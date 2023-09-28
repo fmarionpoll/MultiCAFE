@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Inherited Icy Parent POM -->
-    <parent>
+     <parent>
+        <artifactId>pom-icy</artifactId>
         <groupId>org.bioimageanalysis.icy</groupId>
-        <artifactId>parent-pom-plugin</artifactId>
-        <version>1.0.1</version>
+        <version>2.1.0</version>
     </parent>
 
     <!-- Project Information -->
@@ -17,10 +17,10 @@
     
     <packaging>jar</packaging>
 
-    <name>MultiCAFE2 experiment analysis plugin</name>
-    <description>Measure liquid consumption and activity of flies given access to capillaries filled with liquid and export data to Excel</description>
+    <name>MultiCAFE2 plugin</name>
+    <description>This plugin allows measuring how much flies drink from capillaries filled with liquid. The capillaries are defined by the user as polyLine ROIS, from which kymographs are generated, and the liquid level is then detected and exported to Excel files. The cages and the position of each fly can also be detected and exported to Excel files. Each experiment is described by a series of parameters that are exported along with the measures.</description>
     <url></url>
-    <inceptionYear>2021</inceptionYear>
+    <inceptionYear>2023</inceptionYear>
 
     <organization>
         <name>IDEEV UMR EGCE (CNRS-IRD-Paris-Saclay)</name>
@@ -65,18 +65,13 @@
 
     <!-- List of project's dependencies -->
     <dependencies>
-		<dependency>
-            <groupId>org.openpnp</groupId>
-            <artifactId>opencv</artifactId>
-            <version>4.5.1-2</version>
-        </dependency>
-
-        <!-- The core of Icy -->
+		<!-- The core of Icy -->
 		<dependency>
         	<groupId>org.bioimageanalysis.icy</groupId>
         	<artifactId>icy-kernel</artifactId>
         	<version>2.4.3</version>
 		</dependency>
+		
         <!-- The EzPlug library, simplifies writing UI for Icy plugins. -->
         <dependency>
             <groupId>org.bioimageanalysis.icy</groupId>
@@ -136,7 +131,13 @@
         	<artifactId>commons-csv</artifactId>
         	<version>1.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.openpnp</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.5.1-2</version>
+        </dependency>
     </dependencies>
+    
 
     <!-- Icy Maven repository (to find parent POM) -->
     <repositories>
