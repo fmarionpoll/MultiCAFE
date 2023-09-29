@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe2.tools;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -22,8 +23,8 @@ public class KymosCanvas2D extends Canvas2D
 	 * 
 	 */
 	private static final long serialVersionUID = 8827595503996677250L;
-	final JButton nextButton 				= new JButton("+");
-    final JButton previousButton 			= new JButton("-");
+	final JButton nextButton 				= new JButton(">");
+    final JButton previousButton 			= new JButton("<");
     final JButton zoomImageButton			= new JButton("1:1");
     final JButton shrinkImageButton			= new JButton("all");
 
@@ -36,6 +37,8 @@ public class KymosCanvas2D extends Canvas2D
     @Override
     public void customizeToolbar(JToolBar toolBar)
     {
+    	 toolBar.addSeparator();
+         
 //    	zoomFitImageButton = new IcyButton(new IcyIcon(Canvas2D.ICON_FIT_IMAGE));
 //        zoomFitImageButton.setFlat(true);
 //        zoomFitImageButton.setToolTipText("Fit window to image size");
@@ -49,13 +52,18 @@ public class KymosCanvas2D extends Canvas2D
 		int height = 25;
 		previousButton.setPreferredSize(new Dimension(bWidth, height));
 		previousButton.setToolTipText("Select previous capillary (to the left or lower index)");
-		GridBagConstraints gbc_previousButton = new GridBagConstraints();
-        gbc_previousButton.insets = new Insets(0, 0, 0, 5);
-        gbc_previousButton.gridheight = 1;
-        gbc_previousButton.gridwidth = 1;
-        gbc_previousButton.gridx = 0;
-        gbc_previousButton.gridy = 1;
-        toolBar.add(previousButton, gbc_previousButton);
+//		GridBagConstraints gbc_previousButton = new GridBagConstraints();
+//        gbc_previousButton.insets = new Insets(0, 0, 0, 5);
+//        gbc_previousButton.gridheight = 1;
+//        gbc_previousButton.gridwidth = 1;
+//        gbc_previousButton.gridx = 0;
+//        gbc_previousButton.gridy = 1;
+        
+		previousButton.setOpaque(true);
+		previousButton.setBackground(Color.GREEN);
+		previousButton.setBorderPainted(false);
+        
+        toolBar.add(previousButton); //, gbc_previousButton);
 		
 		nextButton.setPreferredSize(new Dimension(bWidth, height));
 		nextButton.setToolTipText("Select next capillary (to the right or higher index)");
