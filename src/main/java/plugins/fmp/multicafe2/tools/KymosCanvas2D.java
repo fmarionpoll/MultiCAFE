@@ -1,23 +1,21 @@
 package plugins.fmp.multicafe2.tools;
 
-import java.awt.Color;
-import java.awt.Dimension;
+
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import icy.canvas.Canvas2D;
 import icy.gui.component.button.IcyButton;
 import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
-import plugins.fmp.multicafe2.resource.ResourceUtilFMP;
 import icy.resource.ResourceUtil;
 import icy.resource.icon.IcyIcon;
 
+import plugins.fmp.multicafe2.resource.ResourceUtilFMP;
 
 
 public class KymosCanvas2D extends Canvas2D
@@ -33,7 +31,6 @@ public class KymosCanvas2D extends Canvas2D
     static final Image ICON_FIT_YAXIS  = ResourceUtilFMP.getAlphaIconAsImage("fit_y.png");
     static final Image ICON_FIT_XAXIS  = ResourceUtilFMP.getAlphaIconAsImage("fit_x.png");
     
-
     
     public KymosCanvas2D(Viewer viewer)
     {
