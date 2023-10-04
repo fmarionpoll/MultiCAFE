@@ -15,7 +15,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import plugins.fmp.multicafe2.dlg.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe2.experiment.Cage;
-import plugins.fmp.multicafe2.experiment.Capillaries;
 import plugins.fmp.multicafe2.experiment.Capillary;
 import plugins.fmp.multicafe2.experiment.Experiment;
 
@@ -382,7 +381,7 @@ public class XLSExport
 		for (int i = 0; i < ncapillaries; i++) 
 		{
 			Capillary cap 		= expAll.capillaries.capillariesList.get(i);
-			XLSResults row 		= new XLSResults (cap.getRoiName(), cap.capNFlies, xlsOption, nFrames);
+			XLSResults row 		= new XLSResults (cap.getRoiName(), cap.capNFlies, cap.capCageID, xlsOption, nFrames);
 			row.stimulus 		= cap.capStimulus;
 			row.concentration 	= cap.capConcentration;
 			row.cageID 			= cap.capCageID;
@@ -447,7 +446,6 @@ public class XLSExport
 			if (nOutputFrames > 1)
 			{
 				XLSResultsArray resultsArrayList = new XLSResultsArray (expi.capillaries.capillariesList.size());
-				Capillaries caps = expi.capillaries;
 				options.compensateEvaporation = false;
 				switch (xlsExportType) 
 				{
@@ -465,7 +463,7 @@ public class XLSExport
 					case AUTOCORREL_LR:
 					case CROSSCORREL:
 					case CROSSCORREL_LR:
-						resultsArrayList.getResults1(caps, xlsExportType, nOutputFrames, exp.kymoBin_ms, options);
+						resultsArrayList.getResults1(expi.capillaries, xlsExportType, nOutputFrames, exp.kymoBin_ms, options);
 						break;
 						
 					case TOPLEVEL:
@@ -475,7 +473,7 @@ public class XLSExport
 						options.compensateEvaporation = options.subtractEvaporation;
 						
 					case TOPRAW:
-						resultsArrayList.getResults_T0(caps, xlsExportType, nOutputFrames, exp.kymoBin_ms, options);
+						resultsArrayList.getResults_T0(expi.capillaries, xlsExportType, nOutputFrames, exp.kymoBin_ms, options);
 						break;
 	
 					default:

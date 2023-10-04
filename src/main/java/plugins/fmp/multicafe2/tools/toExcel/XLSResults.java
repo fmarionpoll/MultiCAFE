@@ -13,28 +13,30 @@ public class XLSResults
 	String 						stimulus	= null;
 	String 						concentration = null;
 	int 						nadded		= 1;
-	int 						cageID		= 0;
 	boolean[]					padded_out	= null;
 	
 	public int 					dimension	= 0;
 	public int					nflies		= 1;
+	public int 					cageID		= 0;
 	public EnumXLSExportType 	exportType 	= null;
 	public ArrayList<Integer > 	dataInt 	= null;
 	public double []			valuesOut	= null;
 	
 	
 	
-	public XLSResults (String name, int nflies, EnumXLSExportType exportType) 
+	public XLSResults (String name, int nflies, int cageID, EnumXLSExportType exportType) 
 	{
 		this.name = name;
 		this.nflies = nflies;
+		this.cageID = cageID;
 		this.exportType = exportType;
 	}
 	
-	public XLSResults(String name, int nflies, EnumXLSExportType exportType, int nFrames) 
+	public XLSResults(String name, int nflies, int cageID, EnumXLSExportType exportType, int nFrames) 
 	{
 		this.name = name;
 		this.nflies = nflies;
+		this.cageID = cageID;
 		this.exportType = exportType;
 		initValuesArray(nFrames);
 	}

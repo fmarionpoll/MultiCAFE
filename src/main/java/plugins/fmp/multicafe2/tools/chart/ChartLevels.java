@@ -47,6 +47,7 @@ public class ChartLevels extends IcyFrame
 	private String title;
 
 	//----------------------------------------
+	
 	public void createChartPanel(MultiCAFE2 parent, String cstitle) 
 	{
 		title = cstitle;
@@ -60,64 +61,6 @@ public class ChartLevels extends IcyFrame
 	public void setLocationRelativeToRectangle(Rectangle rectv, Point deltapt) 
 	{
 		pt = new Point(rectv.x + deltapt.x, rectv.y + deltapt.y);
-	}
-	
-	private void getDataArrays(
-			Experiment exp, 
-			EnumXLSExportType exportType, 
-			boolean subtractEvaporation, 
-			List<XYSeriesCollection> xyList) 
-	{
-		XLSExport xlsExport = new XLSExport();
-		XLSExportOptions options = new XLSExportOptions();
-		options.buildExcelStepMs = 60000;
-		options.t0 = true;
-		options.subtractEvaporation = subtractEvaporation;
-		XLSResultsArray resultsList = xlsExport.getCapDataFromOneExperiment(exp, exportType, options);
-		
-		XLSResultsArray resultsList2 = null;
-		if (exportType == EnumXLSExportType.TOPLEVEL) 
-			resultsList2 = xlsExport.getCapDataFromOneExperiment(exp, EnumXLSExportType.BOTTOMLEVEL, options);
-		
-		String previousName = null;
-		XYSeriesCollection xyDataset = null;
-		for (int iRow = 0; iRow < resultsList.size(); iRow++ ) 
-		{
-			XLSResults row = resultsList.getRow(iRow);
-			String currentName = row.name.substring(4, row.name.length()-1);
-			// this string can be empty (with names such as line0, line1)
-			if (xyDataset == null) 
-			{
-				xyDataset = new XYSeriesCollection();
-				previousName = currentName; 
-			} 
-			else if (!previousName.equals(currentName) || currentName.isEmpty()) 
-			{
-				if (xyDataset != null)
-					xyList.add(xyDataset);
-				previousName = currentName;
-				xyDataset = new XYSeriesCollection();
-			}
-			
-			XYSeries seriesXY = getXYSeries(row, row.name.substring(4));
-			if (resultsList2 != null)
-			{
-				for (int iRow2 = 0; iRow2 < resultsList2.size(); iRow2++ ) 
-				{
-					XLSResults row2 = resultsList2.getRow(iRow2);
-					if (row2.name .equals(row.name)) 
-					{
-						appendDataToXYSeries(seriesXY, row2);
-						break;
-					}
-				}
-			}
-			xyDataset.addSeries(seriesXY );
-			updateGlobalMaxMin();
-		}
-		
-		if (xyDataset != null)
-			xyList.add(xyDataset);
 	}
 	
 	public void displayData(Experiment exp, EnumXLSExportType option, boolean subtractEvaporation) 
@@ -179,6 +122,108 @@ public class ChartLevels extends IcyFrame
 		mainChartFrame.addToDesktopPane ();
 		mainChartFrame.setVisible(true);
 	}
+	
+	private void getDataArrays(Experiment exp, EnumXLSExportType exportType, boolean subtractEvaporation, List<XYSeriesCollection> xyList) 
+	{
+		XLSExport xlsExport = new XLSExport();
+		XLSExportOptions options = new XLSExportOptions();
+		options.buildExcelStepMs = 60000;
+		options.t0 = true;
+		options.subtractEvaporation = subtractEvaporation;
+		XLSResultsArray resultsList = xlsExport.getCapDataFromOneExperiment(exp, exportType, options);
+		
+		XLSResultsArray resultsList2 = null;
+		if (exportType == EnumXLSExportType.TOPLEVEL) 
+			resultsList2 = xlsExport.getCapDataFromOneExperiment(exp, EnumXLSExportType.BOTTOMLEVEL, options);
+		
+//		String previousName = null;
+		XYSeriesCollection xyDataset = null;
+		int oldcage = -1;
+		for (int iRow = 0; iRow < resultsList.size(); iRow++ ) 
+		{
+			XLSResults rowXLSResults = resultsList.getRow(iRow);
+			
+			if (oldcage != rowXLSResults.cageID ) 
+			{
+				xyDataset = new XYSeriesCollection();
+				oldcage = rowXLSResults.cageID; 
+				xyList.add(xyDataset);
+			} 
+			
+			XYSeries seriesXY = getXYSeries(rowXLSResults, rowXLSResults.name.substring(4));
+			
+			if (resultsList2 != null)
+			{
+				for (int iRow2 = 0; iRow2 < resultsList2.size(); iRow2++ ) 
+				{
+					XLSResults row2 = resultsList2.getRow(iRow2);
+					if (row2.name .equals(rowXLSResults.name)) 
+					{
+						appendDataToXYSeries(seriesXY, row2);
+						break;
+					}
+				}
+			}
+			xyDataset.addSeries(seriesXY );
+			updateGlobalMaxMin();
+		}
+	}
+	
+	/*
+	private void getDataArrays_old(Experiment exp, EnumXLSExportType exportType, boolean subtractEvaporation, List<XYSeriesCollection> xyList) 
+	{
+		XLSExport xlsExport = new XLSExport();
+		XLSExportOptions options = new XLSExportOptions();
+		options.buildExcelStepMs = 60000;
+		options.t0 = true;
+		options.subtractEvaporation = subtractEvaporation;
+		XLSResultsArray resultsList = xlsExport.getCapDataFromOneExperiment(exp, exportType, options);
+		
+		XLSResultsArray resultsList2 = null;
+		if (exportType == EnumXLSExportType.TOPLEVEL) 
+			resultsList2 = xlsExport.getCapDataFromOneExperiment(exp, EnumXLSExportType.BOTTOMLEVEL, options);
+		
+		String previousName = null;
+		XYSeriesCollection xyDataset = null;
+		for (int iRow = 0; iRow < resultsList.size(); iRow++ ) 
+		{
+			XLSResults row = resultsList.getRow(iRow);
+			String currentName = row.name.substring(4, row.name.length()-1);
+			// this string can be empty (with names such as line0, line1)
+			if (xyDataset == null) 
+			{
+				xyDataset = new XYSeriesCollection();
+				previousName = currentName; 
+			} 
+			else if (!previousName.equals(currentName) || currentName.isEmpty()) 
+			{
+				if (xyDataset != null)
+					xyList.add(xyDataset);
+				previousName = currentName;
+				xyDataset = new XYSeriesCollection();
+			}
+			
+			XYSeries seriesXY = getXYSeries(row, row.name.substring(4));
+			if (resultsList2 != null)
+			{
+				for (int iRow2 = 0; iRow2 < resultsList2.size(); iRow2++ ) 
+				{
+					XLSResults row2 = resultsList2.getRow(iRow2);
+					if (row2.name .equals(row.name)) 
+					{
+						appendDataToXYSeries(seriesXY, row2);
+						break;
+					}
+				}
+			}
+			xyDataset.addSeries(seriesXY );
+			updateGlobalMaxMin();
+		}
+		
+		if (xyDataset != null)
+			xyList.add(xyDataset);
+	}
+	*/
 	
 	private void setXAxis(JFreeChart xyChart) {
 		if( parent0.paneExcel.tabCommonOptions.getIsFixedFrame())

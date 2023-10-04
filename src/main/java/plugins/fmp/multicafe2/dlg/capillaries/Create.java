@@ -112,7 +112,11 @@ public class Create extends JPanel
 			@Override public void actionPerformed( final ActionEvent e ) { 
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if ((exp != null) && (exp.capillaries != null)) {
-					ROI2DPolygon extRect = exp.capillaries.get2DPolygonEnclosingCapillaries();
+					Polygon2D extPolygon = exp.capillaries.get2DPolygonEnclosingCapillaries();
+					if (extPolygon == null) {
+						extPolygon = getCapillariesPolygon(exp.seqCamData);
+					}
+					ROI2DPolygon extRect = new ROI2DPolygon(extPolygon);
 					exp.capillaries.deleteAllCapillaries();
 					exp.capillaries.updateCapillariesFromSequence(exp.seqCamData.seq);
 					exp.seqCamData.seq.removeAllROI();

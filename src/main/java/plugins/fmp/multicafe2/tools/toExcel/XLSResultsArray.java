@@ -105,8 +105,8 @@ public class XLSResultsArray
 	
 	private void computeEvaporationFromResultsWithZeroFlies(int dimension) 
 	{
-		evapL = new XLSResults("L", 0, null);
-		evapR = new XLSResults("R", 0, null);
+		evapL = new XLSResults("L", 0, 0, null);
+		evapR = new XLSResults("R", 0, 0, null);
 		evapL.initValuesOutArray(dimension, 0.);
 		evapR.initValuesOutArray(dimension, 0.);
 		
@@ -245,7 +245,7 @@ public class XLSResultsArray
 		for (Capillary cap: caps.capillariesList) 
 		{
 			checkIfSameStimulusAndConcentration(cap);
-			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, xlsExportOptions.exportType, nOutputFrames);
+			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID, xlsExportOptions.exportType, nOutputFrames);
 			results.dataInt = cap.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms, xlsExportOptions.buildExcelStepMs);
 			if (subtractT0) 
 				results.subtractT0();
@@ -312,11 +312,11 @@ public class XLSResultsArray
 			if (rowR != null) 
 			{
 				irow++;
-				XLSResults rowLtoR = new XLSResults("LtoR", 0, null);
+				XLSResults rowLtoR = new XLSResults("LtoR", 0, 0, null);
 				rowLtoR.initValuesOutArray(rowL.dimension, 0.);
 				correl(rowL, rowR, rowLtoR, xlsExportOptions.nbinscorrelation);
 				
-				XLSResults rowRtoL = new XLSResults("RtoL", 0, null);
+				XLSResults rowRtoL = new XLSResults("RtoL", 0, 0, null);
 				rowRtoL.initValuesOutArray(rowL.dimension, 0.);
 				correl(rowR, rowL, rowRtoL, xlsExportOptions.nbinscorrelation);
 				
@@ -336,7 +336,7 @@ public class XLSResultsArray
 			{
 				irow++;
 				
-				XLSResults rowLR = new XLSResults("LR", 0, null);
+				XLSResults rowLR = new XLSResults("LR", 0, 0, null);
 				rowLR.initValuesOutArray(rowL.dimension, 0.);
 				combineIntervals(rowL, rowR, rowLR);
 				
@@ -392,7 +392,7 @@ public class XLSResultsArray
 			{
 				irow++;
 				
-				XLSResults rowLR = new XLSResults("LR", 0, null);
+				XLSResults rowLR = new XLSResults("LR", 0, 0, null);
 				rowLR.initValuesOutArray(rowL.dimension, 0.);
 				combineIntervals(rowL, rowR, rowLR);
 				

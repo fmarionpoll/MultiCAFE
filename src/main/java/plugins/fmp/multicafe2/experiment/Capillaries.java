@@ -26,7 +26,6 @@ import icy.util.XMLUtil;
 import plugins.fmp.multicafe2.tools.Comparators;
 import plugins.fmp.multicafe2.tools.ROI2DUtilities;
 import plugins.fmp.multicafe2.tools.toExcel.EnumXLSExportType;
-import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 
@@ -547,19 +546,22 @@ public class Capillaries
 		return scalingFactorToPhysicalUnits;
 	}
 	
-	public ROI2DPolygon get2DPolygonEnclosingCapillaries() 
+	public Polygon2D get2DPolygonEnclosingCapillaries() 
 	{
 		Rectangle  outerRectangle = null;
-		for (Capillary cap : capillariesList) {
+		for (Capillary cap : capillariesList) 
+		{
 			Rectangle rect = cap.getRoi().getBounds();
 			if (outerRectangle == null) {
 				outerRectangle = rect;
 			}
 			else
 				outerRectangle.add(rect);
-			}
-		Polygon2D polygon = new Polygon2D(outerRectangle);
-		return new ROI2DPolygon(polygon);
+		}
+		if (outerRectangle == null)
+			return null;
+		
+		return new Polygon2D(outerRectangle);
 	}
 	
 	public void deleteAllCapillaries() 
