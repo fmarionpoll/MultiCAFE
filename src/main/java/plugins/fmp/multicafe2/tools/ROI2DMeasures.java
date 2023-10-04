@@ -288,8 +288,9 @@ public class ROI2DMeasures {
 	        while (!it.done())
 	        {
 	            // check for interruption sometime
-	            if (((numPts & 0xFFFF) == 0) && Thread.currentThread().isInterrupted())
+	            if (((numPts & 0xFFFF) == 0) && Thread.currentThread().isInterrupted()) {
 	                throw new InterruptedException();
+	            }
 
 	            x += it.getX();
 	            y += it.getY();
