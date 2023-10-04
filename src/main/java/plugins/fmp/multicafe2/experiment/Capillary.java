@@ -167,6 +167,8 @@ public class Capillary implements Comparable <Capillary>
 	
 	public String getLast2ofCapillaryName() 
 	{
+		if (roi == null)
+			return "missing";
 		return roi.getName().substring(roi.getName().length() -2);
 	}
 	
