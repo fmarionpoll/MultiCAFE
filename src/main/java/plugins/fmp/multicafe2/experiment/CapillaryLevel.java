@@ -92,9 +92,17 @@ public class CapillaryLevel
 	
 	void cropToNPoints(int npoints) 
 	{
+		if (npoints > polylineLevel.npoints)
+			return;
+		
 		if (polyline_old == null) 
 			polyline_old = polylineLevel.clone();
-		polylineLevel.npoints = npoints;
+        
+		Polyline2D pol = new Polyline2D();
+        for (int i = 0; i < npoints; i++)
+            pol.addPoint(polylineLevel.xpoints[i], polylineLevel.ypoints[i]);
+
+		polylineLevel = new Level2D(pol); 
 	}
 	
 	void copy(CapillaryLevel cap) 
