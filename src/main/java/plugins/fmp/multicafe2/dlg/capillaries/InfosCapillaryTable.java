@@ -383,39 +383,38 @@ public class InfosCapillaryTable extends JPanel
 		
 		Capillary capFrom = exp.capillaries.capillariesList.get(rowIndex);	
 		int cageFrom = capFrom.capCageID; 
+		int cageTo = -1;
 				
-		// count how many capillaries are in the current cage
 		int nCapillariesPerCage = getCageNCapillaries(exp, cageFrom);
+		int indexFirstCapillaryOfCageFrom = getIndexFirstCapillaryOfCage(exp, cageFrom);
+		int indexFirstCapillaryOfCageTo = -1;
 		
-		for (Capillary cap: exp.capillaries.capillariesList) 
+		for (int i = 0; i < exp.capillaries.capillariesList.size(); i++) 
 		{
+			Capillary cap = exp.capillaries.capillariesList.get(i);
 			if (cap.capCageID == cageFrom)
 				continue;
 			
+			if (cap.capCageID != cageTo) 
+			{
+				cageTo = cap.capCageID;
+				indexFirstCapillaryOfCageTo = getIndexFirstCapillaryOfCage(exp, cageTo);
+			}
+						
 			if (getCageNCapillaries(exp, cap.capCageID) != nCapillariesPerCage)
 				continue;
-			
 
-//				try 
-//				{
-//					int mod = Integer.valueOf(cap.getCapillarySide()) % 2;
-//					if (mod != modulo2)
-//						continue;
-//				} 
-//				catch (NumberFormatException nfe) 
-//				{
-//					if (!cap.getCapillarySide().equals(side))
-//						continue;
-//				}
-//
-//        	switch (columnIndex) 
-//        	{
-//            case 2: cap.capNFlies = cap0.capNFlies; break;
-//            case 3: cap.capVolume = cap0.capVolume; break;
-//            case 4: cap.capStimulus = cap0.capStimulus; break;
-//            case 5: cap.capConcentration = cap0.capConcentration; break;
-//            default: break;
-//        	}					
+			int indexFrom = i - indexFirstCapillaryOfCageTo + indexFirstCapillaryOfCageFrom;
+			Capillary cap0 = exp.capillaries.capillariesList.get(indexFrom);
+
+        	switch (columnIndex) 
+        	{
+            case 2: cap.capNFlies = cap0.capNFlies; break;
+            case 3: cap.capVolume = cap0.capVolume; break;
+            case 4: cap.capStimulus = cap0.capStimulus; break;
+            case 5: cap.capConcentration = cap0.capConcentration; break;
+            default: break;
+        	}					
 		}
 		
 	}
@@ -430,5 +429,19 @@ public class InfosCapillaryTable extends JPanel
 		}
 			
 		return nCapillaries;
+	}
+	
+	private int getIndexFirstCapillaryOfCage(Experiment exp, int cageID) 
+	{
+		int index = -1;
+		for (int i = 0; i < exp.capillaries.capillariesList.size(); i++) 
+		{
+			Capillary cap = exp.capillaries.capillariesList.get(i);
+			if (cap.capCageID == cageID) {
+				index = i;
+				break;
+			}
+		}
+		return index;		
 	}
 }
