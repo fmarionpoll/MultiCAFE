@@ -353,7 +353,11 @@ class CheckComboBox extends JComboBox<Object> {
    }
 
    class ObjCheckBox extends JCheckBox {
-       private final Object obj;
+       /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final Object obj;
        public ObjCheckBox(final Object obj) {
            super(obj.toString());
            this.obj = obj;

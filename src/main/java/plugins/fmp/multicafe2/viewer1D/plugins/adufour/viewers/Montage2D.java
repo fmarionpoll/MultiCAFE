@@ -104,7 +104,8 @@ public class Montage2D extends PluginActionable implements PluginCanvas
             newHeight = oldHeight * yCount;
         }
         
-        @Override
+        @SuppressWarnings("deprecation")
+		@Override
         public IcyBufferedImage getImage(int t, int z, int c)
         {
             if (z != -1) return super.getImage(t, z, c);

@@ -79,32 +79,16 @@ public class ChartLevels extends IcyFrame
 		int maximumDrawWidth = width;
 		int height = 200;
 		int maximumDrawHeight = height;
-		boolean displayLabels = true;
 		
+		boolean displayLabels = true;
 		String yTitle = option.toUnit();
 
 		for (XYSeriesCollection xyDataset : xyDataSetList) 
 		{
-			JFreeChart xyChart = ChartFactory.createXYLineChart(
-					null,				// chartname 
-					null, 				// xDomain
-					yTitle, 			// yDomain
-					xyDataset, 			// collection
-					PlotOrientation.VERTICAL, 
-					true, 				// legend
-					false, 				// tooltips
-					false);				// url
-			xyChart.setAntiAlias( true );
-			xyChart.setTextAntiAlias( true );
-			
-			setYAxis(xyChart, displayLabels);
-			yTitle = null;
-			
-			setXAxis(xyChart);
-			
-			if (option == EnumXLSExportType.TOPLEVEL || option == EnumXLSExportType.BOTTOMLEVEL) 
-				xyChart.getXYPlot().getRangeAxis(0).setInverted(true);
-			
+			JFreeChart xyChart = buildChartFromSeries( xyDataset,  yTitle, displayLabels, option); 
+			yTitle = null;  			// used only once
+			displayLabels = false;		// used only once
+						
 			xyChartList.add(xyChart);
 			ChartPanel xyChartPanel = new ChartPanel(xyChart, width, height, minimumDrawWidth, 100, 
 					maximumDrawWidth, maximumDrawHeight, false, false, true, true, true, true);
@@ -115,7 +99,7 @@ public class ChartLevels extends IcyFrame
 			minimumDrawWidth = 50;
 			maximumDrawWidth = width;
 			maximumDrawHeight = 200;
-			displayLabels = false;
+
 		}
 		mainChartFrame.pack();
 		mainChartFrame.setLocation(pt);
@@ -123,6 +107,30 @@ public class ChartLevels extends IcyFrame
 		mainChartFrame.setVisible(true);
 	}
 	
+	private JFreeChart buildChartFromSeries(XYSeriesCollection xyDataset, String yTitle, boolean displayLabels, EnumXLSExportType option) 
+	{
+		JFreeChart xyChart = ChartFactory.createXYLineChart(
+				null,				// chartname 
+				null, 				// xDomain
+				yTitle, 			// yDomain
+				xyDataset, 			// collection
+				PlotOrientation.VERTICAL, 
+				true, 				// legend
+				false, 				// tooltips
+				false);				// url
+		xyChart.setAntiAlias( true );
+		xyChart.setTextAntiAlias( true );
+		
+		setYAxis(xyChart, displayLabels);
+		
+		setXAxis(xyChart);
+		
+		if (option == EnumXLSExportType.TOPLEVEL || option == EnumXLSExportType.BOTTOMLEVEL) 
+			xyChart.getXYPlot().getRangeAxis(0).setInverted(true);
+		
+		return xyChart;
+	}
+
 	private void getDataArrays(Experiment exp, EnumXLSExportType exportType, boolean subtractEvaporation, List<XYSeriesCollection> xyList) 
 	{
 		XLSExport xlsExport = new XLSExport();
