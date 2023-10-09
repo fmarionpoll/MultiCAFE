@@ -52,11 +52,16 @@ public class ResourceUtilFMP {
         final URL url = ResourceUtil.class.getResource("/" + ICON_PATH + name);
 
         Image result = null;
-
-        if (url != null)
+       
+        if (url != null) {
+        	System.out.println("url :"+ url);
             result = ImageUtil.load(url, false);
-        else
+        }
+        else 
+        {
+        	System.out.println("string :"+ ICON_PATH + name);
             result = ImageUtil.load(new File(ICON_PATH + name), false);
+        }
 
         // FIXME: we do that as in very rare occasion ImageIO.read(..) throw a NPE (inflater has been closed) 
         // I admit this is an ugly fix but it works eventually.. 
