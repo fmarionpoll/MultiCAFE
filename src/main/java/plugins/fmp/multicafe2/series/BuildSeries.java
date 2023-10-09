@@ -49,7 +49,8 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer>
 		ExperimentCombo expList = options.expList;
 		ProgressFrame progress = new ProgressFrame("Analyze series");
 		selectedExperimentIndex = expList.getSelectedIndex();
-		expList.setSelectedIndex(-1);
+		
+		selectList(expList, -1);
 		
 		for (int index = expList.index0; index <= expList.index1; index++, nbiterations++) 
 		{
@@ -76,10 +77,28 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer>
 		}		
 		progress.close();
 		threadRunning = false;
-		expList.setSelectedIndex(selectedExperimentIndex);
+		
+		selectList(expList, selectedExperimentIndex);
+		
+		
 		return nbiterations;
 	}
 
+	private void selectList(ExperimentCombo expList, int index) {
+		try 
+		{
+			SwingUtilities.invokeAndWait(new Runnable() 
+			{
+				public void run() 
+				{
+					expList.setSelectedIndex(index);
+				}});
+		}
+		catch (InvocationTargetException | InterruptedException e) 
+		{
+			e.printStackTrace();
+		}
+	}
 	@Override
 	protected void done() 
 	{
