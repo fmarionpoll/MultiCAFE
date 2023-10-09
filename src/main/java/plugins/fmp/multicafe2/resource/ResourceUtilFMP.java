@@ -7,6 +7,9 @@ import java.net.URL;
 import icy.image.ImageUtil;
 import icy.resource.ResourceUtil;
 import icy.system.thread.ThreadUtil;
+import icy.util.ClassUtil;
+
+
 
 // copied from ResourceUtil.java of Icy source code
 // 02-october-2023
@@ -23,6 +26,11 @@ public class ResourceUtilFMP {
      */
     public static Image getAlphaIconAsImage(String resourceName)
     {
+//    	String pkg = ClassUtil.getPackageName(MultiCAFE2.class.getName()) + ".";
+//		pkg = ClassUtil.getPathFromQualifiedName(pkg);
+//		
+//		String name = pkg + ICON_PATH + ALPHA_ICON_PATH + resourceName;
+//		System.out.println("resourceName ="+ resourceName + " --filename="+ name);
         return getAlphaIconAsImage(resourceName, -1);
     }
     
@@ -59,6 +67,12 @@ public class ResourceUtilFMP {
         }
         else 
         {
+        	String pkg = ClassUtil.getPackageName(MultiCAFE2.class.getName()) + ".";
+    		pkg = ClassUtil.getPathFromQualifiedName(pkg);
+    		
+    		String name = pkg + ICON_PATH + ALPHA_ICON_PATH + resourceName;
+    		System.out.println("resourceName ="+ resourceName + " --filename="+ name);
+    		
         	System.out.println("string :"+ ICON_PATH + name);
             result = ImageUtil.load(new File(ICON_PATH + name), false);
         }
