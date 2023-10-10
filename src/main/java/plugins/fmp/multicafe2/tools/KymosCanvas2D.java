@@ -1,6 +1,5 @@
 package plugins.fmp.multicafe2.tools;
 
-
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -28,8 +27,7 @@ public class KymosCanvas2D extends Canvas2D
 
     static final Image ICON_PREVIOUS_IMAGE = ResourceUtil.getAlphaIconAsImage("br_prev.png");
     static final Image ICON_NEXT_IMAGE  = ResourceUtil.getAlphaIconAsImage("br_next.png");
-    static final Image ICON_FIT_YAXIS  = ResourceUtilFMP.getAlphaIconAsImage("fit_y.png");
-    static final Image ICON_FIT_XAXIS  = ResourceUtilFMP.getAlphaIconAsImage("fit_x.png");
+    
     
     
     public KymosCanvas2D(Viewer viewer)
@@ -55,13 +53,13 @@ public class KymosCanvas2D extends Canvas2D
         nextButton.setToolTipText("Select next capillary (to the right or higher index)");
 		toolBar.add(nextButton);
 		
-		IcyButton fitYAxisButton = new IcyButton(new IcyIcon(ICON_FIT_YAXIS));
+		IcyButton fitYAxisButton = new IcyButton(ResourceUtilFMP.ICON_FIT_YAXIS);
 		fitYAxisButton.setSelected(false);
 		fitYAxisButton.setFocusable(false);
 		fitYAxisButton.setToolTipText("Set image scale ratio to 1:1 and fit Y axis to the window height");
 		toolBar.add(fitYAxisButton);
 		
-		IcyButton fitXAxisButton = new IcyButton(new IcyIcon(ICON_FIT_XAXIS));
+		IcyButton fitXAxisButton = new IcyButton(ResourceUtilFMP.ICON_FIT_XAXIS);
 		fitXAxisButton.setSelected(false);
 		fitXAxisButton.setFocusable(false);
 		fitXAxisButton.setToolTipText("Fit X and Y axis to the window size");

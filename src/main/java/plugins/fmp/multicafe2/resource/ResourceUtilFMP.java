@@ -1,116 +1,43 @@
 package plugins.fmp.multicafe2.resource;
 
 import java.awt.Image;
-import java.io.File;
-import java.net.URL;
+import java.io.InputStream;
 
 import icy.image.ImageUtil;
-import icy.resource.ResourceUtil;
-import icy.system.thread.ThreadUtil;
-import icy.util.ClassUtil;
+import icy.resource.icon.IcyIcon;
+import plugins.fmp.multicafe2.MultiCAFE2;
 
 
 
-// copied from ResourceUtil.java of Icy source code
-// 02-october-2023
-// author: Stéphane Dallongeville
+
+// adapted from NherveToolbox
 
 
 public class ResourceUtilFMP {
 
-    public static final String ALPHA_ICON_PATH = "alpha/";
-    public static final String ICON_PATH = "icon/";
+    public static final String ALPHA_ICON_PATH 	= "alpha/";
+    public static final String ICON_PATH 		= "icon/";
+    public static final String RESOURCES_PATH 	= "resources/";
     
-    /**
-     * Return an image located in resources/icon/alpha from its name<br>
-     */
-    public static Image getAlphaIconAsImage(String resourceName)
-    {
-//    	String pkg = ClassUtil.getPackageName(MultiCAFE2.class.getName()) + ".";
+    public static final IcyIcon ICON_FIT_YAXIS  = getIcyIcon("fit_y.png");
+    public static final IcyIcon ICON_FIT_XAXIS  = getIcyIcon("fit_x.png");
+    
+    
+    private static IcyIcon getIcyIcon(String fileName) {
+    	String name = 
+    			ICON_PATH + 
+    			ALPHA_ICON_PATH + 
+    			fileName;
+		return new IcyIcon(getImage(name));
+	}
+    
+	private static Image getImage(String fileName) {
+//		String pkg = ClassUtil.getPackageName(MultiCAFE2.class.getName()) + ".";
 //		pkg = ClassUtil.getPathFromQualifiedName(pkg);
-//		
-//		String name = pkg + ICON_PATH + ALPHA_ICON_PATH + resourceName;
-//		System.out.println("resourceName ="+ resourceName + " --filename="+ name);
-        return getAlphaIconAsImage(resourceName, -1);
-    }
-    
-    /**
-     * Return an image located in resources/icon/alpha with specified square size from its name<br>
-     */
-    public static Image getAlphaIconAsImage(String resourceName, int size)
-    {
-        final String finalName;
-
-        if (resourceName.toLowerCase().endsWith(".png"))
-            finalName = resourceName;
-        else
-            finalName = resourceName + ".png";
-
-        return getIconAsImage(ALPHA_ICON_PATH + finalName, size);
-    }
-    
-    /**
-     * Return an image with wanted size located in resources/icon from its name<br>
-     * For any other location use the ImageUtil.loadImage() method
-     * 
-     * @param name
-     */
-    public static Image getIconAsImage(String name, int size)
-    {
-        final URL url = ResourceUtil.class.getResource("/" + ICON_PATH + name);
-
-        Image result = null;
-       
-        if (url != null) {
-        	System.out.println("url :"+ url);
-            result = ImageUtil.load(url, false);
-        }
-        else 
-        {
-        	String pkg = ClassUtil.getPackageName(MultiCAFE2.class.getName()) + ".";
-    		pkg = ClassUtil.getPathFromQualifiedName(pkg);
-    		
-    		String name = pkg + ICON_PATH + ALPHA_ICON_PATH + resourceName;
-    		System.out.println("resourceName ="+ resourceName + " --filename="+ name);
-    		
-        	System.out.println("string :"+ ICON_PATH + name);
-            result = ImageUtil.load(new File(ICON_PATH + name), false);
-        }
-
-        // FIXME: we do that as in very rare occasion ImageIO.read(..) throw a NPE (inflater has been closed) 
-        // I admit this is an ugly fix but it works eventually.. 
-        int retry = 3;
-        while ((result == null) && (retry-- > 0))
-        {
-            ThreadUtil.sleep(1);
-
-            if (url != null)
-                result = ImageUtil.load(url, false);
-            else
-                result = ImageUtil.load(new File(ICON_PATH + name), false);
-        }
-
-        if (result == null)
-        {
-            System.out.println("Resource name can't be found: " + name);
-            return null;
-        }
-
-        return scaleImage(result, size);
-    }
-    
-    private static Image scaleImage(Image image, int size)
-    {
-        // resize if needed
-        if ((image != null) && (size != -1))
-        {
-            // be sure image data are ready
-            ImageUtil.waitImageReady(image);
-            // resize only if image has different size
-            if ((image.getWidth(null) != size) || (image.getWidth(null) != size))
-                return ImageUtil.scale(image, size, size);
-        }
-
-        return image;
-    }
+//		pkg += RESOURCES_PATH+ fileName;
+//		System.out.println(pkg);
+		
+		InputStream url = MultiCAFE2.class.getClassLoader().getResourceAsStream(fileName);
+		return ImageUtil.load(url);
+	}
 }
