@@ -27,7 +27,10 @@ public class KymosCanvas2D extends Canvas2D
 
     static final Image ICON_PREVIOUS_IMAGE = ResourceUtil.getAlphaIconAsImage("br_prev.png");
     static final Image ICON_NEXT_IMAGE  = ResourceUtil.getAlphaIconAsImage("br_next.png");
-    
+    static final IcyIcon ICON_FIT_YAXIS  = ResourceUtilFMP.getIcyIcon("fit_y.png");
+    static final IcyIcon ICON_FIT_XAXIS  = ResourceUtilFMP.getIcyIcon("fit_x.png");
+    static final IcyIcon ALT_ICON_FIT_YAXIS  = ResourceUtilFMP.getIcyIcon("cursor_H_split.png");
+    static final IcyIcon ALT_ICON_FIT_XAXIS  = ResourceUtilFMP.getIcyIcon("cursor_V_split.png");
     
     
     public KymosCanvas2D(Viewer viewer)
@@ -53,13 +56,19 @@ public class KymosCanvas2D extends Canvas2D
         nextButton.setToolTipText("Select next capillary (to the right or higher index)");
 		toolBar.add(nextButton);
 		
-		IcyButton fitYAxisButton = new IcyButton(ResourceUtilFMP.ICON_FIT_YAXIS);
+		IcyIcon fitY = ICON_FIT_YAXIS;
+//		if (fitY == null) 
+			fitY = ALT_ICON_FIT_YAXIS;
+		IcyButton fitYAxisButton = new IcyButton(fitY);
 		fitYAxisButton.setSelected(false);
 		fitYAxisButton.setFocusable(false);
 		fitYAxisButton.setToolTipText("Set image scale ratio to 1:1 and fit Y axis to the window height");
 		toolBar.add(fitYAxisButton);
 		
-		IcyButton fitXAxisButton = new IcyButton(ResourceUtilFMP.ICON_FIT_XAXIS);
+		IcyIcon fitX = ICON_FIT_XAXIS;
+//		if (fitX == null) 
+			fitX = ALT_ICON_FIT_XAXIS;
+		IcyButton fitXAxisButton = new IcyButton(fitX);
 		fitXAxisButton.setSelected(false);
 		fitXAxisButton.setFocusable(false);
 		fitXAxisButton.setToolTipText("Fit X and Y axis to the window size");

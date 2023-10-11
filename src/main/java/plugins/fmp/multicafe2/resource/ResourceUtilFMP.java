@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.io.InputStream;
 
 import icy.image.ImageUtil;
+import icy.resource.ResourceUtil;
 import icy.resource.icon.IcyIcon;
 import plugins.fmp.multicafe2.MultiCAFE2;
 
@@ -14,16 +15,14 @@ import plugins.fmp.multicafe2.MultiCAFE2;
 
 public class ResourceUtilFMP {
 
-    public static final String ALPHA_ICON_PATH 	= "alpha/";
+    public static final String ALPHA_PATH 		= "alpha/";
     public static final String ICON_PATH 		= "icon/";
     public static final String RESOURCES_PATH   = "resources/";
     public static final String ROOT_PATH 		= "../../../";
     
-    public static final IcyIcon ICON_FIT_YAXIS  = getIcyIcon("fit_y.png");
-    public static final IcyIcon ICON_FIT_XAXIS  = getIcyIcon("fit_x.png");
-    
-    
-    private static IcyIcon getIcyIcon(String fileName) 
+
+  
+    public static IcyIcon getIcyIcon(String fileName) 
     {
 		return new IcyIcon(getImage(fileName));
 	}
@@ -35,7 +34,12 @@ public class ResourceUtilFMP {
 //		pkg += RESOURCES_PATH+ fileName;
 //		System.out.println(pkg);
 		
-		String name = ICON_PATH + ALPHA_ICON_PATH + fileName;
+		Image img = ResourceUtil.getAlphaIconAsImage(fileName);
+		if (img != null)
+			return img;
+		
+		System.out.println("0 - resource not found via resourceUtil icon - alpha: " + fileName);
+		String name = ICON_PATH + ALPHA_PATH + fileName;
 		InputStream url = MultiCAFE2.class.getClassLoader().getResourceAsStream(name);
 		if (url == null) {
 			System.out.println("1 - resource not found: at: "+ name);
