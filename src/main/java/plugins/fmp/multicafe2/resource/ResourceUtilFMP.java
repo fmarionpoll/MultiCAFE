@@ -21,8 +21,8 @@ public class ResourceUtilFMP {
     
     public static final IcyIcon ICON_PREVIOUS_IMAGE 	= getIcyIcon("br_prev.png");
     public static final IcyIcon ICON_NEXT_IMAGE  		= getIcyIcon("br_next.png");
-    public static final IcyIcon ICON_FIT_YAXIS  		= getIcyIcon("fit_y.png");
-    public static final IcyIcon ICON_FIT_XAXIS  		= getIcyIcon("fit_x.png");
+    public static final IcyIcon ICON_FIT_YAXIS  		= getIcyIcon("fit_Y.png");
+    public static final IcyIcon ICON_FIT_XAXIS  		= getIcyIcon("fit_X.png");
     public static final IcyIcon ALT_ICON_FIT_YAXIS  	= getIcyIcon("cursor_H_split.png");
     public static final IcyIcon ALT_ICON_FIT_XAXIS  	= getIcyIcon("cursor_V_split.png");
     
