@@ -32,7 +32,7 @@ public class KymosCanvas2D extends Canvas2D
     @Override
     public void customizeToolbar(JToolBar toolBar)
     {
-    	 toolBar.addSeparator();
+    	toolBar.addSeparator();
          
 		IcyButton previousButton = new IcyButton(ResourceUtilFMP.ICON_PREVIOUS_IMAGE);
 		previousButton.setSelected(false);
@@ -40,7 +40,6 @@ public class KymosCanvas2D extends Canvas2D
 		previousButton.setToolTipText("Select previous capillary (to the left or lower index)");
         toolBar.add(previousButton); 
 		
-
         IcyButton nextButton = new IcyButton(ResourceUtilFMP.ICON_NEXT_IMAGE);
         nextButton.setSelected(false);
         nextButton.setFocusable(false);

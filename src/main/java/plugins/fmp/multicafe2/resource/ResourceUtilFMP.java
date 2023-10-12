@@ -12,7 +12,6 @@ import plugins.fmp.multicafe2.MultiCAFE2;
 
 // adapted from NherveToolbox
 
-
 public class ResourceUtilFMP {
 
     public static final String ALPHA_PATH 		= "alpha/";
