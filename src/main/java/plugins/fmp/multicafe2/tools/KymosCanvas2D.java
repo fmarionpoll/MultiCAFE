@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe2.tools;
 
-import java.awt.Image;
+
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +11,6 @@ import icy.canvas.Canvas2D;
 import icy.gui.component.button.IcyButton;
 import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
-import icy.resource.ResourceUtil;
 import icy.resource.icon.IcyIcon;
 
 import plugins.fmp.multicafe2.resource.ResourceUtilFMP;
@@ -23,16 +22,8 @@ public class KymosCanvas2D extends Canvas2D
 	 * 
 	 */
 	private static final long serialVersionUID = 8827595503996677250L;
-	static final int ICON_SIZE = 20;
 
-    static final Image ICON_PREVIOUS_IMAGE = ResourceUtil.getAlphaIconAsImage("br_prev.png");
-    static final Image ICON_NEXT_IMAGE  = ResourceUtil.getAlphaIconAsImage("br_next.png");
-    static final IcyIcon ICON_FIT_YAXIS  = ResourceUtilFMP.getIcyIcon("fit_y.png");
-    static final IcyIcon ICON_FIT_XAXIS  = ResourceUtilFMP.getIcyIcon("fit_x.png");
-    static final IcyIcon ALT_ICON_FIT_YAXIS  = ResourceUtilFMP.getIcyIcon("cursor_H_split.png");
-    static final IcyIcon ALT_ICON_FIT_XAXIS  = ResourceUtilFMP.getIcyIcon("cursor_V_split.png");
-    
-    
+ 
     public KymosCanvas2D(Viewer viewer)
     {
         super(viewer);
@@ -43,31 +34,31 @@ public class KymosCanvas2D extends Canvas2D
     {
     	 toolBar.addSeparator();
          
-		IcyButton previousButton = new IcyButton(new IcyIcon(ICON_PREVIOUS_IMAGE));
+		IcyButton previousButton = new IcyButton(ResourceUtilFMP.ICON_PREVIOUS_IMAGE);
 		previousButton.setSelected(false);
 		previousButton.setFocusable(false);
 		previousButton.setToolTipText("Select previous capillary (to the left or lower index)");
         toolBar.add(previousButton); 
 		
 
-        IcyButton nextButton = new IcyButton(new IcyIcon(ICON_NEXT_IMAGE));
+        IcyButton nextButton = new IcyButton(ResourceUtilFMP.ICON_NEXT_IMAGE);
         nextButton.setSelected(false);
         nextButton.setFocusable(false);
         nextButton.setToolTipText("Select next capillary (to the right or higher index)");
 		toolBar.add(nextButton);
 		
-		IcyIcon fitY = ICON_FIT_YAXIS;
+		IcyIcon fitY = ResourceUtilFMP.ICON_FIT_YAXIS;
 //		if (fitY == null) 
-			fitY = ALT_ICON_FIT_YAXIS;
+//			fitY = ResourceUtilFMP.ALT_ICON_FIT_YAXIS;
 		IcyButton fitYAxisButton = new IcyButton(fitY);
 		fitYAxisButton.setSelected(false);
 		fitYAxisButton.setFocusable(false);
 		fitYAxisButton.setToolTipText("Set image scale ratio to 1:1 and fit Y axis to the window height");
 		toolBar.add(fitYAxisButton);
 		
-		IcyIcon fitX = ICON_FIT_XAXIS;
+		IcyIcon fitX = ResourceUtilFMP.ICON_FIT_XAXIS;
 //		if (fitX == null) 
-			fitX = ALT_ICON_FIT_XAXIS;
+//			fitX = ResourceUtilFMP.ALT_ICON_FIT_XAXIS;
 		IcyButton fitXAxisButton = new IcyButton(fitX);
 		fitXAxisButton.setSelected(false);
 		fitXAxisButton.setFocusable(false);
