@@ -43,7 +43,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer>
 	@Override
 	protected Integer doInBackground() throws Exception 
 	{
-		System.out.println("loop over experiments");
+		System.out.println("BuildSeries:doInBackground loop over experiments");
         threadRunning = true;
 		int nbiterations = 0;
 		ExperimentCombo expList = options.expList;
@@ -61,18 +61,18 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer>
 			Experiment exp = expList.getItemAt(index);
 			
 			progress.setMessage("Processing file: " + (index +1) + "//" + (expList.index1+1));
-			System.out.println((index+1)+": " + exp.getExperimentDirectory());
+			System.out.println("BuildSeries:doInBackground "+(index+1)+": " + exp.getExperimentDirectory());
 			exp.setBinSubDirectory(options.binSubDirectory);
 			boolean flag = exp.createDirectoryIfDoesNotExist(exp.getKymosBinFullDirectory());
 			if (flag) 
 			{
 				analyzeExperiment(exp);
 				long endTime2InNs = System.nanoTime();
-				System.out.println("process ended - duration: "+((endTime2InNs-startTimeInNs)/ 1000000000f) + " s");
+				System.out.println("BuildSeries:doInBackground process ended - duration: "+((endTime2InNs-startTimeInNs)/ 1000000000f) + " s");
 			}
 			else 
 			{
-				System.out.println("process aborted - subdirectory not created: "+ exp.getKymosBinFullDirectory());
+				System.out.println("BuildSeries:doInBackground process aborted - subdirectory not created: "+ exp.getKymosBinFullDirectory());
 			}
 		}		
 		progress.close();
@@ -141,11 +141,11 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer>
              }
              catch (ExecutionException e)
              {
-                 System.out.println("BuildSeries.java - frame:" + frame +" Execution exception: " + e);
+                 System.out.println("BuildSeries:waitFuturesCompletion - frame:" + frame +" Execution exception: " + e);
              }
              catch (InterruptedException e)
              {
-            	 System.out.println("BuildSeries.java - Interrupted exception: " + e);
+            	 System.out.println("BuildSeries:waitFuturesCompletion - Interrupted exception: " + e);
              }
              futuresArray.remove(f);
            
@@ -172,7 +172,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer>
 		boolean flag = true;
 		if (exp.cages.cagesList.size() < 1 ) 
 		{
-			System.out.println("! skipped experiment with no cage: " + exp.getExperimentDirectory());
+			System.out.println("BuildSeries:checkBoundsForCages ! skipped experiment with no cage: " + exp.getExperimentDirectory());
 			flag = false;
 		}
 		return flag;

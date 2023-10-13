@@ -121,7 +121,6 @@ public class BuildBackground extends BuildSeries
 			transformBackground(currentImage, transformOptions);
 			seqReference.setImage(0, 0, transformOptions.backgroundImage);
 			
-//			System.out.println("t= "+t+ " n pixels changed=" + transformOptions.npixels_changed);
 			if (transformOptions.npixels_changed < 10 ) 
 				break;
 		}

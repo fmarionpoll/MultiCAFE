@@ -43,12 +43,12 @@ public class FileNameTimePattern {
 				timeInMs = date.getTime();
 			} catch (ParseException e) {
 				e.printStackTrace();
-				System.out.println("Error parsing filename: " + fileName);
+				System.out.println("FileNamePatterns:getTimeFromString() Error parsing filename: " + fileName);
 				timeInMs = getDummyTime(t);
 			}
 
 	    } else {
-	        System.out.println("Error finding time in filename: " + fileName);
+	        System.out.println("FileNamePatterns:getTimeFromString() Error finding time in filename: " + fileName);
 	        timeInMs = getDummyTime(t);
 	    } 
     	return timeInMs;

@@ -129,7 +129,7 @@ public class LoadSaveKymos extends JPanel
 						{
 							e.printStackTrace();
 						}
-						System.out.println("File "+ cap.getKymographName() + " saved " );
+						System.out.println("LoadSaveKymos:saveKymographFiles() File "+ cap.getKymographName() + " saved " );
 				}});
 			}
 		}
@@ -142,7 +142,7 @@ public class LoadSaveKymos extends JPanel
 		SequenceKymos seqKymos = exp.seqKymos;
 		if (seqKymos == null || exp.capillaries == null) 
 		{
-			System.out.println("kymos loadDefaultKymos: no parent sequence or no capillaries found");
+			System.out.println("LoadSaveKymos:loadDefaultKymos() no parent sequence or no capillaries found");
 			return flag;
 		}
 		

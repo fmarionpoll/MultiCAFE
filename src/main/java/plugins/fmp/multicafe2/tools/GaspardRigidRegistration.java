@@ -153,7 +153,7 @@ public class GaspardRigidRegistration
     {
         int dx = (int) Math.round(vector.x);
         int dy = (int) Math.round(vector.y);
-        System.out.println("dx=" + dx + " dy="+dy);
+        System.out.println("GasparRigidRegistration:applyTranslation2D() dx=" + dx + " dy="+dy);
         if (dx == 0 && dy == 0) 
         	return image;
         

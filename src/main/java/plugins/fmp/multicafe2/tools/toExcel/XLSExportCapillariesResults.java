@@ -12,7 +12,7 @@ public class XLSExportCapillariesResults extends XLSExport
 {	
 	public void exportToFile(String filename, XLSExportOptions opt) 
 	{	
-		System.out.println("XLS capillary measures output");
+		System.out.println("XLSExpoportCapillaries:exportToFile() - start output");
 		options = opt;
 		expList = options.expList;
 		
@@ -75,7 +75,7 @@ public class XLSExportCapillariesResults extends XLSExport
 		{
 			e.printStackTrace();
 		}
-		System.out.println("XLS output finished");
+		System.out.println("XLSExpoportCapillaries:exportToFile() XLS output finished");
 	}
 	
 }

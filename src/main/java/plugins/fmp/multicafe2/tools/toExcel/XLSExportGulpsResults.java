@@ -40,7 +40,7 @@ public class XLSExportGulpsResults  extends XLSExport
 				Experiment exp = expList.getItemAt(index);
 				if (exp.chainToPreviousExperiment != null)
 					continue;
-				progress.setMessage("Export experiment "+ (index+1) +" of "+ nbexpts);
+				progress.setMessage("XLSExpoportGulps:exportToFile() - Export experiment "+ (index+1) +" of "+ nbexpts);
 				String charSeries = CellReference.convertNumToColString(iSeries);
 
 				if (options.derivative) 	
@@ -82,7 +82,7 @@ public class XLSExportGulpsResults  extends XLSExport
 		{
 			e.printStackTrace();
 		}
-		System.out.println("XLS output finished");
+		System.out.println("XLSExpoportGulps:exportToFile() - XLS output finished");
 	}
 
 }

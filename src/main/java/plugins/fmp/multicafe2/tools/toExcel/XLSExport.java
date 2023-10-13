@@ -405,7 +405,7 @@ public class XLSExport
 	
 	private void exportError (Experiment expi, int nOutputFrames) 
 	{
-		String error = "ERROR in "+ expi.getExperimentDirectory() 
+		String error = "XLSExport:ExportError() ERROR in "+ expi.getExperimentDirectory() 
 		+ "\n nOutputFrames="+ nOutputFrames 
 		+ " kymoFirstCol_Ms=" + expi.kymoFirst_ms 
 		+ " kymoLastCol_Ms=" + expi.kymoLast_ms;

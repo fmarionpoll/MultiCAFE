@@ -274,11 +274,11 @@ public class FlyDetectTools
              }
              catch (ExecutionException e)
              {
-                 System.out.println("FlyDetectTools.java - frame:" + frame +" Execution exception: " + e);
+                 System.out.println("FlyDetectTools:waitDetectCompletion - frame:" + frame +" Execution exception: " + e);
              }
              catch (InterruptedException e)
              {
-            	 System.out.println("FlyDetectTools.java - Interrupted exception: " + e);
+            	 System.out.println("FlyDetectTools:waitDetectCompletion - Interrupted exception: " + e);
              }
              futuresArray.remove(f);
              frame ++;

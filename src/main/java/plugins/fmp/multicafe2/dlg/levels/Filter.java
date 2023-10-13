@@ -3,7 +3,6 @@ package plugins.fmp.multicafe2.dlg.levels;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -102,8 +101,6 @@ public class Filter  extends JPanel
 			}
 			ishift[ix] = span - imax;
 		}
-		String cs = "image shifts: " + Arrays.toString(ishift);
-		System.out.println(cs);
 		shiftColumnsOfPixels(ishift, kymo);
 	}
 	

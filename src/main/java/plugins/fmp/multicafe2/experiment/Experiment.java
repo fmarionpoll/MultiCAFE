@@ -190,7 +190,7 @@ public class Experiment
 			catch (IOException e) 
 			{
 				e.printStackTrace();
-				System.out.println("Creating directory failed: "+ directory);
+				System.out.println("Experiment:createDirectoryIfDoesNotExist() Creating directory failed: "+ directory);
 				return false;
 			}
 		}
@@ -361,11 +361,11 @@ public class Experiment
 				camImageLast_ms = lastImage_FileTime.toMillis();
 				camImageBin_ms = (camImageLast_ms - camImageFirst_ms)/(seqCamData.nTotalFrames-1);
 				if (camImageBin_ms == 0)
-					System.out.println("error / file interval size");
+					System.out.println("Experiment:loadFileIntervalsFromSeqCamData() error / file interval size");
 			}
 			else
 			{
-				System.out.println("error / file intervals of " + seqCamData.getImagesDirectory());
+				System.out.println("Experiment:loadFileIntervalsFromSeqCamData() error / file intervals of " + seqCamData.getImagesDirectory());
 			}
 		}
 	}
@@ -871,7 +871,7 @@ public class Experiment
 			return false;	
 		image = ImageUtil.load(inputfile, true);
 		if (image == null) {
-			System.out.println("image not loaded / not found");
+			System.out.println("Experiment:loadReferenceImage() image not loaded / not found");
 			return false;
 		}			
 		seqCamData.refImage =  IcyBufferedImage.createFrom(image);

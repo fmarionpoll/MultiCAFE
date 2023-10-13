@@ -81,7 +81,7 @@ public class MCSpots_1 extends JPanel
 			{ 
 				Experiment exp =(Experiment)  parent0.expListCombo.getSelectedItem();
 				if (exp != null)
-					System.out.println("should call removeBackGround()");
+					System.out.println("MCSpots_1:removeBackgroundButton should call removeBackGround()");
 //					removeBackGround(exp);
 			}});
 	}
@@ -137,7 +137,7 @@ public class MCSpots_1 extends JPanel
 		{
 			if (virtualImage == null) 
 			{
-				System.out.println("An error occurred while reading image: " + seqKymos.currentFrame );
+				System.out.println("MCSpots_1:getAverageXandYProfile() An error occurred while reading image: " + seqKymos.currentFrame );
 				return;
 			}
 			int widthImage = virtualImage.getSizeX();

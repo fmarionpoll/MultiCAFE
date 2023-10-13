@@ -29,7 +29,7 @@ public abstract class SequenceTransformAbstract  extends SwingWorker<Integer, In
 	@Override
 	protected Integer doInBackground() throws Exception 
 	{
-		System.out.println("loop over images");
+		System.out.println("SequenceTransform:diBackgraound loop over images");
         threadRunning = true;
 		
 		ProgressFrame progress = new ProgressFrame("Analyze sequence");
@@ -73,7 +73,6 @@ public abstract class SequenceTransformAbstract  extends SwingWorker<Integer, In
     {  	
   		 int frame = 0;
   		 int nframes = futuresArray.size();
-//  		 System.out.print("nframes="+ futuresArray.size() +"\n");
 
   		while (!futuresArray.isEmpty())
         {
@@ -83,15 +82,14 @@ public abstract class SequenceTransformAbstract  extends SwingWorker<Integer, In
             try
             {
                 f.get();
-//                System.out.println("frame: " + frame);
             }
             catch (ExecutionException e)
             {
-                System.out.println("BuildSeries.java - frame:" + frame +" Execution exception: " + e);
+                System.out.println("SequenceTransform:waitFuturesCompletion - frame:" + frame +" Execution exception: " + e);
             }
             catch (InterruptedException e)
             {
-           	 	System.out.println("BuildSeries.java - Interrupted exception: " + e);
+           	 	System.out.println("SequenceTransform:waitFuturesCompletion - Interrupted exception: " + e);
             }
             futuresArray.remove(f);
             frame ++;

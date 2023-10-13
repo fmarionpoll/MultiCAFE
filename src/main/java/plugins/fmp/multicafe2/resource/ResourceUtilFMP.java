@@ -42,7 +42,7 @@ public class ResourceUtilFMP {
 		String name = ICON_PATH + ALPHA_PATH + fileName;
 		InputStream url = MultiCAFE2.class.getClassLoader().getResourceAsStream(name);
 		if (url == null) {
-			System.out.println(" resource not found: at: "+ name);
+			System.out.println("ResourceUtilFMP:getImage resource not found: at: "+ name);
 		}
 		return ImageUtil.load(url);
 	}

@@ -229,7 +229,7 @@ public class SequenceCamData
         }
         catch (IOException exception) 
         {
-            System.out.println("Exception handled when trying to get file " +
+            System.out.println("SeqCamData:getFileTimeFromFileAttributes() Exception handled when trying to get file " +
                     "attributes: " + exception.getMessage());
         }
         

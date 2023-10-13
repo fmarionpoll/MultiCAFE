@@ -28,7 +28,7 @@ public class XLSExportMoveResults extends XLSExport
 	
 	public void exportToFile(String filename, XLSExportOptions opt) 
 	{	
-		System.out.println("XLS move measures output");
+		System.out.println("XLSExpoportMove:exportToFile() start output");
 		options = opt;
 		expList = options.expList;
 
@@ -88,7 +88,7 @@ public class XLSExportMoveResults extends XLSExport
 		{
 			e.printStackTrace();
 		}
-		System.out.println("XLS output finished");
+		System.out.println("XLSExpoportMove:exportToFile() - output finished");
 	}
 	
 	private int getMoveDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) 

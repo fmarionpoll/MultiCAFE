@@ -123,7 +123,7 @@ public class BuildKymographs extends BuildSeries
 	private boolean buildKymo (Experiment exp) 
 	{
 		if (exp.capillaries.capillariesList.size() < 1) {
-			System.out.println("Abort (1): nbcapillaries = 0");
+			System.out.println("BuildKymographs:buildKymo Abort (1): nbcapillaries = 0");
 			return false;
 		}
 		SequenceKymos seqKymos = exp.seqKymos;

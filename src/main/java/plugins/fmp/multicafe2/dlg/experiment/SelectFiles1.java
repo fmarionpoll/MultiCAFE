@@ -310,7 +310,7 @@ public class SelectFiles1 extends JPanel
 	    }
 	    else 
 	    {
-	      System.out.println("No directory selected ");
+	      System.out.println("SelectFiles:chooseDirectory() No directory selected ");
 	    }
 		return dummy_selected;
 	}

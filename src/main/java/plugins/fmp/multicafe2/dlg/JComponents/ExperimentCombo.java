@@ -94,7 +94,7 @@ public class ExperimentCombo extends JComboBox<Experiment>
 					long diff = lastOffset_Ms - firstOffset_Ms;
 					if (diff < 1) 
 					{
-						System.out.println("Expt # " + i + ": FileTime difference between last and first image < 1; set dt between images = 1 ms");
+						System.out.println("ExperimentCombo:get_MsTime_of_StartAndEnd_AllExperiments() Expt # " + i + ": FileTime difference between last and first image < 1; set dt between images = 1 ms");
 						diff = exp.seqCamData.seq.getSizeT();
 					}
 					if (expAll.camImageLast_ms < diff) 
@@ -165,7 +165,7 @@ public class ExperimentCombo extends JComboBox<Experiment>
              }
              catch (ExecutionException e)
              {
-                 System.out.println("dlg experimentCombo.java - Warning: " + e);
+                 System.out.println("ExperimentCombo:waitFuturesCompletion() - Warning: " + e);
              }
              catch (InterruptedException e)
              {
@@ -240,7 +240,7 @@ public class ExperimentCombo extends JComboBox<Experiment>
 					continue;
 				}
 				// it should never arrive here
-				System.out.println("error in chaining "+ expi.getExperimentDirectory() +" with ->" + expj.getExperimentDirectory());
+				System.out.println("ExperimentCombo:chainExperimentsUsingCamIndexes() error in chaining "+ expi.getExperimentDirectory() +" with ->" + expj.getExperimentDirectory());
 			}
 		}
 	}

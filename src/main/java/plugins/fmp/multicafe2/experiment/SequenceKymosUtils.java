@@ -15,13 +15,13 @@ public class SequenceKymosUtils
 	{
 		if (exp.seqKymos == null) 
 		{
-			System.out.println("seqkymos null - return");
+			System.out.println("SequenceKymosUtils:transferCamDataROIstoKymo seqkymos null - return");
 			return;
 		}
 		if (exp.capillaries == null) 
 		{
 			exp.capillaries = new Capillaries();
-			System.out.println("Error in SequenceKymosUtils:transferCamDataROIstoKymo = seqkymos.capillaries was null");
+			System.out.println("SequenceKymosUtils:transferCamDataROIstoKymo error: seqkymos.capillaries was null");
 		}
 		
 		// rois not in cap? add

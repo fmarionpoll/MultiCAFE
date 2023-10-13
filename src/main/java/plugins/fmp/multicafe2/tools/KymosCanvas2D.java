@@ -85,7 +85,6 @@ public class KymosCanvas2D extends Canvas2D
             public void actionPerformed(ActionEvent arg0) {
             	shrinkImage_to_fit() ;
             }});
-
     }   	        
     
     void zoomImage_1_1() 

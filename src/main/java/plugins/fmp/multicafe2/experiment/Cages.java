@@ -178,7 +178,7 @@ public class Cages
 		}
 		else 
 		{
-			System.out.println("failed to load cages from file");
+			System.out.println("Cages:xmlReadCagesFromFileNoQuestion() failed to load cages from file");
 			return false;
 		}
 		return true;

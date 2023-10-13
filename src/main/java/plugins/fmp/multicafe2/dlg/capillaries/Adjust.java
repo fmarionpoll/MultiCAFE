@@ -84,7 +84,7 @@ public class Adjust extends JPanel
 		IcyBufferedImage vinputImage = seqCamData.seq.getImage(t, 0, chan) ;
 		if (vinputImage == null) 
 		{
-			System.out.println("An error occurred while reading image: " + t );
+			System.out.println("Adjust:roisCenterLinestoAllCapillaries() An error occurred while reading image: " + t );
 			return;
 		}
 		int xwidth = vinputImage.getSizeX();
