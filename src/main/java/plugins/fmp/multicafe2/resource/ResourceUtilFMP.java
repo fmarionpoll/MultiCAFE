@@ -18,8 +18,8 @@ public class ResourceUtilFMP {
     public static final String ICON_PATH 		= "icon/";
 
     
-    public static final IcyIcon ICON_PREVIOUS_IMAGE 	= getIcyIcon("br_prev.png");
-    public static final IcyIcon ICON_NEXT_IMAGE  		= getIcyIcon("br_next.png");
+    public static final IcyIcon ICON_PREVIOUS_IMAGE 	= new IcyIcon(ResourceUtil.getAlphaIconAsImage("br_prev.png"));
+    public static final IcyIcon ICON_NEXT_IMAGE  		= new IcyIcon(ResourceUtil.getAlphaIconAsImage("br_next.png"));
     public static final IcyIcon ICON_FIT_YAXIS  		= getIcyIcon("fit_Y.png");
     public static final IcyIcon ICON_FIT_XAXIS  		= getIcyIcon("fit_X.png");
 
@@ -33,10 +33,6 @@ public class ResourceUtilFMP {
     
 	private static Image getImage(String fileName) 
 	{
-		Image img = ResourceUtil.getAlphaIconAsImage(fileName);
-		if (img != null)
-			return img;
-		
 		String name = "plugins/fmp/multicafe2/" + ICON_PATH + ALPHA_PATH + fileName;
 		InputStream url = MultiCAFE2.class.getClassLoader().getResourceAsStream(name);
 		if (url == null) {

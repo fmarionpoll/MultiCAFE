@@ -10,6 +10,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
@@ -52,10 +54,13 @@ public class ChartLevels extends IcyFrame
 	{
 		title = cstitle;
 		parent0 = parent;
-		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(), new Dimension(300, 70), true, true, true, true);	    
+		
 		mainChartPanel = new JPanel(); 
 		mainChartPanel.setLayout( new BoxLayout( mainChartPanel, BoxLayout.LINE_AXIS ) );
+		
+		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(), new Dimension(300, 70), true, true, true, true);	    
 		mainChartFrame.add(mainChartPanel);
+		
 	}
 
 	public void setLocationRelativeToRectangle(Rectangle rectv, Point deltapt) 
@@ -82,17 +87,29 @@ public class ChartLevels extends IcyFrame
 		
 		boolean displayLabels = true;
 		String yTitle = option.toUnit();
+		int ichart = 0;
 
 		for (XYSeriesCollection xyDataset : xyDataSetList) 
 		{
 			JFreeChart xyChart = buildChartFromSeries( xyDataset,  yTitle, displayLabels, option); 
 			yTitle = null;  			// used only once
 			displayLabels = false;		// used only once
+			xyChart.setID (Integer.toString(ichart));
 						
 			xyChartList.add(xyChart);
 			ChartPanel xyChartPanel = new ChartPanel(xyChart, width, height, minimumDrawWidth, 100, 
 					maximumDrawWidth, maximumDrawHeight, false, false, true, true, true, true);
+			xyChartPanel.addChartMouseListener(new ChartMouseListener() {
+			    public void chartMouseClicked(ChartMouseEvent e) {
+			        JFreeChart chart = e.getChart();
+			        int ichart = Integer.valueOf(chart.getID());
+			        System.out.println("chart i=" + ichart + " "+ e.getEntity());
+			        
+			    }
+			    public void chartMouseMoved(ChartMouseEvent e) {}
+			});
 			mainChartPanel.add(xyChartPanel);
+			ichart++;
 
 			width = 100;
 			height = 200;
