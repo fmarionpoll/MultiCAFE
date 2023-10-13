@@ -47,8 +47,6 @@ public class KymosCanvas2D extends Canvas2D
 		toolBar.add(nextButton);
 		
 		IcyIcon fitY = ResourceUtilFMP.ICON_FIT_YAXIS;
-//		if (fitY == null) 
-//			fitY = ResourceUtilFMP.ALT_ICON_FIT_YAXIS;
 		IcyButton fitYAxisButton = new IcyButton(fitY);
 		fitYAxisButton.setSelected(false);
 		fitYAxisButton.setFocusable(false);
@@ -56,8 +54,6 @@ public class KymosCanvas2D extends Canvas2D
 		toolBar.add(fitYAxisButton);
 		
 		IcyIcon fitX = ResourceUtilFMP.ICON_FIT_XAXIS;
-//		if (fitX == null) 
-//			fitX = ResourceUtilFMP.ALT_ICON_FIT_XAXIS;
 		IcyButton fitXAxisButton = new IcyButton(fitX);
 		fitXAxisButton.setSelected(false);
 		fitXAxisButton.setFocusable(false);

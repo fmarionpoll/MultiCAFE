@@ -16,8 +16,8 @@ public class ResourceUtilFMP {
 
     public static final String ALPHA_PATH 		= "alpha/";
     public static final String ICON_PATH 		= "icon/";
-    public static final String RESOURCES_PATH   = "resources/";
-    public static final String ROOT_PATH 		= "../../../";
+//    public static final String RESOURCES_PATH   = "resources/";
+//    public static final String ROOT_PATH 		= "../../../";
     
     public static final IcyIcon ICON_PREVIOUS_IMAGE 	= getIcyIcon("br_prev.png");
     public static final IcyIcon ICON_NEXT_IMAGE  		= getIcyIcon("br_next.png");
@@ -35,30 +35,14 @@ public class ResourceUtilFMP {
     
 	private static Image getImage(String fileName) 
 	{
-//		String pkg = ClassUtil.getPackageName(MultiCAFE2.class.getName()) + ".";
-//		pkg = ClassUtil.getPathFromQualifiedName(pkg);
-//		pkg += RESOURCES_PATH+ fileName;
-//		System.out.println(pkg);
-		
 		Image img = ResourceUtil.getAlphaIconAsImage(fileName);
 		if (img != null)
 			return img;
 		
-		System.out.println("0 - resource not found via resourceUtil icon - alpha: " + fileName);
 		String name = ICON_PATH + ALPHA_PATH + fileName;
 		InputStream url = MultiCAFE2.class.getClassLoader().getResourceAsStream(name);
 		if (url == null) {
-			System.out.println("1 - resource not found: at: "+ name);
-			String name1 = RESOURCES_PATH + name;
-			url = MultiCAFE2.class.getClassLoader().getResourceAsStream(name1);
-			if (url == null) 
-			{			
-				System.out.println("2 - resource not found either at: "+ name1);
-				String name2 = ROOT_PATH + name;
-				url = MultiCAFE2.class.getClassLoader().getResourceAsStream(name2);
-				if (url == null) 
-					System.out.println("3 - resource not found either at: "+ name2);
-			}
+			System.out.println(" resource not found: at: "+ name);
 		}
 		return ImageUtil.load(url);
 	}
