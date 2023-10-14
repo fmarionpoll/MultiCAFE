@@ -173,15 +173,14 @@ public class XLSResults
 		}
 	}
 	
-	void addValues_out (XLSResults addedData) 
+	void sumValues_out (XLSResults dataToAdd) 
 	{
-		int len = Math.min(valuesOut.length, addedData.valuesOut.length);
+		int len = Math.min(valuesOut.length, dataToAdd.valuesOut.length);
 		for (int i = 0; i < len; i++)  
 		{
-			valuesOut[i] += addedData.valuesOut[i];			
+			valuesOut[i] += dataToAdd.valuesOut[i];			
 		}
 		nadded += 1;
 	}
-	
 	
 }

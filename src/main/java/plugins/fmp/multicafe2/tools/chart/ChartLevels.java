@@ -15,14 +15,18 @@ import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
+import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe2.MultiCAFE2;
 import plugins.fmp.multicafe2.experiment.Experiment;
+
 import plugins.fmp.multicafe2.tools.toExcel.EnumXLSExportType;
 import plugins.fmp.multicafe2.tools.toExcel.XLSExport;
 import plugins.fmp.multicafe2.tools.toExcel.XLSExportOptions;
@@ -60,7 +64,6 @@ public class ChartLevels extends IcyFrame
 		
 		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(), new Dimension(300, 70), true, true, true, true);	    
 		mainChartFrame.add(mainChartPanel);
-		
 	}
 
 	public void setLocationRelativeToRectangle(Rectangle rectv, Point deltapt) 
@@ -100,12 +103,7 @@ public class ChartLevels extends IcyFrame
 			ChartPanel xyChartPanel = new ChartPanel(xyChart, width, height, minimumDrawWidth, 100, 
 					maximumDrawWidth, maximumDrawHeight, false, false, true, true, true, true);
 			xyChartPanel.addChartMouseListener(new ChartMouseListener() {
-			    public void chartMouseClicked(ChartMouseEvent e) {
-			        JFreeChart chart = e.getChart();
-			        int ichart = Integer.valueOf(chart.getID());
-			        System.out.println("chart i=" + ichart + " "+ e.getEntity());
-			        
-			    }
+			    public void chartMouseClicked(ChartMouseEvent e) {selectKymoImage(getSelectedCurve(e)); }
 			    public void chartMouseMoved(ChartMouseEvent e) {}
 			});
 			mainChartPanel.add(xyChartPanel);
@@ -122,6 +120,27 @@ public class ChartLevels extends IcyFrame
 		mainChartFrame.setLocation(pt);
 		mainChartFrame.addToDesktopPane ();
 		mainChartFrame.setVisible(true);
+	}
+	
+	private int getSelectedCurve(ChartMouseEvent e) 
+	{
+		ChartEntity entity = e.getEntity();
+		JFreeChart chart = e.getChart();
+        int ichart = Integer.valueOf(chart.getID());
+        
+        XYPlot xyPlot = (XYPlot) chart.getPlot();
+        int seriesCount = xyPlot.getDatasetCount();
+        System.out.println("chart i=" + ichart + " " + entity);
+        
+        int isel = ichart;
+		return isel;
+	}
+	
+	private void selectKymoImage(int isel)
+	{
+		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+        Viewer v = exp.seqKymos.seq.getFirstViewer();
+        v.setPositionT(isel);
 	}
 	
 	private JFreeChart buildChartFromSeries(XYSeriesCollection xyDataset, String yTitle, boolean displayLabels, EnumXLSExportType option) 
@@ -150,59 +169,54 @@ public class ChartLevels extends IcyFrame
 
 	private void getDataArrays(Experiment exp, EnumXLSExportType exportType, boolean subtractEvaporation, List<XYSeriesCollection> xyList) 
 	{
-		XLSExport xlsExport = new XLSExport();
-		XLSExportOptions options = new XLSExportOptions();
-		options.buildExcelStepMs = 60000;
-		options.t0 = true;
-		options.subtractEvaporation = subtractEvaporation;
-		XLSResultsArray resultsList = xlsExport.getCapDataFromOneExperiment(exp, exportType, options);
-		
-		XLSResultsArray resultsList2 = null;
+		XLSResultsArray resultsArray1 = getDataAsResultsArray(exp, exportType, subtractEvaporation);
+		XLSResultsArray resultsArray2 = null;
 		if (exportType == EnumXLSExportType.TOPLEVEL) 
-			resultsList2 = xlsExport.getCapDataFromOneExperiment(exp, EnumXLSExportType.BOTTOMLEVEL, options);
+			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExportType.BOTTOMLEVEL, subtractEvaporation);
 		
-//		String previousName = null;
 		XYSeriesCollection xyDataset = null;
 		int oldcage = -1;
-		for (int iRow = 0; iRow < resultsList.size(); iRow++ ) 
+		
+		for (int iRow = 0; iRow < resultsArray1.size(); iRow++ ) 
 		{
-			XLSResults rowXLSResults = resultsList.getRow(iRow);
-			
-			if (oldcage != rowXLSResults.cageID ) 
+			XLSResults rowXLSResults1 = resultsArray1.getRow(iRow);
+			if (oldcage != rowXLSResults1.cageID ) 
 			{
 				xyDataset = new XYSeriesCollection();
-				oldcage = rowXLSResults.cageID; 
+				oldcage = rowXLSResults1.cageID; 
 				xyList.add(xyDataset);
-			} 
+			} 	
 			
-			XYSeries seriesXY = getXYSeries(rowXLSResults, rowXLSResults.name.substring(4));
+			XYSeries seriesXY = getXYSeries(rowXLSResults1, rowXLSResults1.name.substring(4));
+			if (resultsArray2 != null) 
+				appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow));
 			
-			if (resultsList2 != null)
-			{
-				for (int iRow2 = 0; iRow2 < resultsList2.size(); iRow2++ ) 
-				{
-					XLSResults row2 = resultsList2.getRow(iRow2);
-					if (row2.name .equals(rowXLSResults.name)) 
-					{
-						appendDataToXYSeries(seriesXY, row2);
-						break;
-					}
-				}
-			}
 			xyDataset.addSeries(seriesXY );
 			updateGlobalMaxMin();
 		}
 	}
 	
+	private XLSResultsArray getDataAsResultsArray(Experiment exp, EnumXLSExportType exportType, boolean subtractEvaporation)
+	{
+		XLSExportOptions options = new XLSExportOptions();
+		options.buildExcelStepMs = 60000;
+		options.t0 = true;
+		options.subtractEvaporation = subtractEvaporation;
+		
+		XLSExport xlsExport = new XLSExport();
+		return xlsExport.getCapDataFromOneExperiment(exp, exportType, options);
+	}
+	
 	private void setXAxis(JFreeChart xyChart) {
-		if( parent0.paneExcel.tabCommonOptions.getIsFixedFrame())
-		{
-			double binMs	= parent0.paneExcel.tabCommonOptions.getBinMs();
-			globalXMin 		= parent0.paneExcel.tabCommonOptions.getStartMs()/binMs;
-			globalXMax 		= parent0.paneExcel.tabCommonOptions.getEndMs()/binMs;
-		}
-		ValueAxis xAxis = xyChart.getXYPlot().getDomainAxis(0);
-		xAxis.setRange(globalXMin, globalXMax);
+
+	if( parent0.paneExcel.tabCommonOptions.getIsFixedFrame())
+	{
+		double binMs	= parent0.paneExcel.tabCommonOptions.getBinMs();
+		globalXMin 		= parent0.paneExcel.tabCommonOptions.getStartMs()/binMs;
+		globalXMax 		= parent0.paneExcel.tabCommonOptions.getEndMs()/binMs;
+	}
+	ValueAxis xAxis = xyChart.getXYPlot().getDomainAxis(0);
+	xAxis.setRange(globalXMin, globalXMax);
 	}
 	
 	private void setYAxis(JFreeChart xyChart, boolean displayLabels) {
@@ -242,7 +256,7 @@ public class ChartLevels extends IcyFrame
 		}
 		return seriesXY;
 	}
-
+	
 	private void appendDataToXYSeries(XYSeries seriesXY, XLSResults results ) 
 	{	
 		if (results.valuesOut != null && results.valuesOut.length > 0) 

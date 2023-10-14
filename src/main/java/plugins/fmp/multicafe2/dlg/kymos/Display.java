@@ -38,7 +38,7 @@ import plugins.fmp.multicafe2.tools.KymosCanvas2D;
 
 
 
-public class Display extends JPanel implements ViewerListener 
+public class Display extends JPanel implements ViewerListener
 {
 	/**
 	 * 
@@ -414,5 +414,7 @@ public class Display extends JPanel implements ViewerListener
 		//displayON();
 		parent0.paneKymos.updateDialogs(exp);
 	}
+
+
 
 }

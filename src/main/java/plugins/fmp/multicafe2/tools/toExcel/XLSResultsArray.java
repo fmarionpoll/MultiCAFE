@@ -17,8 +17,8 @@ public class XLSResultsArray
 	boolean				sameLR			= true;
 	String				stim			= null;
 	String				conc			= null;
-	double 				lowestPiAllowed		= -1.2;
-	double 				highestPiAllowed		= 1.2;
+	double 				lowestPiAllowed	= -1.2;
+	double 				highestPiAllowed = 1.2;
 	
 	public XLSResultsArray (int size) 
 	{
@@ -35,7 +35,7 @@ public class XLSResultsArray
 		return resultsList.size();
 	}
 	
-	public XLSResults getRow(int index) 
+ 	public XLSResults getRow(int index) 
 	{
 		if (index >= resultsList.size())
 			return null;
