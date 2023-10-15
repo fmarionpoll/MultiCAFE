@@ -3,6 +3,7 @@ package plugins.fmp.multicafe2.tools.chart;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +17,8 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -92,9 +93,9 @@ public class ChartLevels extends IcyFrame
 		String yTitle = option.toUnit();
 		int ichart = 0;
 
-		for (XYSeriesCollection xyDataset : xyDataSetList) 
+		for (XYSeriesCollection xySeriesCollection : xyDataSetList) 
 		{
-			JFreeChart xyChart = buildChartFromSeries( xyDataset,  yTitle, displayLabels, option); 
+			JFreeChart xyChart = buildChartFromSeries( xySeriesCollection,  yTitle, displayLabels, option); 
 			yTitle = null;  			// used only once
 			displayLabels = false;		// used only once
 			xyChart.setID (Integer.toString(ichart));
@@ -107,7 +108,7 @@ public class ChartLevels extends IcyFrame
 			    public void chartMouseMoved(ChartMouseEvent e) {}
 			});
 			mainChartPanel.add(xyChartPanel);
-			ichart++;
+			ichart += xySeriesCollection.getSeriesCount();
 
 			width = 100;
 			height = 200;
@@ -122,17 +123,21 @@ public class ChartLevels extends IcyFrame
 		mainChartFrame.setVisible(true);
 	}
 	
+	
 	private int getSelectedCurve(ChartMouseEvent e) 
 	{
-		ChartEntity entity = e.getEntity();
+		final MouseEvent trigger = e.getTrigger();
+        if (trigger.getButton() != MouseEvent.BUTTON1)
+        	return -1;
+        		
 		JFreeChart chart = e.getChart();
-        int ichart = Integer.valueOf(chart.getID());
+        int isel = Integer.valueOf(chart.getID());
         
-        XYPlot xyPlot = (XYPlot) chart.getPlot();
-        int seriesCount = xyPlot.getDatasetCount();
-        System.out.println("chart i=" + ichart + " " + entity);
-        
-        int isel = ichart;
+		ChartEntity chartEntity = e.getEntity();
+		if (chartEntity != null && chartEntity instanceof XYItemEntity) {
+            XYItemEntity ent = (XYItemEntity) chartEntity;
+            isel += ent.getSeriesIndex();
+		}
 		return isel;
 	}
 	
@@ -158,9 +163,7 @@ public class ChartLevels extends IcyFrame
 		xyChart.setTextAntiAlias( true );
 		
 		setYAxis(xyChart, displayLabels);
-		
 		setXAxis(xyChart);
-		
 		if (option == EnumXLSExportType.TOPLEVEL || option == EnumXLSExportType.BOTTOMLEVEL) 
 			xyChart.getXYPlot().getRangeAxis(0).setInverted(true);
 		
