@@ -143,6 +143,9 @@ public class ChartLevels extends IcyFrame
 		MouseEvent mouseEvent = e.getTrigger();
 		// first find subplot
 		CombinedRangeXYPlot combinedXYPlot = (CombinedRangeXYPlot) chart.getPlot();
+		 @SuppressWarnings("unchecked")
+         List<XYPlot> subplots = combinedXYPlot.getSubplots();
+		 
 		Point xy = e.getTrigger().getPoint();
 		
 		// TODO: use handleclick? jfreechart CombinedRangeXYPlot handleClick
@@ -157,6 +160,92 @@ public class ChartLevels extends IcyFrame
 		System.out.println( " chart=" + chart);
 		System.out.println( " entity=" + chartEntity + " " + e.getEntity().getClass());
 		System.out.println( " mouseEvent=" + mouseEvent);
+		
+		// From source file:org.trade.ui.chart.CandlestickChart.java
+		//http://www.java2s.com/example/java-api/org/jfree/chart/chartmouselistener/chartmouselistener-0-2.html
+		// search "jfreechart chartMouseClicked subplot"
+		
+		if (e.getTrigger().getClickCount() == 2) {
+            double xItem = 0;
+            double yItem = 0;
+            if (e.getEntity() instanceof XYItemEntity) {
+                XYItemEntity xYItemEntity = ((XYItemEntity) e.getEntity());
+                xItem = xYItemEntity.getDataset().getXValue(xYItemEntity.getSeriesIndex(),
+                        xYItemEntity.getItem());
+                yItem = xYItemEntity.getDataset().getYValue(xYItemEntity.getSeriesIndex(),
+                        xYItemEntity.getItem());
+            } else {
+                PlotEntity plotEntity = ((PlotEntity) e.getEntity());
+                XYPlot plot = (XYPlot) plotEntity.getPlot();
+                xItem = plot.getDomainCrosshairValue();
+                yItem = plot.getRangeCrosshairValue();
+            }
+
+            for (XYPlot xyplot : subplots) {
+
+                double x = xyplot.getDomainCrosshairValue();
+                double y = xyplot.getRangeCrosshairValue();
+
+                /*
+                 * If the cross hair is from a right-hand y axis we need
+                 * to convert this to a left-hand y axis.
+                 */
+                String rightAxisName = ", Price: ";
+                double rangeLowerLeft = 0;
+                double rangeUpperLeft = 0;
+                double rangeLowerRight = 0;
+                double rangeUpperRight = 0;
+                double yRightLocation = 0;
+                for (int index = 0; index < xyplot.getRangeAxisCount(); index++) {
+                    AxisLocation axisLocation = xyplot.getRangeAxisLocation(index);
+                    Range range = xyplot.getRangeAxis(index).getRange();
+
+                    if (axisLocation.equals(AxisLocation.BOTTOM_OR_LEFT)
+                            || axisLocation.equals(AxisLocation.TOP_OR_LEFT)) {
+                        rangeLowerLeft = range.getLowerBound();
+                        rangeUpperLeft = range.getUpperBound();
+                        rightAxisName = ", " + xyplot.getRangeAxis(index).getLabel() + ": ";
+                    }
+                    if (y >= range.getLowerBound() && y <= range.getUpperBound()
+                            && (axisLocation.equals(AxisLocation.BOTTOM_OR_RIGHT)
+                                    || axisLocation.equals(AxisLocation.TOP_OR_RIGHT))) {
+                        rangeUpperRight = range.getUpperBound();
+                        rangeLowerRight = range.getLowerBound();
+                    }
+                }
+                if ((rangeUpperRight - rangeLowerRight) > 0) {
+                    yRightLocation = rangeLowerLeft + ((rangeUpperLeft - rangeLowerLeft)
+                            * ((y - rangeLowerRight) / (rangeUpperRight - rangeLowerRight)));
+                } else {
+                    yRightLocation = y;
+                }
+
+                String text = " Time: " + dateFormatShort.format(new Date((long) (x))) + rightAxisName
+                        + new Money(y);
+                if (x == xItem && y == yItem) {
+                    titleLegend1.setText(text);
+                    if (null == clickCrossHairs) {
+                        clickCrossHairs = new XYTextAnnotation(text, x, yRightLocation);
+                        clickCrossHairs.setTextAnchor(TextAnchor.BOTTOM_LEFT);
+                        xyplot.addAnnotation(clickCrossHairs);
+                    } else {
+                        clickCrossHairs.setText(text);
+                        clickCrossHairs.setX(x);
+                        clickCrossHairs.setY(yRightLocation);
+                    }
+                }
+            }
+        } else if (e.getTrigger().getClickCount() == 1 && null != clickCrossHairs) {
+            for (XYPlot xyplot : subplots) {
+                if (xyplot.removeAnnotation(clickCrossHairs)) {
+                    clickCrossHairs = null;
+                    titleLegend1.setText(" Time: 0, Price :0.0");
+                    break;
+                }
+            }
+        }
+    }
+	
 		return isel;
 	}
 
