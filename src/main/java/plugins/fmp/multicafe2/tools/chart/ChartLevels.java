@@ -16,10 +16,12 @@ import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.plot.CombinedRangeXYPlot;
+import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
@@ -92,8 +94,7 @@ public class ChartLevels extends IcyFrame
         final NumberAxis valueAxis = new NumberAxis("liquid level (µl)");
         valueAxis.setAutoRangeIncludesZero(false);  
         valueAxis.setInverted(true);
-        final CombinedRangeXYPlot parent = new CombinedRangeXYPlot(valueAxis);
-        
+        final CombinedRangeXYPlot combinedXYPlot = new CombinedRangeXYPlot(valueAxis);
         Paint[] color = ChartColor.createDefaultPaintArray();
 
 		for (XYSeriesCollection xySeriesCollection : xyDataSetList) 
@@ -108,16 +109,15 @@ public class ChartLevels extends IcyFrame
 					icolor = 0;
 				subPlotRenderer.setSeriesPaint(i, color[icolor]);
 			}
-			
 			subplot.setBackgroundPaint(Color.LIGHT_GRAY);
 			subplot.setDomainGridlinePaint(Color.WHITE);
 			subplot.setRangeGridlinePaint(Color.WHITE);
-			parent.add(subplot);
+			combinedXYPlot.add(subplot);
 						
 			icage++;
 		}
 		
-        JFreeChart chart = new JFreeChart("Capillary levels", null, parent, true);
+        JFreeChart chart = new JFreeChart("Capillary levels", null, combinedXYPlot, true);
 
         final ChartPanel panel = new ChartPanel(chart, true, true, true, false, true);
         panel.addChartMouseListener(new ChartMouseListener() {
@@ -139,17 +139,24 @@ public class ChartLevels extends IcyFrame
         	return -1;
         		
 		JFreeChart chart = e.getChart();
-//        int isel = Integer.valueOf(chart.getID());
 		ChartEntity chartEntity = e.getEntity();
+		MouseEvent mouseEvent = e.getTrigger();
+		// first find subplot
+		CombinedRangeXYPlot combinedXYPlot = (CombinedRangeXYPlot) chart.getPlot();
+		Point xy = e.getTrigger().getPoint();
+		
 		// TODO: use handleclick? jfreechart CombinedRangeXYPlot handleClick
+
+		
 		int isel= -1;
 //		if (chartEntity != null && chartEntity instanceof XYItemEntity) {
 //            XYItemEntity ent = (XYItemEntity) chartEntity;
 //            isel += ent.getSeriesIndex();
 //		}
 		
-		
-		System.out.println( " entity" + chartEntity);
+		System.out.println( " chart=" + chart);
+		System.out.println( " entity=" + chartEntity + " " + e.getEntity().getClass());
+		System.out.println( " mouseEvent=" + mouseEvent);
 		return isel;
 	}
 
