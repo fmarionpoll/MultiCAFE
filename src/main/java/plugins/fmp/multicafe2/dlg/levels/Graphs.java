@@ -2,7 +2,6 @@ package plugins.fmp.multicafe2.dlg.levels;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,11 +30,11 @@ public class Graphs extends JPanel implements SequenceListener
 	 * 
 	 */
 	private static final long serialVersionUID = -7079184380174992501L;
-	private ChartLevels plotTopAndBottom	= null;
-	private ChartLevels plotDelta 			= null;
-	private ChartLevels plotDerivative 		= null;
-	private ChartLevels plotSumgulps 		= null;
-	private MultiCAFE2 	parent0 			= null;
+	private ChartLevels plotTopAndBottom			= null;
+	private ChartLevels plotDelta 					= null;
+	private ChartLevels plotDerivative 				= null;
+	private ChartLevels plotSumgulps 				= null;
+	private MultiCAFE2 	parent0 					= null;
 	
 	private JCheckBox 	limitsCheckbox 				= new JCheckBox("top/bottom", true);
 	private JCheckBox 	derivativeCheckbox 			= new JCheckBox("derivative", false);
@@ -94,20 +93,25 @@ public class Graphs extends JPanel implements SequenceListener
 			}});
 	}
 	
-	public void displayGraphsPanels(Experiment exp) 
+	private Rectangle getInitialUpperLeftPosition(Experiment exp)
 	{
-		Point ptRelative = new Point(0, 0);
 		Rectangle rectv = new Rectangle(50, 500, 10, 10);
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		if (v != null) {
 			rectv = v.getBounds();
-			ptRelative.y = rectv.height;
+			rectv.translate(0, rectv.height);
 		}
 		else
 		{
-			Rectangle rect0 = parent0.mainFrame.getBoundsInternal();
-			rectv.setLocation(rect0.x /*+ rect0.width*/, rect0.y + 300); // rect0.height);
+			rectv = parent0.mainFrame.getBounds();
+			rectv.translate(rectv.width, rectv.height + 100);
 		}
+		return rectv;
+	}
+	
+	public void displayGraphsPanels(Experiment exp) 
+	{
+		Rectangle rectv = getInitialUpperLeftPosition(exp);
 			
 		int dx = 5;
 		int dy = 10; 
@@ -118,8 +122,8 @@ public class Graphs extends JPanel implements SequenceListener
 		{
 			plotTopAndBottom = plotToChart(exp, "top + bottom levels", 
 					EnumXLSExportType.TOPLEVEL, 
-					plotTopAndBottom, rectv, ptRelative);
-			ptRelative.translate(dx, dy);
+					plotTopAndBottom, rectv);
+			rectv.translate(dx, dy);
 		}
 		else if (plotTopAndBottom != null) 
 			closeChart(plotTopAndBottom);
@@ -128,8 +132,8 @@ public class Graphs extends JPanel implements SequenceListener
 		{
 			plotDelta = plotToChart(exp, "top delta t -(t-1)", 
 					EnumXLSExportType.TOPLEVELDELTA, 
-					plotDelta, rectv, ptRelative);
-			ptRelative.translate(dx, dy);
+					plotDelta, rectv);
+			rectv.translate(dx, dy);
 		}
 		else if (plotDelta != null) 
 			closeChart(plotDelta);
@@ -138,8 +142,8 @@ public class Graphs extends JPanel implements SequenceListener
 		{
 			plotDerivative = plotToChart(exp, "Derivative", 
 					EnumXLSExportType.DERIVEDVALUES, 
-					plotDerivative, rectv, ptRelative);
-			ptRelative.translate(dx, dy); 
+					plotDerivative, rectv);
+			rectv.translate(dx, dy); 
 		}
 		else if (plotDerivative != null) 
 			closeChart(plotDerivative);
@@ -148,23 +152,22 @@ public class Graphs extends JPanel implements SequenceListener
 		{
 			plotSumgulps = plotToChart(exp, "Cumulated gulps", 
 					EnumXLSExportType.SUMGULPS, 
-					plotSumgulps, rectv, ptRelative);
-			ptRelative.translate(dx, dy); 
+					plotSumgulps, rectv);
+			rectv.translate(dx, dy); 
 		}
 		else if (plotSumgulps != null) 
 			closeChart(plotSumgulps);
 	}
 	
 	private ChartLevels plotToChart(Experiment exp, String title, EnumXLSExportType option, 
-											ChartLevels iChart, Rectangle rectv, Point ptRelative ) 
+											ChartLevels iChart, Rectangle rectv ) 
 	{	
 		if (iChart != null) 
 			iChart.mainChartFrame.dispose();
 		iChart = new ChartLevels();
 		iChart.createChartPanel(parent0, title);
-		if (ptRelative != null)
-			iChart.setLocationRelativeToRectangle(rectv, ptRelative);
-		iChart.displayData(exp, option, correctEvaporationCheckbox.isSelected());
+		iChart.setUpperLeftLocation(rectv);
+		iChart.displayData(exp, option, title, correctEvaporationCheckbox.isSelected());
 		iChart.mainChartFrame.toFront();
 		iChart.mainChartFrame.requestFocus();
 		return iChart;

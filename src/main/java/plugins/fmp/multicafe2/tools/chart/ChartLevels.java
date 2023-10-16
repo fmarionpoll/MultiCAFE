@@ -6,6 +6,7 @@ import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +17,10 @@ import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.CombinedRangeXYPlot;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
@@ -76,34 +77,33 @@ public class ChartLevels extends IcyFrame
 		pt = new Point(rectv.x + deltapt.x, rectv.y + deltapt.y);
 	}
 	
-	public void displayData(Experiment exp, EnumXLSExportType option, boolean subtractEvaporation) 
+	public void setUpperLeftLocation(Rectangle rectv) 
+	{
+		pt = new Point(rectv.x, rectv.y);
+	}
+	
+	public void displayData(Experiment exp, EnumXLSExportType option, String title, boolean subtractEvaporation) 
 	{
 		xyChartList.clear();
-		
-		Dimension dim = this.getSize();
-		System.out.println(dim);
-		
 		ymax = 0;
 		ymin = 0;
 		flagMaxMinSet = false;
 		List<XYSeriesCollection> xyDataSetList = getDataArrays(exp, option, subtractEvaporation);;
 		
 		int icage = 0;
-		
-		// make a common vertical axis for all the sub-plots  
-        final NumberAxis valueAxis = new NumberAxis("liquid level (µl)");
-        valueAxis.setAutoRangeIncludesZero(false);  
-        valueAxis.setInverted(true);
-        final CombinedRangeXYPlot combinedXYPlot = new CombinedRangeXYPlot(valueAxis);
+        final NumberAxis yAxis = new NumberAxis("volume (µl)");
+        yAxis.setAutoRangeIncludesZero(false);  
+        yAxis.setInverted(true);
+        final CombinedRangeXYPlot combinedXYPlot = new CombinedRangeXYPlot(yAxis);
         Paint[] color = ChartColor.createDefaultPaintArray();
 
 		for (XYSeriesCollection xySeriesCollection : xyDataSetList) 
 		{
-			NumberAxis domainAxis = new NumberAxis("Cage " + icage);
+			NumberAxis xAxis = new NumberAxis("Cage " + icage);
 			XYLineAndShapeRenderer subPlotRenderer = new XYLineAndShapeRenderer(true, false);
-			final XYPlot subplot = new XYPlot(xySeriesCollection, domainAxis, null, subPlotRenderer);
+			final XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, null, subPlotRenderer);
 			int icolor = 0;
-			for (int i=0; i< xySeriesCollection.getSeriesCount(); i++, icolor++ )
+			for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++, icolor++ )
 			{
 				if (icolor > color.length)
 					icolor = 0;
@@ -117,11 +117,22 @@ public class ChartLevels extends IcyFrame
 			icage++;
 		}
 		
-        JFreeChart chart = new JFreeChart("Capillary levels", null, combinedXYPlot, true);
+        JFreeChart chart = new JFreeChart(title, null, combinedXYPlot, true);
 
-        final ChartPanel panel = new ChartPanel(chart, true, true, true, false, true);
+        int width= 800;
+        int height= 300;
+        int minimumDrawWidth= width;
+        int minimumDrawHeight= 300;
+        int maximumDrawWidth= 800;
+        int maximumDrawHeight= 500;
+        boolean useBuffer= true;
+        
+        final ChartPanel panel = new ChartPanel(chart, 
+        		width, height, minimumDrawWidth, minimumDrawHeight, maximumDrawWidth, maximumDrawHeight, useBuffer,
+        		true, true, true, false, true); // boolean properties, boolean save, boolean print, boolean zoom, boolean tooltips)
         panel.addChartMouseListener(new ChartMouseListener() {
-		    public void chartMouseClicked(ChartMouseEvent e) {selectKymoImage(getSelectedCurve(e)); }
+		    public void chartMouseClicked(ChartMouseEvent e) {
+		    	selectKymoImage(getSelectedCurve(e)); }
 		    public void chartMouseMoved(ChartMouseEvent e) {}
 		});
     	
@@ -137,115 +148,28 @@ public class ChartLevels extends IcyFrame
 		final MouseEvent trigger = e.getTrigger();
         if (trigger.getButton() != MouseEvent.BUTTON1)
         	return -1;
-        		
+        
 		JFreeChart chart = e.getChart();
 		ChartEntity chartEntity = e.getEntity();
 		MouseEvent mouseEvent = e.getTrigger();
-		// first find subplot
+
+		int isel= 0;
+		if (chartEntity != null && chartEntity instanceof XYItemEntity) {
+		   XYItemEntity xyItemEntity = ((XYItemEntity) e.getEntity());
+		   isel += xyItemEntity.getSeriesIndex();
+		}
+
 		CombinedRangeXYPlot combinedXYPlot = (CombinedRangeXYPlot) chart.getPlot();
-		 @SuppressWarnings("unchecked")
-         List<XYPlot> subplots = combinedXYPlot.getSubplots();
-		 
-		Point xy = e.getTrigger().getPoint();
+		@SuppressWarnings("unchecked")
+        List<XYPlot> subplots = combinedXYPlot.getSubplots();
 		
-		// TODO: use handleclick? jfreechart CombinedRangeXYPlot handleClick
+		ChartPanel panel = (ChartPanel) mainChartPanel.getComponent(0);
+		PlotRenderingInfo plotInfo = panel.getChartRenderingInfo().getPlotInfo();
+		Point2D p = panel.translateScreenToJava2D(mouseEvent.getPoint());
+		int subplotindex = plotInfo.getSubplotIndex(p);
+		for (int i= 0; i < subplotindex ; i++)
+			isel += subplots.get(i).getSeriesCount();
 
-		
-		int isel= -1;
-//		if (chartEntity != null && chartEntity instanceof XYItemEntity) {
-//            XYItemEntity ent = (XYItemEntity) chartEntity;
-//            isel += ent.getSeriesIndex();
-//		}
-		
-		System.out.println( " chart=" + chart);
-		System.out.println( " entity=" + chartEntity + " " + e.getEntity().getClass());
-		System.out.println( " mouseEvent=" + mouseEvent);
-		
-		// From source file:org.trade.ui.chart.CandlestickChart.java
-		//http://www.java2s.com/example/java-api/org/jfree/chart/chartmouselistener/chartmouselistener-0-2.html
-		// search "jfreechart chartMouseClicked subplot"
-		
-		if (e.getTrigger().getClickCount() == 2) {
-            double xItem = 0;
-            double yItem = 0;
-            if (e.getEntity() instanceof XYItemEntity) {
-                XYItemEntity xYItemEntity = ((XYItemEntity) e.getEntity());
-                xItem = xYItemEntity.getDataset().getXValue(xYItemEntity.getSeriesIndex(),
-                        xYItemEntity.getItem());
-                yItem = xYItemEntity.getDataset().getYValue(xYItemEntity.getSeriesIndex(),
-                        xYItemEntity.getItem());
-            } else {
-                PlotEntity plotEntity = ((PlotEntity) e.getEntity());
-                XYPlot plot = (XYPlot) plotEntity.getPlot();
-                xItem = plot.getDomainCrosshairValue();
-                yItem = plot.getRangeCrosshairValue();
-            }
-
-            for (XYPlot xyplot : subplots) {
-
-                double x = xyplot.getDomainCrosshairValue();
-                double y = xyplot.getRangeCrosshairValue();
-
-                /*
-                 * If the cross hair is from a right-hand y axis we need
-                 * to convert this to a left-hand y axis.
-                 */
-                String rightAxisName = ", Price: ";
-                double rangeLowerLeft = 0;
-                double rangeUpperLeft = 0;
-                double rangeLowerRight = 0;
-                double rangeUpperRight = 0;
-                double yRightLocation = 0;
-                for (int index = 0; index < xyplot.getRangeAxisCount(); index++) {
-                    AxisLocation axisLocation = xyplot.getRangeAxisLocation(index);
-                    Range range = xyplot.getRangeAxis(index).getRange();
-
-                    if (axisLocation.equals(AxisLocation.BOTTOM_OR_LEFT)
-                            || axisLocation.equals(AxisLocation.TOP_OR_LEFT)) {
-                        rangeLowerLeft = range.getLowerBound();
-                        rangeUpperLeft = range.getUpperBound();
-                        rightAxisName = ", " + xyplot.getRangeAxis(index).getLabel() + ": ";
-                    }
-                    if (y >= range.getLowerBound() && y <= range.getUpperBound()
-                            && (axisLocation.equals(AxisLocation.BOTTOM_OR_RIGHT)
-                                    || axisLocation.equals(AxisLocation.TOP_OR_RIGHT))) {
-                        rangeUpperRight = range.getUpperBound();
-                        rangeLowerRight = range.getLowerBound();
-                    }
-                }
-                if ((rangeUpperRight - rangeLowerRight) > 0) {
-                    yRightLocation = rangeLowerLeft + ((rangeUpperLeft - rangeLowerLeft)
-                            * ((y - rangeLowerRight) / (rangeUpperRight - rangeLowerRight)));
-                } else {
-                    yRightLocation = y;
-                }
-
-                String text = " Time: " + dateFormatShort.format(new Date((long) (x))) + rightAxisName
-                        + new Money(y);
-                if (x == xItem && y == yItem) {
-                    titleLegend1.setText(text);
-                    if (null == clickCrossHairs) {
-                        clickCrossHairs = new XYTextAnnotation(text, x, yRightLocation);
-                        clickCrossHairs.setTextAnchor(TextAnchor.BOTTOM_LEFT);
-                        xyplot.addAnnotation(clickCrossHairs);
-                    } else {
-                        clickCrossHairs.setText(text);
-                        clickCrossHairs.setX(x);
-                        clickCrossHairs.setY(yRightLocation);
-                    }
-                }
-            }
-        } else if (e.getTrigger().getClickCount() == 1 && null != clickCrossHairs) {
-            for (XYPlot xyplot : subplots) {
-                if (xyplot.removeAnnotation(clickCrossHairs)) {
-                    clickCrossHairs = null;
-                    titleLegend1.setText(" Time: 0, Price :0.0");
-                    break;
-                }
-            }
-        }
-    }
-	
 		return isel;
 	}
 
@@ -350,6 +274,5 @@ public class ChartLevels extends IcyFrame
 			x++;
 		}
 	}
-
 	
 }
