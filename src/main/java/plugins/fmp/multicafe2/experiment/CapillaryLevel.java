@@ -50,15 +50,15 @@ public class CapillaryLevel
 		polylineLevel = new Level2D();
 	}
 	
-	public void setPolylineLevelFromTempData(String name, int indexImage, int start, int end) 
+	public void setPolylineLevelFromTempData(String name, int indexImage, int xStart, int xEnd) 
 	{
 		this.capName = name;
 		this.capIndexKymo = indexImage;
-		int npoints = end-start+1;
+		int npoints = xEnd-xStart+1;
 		double [] xpoints = new double [npoints];
 		double [] ypoints = new double [npoints];
 		int j= 0;
-		for (int i = start; i <= end; i++, j++) 
+		for (int i = xStart; i <= xEnd; i++, j++) 
 		{
 			xpoints[j] = i;
 			ypoints[j] = limit[j];

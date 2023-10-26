@@ -168,13 +168,13 @@ public class LevelsToGulps extends JPanel  implements PropertyChangeListener
 		options.detectAllKymos = allKymosCheckBox.isSelected();
 		parent0.paneKymos.tabDisplay.indexImagesCombo = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
 		if (!allKymosCheckBox.isSelected()) {
-			options.kymoFirst = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
-			options.kymoLast = options.kymoFirst;
+			options.kymoFirst 	= parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
+			options.kymoLast 	= options.kymoFirst;
 		}
 		else
 		{
 			options.kymoFirst = 0;
-			options.kymoLast = parent0.paneKymos.tabDisplay.kymographsCombo.getItemCount()-1;
+			options.kymoLast 	= parent0.paneKymos.tabDisplay.kymographsCombo.getItemCount()-1;
 		}
 		options.detectGulpsThreshold_uL = (double) detectGulpsThresholdSpinner.getValue();
 		options.transformForGulps = (ImageTransformEnums) transformForGulpsComboBox.getSelectedItem();
@@ -183,8 +183,8 @@ public class LevelsToGulps extends JPanel  implements PropertyChangeListener
 		options.buildGulps		= detectGulpsCheckBox.isSelected();
 		options.buildDerivative	= buildDerivativeCheckBox.isSelected();
 		options.analyzePartOnly	= partCheckBox.isSelected();
-		options.columnFirst		= (int) startSpinner.getValue();
-		options.columnLast		= (int) endSpinner.getValue();
+		options.searchArea.x 	= (int) startSpinner.getValue();
+		options.searchArea.width= (int) endSpinner.getValue()+ (int) startSpinner.getValue(); 
 		options.parent0Rect 	= parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = (String) parent0.paneKymos.tabDisplay.getBinSubdirectory() ;
 		return options;
@@ -230,8 +230,9 @@ public class LevelsToGulps extends JPanel  implements PropertyChangeListener
 			parent0.paneKymos.tabDisplay.selectKymographImage(parent0.paneKymos.tabDisplay.indexImagesCombo);
 			parent0.paneKymos.tabDisplay.indexImagesCombo = -1;
 			
-			startSpinner.setValue(threadDetectGulps.options.columnFirst); 
-			endSpinner.setValue(threadDetectGulps.options.columnLast); 
+			startSpinner.setValue(threadDetectGulps.options.searchArea.x); 
+			endSpinner.setValue(threadDetectGulps.options.searchArea.width+ threadDetectGulps.options.searchArea.x); 
+
 		 }
 	}
 	

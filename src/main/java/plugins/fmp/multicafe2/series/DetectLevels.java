@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe2.series;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.concurrent.Future;
 
@@ -82,23 +83,19 @@ public class DetectLevels  extends BuildSeries
 					IcyBufferedImage rawImage = imageIORead(seqKymos.getFileName(capi.kymographIndex));
 					int imageWidth = rawImage.getSizeX();
 					int imageHeight = rawImage.getSizeY();
-					int columnFirst = 0;
-					int columnLast = rawImage.getSizeX()-1;
+					Rectangle searchRect = new Rectangle(0, 0, rawImage.getSizeX()-1, rawImage.getSizeY()-1);
 					if (options.analyzePartOnly) 
-					{
-						columnFirst = options.columnFirst;
-						columnLast = options.columnLast;
-						if (columnLast > imageWidth-1)
-							columnLast = imageWidth -1;
-					} 
+						searchRect = options.searchArea; 
 					
 					if (options.pass1) 
-						detectPass1(rawImage, transformPass1, capi, imageWidth, imageHeight, columnFirst, columnLast, jitter);
+						detectPass1(rawImage, transformPass1, capi, imageWidth, imageHeight, searchRect, jitter);
 					
 					
 					if (options.pass2) 
-						detectPass2(rawImage, transformPass2, capi, imageWidth, imageHeight, columnFirst, columnLast, jitter);
+						detectPass2(rawImage, transformPass2, capi, imageWidth, imageHeight, searchRect, jitter);
 
+					int columnFirst = (int) searchRect.getX();
+					int columnLast = (int) (searchRect.getWidth() + columnFirst);
 					if (options.analyzePartOnly) 
 					{
 						capi.ptsTop.polylineLevel.insertYPoints(capi.ptsTop.limit, columnFirst, columnLast);
@@ -124,13 +121,15 @@ public class DetectLevels  extends BuildSeries
 	}
 	
 	private void detectPass1(IcyBufferedImage rawImage, ImageTransformInterface transformPass1, Capillary capi, 
-							int imageWidth, int imageHeight, int columnFirst, int columnLast, int jitter) 
+							int imageWidth, int imageHeight, Rectangle searchRect, int jitter) 
 	{
 		IcyBufferedImage transformedImage1 = transformPass1.getTransformedImage (rawImage, null);
 		Object transformedArray1 = transformedImage1.getDataXY(0);
 		int[] transformed1DArray1 = Array1DUtil.arrayToIntArray(transformedArray1, transformedImage1.isSignedDataType());
 		
 		int topSearchFrom = 0;
+		int columnFirst = (int) searchRect.getX();
+		int columnLast = (int) (searchRect.getWidth() + columnFirst);
 		int n_measures = columnLast - columnFirst +1;
 		capi.ptsTop.limit = new int [n_measures];
 		capi.ptsBottom.limit = new int [n_measures];
@@ -155,13 +154,15 @@ public class DetectLevels  extends BuildSeries
 	}
 	
 	private void detectPass2(IcyBufferedImage rawImage, ImageTransformInterface transformPass2, Capillary capi, 
-			int imageWidth, int imageHeight, int columnFirst, int columnLast, int jitter) {
+			int imageWidth, int imageHeight, Rectangle searchRect, int jitter) {
 		if (capi.ptsTop.limit == null)
 			capi.ptsTop.setTempDataFromPolylineLevel();
 
 		IcyBufferedImage transformedImage2 = transformPass2.getTransformedImage (rawImage, null);		
 		Object transformedArray2 = transformedImage2.getDataXY(0);
 		int[] transformed1DArray2 = Array1DUtil.arrayToIntArray(transformedArray2, transformedImage2.isSignedDataType());
+		int columnFirst = (int) searchRect.getX();
+		int columnLast = (int) (searchRect.getWidth() + columnFirst);
 		switch (options.transform02)
 		{
 			case COLORDISTANCE_L1_Y:

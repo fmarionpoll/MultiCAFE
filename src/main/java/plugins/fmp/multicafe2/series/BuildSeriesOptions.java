@@ -47,15 +47,15 @@ public class BuildSeriesOptions implements XMLPersistent
 	public	boolean		pass1 = true;
 	public 	boolean		directionUp1			= true;
 	public 	int			detectLevel1Threshold 	= 35;
-	public 	ImageTransformEnums transform01 = ImageTransformEnums.R_RGB;
+	public 	ImageTransformEnums transform01 	= ImageTransformEnums.R_RGB;
 	
 	public boolean 		pass2 = false;
 	public 	boolean		directionUp2			= true;
 	public 	int			detectLevel2Threshold 	= 35;
-	public ImageTransformEnums transform02 = ImageTransformEnums.L1DIST_TO_1RSTCOL;
+	public ImageTransformEnums transform02 		= ImageTransformEnums.L1DIST_TO_1RSTCOL;
 	public 	boolean 	analyzePartOnly			= false;
-	public 	int 		columnFirst 				= -1;
-	public 	int 		columnLast 				= -1;
+	public Rectangle 	searchArea				= new Rectangle();
+	
 	public  int			spanDiffTop				= 3;
 	
 	public double		detectGulpsThreshold_uL	= .3;
@@ -82,7 +82,7 @@ public class BuildSeriesOptions implements XMLPersistent
 	public boolean		detectFlies				= true;
 	public int			nFliesPresent			= 1;
 	
-	public ImageTransformEnums transformop = ImageTransformEnums.NONE; 
+	public ImageTransformEnums transformop 		= ImageTransformEnums.NONE; 
 	public int			videoChannel 			= 0;
 	public boolean 		backgroundSubstraction 	= false;
 	public int 			background_delta = 50;
@@ -99,7 +99,7 @@ public class BuildSeriesOptions implements XMLPersistent
 		destination.detectLevel1Threshold 	= detectLevel1Threshold;
 		destination.detectAllKymos 			= detectAllKymos;
 		
-		destination.detectGulpsThreshold_uL 	= detectGulpsThreshold_uL;
+		destination.detectGulpsThreshold_uL = detectGulpsThreshold_uL;
 		destination.transformForGulps 		= transformForGulps;
 		destination.detectAllGulps 			= detectAllGulps;
 	}
@@ -113,7 +113,7 @@ public class BuildSeriesOptions implements XMLPersistent
 		detectLevel1Threshold 	= destination.detectLevel1Threshold;
 		detectAllKymos 			= destination.detectAllKymos;
 		
-		detectGulpsThreshold_uL 	= destination.detectGulpsThreshold_uL;
+		detectGulpsThreshold_uL = destination.detectGulpsThreshold_uL;
 		transformForGulps 		= destination.transformForGulps;
 		detectAllGulps 			= destination.detectAllGulps;
 	}
@@ -121,7 +121,7 @@ public class BuildSeriesOptions implements XMLPersistent
 	public void copyParameters (BuildSeriesOptions det) 
 	{
 		threshold = det.threshold;
-		backgroundThreshold			= det.backgroundThreshold;
+		backgroundThreshold		= det.backgroundThreshold;
 		thresholdDiff			= det.thresholdDiff;
 		btrackWhite 			= det.btrackWhite;
 		blimitLow 				= det.blimitLow;

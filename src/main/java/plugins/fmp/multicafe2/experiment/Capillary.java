@@ -362,8 +362,11 @@ public class Capillary implements Comparable <Capillary>
 			ptsGulps.gulps = new ArrayList <> ();
 		}
 		
-		if (limitsOptions.analyzePartOnly)
-			ptsGulps.removeGulpsWithinInterval(limitsOptions.columnFirst, limitsOptions.columnLast);
+		if (limitsOptions.analyzePartOnly) {
+			int searchFromXFirst = (int) limitsOptions.searchArea.getX();
+			int searchFromXLast = (int) limitsOptions.searchArea.getWidth() + searchFromXFirst;
+			ptsGulps.removeGulpsWithinInterval(searchFromXFirst, searchFromXLast);
+		}
 		else 
 			ptsGulps.gulps.clear();
 	}
@@ -376,8 +379,9 @@ public class Capillary implements Comparable <Capillary>
 			return;
 		int lastPixel = ptsTop.polylineLevel.npoints;
 		if (limitsOptions.analyzePartOnly){
-			firstPixel = limitsOptions.columnFirst;
-			lastPixel = limitsOptions.columnLast;
+			firstPixel = (int) limitsOptions.searchArea.getX();
+			lastPixel = (int) limitsOptions.searchArea.getWidth() + firstPixel;
+			
 		} 
 		int threshold = (int) ((limitsOptions.detectGulpsThreshold_uL / capVolume) * capPixels);
 		ArrayList<Point2D> gulpPoints = new ArrayList<Point2D>();

@@ -321,14 +321,14 @@ public class Levels extends JPanel implements PropertyChangeListener
 		options.directionUp1 		= (direction1ComboBox.getSelectedIndex() == 0);
 		options.detectLevel1Threshold= (int) threshold1Spinner.getValue();
 		
-		options.pass2 = pass2CheckBox.isSelected();
+		options.pass2 				= pass2CheckBox.isSelected();
 		options.transform02			= (ImageTransformEnums) transform02ComboBox.getSelectedItem();
 		options.directionUp2 		= (direction2ComboBox.getSelectedIndex() == 0);
 		options.detectLevel2Threshold= (int) threshold2Spinner.getValue();
 		
 		options.analyzePartOnly		= fromCheckBox.isSelected();
-		options.columnFirst			= (int) startSpinner.getValue(); 
-		options.columnLast			= (int) endSpinner.getValue(); 
+		options.searchArea.x 		= (int) startSpinner.getValue();
+		options.searchArea.width 	= (int) endSpinner.getValue()+ (int) startSpinner.getValue(); 
 		options.spanDiffTop			= getSpanDiffTop();
 		options.detectL 			= leftCheckBox.isSelected();
 		options.detectR				= rightCheckBox.isSelected();
@@ -367,8 +367,8 @@ public class Levels extends JPanel implements PropertyChangeListener
 			parent0.paneKymos.tabDisplay.selectKymographImage(parent0.paneKymos.tabDisplay.indexImagesCombo);
 			parent0.paneKymos.tabDisplay.indexImagesCombo = -1;
 			
-			startSpinner.setValue(threadDetectLevels.options.columnFirst); 
-			endSpinner.setValue(threadDetectLevels.options.columnLast); 
+			startSpinner.setValue(threadDetectLevels.options.searchArea.x); 
+			endSpinner.setValue(threadDetectLevels.options.searchArea.width+ threadDetectLevels.options.searchArea.x); 
 		 }
 	}
 
