@@ -3,6 +3,7 @@ package plugins.fmp.multicafe2.dlg.levels;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -17,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import icy.type.geom.Polygon2D;
 import icy.util.StringUtil;
 import plugins.fmp.multicafe2.MultiCAFE2;
 import plugins.fmp.multicafe2.experiment.Capillary;
@@ -25,6 +27,7 @@ import plugins.fmp.multicafe2.experiment.SequenceKymos;
 import plugins.fmp.multicafe2.series.BuildSeriesOptions;
 import plugins.fmp.multicafe2.series.DetectLevels;
 import plugins.fmp.multicafe2.tools.Image.ImageTransformEnums;
+import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 
 
@@ -191,6 +194,32 @@ public class Levels extends JPanel implements PropertyChangeListener
 				allSeriesCheckBox.setForeground(color);
 				detectButton.setForeground(color);
 		}});
+		
+		fromCheckBox.addActionListener(new ActionListener () 
+		{ 
+			@Override public void actionPerformed( final ActionEvent e ) 
+			{
+				if (fromCheckBox.isSelected()) {
+					Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+					if (exp == null)
+							return;
+				
+					
+					Rectangle2D searchPolygon = exp.seqKymos.seq.getBounds2D() ;
+					ROI2DRectangle searchRect = new ROI2DRectangle(searchPolygon);
+					
+					final String dummyname = "search_rectangle";
+					searchRect.setName(dummyname);
+					exp.seqCamData.seq.addROI(extRect);
+					exp.seqCamData.seq.setSelectedROI(extRect);
+					// TODO delete kymos
+				}
+				else
+				{
+					create2DPolygon();
+				}
+			}});
+		
 	}
 	
 	// -------------------------------------------------
