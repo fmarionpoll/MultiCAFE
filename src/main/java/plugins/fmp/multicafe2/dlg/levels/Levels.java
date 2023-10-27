@@ -3,7 +3,7 @@ package plugins.fmp.multicafe2.dlg.levels;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import icy.type.geom.Polygon2D;
+
 import icy.util.StringUtil;
 import plugins.fmp.multicafe2.MultiCAFE2;
 import plugins.fmp.multicafe2.experiment.Capillary;
@@ -26,16 +26,17 @@ import plugins.fmp.multicafe2.experiment.Experiment;
 import plugins.fmp.multicafe2.experiment.SequenceKymos;
 import plugins.fmp.multicafe2.series.BuildSeriesOptions;
 import plugins.fmp.multicafe2.series.DetectLevels;
+import plugins.fmp.multicafe2.tools.ROI2DUtilities;
 import plugins.fmp.multicafe2.tools.Image.ImageTransformEnums;
-import plugins.kernel.roi.roi2d.ROI2DPolygon;
+import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 
 
 public class Levels extends JPanel implements PropertyChangeListener 
 {
 	private static final long serialVersionUID 	= -6329863521455897561L;
-	JSpinner			startSpinner			= new JSpinner(new SpinnerNumberModel(0, 0, 100000, 1));
-	JSpinner			endSpinner				= new JSpinner(new SpinnerNumberModel(3, 1, 100000, 1));
+	JSpinner			startSpinner			= new JSpinner(new SpinnerNumberModel(0, 0, 10000, 1));
+	JSpinner			endSpinner				= new JSpinner(new SpinnerNumberModel(3, 1, 10000, 1));
 	
 	private JCheckBox	pass1CheckBox 			= new JCheckBox ("pass1", true);
 	private JComboBox<String> direction1ComboBox= new JComboBox<String> (new String[] {" threshold >", " threshold <" });
@@ -199,24 +200,23 @@ public class Levels extends JPanel implements PropertyChangeListener
 		{ 
 			@Override public void actionPerformed( final ActionEvent e ) 
 			{
-				if (fromCheckBox.isSelected()) {
-					Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-					if (exp == null)
-							return;
-				
-					
-					Rectangle2D searchPolygon = exp.seqKymos.seq.getBounds2D() ;
-					ROI2DRectangle searchRect = new ROI2DRectangle(searchPolygon);
-					
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp == null)
+						return;
+				if (fromCheckBox.isSelected()) 
+				{
+					Rectangle2D searchRectangle = exp.seqKymos.seq.getBounds2D() ;
+					ROI2DRectangle searchRectangleROI2D = new ROI2DRectangle(searchRectangle);
 					final String dummyname = "search_rectangle";
-					searchRect.setName(dummyname);
-					exp.seqCamData.seq.addROI(extRect);
-					exp.seqCamData.seq.setSelectedROI(extRect);
-					// TODO delete kymos
+					searchRectangleROI2D.setName(dummyname);
+					searchRectangleROI2D.setColor(Color.ORANGE);
+					
+					exp.seqKymos.seq.addROI(searchRectangleROI2D);
+					exp.seqKymos.seq.setSelectedROI(searchRectangleROI2D);
 				}
 				else
 				{
-					create2DPolygon();
+					ROI2DUtilities.removeRoisContainingString(-1, "search_rectangle", exp.seqKymos.seq);
 				}
 			}});
 		

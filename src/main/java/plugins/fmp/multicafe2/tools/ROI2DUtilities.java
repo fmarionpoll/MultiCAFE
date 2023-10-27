@@ -138,24 +138,6 @@ public class ROI2DUtilities
 		return null;
 	}
 		
-//	public static void addROItoCumulatedSumArray(ROI2DPolyLine roi, ArrayList<Integer> sumArrayList) 
-//	{
-//		Polyline2D roiline = roi.getPolyline2D();
-//		int width =(int) roiline.xpoints[roiline.npoints-1] - (int) roiline.xpoints[0] +1; 
-//		interpolateMissingPointsAlongXAxis (roi, width);
-//		List<Integer> intArray = transferROIYpointsToIntList(roi);
-//		
-//		int jstart = (int) roiline.xpoints[0];
-//		int previousY = intArray.get(0);
-//		for (int i=1; i< intArray.size(); i++) {
-//			int val = intArray.get(i);
-//			int deltaY = val - previousY;
-//			previousY = val;
-//			for (int j = jstart+i; j< sumArrayList.size(); j++) 
-//				sumArrayList.set(j, sumArrayList.get(j) +deltaY);
-//		}
-//	}
-
 	public static List<ROI2D> loadROIsFromXML(Document doc) 
 	{
 		List<ROI> localList = ROI.loadROIsFromXML(XMLUtil.getRootElement(doc));
