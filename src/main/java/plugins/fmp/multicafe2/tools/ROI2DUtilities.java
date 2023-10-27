@@ -242,13 +242,13 @@ public class ROI2DUtilities
 	{
 		List<ROI2D> roiList = seq.getROI2Ds();
 		Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
-		List<ROI2D> capillaryRois = new ArrayList<ROI2D>();
+		List<ROI2D> listROIsMatchingString = new ArrayList<ROI2D>();
 		for ( ROI2D roi : roiList ) 
 		{
 			if ((roi instanceof ROI2DShape) && roi.getName().contains(string)) 
-				capillaryRois.add(roi);
+				listROIsMatchingString.add(roi);
 		}
-		return capillaryRois;
+		return listROIsMatchingString;
 	}
 	
 	public static void removeRoisContainingString(int t, String string, Sequence seq) 

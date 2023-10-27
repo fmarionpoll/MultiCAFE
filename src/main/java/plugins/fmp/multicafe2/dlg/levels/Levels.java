@@ -3,7 +3,7 @@ package plugins.fmp.multicafe2.dlg.levels;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -26,7 +26,6 @@ import plugins.fmp.multicafe2.experiment.Experiment;
 import plugins.fmp.multicafe2.experiment.SequenceKymos;
 import plugins.fmp.multicafe2.series.BuildSeriesOptions;
 import plugins.fmp.multicafe2.series.DetectLevels;
-import plugins.fmp.multicafe2.tools.ROI2DUtilities;
 import plugins.fmp.multicafe2.tools.Image.ImageTransformEnums;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
@@ -35,8 +34,6 @@ import plugins.kernel.roi.roi2d.ROI2DRectangle;
 public class Levels extends JPanel implements PropertyChangeListener 
 {
 	private static final long serialVersionUID 	= -6329863521455897561L;
-	JSpinner			startSpinner			= new JSpinner(new SpinnerNumberModel(0, 0, 10000, 1));
-	JSpinner			endSpinner				= new JSpinner(new SpinnerNumberModel(3, 1, 10000, 1));
 	
 	private JCheckBox	pass1CheckBox 			= new JCheckBox ("pass1", true);
 	private JComboBox<String> direction1ComboBox= new JComboBox<String> (new String[] {" threshold >", " threshold <" });
@@ -67,7 +64,8 @@ public class Levels extends JPanel implements PropertyChangeListener
 	private JSpinner	spanTopSpinner			= new JSpinner(new SpinnerNumberModel(3, 1, 100, 1));
 	private String 		detectString 			= "        Detect     ";
 	private JButton 	detectButton 			= new JButton(detectString);
-	private JCheckBox	fromCheckBox 			= new JCheckBox (" from (pixel)", false);
+	private JCheckBox	fromCheckBox 			= new JCheckBox (" detection from ROI rectangle", false);
+	
 	private JCheckBox 	allSeriesCheckBox 		= new JCheckBox("ALL (current to last)", false);
 	private JCheckBox	leftCheckBox 			= new JCheckBox ("L", true);
 	private JCheckBox	rightCheckBox 			= new JCheckBox ("R", true);
@@ -76,6 +74,8 @@ public class Levels extends JPanel implements PropertyChangeListener
 	private MultiCAFE2 	parent0 				= null;
 	private DetectLevels threadDetectLevels 	= null;
 	
+	private String SEARCHRECT = new String("search_rectangle");
+	private ROI2DRectangle searchRectangleROI2D = null;
 	// -----------------------------------------------------
 		
 	void init(GridLayout capLayout, MultiCAFE2 parent0) 
@@ -114,9 +114,6 @@ public class Levels extends JPanel implements PropertyChangeListener
 		
 		JPanel panel03 = new JPanel(layoutLeft);
 		panel03.add(fromCheckBox);
-		panel03.add(startSpinner);
-		panel03.add(new JLabel("to"));
-		panel03.add(endSpinner);
 		panel03.add(runBackwardsCheckBox);
 		add( panel03);
 		
@@ -205,21 +202,15 @@ public class Levels extends JPanel implements PropertyChangeListener
 						return;
 				if (fromCheckBox.isSelected()) 
 				{
-					Rectangle2D searchRectangle = exp.seqKymos.seq.getBounds2D() ;
-					ROI2DRectangle searchRectangleROI2D = new ROI2DRectangle(searchRectangle);
-					final String dummyname = "search_rectangle";
-					searchRectangleROI2D.setName(dummyname);
-					searchRectangleROI2D.setColor(Color.ORANGE);
-					
-					exp.seqKymos.seq.addROI(searchRectangleROI2D);
-					exp.seqKymos.seq.setSelectedROI(searchRectangleROI2D);
+					displaySearchArea(exp);
 				}
 				else
 				{
-					ROI2DUtilities.removeRoisContainingString(-1, "search_rectangle", exp.seqKymos.seq);
+					if (searchRectangleROI2D != null)
+						exp.seqKymos.seq.removeROI(searchRectangleROI2D);
 				}
 			}});
-		
+	
 	}
 	
 	// -------------------------------------------------
@@ -279,7 +270,6 @@ public class Levels extends JPanel implements PropertyChangeListener
 	
 	void transform2EnableInputs(boolean enable) 
 	{
-//		direction2ComboBox.setEnabled(enable);
 		threshold2Spinner.setEnabled(enable);
 	}
 	
@@ -303,6 +293,8 @@ public class Levels extends JPanel implements PropertyChangeListener
 		allKymosCheckBox.setSelected(options.detectAllKymos);
 		leftCheckBox.setSelected(options.detectL);
 		rightCheckBox.setSelected(options.detectR);
+		
+		fromCheckBox.setSelected(false);
 	}
 	
 	void getInfosFromDialog(Capillary cap) 
@@ -356,8 +348,9 @@ public class Levels extends JPanel implements PropertyChangeListener
 		options.detectLevel2Threshold= (int) threshold2Spinner.getValue();
 		
 		options.analyzePartOnly		= fromCheckBox.isSelected();
-		options.searchArea.x 		= (int) startSpinner.getValue();
-		options.searchArea.width 	= (int) endSpinner.getValue()+ (int) startSpinner.getValue(); 
+		if (fromCheckBox.isSelected() && searchRectangleROI2D != null)
+			options.searchArea 	= getSearchArea(exp);
+		 
 		options.spanDiffTop			= getSpanDiffTop();
 		options.detectL 			= leftCheckBox.isSelected();
 		options.detectR				= rightCheckBox.isSelected();
@@ -395,10 +388,35 @@ public class Levels extends JPanel implements PropertyChangeListener
 			detectButton.setText(detectString);
 			parent0.paneKymos.tabDisplay.selectKymographImage(parent0.paneKymos.tabDisplay.indexImagesCombo);
 			parent0.paneKymos.tabDisplay.indexImagesCombo = -1;
-			
-			startSpinner.setValue(threadDetectLevels.options.searchArea.x); 
-			endSpinner.setValue(threadDetectLevels.options.searchArea.width+ threadDetectLevels.options.searchArea.x); 
 		 }
 	}
-
+	
+	private void displaySearchArea (Experiment exp)
+	{
+		if (searchRectangleROI2D == null ) {
+			Rectangle searchRectangle = exp.seqKymos.seq.getBounds2D();
+			searchRectangle.width -= 1; 
+			searchRectangle.height  -= 1;
+			searchRectangleROI2D = new ROI2DRectangle(searchRectangle);
+			searchRectangleROI2D.setName(SEARCHRECT);
+			searchRectangleROI2D.setColor(Color.ORANGE);
+		}			
+		exp.seqKymos.seq.addROI(searchRectangleROI2D);
+		exp.seqKymos.seq.setSelectedROI(searchRectangleROI2D);
+	}
+	
+	private Rectangle getSearchArea(Experiment exp) 
+	{
+		Rectangle rectangle = searchRectangleROI2D.getBounds();
+		Rectangle seqRectangle = exp.seqKymos.seq.getBounds2D();
+		if (rectangle.x < 0) 
+			rectangle.x = 0;
+		if (rectangle.y < 0) 
+			rectangle.y = 0;
+		if ((rectangle.width + rectangle.x) > seqRectangle.width) 
+			rectangle.width = seqRectangle.width -1 - rectangle.x ; 
+		if ((rectangle.height + rectangle.y)> (seqRectangle.height-1)) 
+			rectangle.height = seqRectangle.height -1 - rectangle.y;
+		return rectangle;
+	}
 }

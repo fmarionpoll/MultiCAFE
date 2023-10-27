@@ -215,10 +215,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			progressFrame.setMessage("Load data: update dialogs");
 			
 			parent0.paneExperiment.updateDialogs(exp);
-			parent0.paneLevels.updateDialogs(exp);
 			parent0.paneKymos.updateDialogs(exp);
 			parent0.paneCapillaries.updateDialogs(exp);
-			parent0.paneLevels.updateDialogs(exp);
 		}
 		else 
 		{

@@ -11,8 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import icy.gui.component.PopupPanel;
+
 import plugins.fmp.multicafe2.MultiCAFE2;
-import plugins.fmp.multicafe2.experiment.Experiment;
 import plugins.fmp.multicafe2.tools.Image.ImageTransformEnums;
 
 
@@ -96,12 +96,4 @@ public class MCLevels_ extends JPanel implements PropertyChangeListener
 		}
 	}
 	
-	public void updateDialogs(Experiment exp) 
-	{
-		int lastpixel = exp.seqKymos.imageWidthMax - 1;
-		tabDetectLevels2.startSpinner.setValue(0);
-		tabDetectLevels2.endSpinner.setValue(lastpixel);
-		tabDetectGulps.startSpinner.setValue(0);
-		tabDetectGulps.endSpinner.setValue(lastpixel);
-	}
 }

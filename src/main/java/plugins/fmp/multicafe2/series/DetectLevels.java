@@ -90,7 +90,6 @@ public class DetectLevels  extends BuildSeries
 					if (options.pass1) 
 						detectPass1(rawImage, transformPass1, capi, imageWidth, imageHeight, searchRect, jitter);
 					
-					
 					if (options.pass2) 
 						detectPass2(rawImage, transformPass2, capi, imageWidth, imageHeight, searchRect, jitter);
 
@@ -130,22 +129,23 @@ public class DetectLevels  extends BuildSeries
 		int topSearchFrom = 0;
 		int columnFirst = (int) searchRect.getX();
 		int columnLast = (int) (searchRect.getWidth() + columnFirst);
+		
 		int n_measures = columnLast - columnFirst +1;
 		capi.ptsTop.limit = new int [n_measures];
 		capi.ptsBottom.limit = new int [n_measures];
 		
 		if (options.runBackwards) 
 			for (int ix = columnLast; ix >= columnFirst; ix--) 
-				topSearchFrom = detectLimitOnOneColumn(ix, columnFirst, topSearchFrom, jitter, imageWidth, imageHeight, capi, transformed1DArray1);
+				topSearchFrom = detectLimitOnOneColumn(ix, columnFirst, topSearchFrom, jitter, imageWidth, imageHeight, capi, transformed1DArray1, searchRect);
 		else
 			for (int ix = columnFirst; ix <= columnLast; ix++) 
-				topSearchFrom = detectLimitOnOneColumn(ix, columnFirst, topSearchFrom, jitter, imageWidth, imageHeight, capi, transformed1DArray1);
+				topSearchFrom = detectLimitOnOneColumn(ix, columnFirst, topSearchFrom, jitter, imageWidth, imageHeight, capi, transformed1DArray1, searchRect);
 	}
 	
-	private int detectLimitOnOneColumn(int ix, int istart, int topSearchFrom, int jitter, int imageWidth, int imageHeight, Capillary capi, int[] transformed1DArray1)
+	private int detectLimitOnOneColumn(int ix, int istart, int topSearchFrom, int jitter, int imageWidth, int imageHeight, Capillary capi, int[] transformed1DArray1, Rectangle searchRect)
 	{
-		int iyTop = detectThresholdFromTop(ix, topSearchFrom, jitter, transformed1DArray1, imageWidth, imageHeight, options);
-		int iyBottom = detectThresholdFromBottom(ix, jitter, transformed1DArray1, imageWidth, imageHeight, options);
+		int iyTop = detectThresholdFromTop(ix, topSearchFrom, jitter, transformed1DArray1, imageWidth, imageHeight, options, searchRect);
+		int iyBottom = detectThresholdFromBottom(ix, jitter, transformed1DArray1, imageWidth, imageHeight, options, searchRect);
 		if (iyBottom <= iyTop) 
 			iyTop = topSearchFrom;
 		capi.ptsTop.limit[ix-istart] = iyTop;
@@ -238,10 +238,13 @@ public class DetectLevels  extends BuildSeries
 		return rowIndex;
 	}
 
-	private int detectThresholdFromTop(int ix, int searchFrom, int jitter, int [] tabValues, int imageWidth, int imageHeight, BuildSeriesOptions options) 
+	private int detectThresholdFromTop(int ix, int searchFrom, int jitter, int [] tabValues, int imageWidth, int imageHeight, BuildSeriesOptions options, Rectangle searchRect) 
 	{
 		int y = imageHeight-1;
 		searchFrom = checkIndexLimits(searchFrom - jitter, imageHeight-1);
+		if (searchFrom < searchRect.y)
+			searchFrom = searchRect.y;
+		
 		for (int iy = searchFrom; iy < imageHeight; iy++) 
 		{
 			boolean flag = false;
@@ -258,10 +261,14 @@ public class DetectLevels  extends BuildSeries
 		return y;
 	}
 	
-	private int detectThresholdFromBottom(int ix, int jitter, int[] tabValues, int imageWidth, int imageHeight, BuildSeriesOptions options) 
+	private int detectThresholdFromBottom(int ix, int jitter, int[] tabValues, int imageWidth, int imageHeight, BuildSeriesOptions options, Rectangle searchRect) 
 	{
 		int y = 0;
-		for (int iy = imageHeight - 1; iy >= 0 ; iy--) 
+		int searchFrom = imageHeight -1;
+		if (searchFrom > (searchRect.y + searchRect.height))
+			searchFrom = searchRect.y + searchRect.height-1;
+		
+		for (int iy = searchFrom; iy >= 0 ; iy--) 
 		{
 			boolean flag = false;
 			if (options.directionUp1)
