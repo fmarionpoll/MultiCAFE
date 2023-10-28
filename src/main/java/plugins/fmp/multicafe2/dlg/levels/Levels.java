@@ -153,9 +153,9 @@ public class Levels extends JPanel implements PropertyChangeListener
 			@Override public void actionPerformed( final ActionEvent e ) 
 			{ 
 				if (detectButton.getText().equals(detectString))
-					startComputation();
+					startLevelsDetection();
 				else 
-					stopComputation();
+					stopLevelsDetection();
 			}});	
 		
 		displayTransform1Button.addActionListener(new ActionListener () 
@@ -214,11 +214,6 @@ public class Levels extends JPanel implements PropertyChangeListener
 	}
 	
 	// -------------------------------------------------
-	
-	int getSpanDiffTop() 
-	{
-		return (int) spanTopSpinner.getValue() ;
-	}
 		
 	void kymosDisplayFiltered01(Experiment exp) 
 	{
@@ -232,7 +227,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 			getInfosFromDialog(capList.get(t));		
 		
 		int zChannelDestination = 1;
-		exp.kymosBuildFiltered01(0, zChannelDestination, transform01, getSpanDiffTop());
+		exp.kymosBuildFiltered01(0, zChannelDestination, transform01, (int) spanTopSpinner.getValue());
 		seqKymos.seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
 	}
 	
@@ -248,7 +243,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 			getInfosFromDialog(capList.get(t));		
 		
 		int zChannelDestination = 1;
-		exp.kymosBuildFiltered01(0, zChannelDestination, transform02, getSpanDiffTop());
+		exp.kymosBuildFiltered01(0, zChannelDestination, transform02, (int) spanTopSpinner.getValue());
 		seqKymos.seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
 	}
 	
@@ -265,12 +260,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 		default:
 			break;
 		}
-		transform2EnableInputs(flag);
-	}
-	
-	void transform2EnableInputs(boolean enable) 
-	{
-		threshold2Spinner.setEnabled(enable);
+		threshold2Spinner.setEnabled(flag);
 	}
 	
 	void setInfosToDialog(Capillary cap) 
@@ -349,9 +339,9 @@ public class Levels extends JPanel implements PropertyChangeListener
 		
 		options.analyzePartOnly		= fromCheckBox.isSelected();
 		if (fromCheckBox.isSelected() && searchRectangleROI2D != null)
-			options.searchArea 	= getSearchArea(exp);
+			options.searchArea 	= getSearchAreaFromSearchRectangle(exp);
 		 
-		options.spanDiffTop			= getSpanDiffTop();
+		options.spanDiffTop			= (int) spanTopSpinner.getValue();
 		options.detectL 			= leftCheckBox.isSelected();
 		options.detectR				= rightCheckBox.isSelected();
 		options.parent0Rect 		= parent0.mainFrame.getBoundsInternal();
@@ -360,7 +350,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 		return options;
 	}
 	
-	void startComputation() 
+	void startLevelsDetection() 
 	{
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();	
 		if (exp != null)
@@ -374,7 +364,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 		}
 	}
 
-	private void stopComputation() 
+	private void stopLevelsDetection() 
 	{	
 		if (threadDetectLevels != null && !threadDetectLevels.stopFlag) 
 			threadDetectLevels.stopFlag = true;
@@ -388,6 +378,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 			detectButton.setText(detectString);
 			parent0.paneKymos.tabDisplay.selectKymographImage(parent0.paneKymos.tabDisplay.indexImagesCombo);
 			parent0.paneKymos.tabDisplay.indexImagesCombo = -1;
+			fromCheckBox.setSelected(false);
 		 }
 	}
 	
@@ -405,7 +396,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 		exp.seqKymos.seq.setSelectedROI(searchRectangleROI2D);
 	}
 	
-	private Rectangle getSearchArea(Experiment exp) 
+	private Rectangle getSearchAreaFromSearchRectangle(Experiment exp) 
 	{
 		Rectangle rectangle = searchRectangleROI2D.getBounds();
 		Rectangle seqRectangle = exp.seqKymos.seq.getBounds2D();

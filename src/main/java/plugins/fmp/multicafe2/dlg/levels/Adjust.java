@@ -14,6 +14,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import icy.util.StringUtil;
+
 import plugins.fmp.multicafe2.MultiCAFE2;
 import plugins.fmp.multicafe2.experiment.Capillary;
 import plugins.fmp.multicafe2.experiment.Experiment;
@@ -31,20 +32,19 @@ public class Adjust extends JPanel  implements PropertyChangeListener
 	 * 
 	 */
 	private static final long serialVersionUID = 2580935598417087197L;
-	private MultiCAFE2 			parent0;
-	private JCheckBox			allSeriesCheckBox = new JCheckBox("ALL series", false);
+	private MultiCAFE2	parent0;
+	private JCheckBox	allSeriesCheckBox = new JCheckBox("ALL series", false);
 	
-	private String				adjustString  	= new String("Resize levels to Kymographs");
-	private String				cropString  	= new String("Crop levels to Kymograph");
+	private final String adjustString  	= "Resize levels to Kymographs";
+	private final String cropString  	= "Crop levels to Kymograph";
+	private final String clipString 	= "Clip levels npts to the shortest curve";
+	private final String restoreString	= "Restore levels";
+	private final String stopString		= "STOP ";
 	
-	private String				clipString 		= new String("Clip levels npts to the shortest curve");
-	private String				restoreString	= new String("Restore levels");
-	
-	private JButton 			adjustButton 	= new JButton(adjustString);
-	private JButton 			restoreButton 	= new JButton(restoreString);
-	private JButton 			clipButton 		= new JButton(clipString);
-	private JButton				cropButton		= new JButton(cropString);
-	private String				stopString		= new String("STOP ");
+	private JButton 	adjustButton 	= new JButton(adjustString);
+	private JButton 	restoreButton 	= new JButton(restoreString);
+	private JButton 	clipButton 		= new JButton(clipString);
+	private JButton		cropButton		= new JButton(cropString);
 	
 	private AdjustMeasuresToDimensions threadAdjust = null;
 	private CurvesRestoreLength threadRestore = null;

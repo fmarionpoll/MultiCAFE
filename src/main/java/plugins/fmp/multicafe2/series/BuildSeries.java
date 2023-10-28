@@ -31,13 +31,15 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer>
 	public 	BuildSeriesOptions	options 		= new BuildSeriesOptions();
 	public	boolean 			stopFlag 		= false;
 	public 	boolean 			threadRunning 	= false;
-			int 				nframescomputed     = 0;
-			int					nframestotal		= 0;
+			int 				nframescomputed    = 0;
+			int					nframestotal	= 0;
 			
 			int 				selectedExperimentIndex = -1;
-			Sequence seqNegative = null;
-			Viewer vNegative = null;
-			
+			Sequence 			seqNegative 	= null;
+			Viewer 				vNegative 		= null;
+	public final String 		THREAD_ENDED 	= "thread_ended";
+	public final String 		THREAD_DONE 	= "thread_done";
+					
 		
 	
 	@Override
@@ -79,8 +81,6 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer>
 		threadRunning = false;
 		
 		selectList(expList, selectedExperimentIndex);
-		
-		
 		return nbiterations;
 	}
 
@@ -111,14 +111,12 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer>
 		{
 			e.printStackTrace();
 		} 
+		
 		if (!threadRunning || stopFlag) 
-		{
-			firePropertyChange("thread_ended", null, statusMsg);
-		} 
+			firePropertyChange(THREAD_ENDED, null, statusMsg);
 		else 
-		{
-			firePropertyChange("thread_done", null, statusMsg);
-		}
+			firePropertyChange(THREAD_DONE, null, statusMsg);
+
     }
 	
 	abstract void analyzeExperiment(Experiment exp);

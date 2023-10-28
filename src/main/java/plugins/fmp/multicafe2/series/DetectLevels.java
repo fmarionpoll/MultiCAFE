@@ -43,15 +43,15 @@ public class DetectLevels  extends BuildSeries
 		threadRunning = true;
 		stopFlag = false;
 		ProgressFrame progressBar = new ProgressFrame("Processing with subthreads started");
-		int firstKymo = options.kymoFirst;
-		if (firstKymo > seqKymos.seq.getSizeT() || firstKymo < 0)
-			firstKymo = 0;
-		int lastKymo = options.kymoLast;
-		if (lastKymo >= seqKymos.seq.getSizeT())
-			lastKymo = seqKymos.seq.getSizeT() -1;
+		int tFirsKymo = options.kymoFirst;
+		if (tFirsKymo > seqKymos.seq.getSizeT() || tFirsKymo < 0)
+			tFirsKymo = 0;
+		int tLastKymo = options.kymoLast;
+		if (tLastKymo >= seqKymos.seq.getSizeT())
+			tLastKymo = seqKymos.seq.getSizeT() -1;
 		seqKymos.seq.beginUpdate();
 		
-		int nframes = lastKymo - firstKymo +1;
+		int nframes = tLastKymo - tFirsKymo +1;
 	    final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 	    processor.setThreadName("detectlevel");
 	    processor.setPriority(Processor.NORM_PRIORITY);
@@ -62,15 +62,15 @@ public class DetectLevels  extends BuildSeries
 		final ImageTransformInterface transformPass1 = options.transform01.getFunction();
 		final ImageTransformInterface transformPass2 = options.transform02.getFunction();
 		
-		for (int indexKymo = firstKymo; indexKymo <= lastKymo; indexKymo++) 
+		for (int tKymo = tFirsKymo; tKymo <= tLastKymo; tKymo++) 
 		{
-			final Capillary capi = exp.capillaries.capillariesList.get(indexKymo);
+			final Capillary capi = exp.capillaries.capillariesList.get(tKymo);
 			if (!options.detectR && capi.getKymographName().endsWith("2"))
 				continue;
 			if (!options.detectL && capi.getKymographName().endsWith("1"))
 				continue;
 			
-			capi.kymographIndex = indexKymo;
+			capi.kymographIndex = tKymo;
 			capi.ptsDerivative.clear();
 			capi.ptsGulps.gulps.clear();
 			capi.limitsOptions.copyFrom(options);
