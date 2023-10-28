@@ -58,7 +58,7 @@ public class Level2D extends Polyline2D
 		if (start < 0 || end > (this.npoints -1))
 			return false;
 		int i_list = 0;
-		for (int i_array= start; i_array < end; i_array++, i_list++) 
+		for (int i_array= start; i_array <= end; i_array++, i_list++) 
 			this.ypoints[i_array] = points[i_list]; 
 		return true;
 	}
