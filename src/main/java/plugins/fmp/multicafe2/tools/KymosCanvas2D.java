@@ -71,7 +71,7 @@ public class KymosCanvas2D extends Canvas2D
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	 setPositionT( getPositionT()+1);
+            	setPositionT( getPositionT()+1);
             }});
         
         fitYAxisButton.addActionListener(new ActionListener() {
