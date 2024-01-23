@@ -313,9 +313,8 @@ public class Display extends JPanel implements ViewerListener
 			isel = 0;
 		if (isel >= seqKymos.seq.getSizeT() )
 			isel = seqKymos.seq.getSizeT() -1;
-		System.out.println("selectKymoImage -- 1");
 		int icurrent = kymographsCombo.getSelectedIndex();
-		System.out.println("selectKymoImage -- 2");
+		System.out.println("selectKymoImage -- 1; #isel =" + isel + " #icurrent =" + icurrent);
 		if (icurrent != isel)
 		{
 			System.out.println("selectKymoImage #"+ isel + " begin update");
