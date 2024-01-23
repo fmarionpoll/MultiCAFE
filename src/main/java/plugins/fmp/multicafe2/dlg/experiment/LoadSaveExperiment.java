@@ -339,14 +339,15 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					v.setTitle(exp.seqCamData.getDecoratedImageName(t));
 				}
 				// TODO: check if the lines below are necessary
-//				else if (exp.seqKymos.seq != null 
-//					&& sequenceEvent.getSequence() == exp.seqKymos.seq)
-//				{
-//					Viewer v = exp.seqKymos.seq.getFirstViewer();
+				else if (exp.seqKymos.seq != null 
+					&& sequenceEvent.getSequence() == exp.seqKymos.seq)
+				{
+					Viewer v = exp.seqKymos.seq.getFirstViewer();
 //					int t = v.getPositionT(); 
 //					String title = parent0.paneKymos.tabDisplay.getKymographTitle();
 //					v.setTitle(title);
-//				}
+					v.setTitle("dummy");
+				}
 			}
 		}
 	}

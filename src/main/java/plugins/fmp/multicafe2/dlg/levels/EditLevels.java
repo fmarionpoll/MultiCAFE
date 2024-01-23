@@ -206,6 +206,8 @@ public class EditLevels  extends JPanel
 			if (optionSelected.contains("deriv"))
 				removeAndUpdate(seqKymos, cap, cap.ptsDerivative, roi);
 		}
+		
+		exp.seqKymos.seq.roiChanged(roi);
 	}
 	
 	private void removeAndUpdate(SequenceKymos seqKymos, Capillary cap, CapillaryLevel caplimits, ROI2D roi) 

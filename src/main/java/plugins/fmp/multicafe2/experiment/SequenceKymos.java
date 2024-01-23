@@ -161,7 +161,7 @@ public class SequenceKymos extends SequenceCamData
 			if (capillaries.capillariesList.size() <= kymo) 
 				capillaries.capillariesList.add(new Capillary());
 			Capillary cap = capillaries.capillariesList.get(kymo);
-			cap.filenameTIFF = getFileName(kymo);
+			cap.filenameTIFF = getFileNameFromImageList(kymo);
 			cap.kymographIndex = kymo;
 			cap.transferROIsToMeasures(roisAtT);	
 		}
@@ -253,7 +253,6 @@ public class SequenceKymos extends SequenceCamData
 			setImagesList(convertLinexLRFileNames(myList));
 			
 			// threaded by default here
-			//seq = loadSequenceFromImagesList(imagesList);
 			loadImages();
 			setParentDirectoryAsCSCamFileName(imagesList.get(0));
 			status = EnumStatus.KYMOGRAPH;

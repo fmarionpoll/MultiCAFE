@@ -51,13 +51,13 @@ public class FlyDetect1 extends BuildSeries
 		switch (options.transformOption) 
 		{
 			case SUBTRACT_TM1: 
-				options.backgroundImage = imageIORead(exp.seqCamData.getFileName(t));
+				options.backgroundImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t));
 				break;
 				
 			case SUBTRACT_T0:
 			case SUBTRACT_REF:
 				if (options.backgroundImage == null)
-					options.backgroundImage = imageIORead(exp.seqCamData.getFileName(0));
+					options.backgroundImage = imageIORead(exp.seqCamData.getFileNameFromImageList(0));
 				break;
 				
 			case NONE:
@@ -88,7 +88,7 @@ public class FlyDetect1 extends BuildSeries
 			String title = "Frame #"+ t_from + "/" + exp.seqCamData.nTotalFrames;
 			progressBar.setMessage(title);
 	
-			IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileName(t_from));
+			IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));
 			getReferenceImage (exp, t_previous, transformOptions);
 			IcyBufferedImage workImage = transformFunction.getTransformedImage(sourceImage, transformOptions); 
 			if (workImage == null)

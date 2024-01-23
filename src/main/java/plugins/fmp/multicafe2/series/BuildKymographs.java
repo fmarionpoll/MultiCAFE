@@ -204,10 +204,10 @@ public class BuildKymographs extends BuildSeries
 	
 	private IcyBufferedImage loadImageFromIndex(Experiment exp, int indexFromFrame) 
 	{
-		IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileName(indexFromFrame));				
+		IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(indexFromFrame));				
 		if (options.doRegistration ) 
 		{
-			String referenceImageName = exp.seqCamData.getFileName(options.referenceFrame);			
+			String referenceImageName = exp.seqCamData.getFileNameFromImageList(options.referenceFrame);			
 			IcyBufferedImage referenceImage = imageIORead(referenceImageName);
 			adjustImage(sourceImage, referenceImage);
 		}

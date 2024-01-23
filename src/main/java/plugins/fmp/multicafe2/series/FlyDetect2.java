@@ -71,7 +71,7 @@ public class FlyDetect2 extends BuildSeries
 			String title = "Frame #"+ t_from + "/" + exp.seqCamData.nTotalFrames;
 			progressBar.setMessage(title);
 
-			IcyBufferedImage workImage = imageIORead(exp.seqCamData.getFileName(t_from));
+			IcyBufferedImage workImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));
 			IcyBufferedImage negativeImage = transformFunction.getTransformedImage(workImage, transformOptions);
 			try {
 				seqNegative.beginUpdate();

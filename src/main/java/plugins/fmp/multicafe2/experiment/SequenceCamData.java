@@ -127,7 +127,7 @@ public class SequenceCamData
 		return csCamFileName;		
 	}
 	
-	public String getFileName(int t) 
+	public String getFileNameFromImageList(int t) 
 	{
 		String csName = null;
 		if (status == EnumStatus.FILESTACK || status == EnumStatus.KYMOGRAPH)  
@@ -185,7 +185,7 @@ public class SequenceCamData
 	public FileTime getFileTimeFromStructuredName(int t) 
 	{
 		long timeInMs = 0;
-		String fileName = fileComponent(getFileName(t));
+		String fileName = fileComponent(getFileNameFromImageList(t));
 		
 		if (fileName == null) 
 		{
@@ -219,7 +219,7 @@ public class SequenceCamData
 	public FileTime getFileTimeFromFileAttributes(int t) 
 	{
 		FileTime filetime=null;
-		File file = new File(getFileName(t));
+		File file = new File(getFileNameFromImageList(t));
         Path filePath = file.toPath();
 
         BasicFileAttributes attributes = null;
@@ -244,7 +244,7 @@ public class SequenceCamData
 
 	public FileTime getFileTimeFromJPEGMetaData(int t) {
 		FileTime filetime = null;
-		File file = new File(getFileName(t));
+		File file = new File(getFileNameFromImageList(t));
 		Metadata metadata;
 		try {
 			metadata = ImageMetadataReader.readMetadata(file);
