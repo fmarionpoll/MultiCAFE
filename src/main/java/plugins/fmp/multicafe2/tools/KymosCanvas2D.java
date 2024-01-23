@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JComboBox;
 import javax.swing.JToolBar;
 
 import icy.canvas.Canvas2D;
@@ -22,7 +23,8 @@ public class KymosCanvas2D extends Canvas2D
 	 * 
 	 */
 	private static final long serialVersionUID = 8827595503996677250L;
-
+	public 	JComboBox<String> kymographsCombo 	= new JComboBox <String> (new String[] {"none", "transf"});
+	
  
     public KymosCanvas2D(Viewer viewer)
     {
@@ -33,7 +35,8 @@ public class KymosCanvas2D extends Canvas2D
     public void customizeToolbar(JToolBar toolBar)
     {
     	toolBar.addSeparator();
-         
+        toolBar.add(kymographsCombo);
+        
 		IcyButton previousButton = new IcyButton(ResourceUtilFMP.ICON_PREVIOUS_IMAGE);
 		previousButton.setSelected(false);
 		previousButton.setFocusable(false);
