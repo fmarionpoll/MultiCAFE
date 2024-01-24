@@ -132,10 +132,10 @@ public class Levels extends JPanel implements PropertyChangeListener
 				Experiment exp =(Experiment)  parent0.expListCombo.getSelectedItem();
 				if (exp != null && exp.seqKymos != null) 
 				{
-					kymosDisplayFiltered01(exp);
+//					kymosDisplayFiltered01(exp);
 //					firePropertyChange("KYMO_DISPLAY_FILTERED1", false, true);
-					
-					getKymosCanvas(exp).kymographsCombo.setSelectedIndex(item);
+					int index = transform01ComboBox.getSelectedIndex();
+					getKymosCanvas(exp).kymographsCombo.setSelectedIndex(index +1);
 				}
 			}});
 		
@@ -170,9 +170,10 @@ public class Levels extends JPanel implements PropertyChangeListener
 				if (exp != null) 
 				{ 
 					if (displayTransform1Button.isSelected()) {
-						// get transform index of combo and pass it to canvasCombo
-						int iselected = transform01ComboBox.getSelectedIndex();
 						KymosCanvas2D canvas = getKymosCanvas(exp);
+						transferFunctionEnumsToKymosCanvas( canvas, transformPass1);
+						int index = transform01ComboBox.getSelectedIndex();
+						getKymosCanvas(exp).kymographsCombo.setSelectedIndex(index +1);
 					}
 //					kymosDisplayFiltered01(exp);
 //					firePropertyChange("KYMO_DISPLAY_FILTERED1", false, true);
@@ -428,7 +429,6 @@ public class Levels extends JPanel implements PropertyChangeListener
 	
 	protected void transferFunctionEnumsToKymosCanvas(KymosCanvas2D canvas, ImageTransformEnums[] transformArray) 
 	{
-		JComboBox<ImageTransformEnums> kymographsCombo = canvas.kymographsCombo;
 		canvas.kymographsCombo.removeAllItems();
 		canvas.kymographsCombo.addItem(ImageTransformEnums.NONE);
 		for (int i = 0; i < transformArray.length; i++)

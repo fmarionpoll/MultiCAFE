@@ -177,7 +177,8 @@ public class ChartLevels extends IcyFrame
 	{
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
         Viewer v = exp.seqKymos.seq.getFirstViewer();
-        v.setPositionT(isel);
+        if (v != null && isel >= 0)
+        	v.setPositionT(isel);
 	}
 
 	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumXLSExportType exportType, boolean subtractEvaporation) 
