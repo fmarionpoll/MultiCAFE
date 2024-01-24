@@ -32,7 +32,7 @@ public class KymosCanvas2D extends Canvas2D
 			ImageTransformEnums.GBMINUS_2R, ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, ImageTransformEnums.RGB_DIFFS,
 			ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB
 			};
-	JComboBox<ImageTransformEnums> kymographsCombo = new JComboBox<ImageTransformEnums> (imageTransform);
+	public JComboBox<ImageTransformEnums> kymographsCombo = new JComboBox<ImageTransformEnums> (imageTransform);
 	ImageTransformInterface transform = ImageTransformEnums.NONE.getFunction();
  
     public KymosCanvas2D(Viewer viewer)

@@ -27,6 +27,7 @@ import plugins.fmp.multicafe2.experiment.Experiment;
 import plugins.fmp.multicafe2.experiment.SequenceKymos;
 import plugins.fmp.multicafe2.series.BuildSeriesOptions;
 import plugins.fmp.multicafe2.series.DetectLevels;
+import plugins.fmp.multicafe2.tools.KymosCanvas2D;
 import plugins.fmp.multicafe2.tools.Image.ImageTransformEnums;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
@@ -129,10 +130,12 @@ public class Levels extends JPanel implements PropertyChangeListener
 			@Override public void actionPerformed( final ActionEvent e ) 
 			{ 
 				Experiment exp =(Experiment)  parent0.expListCombo.getSelectedItem();
-				if (exp != null && exp.seqCamData != null) 
+				if (exp != null && exp.seqKymos != null) 
 				{
 					kymosDisplayFiltered01(exp);
-					firePropertyChange("KYMO_DISPLAY_FILTERED1", false, true);
+//					firePropertyChange("KYMO_DISPLAY_FILTERED1", false, true);
+					
+					getKymosCanvas(exp).kymographsCombo.setSelectedIndex(item);
 				}
 			}});
 		
@@ -145,7 +148,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 				if (exp != null && exp.seqCamData != null) 
 				{
 					kymosDisplayFiltered02(exp);
-					firePropertyChange("KYMO_DISPLAY_FILTERED2", false, true);
+//					firePropertyChange("KYMO_DISPLAY_FILTERED2", false, true);
 				}
 			}});
 	
@@ -166,8 +169,13 @@ public class Levels extends JPanel implements PropertyChangeListener
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) 
 				{ 
-					kymosDisplayFiltered01(exp);
-					firePropertyChange("KYMO_DISPLAY_FILTERED1", false, true);
+					if (displayTransform1Button.isSelected()) {
+						// get transform index of combo and pass it to canvasCombo
+						int iselected = transform01ComboBox.getSelectedIndex();
+						KymosCanvas2D canvas = getKymosCanvas(exp);
+					}
+//					kymosDisplayFiltered01(exp);
+//					firePropertyChange("KYMO_DISPLAY_FILTERED1", false, true);
 				}
 			}});
 		
@@ -216,21 +224,21 @@ public class Levels extends JPanel implements PropertyChangeListener
 	
 	// -------------------------------------------------
 		
-	void kymosDisplayFiltered01(Experiment exp) 
-	{
-		SequenceKymos seqKymos = exp.seqKymos;
-		if (seqKymos == null)
-			return;
-		ImageTransformEnums transform01 = (ImageTransformEnums) transform01ComboBox.getSelectedItem();
-		
-		List<Capillary> capList = exp.capillaries.capillariesList;
-		for (int t=0; t < exp.seqKymos.seq.getSizeT(); t++) 
-			getInfosFromDialog(capList.get(t));		
-		
-		int zChannelDestination = 1;
-		exp.kymosBuildFiltered01(0, zChannelDestination, transform01, (int) spanTopSpinner.getValue());
-		seqKymos.seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
-	}
+//	void kymosDisplayFiltered01(Experiment exp) 
+//	{
+//		SequenceKymos seqKymos = exp.seqKymos;
+//		if (seqKymos == null)
+//			return;
+//		ImageTransformEnums transform01 = (ImageTransformEnums) transform01ComboBox.getSelectedItem();
+//		
+//		List<Capillary> capList = exp.capillaries.capillariesList;
+//		for (int t=0; t < exp.seqKymos.seq.getSizeT(); t++) 
+//			getInfosFromDialog(capList.get(t));		
+//		
+//		int zChannelDestination = 1;
+//		exp.kymosBuildFiltered01(0, zChannelDestination, transform01, (int) spanTopSpinner.getValue());
+//		seqKymos.seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
+//	}
 	
 	void kymosDisplayFiltered02(Experiment exp) 
 	{
@@ -411,4 +419,21 @@ public class Levels extends JPanel implements PropertyChangeListener
 			rectangle.height = seqRectangle.height -1 - rectangle.y;
 		return rectangle;
 	}
+	
+	protected KymosCanvas2D getKymosCanvas(Experiment exp) 
+	{
+		KymosCanvas2D canvas = (KymosCanvas2D) exp.seqKymos.seq.getFirstViewer().getCanvas();
+		return canvas;
+	}
+	
+	protected void transferFunctionEnumsToKymosCanvas(KymosCanvas2D canvas, ImageTransformEnums[] transformArray) 
+	{
+		JComboBox<ImageTransformEnums> kymographsCombo = canvas.kymographsCombo;
+		canvas.kymographsCombo.removeAllItems();
+		canvas.kymographsCombo.addItem(ImageTransformEnums.NONE);
+		for (int i = 0; i < transformArray.length; i++)
+			canvas.kymographsCombo.addItem(transformArray[i]);
+	}
+	
+	
 }
