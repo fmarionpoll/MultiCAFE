@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JToggleButton;
 import javax.swing.SpinnerNumberModel;
 
 
@@ -38,27 +39,27 @@ public class Levels extends JPanel implements PropertyChangeListener
 	private JCheckBox	pass1CheckBox 			= new JCheckBox ("pass1", true);
 	private JComboBox<String> direction1ComboBox= new JComboBox<String> (new String[] {" threshold >", " threshold <" });
 	private JSpinner 	threshold1Spinner 		= new JSpinner(new SpinnerNumberModel(35, 1, 255, 1));
-	JComboBox<ImageTransformEnums> transform01ComboBox = new JComboBox<ImageTransformEnums> (
-		new ImageTransformEnums[] {
+	ImageTransformEnums[] transformPass1 = new ImageTransformEnums[] {
 			ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB, ImageTransformEnums.B_RGB, 
 			ImageTransformEnums.R2MINUS_GB, ImageTransformEnums.G2MINUS_RB, ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB,
 			ImageTransformEnums.GBMINUS_2R, ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, ImageTransformEnums.RGB_DIFFS,
 			ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB
-			
-		});
-	private JButton		displayTransform1Button	= new JButton("Display");
+			};
+	JComboBox<ImageTransformEnums> transform01ComboBox = new JComboBox<ImageTransformEnums> (transformPass1);
+	private JToggleButton		displayTransform1Button	= new JToggleButton("Display");
 	
 	private JCheckBox	pass2CheckBox 			= new JCheckBox ("pass2", false);
 	private JComboBox<String> direction2ComboBox= new JComboBox<String> (new String[] {" threshold >", " threshold <" });
 	private JSpinner 	threshold2Spinner 		= new JSpinner(new SpinnerNumberModel(40, 1, 255, 1));
-	JComboBox<ImageTransformEnums> transform02ComboBox = new JComboBox<ImageTransformEnums> (new ImageTransformEnums[] {
+	ImageTransformEnums[] transformPass2 = new ImageTransformEnums[] {
 			ImageTransformEnums.YDIFFN, ImageTransformEnums.YDIFFN2,
 			ImageTransformEnums.DERICHE, ImageTransformEnums.DERICHE_COLOR,
 			ImageTransformEnums.MINUSHORIZAVG,
 			ImageTransformEnums.COLORDISTANCE_L1_Y, ImageTransformEnums.COLORDISTANCE_L2_Y,
-			ImageTransformEnums.SUBTRACT_1RSTCOL, ImageTransformEnums.L1DIST_TO_1RSTCOL,
-			});
-	private JButton		displayTransform2Button	= new JButton("Display");
+			ImageTransformEnums.SUBTRACT_1RSTCOL, ImageTransformEnums.L1DIST_TO_1RSTCOL
+			};
+	JComboBox<ImageTransformEnums> transform02ComboBox = new JComboBox<ImageTransformEnums> (transformPass2);
+	private JToggleButton		displayTransform2Button	= new JToggleButton("Display");
 	
 	private JCheckBox	allKymosCheckBox 		= new JCheckBox ("all kymographs", true);
 	private JSpinner	spanTopSpinner			= new JSpinner(new SpinnerNumberModel(3, 1, 100, 1));

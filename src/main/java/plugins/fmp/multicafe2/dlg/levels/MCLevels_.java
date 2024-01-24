@@ -86,11 +86,12 @@ public class MCLevels_ extends JPanel implements PropertyChangeListener
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) 
 	{
-		if (arg0.getPropertyName().equals("KYMO_DISPLAY_FILTERED1")) 
-		{
-			parent0.paneKymos.tabDisplay.displayUpdateOnSwingThread();
-		}
-		else if (arg0.getPropertyName().equals("MEASURES_SAVE")) 
+//		if (arg0.getPropertyName().equals("KYMO_DISPLAY_FILTERED1")) 
+//		{
+//			parent0.paneKymos.tabDisplay.displayUpdateOnSwingThread();
+//		}
+//		else 
+		if (arg0.getPropertyName().equals("MEASURES_SAVE")) 
 		{
 			tabsPane.setSelectedIndex(0);
 		}

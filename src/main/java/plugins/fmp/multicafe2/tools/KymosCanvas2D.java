@@ -11,10 +11,13 @@ import javax.swing.JToolBar;
 import icy.canvas.Canvas2D;
 import icy.gui.component.button.IcyButton;
 import icy.gui.viewer.Viewer;
+import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 import icy.resource.icon.IcyIcon;
 
 import plugins.fmp.multicafe2.resource.ResourceUtilFMP;
+import plugins.fmp.multicafe2.tools.Image.ImageTransformEnums;
+import plugins.fmp.multicafe2.tools.Image.ImageTransformInterface;
 
 
 public class KymosCanvas2D extends Canvas2D
@@ -23,8 +26,14 @@ public class KymosCanvas2D extends Canvas2D
 	 * 
 	 */
 	private static final long serialVersionUID = 8827595503996677250L;
-	public 	JComboBox<String> kymographsCombo 	= new JComboBox <String> (new String[] {"none", "transf"});
-	
+	public ImageTransformEnums[] imageTransform = new ImageTransformEnums[] {ImageTransformEnums.NONE,
+			ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB, ImageTransformEnums.B_RGB, 
+			ImageTransformEnums.R2MINUS_GB, ImageTransformEnums.G2MINUS_RB, ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB,
+			ImageTransformEnums.GBMINUS_2R, ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, ImageTransformEnums.RGB_DIFFS,
+			ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB
+			};
+	JComboBox<ImageTransformEnums> kymographsCombo = new JComboBox<ImageTransformEnums> (imageTransform);
+	ImageTransformInterface transform = ImageTransformEnums.NONE.getFunction();
  
     public KymosCanvas2D(Viewer viewer)
     {
@@ -88,6 +97,17 @@ public class KymosCanvas2D extends Canvas2D
             public void actionPerformed(ActionEvent arg0) {
             	shrinkImage_to_fit() ;
             }});
+        
+        kymographsCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	ImageTransformEnums transformEnum = (ImageTransformEnums) kymographsCombo.getSelectedItem();
+            	transform = transformEnum.getFunction();
+            	refresh();
+            }});
+        
+        kymographsCombo.setSelectedIndex(0);
+        refresh();
     }   	        
     
     void zoomImage_1_1() 
@@ -114,4 +134,12 @@ public class KymosCanvas2D extends Canvas2D
 		setMouseImagePos(rectImage.width/2, rectImage.height/ 2);
 		setScale(scaleX, scaleY, true, true);
 	}
+    
+    @Override
+    public IcyBufferedImage getImage(int t, int z, int c)
+    {
+    	IcyBufferedImage img = super.getImage(t, z, c);
+    	IcyBufferedImage img2 = transform.getTransformedImage (img, null);
+        return img2;
+    }
 }
