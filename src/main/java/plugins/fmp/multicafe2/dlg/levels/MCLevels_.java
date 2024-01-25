@@ -68,7 +68,7 @@ public class MCLevels_ extends JPanel implements PropertyChangeListener
 		tabsPane.addTab("Load/Save", null, tabFileLevels, "Load/Save kymographs");
 						
 		capPanel.add(tabsPane);
-		tabDetectLevels2.transform01ComboBox.setSelectedItem(ImageTransformEnums.RGB_DIFFS);
+		tabDetectLevels2.transformPass1ComboBox.setSelectedItem(ImageTransformEnums.RGB_DIFFS);
 		tabsPane.setSelectedIndex(0);
 		
 		capPopupPanel.addComponentListener(new ComponentAdapter() 
