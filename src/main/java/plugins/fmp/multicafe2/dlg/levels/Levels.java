@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -24,7 +23,6 @@ import icy.util.StringUtil;
 import plugins.fmp.multicafe2.MultiCAFE2;
 import plugins.fmp.multicafe2.experiment.Capillary;
 import plugins.fmp.multicafe2.experiment.Experiment;
-import plugins.fmp.multicafe2.experiment.SequenceKymos;
 import plugins.fmp.multicafe2.series.BuildSeriesOptions;
 import plugins.fmp.multicafe2.series.DetectLevels;
 import plugins.fmp.multicafe2.tools.KymosCanvas2D;
@@ -174,6 +172,8 @@ public class Levels extends JPanel implements PropertyChangeListener
 						int index = transformPass1ComboBox.getSelectedIndex();
 						canvas.selectImageTransformFunction(index +1);
 					}
+					else
+						getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(0);
 				}
 			}});
 		
@@ -191,6 +191,8 @@ public class Levels extends JPanel implements PropertyChangeListener
 						int index = transformPass2ComboBox.getSelectedIndex();
 						canvas.selectImageTransformFunction(index +1);
 					}
+					else
+						getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(0);
 				}
 			}});
 		
@@ -223,41 +225,6 @@ public class Levels extends JPanel implements PropertyChangeListener
 				}
 			}});
 	
-	}
-	
-	// -------------------------------------------------
-/*		
-//	void kymosDisplayFiltered01(Experiment exp) 
-//	{
-//		SequenceKymos seqKymos = exp.seqKymos;
-//		if (seqKymos == null)
-//			return;
-//		ImageTransformEnums transform01 = (ImageTransformEnums) transform01ComboBox.getSelectedItem();
-//		
-//		List<Capillary> capList = exp.capillaries.capillariesList;
-//		for (int t=0; t < exp.seqKymos.seq.getSizeT(); t++) 
-//			getInfosFromDialog(capList.get(t));		
-//		
-//		int zChannelDestination = 1;
-//		exp.kymosBuildFiltered01(0, zChannelDestination, transform01, (int) spanTopSpinner.getValue());
-//		seqKymos.seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
-//	}
- * */
- 
-	void kymosDisplayFiltered02(Experiment exp) 
-	{
-		SequenceKymos seqKymos = exp.seqKymos;
-		if (seqKymos == null)
-			return;
-		ImageTransformEnums transform02 = (ImageTransformEnums) transformPass2ComboBox.getSelectedItem();
-		
-		List<Capillary> capList = exp.capillaries.capillariesList;
-		for (int t=0; t < exp.seqKymos.seq.getSizeT(); t++) 
-			getInfosFromDialog(capList.get(t));		
-		
-		int zChannelDestination = 1;
-		exp.kymosBuildFiltered01(0, zChannelDestination, transform02, (int) spanTopSpinner.getValue());
-		seqKymos.seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
 	}
 	
 	void allowItemsAccordingToSelection() 
