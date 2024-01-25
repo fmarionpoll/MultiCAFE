@@ -27,12 +27,12 @@ public class KymosCanvas2D extends Canvas2D
 	 */
 	private static final long serialVersionUID = 8827595503996677250L;
 	public ImageTransformEnums[] imageTransform = new ImageTransformEnums[] {ImageTransformEnums.NONE,
-			ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB, ImageTransformEnums.B_RGB, 
-			ImageTransformEnums.R2MINUS_GB, ImageTransformEnums.G2MINUS_RB, ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB,
-			ImageTransformEnums.GBMINUS_2R, ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, ImageTransformEnums.RGB_DIFFS,
-			ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB
+			ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB, ImageTransformEnums.B_RGB 
+//			, ImageTransformEnums.R2MINUS_GB, ImageTransformEnums.G2MINUS_RB, ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB
+//			, ImageTransformEnums.GBMINUS_2R, ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, ImageTransformEnums.RGB_DIFFS
+//			, ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB
 			};
-	public JComboBox<ImageTransformEnums> kymographsCombo = new JComboBox<ImageTransformEnums> (imageTransform);
+	public JComboBox<ImageTransformEnums> imageTransformFunctionsCombo = new JComboBox<ImageTransformEnums> (imageTransform);
 	ImageTransformInterface transform = ImageTransformEnums.NONE.getFunction();
  
     public KymosCanvas2D(Viewer viewer)
@@ -44,7 +44,7 @@ public class KymosCanvas2D extends Canvas2D
     public void customizeToolbar(JToolBar toolBar)
     {
     	toolBar.addSeparator();
-        toolBar.add(kymographsCombo);
+        toolBar.add(imageTransformFunctionsCombo);
         
 		IcyButton previousButton = new IcyButton(ResourceUtilFMP.ICON_PREVIOUS_IMAGE);
 		previousButton.setSelected(false);
@@ -98,15 +98,15 @@ public class KymosCanvas2D extends Canvas2D
             	shrinkImage_to_fit() ;
             }});
         
-        kymographsCombo.addActionListener(new ActionListener() {
+        imageTransformFunctionsCombo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	ImageTransformEnums transformEnum = (ImageTransformEnums) kymographsCombo.getSelectedItem();
+            	ImageTransformEnums transformEnum = (ImageTransformEnums) imageTransformFunctionsCombo.getSelectedItem();
             	transform = transformEnum.getFunction();
             	refresh();
             }});
         
-        kymographsCombo.setSelectedIndex(0);
+        imageTransformFunctionsCombo.setSelectedIndex(0);
         refresh();
     }   	        
     
@@ -141,5 +141,31 @@ public class KymosCanvas2D extends Canvas2D
     	IcyBufferedImage img = super.getImage(t, z, c);
     	IcyBufferedImage img2 = transform.getTransformedImage (img, null);
         return img2;
+    }
+    
+    public void updateListOfImageTransformFunctions(ImageTransformEnums[] transformArray) 
+    {
+        // remove listeners
+        ActionListener[] listeners = imageTransformFunctionsCombo.getActionListeners();
+        for (int i = 0; i < listeners.length; i++)
+        	imageTransformFunctionsCombo.removeActionListener(listeners[i]);
+
+        if (imageTransformFunctionsCombo.getItemCount() > 0)
+        	imageTransformFunctionsCombo.removeAllItems();
+
+        // add contents
+        imageTransformFunctionsCombo.addItem(ImageTransformEnums.NONE);
+        for (int i = 0; i < transformArray.length; i++) {
+        	imageTransformFunctionsCombo.addItem(transformArray[i]);
+        }
+
+        // restore listeners
+        for (int i = 0; i < listeners.length; i++)
+        	imageTransformFunctionsCombo.addActionListener(listeners[i]);
+    }
+    
+    public void selectImageTransformFunction(int iselected) 
+    {
+		imageTransformFunctionsCombo.setSelectedIndex(iselected);
     }
 }

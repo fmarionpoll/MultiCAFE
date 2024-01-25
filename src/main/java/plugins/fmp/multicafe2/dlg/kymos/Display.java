@@ -321,7 +321,7 @@ public class Display extends JPanel implements ViewerListener
 			seqKymos.seq.beginUpdate();
 			seqKymos.validateRoisAtT(icurrent);
 			
-			seqKymos.currentFrame = isel;
+			seqKymos.currentFrame = isel; 
 			Viewer v = seqKymos.seq.getFirstViewer();
 			if (v != null)
 			{
@@ -331,7 +331,8 @@ public class Display extends JPanel implements ViewerListener
 			seqKymos.seq.endUpdate();
 //			System.out.println("selectKymoImage #"+ isel + " end update");
 			
-			kymographsCombo.setSelectedIndex(isel);
+			if (icurrent >= 0) 
+				kymographsCombo.setSelectedIndex(isel);
 			parent0.paneKymos.tabDisplay.displayROIsAccordingToUserSelection();
 			selectCapillary(exp, isel);
 //			System.out.println("selectKymoImage #" + isel + " -- setselectedIndex + selectcapillary");
