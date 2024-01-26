@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -17,7 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JToggleButton;
 import javax.swing.SpinnerNumberModel;
-
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import icy.util.StringUtil;
 import plugins.fmp.multicafe2.MultiCAFE2;
@@ -27,6 +30,7 @@ import plugins.fmp.multicafe2.series.BuildSeriesOptions;
 import plugins.fmp.multicafe2.series.DetectLevels;
 import plugins.fmp.multicafe2.tools.KymosCanvas2D;
 import plugins.fmp.multicafe2.tools.Image.ImageTransformEnums;
+import plugins.fmp.multicafe2.tools.Overlay.OverlayThreshold;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 
@@ -36,7 +40,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 	private static final long serialVersionUID 	= -6329863521455897561L;
 	
 	private JCheckBox	pass1CheckBox 			= new JCheckBox ("pass1", true);
-	private JComboBox<String> direction1ComboBox= new JComboBox<String> (new String[] {" threshold >", " threshold <" });
+	private JComboBox<String> direction1ComboBox = new JComboBox<String> (new String[] {" threshold >", " threshold <" });
 	private JSpinner 	threshold1Spinner 		= new JSpinner(new SpinnerNumberModel(35, 1, 255, 1));
 	ImageTransformEnums[] transformPass1 		= new ImageTransformEnums[] {
 			ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB, ImageTransformEnums.B_RGB, 
@@ -70,12 +74,14 @@ public class Levels extends JPanel implements PropertyChangeListener
 	private JCheckBox	leftCheckBox 			= new JCheckBox ("L", true);
 	private JCheckBox	rightCheckBox 			= new JCheckBox ("R", true);
 	private JCheckBox	runBackwardsCheckBox 	= new JCheckBox ("run backwards", false);
+	private JCheckBox 	overlayCheckBox 		= new JCheckBox("overlay");
 	
 	private MultiCAFE2 	parent0 				= null;
 	private DetectLevels threadDetectLevels 	= null;
 	
 	private String SEARCHRECT = new String("search_rectangle");
 	private ROI2DRectangle searchRectangleROI2D = null;
+	private OverlayThreshold overlayThreshold 	= null;
 	// -----------------------------------------------------
 		
 	void init(GridLayout capLayout, MultiCAFE2 parent0) 
@@ -101,6 +107,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 		panel01.add(threshold1Spinner);
 		panel01.add(transformPass1ComboBox);
 		panel01.add(transformPass1DisplayButton);
+		panel01.add(overlayCheckBox);
 		add (panel01);
 		
 		JPanel panel02 = new JPanel(layoutLeft);
@@ -118,7 +125,32 @@ public class Levels extends JPanel implements PropertyChangeListener
 		add( panel03);
 		
 		defineActionListeners();
+		defineItemListeners();
 		allowItemsAccordingToSelection();
+	}
+	
+	private void defineItemListeners() 
+	{
+		overlayCheckBox.addItemListener(new ItemListener() 
+		{
+		      public void itemStateChanged(ItemEvent e) 
+		      {
+		    	  Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		    	  if (exp != null) 
+		    	  {
+		    		  if (overlayCheckBox.isSelected()) 
+		    			  updateOverlay(exp);
+		    		  else
+		    			  removeOverlay(exp);
+		    	  }
+		      }});
+		
+		threshold1Spinner.addChangeListener(new ChangeListener() 
+		{
+			 public void stateChanged(ChangeEvent e) 
+		     {
+		    	  updateOverlayThreshold();
+		      }});
 	}
 	
 	private void defineActionListeners() 
@@ -132,6 +164,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 				{
 					int index = transformPass1ComboBox.getSelectedIndex();
 					getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(index +1);
+					updateOverlayThreshold();
 				}
 			}});
 		
@@ -215,16 +248,17 @@ public class Levels extends JPanel implements PropertyChangeListener
 				if (exp == null)
 						return;
 				if (fromCheckBox.isSelected()) 
-				{
 					displaySearchArea(exp);
-				}
-				else
-				{
-					if (searchRectangleROI2D != null)
-						exp.seqKymos.seq.removeROI(searchRectangleROI2D);
-				}
+				else if (searchRectangleROI2D != null)
+					exp.seqKymos.seq.removeROI(searchRectangleROI2D);
 			}});
-	
+		
+		direction1ComboBox.addActionListener(new ActionListener () 
+		{ 
+			@Override public void actionPerformed( final ActionEvent e ) 
+			{ 
+				updateOverlayThreshold();
+			}});
 	}
 	
 	void allowItemsAccordingToSelection() 
@@ -396,5 +430,39 @@ public class Levels extends JPanel implements PropertyChangeListener
 		KymosCanvas2D canvas = (KymosCanvas2D) exp.seqKymos.seq.getFirstViewer().getCanvas();
 		return canvas;
 	}
+	
+	void updateOverlay (Experiment exp) 
+	{
+		if (exp.seqKymos == null)
+			return;
+		if (overlayThreshold == null) 
+			overlayThreshold = new OverlayThreshold(exp.seqKymos);
+		else 
+		{
+			exp.seqKymos.seq.removeOverlay(overlayThreshold);
+			overlayThreshold.setSequence(exp.seqKymos);
+		}
+		exp.seqKymos.seq.addOverlay(overlayThreshold);	
+		updateOverlayThreshold();	
+	}
+	
+	void updateOverlayThreshold() 
+	{
+		if (overlayThreshold == null)
+			return;
+		boolean ifGreater = (direction1ComboBox.getSelectedIndex() == 0); 
+		int detectLevel1Threshold = (int) threshold1Spinner.getValue();
+		overlayThreshold.setThresholdSingle(detectLevel1Threshold, 
+				(ImageTransformEnums) transformPass1ComboBox.getSelectedItem(), 
+				ifGreater);
+		overlayThreshold.painterChanged();
+	}
+	
+	void removeOverlay(Experiment exp) 
+	{
+		if (exp.seqKymos != null && exp.seqKymos.seq != null)
+			exp.seqKymos.seq.removeOverlay(overlayThreshold);
+	}
+
 	
 }

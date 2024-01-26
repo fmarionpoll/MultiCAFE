@@ -56,7 +56,7 @@ public class Detect2 extends JPanel implements ChangeListener, PropertyChangeLis
 	private JComboBox<String> allCagesComboBox = new JComboBox<String> (new String[] {"all cages"});
 	
 	private FlyDetect2 flyDetect2 		= null;
-	private OverlayThreshold ov 		= null;
+	private OverlayThreshold overlayThreshold2 	= null;
 	
 	// ----------------------------------------------------
 	
@@ -138,20 +138,20 @@ public class Detect2 extends JPanel implements ChangeListener, PropertyChangeLis
 		SequenceCamData seqCamData = exp.seqCamData;
 		if (seqCamData == null)
 			return;
-		if (ov == null) {
-			ov = new OverlayThreshold(seqCamData);
+		if (overlayThreshold2 == null) {
+			overlayThreshold2 = new OverlayThreshold(seqCamData);
 			exp.seqCamData.refImage = IcyBufferedImageUtil.getCopy(exp.seqCamData.getSeqImage(0, 0));
 		}
 		else 
 		{
-			seqCamData.seq.removeOverlay(ov);
-			ov.setSequence(seqCamData);
+			seqCamData.seq.removeOverlay(overlayThreshold2);
+			overlayThreshold2.setSequence(seqCamData);
 		}
-		seqCamData.seq.addOverlay(ov);	
+		seqCamData.seq.addOverlay(overlayThreshold2);	
 		boolean ifGreater = true; 
 		ImageTransformEnums transformOp = ImageTransformEnums.SUBTRACT_REF;
-		ov.setThresholdSingle(threshold, transformOp, ifGreater);
-		ov.painterChanged();	
+		overlayThreshold2.setThresholdSingle(threshold, transformOp, ifGreater);
+		overlayThreshold2.painterChanged();	
 	}
 	
 	private BuildSeriesOptions initTrackParameters() 

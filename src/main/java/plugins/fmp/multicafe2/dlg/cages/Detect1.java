@@ -80,7 +80,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 			JCheckBox 	overlayCheckBox 		= new JCheckBox("overlay");
 	private JCheckBox 	allCheckBox 			= new JCheckBox("ALL (current to last)", false);
 	
-	private OverlayThreshold ov 				= null;
+	private OverlayThreshold overlayThreshold1	= null;
 	private FlyDetect1 flyDetect1 				= null;
 
 
@@ -148,9 +148,9 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		    	  {
 		    		  if (overlayCheckBox.isSelected()) 
 		    		  {
-		    			  if (ov == null)
-		    				  ov = new OverlayThreshold(exp.seqCamData);
-		    			  exp.seqCamData.seq.addOverlay(ov);
+		    			  if (overlayThreshold1 == null)
+		    				  overlayThreshold1 = new OverlayThreshold(exp.seqCamData);
+		    			  exp.seqCamData.seq.addOverlay(overlayThreshold1);
 		    			  updateOverlay(exp);
 		    		  }
 		    		  else
@@ -185,24 +185,24 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		SequenceCamData seqCamData = exp.seqCamData;
 		if (seqCamData == null)
 			return;
-		if (ov == null) 
-			ov = new OverlayThreshold(seqCamData);
+		if (overlayThreshold1 == null) 
+			overlayThreshold1 = new OverlayThreshold(seqCamData);
 		else 
 		{
-			seqCamData.seq.removeOverlay(ov);
-			ov.setSequence(seqCamData);
+			seqCamData.seq.removeOverlay(overlayThreshold1);
+			overlayThreshold1.setSequence(seqCamData);
 		}
-		seqCamData.seq.addOverlay(ov);	
+		seqCamData.seq.addOverlay(overlayThreshold1);	
 		boolean ifGreater = true; 
 		ImageTransformEnums transformOp = (ImageTransformEnums) transformComboBox.getSelectedItem();
-		ov.setThresholdSingle(exp.cages.detect_threshold, transformOp, ifGreater);
-		ov.painterChanged();	
+		overlayThreshold1.setThresholdSingle(exp.cages.detect_threshold, transformOp, ifGreater);
+		overlayThreshold1.painterChanged();	
 	}
 	
 	public void removeOverlay(Experiment exp) 
 	{
 		if (exp.seqCamData != null && exp.seqCamData.seq != null)
-			exp.seqCamData.seq.removeOverlay(ov);
+			exp.seqCamData.seq.removeOverlay(overlayThreshold1);
 	}
 
 	@Override

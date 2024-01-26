@@ -53,7 +53,7 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 				ImageTransformEnums.R2MINUS_GB, ImageTransformEnums.G2MINUS_RB, ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB,
 				ImageTransformEnums.GBMINUS_2R, ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, 
 				ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB	});
-	private OverlayThreshold 	ov 				= null;
+	private OverlayThreshold overlayThreshold 	= null;
 	private MultiCAFE2 			parent0			= null;
 	
 	
@@ -138,23 +138,23 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 		SequenceCamData seqCamData = exp.seqCamData;
 		if (seqCamData == null)
 			return;
-		if (ov == null) 
+		if (overlayThreshold == null) 
 		{
-			ov = new OverlayThreshold(seqCamData);
-			seqCamData.seq.addOverlay(ov);
+			overlayThreshold = new OverlayThreshold(seqCamData);
+			seqCamData.seq.addOverlay(overlayThreshold);
 		}
 		else 
 		{
-			seqCamData.seq.removeOverlay(ov);
-			ov.setSequence(seqCamData);
-			seqCamData.seq.addOverlay(ov);
+			seqCamData.seq.removeOverlay(overlayThreshold);
+			overlayThreshold.setSequence(seqCamData);
+			seqCamData.seq.addOverlay(overlayThreshold);
 		}
 		exp.cages.detect_threshold = (int) thresholdSpinner.getValue();
-		ov.setThresholdTransform(
+		overlayThreshold.setThresholdTransform(
 				exp.cages.detect_threshold,  
 				(ImageTransformEnums) transformForLevelsComboBox.getSelectedItem(),
 				false);
-		seqCamData.seq.overlayChanged(ov);
+		seqCamData.seq.overlayChanged(overlayThreshold);
 		seqCamData.seq.dataChanged();		
 	}
 	
@@ -162,7 +162,7 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 	public void removeOverlay(Experiment exp) 
 	{
 		if (exp.seqCamData != null && exp.seqCamData.seq != null)
-			exp.seqCamData.seq.removeOverlay(ov);
+			exp.seqCamData.seq.removeOverlay(overlayThreshold);
 	}
 	
 	@Override
@@ -181,9 +181,9 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
     	  	{
 	  			if (overlayCheckBox.isSelected()) 
 	  			{
-					if (ov == null)
-						ov = new OverlayThreshold(exp.seqCamData);
-					exp.seqCamData.seq.addOverlay(ov);
+					if (overlayThreshold == null)
+						overlayThreshold = new OverlayThreshold(exp.seqCamData);
+					exp.seqCamData.seq.addOverlay(overlayThreshold);
 					updateOverlay(exp);
 				}
 				else
@@ -197,7 +197,7 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 		exp.cages.removeAllRoiCagesFromSequence(exp.seqCamData);
 		int t = exp.seqCamData.currentFrame;
 		IcyBufferedImage img0 = IcyBufferedImageUtil.convertToType(
-				ov.getTransformedImage(t), 
+				overlayThreshold.getTransformedImage(t), 
 				DataType.INT, 
 				false);
 		Rectangle rectGrid = new Rectangle(0,0, img0.getSizeX(), img0.getSizeY());
