@@ -74,7 +74,8 @@ public class Levels extends JPanel implements PropertyChangeListener
 	private JCheckBox	leftCheckBox 			= new JCheckBox ("L", true);
 	private JCheckBox	rightCheckBox 			= new JCheckBox ("R", true);
 	private JCheckBox	runBackwardsCheckBox 	= new JCheckBox ("run backwards", false);
-	private JCheckBox 	overlayCheckBox 		= new JCheckBox("overlay");
+	private JCheckBox 	overlayPass1CheckBox 	= new JCheckBox("overlay");
+	private JCheckBox 	overlayPass2CheckBox 	= new JCheckBox("overlay");
 	
 	private MultiCAFE2 	parent0 				= null;
 	private DetectLevels threadDetectLevels 	= null;
@@ -107,7 +108,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 		panel01.add(threshold1Spinner);
 		panel01.add(transformPass1ComboBox);
 		panel01.add(transformPass1DisplayButton);
-		panel01.add(overlayCheckBox);
+		panel01.add(overlayPass1CheckBox);
 		add (panel01);
 		
 		JPanel panel02 = new JPanel(layoutLeft);
@@ -117,6 +118,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 		panel02.add(threshold2Spinner);
 		panel02.add(transformPass2ComboBox);
 		panel02.add(transformPass2DisplayButton);
+		panel02.add(overlayPass2CheckBox);
 		add (panel02);
 		
 		JPanel panel03 = new JPanel(layoutLeft);
@@ -131,14 +133,28 @@ public class Levels extends JPanel implements PropertyChangeListener
 	
 	private void defineItemListeners() 
 	{
-		overlayCheckBox.addItemListener(new ItemListener() 
+		overlayPass1CheckBox.addItemListener(new ItemListener() 
 		{
 		      public void itemStateChanged(ItemEvent e) 
 		      {
 		    	  Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		    	  if (exp != null) 
 		    	  {
-		    		  if (overlayCheckBox.isSelected()) 
+		    		  if (overlayPass1CheckBox.isSelected()) 
+		    			  updateOverlay(exp);
+		    		  else
+		    			  removeOverlay(exp);
+		    	  }
+		      }});
+		
+		overlayPass2CheckBox.addItemListener(new ItemListener() 
+		{
+		      public void itemStateChanged(ItemEvent e) 
+		      {
+		    	  Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		    	  if (exp != null) 
+		    	  {
+		    		  if (overlayPass2CheckBox.isSelected()) 
 		    			  updateOverlay(exp);
 		    		  else
 		    			  removeOverlay(exp);
@@ -146,6 +162,13 @@ public class Levels extends JPanel implements PropertyChangeListener
 		      }});
 		
 		threshold1Spinner.addChangeListener(new ChangeListener() 
+		{
+			 public void stateChanged(ChangeEvent e) 
+		     {
+		    	  updateOverlayThreshold();
+		      }});
+		
+		threshold2Spinner.addChangeListener(new ChangeListener() 
 		{
 			 public void stateChanged(ChangeEvent e) 
 		     {
@@ -178,6 +201,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 				{
 					int index = transformPass2ComboBox.getSelectedIndex();
 					getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(index +1);
+					updateOverlayThreshold();
 				}
 			}});
 	
@@ -442,19 +466,35 @@ public class Levels extends JPanel implements PropertyChangeListener
 			exp.seqKymos.seq.removeOverlay(overlayThreshold);
 			overlayThreshold.setSequence(exp.seqKymos);
 		}
-		exp.seqKymos.seq.addOverlay(overlayThreshold);	
-		updateOverlayThreshold();	
+		
+		if (transformPass1DisplayButton.isSelected() || transformPass2DisplayButton.isSelected()) {
+			exp.seqKymos.seq.addOverlay(overlayThreshold);	
+			updateOverlayThreshold();	
+		}
 	}
 	
 	void updateOverlayThreshold() 
 	{
 		if (overlayThreshold == null)
 			return;
-		boolean ifGreater = (direction1ComboBox.getSelectedIndex() == 0); 
-		int detectLevel1Threshold = (int) threshold1Spinner.getValue();
-		overlayThreshold.setThresholdSingle(detectLevel1Threshold, 
-				(ImageTransformEnums) transformPass1ComboBox.getSelectedItem(), 
-				ifGreater);
+		
+		boolean ifGreater = true; 
+		int threshold = 0;
+		ImageTransformEnums transform = ImageTransformEnums.NONE;
+		if (transformPass1DisplayButton.isSelected() ) {
+			ifGreater = (direction1ComboBox.getSelectedIndex() == 0); 
+			threshold = (int) threshold1Spinner.getValue();
+			transform = (ImageTransformEnums) transformPass1ComboBox.getSelectedItem();
+		}
+		else if (transformPass2DisplayButton.isSelected() ) 
+		{
+			ifGreater = (direction2ComboBox.getSelectedIndex() == 0); 
+			threshold = (int) threshold2Spinner.getValue();
+			transform = (ImageTransformEnums) transformPass2ComboBox.getSelectedItem();
+		}
+		else
+			return;
+		overlayThreshold.setThresholdSingle(threshold, transform, ifGreater);
 		overlayThreshold.painterChanged();
 	}
 	
