@@ -299,7 +299,6 @@ public class Display extends JPanel implements ViewerListener
 	
 	public void selectKymographImage(int isel)
 	{
-		System.out.println("selectKymoImage ");
 		Experiment exp =(Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null) 
 			return;
@@ -314,10 +313,8 @@ public class Display extends JPanel implements ViewerListener
 		if (isel >= seqKymos.seq.getSizeT() )
 			isel = seqKymos.seq.getSizeT() -1;
 		int icurrent = kymographsCombo.getSelectedIndex();
-//		System.out.println("selectKymoImage -- 1; #isel =" + isel + " #icurrent =" + icurrent);
 		if (icurrent != isel)
 		{
-//			System.out.println("selectKymoImage #"+ isel + " begin update");
 			seqKymos.seq.beginUpdate();
 			seqKymos.validateRoisAtT(icurrent);
 			
@@ -329,13 +326,11 @@ public class Display extends JPanel implements ViewerListener
 					v.setPositionT(isel);
 			}
 			seqKymos.seq.endUpdate();
-//			System.out.println("selectKymoImage #"+ isel + " end update");
 			
 			if (icurrent >= 0) 
 				kymographsCombo.setSelectedIndex(isel);
 			parent0.paneKymos.tabDisplay.displayROIsAccordingToUserSelection();
 			selectCapillary(exp, isel);
-//			System.out.println("selectKymoImage #" + isel + " -- setselectedIndex + selectcapillary");
 		}
 	}
 	
@@ -359,7 +354,6 @@ public class Display extends JPanel implements ViewerListener
 			{
 				Viewer v = exp.seqKymos.seq.getFirstViewer();
 				int t = v.getPositionT();
-				System.out.println("viewer changed");
 				selectKymographImage(t);
 			}
 		}
