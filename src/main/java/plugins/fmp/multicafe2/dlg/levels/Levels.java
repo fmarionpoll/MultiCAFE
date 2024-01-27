@@ -49,7 +49,8 @@ public class Levels extends JPanel implements PropertyChangeListener
 			ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB
 			};
 	JComboBox<ImageTransformEnums> transformPass1ComboBox = new JComboBox<ImageTransformEnums> (transformPass1);
-	private JToggleButton transformPass1DisplayButton = new JToggleButton("Display");
+	private JToggleButton transformPass1DisplayButton = new JToggleButton("View");
+	private JCheckBox 	overlayPass1CheckBox 	= new JCheckBox("overlay");
 	
 	private JCheckBox	pass2CheckBox 			= new JCheckBox ("pass2", false);
 	private JComboBox<String> direction2ComboBox= new JComboBox<String> (new String[] {" threshold >", " threshold <" });
@@ -62,7 +63,8 @@ public class Levels extends JPanel implements PropertyChangeListener
 			ImageTransformEnums.SUBTRACT_1RSTCOL, ImageTransformEnums.L1DIST_TO_1RSTCOL
 			};
 	JComboBox<ImageTransformEnums> transformPass2ComboBox = new JComboBox<ImageTransformEnums> (transformPass2);
-	private JToggleButton transformPass2DisplayButton = new JToggleButton("Display");
+	private JToggleButton transformPass2DisplayButton = new JToggleButton("View");
+	private JCheckBox 	overlayPass2CheckBox 	= new JCheckBox("overlay");
 	
 	private JCheckBox	allKymosCheckBox 		= new JCheckBox ("all kymographs", true);
 	private JSpinner	spanTopSpinner			= new JSpinner(new SpinnerNumberModel(3, 1, 100, 1));
@@ -74,8 +76,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 	private JCheckBox	leftCheckBox 			= new JCheckBox ("L", true);
 	private JCheckBox	rightCheckBox 			= new JCheckBox ("R", true);
 	private JCheckBox	runBackwardsCheckBox 	= new JCheckBox ("run backwards", false);
-	private JCheckBox 	overlayPass1CheckBox 	= new JCheckBox("overlay");
-	private JCheckBox 	overlayPass2CheckBox 	= new JCheckBox("overlay");
+	
 	
 	private MultiCAFE2 	parent0 				= null;
 	private DetectLevels threadDetectLevels 	= null;
@@ -222,15 +223,23 @@ public class Levels extends JPanel implements PropertyChangeListener
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) 
 				{ 
+					boolean displayCheckOverlay = false;
 					if (transformPass1DisplayButton.isSelected()) {
 						transformPass2DisplayButton.setSelected(false);
 						KymosCanvas2D canvas = getKymosCanvas(exp);
 						canvas.updateListOfImageTransformFunctions( transformPass1);
 						int index = transformPass1ComboBox.getSelectedIndex();
 						canvas.selectImageTransformFunction(index +1);
+						displayCheckOverlay = true;
 					}
 					else
+					{
+						removeOverlay(exp);
+						overlayPass1CheckBox.setSelected(false);
 						getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(0);
+						
+					}
+					overlayPass1CheckBox.setEnabled(displayCheckOverlay);
 				}
 			}});
 		
@@ -241,15 +250,22 @@ public class Levels extends JPanel implements PropertyChangeListener
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) 
 				{ 
+					boolean displayCheckOverlay = false;
 					if (transformPass2DisplayButton.isSelected()) {
 						transformPass1DisplayButton.setSelected(false);
 						KymosCanvas2D canvas = getKymosCanvas(exp);
 						canvas.updateListOfImageTransformFunctions( transformPass2);
 						int index = transformPass2ComboBox.getSelectedIndex();
 						canvas.selectImageTransformFunction(index +1);
+						displayCheckOverlay = true;
 					}
 					else
+					{
+						removeOverlay(exp);
+						overlayPass2CheckBox.setSelected(false);
 						getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(0);
+					}
+					overlayPass1CheckBox.setEnabled(displayCheckOverlay);
 				}
 			}});
 		
