@@ -30,6 +30,7 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 	public	PopupPanel 	capPopupPanel	= null;
 			JTabbedPane tabsPane 		= new JTabbedPane();
 	public 	Create 		tabCreate 		= new Create();
+	public 	CreateFromCages	tabCreateFromCages	= new CreateFromCages();
 			Edit		tabEdit			= new Edit();
 	public 	LoadSaveCapillaries 	tabFile 		= new LoadSaveCapillaries();
 			Adjust 		tabAdjust 		= new Adjust();
@@ -56,7 +57,12 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 		int order = 0;
 		tabCreate.init(capLayout, parent0);
 		tabCreate.addPropertyChangeListener(this);
-		tabsPane.addTab("Create", null, tabCreate, "Create lines defining capillaries");
+		tabsPane.addTab("Create caps", null, tabCreate, "Create lines defining capillaries");
+		order++;
+		
+		tabCreateFromCages.init(capLayout, parent0);
+		tabCreateFromCages.addPropertyChangeListener(this);
+		tabsPane.addTab("Create drops", null, tabCreateFromCages, "Create lines defining drops");
 		order++;
 		
 		ID_INFOS=order;
@@ -144,7 +150,7 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 	public void getDialogCapillariesInfos(Experiment exp) 
 	{
 		tabInfos.getDescriptors(exp.capillaries);
-		tabCreate.getGrouping(exp.capillaries);
+		tabCreate.setCapillariesGrouping(exp.capillaries);
 	}
 
 	@Override
