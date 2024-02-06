@@ -29,8 +29,8 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 	private static final long serialVersionUID = 853047648249832145L;
 	public	PopupPanel 	capPopupPanel	= null;
 			JTabbedPane tabsPane 		= new JTabbedPane();
-	public 	Create 		tabCreate 		= new Create();
-	public 	CreateFromCages	tabCreateFromCages	= new CreateFromCages();
+	public 	CreateForCapillaries 		tabCreate 		= new CreateForCapillaries();
+	public 	CreateForSpots	tabCreateFromCages	= new CreateForSpots();
 			Edit		tabEdit			= new Edit();
 	public 	LoadSaveCapillaries 	tabFile 		= new LoadSaveCapillaries();
 			Adjust 		tabAdjust 		= new Adjust();

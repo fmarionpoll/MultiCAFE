@@ -32,7 +32,7 @@ import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 
-public class CreateFromCages extends JPanel 
+public class CreateForSpots extends JPanel 
 {
 	/**
 	 * 

@@ -37,7 +37,7 @@ import plugins.fmp.multicafe2.tools.ROI2DUtilities;
 
 
 
-public class EditCapillariesPositionWithTime extends JPanel implements ListSelectionListener {
+public class EditPositionWithTime extends JPanel implements ListSelectionListener {
 
 	/**
 	 * 

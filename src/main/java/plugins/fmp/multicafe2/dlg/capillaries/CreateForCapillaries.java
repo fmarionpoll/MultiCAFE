@@ -32,7 +32,7 @@ import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 
-public class Create extends JPanel 
+public class CreateForCapillaries extends JPanel 
 {
 	/**
 	 * 
