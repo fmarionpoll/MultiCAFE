@@ -40,7 +40,10 @@ public class CreateForSpots extends JPanel
 	private static final long serialVersionUID = -5257698990389571518L;
 	
 	private JButton 	addPolygon2DButton 		= new JButton("(1) Draw frame");
+	private JComboBox<String> modeJCombo 		= new JComboBox<String> (new String[] {"cages"});
 	private JButton 	createROIsFromPolygonButton2 = new JButton("(2) Generate");
+	
+	
 	private JRadioButton selectGroupedby2Button = new JRadioButton("by 2");
 	private JRadioButton selectEvenlySpacedButton 	= new JRadioButton("even");
 	private JComboBox<String> cagesJCombo 		= new JComboBox<String> (new String[] {"10", "4+(2)", "1+(2)"});
@@ -48,10 +51,8 @@ public class CreateForSpots extends JPanel
 	private ButtonGroup buttonGroup2 			= new ButtonGroup();
 	private JSpinner 	nbcapillariesJSpinner 	= new JSpinner(new SpinnerNumberModel(2, 1, 500, 1));
 	private JSpinner 	nbFliesPerCageJSpinner 	= new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
-	private JSpinner 	width_between_capillariesJSpinner = new JSpinner(new SpinnerNumberModel(30, 0, 10000, 1));
-	private JLabel		width_between_capillariesLabel = new JLabel("pixels btw. caps ");
-	private JSpinner 	width_intervalJSpinner 	= new JSpinner(new SpinnerNumberModel(53, 0, 10000, 1)); 
-	private JLabel 		width_intervalLabel 	= new JLabel("btw. groups ");
+
+
 	private Polygon2D 	capillariesPolygon 		= null;
 	
 	private JSpinner 	nRowsJSpinner 		= new JSpinner(new SpinnerNumberModel(1, 1, 500, 1));
@@ -67,42 +68,35 @@ public class CreateForSpots extends JPanel
 		flowLayout.setVgap(0);
 		
 		JPanel panel0 = new JPanel(flowLayout);
-		panel0.add(addPolygon2DButton);
-		
-		
-		panel0.add(new JLabel ("grid rows:"));
-		panel0.add(nRowsJSpinner);
-		nRowsJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel0.add(new JLabel ("cols:"));
-		panel0.add(nColumnsJSpinner);
-		nColumnsJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel0.add(new JLabel ("cages/cell:"));
-		panel0.add(cagesJCombo);	
-		cagesJCombo.setPreferredSize(new Dimension (60, 20));
+		panel0.add(addPolygon2DButton);		
+		panel0.add(new JLabel ("including all"));
+		panel0.add(modeJCombo);
+		panel0.add(createROIsFromPolygonButton2);
 		
 		JPanel panel2 = new JPanel(flowLayout);
+		panel2.add(new JLabel ("grid rows"));
+		panel2.add(nRowsJSpinner);
+		nRowsJSpinner.setPreferredSize(new Dimension (40, 20));
+		panel2.add(new JLabel ("cols"));
+		panel2.add(nColumnsJSpinner);
+		nColumnsJSpinner.setPreferredSize(new Dimension (40, 20));
+		panel2.add(new JLabel ("cages/cell"));
+		panel2.add(cagesJCombo);	
+		cagesJCombo.setPreferredSize(new Dimension (60, 20));
 		panel2.add(new JLabel ("fly/cage"));
 		panel2.add(nbFliesPerCageJSpinner);
 		nbFliesPerCageJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel2.add(new JLabel ("caps/cage:"));
-		panel2.add(nbcapillariesJSpinner);
-		nbcapillariesJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel2.add(new JLabel ("with:"));
-		panel2.add(width_between_capillariesJSpinner);
-		width_between_capillariesJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel2.add(width_between_capillariesLabel);
-		panel2.add(width_intervalJSpinner);
-		width_intervalJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel2.add(width_intervalLabel);		
-		JPanel panel1 = new JPanel(flowLayout);
 		
-		panel1.add(new JLabel (" angle:"));
+		JPanel panel1 = new JPanel(flowLayout);
+		panel1.add(new JLabel ("polyline/cage"));
+		panel1.add(nbcapillariesJSpinner);
+		nbcapillariesJSpinner.setPreferredSize(new Dimension (40, 20));
+		panel1.add(new JLabel (" angle"));
 		panel1.add(orientationJCombo);
 		orientationJCombo.setPreferredSize(new Dimension (50, 20));
-		panel1.add(new JLabel ("points/cap:"));
+		panel1.add(new JLabel ("points/polyline"));
 		panel1.add(nPointsJSpinner);
 		nPointsJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel1.add(createROIsFromPolygonButton2);
 				
 		add(panel0);
 		add(panel2);
@@ -161,24 +155,7 @@ public class CreateForSpots extends JPanel
 				}
 			}});
 		
-		selectEvenlySpacedButton.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) { 
-				EnableBinWidthItems(false);
-			}});
-		
-		selectGroupedby2Button.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) { 
-				EnableBinWidthItems(true);
-			}});
-	}
-	
-	private void EnableBinWidthItems(boolean status) {
-		width_between_capillariesJSpinner.setEnabled(status);
-		width_between_capillariesLabel.setEnabled(status);
-		width_intervalJSpinner.setEnabled(status);
-		width_intervalLabel.setEnabled(status);
+
 	}
 	
 	// set/ get	
@@ -188,15 +165,6 @@ public class CreateForSpots extends JPanel
 		return (int) nbcapillariesJSpinner.getValue();
 	}
 
-	private int getWidthSmallInterval ( ) 
-	{
-		return (int) width_between_capillariesJSpinner.getValue();
-	}
-	
-	private int getWidthLongInterval() 
-	{
-		return (int) width_intervalJSpinner.getValue();
-	}
 	
 	private boolean getGroupedBy2() 
 	{
@@ -206,8 +174,10 @@ public class CreateForSpots extends JPanel
 	void setGroupedBy2(boolean flag) 
 	{
 		buttonGroup2.clearSelection();
-		selectGroupedby2Button.setSelected(flag);
-		selectEvenlySpacedButton.setSelected(!flag);
+//		selectGroupedby2Button.setSelected(flag);
+//		selectEvenlySpacedButton.setSelected(!flag);
+		selectGroupedby2Button.setVisible(flag);
+		selectEvenlySpacedButton.setVisible(!flag);
 	}
 	
 	void setGroupingAndNumber(Capillaries cap) 
@@ -295,11 +265,6 @@ public class CreateForSpots extends JPanel
 		try 
 		{ 
 			nbcapillaries = getNbCapillaries();
-			if(statusGroup2Mode) 
-			{
-				width_between_capillaries = getWidthSmallInterval();
-				width_interval = getWidthLongInterval();
-			}
 		} 
 		catch( Exception e ) 
 		{ 
