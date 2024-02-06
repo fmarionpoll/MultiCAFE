@@ -17,14 +17,14 @@
     
     <packaging>jar</packaging>
 
-    <name>MultiCAFE2 plugin</name>
+    <name>MultiCAFE2</name>
     <description>This plugin allows measuring how much flies drink from capillaries filled with liquid. Capillaries are defined by the user as polyLine ROIS. These ROIS are used to generate kymographs, from which the liquid level is detected and exported to Excel files. Cages and the position of individual flies can also be detected and exported to Excel files. No provision is made to detect more than one fly by cage. Each experiment is described by a series of parameters that are exported along with the measures.</description>
     <url></url>
-    <inceptionYear>2023</inceptionYear>
+    <inceptionYear>2024</inceptionYear>
 
     <organization>
         <name>IDEEV UMR EGCE (CNRS-IRD-Paris-Saclay)</name>
-        <url>https://egce.cnrs-gif.fr</url>
+        <url>https://www.egce.universite-paris-saclay.fr/</url>
     </organization>
 
     <licenses>
@@ -80,10 +80,6 @@
 
         <dependency>
         	<groupId>org.bioimageanalysis.icy</groupId>
-        	<artifactId>xuggler</artifactId>
-        </dependency>
-        <dependency>
-        	<groupId>org.bioimageanalysis.icy</groupId>
         	<artifactId>flanagan</artifactId>
         </dependency>
         <dependency>
@@ -129,6 +125,10 @@
             <groupId>org.openpnp</groupId>
             <artifactId>opencv</artifactId>
             <version>4.5.1-2</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.bioimageanalysis.icy</groupId>
+        	<artifactId>xuggler</artifactId>
         </dependency>
     </dependencies>
     
@@ -188,11 +188,6 @@
     			<groupId>org.bioimageanalysis.icy</groupId>
     			<artifactId>mask-editor</artifactId>
     			<version>1.2.1</version>
-    		</dependency>
-    		<dependency>
-    			<groupId>org.bioimageanalysis.icy</groupId>
-    			<artifactId>xuggler</artifactId>
-    			<version>5.5.2</version>
     		</dependency>
     	</dependencies>
     </dependencyManagement>
