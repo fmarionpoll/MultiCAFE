@@ -39,23 +39,26 @@ public class CreateForCapillaries extends JPanel
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
 	
-	private JButton 	addPolygon2DButton 		= new JButton("(1) Draw frame");
-	private JComboBox<String> modeJCombo 		= new JComboBox<String> (new String[] {"capillaries"});
-	private JButton 	createROIsFromPolygonButton2 = new JButton("(2) Generate");
+	private JButton 	addPolygon2DButton 		= new JButton("(1) Eclose capillaries");
+	private JButton 	createROIsFromPolygonButton2 = new JButton("(2) Generate caps");
 	
 	private JComboBox<String> cagesJCombo 		= new JComboBox<String> (new String[] {"10", "4+(2)", "1+(2)"});
 	private JSpinner 	nbFliesPerCageJSpinner 	= new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
 	
-	private JLabel		widthLabel				= new JLabel ("with");
+	private JLabel		widthLabel				= new JLabel ("with a ratio of");
 	private JSpinner 	nCapillariesPerCage 	= new JSpinner(new SpinnerNumberModel(2, 1, 500, 1));
 	private JSpinner 	width_between_capillariesJSpinner = new JSpinner(new SpinnerNumberModel(30, 0, 10000, 1));
-	private JLabel		width_between_capillariesLabel = new JLabel("pixels btw. caps vs.");
+	private JLabel		width_between_capillariesLabel = new JLabel("pixels btw. caps to");
 	private JSpinner 	width_intervalJSpinner 	= new JSpinner(new SpinnerNumberModel(53, 0, 10000, 1)); 
 	private JLabel 		width_intervalLabel 	= new JLabel("pixels btw. cages");
 	private Polygon2D 	capillariesPolygon 		= null;
+	private String 		flySingleString			= new String("fly");
+	private String 		flyPluralString			= new String("flies");
+	private JLabel 		flyLabel 				= new JLabel (flySingleString);
 
-	
 	private MultiCAFE2 	parent0 				= null;
+	
+	
 	
 	void init(GridLayout capLayout, MultiCAFE2 parent0) 
 	{
@@ -65,22 +68,21 @@ public class CreateForCapillaries extends JPanel
 		
 		JPanel panel0 = new JPanel(flowLayout);
 		panel0.add(addPolygon2DButton);		
-		panel0.add(new JLabel ("including all"));
-		panel0.add(modeJCombo);
 		panel0.add(createROIsFromPolygonButton2);
 		
 		JPanel panel1 = new JPanel(flowLayout);
-		panel1.add(new JLabel ("cages/frame"));
+		panel1.add(new JLabel ("Grouped as"));
 		panel1.add(cagesJCombo);	
-		panel1.add(new JLabel ("fly/cage"));
+		cagesJCombo.setPreferredSize(new Dimension (60, 20));
+		panel1.add(new JLabel ("cages each with"));
+		panel1.add(nCapillariesPerCage);
+		nCapillariesPerCage.setPreferredSize(new Dimension (40, 20));
+		panel1.add(new JLabel ("caps &"));
 		panel1.add(nbFliesPerCageJSpinner);
-		nbFliesPerCageJSpinner.setPreferredSize(new Dimension (40, 20));	
+		nbFliesPerCageJSpinner.setPreferredSize(new Dimension (40, 20));
+		panel1.add(flyLabel);
 		
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(new JLabel ("caps/cage"));
-		panel2.add(nCapillariesPerCage);
-		cagesJCombo.setPreferredSize(new Dimension (60, 20));
-		nCapillariesPerCage.setPreferredSize(new Dimension (40, 20));
 		panel2.add(widthLabel);
 		panel2.add(width_between_capillariesJSpinner);
 		width_between_capillariesJSpinner.setPreferredSize(new Dimension (40, 20));
@@ -148,6 +150,14 @@ public class CreateForCapillaries extends JPanel
 		    	boolean status = (int) nCapillariesPerCage.getValue() == 2? true:false;
 		        EnableBinWidthItems(status);
 		    	nCapillariesPerCage.requestFocus();
+		    }});
+		
+		nbFliesPerCageJSpinner.addChangeListener(new ChangeListener() {
+		    @Override
+		    public void stateChanged(ChangeEvent e) {
+		    	String text = (int) nbFliesPerCageJSpinner.getValue() > 1 ? flyPluralString:flySingleString;
+		        flyLabel.setText(text);
+		        nbFliesPerCageJSpinner.requestFocus();
 		    }});
 
 	}
