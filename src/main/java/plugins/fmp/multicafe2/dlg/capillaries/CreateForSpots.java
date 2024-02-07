@@ -90,7 +90,7 @@ public class CreateForSpots extends JPanel
 		panel1.add(flyLabel);
 		
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(new JLabel ("In each cage, draw polyline with"));
+		panel2.add(new JLabel ("Polyline with"));
 		panel2.add(nCapillariesJSpinner);
 		nCapillariesJSpinner.setPreferredSize(new Dimension (40, 20));
 		panel2.add(capLabel);

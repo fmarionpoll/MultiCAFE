@@ -62,7 +62,7 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 		
 		tabCreateFromCages.init(capLayout, parent0);
 		tabCreateFromCages.addPropertyChangeListener(this);
-		tabsPane.addTab("Create drops", null, tabCreateFromCages, "Create lines defining drops");
+		tabsPane.addTab("Create spots", null, tabCreateFromCages, "Create spots defining liquid drops");
 		order++;
 		
 		ID_INFOS=order;
