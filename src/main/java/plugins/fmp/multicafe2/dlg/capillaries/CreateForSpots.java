@@ -10,12 +10,10 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
@@ -25,7 +23,6 @@ import icy.gui.frame.progress.AnnounceFrame;
 import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe2.MultiCAFE2;
-import plugins.fmp.multicafe2.experiment.Capillaries;
 import plugins.fmp.multicafe2.experiment.Experiment;
 import plugins.fmp.multicafe2.experiment.SequenceCamData;
 import plugins.fmp.multicafe2.experiment.SequenceKymosUtils;
@@ -41,23 +38,28 @@ public class CreateForSpots extends JPanel
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
 	
-	private JButton 	addPolygon2DButton 		= new JButton("(1) Enclose all cages");
-	private JButton 	createROIsFromPolygonButton2 = new JButton("(2) Generate polylines");
+	private JButton 	addPolygon2DButton 		= new JButton("(1) Display frame");
+	private JButton 	createROIsFromPolygonButton2 = new JButton("(2) Generate polylines from edited frame");
 	
 	
-	private JComboBox<String> cagesJCombo 		= new JComboBox<String> (new String[] {"10", "4+(2)", "1+(2)"});
+	private JComboBox<String> cagesJCombo 		= new JComboBox<String> (new String[] {"10", "other"});
 	private JComboBox<String> orientationJCombo = new JComboBox<String> (new String[] {"0°", "90°", "180°", "270°" });
-	private JSpinner 	nbcapillariesJSpinner 	= new JSpinner(new SpinnerNumberModel(1, 1, 500, 1));
+	private JSpinner 	nCapillariesJSpinner 	= new JSpinner(new SpinnerNumberModel(2, 2, 500, 1));
 	private JSpinner 	nbFliesPerCageJSpinner 	= new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
-
 
 	private Polygon2D 	capillariesPolygon 		= null;
 	private JSpinner 	nRowsJSpinner 			= new JSpinner(new SpinnerNumberModel(1, 1, 500, 1));
 	private JSpinner 	nColumnsJSpinner 		= new JSpinner(new SpinnerNumberModel(1, 1, 500, 1));
-	private JSpinner 	nPointsJSpinner 		= new JSpinner(new SpinnerNumberModel(2, 2, 500, 1));
-	private String 		flySingleString			= new String("fly");
-	private String 		flyPluralString			= new String("flies");
-	private JLabel 		flyLabel 				= new JLabel (flySingleString);
+
+	private String []	flyString				= new String[] {"fly", "flies"};
+	private String []	colString				= new String[] {"col X", "cols X"};	
+	private String []	rowString				= new String[] {"row of", "rows of"};
+	
+	private JLabel 		flyLabel 				= new JLabel (flyString[0]);
+	private JLabel 		capLabel 				= new JLabel ("points at");
+	private JLabel 		colLabel 				= new JLabel (colString[0]);
+	private JLabel 		rowLabel 				= new JLabel (rowString[0]);
+
 	
 	private MultiCAFE2 	parent0 				= null;
 	
@@ -75,10 +77,10 @@ public class CreateForSpots extends JPanel
 		panel1.add(new JLabel ("Grouped as"));
 		panel1.add(nColumnsJSpinner);
 		nColumnsJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel1.add(new JLabel ("cols x"));
+		panel1.add(colLabel);
 		panel1.add(nRowsJSpinner);
 		nRowsJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel1.add(new JLabel ("rows of"));
+		panel1.add(rowLabel);
 		
 		panel1.add(cagesJCombo);	
 		cagesJCombo.setPreferredSize(new Dimension (60, 20));
@@ -86,25 +88,19 @@ public class CreateForSpots extends JPanel
 		panel1.add(nbFliesPerCageJSpinner);
 		nbFliesPerCageJSpinner.setPreferredSize(new Dimension (40, 20));
 		panel1.add(flyLabel);
-
 		
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(new JLabel ("In each cage, draw"));
-		panel2.add(nbcapillariesJSpinner);
-		nbcapillariesJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel2.add(new JLabel ("polylines with"));
-		panel2.add(nPointsJSpinner);
-		nPointsJSpinner.setPreferredSize(new Dimension (40, 20));
-		panel2.add(new JLabel ("points at"));
+		panel2.add(new JLabel ("In each cage, draw polyline with"));
+		panel2.add(nCapillariesJSpinner);
+		nCapillariesJSpinner.setPreferredSize(new Dimension (40, 20));
+		panel2.add(capLabel);
 		panel2.add(orientationJCombo);
 		orientationJCombo.setPreferredSize(new Dimension (50, 20));
 		panel2.add(new JLabel ("angle"));
-		
-				
+						
 		add(panel0);
 		add(panel1);
-		add(panel2);
-		
+		add(panel2);		
 		
 		defineActionListeners();
 		this.parent0 = parent0;
@@ -158,18 +154,33 @@ public class CreateForSpots extends JPanel
 		nbFliesPerCageJSpinner.addChangeListener(new ChangeListener() {
 		    @Override
 		    public void stateChanged(ChangeEvent e) {
-		    	String text = (int) nbFliesPerCageJSpinner.getValue() > 1 ? flyPluralString:flySingleString;
-		        flyLabel.setText(text);
+		    	int i = (int) nbFliesPerCageJSpinner.getValue() > 1 ? 1:0;
+		        flyLabel.setText(flyString[i]);
 		        nbFliesPerCageJSpinner.requestFocus();
 		    }});
 
+		nColumnsJSpinner.addChangeListener(new ChangeListener() {
+		    @Override
+		    public void stateChanged(ChangeEvent e) {
+		    	int i = (int) nColumnsJSpinner.getValue() > 1 ? 1:0;
+		        colLabel.setText(colString[i]);
+		        nColumnsJSpinner.requestFocus();
+		    }});
+		
+		nRowsJSpinner.addChangeListener(new ChangeListener() {
+		    @Override
+		    public void stateChanged(ChangeEvent e) {
+		    	int i = (int) nRowsJSpinner.getValue() > 1 ? 1:0;
+		        rowLabel.setText(rowString[i]);
+		        nRowsJSpinner.requestFocus();
+		    }});
 	}
 	
 	// set/ get	
 
 	private int getNbCapillaries( ) 
 	{
-		return (int) nbcapillariesJSpinner.getValue();
+		return (int) nCapillariesJSpinner.getValue();
 	}
 
 	
