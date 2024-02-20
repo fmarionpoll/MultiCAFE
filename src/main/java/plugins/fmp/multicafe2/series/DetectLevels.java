@@ -154,7 +154,8 @@ public class DetectLevels  extends BuildSeries
 	}
 	
 	private void detectPass2(IcyBufferedImage rawImage, ImageTransformInterface transformPass2, Capillary capi, 
-			int imageWidth, int imageHeight, Rectangle searchRect, int jitter) {
+			int imageWidth, int imageHeight, Rectangle searchRect, int jitter) 
+	{
 		if (capi.ptsTop.limit == null)
 			capi.ptsTop.setTempDataFromPolylineLevel();
 

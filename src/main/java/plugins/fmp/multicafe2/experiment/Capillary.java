@@ -757,6 +757,21 @@ public class Capillary implements Comparable <Capillary>
 		return (int) npixels;
 	}
 	
+	public void adjustToImageWidth (int imageWidth) 
+	{
+		ptsTop.adjustToImageWidth(imageWidth);
+		ptsBottom.adjustToImageWidth(imageWidth);
+		ptsDerivative.adjustToImageWidth(imageWidth);
+		ptsGulps.gulps.clear(); 
+	}
+
+	public void cropToImageWidth (int imageWidth) 
+	{
+		ptsTop.cropToImageWidth(imageWidth);
+		ptsBottom.cropToImageWidth(imageWidth);
+		ptsDerivative.cropToImageWidth(imageWidth);
+		ptsGulps.gulps.clear();
+	}
 	// --------------------------------------------
 	
 	public List<KymoROI2D> getROIsForKymo() 

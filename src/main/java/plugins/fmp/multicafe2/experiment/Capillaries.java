@@ -293,23 +293,13 @@ public class Capillaries
 	public void adjustToImageWidth (int imageWidth) 
 	{
 		for (Capillary cap: capillariesList) 
-		{
-			cap.ptsTop.adjustToImageWidth(imageWidth);
-			cap.ptsBottom.adjustToImageWidth(imageWidth);
-			cap.ptsDerivative.adjustToImageWidth(imageWidth);
-			cap.ptsGulps.gulps.clear(); 
-		}
+			cap.adjustToImageWidth(imageWidth);
 	}
 	
 	public void cropToImageWidth (int imageWidth) 
 	{
 		for (Capillary cap: capillariesList) 
-		{
-			cap.ptsTop.cropToImageWidth(imageWidth);
-			cap.ptsBottom.cropToImageWidth(imageWidth);
-			cap.ptsDerivative.cropToImageWidth(imageWidth);
-			cap.ptsGulps.gulps.clear();
-		}
+			cap.cropToImageWidth(imageWidth);
 	}
 
 	public void transferDescriptionToCapillaries() 
