@@ -16,7 +16,7 @@ import plugins.fmp.multicafe2.tools.Image.ImageTransformInterface;
 
 
 
-public class DetectLevels  extends BuildSeries  
+public class DetectLevels extends BuildSeries  
 {
 	void analyzeExperiment(Experiment exp) 
 	{

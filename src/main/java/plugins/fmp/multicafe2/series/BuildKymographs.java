@@ -176,7 +176,6 @@ public class BuildKymographs extends BuildSeries
 		return true;
 	}
 	
-	
 	private void analyzeImageWithCapillary(IcyBufferedImage sourceImage, Capillary cap, int fromSourceImageIndex, int kymographColumn)
 	{
 		KymoROI2D capT = cap.getROI2DKymoAtIntervalT(fromSourceImageIndex);
