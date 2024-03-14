@@ -42,7 +42,7 @@ public class EditLevels  extends JPanel
 //	private ArrayList<ROI> 		listGulpsSelected = null;
 	private JComboBox<String> 	roiTypeCombo 	= new JComboBox<String> (new String[] 
 			{" top level", "bottom level", "top & bottom levels", "derivative", "gulps" });
-	private JButton 			deleteButton 	= new JButton("Cut & interpolate");
+	private JButton 			cutAndInterpolateButton 	= new JButton("Cut & interpolate");
 	private JButton 			cropButton 		= new JButton("Crop from left");
 	private JButton 			restoreButton 	= new JButton("Restore");
 	
@@ -59,7 +59,7 @@ public class EditLevels  extends JPanel
 		panel1.add(roiTypeCombo, BorderLayout.CENTER);
 		
 		add(GuiUtil.besidesPanel(new JLabel(" "), panel1));
-		add(GuiUtil.besidesPanel(new JLabel(" "), deleteButton));
+		add(GuiUtil.besidesPanel(new JLabel(" "), cutAndInterpolateButton));
 		
 		JPanel panel2 = new JPanel();
 		panel2.setLayout(new BorderLayout());
@@ -72,13 +72,13 @@ public class EditLevels  extends JPanel
 	
 	private void defineListeners() 
 	{
-		deleteButton.addActionListener(new ActionListener () 
+		cutAndInterpolateButton.addActionListener(new ActionListener () 
 		{ 
 			@Override public void actionPerformed( final ActionEvent e ) 
 			{ 
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
-					deletePointsIncluded(exp);
+					cutAndInterpolate(exp);
 			}});
 		
 		cropButton.addActionListener(new ActionListener () 
@@ -178,7 +178,7 @@ public class EditLevels  extends JPanel
 			seq.removeROI(roi);
 	}
 	
-	void deletePointsIncluded(Experiment exp) 
+	void cutAndInterpolate(Experiment exp) 
 	{
 		SequenceKymos seqKymos = exp.seqKymos;
 		int t = seqKymos.currentFrame;
@@ -186,7 +186,7 @@ public class EditLevels  extends JPanel
 		if (roi == null)
 			return;
 		
-		seqKymos.transferKymosRoisToCapillaries_Measures(exp.capillaries);
+		seqKymos.transferKymosRoi_atT_ToCapillaries_Measures(t, exp.capillaries);
 		Capillary cap = exp.capillaries.capillariesList.get(t);
 		String optionSelected = (String) roiTypeCombo.getSelectedItem();
 		if (optionSelected .contains("gulp")) 
@@ -196,6 +196,8 @@ public class EditLevels  extends JPanel
 			seqKymos.removeROIsPolylineAtT(t);
 			List<ROI2D> listOfRois = cap.transferMeasuresToROIs();
 			seqKymos.seq.addROIs (listOfRois, false);
+			for (ROI lroi: listOfRois)
+				seqKymos.seq.roiChanged(lroi);
 		} 
 		else 
 		{
@@ -206,8 +208,6 @@ public class EditLevels  extends JPanel
 			if (optionSelected.contains("deriv"))
 				removeAndUpdate(seqKymos, cap, cap.ptsDerivative, roi);
 		}
-		
-		exp.seqKymos.seq.roiChanged(roi);
 	}
 	
 	private void removeAndUpdate(SequenceKymos seqKymos, Capillary cap, CapillaryLevel caplimits, ROI2D roi) 
@@ -225,7 +225,7 @@ public class EditLevels  extends JPanel
 			double [] xpoints = new double [npointsOutside];
 			double [] ypoints = new double [npointsOutside];
 			int index = 0;
-			for (int i=0; i < polyline.npoints; i++) 
+			for (int i = 0; i < polyline.npoints; i++) 
 			{
 				if (!isInside[i]) 
 				{

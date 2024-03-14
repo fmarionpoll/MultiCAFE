@@ -114,8 +114,10 @@ public class SequenceKymos extends SequenceCamData
 				continue;
 			if (!roi.getName().contains(caplimits.capName))
 				continue;
+			
 			((ROI2DPolyLine) roi).setPolyline2D(caplimits.polylineLevel);
 			roi.setName(caplimits.capName);
+			seq.roiChanged(roi);
 			break;
 		}
 	}
@@ -150,6 +152,7 @@ public class SequenceKymos extends SequenceCamData
 		List<ROI> allRois = seq.getROIs();
 		if (allRois.size() < 1)
 			return false;
+		
 		for (int kymo=0; kymo< seq.getSizeT(); kymo++) 
 		{
 			List<ROI> roisAtT = new ArrayList<ROI> ();
@@ -165,6 +168,28 @@ public class SequenceKymos extends SequenceCamData
 			cap.kymographIndex = kymo;
 			cap.transferROIsToMeasures(roisAtT);	
 		}
+		return true;
+	}
+	
+	public boolean transferKymosRoi_atT_ToCapillaries_Measures(int t, Capillaries capillaries) 
+	{
+		List<ROI> allRois = seq.getROIs();
+		if (allRois.size() < 1)
+			return false;
+
+		List<ROI> roisAtT = new ArrayList<ROI> ();
+		for (ROI roi: allRois) 
+		{
+			if (roi instanceof ROI2D && ((ROI2D)roi).getT() == t)
+				roisAtT.add(roi);
+		}
+		if (capillaries.capillariesList.size() <= t) 
+			capillaries.capillariesList.add(new Capillary());
+		Capillary cap = capillaries.capillariesList.get(t);
+		cap.filenameTIFF = getFileNameFromImageList(t);
+		cap.kymographIndex = t;
+		cap.transferROIsToMeasures(roisAtT);	
+		
 		return true;
 	}
 	

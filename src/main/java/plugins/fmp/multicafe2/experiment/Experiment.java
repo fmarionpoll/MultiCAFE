@@ -769,6 +769,8 @@ public class Experiment
 	
 	public void replaceFieldValue(EnumXLSColumnHeader fieldEnumCode, String oldValue, String newValue) 
 	{
+		loadMCExperiment();
+		loadCapillariesMeasures();
 		switch (fieldEnumCode)
 		{
 		case EXP_STIM:
@@ -788,6 +790,7 @@ public class Experiment
 			break;
 		}
 		saveMCExperiment();
+		saveCapillariesMeasures();
 	}
 	
 	// --------------------------------------------
