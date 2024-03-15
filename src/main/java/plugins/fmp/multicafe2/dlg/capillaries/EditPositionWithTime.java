@@ -33,6 +33,7 @@ import plugins.fmp.multicafe2.MultiCAFE2;
 import plugins.fmp.multicafe2.dlg.JComponents.CapillariesWithTimeTableModel;
 import plugins.fmp.multicafe2.experiment.Capillary;
 import plugins.fmp.multicafe2.experiment.Experiment;
+import plugins.fmp.multicafe2.experiment.KymoROI2D;
 import plugins.fmp.multicafe2.tools.ROI2DUtilities;
 
 
@@ -142,7 +143,8 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 			}});
 	}
 	
-	private void defineSelectionListener() {
+	private void defineSelectionListener() 
+	{
 		tableView.getSelectionModel().addListSelectionListener(this);
 	}
 	
@@ -150,7 +152,8 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		dialogFrame.close();
 	}
 	
-	private void moveAllCapillaries() {
+	private void moveAllCapillaries() 
+	{
 		if (envelopeRoi == null) 
 			return;
 		Point2D pt0 = envelopeRoi_initial.getPosition2D();
@@ -161,7 +164,8 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		shiftPositionOfCapillaries(deltaX, deltaY);		
 	}
 	
-	private void shiftPositionOfCapillaries(double deltaX, double deltaY) {
+	private void shiftPositionOfCapillaries(double deltaX, double deltaY) 
+	{
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();;
 		if (exp == null) 
 			return;
@@ -175,40 +179,49 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		}
 	}
 	
-	private void showFrame(boolean show) {
+	private void showFrame(boolean show) 
+	{
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
 		
 		if (show)
-			addFrameAroundCapillaries(exp.seqCamData.seq);
+		{
+			int t = exp.seqCamData.seq.getFirstViewer().getPositionT();
+			// TODO select current interval and return only rois2D from that interval
+			addFrameAroundCapillaries(t, exp);
+		}
 		else 
 			removeFrameAroundCapillaries(exp.seqCamData.seq);
 	}
 	
-	private void addFrameAroundCapillaries(Sequence seq) {
-		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingCapillaries(seq.getROI2Ds());
+	private void addFrameAroundCapillaries(int t, Experiment exp) 
+	{
+		ArrayList<ROI2D> listRoisAtT = new ArrayList<ROI2D>();
+		for (Capillary cap: exp.capillaries.capillariesList) 
+		{
+			KymoROI2D kymoROI2D = cap.getROI2DKymoAtIntervalT(t);
+			listRoisAtT.add(kymoROI2D.getRoi());
+		}
+		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingCapillaries(listRoisAtT);
+ 
 		envelopeRoi_initial = new ROI2DPolygon (polygon);
 		envelopeRoi = new ROI2DPolygon(polygon);
 		envelopeRoi.setName(dummyname);
 		envelopeRoi.setColor(Color.YELLOW);
 		
-		seq.addROI(envelopeRoi);
-		seq.setSelectedROI(envelopeRoi);
+		exp.seqCamData.seq.addROI(envelopeRoi);
+		exp.seqCamData.seq.setSelectedROI(envelopeRoi);
 	}
 
-	private void removeFrameAroundCapillaries(Sequence seq) {
-		ArrayList<ROI2D> listRois = seq.getROI2Ds();
-		for (ROI2D roi: listRois) {
-			if (roi.getName().equals(dummyname)) {
-				seq.removeROI(roi);
-				break;
-			}
-		}
-		envelopeRoi = null;
+	private void removeFrameAroundCapillaries(Sequence seq) 
+	{
+		seq.removeROI(envelopeRoi);
+		seq.removeROI(envelopeRoi_initial);
 	}
 	
-	private void addTableItem() {
+	private void addTableItem() 
+	{
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null) return;
 
@@ -232,7 +245,8 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		}
 	}
 	
-	private void displayCapillariesForSelectedInterval(int selectedRow) {
+	private void displayCapillariesForSelectedInterval(int selectedRow) 
+	{
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null) return;
 		Sequence seq = exp.seqCamData.seq;

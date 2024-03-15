@@ -21,35 +21,43 @@ public class KymoROI2D implements XMLPersistent
 	private final String ID_START 	= "startT";
 	
 	
-	public KymoROI2D(long start, ROI2D roi) {
+	public KymoROI2D(long start, ROI2D roi) 
+	{
 		setRoi(roi);
 		this.start = start;
 	}
 	
-	public KymoROI2D() {
+	public KymoROI2D() 
+	{
 	}
 
-	public long getStart() {
+	public long getStart() 
+	{
 		return start;
 	}
 	
-	public ROI2D getRoi() {
+	public ROI2D getRoi() 
+	{
 		return roi;
 	}
 	
-	public ArrayList<ArrayList<int[]>> getMasksList() {
+	public ArrayList<ArrayList<int[]>> getMasksList() 
+	{
 		return masksList;
 	}
 	
-	public void setStart(long start) {
+	public void setStart(long start) 
+	{
 		this.start = start;
 	}
 	
-	public void setRoi(ROI2D roi) {
+	public void setRoi(ROI2D roi) 
+	{
 		this.roi = (ROI2D) roi.getCopy();
 	}
 	
-	public void setMasksList(ArrayList<ArrayList<int[]>> masksList) {
+	public void setMasksList(ArrayList<ArrayList<int[]>> masksList) 
+	{
 		this.masksList = masksList;
 	}
 

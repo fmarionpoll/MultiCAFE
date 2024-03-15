@@ -181,7 +181,7 @@ public class EditLevels  extends JPanel
 	void cutAndInterpolate(Experiment exp) 
 	{
 		SequenceKymos seqKymos = exp.seqKymos;
-		int t = seqKymos.currentFrame;
+		int t = seqKymos.seq.getFirstViewer().getPositionT();
 		ROI2D roi = seqKymos.seq.getSelectedROI2D();
 		if (roi == null)
 			return;

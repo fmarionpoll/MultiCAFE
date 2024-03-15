@@ -95,7 +95,8 @@ public class BuildKymographs extends BuildSeries
         ArrayList<Future<?>> futuresArray = new ArrayList<Future<?>>(nframes);
 		futuresArray.clear();
 		
-		for (int t = 0; t < exp.seqKymos.seq.getSizeT(); t++) {
+		for (int t = 0; t < exp.seqKymos.seq.getSizeT(); t++) 
+		{
 			final int t_index = t;
 			futuresArray.add(processor.submit(new Runnable () {
 				@Override
@@ -147,8 +148,8 @@ public class BuildKymographs extends BuildSeries
 	    ArrayList<Future<?>> tasks = new ArrayList<Future<?>>( ntasks);
 		
 	    tasks.clear();
-		for (long ii_ms = exp.kymoFirst_ms ; ii_ms <= exp.kymoLast_ms; ii_ms += exp.kymoBin_ms, iToColumn++) {
-
+		for (long ii_ms = exp.kymoFirst_ms ; ii_ms <= exp.kymoLast_ms; ii_ms += exp.kymoBin_ms, iToColumn++) 
+		{
 			sourceImageIndex = exp.getClosestInterval(sourceImageIndex, ii_ms);
 			final int fromSourceImageIndex = sourceImageIndex;
 			final int kymographColumn =  iToColumn;	
@@ -176,9 +177,9 @@ public class BuildKymographs extends BuildSeries
 		return true;
 	}
 	
-	private void analyzeImageWithCapillary(IcyBufferedImage sourceImage, Capillary cap, int fromSourceImageIndex, int kymographColumn)
+	private void analyzeImageWithCapillary(IcyBufferedImage sourceImage, Capillary cap, int t, int kymographColumn)
 	{
-		KymoROI2D capT = cap.getROI2DKymoAtIntervalT(fromSourceImageIndex);
+		KymoROI2D kymoROI2D = cap.getROI2DKymoAtIntervalT(t);
 		int sizeC = sourceImage.getSizeC();
 	  
 		for (int chan = 0; chan < sizeC; chan++) {
@@ -188,7 +189,7 @@ public class BuildKymographs extends BuildSeries
 		
 			int cnt = 0;
 			int sourceImageWidth = sourceImage.getWidth();
-			for (ArrayList<int[]> mask : capT.getMasksList()) 
+			for (ArrayList<int[]> mask : kymoROI2D.getMasksList()) 
 			{
 				int sum = 0;
 				for (int[] m: mask) 
