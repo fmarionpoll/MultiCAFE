@@ -205,6 +205,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		}
 		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingCapillaries(listRoisAtT);
  
+		removeFrameAroundCapillaries(exp.seqCamData.seq) ;
 		envelopeRoi_initial = new ROI2DPolygon (polygon);
 		envelopeRoi = new ROI2DPolygon(polygon);
 		envelopeRoi.setName(dummyname);
