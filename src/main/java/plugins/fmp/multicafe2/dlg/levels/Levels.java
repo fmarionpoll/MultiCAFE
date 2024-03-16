@@ -372,8 +372,9 @@ public class Levels extends JPanel implements PropertyChangeListener
 		parent0.paneKymos.tabDisplay.indexImagesCombo = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
 		if (!allKymosCheckBox.isSelected()) 
 		{
-			options.kymoFirst = parent0.paneKymos.tabDisplay.indexImagesCombo;
-			options.kymoLast = options.kymoFirst;
+			int t = exp.seqKymos.seq.getFirstViewer().getPositionT();
+			options.kymoFirst = t;
+			options.kymoLast = t;
 		}
 		else
 		{
