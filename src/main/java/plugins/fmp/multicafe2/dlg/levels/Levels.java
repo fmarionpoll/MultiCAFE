@@ -369,7 +369,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
 		// list of kymographs
 		options.detectAllKymos = allKymosCheckBox.isSelected();
-		parent0.paneKymos.tabDisplay.indexImagesCombo = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
+//		parent0.paneKymos.tabDisplay.indexImagesCombo = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
 		if (!allKymosCheckBox.isSelected()) 
 		{
 			int t = exp.seqKymos.seq.getFirstViewer().getPositionT();
@@ -379,7 +379,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 		else
 		{
 			options.kymoFirst = 0;
-			options.kymoLast = parent0.paneKymos.tabDisplay.kymographsCombo.getItemCount()-1;
+			options.kymoLast = exp.seqKymos.seq.getSizeT()-1;
 		}
 		// other parameters
 		options.pass1 				= pass1CheckBox.isSelected();

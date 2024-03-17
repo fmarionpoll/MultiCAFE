@@ -46,7 +46,7 @@ public class Display extends JPanel implements ViewerListener
 	private static final long serialVersionUID = -2103052112476748890L;
 	
 	public 	int			indexImagesCombo 		= -1;
-	public 	JComboBox<String> kymographsCombo 	= new JComboBox <String> (new String[] {"none"});
+	 		JComboBox<String> kymographsCombo 	= new JComboBox <String> (new String[] {"none"});
 			JComboBox<String> viewsCombo		= new JComboBox <String>();
 			JButton  	previousButton		 	= new JButton("<");
 			JButton		nextButton				= new JButton(">");

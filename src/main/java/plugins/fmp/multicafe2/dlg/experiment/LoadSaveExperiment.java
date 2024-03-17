@@ -166,7 +166,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			}
 			exp.closeSequences();
 		}
-		parent0.paneKymos.tabDisplay.kymographsCombo.removeAllItems();
+//		parent0.paneKymos.tabDisplay.kymographsCombo.removeAllItems();
 	}
 	
 	public void closeCurrentExperiment() 

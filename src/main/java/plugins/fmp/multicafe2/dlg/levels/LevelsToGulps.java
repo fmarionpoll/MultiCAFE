@@ -162,15 +162,16 @@ public class LevelsToGulps extends JPanel  implements PropertyChangeListener
 			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
 
 		options.detectAllKymos = allKymosCheckBox.isSelected();
-		parent0.paneKymos.tabDisplay.indexImagesCombo = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
+//		parent0.paneKymos.tabDisplay.indexImagesCombo = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
 		if (!allKymosCheckBox.isSelected()) {
-			options.kymoFirst 	= parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
-			options.kymoLast 	= options.kymoFirst;
+			int t = exp.seqKymos.seq.getFirstViewer().getPositionT();
+			options.kymoFirst 	= t;
+			options.kymoLast 	= t;
 		}
 		else
 		{
 			options.kymoFirst = 0;
-			options.kymoLast 	= parent0.paneKymos.tabDisplay.kymographsCombo.getItemCount()-1;
+			options.kymoLast = exp.seqKymos.seq.getSizeT()-1;
 		}
 		options.detectGulpsThreshold_uL = (double) detectGulpsThresholdSpinner.getValue();
 		options.transformForGulps = (ImageTransformEnums) gulpTransformsComboBox.getSelectedItem();
