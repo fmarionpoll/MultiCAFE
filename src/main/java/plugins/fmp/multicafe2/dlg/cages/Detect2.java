@@ -163,7 +163,6 @@ public class Detect2 extends JPanel implements ChangeListener, PropertyChangeLis
 			options.expList.index1 = options.expList.getItemCount()-1;
 		else
 			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
-		parent0.paneKymos.tabDisplay.indexImagesCombo = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
 		
 		options.btrackWhite 	= true;
 		options.blimitLow 		= objectLowsizeCheckBox.isSelected();
