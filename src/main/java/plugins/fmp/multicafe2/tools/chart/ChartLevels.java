@@ -90,7 +90,6 @@ public class ChartLevels extends IcyFrame
 		flagMaxMinSet = false;
 		List<XYSeriesCollection> xyDataSetList = getDataArrays(exp, option, subtractEvaporation);;
 		
-		int icage = 0;
         final NumberAxis yAxis = new NumberAxis("volume (µl)");
         yAxis.setAutoRangeIncludesZero(false);  
         yAxis.setInverted(true);
@@ -99,7 +98,8 @@ public class ChartLevels extends IcyFrame
 
 		for (XYSeriesCollection xySeriesCollection : xyDataSetList) 
 		{
-			NumberAxis xAxis = new NumberAxis("Cage " + icage);
+			String cageDescription = xySeriesCollection.getSeries(0).getDescription();
+			NumberAxis xAxis = new NumberAxis(cageDescription);
 			XYLineAndShapeRenderer subPlotRenderer = new XYLineAndShapeRenderer(true, false);
 			final XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, null, subPlotRenderer);
 			int icolor = 0;
@@ -114,7 +114,6 @@ public class ChartLevels extends IcyFrame
 			subplot.setRangeGridlinePaint(Color.WHITE);
 			combinedXYPlot.add(subplot);
 						
-			icage++;
 		}
 		
         JFreeChart chart = new JFreeChart(title, null, combinedXYPlot, true);
@@ -203,6 +202,7 @@ public class ChartLevels extends IcyFrame
 			} 	
 			
 			XYSeries seriesXY = getXYSeries(rowXLSResults1, rowXLSResults1.name.substring(4));
+			seriesXY.setDescription("cage "+ rowXLSResults1.cageID);
 			if (resultsArray2 != null) 
 				appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow));
 			
