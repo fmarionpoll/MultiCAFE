@@ -98,8 +98,9 @@ public class ChartLevels extends IcyFrame
 
 		for (XYSeriesCollection xySeriesCollection : xyDataSetList) 
 		{
-			String cageDescription = xySeriesCollection.getSeries(0).getDescription();
-			NumberAxis xAxis = new NumberAxis(cageDescription);
+			String[] description = xySeriesCollection.getSeries(0).getDescription().split("_");
+			 		
+			NumberAxis xAxis = new NumberAxis(description[0]);
 			XYLineAndShapeRenderer subPlotRenderer = new XYLineAndShapeRenderer(true, false);
 			final XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, null, subPlotRenderer);
 			int icolor = 0;
@@ -109,11 +110,22 @@ public class ChartLevels extends IcyFrame
 					icolor = 0;
 				subPlotRenderer.setSeriesPaint(i, color[icolor]);
 			}
-			subplot.setBackgroundPaint(Color.LIGHT_GRAY);
-			subplot.setDomainGridlinePaint(Color.WHITE);
-			subplot.setRangeGridlinePaint(Color.WHITE);
-			combinedXYPlot.add(subplot);
-						
+			
+			int nflies = Integer.valueOf(description[1]);
+			if (nflies < 1) {
+				subplot.setBackgroundPaint(Color.LIGHT_GRAY);
+				subplot.setDomainGridlinePaint(Color.WHITE);
+				subplot.setRangeGridlinePaint(Color.WHITE);
+			}
+			else
+			{
+				subplot.setBackgroundPaint(Color.WHITE);
+				subplot.setDomainGridlinePaint(Color.GRAY);
+				subplot.setRangeGridlinePaint(Color.GRAY);
+			}
+				
+			
+			combinedXYPlot.add(subplot);			
 		}
 		
         JFreeChart chart = new JFreeChart(title, null, combinedXYPlot, true);
@@ -193,16 +205,16 @@ public class ChartLevels extends IcyFrame
 		List<XYSeriesCollection> xyList = new ArrayList<XYSeriesCollection>();
 		for (int iRow = 0; iRow < resultsArray1.size(); iRow++ ) 
 		{
-			XLSResults rowXLSResults1 = resultsArray1.getRow(iRow);
-			if (oldcage != rowXLSResults1.cageID ) 
+			XLSResults xlsResults = resultsArray1.getRow(iRow);
+			if (oldcage != xlsResults.cageID ) 
 			{
 				xyDataset = new XYSeriesCollection();
-				oldcage = rowXLSResults1.cageID; 
+				oldcage = xlsResults.cageID; 
 				xyList.add(xyDataset);
 			} 	
 			
-			XYSeries seriesXY = getXYSeries(rowXLSResults1, rowXLSResults1.name.substring(4));
-			seriesXY.setDescription("cage "+ rowXLSResults1.cageID);
+			XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.name.substring(4));
+			seriesXY.setDescription("cage "+ xlsResults.cageID + "_"+ xlsResults.nflies);
 			if (resultsArray2 != null) 
 				appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow));
 			
