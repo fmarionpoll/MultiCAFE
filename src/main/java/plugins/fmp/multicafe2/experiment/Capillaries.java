@@ -636,7 +636,7 @@ public class Capillaries
 		try {
 			row = csvReader.readLine();
 			row = csvReader.readLine();
-			String[] data = row.split(",");
+			String[] data = row.split(sep);
 			capillariesDescription.csvImportCapillariesDescriptionData(data);
 			
 			row = csvReader.readLine();

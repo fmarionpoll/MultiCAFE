@@ -197,7 +197,7 @@ public class CapillaryGulps
 	
 	private void csvExportOneGulp(StringBuffer sbf, int indexgulp, String sep)
 	{
-		sbf.append("g"+indexgulp+",");
+		sbf.append("g"+indexgulp+sep);
 		Polyline2D gulp = gulps.get(indexgulp);
     	sbf.append(StringUtil.toString((int) gulp.npoints));
         sbf.append(sep);
