@@ -110,6 +110,7 @@ public class Edit   extends JPanel
 		{
 			Experiment exp = editExpList.getItemAt(i);
 			exp.xmlLoad_MCExperiment();
+			exp.loadMCCapillaries();
 			exp.loadCapillaries();
 			
 			exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
