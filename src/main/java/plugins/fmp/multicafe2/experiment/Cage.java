@@ -75,7 +75,7 @@ public class Cage
 		return true;
 	}
 	
-	public String csvExportCageDescription() 
+	public String csvExportCageDescription(String sep) 
 	{	
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = new ArrayList<String>();
@@ -99,7 +99,7 @@ public class Cage
 		}
 		else
 			row.add("0");
-		sbf.append(String.join(",", row));
+		sbf.append(String.join(sep, row));
 		sbf.append("\n");
 		return sbf.toString();
 	}

@@ -182,30 +182,30 @@ public class CapillaryGulps
 	
 	// -------------------------------
 		
-	public boolean csvExportDataToRow(StringBuffer sbf) 
+	public boolean csvExportDataToRow(StringBuffer sbf, String sep) 
 	{
 		int ngulps = 0;
 		if (gulps != null)
 			ngulps = gulps.size();
-		sbf.append(Integer.toString(ngulps) + ",");
+		sbf.append(Integer.toString(ngulps) +sep);
 		if (ngulps > 0) {
 		    for (int indexgulp = 0; indexgulp < gulps.size(); indexgulp++) 
-		    	csvExportOneGulp(sbf, indexgulp);
+		    	csvExportOneGulp(sbf, indexgulp, sep);
 		}
 		return true;
 	}
 	
-	private void csvExportOneGulp(StringBuffer sbf, int indexgulp)
+	private void csvExportOneGulp(StringBuffer sbf, int indexgulp, String sep)
 	{
 		sbf.append("g"+indexgulp+",");
 		Polyline2D gulp = gulps.get(indexgulp);
     	sbf.append(StringUtil.toString((int) gulp.npoints));
-        sbf.append(",");
+        sbf.append(sep);
         for (int i = 0; i< gulp.npoints; i++) {
 	    	sbf.append(StringUtil.toString((int) gulp.xpoints[i]));
-            sbf.append(",");
+            sbf.append(sep);
             sbf.append(StringUtil.toString((int) gulp.ypoints[i]));
-            sbf.append(",");
+            sbf.append(sep);
         }
 	}
 	

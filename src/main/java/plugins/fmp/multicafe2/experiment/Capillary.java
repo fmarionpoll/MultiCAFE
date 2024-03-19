@@ -828,7 +828,7 @@ public class Capillary implements Comparable <Capillary>
 	
 	// -----------------------------------------------------------------------------
 	
-	public String csvExportCapillarySubSectionHeader() 
+	public String csvExportCapillarySubSectionHeader(String sep) 
 	{
 		StringBuffer sbf = new StringBuffer();
 		
@@ -845,12 +845,12 @@ public class Capillary implements Comparable <Capillary>
 				"cap_stim", 
 				"cap_conc", 
 				"cap_side");
-		sbf.append(String.join(",", row2));
+		sbf.append(String.join(sep, row2));
 		sbf.append("\n");
 		return sbf.toString();
 	}
 	
-	public String csvExportCapillaryDescription() 
+	public String csvExportCapillaryDescription(String sep) 
 	{	
 		StringBuffer sbf = new StringBuffer();
 		if (kymographPrefix == null)
@@ -868,53 +868,53 @@ public class Capillary implements Comparable <Capillary>
 				capStimulus, 
 				capConcentration, 
 				capSide);
-		sbf.append(String.join(",", row));
+		sbf.append(String.join(sep, row));
 		sbf.append("\n");
 		return sbf.toString();
 	}
 	
-	public String csvExportMeasureSectionHeader(EnumCapillaryMeasures measureType) 
+	public String csvExportMeasureSectionHeader(EnumCapillaryMeasures measureType, String sep) 
 	{
 		StringBuffer sbf = new StringBuffer();
-		String explanation1 = "columns=,name,index, npts,..,.(xi;yi)\n";
+		String explanation1 = "columns="+sep+"name"+sep+"index"+sep+"npts"+sep+"xi"+sep+"yi\n";
 		String explanation2 = "columns=,name,index, n_gulps(i), ..., gulp_i, .npts(j),.,(xij;yij))\n";
 		switch(measureType) {
 			case TOPLEVEL:
-				sbf.append("#,TOPLEVEL," + explanation1);
+				sbf.append("#"+sep+"TOPLEVEL"+sep+ explanation1);
 				break;
 			case BOTTOMLEVEL:
-				sbf.append("#,BOTTOMLEVEL,"+explanation1);
+				sbf.append("#"+sep+"BOTTOMLEVEL"+sep+explanation1);
 				break;
 			case TOPDERIVATIVE:
-				sbf.append("#,TOPDERIVATIVE,"+explanation1);
+				sbf.append("#"+sep+"TOPDERIVATIVE"+sep+explanation1);
 				break;
 			case GULPS:
-				sbf.append("#,GULPS,"+explanation2);
+				sbf.append("#"+sep+"GULPS"+sep+explanation2);
 				break;
 			default:
-				sbf.append("#,UNDEFINED,------------\n");
+				sbf.append("#"+sep+"UNDEFINED------------\n");
 				break;
 		}
 		return sbf.toString();
 	}
 	
-	public String csvExportCapillaryData(EnumCapillaryMeasures measureType) 
+	public String csvExportCapillaryData(EnumCapillaryMeasures measureType, String sep) 
 	{
 		StringBuffer sbf = new StringBuffer();
-		sbf.append(kymographPrefix+ ","+ kymographIndex +",");
+		sbf.append(kymographPrefix+ sep + kymographIndex + sep);
 		
 		switch(measureType) {
 			case TOPLEVEL:
-				ptsTop.cvsExportDataToRow(sbf);
+				ptsTop.cvsExportDataToRow(sbf, sep);
 				break;
 			case BOTTOMLEVEL:
-				ptsBottom.cvsExportDataToRow(sbf);
+				ptsBottom.cvsExportDataToRow(sbf, sep);
 				break;
 			case TOPDERIVATIVE:
-				ptsDerivative.cvsExportDataToRow(sbf);
+				ptsDerivative.cvsExportDataToRow(sbf, sep);
 				break;
 			case GULPS:
-				ptsGulps.csvExportDataToRow(sbf);
+				ptsGulps.csvExportDataToRow(sbf, sep);
 				break;
 			default:
 				break;

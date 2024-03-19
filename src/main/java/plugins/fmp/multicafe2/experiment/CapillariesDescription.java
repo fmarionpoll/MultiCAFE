@@ -205,7 +205,8 @@ public class CapillariesDescription
 	
 	// --------------------------------------
 	
-	public String csvExportSectionHeader() {
+	public String csvExportSectionHeader(String sep) 
+	{
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("#,DESCRIPTION,Capillarytrack data\n");
 		List<String> row2 = Arrays.asList(
@@ -222,12 +223,13 @@ public class CapillariesDescription
 				ID_COMMENT2, 
 				ID_STRAIN, 
 				ID_SEX);
-		sbf.append(String.join(",", row2));
+		sbf.append(String.join(sep, row2));
 		sbf.append("\n");
 		return sbf.toString();
 	}
 	
-	public String csvExportExperimentDescriptors() {
+	public String csvExportExperimentDescriptors(String sep) 
+	{
 		StringBuffer sbf = new StringBuffer();
 		List<String> row3 = Arrays.asList(
 				Integer.toString(grouping),
@@ -243,12 +245,13 @@ public class CapillariesDescription
 				old_comment2, 
 				old_strain, 
 				old_sex);
-		sbf.append(String.join(",", row3));
+		sbf.append(String.join(sep, row3));
 		sbf.append("\n");
 		return sbf.toString();
 	}
 	
-	public void csvImportCapillariesDescriptionData(String[] data) {
+	public void csvImportCapillariesDescriptionData(String[] data) 
+	{
 		int i= 0; 
 		grouping = Integer.valueOf(data[i]); i++;
 		volume = Double.valueOf(data[i]); i++; 

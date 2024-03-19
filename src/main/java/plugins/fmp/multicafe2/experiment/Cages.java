@@ -107,6 +107,7 @@ public class Cages
 	}
 	
 	// -----------------------------------------------------
+	final String csvSep = ";";
 	
 	private boolean csvSaveCagesMeasures(String directory) 
 	{
@@ -129,14 +130,14 @@ public class Cages
 	private boolean csvSaveDescriptionSection(FileWriter csvWriter) 
 	{
 		try {
-			csvWriter.append("#,DESCRIPTION, Cages data\n");
-			csvWriter.append("n cages=," + Integer.toString(cagesList.size()) + "\n");
+			csvWriter.append("#"+csvSep+"DESCRIPTION"+csvSep+"Cages data\n");
+			csvWriter.append("n cages="+csvSep + Integer.toString(cagesList.size()) + "\n");
 			
 			if (cagesList.size() > 0) 
 				for (Cage cage:cagesList) 
-					csvWriter.append(cage.csvExportCageDescription());
+					csvWriter.append(cage.csvExportCageDescription(csvSep));
 			
-			csvWriter.append("#,#\n");
+			csvWriter.append("#"+csvSep+"#\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
