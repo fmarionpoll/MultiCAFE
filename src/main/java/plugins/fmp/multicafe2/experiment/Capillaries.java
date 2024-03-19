@@ -620,8 +620,10 @@ public class Capillaries
 				if (data[0] .equals("#")) 
 					return data[1];
 				Capillary cap = getCapillaryFromKymographName(data[2]);
-				if (cap == null)
+				if (cap == null) {
 					cap = new Capillary();
+					capillariesList.add(cap);
+				}
 				cap.csvImportCapillaryDescription(data);
 			}
 		} catch (IOException e) {

@@ -876,9 +876,10 @@ public class Capillary implements Comparable <Capillary>
 	public String csvExportMeasure_SectionHeader(EnumCapillaryMeasures measureType, String sep) 
 	{
 		StringBuffer sbf = new StringBuffer();
-		String explanation1 = "columns="+sep+"name"+sep+"index"+sep+"npts"+sep+"yi"+sep+"\n";
-		String explanation2 = "columns=,name,index, n_gulps(i), ..., gulp_i, .npts(j),.,(xij;yij))\n";
-		switch(measureType) {
+		String explanation1 = "columns="+sep+"name"+sep+"index"+sep+"npts"+sep+"yi\n";
+		String explanation2 = "columns="+sep+"name"+sep+"index"+sep+" n_gulps(i)"+sep+" ..."+sep+" gulp_i"+sep+" .npts(j)"+sep+"."+sep+"(xij"+sep+"yij))\n";
+		switch(measureType) 
+		{
 			case TOPLEVEL:
 				sbf.append("#"+sep+"TOPLEVEL"+sep+ explanation1);
 				break;
@@ -903,7 +904,8 @@ public class Capillary implements Comparable <Capillary>
 		StringBuffer sbf = new StringBuffer();
 		sbf.append(kymographPrefix+ sep + kymographIndex + sep);
 		
-		switch(measureType) {
+		switch(measureType) 
+		{
 			case TOPLEVEL:
 				ptsTop.cvsExportYDataToRow(sbf, sep);
 				break;
