@@ -45,11 +45,12 @@ public class Capillaries
 
 	// ---------------------------------
 	
-	public boolean loadCapillaries_Measures(String directory) 
+	public boolean load_Capillaries(String directory) 
 	{
 		boolean flag = false;
-		try {
-			flag = csvLoadCapillaries_Measures(directory);
+		try 
+		{
+			flag = csvLoad_Capillaries(directory);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -61,12 +62,12 @@ public class Capillaries
 		return flag;
 	}
 	
-	public boolean saveCapillaries_Measures(String directory) 
+	public boolean save_Capillaries(String directory) 
 	{
 		if (directory == null)
 			return false;
 		
-		csvSaveCapillariesMeasures_Data(directory);
+		csvSave_Capillaries(directory);
 		return true;
 	}
 	
@@ -564,7 +565,7 @@ public class Capillaries
 	
 	final String csvSep = ";";
 	
-	private boolean csvLoadCapillaries_Measures(String directory) throws Exception 
+	private boolean csvLoad_Capillaries(String directory) throws Exception 
 	{
 		String pathToCsv = directory + File.separator +"CapillariesMeasures.csv";
 		File csvFile = new File(pathToCsv);
@@ -579,25 +580,26 @@ public class Capillaries
 				sep = String.valueOf(row.charAt(1));
 			
 		    String[] data = row.split(sep);
-		    if (data[0] .equals( "#")) {
+		    if (data[0] .equals( "#")) 
+		    {
 		    	switch(data[1]) {
 		    	case "DESCRIPTION":
-		    		csvLoadDescription (csvReader, sep);
+		    		csvLoad_Description (csvReader, sep);
 		    		break;
 		    	case "CAPILLARIES":
-		    		csvLoadCapillariesDescription (csvReader, sep);
+		    		csvLoad_Capillaries_Description (csvReader, sep);
 		    		break;
 		    	case "TOPLEVEL":
-		    		csvLoadCapillariesMeasures(csvReader, EnumCapillaryMeasures.TOPLEVEL, sep);
+		    		csvLoad_Capillaries_Measures(csvReader, EnumCapillaryMeasures.TOPLEVEL, sep, row.contains("xi"));
 		    		break;
 		    	case "BOTTOMLEVEL":
-		    		csvLoadCapillariesMeasures(csvReader, EnumCapillaryMeasures.BOTTOMLEVEL, sep);
+		    		csvLoad_Capillaries_Measures(csvReader, EnumCapillaryMeasures.BOTTOMLEVEL, sep, row.contains("xi"));
 		    		break;
 		    	case "TOPDERIVATIVE":
-		    		csvLoadCapillariesMeasures(csvReader, EnumCapillaryMeasures.TOPDERIVATIVE, sep);
+		    		csvLoad_Capillaries_Measures(csvReader, EnumCapillaryMeasures.TOPDERIVATIVE, sep, row.contains("xi"));
 		    		break;
 		    	case "GULPS": 
-		    		csvLoadCapillariesMeasures(csvReader, EnumCapillaryMeasures.GULPS, sep);
+		    		csvLoad_Capillaries_Measures(csvReader, EnumCapillaryMeasures.GULPS, sep, true);
 		    		break;
 	    		default:
 	    			break;
@@ -605,18 +607,17 @@ public class Capillaries
 		    }
 		}
 		csvReader.close();
-		
 		return true;
 	}
 	
-	private String csvLoadCapillariesDescription (BufferedReader csvReader, String sep) 
+	private String csvLoad_Capillaries_Description (BufferedReader csvReader, String sep) 
 	{
 		String row;
 		try {
 			row = csvReader.readLine();			
 			while ((row = csvReader.readLine()) != null) {
 				String[] data = row.split(sep);
-				if (data[0] .equals( "#")) 
+				if (data[0] .equals("#")) 
 					return data[1];
 				Capillary cap = getCapillaryFromKymographName(data[2]);
 				if (cap == null)
@@ -630,7 +631,7 @@ public class Capillaries
 		return null;
 	}
 	
-	private String csvLoadDescription (BufferedReader csvReader, String sep) 
+	private String csvLoad_Description (BufferedReader csvReader, String sep) 
 	{
 		String row;
 		try {
@@ -660,19 +661,21 @@ public class Capillaries
 		return null;
 	}
 	
-	private String csvLoadCapillariesMeasures(BufferedReader csvReader, EnumCapillaryMeasures measureType, String sep) 
+	private String csvLoad_Capillaries_Measures(BufferedReader csvReader, EnumCapillaryMeasures measureType, String sep, boolean x) 
 	{
 		String row;
+		final boolean y = true;
 		try {
-			while ((row = csvReader.readLine()) != null) {
+			while ((row = csvReader.readLine()) != null) 
+			{
 				String[] data = row.split(sep);
-				if (data[0] .equals( "#")) 
+				if (data[0] .equals("#")) 
 					return data[1];
 				
 				Capillary cap = getCapillaryFromRoiNamePrefix(data[0]);
 				if (cap == null)
 					cap = new Capillary();
-				cap.csvImportCapillaryData(measureType, data);
+				cap.csvImportCapillaryData(measureType, data, x, y);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -683,7 +686,7 @@ public class Capillaries
 	
 	// ---------------------------------
 	
-	private boolean csvSaveCapillariesMeasures_Data(String directory) 
+	private boolean csvSave_Capillaries(String directory) 
 	{
 		Path path = Paths.get(directory);
 		if (!Files.exists(path))
@@ -692,12 +695,12 @@ public class Capillaries
 		try {
 			FileWriter csvWriter = new FileWriter(directory + File.separator +"CapillariesMeasures.csv");
 			
-			csvSaveDescriptionSection(csvWriter);
+			csvSave_DescriptionSection(csvWriter);
 			
-			csvSaveMeasuresSection(csvWriter, EnumCapillaryMeasures.TOPLEVEL);
-			csvSaveMeasuresSection(csvWriter, EnumCapillaryMeasures.BOTTOMLEVEL);
-			csvSaveMeasuresSection(csvWriter, EnumCapillaryMeasures.TOPDERIVATIVE);
-			csvSaveMeasuresSection(csvWriter, EnumCapillaryMeasures.GULPS);
+			csvSave_MeasuresSection(csvWriter, EnumCapillaryMeasures.TOPLEVEL);
+			csvSave_MeasuresSection(csvWriter, EnumCapillaryMeasures.BOTTOMLEVEL);
+			csvSave_MeasuresSection(csvWriter, EnumCapillaryMeasures.TOPDERIVATIVE);
+			csvSave_MeasuresSection(csvWriter, EnumCapillaryMeasures.GULPS);
 			csvWriter.flush();
 			csvWriter.close();
 			
@@ -708,7 +711,7 @@ public class Capillaries
 		return true;
 	}
 	
-	private boolean csvSaveDescriptionSection(FileWriter csvWriter) 
+	private boolean csvSave_DescriptionSection(FileWriter csvWriter) 
 	{
 		try {
 			csvWriter.append(capillariesDescription.csvExportSectionHeader(csvSep));
@@ -729,15 +732,15 @@ public class Capillaries
 		return true;
 	}
 	
-	private boolean csvSaveMeasuresSection(FileWriter csvWriter, EnumCapillaryMeasures measureType) 
+	private boolean csvSave_MeasuresSection(FileWriter csvWriter, EnumCapillaryMeasures measureType) 
 	{
 		try {
 			if (capillariesList.size() <= 1)
 				return false;
 			
-			csvWriter.append(capillariesList.get(0).csvExportMeasureSectionHeader(measureType, csvSep));
+			csvWriter.append(capillariesList.get(0).csvExportMeasure_SectionHeader(measureType, csvSep));
 			for (Capillary cap:capillariesList) 
-				csvWriter.append(cap.csvExportCapillaryData(measureType, csvSep));
+				csvWriter.append(cap.csvExportMeasures_OneType(measureType, csvSep));
 			
 			csvWriter.append("#"+csvSep+"#\n");
 		} catch (IOException e) {

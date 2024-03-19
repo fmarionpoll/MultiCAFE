@@ -12,7 +12,7 @@ public class ClipCagesMeasuresToSmallest extends BuildSeries
 {
 	void analyzeExperiment(Experiment exp) 
 	{
-		exp.loadMCExperiment();
+		exp.xmlLoad_MCExperiment();
 		exp.loadMCCapillaries();
 		if (exp.loadKymographs()) 
 		{
@@ -34,7 +34,7 @@ public class ClipCagesMeasuresToSmallest extends BuildSeries
 						ttcap.cropMeasuresToNPoints(minLength);
 				}
 			}
-			exp.saveCapillariesMeasures();
+			exp.saveCapillaries();
 		}
 		exp.seqCamData.closeSequence();
 		exp.seqKymos.closeSequence();

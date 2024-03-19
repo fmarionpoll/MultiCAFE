@@ -30,7 +30,7 @@ public class DetectLevels extends BuildSeries
 	
 	private boolean loadExperimentDataToDetectLevels(Experiment exp) 
 	{
-		exp.loadMCExperiment();
+		exp.xmlLoad_MCExperiment();
 		exp.loadMCCapillaries();
 		return exp.loadKymographs();
 	}
@@ -111,7 +111,7 @@ public class DetectLevels extends BuildSeries
 		}
 		waitFuturesCompletion(processor, futures, progressBar);
 		
-		exp.saveCapillariesMeasures() ;
+		exp.saveCapillaries() ;
 		seqKymos.seq.endUpdate();
 		
 		progressBar.close();

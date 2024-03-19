@@ -161,7 +161,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (exp != null) 
 		{
 			if (exp.seqCamData != null) {
-				exp.saveMCExperiment();
+				exp.xmlSave_MCExperiment();
 				exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
 			}
 			exp.closeSequences();
@@ -190,7 +190,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	boolean openSelecteExperiment(Experiment exp) 
 	{
 		ProgressFrame progressFrame = new ProgressFrame("Load Data");
-		exp.loadMCExperiment();
+		exp.xmlLoad_MCExperiment();
 
 		boolean flag = true;
 		progressFrame.setMessage("Load image");

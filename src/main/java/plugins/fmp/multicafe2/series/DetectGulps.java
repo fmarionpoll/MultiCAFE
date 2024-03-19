@@ -14,7 +14,7 @@ import icy.system.thread.Processor;
 import icy.type.collection.array.Array1DUtil;
 import icy.type.geom.Polyline2D;
 import plugins.fmp.multicafe2.experiment.Capillary;
-import plugins.fmp.multicafe2.experiment.CapillaryLevel;
+import plugins.fmp.multicafe2.experiment.CapillaryMeasure;
 import plugins.fmp.multicafe2.experiment.Experiment;
 import plugins.fmp.multicafe2.experiment.SequenceKymos;
 
@@ -36,10 +36,10 @@ public class DetectGulps extends BuildSeries
 	
 	private boolean loadExperimentDataToDetectGulps(Experiment exp) 
 	{
-		exp.loadMCExperiment();
+		exp.xmlLoad_MCExperiment();
 		boolean flag = exp.loadMCCapillaries_Only();
 		flag &= exp.loadKymographs();
-		flag &= exp.loadCapillariesMeasures();
+		flag &= exp.loadCapillaries();
 		return flag;
 	}
 	
@@ -85,7 +85,7 @@ public class DetectGulps extends BuildSeries
 				public void run() 
 				{
 					if (options.buildDerivative) 
-						capi.ptsDerivative = new CapillaryLevel(
+						capi.ptsDerivative = new CapillaryMeasure(
 								capi.getLast2ofCapillaryName()+"_derivative", 
 								capi.kymographIndex,
 								getDerivativeProfile(seqAnalyzed, capi, jitter));
@@ -99,7 +99,7 @@ public class DetectGulps extends BuildSeries
 		}
 		
 		waitFuturesCompletion(processor, futures, progressBar);
-		exp.saveCapillariesMeasures() ;
+		exp.saveCapillaries() ;
 
 		processor.shutdown();
 		

@@ -87,7 +87,7 @@ public class LoadSaveCapillaries extends JPanel
 		parent0.paneExperiment.getExperimentInfosFromDialog(exp);
 		exp.capillaries.transferDescriptionToCapillaries();
 	
-		exp.saveMCExperiment ();
+		exp.xmlSave_MCExperiment ();
 		exp.capillaries.updateCapillariesFromSequence(exp.seqCamData.seq);
 		return exp.saveMCCapillaries_Only();
 	}

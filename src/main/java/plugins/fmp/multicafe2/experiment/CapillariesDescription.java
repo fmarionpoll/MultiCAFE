@@ -208,7 +208,7 @@ public class CapillariesDescription
 	public String csvExportSectionHeader(String sep) 
 	{
 		StringBuffer sbf = new StringBuffer();
-		sbf.append("#,DESCRIPTION,Capillarytrack data\n");
+		sbf.append("#"+sep+"DESCRIPTION"+sep+"Capillarytrack data\n");
 		List<String> row2 = Arrays.asList(
 				ID_DESCGROUPING, 
 				ID_DESCVOLUMEUL, 

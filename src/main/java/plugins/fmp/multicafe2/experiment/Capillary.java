@@ -56,9 +56,9 @@ public class Capillary implements Comparable <Capillary>
 	public  final String 				ID_BOTTOMLEVEL 	= "bottomlevel";	
 	public  final String 				ID_DERIVATIVE 	= "derivative";	
 	
-	public CapillaryLevel				ptsTop  		= new CapillaryLevel(ID_TOPLEVEL); 
-	public CapillaryLevel				ptsBottom 		= new CapillaryLevel(ID_BOTTOMLEVEL); 
-	public CapillaryLevel				ptsDerivative 	= new CapillaryLevel(ID_DERIVATIVE); 
+	public CapillaryMeasure				ptsTop  		= new CapillaryMeasure(ID_TOPLEVEL); 
+	public CapillaryMeasure				ptsBottom 		= new CapillaryMeasure(ID_BOTTOMLEVEL); 
+	public CapillaryMeasure				ptsDerivative 	= new CapillaryMeasure(ID_DERIVATIVE); 
 	public CapillaryGulps 				ptsGulps 		= new CapillaryGulps(); 
 	
 	public boolean						valid			= true;
@@ -501,7 +501,7 @@ public class Capillary implements Comparable <Capillary>
 		return listrois;
 	}
 	
-	private void getROIFromCapillaryLevel(CapillaryLevel capLevel, List<ROI2D> listrois) 
+	private void getROIFromCapillaryLevel(CapillaryMeasure capLevel, List<ROI2D> listrois) 
 	{
 		if (capLevel.polylineLevel == null || capLevel.polylineLevel.npoints == 0)
 			return;
@@ -832,7 +832,7 @@ public class Capillary implements Comparable <Capillary>
 	{
 		StringBuffer sbf = new StringBuffer();
 		
-		sbf.append("#,CAPILLARIES,describe each capillary\n");
+		sbf.append("#"+sep+"CAPILLARIES"+sep+"describe each capillary\n");
 		List<String> row2 = Arrays.asList(
 				"cap_prefix",
 				"kymoIndex", 
@@ -873,10 +873,10 @@ public class Capillary implements Comparable <Capillary>
 		return sbf.toString();
 	}
 	
-	public String csvExportMeasureSectionHeader(EnumCapillaryMeasures measureType, String sep) 
+	public String csvExportMeasure_SectionHeader(EnumCapillaryMeasures measureType, String sep) 
 	{
 		StringBuffer sbf = new StringBuffer();
-		String explanation1 = "columns="+sep+"name"+sep+"index"+sep+"npts"+sep+"xi"+sep+"yi\n";
+		String explanation1 = "columns="+sep+"name"+sep+"index"+sep+"npts"+sep+"yi"+sep+"\n";
 		String explanation2 = "columns=,name,index, n_gulps(i), ..., gulp_i, .npts(j),.,(xij;yij))\n";
 		switch(measureType) {
 			case TOPLEVEL:
@@ -898,20 +898,20 @@ public class Capillary implements Comparable <Capillary>
 		return sbf.toString();
 	}
 	
-	public String csvExportCapillaryData(EnumCapillaryMeasures measureType, String sep) 
+	public String csvExportMeasures_OneType(EnumCapillaryMeasures measureType, String sep) 
 	{
 		StringBuffer sbf = new StringBuffer();
 		sbf.append(kymographPrefix+ sep + kymographIndex + sep);
 		
 		switch(measureType) {
 			case TOPLEVEL:
-				ptsTop.cvsExportDataToRow(sbf, sep);
+				ptsTop.cvsExportYDataToRow(sbf, sep);
 				break;
 			case BOTTOMLEVEL:
-				ptsBottom.cvsExportDataToRow(sbf, sep);
+				ptsBottom.cvsExportYDataToRow(sbf, sep);
 				break;
 			case TOPDERIVATIVE:
-				ptsDerivative.cvsExportDataToRow(sbf, sep);
+				ptsDerivative.cvsExportYDataToRow(sbf, sep);
 				break;
 			case GULPS:
 				ptsGulps.csvExportDataToRow(sbf, sep);
@@ -941,20 +941,27 @@ public class Capillary implements Comparable <Capillary>
 		capSide = data[i]; 
 	}
 		
-	public void csvImportCapillaryData(EnumCapillaryMeasures measureType, String[] data) 
+	public void csvImportCapillaryData(EnumCapillaryMeasures measureType, String[] data, boolean x, boolean y) 
 	{
 		switch(measureType) {
-		case TOPLEVEL:
-			ptsTop.csvImportDataFromRow( data, 2); 
+		case TOPLEVEL: 		
+			if (x && y) 
+				ptsTop.csvImportXYDataFromRow( data, 2); 
+			else if (!x && y) 
+				ptsTop.csvImportYDataFromRow( data, 2);
 			break;
-		case BOTTOMLEVEL:
-			ptsBottom.csvImportDataFromRow( data, 2);
+		case BOTTOMLEVEL: 	
+			if (x && y) 
+				ptsBottom.csvImportXYDataFromRow( data, 2); 
+			else if (!x && y) 
+				ptsBottom.csvImportYDataFromRow( data, 2);
 			break;
-		case TOPDERIVATIVE:
-			ptsDerivative.csvImportDataFromRow( data, 2); 
+		case TOPDERIVATIVE: 
+			if (x && y) ptsDerivative.csvImportXYDataFromRow( data, 2); 
+			else if (!x && y) ptsDerivative.csvImportYDataFromRow( data, 2);
 			break;
-		case GULPS:
-			ptsGulps.csvImportDataFromRow(data, 2);
+		case GULPS: 		
+			ptsGulps.csvImportDataFromRow(data, 2); 
 			break;
 		default:
 			break;

@@ -8,7 +8,7 @@ public class CurvesRestoreLength extends BuildSeries
 {
 	void analyzeExperiment(Experiment exp) 
 	{
-		exp.loadMCExperiment();
+		exp.xmlLoad_MCExperiment();
 		exp.loadMCCapillaries();
 		if (exp.loadKymographs()) 
 		{
@@ -18,7 +18,7 @@ public class CurvesRestoreLength extends BuildSeries
 				Capillary cap = exp.capillaries.capillariesList.get(t);
 				cap.restoreClippedMeasures();
 			}
-			exp.saveCapillariesMeasures();
+			exp.saveCapillaries();
 		}
 		exp.seqCamData.closeSequence();
 		exp.seqKymos.closeSequence();

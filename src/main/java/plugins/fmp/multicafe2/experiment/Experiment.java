@@ -261,7 +261,7 @@ public class Experiment
 	{
 		if (seqCamData == null) 
 			seqCamData = new SequenceCamData();
-		loadMCExperiment ();
+		xmlLoad_MCExperiment ();
 		
 		getFileIntervalsFromSeqCamData();
 		
@@ -270,7 +270,7 @@ public class Experiment
 		if (loadCapillaries) 
 		{
 			loadMCCapillaries_Only();
-			if (!capillaries.loadCapillaries_Measures(getKymosBinFullDirectory())) 
+			if (!capillaries.load_Capillaries(getKymosBinFullDirectory())) 
 				return false;
 		}
 
@@ -334,7 +334,7 @@ public class Experiment
 		loadImagesForSequenceCamData(strImagesDirectory);
 		if (seqCamData != null) 
 		{
-			loadMCExperiment();
+			xmlLoad_MCExperiment();
 			getFileIntervalsFromSeqCamData();
 		}
 		return seqCamData;
@@ -453,7 +453,7 @@ public class Experiment
 	
 	// -------------------------------
 	
-	public boolean loadMCExperiment () 
+	public boolean xmlLoad_MCExperiment () 
 	{
 		if (strExperimentDirectory == null && seqCamData != null) 
 		{
@@ -464,7 +464,7 @@ public class Experiment
 		return found;
 	}
 	
-	public boolean saveMCExperiment () 
+	public boolean xmlSave_MCExperiment () 
 	{
 		final Document doc = XMLUtil.createDocument(true);
 		if (doc != null) 
@@ -543,7 +543,7 @@ public class Experiment
 		String xmlCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY, BIN_DIRECTORY, IMG_DIRECTORY);
 		boolean flag1 = capillaries.loadMCCapillaries_Descriptors(xmlCapillaryFileName);
 		String kymosImagesDirectory = getKymosBinFullDirectory();
-		boolean flag2 = capillaries.loadCapillaries_Measures(kymosImagesDirectory);
+		boolean flag2 = capillaries.load_Capillaries(kymosImagesDirectory);
 		if (flag1 & flag2) 
 			seqKymos.loadListOfPotentialKymographsFromCapillaries(kymosImagesDirectory, capillaries);
 		return flag1 & flag2;
@@ -555,7 +555,7 @@ public class Experiment
 		if (capillaries.xmlLoadOldCapillaries_Only(filename)) 
 		{
 			saveMCCapillaries_Only();
-			saveCapillariesMeasures();
+			saveCapillaries();
 			try {
 		        Files.delete(Paths.get(filename));
 		    } catch (IOException e) {
@@ -563,6 +563,7 @@ public class Experiment
 		    }
 			return true;
 		}
+		
 		filename = findFile_3Locations("roislines.xml", IMG_DIRECTORY, EXPT_DIRECTORY, BIN_DIRECTORY);
 		if (xmlReadCamDataROIs(filename)) 
 		{
@@ -616,14 +617,14 @@ public class Experiment
 		return capillaries.xmlSaveCapillaries_Descriptors(xmlCapillaryFileName);
 	}
 		
- 	public boolean loadCapillariesMeasures() 
+ 	public boolean loadCapillaries() 
  	{
- 		return capillaries.loadCapillaries_Measures(getKymosBinFullDirectory());
+ 		return capillaries.load_Capillaries(getKymosBinFullDirectory());
  	}
  	
- 	public boolean saveCapillariesMeasures() 
+ 	public boolean saveCapillaries() 
  	{
- 		return capillaries.saveCapillaries_Measures(getKymosBinFullDirectory());
+ 		return capillaries.save_Capillaries(getKymosBinFullDirectory());
  	}
  	
  	public boolean loadCagesMeasures() 
@@ -769,8 +770,6 @@ public class Experiment
 	
 	public void replaceFieldValue(EnumXLSColumnHeader fieldEnumCode, String oldValue, String newValue) 
 	{
-		loadMCExperiment();
-		loadCapillariesMeasures();
 		switch (fieldEnumCode)
 		{
 		case EXP_STIM:
@@ -789,8 +788,6 @@ public class Experiment
 		default:
 			break;
 		}
-		saveMCExperiment();
-		saveCapillariesMeasures();
 	}
 	
 	// --------------------------------------------
@@ -832,7 +829,7 @@ public class Experiment
 		{
 			seqKymos.validateRois();
 			seqKymos.transferKymosRoisToCapillaries_Measures(capillaries);
-			flag = capillaries.saveCapillaries_Measures(directory);
+			flag = capillaries.save_Capillaries(directory);
 		}
 		return flag;
 	}

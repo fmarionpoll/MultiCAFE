@@ -5,7 +5,7 @@ import plugins.fmp.multicafe2.experiment.Experiment;
 public class CropMeasuresToDimensions  extends BuildSeries  {
 	void analyzeExperiment(Experiment exp) 
 	{
-		exp.loadMCExperiment();
+		exp.xmlLoad_MCExperiment();
 		exp.loadMCCapillaries();
 		if (exp.loadKymographs()) 
 		{
