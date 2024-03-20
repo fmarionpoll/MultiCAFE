@@ -90,7 +90,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
         
         tableView.setModel(capillariesWithTimeTablemodel);
 	    tableView.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	    tableView.setPreferredScrollableViewportSize(new Dimension(180, 120));
+	    tableView.setPreferredScrollableViewportSize(new Dimension(180, 300));
 	    tableView.setFillsViewportHeight(true);
         JScrollPane scrollPane = new JScrollPane(tableView);
         JPanel tablePanel = new JPanel();
