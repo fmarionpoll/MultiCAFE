@@ -215,7 +215,7 @@ public class Adjust extends JPanel  implements PropertyChangeListener
 		options.t_Ms_BinDuration			= parent0.paneExcel.tabCommonOptions.getBinMs();
 				
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
-		options.binSubDirectory = parent0.paneKymos.tabDisplay.getBinSubdirectory() ;
+		options.binSubDirectory = exp.getBinSubDirectory();
 		return true;
 	}
 	

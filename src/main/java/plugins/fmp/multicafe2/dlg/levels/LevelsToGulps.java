@@ -183,7 +183,7 @@ public class LevelsToGulps extends JPanel  implements PropertyChangeListener
 		options.searchArea.x 	= (int) startSpinner.getValue();
 		options.searchArea.width= (int) endSpinner.getValue()+ (int) startSpinner.getValue(); 
 		options.parent0Rect 	= parent0.mainFrame.getBoundsInternal();
-		options.binSubDirectory = (String) parent0.paneKymos.tabDisplay.getBinSubdirectory() ;
+		options.binSubDirectory = exp.getBinSubDirectory();
 		return options;
 	}
 	

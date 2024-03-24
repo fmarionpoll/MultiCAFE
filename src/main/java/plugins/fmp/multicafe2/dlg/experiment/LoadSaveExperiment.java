@@ -166,7 +166,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			}
 			exp.closeSequences();
 		}
-//		parent0.paneKymos.tabDisplay.kymographsCombo.removeAllItems();
 	}
 	
 	public void closeCurrentExperiment() 
@@ -337,16 +336,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					Viewer v = exp.seqCamData.seq.getFirstViewer();
 					int t = v.getPositionT(); 
 					v.setTitle(exp.seqCamData.getDecoratedImageName(t));
-				}
-				// TODO: check if the lines below are necessary
-				else if (exp.seqKymos.seq != null 
-					&& sequenceEvent.getSequence() == exp.seqKymos.seq)
-				{
-					Viewer v = exp.seqKymos.seq.getFirstViewer();
-//					int t = v.getPositionT(); 
-//					String title = parent0.paneKymos.tabDisplay.getKymographTitle();
-//					v.setTitle(title);
-					v.setTitle("dummy");
 				}
 			}
 		}

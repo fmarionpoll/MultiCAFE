@@ -99,7 +99,7 @@ public class MCExcel_  extends JPanel implements PropertyChangeListener
 				@Override public void run() 
 				{
 					XLSExportMoveResults xlsExport = new XLSExportMoveResults();
-					xlsExport.exportToFile(file, getMoveOptions());
+					xlsExport.exportToFile(file, getMoveOptions(exp));
 				}});
 		} 
 		else if (evt.getPropertyName().equals("EXPORT_KYMOSDATA")) 
@@ -113,7 +113,7 @@ public class MCExcel_  extends JPanel implements PropertyChangeListener
 				@Override public void run() 
 				{
 				XLSExportCapillariesResults xlsExport2 = new XLSExportCapillariesResults();
-				xlsExport2.exportToFile(file, getLevelsOptions());
+				xlsExport2.exportToFile(file, getLevelsOptions(exp));
 			}});
 		}
 		else if (evt.getPropertyName().equals("EXPORT_GULPSDATA")) 
@@ -127,7 +127,7 @@ public class MCExcel_  extends JPanel implements PropertyChangeListener
 				@Override public void run() 
 				{
 					XLSExportGulpsResults xlsExport2 = new XLSExportGulpsResults();
-					xlsExport2.exportToFile(file, getGulpsOptions());
+					xlsExport2.exportToFile(file, getGulpsOptions(exp));
 				}});	
 		}
 	}
@@ -147,7 +147,7 @@ public class MCExcel_  extends JPanel implements PropertyChangeListener
 		parent0.paneExperiment.tabInfos.getExperimentInfosFromDialog(exp);
 	}
 	
-	private XLSExportOptions getMoveOptions() 
+	private XLSExportOptions getMoveOptions(Experiment exp) 
 	{
 		XLSExportOptions options = new XLSExportOptions();
 		options.xyImage 		= tabMove.xyCenterCheckBox.isSelected(); 
@@ -158,11 +158,11 @@ public class MCExcel_  extends JPanel implements PropertyChangeListener
 		options.onlyalive 		= tabMove.deadEmptyCheckBox.isSelected();
 		options.sleep			= tabMove.sleepCheckBox.isSelected();
 		options.ellipseAxes		= tabMove.rectSizeCheckBox.isSelected();
-		getCommonOptions(options);
+		getCommonOptions(options, exp);
 		return options;
 	}
 	
-	private XLSExportOptions getLevelsOptions() 
+	private XLSExportOptions getLevelsOptions(Experiment exp) 
 	{
 		XLSExportOptions options = new XLSExportOptions();
 		options.sumGulps 		= false; 
@@ -177,11 +177,11 @@ public class MCExcel_  extends JPanel implements PropertyChangeListener
 		options.sumPerCage 		= tabLevels.sumPerCageCheckBox.isSelected();
 		options.t0 				= tabLevels.t0CheckBox.isSelected();
 		options.subtractEvaporation = tabLevels.subtractEvaporationCheckBox.isSelected();
-		getCommonOptions(options);
+		getCommonOptions(options, exp);
 		return options;
 	}
 	
-	private XLSExportOptions getGulpsOptions() 
+	private XLSExportOptions getGulpsOptions(Experiment exp) 
 	{
 		XLSExportOptions options= new XLSExportOptions();
 		options.topLevel 		= false; 
@@ -200,11 +200,11 @@ public class MCExcel_  extends JPanel implements PropertyChangeListener
 		options.nbinscorrelation	= (int) tabGulps.nbinsJSpinner.getValue();
 		
 		options.subtractEvaporation = false;
-		getCommonOptions(options);
+		getCommonOptions(options, exp);
 		return options;
 	}
 	
-	private void getCommonOptions(XLSExportOptions options) 
+	private void getCommonOptions(XLSExportOptions options, Experiment exp) 
 	{
 		options.transpose 		= tabCommonOptions.transposeCheckBox.isSelected();
 		options.buildExcelStepMs= tabCommonOptions.getExcelBuildStep() ;
@@ -220,7 +220,7 @@ public class MCExcel_  extends JPanel implements PropertyChangeListener
 		options.exportAllFiles 	= tabCommonOptions.exportAllFilesCheckBox.isSelected();
 		
 		options.expList = parent0.expListCombo; 
-		options.expList.expListBinSubDirectory = parent0.paneKymos.tabDisplay.getBinSubdirectory() ;
+		options.expList.expListBinSubDirectory = exp.getBinSubDirectory();
 		if (tabCommonOptions.exportAllFilesCheckBox.isSelected()) {
 			options.firstExp 	= 0;
 			options.lastExp 	= options.expList.getItemCount() - 1;

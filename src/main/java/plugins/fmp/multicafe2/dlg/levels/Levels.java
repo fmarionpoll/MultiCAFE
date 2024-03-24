@@ -77,13 +77,14 @@ public class Levels extends JPanel implements PropertyChangeListener
 	private JCheckBox	rightCheckBox 			= new JCheckBox ("R", true);
 	private JCheckBox	runBackwardsCheckBox 	= new JCheckBox ("run backwards", false);
 	
-	
 	private MultiCAFE2 	parent0 				= null;
 	private DetectLevels threadDetectLevels 	= null;
 	
 	private String SEARCHRECT = new String("search_rectangle");
 	private ROI2DRectangle searchRectangleROI2D = null;
 	private OverlayThreshold overlayThreshold 	= null;
+	private int currentKymographImage = 0;
+	
 	// -----------------------------------------------------
 		
 	void init(GridLayout capLayout, MultiCAFE2 parent0) 
@@ -317,7 +318,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 		threshold2Spinner.setEnabled(flag);
 	}
 	
-	void setInfosToDialog(Capillary cap) 
+	void setDialogFromOptions(Capillary cap) 
 	{
 		BuildSeriesOptions options = cap.limitsOptions;
 		
@@ -341,7 +342,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 		fromCheckBox.setSelected(false);
 	}
 	
-	void getInfosFromDialog(Capillary cap) 
+	void setOptionsFromDialog(Capillary cap) 
 	{
 		BuildSeriesOptions capOptions 		= cap.limitsOptions;
 		capOptions.pass1 					= pass1CheckBox.isSelected();
@@ -369,12 +370,13 @@ public class Levels extends JPanel implements PropertyChangeListener
 			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
 		// list of kymographs
 		options.detectAllKymos = allKymosCheckBox.isSelected();
-//		parent0.paneKymos.tabDisplay.indexImagesCombo = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
+		currentKymographImage = 0;
 		if (!allKymosCheckBox.isSelected()) 
 		{
 			int t = exp.seqKymos.seq.getFirstViewer().getPositionT();
 			options.kymoFirst = t;
 			options.kymoLast = t;
+			currentKymographImage = exp.seqKymos.seq.getFirstViewer().getPositionT();
 		}
 		else
 		{
@@ -418,6 +420,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 			detectButton.setText("STOP");
 		}
 	}
+	
 
 	private void stopLevelsDetection() 
 	{	
@@ -431,7 +434,8 @@ public class Levels extends JPanel implements PropertyChangeListener
 		 if (StringUtil.equals("thread_ended", evt.getPropertyName())) 
 		 {
 			detectButton.setText(detectString);
-			parent0.paneKymos.tabDisplay.selectKymographImage(parent0.paneKymos.tabDisplay.indexImagesCombo);
+			System.out.println("thread_ended");
+			parent0.paneKymos.tabDisplay.selectKymographImage(currentKymographImage);
 			parent0.paneKymos.tabDisplay.indexImagesCombo = -1;
 			fromCheckBox.setSelected(false);
 		 }

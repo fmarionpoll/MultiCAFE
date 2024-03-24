@@ -219,7 +219,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		}
 	}
 	
-	private BuildSeriesOptions initTrackParameters() 
+	private BuildSeriesOptions initTrackParameters(Experiment exp) 
 	{
 		BuildSeriesOptions options = new BuildSeriesOptions();
 		options.expList 		= parent0.expListCombo;	
@@ -246,10 +246,10 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		options.isFrameFixed 	= parent0.paneExcel.tabCommonOptions.getIsFixedFrame();
 		options.t_Ms_First 		= parent0.paneExcel.tabCommonOptions.getStartMs();
 		options.t_Ms_Last 		= parent0.paneExcel.tabCommonOptions.getEndMs();
-		options.t_Ms_BinDuration			= parent0.paneExcel.tabCommonOptions.getBinMs();
+		options.t_Ms_BinDuration= parent0.paneExcel.tabCommonOptions.getBinMs();
 
 		options.parent0Rect 	= parent0.mainFrame.getBoundsInternal();
-		options.binSubDirectory	= parent0.paneKymos.tabDisplay.getBinSubdirectory() ;
+		options.binSubDirectory	= exp.getBinSubDirectory() ;
 		
 		options.detectCage = allCagesComboBox.getSelectedIndex() - 1;
 	
@@ -264,7 +264,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		parent0.paneExperiment.panelLoadSave.closeViewsForCurrentExperiment(exp);
 		
 		flyDetect1 = new FlyDetect1();			
-		flyDetect1.options 			= initTrackParameters();
+		flyDetect1.options 			= initTrackParameters(exp);
 		flyDetect1.stopFlag 		= false;
 		flyDetect1.buildBackground	= false;
 		flyDetect1.detectFlies		= true;

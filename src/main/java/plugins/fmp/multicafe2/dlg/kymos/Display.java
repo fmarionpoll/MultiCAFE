@@ -126,8 +126,10 @@ public class Display extends JPanel implements ViewerListener
 			@Override public void actionPerformed( final ActionEvent e )
 			{ 
 			int isel = kymographsCombo.getSelectedIndex()+1;
-			if (isel < kymographsCombo.getItemCount())
-				selectKymographImage(isel);
+			if (isel < kymographsCombo.getItemCount()) {
+				isel = selectKymographImage(isel);
+				selectKymographComboItem(isel);
+			}
 			}});
 		
 		previousButton.addActionListener(new ActionListener ()
@@ -135,8 +137,10 @@ public class Display extends JPanel implements ViewerListener
 			@Override public void actionPerformed( final ActionEvent e )
 			{ 
 			int isel = kymographsCombo.getSelectedIndex()-1;
-			if (isel < kymographsCombo.getItemCount())
-				selectKymographImage(isel);
+			if (isel < kymographsCombo.getItemCount()) {
+				isel = selectKymographImage(isel);
+				selectKymographComboItem(isel);
+			}
 			}});
 		
 		viewsCombo.addActionListener(new ActionListener ()
@@ -159,7 +163,7 @@ public class Display extends JPanel implements ViewerListener
 			kymographsCombo.removeAllItems();
 			Collections.sort(exp.capillaries.capillariesList); 
 			int ncapillaries = exp.capillaries.capillariesList.size();
-			for (int i=0; i< ncapillaries; i++)
+			for (int i = 0; i < ncapillaries; i++)
 			{
 				Capillary cap = exp.capillaries.capillariesList.get(i);
 				kymographsCombo.addItem(cap.getRoiName());
@@ -221,8 +225,9 @@ public class Display extends JPanel implements ViewerListener
 
 				placeKymoViewerNextToCamViewer(exp);
 				
-				int isel = kymographsCombo.getSelectedIndex();
-				selectCapillary(exp, isel);
+				int isel = seqKymographs.currentFrame;
+				isel = selectKymographImage(isel);
+				selectKymographComboItem(isel);
 			}
 		}
 	}
@@ -278,7 +283,8 @@ public class Display extends JPanel implements ViewerListener
 	{		
 		SwingUtilities.invokeLater(new Runnable() { public void run()
 		{
-			selectKymographImage(displayUpdate());
+			int isel = selectKymographImage(displayUpdate());
+			selectKymographComboItem(isel);
 		}});
 	}
 	
@@ -290,57 +296,66 @@ public class Display extends JPanel implements ViewerListener
 		displayON();
 		
 		item = kymographsCombo.getSelectedIndex();
-		if (item < 0) {
+		if (item < 0) 
+		{
 			item = indexImagesCombo >= 0 ? indexImagesCombo : 0;
 			indexImagesCombo = -1;
 		}
 		return item;
 	}
 	
-	public void selectKymographImage(int isel)
+	private void selectKymographComboItem(int isel) 
 	{
+		int icurrent = kymographsCombo.getSelectedIndex();
+		if (isel >= 0 && isel != icurrent)
+			kymographsCombo.setSelectedIndex(isel);
+	}
+	
+	public int selectKymographImage(int isel)
+	{
+		int selectedImageIndex = -1;
 		Experiment exp =(Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null) 
-			return;
+			return selectedImageIndex;
+		
 		SequenceKymos seqKymos = exp.seqKymos;
 		if (seqKymos == null || seqKymos.seq == null)
-			return;
+			return selectedImageIndex;
 		if (seqKymos.seq.isUpdating())
-			return;
+			return selectedImageIndex;
 		
 		if (isel < 0)
 			isel = 0;
 		if (isel >= seqKymos.seq.getSizeT() )
 			isel = seqKymos.seq.getSizeT() -1;
-		int icurrent = kymographsCombo.getSelectedIndex();
-		if (icurrent != isel)
-		{
+		
+		
 			seqKymos.seq.beginUpdate();
-			seqKymos.validateRoisAtT(icurrent);
-			
-			seqKymos.currentFrame = isel; 
 			Viewer v = seqKymos.seq.getFirstViewer();
-			if (v != null)
+			if (v != null) 
 			{
-				if( v.getPositionT() != isel)
+				int icurrent = v.getPositionT();
+				if (icurrent != isel)
 					v.setPositionT(isel);
+				seqKymos.validateRoisAtT(seqKymos.currentFrame);
+				seqKymos.currentFrame = isel;
 			}
 			seqKymos.seq.endUpdate();
-			
-			if (icurrent >= 0) 
-				kymographsCombo.setSelectedIndex(isel);
-			parent0.paneKymos.tabDisplay.displayROIsAccordingToUserSelection();
-			selectCapillary(exp, isel);
-		}
+		
+		selectedImageIndex = seqKymos.currentFrame;
+		parent0.paneKymos.tabDisplay.displayROIsAccordingToUserSelection();
+		selectCapillary(exp, selectedImageIndex);	
+		return selectedImageIndex;
 	}
 	
 	private void selectCapillary(Experiment exp, int isel)
 	{
 		Capillaries capillaries = exp.capillaries;
-		for (Capillary cap : capillaries.capillariesList) {
+		for (Capillary cap : capillaries.capillariesList) 
+		{
 			cap.getRoi().setSelected(false);
-		Capillary capSel = capillaries.capillariesList.get(isel);
-		capSel.getRoi().setSelected(true);
+			Capillary capSel = capillaries.capillariesList.get(isel);
+			capSel.getRoi().setSelected(true);
 		}
 	}
 	
@@ -354,7 +369,8 @@ public class Display extends JPanel implements ViewerListener
 			{
 				Viewer v = exp.seqKymos.seq.getFirstViewer();
 				int t = v.getPositionT();
-				selectKymographImage(t);
+				t = selectKymographImage(t);
+				if (t>= 0) selectKymographComboItem(t);
 			}
 		}
 	}
@@ -408,7 +424,6 @@ public class Display extends JPanel implements ViewerListener
 		exp.setBinSubDirectory(localString);
 		exp.seqKymos.seq.close();
 		exp.loadKymographs();
-		//displayON();
 		parent0.paneKymos.updateDialogs(exp);
 	}
 

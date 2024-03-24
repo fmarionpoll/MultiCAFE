@@ -154,7 +154,7 @@ public class Detect2 extends JPanel implements ChangeListener, PropertyChangeLis
 		overlayThreshold2.painterChanged();	
 	}
 	
-	private BuildSeriesOptions initTrackParameters() 
+	private BuildSeriesOptions initTrackParameters(Experiment exp) 
 	{
 		BuildSeriesOptions options = flyDetect2.options;
 		options.expList 		= parent0.expListCombo;	
@@ -175,12 +175,12 @@ public class Detect2 extends JPanel implements ChangeListener, PropertyChangeLis
 		options.detectFlies		= true;
 		
 		options.parent0Rect 	= parent0.mainFrame.getBoundsInternal();
-		options.binSubDirectory = parent0.paneKymos.tabDisplay.getBinSubdirectory() ;
+		options.binSubDirectory = exp.getBinSubDirectory() ;
 		
 		options.isFrameFixed 	= parent0.paneExcel.tabCommonOptions.getIsFixedFrame();
 		options.t_Ms_First 		= parent0.paneExcel.tabCommonOptions.getStartMs();
 		options.t_Ms_Last 		= parent0.paneExcel.tabCommonOptions.getEndMs();
-		options.t_Ms_BinDuration			= parent0.paneExcel.tabCommonOptions.getBinMs();
+		options.t_Ms_BinDuration= parent0.paneExcel.tabCommonOptions.getBinMs();
 
 		return options;
 	}
@@ -193,7 +193,7 @@ public class Detect2 extends JPanel implements ChangeListener, PropertyChangeLis
 		parent0.paneExperiment.panelLoadSave.closeViewsForCurrentExperiment(exp);
 		
 		flyDetect2 = new FlyDetect2();		
-		flyDetect2.options = initTrackParameters();
+		flyDetect2.options = initTrackParameters(exp);
 		flyDetect2.stopFlag = false;
 		flyDetect2.addPropertyChangeListener(this);
 		flyDetect2.execute();

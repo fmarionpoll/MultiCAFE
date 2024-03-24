@@ -219,7 +219,7 @@ public class Detect2BuildBackground extends JPanel implements ChangeListener, Pr
 			exp.seqCamData.seq.removeOverlay(ov);
 	}
 	
-	private BuildSeriesOptions initTrackParameters() 
+	private BuildSeriesOptions initTrackParameters(Experiment exp) 
 	{
 		BuildSeriesOptions options = buildBackground.options;
 		options.expList 		= parent0.expListCombo;	
@@ -232,14 +232,13 @@ public class Detect2BuildBackground extends JPanel implements ChangeListener, Pr
 		options.btrackWhite 	= true;
 		options.backgroundThreshold	= (int) backgroundThresholdSpinner.getValue();		
 		options.backgroundNFrames = (int) backgroundNFramesSpinner.getValue();	
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		options.backgroundFirst = (int) exp.seqCamData.currentFrame;
 		
 		options.forceBuildBackground = true;
 		options.detectFlies		= false;
 		
 		options.parent0Rect 	= parent0.mainFrame.getBoundsInternal();
-		options.binSubDirectory = parent0.paneKymos.tabDisplay.getBinSubdirectory() ;
+		options.binSubDirectory = exp.getBinSubDirectory() ;
 		
 		options.isFrameFixed 	= parent0.paneExcel.tabCommonOptions.getIsFixedFrame();
 		options.t_Ms_First 		= parent0.paneExcel.tabCommonOptions.getStartMs();
@@ -260,7 +259,7 @@ public class Detect2BuildBackground extends JPanel implements ChangeListener, Pr
 		parent0.paneExperiment.panelLoadSave.closeViewsForCurrentExperiment(exp);
 		
 		buildBackground = new BuildBackground();		
-		buildBackground.options = initTrackParameters();
+		buildBackground.options = initTrackParameters(exp);
 		buildBackground.stopFlag = false;
 
 		buildBackground.addPropertyChangeListener(this);
