@@ -61,15 +61,20 @@ public class Edit   extends JPanel
 		panel0.add(fieldNamesCombo);
 		fieldNamesCombo.setPreferredSize(new Dimension(bWidth, bHeight));
 		add(panel0);
-				
+		
+		bWidth = 200;
 		JPanel panel1 = new JPanel(flowlayout);
 		panel1.add(new JLabel("Field value "));
 		panel1.add(fieldOldValuesCombo);
 		fieldOldValuesCombo.setPreferredSize(new Dimension(bWidth, bHeight));
-		panel1.add(new JLabel(" replace with "));
-		panel1.add(newValueTextField);
-		panel1.add(applyButton);
 		add (panel1);
+		
+		JPanel panel2 = new JPanel(flowlayout);
+		panel2.add(new JLabel("replace with"));
+		panel2.add(newValueTextField);
+		newValueTextField.setPreferredSize(new Dimension(bWidth, bHeight));
+		panel2.add(applyButton);
+		add (panel2);
 	
 		defineActionListeners();
 	}
