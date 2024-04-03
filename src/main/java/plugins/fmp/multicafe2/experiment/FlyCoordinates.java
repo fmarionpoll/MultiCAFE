@@ -6,11 +6,12 @@ import java.awt.geom.Rectangle2D;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import icy.util.StringUtil;
 import icy.util.XMLUtil;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 
-public class XYTaValue
+public class FlyCoordinates
 {
 	public Rectangle2D rectBounds = new Rectangle2D.Double(Double.NaN,Double.NaN,Double.NaN,Double.NaN);
 	public ROI2DArea flyRoi 	= null;
@@ -24,16 +25,16 @@ public class XYTaValue
 	public double   axis2	   	= 0.;
 	
 	
-	public XYTaValue() 
+	public FlyCoordinates() 
 	{
 	}
 	
-	public XYTaValue(int indexT) 
+	public FlyCoordinates(int indexT) 
 	{
 		this.indexT = indexT;
 	}
 	
-	public XYTaValue(int indexT, Rectangle2D rectangle, ROI2DArea roiArea) 
+	public FlyCoordinates(int indexT, Rectangle2D rectangle, ROI2DArea roiArea) 
 	{
 		if (rectangle != null)
 			this.rectBounds.setRect(rectangle);
@@ -41,7 +42,7 @@ public class XYTaValue
 		this.indexT = indexT;
 	}
 	
-	public XYTaValue(int indexT, Rectangle2D rectangle, boolean alive) 
+	public FlyCoordinates(int indexT, Rectangle2D rectangle, boolean alive) 
 	{
 		if (rectangle != null)
 			this.rectBounds.setRect(rectangle);
@@ -49,7 +50,7 @@ public class XYTaValue
 		this.bAlive = alive;
 	}
 	
-	public void copy (XYTaValue aVal) 
+	public void copy (FlyCoordinates aVal) 
 	{
 		indexT = aVal.indexT;
 		bAlive = aVal.bAlive;
@@ -87,7 +88,9 @@ public class XYTaValue
 			double hR =  XMLUtil.getAttributeDoubleValue( node_XYTa, "hR", Double.NaN);
 			if (!Double.isNaN(xR) && !Double.isNaN(yR)) {
 				rectBounds.setRect(xR, yR, wR, hR);
-			} else {
+			} 
+			else 
+			{
 				xR =  XMLUtil.getAttributeDoubleValue( node_XYTa, "x", Double.NaN);
 				yR =  XMLUtil.getAttributeDoubleValue( node_XYTa, "y", Double.NaN);
 				if (!Double.isNaN(xR) && !Double.isNaN(yR)) {
@@ -137,4 +140,76 @@ public class XYTaValue
 			flyRoi.saveToXML(node_roi);
 		return false;
 	}
+
+	// --------------------------------------------
+	
+	public boolean cvsExportXYWHDataToRow(StringBuffer sbf, String sep) 
+	{
+
+        sbf.append(StringUtil.toString((double) rectBounds.getX()));
+        sbf.append(sep);
+        sbf.append(StringUtil.toString((double) rectBounds.getY()));
+        sbf.append(sep);
+        sbf.append(StringUtil.toString((double) rectBounds.getWidth()));
+        sbf.append(sep);
+        sbf.append(StringUtil.toString((double) rectBounds.getHeight()));
+        sbf.append(sep);
+
+		return true;
+	}
+	
+	public boolean cvsExportXYDataToRow(StringBuffer sbf, String sep) 
+	{
+
+        sbf.append(StringUtil.toString((double) rectBounds.getX()));
+        sbf.append(sep);
+        sbf.append(StringUtil.toString((double) rectBounds.getY()));
+        sbf.append(sep);
+
+		return true;
+	}
+	
+	public boolean csvImportXYWHDataFromRow(String[] data, int startAt) 
+	{
+		int npoints = 4;
+		if (data.length < npoints+startAt-1)
+			return false;
+		
+		int offset = startAt;
+		double xR = Double.valueOf(data[offset]);
+		offset++;
+		double yR = Double.valueOf(data[offset]);
+		offset++;
+		double wR = Double.valueOf(data[offset]);
+		offset++;
+		double hR = Double.valueOf(data[offset]);
+		offset++;
+		rectBounds.setRect(xR, yR, wR, hR);
+		
+		return true;
+	}
+	
+	public boolean csvImportXYDataFromRow(String[] data, int startAt) 
+	{
+		int npoints = 4;
+		if (data.length < npoints+startAt-1)
+			return false;
+		
+		int offset = startAt;
+		double xR = Double.valueOf(data[offset]);
+		offset++;
+		double yR = Double.valueOf(data[offset]);
+		offset++;
+		
+		if (!Double.isNaN(xR) && !Double.isNaN(yR)) {
+			xR -= 2.;
+			yR -= 2.;
+			double wR = 4.;
+			double hR = 4.;
+			rectBounds.setRect(xR, yR, wR, hR);
+		}
+		
+		return true;
+	}
+	
 }

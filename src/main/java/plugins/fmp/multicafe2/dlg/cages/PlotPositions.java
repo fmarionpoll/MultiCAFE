@@ -20,7 +20,7 @@ import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe2.MultiCAFE2;
 import plugins.fmp.multicafe2.experiment.Cage;
 import plugins.fmp.multicafe2.experiment.Experiment;
-import plugins.fmp.multicafe2.experiment.XYTaSeriesArrayList;
+import plugins.fmp.multicafe2.experiment.FlyPositions;
 import plugins.fmp.multicafe2.tools.chart.ChartPositions;
 import plugins.fmp.multicafe2.tools.toExcel.EnumXLSExportType;
 
@@ -110,7 +110,7 @@ public class PlotPositions extends JPanel implements SequenceListener
 		{
 			double threshold = (double) aliveThresholdSpinner.getValue();		
 			for (Cage cage: exp.cages.cagesList) {
-				XYTaSeriesArrayList posSeries = cage.flyPositions;
+				FlyPositions posSeries = cage.flyPositions;
 				posSeries.moveThreshold = threshold;
 				posSeries.computeIsAlive();
 			}
@@ -122,7 +122,7 @@ public class PlotPositions extends JPanel implements SequenceListener
 		{	
 			for (Cage cage: exp.cages.cagesList) 
 			{
-				XYTaSeriesArrayList posSeries = cage.flyPositions;
+				FlyPositions posSeries = cage.flyPositions;
 				posSeries.computeSleep();
 			}
 			displayYPos("flies asleep", sleepChart, rectv, ptRelative, exp, EnumXLSExportType.SLEEP);	

@@ -21,7 +21,7 @@ public class Cage
 {
 	public ROI2D 		cageRoi2D				= null;
 	public BooleanMask2D cageMask2D				= null;
-	public XYTaSeriesArrayList 	flyPositions 	= new XYTaSeriesArrayList();
+	public FlyPositions 	flyPositions 	= new FlyPositions();
 	public int 			cageNFlies  			= 0;
 	public int 			cageAge 				= 5;
 	public String 		strCageComment 			= "..";
@@ -231,7 +231,7 @@ public class Cage
 		int nitems = flyPositions.xytArrayList.size();
 		if (nitems == 0 || t >= nitems)
 			return null;
-		XYTaValue aValue = flyPositions.xytArrayList.get(t);
+		FlyCoordinates aValue = flyPositions.xytArrayList.get(t);
 		
 		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.rectBounds);
 		flyRoiR.setName("detR"+getCageNumber() +"_" + t );

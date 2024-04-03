@@ -21,7 +21,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import plugins.fmp.multicafe2.experiment.Cage;
-import plugins.fmp.multicafe2.experiment.XYTaSeriesArrayList;
+import plugins.fmp.multicafe2.experiment.FlyPositions;
 import plugins.fmp.multicafe2.tools.MaxMinDouble;
 import plugins.fmp.multicafe2.tools.toExcel.EnumXLSExportType;
 
@@ -99,7 +99,7 @@ public class ChartPositions extends IcyFrame
 	
 	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumXLSExportType option, XYSeries seriesXY) 
 	{
-		XYTaSeriesArrayList results = cage.flyPositions;
+		FlyPositions results = cage.flyPositions;
 		int itmax = results.xytArrayList.size();
 		MaxMinDouble yMaxMin = null;
 		if (itmax > 0) 
@@ -159,7 +159,7 @@ public class ChartPositions extends IcyFrame
 		return yMaxMin;
 	}
 	
-	private void addxyPos(XYSeries seriesXY, XYTaSeriesArrayList positionxyt, int it, Double ypos)
+	private void addxyPos(XYSeries seriesXY, FlyPositions positionxyt, int it, Double ypos)
 	{
 		double indexT = positionxyt.xytArrayList.get(it).indexT;
 		seriesXY.add( indexT, ypos );

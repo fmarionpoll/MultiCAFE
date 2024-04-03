@@ -7,8 +7,8 @@ import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe2.experiment.Cage;
 import plugins.fmp.multicafe2.experiment.Experiment;
-import plugins.fmp.multicafe2.experiment.XYTaSeriesArrayList;
-import plugins.fmp.multicafe2.experiment.XYTaValue;
+import plugins.fmp.multicafe2.experiment.FlyPositions;
+import plugins.fmp.multicafe2.experiment.FlyCoordinates;
 import plugins.fmp.multicafe2.tools.toExcel.XLSResults;
 
 
@@ -58,10 +58,10 @@ public class Comparators
 		}
 	}
 	
-	public static class XYTaSeries_Name_Comparator implements Comparator <XYTaSeriesArrayList> 
+	public static class XYTaSeries_Name_Comparator implements Comparator <FlyPositions> 
 	{
 		@Override
-		public int compare (XYTaSeriesArrayList o1, XYTaSeriesArrayList o2) 
+		public int compare (FlyPositions o1, FlyPositions o2) 
 		{
 			return o1.name.compareTo(o2.name);
 		}
@@ -76,10 +76,10 @@ public class Comparators
 		}
 	}
 	
-	public static class XYTaValue_Tindex_Comparator implements Comparator <XYTaValue> 
+	public static class XYTaValue_Tindex_Comparator implements Comparator <FlyCoordinates> 
 	{
 		@Override
-		public int compare (XYTaValue o1, XYTaValue o2) 
+		public int compare (FlyCoordinates o1, FlyCoordinates o2) 
 		{
 			return o1.indexT - o2.indexT;
 		}

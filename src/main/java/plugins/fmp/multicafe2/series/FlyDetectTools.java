@@ -16,7 +16,7 @@ import icy.system.thread.Processor;
 import plugins.fmp.multicafe2.experiment.Cage;
 import plugins.fmp.multicafe2.experiment.Cages;
 import plugins.fmp.multicafe2.experiment.Experiment;
-import plugins.fmp.multicafe2.experiment.XYTaSeriesArrayList;
+import plugins.fmp.multicafe2.experiment.FlyPositions;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 
@@ -231,7 +231,7 @@ public class FlyDetectTools
 				continue;
 			if (cage.cageNFlies > 0) 
 			{
-				XYTaSeriesArrayList positions = new XYTaSeriesArrayList();
+				FlyPositions positions = new FlyPositions();
 				positions.ensureCapacity(exp.cages.detect_nframes);
 				cage.flyPositions = positions;
 			}
