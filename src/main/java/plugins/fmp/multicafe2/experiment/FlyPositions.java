@@ -10,6 +10,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import icy.util.StringUtil;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe2.tools.Comparators;
 import plugins.fmp.multicafe2.tools.ROI2DMeasures;
@@ -25,7 +26,7 @@ public class FlyPositions
 	public int				sleepThreshold		= 5;
 	public int 				lastTimeAlive 		= 0;
 	public int 				lastIntervalAlive 	= 0;
-	public ArrayList<FlyCoordinates> xytArrayList	= new ArrayList<FlyCoordinates>();
+	public ArrayList<FlyCoordinates> flyCoordinatesList	= new ArrayList<FlyCoordinates>();
 	
 	public String			name 				= null;
 	public EnumXLSExportType exportType 		= null;
@@ -50,19 +51,19 @@ public class FlyPositions
 		this.name = name;
 		this.exportType = exportType;
 		this.binsize = binsize;
-		xytArrayList = new ArrayList<FlyCoordinates>(nFrames);
+		flyCoordinatesList = new ArrayList<FlyCoordinates>(nFrames);
 		for (int i = 0; i < nFrames; i++) 
-			xytArrayList.add(new FlyCoordinates(i));
+			flyCoordinatesList.add(new FlyCoordinates(i));
 	}
 	
 	public void clear() 
 	{
-		xytArrayList.clear();
+		flyCoordinatesList.clear();
 	}
 	
 	public void ensureCapacity(int nFrames) 
 	{
-		xytArrayList.ensureCapacity(nFrames);
+		flyCoordinatesList.ensureCapacity(nFrames);
 //		initArray(nFrames);
 	}
 	
@@ -70,13 +71,13 @@ public class FlyPositions
 	{
 		for (int i = 0; i < nFrames; i++) {
 			FlyCoordinates value = new FlyCoordinates(i);
-			xytArrayList.add(value);
+			flyCoordinatesList.add(value);
 		}
 	}
 	
 	public Rectangle2D getRectangle(int i) 
 	{
-		return xytArrayList.get(i).rectBounds;
+		return flyCoordinatesList.get(i).rectBounds;
 	}
 	
 	public Rectangle2D getValidPointAtOrBefore(int index) 
@@ -84,7 +85,7 @@ public class FlyPositions
 		Rectangle2D rect = new Rectangle2D.Double(-1, -1, Double.NaN, Double.NaN);
 		for (int i = index; i>= 0; i--) 
 		{
-			FlyCoordinates xyVal = xytArrayList.get(i);
+			FlyCoordinates xyVal = flyCoordinatesList.get(i);
 			if (xyVal.rectBounds.getX() >= 0 && xyVal.rectBounds.getY() >= 0) {
 				rect = xyVal.rectBounds;
 				break;
@@ -95,13 +96,13 @@ public class FlyPositions
 	
 	public int getTime(int i) 
 	{
-		return xytArrayList.get(i).indexT;
+		return flyCoordinatesList.get(i).indexT;
 	}
 
 	public void addPosition (int frame, Rectangle2D rectangle, ROI2DArea roiArea) 
 	{
 		FlyCoordinates pos = new FlyCoordinates(frame, rectangle, roiArea);
-		xytArrayList.add(pos);
+		flyCoordinatesList.add(pos);
 	}
 	
 	public void copyXYTaSeries (FlyPositions xySer) 
@@ -109,8 +110,8 @@ public class FlyPositions
 		moveThreshold = xySer.moveThreshold;
 		sleepThreshold = xySer.sleepThreshold;
 		lastTimeAlive = xySer.lastIntervalAlive;
-		xytArrayList = new ArrayList<FlyCoordinates>(xySer.xytArrayList.size());
-		xytArrayList.addAll(xytArrayList);
+		flyCoordinatesList = new ArrayList<FlyCoordinates>(xySer.flyCoordinatesList.size());
+		flyCoordinatesList.addAll(flyCoordinatesList);
 		name = xySer.name;
 		exportType = xySer.exportType;
 		binsize = xySer.binsize;
@@ -131,30 +132,30 @@ public class FlyPositions
 		if (node_position_list == null) 
 			return false;
 		
-		xytArrayList.clear();
+		flyCoordinatesList.clear();
 		int nb_items =  XMLUtil.getAttributeIntValue(node_position_list, ID_NBITEMS, 0);
-		xytArrayList.ensureCapacity(nb_items);
+		flyCoordinatesList.ensureCapacity(nb_items);
 		for (int i = 0; i< nb_items; i++) 
-			xytArrayList.add(new FlyCoordinates(i));
+			flyCoordinatesList.add(new FlyCoordinates(i));
 		boolean bAdded = false;
 		
-		for (int i=0; i< nb_items; i++) 
+		for (int i = 0; i < nb_items; i++) 
 		{
 			String elementi = "i"+i;
 			Element node_position_i = XMLUtil.getElement(node_position_list, elementi);
 			FlyCoordinates pos = new FlyCoordinates();
 			pos.loadXYTvaluesFromXML(node_position_i);
 			if (pos.indexT < nb_items) 
-				xytArrayList.set(pos.indexT, pos);
+				flyCoordinatesList.set(pos.indexT, pos);
 			else 
 			{
-				xytArrayList.add(pos);
+				flyCoordinatesList.add(pos);
 				bAdded = true;
 			}
 		}
 		
 		if (bAdded)
-			Collections.sort(xytArrayList, new Comparators.XYTaValue_Tindex_Comparator());
+			Collections.sort(flyCoordinatesList, new Comparators.XYTaValue_Tindex_Comparator());
 		return true;
 	}
 
@@ -169,10 +170,10 @@ public class FlyPositions
 		XMLUtil.setAttributeIntValue(node_lastime, ID_ILAST, lastIntervalAlive);
 		
 		Element node_position_list = XMLUtil.addElement(node, ID_POSITIONSLIST);
-		XMLUtil.setAttributeIntValue(node_position_list, ID_NBITEMS, xytArrayList.size());
+		XMLUtil.setAttributeIntValue(node_position_list, ID_NBITEMS, flyCoordinatesList.size());
 		
 		int i = 0;
-		for (FlyCoordinates pos: xytArrayList) 
+		for (FlyCoordinates pos: flyCoordinatesList) 
 		{
 			String elementi = "i"+i;
 			Element node_position_i = XMLUtil.addElement(node_position_list, elementi);
@@ -195,9 +196,9 @@ public class FlyPositions
 		computeDistanceBetweenConsecutivePoints();
 		lastIntervalAlive = 0;
 		boolean isalive = false;
-		for (int i= xytArrayList.size() - 1; i >= 0; i--) 
+		for (int i= flyCoordinatesList.size() - 1; i >= 0; i--) 
 		{
-			FlyCoordinates pos = xytArrayList.get(i);
+			FlyCoordinates pos = flyCoordinatesList.get(i);
 			if (pos.distance > moveThreshold && !isalive) 
 			{
 				lastIntervalAlive = i;
@@ -212,9 +213,9 @@ public class FlyPositions
 	{
 		lastIntervalAlive = 0;
 		boolean isalive = false;
-		for (int i= xytArrayList.size() - 1; i >= 0; i--) 
+		for (int i= flyCoordinatesList.size() - 1; i >= 0; i--) 
 		{
-			FlyCoordinates pos = xytArrayList.get(i);
+			FlyCoordinates pos = flyCoordinatesList.get(i);
 			if (!isalive && pos.bAlive) 
 			{
 				lastIntervalAlive = i;
@@ -227,12 +228,12 @@ public class FlyPositions
 
 	public void computeDistanceBetweenConsecutivePoints() 
 	{
-		if (xytArrayList.size() <= 0)
+		if (flyCoordinatesList.size() <= 0)
 			return;
 		
 		// assume ordered points
-		Point2D previousPoint = xytArrayList.get(0).getCenterRectangle();
-		for (FlyCoordinates pos: xytArrayList) 
+		Point2D previousPoint = flyCoordinatesList.get(0).getCenterRectangle();
+		for (FlyCoordinates pos: flyCoordinatesList) 
 		{
 			Point2D currentPoint = pos.getCenterRectangle();
 			pos.distance = currentPoint.distance(previousPoint);
@@ -244,12 +245,12 @@ public class FlyPositions
 	
 	public void computeCumulatedDistance() 
 	{
-		if (xytArrayList.size() <= 0)
+		if (flyCoordinatesList.size() <= 0)
 			return;
 		
 		// assume ordered points
 		double sum = 0.;
-		for (FlyCoordinates pos: xytArrayList) 
+		for (FlyCoordinates pos: flyCoordinatesList) 
 		{
 			sum += pos.distance;
 			pos.sumDistance = sum;
@@ -260,32 +261,32 @@ public class FlyPositions
 	
 	public void excelComputeDistanceBetweenPoints(FlyPositions flyPositions, int dataStepMs, int excelStepMs) 
 	{
-		if (flyPositions.xytArrayList.size() <= 0)
+		if (flyPositions.flyCoordinatesList.size() <= 0)
 			return;
 		
 		flyPositions.computeDistanceBetweenConsecutivePoints();
 		flyPositions.computeCumulatedDistance();
 		
 		int excel_startMs = 0;
-		int n_excel_intervals = xytArrayList.size();
+		int n_excel_intervals = flyCoordinatesList.size();
 		int excel_endMs = n_excel_intervals * excelStepMs;
-		int n_data_intervals = flyPositions.xytArrayList.size();
+		int n_data_intervals = flyPositions.flyCoordinatesList.size();
 		
 		double sumDistance_previous = 0.;
 		
 		for (int excel_Ms = excel_startMs; excel_Ms < excel_endMs; excel_Ms += excelStepMs) 
 		{
 			int excel_bin = excel_Ms / excelStepMs;
-			FlyCoordinates excel_pos = xytArrayList.get(excel_bin);
+			FlyCoordinates excel_pos = flyCoordinatesList.get(excel_bin);
 			
 			int data_bin = excel_Ms / dataStepMs;
 			int data_bin_remainder = excel_Ms % dataStepMs;
-			FlyCoordinates data_pos = flyPositions.xytArrayList.get(data_bin);
+			FlyCoordinates data_pos = flyPositions.flyCoordinatesList.get(data_bin);
 			
 			double delta = 0.;
 			if (data_bin_remainder != 0 && (data_bin + 1 < n_data_intervals)) 
 			{
-				delta = flyPositions.xytArrayList.get(data_bin+1).distance * data_bin_remainder / dataStepMs;
+				delta = flyPositions.flyCoordinatesList.get(data_bin+1).distance * data_bin_remainder / dataStepMs;
 			}
 			excel_pos.distance = data_pos.sumDistance - sumDistance_previous + delta;
 			sumDistance_previous = data_pos.sumDistance;
@@ -296,13 +297,13 @@ public class FlyPositions
 	{
 		flyPositions.computeIsAlive();
 		int it_start = 0;
-		int it_end = flyPositions.xytArrayList.size() * stepMs;
+		int it_end = flyPositions.flyCoordinatesList.size() * stepMs;
 		int it_out = 0;
-		for (int it = it_start; it < it_end && it_out < xytArrayList.size(); it += buildExcelStepMs, it_out++) 
+		for (int it = it_start; it < it_end && it_out < flyCoordinatesList.size(); it += buildExcelStepMs, it_out++) 
 		{
 			int index = it/stepMs;
-			FlyCoordinates pos = xytArrayList.get(it_out);
-			pos.bAlive = flyPositions.xytArrayList.get(index).bAlive;
+			FlyCoordinates pos = flyCoordinatesList.get(it_out);
+			pos.bAlive = flyPositions.flyCoordinatesList.get(index).bAlive;
 		}
 	}
 	
@@ -310,13 +311,13 @@ public class FlyPositions
 	{
 		flyPositions.computeSleep();
 		int it_start = 0;
-		int it_end = flyPositions.xytArrayList.size() * stepMs;
+		int it_end = flyPositions.flyCoordinatesList.size() * stepMs;
 		int it_out = 0;
-		for (int it = it_start; it < it_end && it_out < xytArrayList.size(); it += buildExcelStepMs, it_out++) 
+		for (int it = it_start; it < it_end && it_out < flyCoordinatesList.size(); it += buildExcelStepMs, it_out++) 
 		{
 			int index = it/stepMs;
-			FlyCoordinates pos = xytArrayList.get(it_out);
-			pos.bSleep = flyPositions.xytArrayList.get(index).bSleep;
+			FlyCoordinates pos = flyCoordinatesList.get(it_out);
+			pos.bSleep = flyPositions.flyCoordinatesList.get(index).bSleep;
 		}
 	}
 	
@@ -328,13 +329,13 @@ public class FlyPositions
 		if (deltaX == 0 && deltaY == 0)
 			return;
 		int it_start = 0;
-		int it_end = flyPositions.xytArrayList.size()  * stepMs;
+		int it_end = flyPositions.flyCoordinatesList.size()  * stepMs;
 		int it_out = 0;
-		for (int it = it_start; it < it_end && it_out < xytArrayList.size(); it += buildExcelStepMs, it_out++) 
+		for (int it = it_start; it < it_end && it_out < flyCoordinatesList.size(); it += buildExcelStepMs, it_out++) 
 		{
 			int index = it/stepMs;
-			FlyCoordinates pos_from = flyPositions.xytArrayList.get(index);
-			FlyCoordinates pos_to = xytArrayList.get(it_out);
+			FlyCoordinates pos_from = flyPositions.flyCoordinatesList.get(index);
+			FlyCoordinates pos_to = flyCoordinatesList.get(it_out);
 			pos_to.copy(pos_from);
 			pos_to.rectBounds.setRect( pos_to.rectBounds.getX()-deltaX, pos_to.rectBounds.getY()-deltaY,
 					pos_to.rectBounds.getWidth(), pos_to.rectBounds.getHeight());
@@ -343,21 +344,21 @@ public class FlyPositions
 	
 	public void excelComputeEllipse(FlyPositions flyPositions, int dataStepMs, int excelStepMs) 
 	{
-		if (flyPositions.xytArrayList.size() <= 0)
+		if (flyPositions.flyCoordinatesList.size() <= 0)
 			return;
 		
 		flyPositions.computeEllipseAxes();
 		int excel_startMs = 0;
-		int n_excel_intervals = xytArrayList.size();
+		int n_excel_intervals = flyCoordinatesList.size();
 		int excel_endMs = (n_excel_intervals - 1) * excelStepMs;
 		
 		for (int excel_Ms = excel_startMs; excel_Ms < excel_endMs; excel_Ms += excelStepMs) 
 		{
 			int excel_bin = excel_Ms / excelStepMs;
-			FlyCoordinates excel_pos = xytArrayList.get(excel_bin);
+			FlyCoordinates excel_pos = flyCoordinatesList.get(excel_bin);
 			
 			int data_bin = excel_Ms / dataStepMs;
-			FlyCoordinates data_pos = flyPositions.xytArrayList.get(data_bin);
+			FlyCoordinates data_pos = flyPositions.flyCoordinatesList.get(data_bin);
 			
 			excel_pos.axis1 = data_pos.axis1;
 			excel_pos.axis2 = data_pos.axis2;
@@ -369,8 +370,8 @@ public class FlyPositions
 	public List<Double> getIsAliveAsDoubleArray() 
 	{
 		ArrayList<Double> dataArray = new ArrayList<Double>();
-		dataArray.ensureCapacity(xytArrayList.size());
-		for (FlyCoordinates pos: xytArrayList) 
+		dataArray.ensureCapacity(flyCoordinatesList.size());
+		for (FlyCoordinates pos: flyCoordinatesList) 
 			dataArray.add(pos.bAlive ? 1.0: 0.0);
 		return dataArray;
 	}
@@ -378,8 +379,8 @@ public class FlyPositions
 	public List<Integer> getIsAliveAsIntegerArray() 
 	{
 		ArrayList<Integer> dataArray = new ArrayList<Integer>();
-		dataArray.ensureCapacity(xytArrayList.size());
-		for (FlyCoordinates pos: xytArrayList) 
+		dataArray.ensureCapacity(flyCoordinatesList.size());
+		for (FlyCoordinates pos: flyCoordinatesList) 
 		{
 			dataArray.add(pos.bAlive ? 1: 0);
 		}
@@ -395,19 +396,19 @@ public class FlyPositions
 	
 	public int getTimeBinSize () 
 	{
-		return xytArrayList.get(1).indexT - xytArrayList.get(0).indexT;
+		return flyCoordinatesList.get(1).indexT - flyCoordinatesList.get(0).indexT;
 	}
 	
 	public Double getDistanceBetween2Points(int firstTimeIndex, int secondTimeIndex) 
 	{
-		if (xytArrayList.size() < 2)
+		if (flyCoordinatesList.size() < 2)
 			return Double.NaN;
 		int firstIndex = firstTimeIndex / getTimeBinSize();
 		int secondIndex = secondTimeIndex / getTimeBinSize();
-		if (firstIndex < 0 || secondIndex < 0 || firstIndex >= xytArrayList.size() || secondIndex >= xytArrayList.size())
+		if (firstIndex < 0 || secondIndex < 0 || firstIndex >= flyCoordinatesList.size() || secondIndex >= flyCoordinatesList.size())
 			return Double.NaN;
-		FlyCoordinates pos1 = xytArrayList.get(firstIndex);
-		FlyCoordinates pos2 = xytArrayList.get(secondIndex);
+		FlyCoordinates pos1 = flyCoordinatesList.get(firstIndex);
+		FlyCoordinates pos2 = flyCoordinatesList.get(secondIndex);
 		if (pos1.rectBounds.getX() < 0 || pos2.rectBounds.getX()  < 0)
 			return Double.NaN;
 
@@ -418,11 +419,11 @@ public class FlyPositions
 	
 	public int isAliveAtTimeIndex(int timeIndex) 
 	{
-		if (xytArrayList.size() < 2)
+		if (flyCoordinatesList.size() < 2)
 			return 0;
 		getLastIntervalAlive();
 		int index = timeIndex / getTimeBinSize();
-		FlyCoordinates pos = xytArrayList.get(index);
+		FlyCoordinates pos = flyCoordinatesList.get(index);
 		return (pos.bAlive ? 1: 0); 
 	}
 
@@ -430,20 +431,20 @@ public class FlyPositions
 	{
 		computeDistanceBetweenConsecutivePoints();
 		ArrayList<Integer> dataArray = new ArrayList<Integer>();
-		dataArray.ensureCapacity(xytArrayList.size());
-		for (int i= 0; i< xytArrayList.size(); i++) 
-			dataArray.add(xytArrayList.get(i).distance < moveThreshold ? 1: 0);
+		dataArray.ensureCapacity(flyCoordinatesList.size());
+		for (int i= 0; i< flyCoordinatesList.size(); i++) 
+			dataArray.add(flyCoordinatesList.get(i).distance < moveThreshold ? 1: 0);
 		return dataArray;
 	}
 	
 	public void computeSleep() 
 	{
-		if (xytArrayList.size() < 1)
+		if (flyCoordinatesList.size() < 1)
 			return;
 		List <Integer> datai = getDistanceAsMoveOrNot();
 		int timeBinSize = getTimeBinSize() ;
 		int j = 0;
-		for (FlyCoordinates pos: xytArrayList) 
+		for (FlyCoordinates pos: flyCoordinatesList) 
 		{
 			int isleep = 1;
 			int k = 0;
@@ -464,20 +465,20 @@ public class FlyPositions
 	public List<Double> getSleepAsDoubleArray() 
 	{
 		ArrayList<Double> dataArray = new ArrayList<Double>();
-		dataArray.ensureCapacity(xytArrayList.size());
-		for (FlyCoordinates pos: xytArrayList) 
+		dataArray.ensureCapacity(flyCoordinatesList.size());
+		for (FlyCoordinates pos: flyCoordinatesList) 
 			dataArray.add(pos.bSleep ? 1.0: 0.0);
 		return dataArray;
 	}
 	
 	public int isAsleepAtTimeIndex(int timeIndex) 
 	{
-		if (xytArrayList.size() < 2)
+		if (flyCoordinatesList.size() < 2)
 			return -1;
 		int index = timeIndex / getTimeBinSize();
-		if (index >= xytArrayList.size())
+		if (index >= flyCoordinatesList.size())
 			return -1;
-		return (xytArrayList.get(index).bSleep ? 1: 0); 
+		return (flyCoordinatesList.get(index).bSleep ? 1: 0); 
 	}
 
 	public void computeNewPointsOrigin(Point2D newOrigin) 
@@ -487,7 +488,7 @@ public class FlyPositions
 		double deltaY = newOrigin.getY() - origin.getY();
 		if (deltaX == 0 && deltaY == 0)
 			return;
-		for (FlyCoordinates pos : xytArrayList) {
+		for (FlyCoordinates pos : flyCoordinatesList) {
 			pos.rectBounds.setRect(
 					pos.rectBounds.getX()-deltaX, 
 					pos.rectBounds.getY()-deltaY, 
@@ -498,10 +499,10 @@ public class FlyPositions
 	
 	public void computeEllipseAxes() 
 	{
-		if (xytArrayList.size() < 1)
+		if (flyCoordinatesList.size() < 1)
 			return;
 
-		for (FlyCoordinates pos: xytArrayList) 
+		for (FlyCoordinates pos: flyCoordinatesList) 
 		{
 			if (pos.flyRoi != null) 
 			{
@@ -534,7 +535,7 @@ public class FlyPositions
 	
 	public void convertPixelsToPhysicalValues() 
 	{
-		for (FlyCoordinates pos : xytArrayList) {
+		for (FlyCoordinates pos : flyCoordinatesList) {
 			pos.rectBounds.setRect(
 					pos.rectBounds.getX()*pixelsize, 
 					pos.rectBounds.getY()*pixelsize, 
@@ -548,15 +549,93 @@ public class FlyPositions
 		origin.setLocation(origin.getX()*pixelsize, origin.getY()*pixelsize);
 	}
 
-	
 	public void clearValues(int fromIndex) 
 	{
-		int toIndex = xytArrayList.size();
+		int toIndex = flyCoordinatesList.size();
 		if (fromIndex > 0 && fromIndex < toIndex) 
-			xytArrayList.subList(fromIndex, toIndex).clear();
+			flyCoordinatesList.subList(fromIndex, toIndex).clear();
 		
 	}
 
+	// --------------------------------------------------------
+	
+	public boolean cvsExportXYDataToRow(StringBuffer sbf, String sep) 
+	{
+		int npoints = 0;
+		if (flyCoordinatesList != null && flyCoordinatesList.npoints > 0)
+			npoints = polylineLevel.npoints; 
+			
+		sbf.append(Integer.toString(npoints)+ sep);
+		if (npoints > 0) {
+			for (int i = 0; i < polylineLevel.npoints; i++)
+	        {
+	            sbf.append(StringUtil.toString((double) polylineLevel.xpoints[i]));
+	            sbf.append(sep);
+	            sbf.append(StringUtil.toString((double) polylineLevel.ypoints[i]));
+	            sbf.append(sep);
+	        }
+		}
+		return true;
+	}
+	
+	public boolean cvsExportYDataToRow(StringBuffer sbf, String sep) 
+	{
+		int npoints = 0;
+		if (polylineLevel != null && polylineLevel.npoints > 0)
+			npoints = polylineLevel.npoints; 
+			
+		sbf.append(Integer.toString(npoints)+ sep);
+		if (npoints > 0) {
+			for (int i = 0; i < polylineLevel.npoints; i++)
+	        {
+	            sbf.append(StringUtil.toString((double) polylineLevel.ypoints[i]));
+	            sbf.append(sep);
+	        }
+		}
+		return true;
+	}
+	
+	public boolean csvImportXYDataFromRow(String[] data, int startAt) 
+	{
+		if (data.length < startAt)
+			return false;
+		
+		int npoints = Integer.valueOf(data[startAt]);
+		if (npoints > 0) {
+			double[] x = new double[npoints];
+			double[] y = new double[npoints];
+			int offset = startAt+1;
+			for (int i = 0; i < npoints; i++) { 
+				x[i] = Double.valueOf(data[offset]);
+				offset++;
+				y[i] = Double.valueOf(data[offset]);
+				offset++;
+			}
+			polylineLevel = new Level2D(x, y, npoints);
+		}
+		return true;
+	}
+	
+	public boolean csvImportYDataFromRow(String[] data, int startAt) 
+	{
+		if (data.length < startAt)
+			return false;
+		
+		int npoints = Integer.valueOf(data[startAt]);
+		if (npoints > 0) {
+			double[] x = new double[npoints];
+			double[] y = new double[npoints];
+			int offset = startAt+1;
+			for (int i = 0; i < npoints; i++) { 
+				x[i] = i;
+				y[i] = Double.valueOf(data[offset]);
+				offset++;
+			}
+			polylineLevel = new Level2D(x, y, npoints);
+		}
+		return true;
+	}
+	
 }
 
 

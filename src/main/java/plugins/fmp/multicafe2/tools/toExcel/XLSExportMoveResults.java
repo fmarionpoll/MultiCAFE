@@ -246,15 +246,15 @@ public class XLSExportMoveResults extends XLSExport
 				for (long fromTime = from_first_Ms; fromTime <= from_lastMs; fromTime += options.buildExcelStepMs) 
 				{					
 					int from_i = (int) ((fromTime - from_first_Ms) / options.buildExcelStepMs);
-					if (from_i >= results.xytArrayList.size())
+					if (from_i >= results.flyCoordinatesList.size())
 						break;
-					FlyCoordinates aVal = results.xytArrayList.get(from_i);
+					FlyCoordinates aVal = results.flyCoordinatesList.get(from_i);
 					int to_i = (int) ((fromTime - expAll.camImageFirst_ms) / options.buildExcelStepMs) ;
-					if (to_i >= row.xytArrayList.size())
+					if (to_i >= row.flyCoordinatesList.size())
 						break;
 					if (to_i < 0)
 						continue;
-					row.xytArrayList.get(to_i).copy(aVal);
+					row.flyCoordinatesList.get(to_i).copy(aVal);
 				}
 				
 			} 
@@ -266,14 +266,14 @@ public class XLSExportMoveResults extends XLSExport
 					int nvalues = to_nvalues;
 					if (posok != null) 
 					{
-						if (nvalues > row.xytArrayList.size())
-							nvalues = row.xytArrayList.size();
+						if (nvalues > row.flyCoordinatesList.size())
+							nvalues = row.flyCoordinatesList.size();
 						int tofirst = to_first_index;
 						int tolast = tofirst + nvalues;
-						if (tolast > row.xytArrayList.size())
-							tolast = row.xytArrayList.size();
+						if (tolast > row.flyCoordinatesList.size())
+							tolast = row.flyCoordinatesList.size();
 						for (int toi = tofirst; toi < tolast; toi++) 
-							row.xytArrayList.get(toi).copy(posok);
+							row.flyCoordinatesList.get(toi).copy(posok);
 					}
 				}
 			}
@@ -286,10 +286,10 @@ public class XLSExportMoveResults extends XLSExport
 		int index = getIndexOfFirstNonEmptyValueBackwards(row, transfer_first_index);
 		if (index >= 0) 
 		{
-			posok = row.xytArrayList.get(index);
+			posok = row.flyCoordinatesList.get(index);
 			for (int i=index+1; i< transfer_first_index; i++) 
 			{
-				FlyCoordinates pos = row.xytArrayList.get(i);
+				FlyCoordinates pos = row.flyCoordinatesList.get(i);
 				pos.copy(posok);
 				pos.bPadded = true;
 			}
@@ -302,7 +302,7 @@ public class XLSExportMoveResults extends XLSExport
 		int index = -1;
 		for (int i= fromindex; i>= 0; i--) 
 		{
-			FlyCoordinates pos = row.xytArrayList.get(i);
+			FlyCoordinates pos = row.flyCoordinatesList.get(i);
 			if (!Double.isNaN(pos.rectBounds.getX())) 
 			{
 				index = i;
@@ -376,12 +376,12 @@ public class XLSExportMoveResults extends XLSExport
 			for (long coltime = 0; coltime <= last; coltime += options.buildExcelStepMs, pt.y++) 
 			{
 				int i_from = (int) (coltime  / options.buildExcelStepMs);
-				if (i_from >= row.xytArrayList.size())
+				if (i_from >= row.flyCoordinatesList.size())
 					break;
 				
 				double valueL = Double.NaN;
 				double valueR = Double.NaN;
-				FlyCoordinates pos = row.xytArrayList.get(i_from);
+				FlyCoordinates pos = row.flyCoordinatesList.get(i_from);
 				
 				switch (row.exportType) 
 				{

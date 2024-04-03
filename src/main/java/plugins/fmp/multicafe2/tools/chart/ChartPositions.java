@@ -56,7 +56,7 @@ public class ChartPositions extends IcyFrame
 		int count = 0;
 		for (Cage cage: cageList) 
 		{
-			if (cage.flyPositions != null && cage.flyPositions.xytArrayList.size() > 0) 
+			if (cage.flyPositions != null && cage.flyPositions.flyCoordinatesList.size() > 0) 
 			{	
 				ChartData chartData = getDataSet(cage, option);
 				XYSeriesCollection xyDataset = chartData.xyDataset;
@@ -100,20 +100,20 @@ public class ChartPositions extends IcyFrame
 	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumXLSExportType option, XYSeries seriesXY) 
 	{
 		FlyPositions results = cage.flyPositions;
-		int itmax = results.xytArrayList.size();
+		int itmax = results.flyCoordinatesList.size();
 		MaxMinDouble yMaxMin = null;
 		if (itmax > 0) 
 		{
 			switch (option) 
 			{
 			case DISTANCE:
-				double previousY = results.xytArrayList.get(0).rectBounds.getY() 
-									+ results.xytArrayList.get(0).rectBounds.getHeight()/2;
+				double previousY = results.flyCoordinatesList.get(0).rectBounds.getY() 
+									+ results.flyCoordinatesList.get(0).rectBounds.getHeight()/2;
 				
 				for ( int it = 0; it < itmax;  it++) 
 				{
-					double currentY = results.xytArrayList.get(it).rectBounds.getY() 
-							+ results.xytArrayList.get(it).rectBounds.getHeight()/2;
+					double currentY = results.flyCoordinatesList.get(it).rectBounds.getY() 
+							+ results.flyCoordinatesList.get(it).rectBounds.getHeight()/2;
 					double ypos = currentY - previousY;
 					addxyPos(seriesXY, results, it, ypos);
 					previousY = currentY;
@@ -126,7 +126,7 @@ public class ChartPositions extends IcyFrame
 			case ISALIVE:
 				for ( int it = 0; it < itmax;  it++) 
 				{
-					boolean alive = results.xytArrayList.get(it).bAlive;
+					boolean alive = results.flyCoordinatesList.get(it).bAlive;
 					double ypos = alive? 1.0: 0.0;
 					addxyPos(seriesXY, results, it, ypos);
 				}
@@ -136,7 +136,7 @@ public class ChartPositions extends IcyFrame
 			case SLEEP:
 				for ( int it = 0; it < itmax;  it++) 
 				{
-					boolean sleep = results.xytArrayList.get(it).bSleep;
+					boolean sleep = results.flyCoordinatesList.get(it).bSleep;
 					double ypos = sleep ? 1.0: 0.0;
 					addxyPos(seriesXY, results, it, ypos);
 				}
@@ -148,7 +148,7 @@ public class ChartPositions extends IcyFrame
 				double yOrigin = rect1.getY() + rect1.getHeight();	
 				for ( int it = 0; it < itmax;  it++) 
 				{
-					Rectangle2D itRect = results.xytArrayList.get(it).rectBounds;
+					Rectangle2D itRect = results.flyCoordinatesList.get(it).rectBounds;
 					double ypos = yOrigin - itRect.getY();
 					addxyPos(seriesXY, results, it, ypos);
 				}
@@ -161,7 +161,7 @@ public class ChartPositions extends IcyFrame
 	
 	private void addxyPos(XYSeries seriesXY, FlyPositions positionxyt, int it, Double ypos)
 	{
-		double indexT = positionxyt.xytArrayList.get(it).indexT;
+		double indexT = positionxyt.flyCoordinatesList.get(it).indexT;
 		seriesXY.add( indexT, ypos );
 		if (globalXMax < indexT)
 			globalXMax = indexT;
