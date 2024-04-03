@@ -158,12 +158,12 @@ public class Edit extends JPanel
 		{
 			for (Cage cage: exp.cages.cagesList) 
 			{
-				if (frame >= cage.flyPositions.flyCoordinatesList.size())
+				if (frame >= cage.flyPositions.flyPositionList.size())
 					continue;
-				Rectangle2D rect = cage.flyPositions.flyCoordinatesList.get(frame).rectBounds;
+				Rectangle2D rect = cage.flyPositions.flyPositionList.get(frame).rectPosition;
 				if (rect.getX() == -1 && rect.getY() == -1 ) 
 				{
-					foundT = cage.flyPositions.flyCoordinatesList.get(frame).indexT;
+					foundT = cage.flyPositions.flyPositionList.get(frame).indexT;
 					foundCage = cage.getCageNumberInteger();
 					return true;
 				}
@@ -186,12 +186,12 @@ public class Edit extends JPanel
 		{
 			for (Cage cage: exp.cages.cagesList) 
 			{
-				if (frame >= cage.flyPositions.flyCoordinatesList.size())
+				if (frame >= cage.flyPositions.flyPositionList.size())
 					continue;
-				Rectangle2D rect = cage.flyPositions.flyCoordinatesList.get(frame).rectBounds;
+				Rectangle2D rect = cage.flyPositions.flyPositionList.get(frame).rectPosition;
 				if (rect.getX() == -1 && rect.getY() == -1 ) 
 				{
-					String name = "det"+cage.getCageNumber()+"_"+ cage.flyPositions.flyCoordinatesList.get(frame).indexT;
+					String name = "det"+cage.getCageNumber()+"_"+ cage.flyPositions.flyPositionList.get(frame).indexT;
 					foundCombo.addItem(name);
 				}
 			}
@@ -223,7 +223,7 @@ public class Edit extends JPanel
 		if (cageNumber >= 0) 
 		{
 			Cage cage = exp.cages.getCageFromNumber(cageNumber);
-			Rectangle2D rect0 = cage.flyPositions.flyCoordinatesList.get(frame).rectBounds;
+			Rectangle2D rect0 = cage.flyPositions.flyPositionList.get(frame).rectPosition;
 			if (rect0.getX() == -1 && rect0.getY() == -1 ) 
 			{
 				Rectangle rect = cage.cageRoi2D.getBounds();

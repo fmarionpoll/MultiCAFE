@@ -228,12 +228,12 @@ public class Cage
 	
 	public ROI2DRectangle getRoiRectangleFromPositionAtT(int t) 
 	{
-		int nitems = flyPositions.flyCoordinatesList.size();
+		int nitems = flyPositions.flyPositionList.size();
 		if (nitems == 0 || t >= nitems)
 			return null;
-		FlyCoordinates aValue = flyPositions.flyCoordinatesList.get(t);
+		FlyPosition aValue = flyPositions.flyPositionList.get(t);
 		
-		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.rectBounds);
+		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.rectPosition);
 		flyRoiR.setName("detR"+getCageNumber() +"_" + t );
 		flyRoiR.setT( t );
 		return flyRoiR;
@@ -249,7 +249,7 @@ public class Cage
 				continue;
 			Rectangle2D rect = ((ROI2DRectangle) roi).getRectangle();
 			int t = roi.getT();	
-			flyPositions.flyCoordinatesList.get(t).rectBounds = rect;
+			flyPositions.flyPositionList.get(t).rectPosition = rect;
 		}
 	}
 	

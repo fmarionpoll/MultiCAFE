@@ -16,7 +16,7 @@ import plugins.fmp.multicafe2.dlg.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe2.experiment.Cage;
 import plugins.fmp.multicafe2.experiment.Experiment;
 import plugins.fmp.multicafe2.experiment.FlyPositions;
-import plugins.fmp.multicafe2.experiment.FlyCoordinates;
+import plugins.fmp.multicafe2.experiment.FlyPosition;
 import plugins.fmp.multicafe2.tools.Comparators;
 
 
@@ -248,15 +248,15 @@ public class XLSExportMoveResults extends XLSExport
 				for (long fromTime = from_first_Ms; fromTime <= from_lastMs; fromTime += options.buildExcelStepMs) 
 				{					
 					int from_i = (int) ((fromTime - from_first_Ms) / options.buildExcelStepMs);
-					if (from_i >= results.flyCoordinatesList.size())
+					if (from_i >= results.flyPositionList.size())
 						break;
-					FlyCoordinates aVal = results.flyCoordinatesList.get(from_i);
+					FlyPosition aVal = results.flyPositionList.get(from_i);
 					int to_i = (int) ((fromTime - expAll.camImageFirst_ms) / options.buildExcelStepMs) ;
-					if (to_i >= row.flyCoordinatesList.size())
+					if (to_i >= row.flyPositionList.size())
 						break;
 					if (to_i < 0)
 						continue;
-					row.flyCoordinatesList.get(to_i).copy(aVal);
+					row.flyPositionList.get(to_i).copy(aVal);
 				}
 				
 			} 
@@ -264,34 +264,34 @@ public class XLSExportMoveResults extends XLSExport
 			{
 				if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null) 
 				{
-					FlyCoordinates posok = padWithLastPreviousValue(row, to_first_index);
+					FlyPosition posok = padWithLastPreviousValue(row, to_first_index);
 					int nvalues = to_nvalues;
 					if (posok != null) 
 					{
-						if (nvalues > row.flyCoordinatesList.size())
-							nvalues = row.flyCoordinatesList.size();
+						if (nvalues > row.flyPositionList.size())
+							nvalues = row.flyPositionList.size();
 						int tofirst = to_first_index;
 						int tolast = tofirst + nvalues;
-						if (tolast > row.flyCoordinatesList.size())
-							tolast = row.flyCoordinatesList.size();
+						if (tolast > row.flyPositionList.size())
+							tolast = row.flyPositionList.size();
 						for (int toi = tofirst; toi < tolast; toi++) 
-							row.flyCoordinatesList.get(toi).copy(posok);
+							row.flyPositionList.get(toi).copy(posok);
 					}
 				}
 			}
 		}
 	}
 	
-	private FlyCoordinates padWithLastPreviousValue(FlyPositions row, int transfer_first_index) 
+	private FlyPosition padWithLastPreviousValue(FlyPositions row, int transfer_first_index) 
 	{
-		FlyCoordinates posok = null;
+		FlyPosition posok = null;
 		int index = getIndexOfFirstNonEmptyValueBackwards(row, transfer_first_index);
 		if (index >= 0) 
 		{
-			posok = row.flyCoordinatesList.get(index);
+			posok = row.flyPositionList.get(index);
 			for (int i=index+1; i< transfer_first_index; i++) 
 			{
-				FlyCoordinates pos = row.flyCoordinatesList.get(i);
+				FlyPosition pos = row.flyPositionList.get(i);
 				pos.copy(posok);
 				pos.bPadded = true;
 			}
@@ -304,8 +304,8 @@ public class XLSExportMoveResults extends XLSExport
 		int index = -1;
 		for (int i= fromindex; i>= 0; i--) 
 		{
-			FlyCoordinates pos = row.flyCoordinatesList.get(i);
-			if (!Double.isNaN(pos.rectBounds.getX())) 
+			FlyPosition pos = row.flyPositionList.get(i);
+			if (!Double.isNaN(pos.rectPosition.getX())) 
 			{
 				index = i;
 				break;
@@ -378,12 +378,12 @@ public class XLSExportMoveResults extends XLSExport
 			for (long coltime = 0; coltime <= last; coltime += options.buildExcelStepMs, pt.y++) 
 			{
 				int i_from = (int) (coltime  / options.buildExcelStepMs);
-				if (i_from >= row.flyCoordinatesList.size())
+				if (i_from >= row.flyPositionList.size())
 					break;
 				
 				double valueL = Double.NaN;
 				double valueR = Double.NaN;
-				FlyCoordinates pos = row.flyCoordinatesList.get(i_from);
+				FlyPosition pos = row.flyPositionList.get(i_from);
 				
 				switch (row.exportType) 
 				{
@@ -402,8 +402,8 @@ public class XLSExportMoveResults extends XLSExport
 					case XYTOPCAGE:
 					case XYTIPCAPS:
 					case XYIMAGE:
-						valueL = pos.rectBounds.getX() + pos.rectBounds.getWidth()/2.;
-						valueR = pos.rectBounds.getY() + pos.rectBounds.getHeight()/2.;
+						valueL = pos.rectPosition.getX() + pos.rectPosition.getWidth()/2.;
+						valueR = pos.rectPosition.getY() + pos.rectPosition.getHeight()/2.;
 						break;
 					case ELLIPSEAXES:
 						valueL = pos.axis1;

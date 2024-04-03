@@ -11,9 +11,9 @@ import icy.util.XMLUtil;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 
-public class FlyCoordinates
+public class FlyPosition
 {
-	public Rectangle2D rectBounds = new Rectangle2D.Double(Double.NaN,Double.NaN,Double.NaN,Double.NaN);
+	public Rectangle2D rectPosition = new Rectangle2D.Double(Double.NaN,Double.NaN,Double.NaN,Double.NaN);
 	public ROI2DArea flyRoi 	= null;
 	public int 		indexT 		= 0;
 	public boolean 	bAlive 		= false;
@@ -25,39 +25,39 @@ public class FlyCoordinates
 	public double   axis2	   	= 0.;
 	
 	
-	public FlyCoordinates() 
+	public FlyPosition() 
 	{
 	}
 	
-	public FlyCoordinates(int indexT) 
+	public FlyPosition(int indexT) 
 	{
 		this.indexT = indexT;
 	}
 	
-	public FlyCoordinates(int indexT, Rectangle2D rectangle, ROI2DArea roiArea) 
+	public FlyPosition(int indexT, Rectangle2D rectangle, ROI2DArea roiArea) 
 	{
 		if (rectangle != null)
-			this.rectBounds.setRect(rectangle);
+			this.rectPosition.setRect(rectangle);
 		this.flyRoi = new ROI2DArea(roiArea);
 		this.indexT = indexT;
 	}
 	
-	public FlyCoordinates(int indexT, Rectangle2D rectangle, boolean alive) 
+	public FlyPosition(int indexT, Rectangle2D rectangle, boolean alive) 
 	{
 		if (rectangle != null)
-			this.rectBounds.setRect(rectangle);
+			this.rectPosition.setRect(rectangle);
 		this.indexT = indexT;
 		this.bAlive = alive;
 	}
 	
-	public void copy (FlyCoordinates aVal) 
+	public void copy (FlyPosition aVal) 
 	{
 		indexT = aVal.indexT;
 		bAlive = aVal.bAlive;
 		bSleep = aVal.bSleep;
 		bPadded = aVal.bPadded;
 		distance = aVal.distance;
-		rectBounds.setRect(aVal.rectBounds); 
+		rectPosition.setRect(aVal.rectPosition); 
 		if (		aVal.flyRoi != null 
 				&& aVal.flyRoi.getBounds().height > 0 
 				&& aVal.flyRoi.getBounds().width > 0
@@ -69,8 +69,8 @@ public class FlyCoordinates
 	
 	Point2D getCenterRectangle() {
 		return new Point2D.Double (
-				rectBounds.getX() + rectBounds.getWidth()/2,
-				rectBounds.getY() + rectBounds.getHeight()/2);
+				rectPosition.getX() + rectPosition.getWidth()/2,
+				rectPosition.getY() + rectPosition.getHeight()/2);
 	}
 	
 	// --------------------------------------------
@@ -87,7 +87,7 @@ public class FlyCoordinates
 			double wR =  XMLUtil.getAttributeDoubleValue( node_XYTa, "wR", Double.NaN);
 			double hR =  XMLUtil.getAttributeDoubleValue( node_XYTa, "hR", Double.NaN);
 			if (!Double.isNaN(xR) && !Double.isNaN(yR)) {
-				rectBounds.setRect(xR, yR, wR, hR);
+				rectPosition.setRect(xR, yR, wR, hR);
 			} 
 			else 
 			{
@@ -98,7 +98,7 @@ public class FlyCoordinates
 					yR -= 2.;
 					wR = 4.;
 					hR = 4.;
-					rectBounds.setRect(xR, yR, wR, hR);
+					rectPosition.setRect(xR, yR, wR, hR);
 				}
 			}
 			
@@ -124,11 +124,11 @@ public class FlyCoordinates
 		
 		Element node_XYTa = XMLUtil.addElement(node, "XYTa");
 		
-		if (!Double.isNaN(rectBounds.getX())) {
-			XMLUtil.setAttributeDoubleValue(node_XYTa, "xR", rectBounds.getX());
-			XMLUtil.setAttributeDoubleValue(node_XYTa, "yR", rectBounds.getY());
-			XMLUtil.setAttributeDoubleValue(node_XYTa, "wR", rectBounds.getWidth());
-			XMLUtil.setAttributeDoubleValue(node_XYTa, "hR", rectBounds.getHeight());
+		if (!Double.isNaN(rectPosition.getX())) {
+			XMLUtil.setAttributeDoubleValue(node_XYTa, "xR", rectPosition.getX());
+			XMLUtil.setAttributeDoubleValue(node_XYTa, "yR", rectPosition.getY());
+			XMLUtil.setAttributeDoubleValue(node_XYTa, "wR", rectPosition.getWidth());
+			XMLUtil.setAttributeDoubleValue(node_XYTa, "hR", rectPosition.getHeight());
 		}
 		
 		XMLUtil.setAttributeIntValue(node_XYTa, "t", indexT);
@@ -143,33 +143,32 @@ public class FlyCoordinates
 
 	// --------------------------------------------
 	
-	public boolean cvsExportXYWHDataToRow(StringBuffer sbf, String sep) 
+	public boolean cvsExportXYWHData(StringBuffer sbf, String sep) 
 	{
-
-        sbf.append(StringUtil.toString((double) rectBounds.getX()));
+        sbf.append(StringUtil.toString((double) rectPosition.getX()));
         sbf.append(sep);
-        sbf.append(StringUtil.toString((double) rectBounds.getY()));
+        sbf.append(StringUtil.toString((double) rectPosition.getY()));
         sbf.append(sep);
-        sbf.append(StringUtil.toString((double) rectBounds.getWidth()));
+        sbf.append(StringUtil.toString((double) rectPosition.getWidth()));
         sbf.append(sep);
-        sbf.append(StringUtil.toString((double) rectBounds.getHeight()));
+        sbf.append(StringUtil.toString((double) rectPosition.getHeight()));
         sbf.append(sep);
 
 		return true;
 	}
 	
-	public boolean cvsExportXYDataToRow(StringBuffer sbf, String sep) 
+	public boolean cvsExportXYData(StringBuffer sbf, String sep) 
 	{
 
-        sbf.append(StringUtil.toString((double) rectBounds.getX()));
+        sbf.append(StringUtil.toString((double) rectPosition.getX()));
         sbf.append(sep);
-        sbf.append(StringUtil.toString((double) rectBounds.getY()));
+        sbf.append(StringUtil.toString((double) rectPosition.getY()));
         sbf.append(sep);
 
 		return true;
 	}
 	
-	public boolean csvImportXYWHDataFromRow(String[] data, int startAt) 
+	public boolean csvImportXYWHData(String[] data, int startAt) 
 	{
 		int npoints = 4;
 		if (data.length < npoints+startAt-1)
@@ -184,12 +183,12 @@ public class FlyCoordinates
 		offset++;
 		double hR = Double.valueOf(data[offset]);
 		offset++;
-		rectBounds.setRect(xR, yR, wR, hR);
+		rectPosition.setRect(xR, yR, wR, hR);
 		
 		return true;
 	}
 	
-	public boolean csvImportXYDataFromRow(String[] data, int startAt) 
+	public boolean csvImportXYData(String[] data, int startAt) 
 	{
 		int npoints = 4;
 		if (data.length < npoints+startAt-1)
@@ -206,7 +205,7 @@ public class FlyCoordinates
 			yR -= 2.;
 			double wR = 4.;
 			double hR = 4.;
-			rectBounds.setRect(xR, yR, wR, hR);
+			rectPosition.setRect(xR, yR, wR, hR);
 		}
 		
 		return true;
