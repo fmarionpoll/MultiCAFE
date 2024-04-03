@@ -66,6 +66,8 @@ public class Experiment
 	private String 			field_comment2			= new String("..");
 	private String 			field_strain			= new String("..");
 	private String			field_sex				= new String("..");
+	private String 			field_cond1				= new String("..");
+	private String 			field_cond2				= new String("..");
 	
 	public int				col						= -1;
 	public Experiment 		chainToPreviousExperiment = null;	
@@ -95,6 +97,8 @@ public class Experiment
 	private final static String ID_COMMENT2 		= "comment2";
 	private final static String ID_STRAIN			= "strain";
 	private final static String ID_SEX				= "sex";
+	private final static String ID_COND1			= "cond1";
+	private final static String ID_COND2			= "cond2";
 	
 	private final static int EXPT_DIRECTORY = 1;
 	private final static int IMG_DIRECTORY = 2;
@@ -488,6 +492,8 @@ public class Experiment
 	        XMLUtil.setElementValue(node, ID_COMMENT2, field_comment2);
 	        XMLUtil.setElementValue(node, ID_STRAIN, field_strain);
 	        XMLUtil.setElementValue(node, ID_SEX, field_sex);
+	        XMLUtil.setElementValue(node, ID_COND1, field_cond1); 
+	        XMLUtil.setElementValue(node, ID_COND2, field_cond2);
 	        
 	        if (strImagesDirectory == null ) 
 	        	strImagesDirectory = seqCamData.getImagesDirectory();
@@ -528,12 +534,14 @@ public class Experiment
 				&& field_sex.contentEquals("..")
 				&& field_strain.contentEquals("..")) 
 		{
-			field_boxID = capillaries.capillariesDescription.old_boxID;
-			field_experiment = capillaries.capillariesDescription.old_experiment;
-			field_comment1 = capillaries.capillariesDescription.old_comment1;
-			field_comment2 = capillaries.capillariesDescription.old_comment2;
-			field_sex = capillaries.capillariesDescription.old_sex;
-			field_strain = capillaries.capillariesDescription.old_strain;
+			field_boxID 	= capillaries.capillariesDescription.old_boxID;
+			field_experiment= capillaries.capillariesDescription.old_experiment;
+			field_comment1 	= capillaries.capillariesDescription.old_comment1;
+			field_comment2 	= capillaries.capillariesDescription.old_comment2;
+			field_sex 		= capillaries.capillariesDescription.old_sex;
+			field_strain 	= capillaries.capillariesDescription.old_strain;
+			field_cond1 	= capillaries.capillariesDescription.old_cond1;
+			field_cond2 	= capillaries.capillariesDescription.old_cond2;
 		}
 		return flag;
 	}
@@ -696,6 +704,12 @@ public class Experiment
 		case EXP_SEX:
 			strField = field_sex;
 			break;
+		case EXP_COND1:
+			strField = field_cond1;
+			break;
+		case EXP_COND2:
+			strField = field_cond2;
+			break;
 		default:
 			break;
 		}
@@ -712,6 +726,8 @@ public class Experiment
 		case EXP_BOXID:
 		case EXP_STRAIN:
 		case EXP_SEX:
+		case EXP_COND1:
+		case EXP_COND2:
 			addValue(getExperimentField(fieldEnumCode), textList);
 			break;
 		case CAP_STIM:
@@ -732,13 +748,16 @@ public class Experiment
 		return flag;
 	}
 	
-	public void copyExperimentFields(Experiment expSource) {
+	public void copyExperimentFields(Experiment expSource) 
+	{
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID, expSource.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT, expSource.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM, expSource.getExperimentField(EnumXLSColumnHeader.EXP_STIM));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC, expSource.getExperimentField(EnumXLSColumnHeader.EXP_CONC));	
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STRAIN, expSource.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_SEX, expSource.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
+		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND1, expSource.getExperimentField(EnumXLSColumnHeader.EXP_COND1));
+		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND2, expSource.getExperimentField(EnumXLSColumnHeader.EXP_COND2));
 	}
 	
 	public void setExperimentFieldNoTest (EnumXLSColumnHeader fieldEnumCode, String newValue)
@@ -763,6 +782,12 @@ public class Experiment
 		case EXP_SEX:
 			field_sex  = newValue; 
 			break;
+		case EXP_COND1:
+			field_cond1 = newValue;
+			break;
+		case EXP_COND2:
+			field_cond2 = newValue;
+			break;
 		default:
 			break;
 		}
@@ -778,6 +803,8 @@ public class Experiment
 		case EXP_BOXID:
 		case EXP_STRAIN:
 		case EXP_SEX:
+		case EXP_COND1:
+		case EXP_COND2:
 			replaceExperimentFieldIfEqualOld(fieldEnumCode, oldValue, newValue);
 			break;
 		case CAP_STIM:
@@ -1077,6 +1104,8 @@ public class Experiment
 	        field_comment2 	= XMLUtil.getElementValue(node, ID_COMMENT2, "..");
 	        field_strain 	= XMLUtil.getElementValue(node, ID_STRAIN, "..");
 	        field_sex 		= XMLUtil.getElementValue(node, ID_SEX, "..");
+	        field_cond1		= XMLUtil.getElementValue(node, ID_COND1, "..");
+	        field_cond2		= XMLUtil.getElementValue(node, ID_COND2, "..");
 		}
 		return true;
 	}
@@ -1126,12 +1155,14 @@ public class Experiment
 
 	private void transferExpDescriptorsToCapillariesDescriptors() 
 	{
-		capillaries.capillariesDescription.old_boxID = field_boxID;
-		capillaries.capillariesDescription.old_experiment = field_experiment;
-		capillaries.capillariesDescription.old_comment1 = field_comment1;
-		capillaries.capillariesDescription.old_comment2 = field_comment2;	
-		capillaries.capillariesDescription.old_strain = field_strain;
-		capillaries.capillariesDescription.old_sex = field_sex;
+		capillaries.capillariesDescription.old_boxID 		= field_boxID;
+		capillaries.capillariesDescription.old_experiment 	= field_experiment;
+		capillaries.capillariesDescription.old_comment1 	= field_comment1;
+		capillaries.capillariesDescription.old_comment2 	= field_comment2;	
+		capillaries.capillariesDescription.old_strain 		= field_strain;
+		capillaries.capillariesDescription.old_sex 			= field_sex;
+		capillaries.capillariesDescription.old_cond1 		= field_cond1;
+		capillaries.capillariesDescription.old_cond2 		= field_cond2;
 	}
 
 	private String getReferenceImageFullName() 

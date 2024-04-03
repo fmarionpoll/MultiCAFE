@@ -54,7 +54,7 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 		capPopupPanel = new PopupPanel(string);			
 		capPopupPanel.collapse();
 		mainPanel.add(capPopupPanel);
-		GridLayout tabsLayout = new GridLayout(3, 1);
+		GridLayout tabsLayout = new GridLayout(4, 1);
 		
 		JPanel filesPanel = panelLoadSave.initPanel(parent0);
 		

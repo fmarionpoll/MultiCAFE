@@ -35,6 +35,8 @@ public class Filter  extends JPanel
 	private JComboBox<String> 	exptCombo 		= new JComboBox<String>(new SortedComboBoxModel());
 	private JComboBox<String> 	strainCombo 	= new JComboBox<String>(new SortedComboBoxModel());
 	private JComboBox<String> 	sexCombo 		= new JComboBox<String>(new SortedComboBoxModel());
+	private JComboBox<String> 	cond1Combo 		= new JComboBox<String>(new SortedComboBoxModel());
+	private JComboBox<String> 	cond2Combo 		= new JComboBox<String>(new SortedComboBoxModel());
 	
 	private JCheckBox			experimentCheck	= new JCheckBox(EnumXLSColumnHeader.EXP_EXPT.toString());
 	private JCheckBox			boxIDCheck		= new JCheckBox(EnumXLSColumnHeader.EXP_BOXID.toString());
@@ -42,12 +44,14 @@ public class Filter  extends JPanel
 	private JCheckBox			comment2Check	= new JCheckBox(EnumXLSColumnHeader.EXP_CONC.toString());
 	private JCheckBox			strainCheck		= new JCheckBox(EnumXLSColumnHeader.EXP_STRAIN.toString());
 	private JCheckBox			sexCheck		= new JCheckBox(EnumXLSColumnHeader.EXP_SEX.toString());
+	private JCheckBox			cond1Check		= new JCheckBox(EnumXLSColumnHeader.EXP_COND1.toString());
+	private JCheckBox			cond2Check		= new JCheckBox(EnumXLSColumnHeader.EXP_COND2.toString());
 	private JButton				applyButton 	= new JButton("Apply");
 	private JButton				clearButton		= new JButton("Clear");
 	
-	private MultiCAFE2 			parent0 		= null;
+	private MultiCAFE2 			parent0 			= null;
 			boolean 			disableChangeFile 	= false;
-			ExperimentCombo 	filterExpList 	= new ExperimentCombo();
+			ExperimentCombo 	filterExpList 		= new ExperimentCombo();
 	
 	
 	void init(GridLayout capLayout, MultiCAFE2 parent0) 
@@ -102,6 +106,17 @@ public class Filter  extends JPanel
 		add(sexCheck, c);
 		c.gridx += delta1;
 		add(sexCombo, c);
+		
+		// line 3
+		c.gridy = 3;
+		c.gridx = 0;
+		add(cond1Check, c);
+		c.gridx += delta1;
+		add(cond1Combo, c);
+		c.gridx += delta2;
+		add(cond2Check, c);
+		c.gridx += delta1;
+		add(cond2Combo, c);
 
 		defineActionListeners();
 	}
@@ -116,6 +131,8 @@ public class Filter  extends JPanel
 		filterExpList.getFieldValuesToCombo(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
 		filterExpList.getFieldValuesToCombo(sexCombo, EnumXLSColumnHeader.EXP_SEX);
 		filterExpList.getFieldValuesToCombo(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
+		filterExpList.getFieldValuesToCombo(cond1Combo, EnumXLSColumnHeader.EXP_COND1);
+		filterExpList.getFieldValuesToCombo(cond2Combo, EnumXLSColumnHeader.EXP_COND2);
 	}
 	
 	
@@ -164,6 +181,8 @@ public class Filter  extends JPanel
 		comment2Check.setSelected(select);
 		strainCheck.setSelected(select);
 		sexCheck.setSelected(select);
+		cond1Check.setSelected(select);
+		cond2Check.setSelected(select);
 	}
 	
 	private List<Experiment> filterAllItems() 
@@ -181,6 +200,10 @@ public class Filter  extends JPanel
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_SEX, (String) sexCombo.getSelectedItem());
 		if (strainCheck.isSelected())
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_STRAIN, (String) strainCombo.getSelectedItem());
+		if (cond1Check.isSelected())
+			filterItem(filteredList, EnumXLSColumnHeader.EXP_COND1, (String) cond1Combo.getSelectedItem());
+		if (cond2Check.isSelected())
+			filterItem(filteredList, EnumXLSColumnHeader.EXP_COND2, (String) cond2Combo.getSelectedItem());
 		return filteredList;
 		
 	}

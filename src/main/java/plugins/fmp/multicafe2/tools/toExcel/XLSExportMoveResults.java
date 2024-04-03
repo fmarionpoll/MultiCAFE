@@ -119,6 +119,8 @@ public class XLSExportMoveResults extends XLSExport
 		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC, exp.getExperimentField(EnumXLSColumnHeader.EXP_CONC));
 		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_SEX, exp.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
 		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STRAIN, exp.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
+		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND1, exp.getExperimentField(EnumXLSColumnHeader.EXP_COND1));
+		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND2, exp.getExperimentField(EnumXLSColumnHeader.EXP_COND2));
 	
 		Experiment expi = exp.chainToNextExperiment;
 		while (expi != null ) 
