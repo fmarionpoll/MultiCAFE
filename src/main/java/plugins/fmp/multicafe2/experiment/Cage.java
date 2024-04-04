@@ -3,6 +3,7 @@ package plugins.fmp.multicafe2.experiment;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,7 +22,7 @@ public class Cage
 {
 	public ROI2D 		cageRoi2D				= null;
 	public BooleanMask2D cageMask2D				= null;
-	public FlyPositions 	flyPositions 	= new FlyPositions();
+	public FlyPositions flyPositions 			= new FlyPositions();
 	public int 			cageNFlies  			= 0;
 	public int 			cageAge 				= 5;
 	public String 		strCageComment 			= "..";
@@ -74,36 +75,7 @@ public class Cage
 		}
 		return true;
 	}
-	
-	public String csvExportCageDescription(String sep) 
-	{	
-		StringBuffer sbf = new StringBuffer();
-		List<String> row = new ArrayList<String>();
-		row.add(strCageNumber);
-		row.add(cageRoi2D.getName());
-		row.add(Integer.toString(cageNFlies));
-		row.add(Integer.toString(cageAge));
-		row.add(strCageComment);
-		row.add(strCageStrain);
-		row.add(strCageSex);
-		
-		int npoints = 0;
-		if (cageRoi2D != null) 
-		{			
-			Polygon2D polygon = ((ROI2DPolygon) cageRoi2D).getPolygon2D();
-			row.add(Integer.toString(polygon.npoints));
-			for (int i= 0; i< npoints; i++) {
-				row.add(Integer.toString((int) polygon.xpoints[i]));
-				row.add(Integer.toString((int) polygon.ypoints[i]));
-			}
-		}
-		else
-			row.add("0");
-		sbf.append(String.join(sep, row));
-		sbf.append("\n");
-		return sbf.toString();
-	}
-	
+
 	public boolean xmlSaveFlyPositions(Element xmlVal) 
 	{
 		Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_FLYPOSITIONS);
@@ -156,6 +128,122 @@ public class Cage
 		return false;
 	}
 
+	// ------------------------------------
+	
+	public String csvExportCageSubSectionHeader(String sep) 
+	{
+		StringBuffer sbf = new StringBuffer();
+		
+		sbf.append("#"+sep+"CAPILLARIES"+sep+"describe each capillary\n");
+		List<String> row2 = Arrays.asList(
+				"cageNumber",
+				"roi2D_name", 
+				"nFlies", 
+				"age", 
+				"comment",
+				"strain",
+				"sex",
+				"roi_npoints", "xy");
+		sbf.append(String.join(sep, row2));
+		sbf.append("\n");
+		return sbf.toString();
+	}
+	
+	public String csvExportCageDescription(String sep) 
+	{	
+		StringBuffer sbf = new StringBuffer();
+		List<String> row = new ArrayList<String>();
+		row.add(strCageNumber);
+		row.add(cageRoi2D.getName());
+		row.add(Integer.toString(cageNFlies));
+		row.add(Integer.toString(cageAge));
+		row.add(strCageComment);
+		row.add(strCageStrain);
+		row.add(strCageSex);
+		
+		int npoints = 0;
+		if (cageRoi2D != null) 
+		{			
+			Polygon2D polygon = ((ROI2DPolygon) cageRoi2D).getPolygon2D();
+			row.add(Integer.toString(polygon.npoints));
+			for (int i= 0; i< npoints; i++) {
+				row.add(Integer.toString((int) polygon.xpoints[i]));
+				row.add(Integer.toString((int) polygon.ypoints[i]));
+			}
+		}
+		else
+			row.add("0");
+		sbf.append(String.join(sep, row));
+		sbf.append("\n");
+		return sbf.toString();
+	}
+	
+	public String csvExportMeasure_SectionHeader(EnumCageMeasures measureType, String sep) 
+	{
+		StringBuffer sbf = new StringBuffer();
+		String explanation1 = "columns="+sep+"name"+sep+"index"+sep+"npts"+sep+"xi"+sep+"yi\n";
+		switch(measureType) 
+		{
+			case POSITION:
+				sbf.append("#"+sep+"POSITION"+sep+ explanation1);
+				break;
+			default:
+				sbf.append("#"+sep+"UNDEFINED------------\n");
+				break;
+		}
+		return sbf.toString();
+	}
+	
+	public String csvExportMeasures_OneType(EnumCageMeasures measureType, String sep) 
+	{
+		StringBuffer sbf = new StringBuffer();
+		sbf.append(cageRoi2D.getName() + sep);
+		
+		switch(measureType) 
+		{
+			case POSITION:
+				flyPositions.cvsExportXYDataToRow(sbf, sep);
+				break;
+
+			default:
+				break;
+		}
+		sbf.append("\n");
+		return sbf.toString();
+	}
+	
+	
+	public void csvImportCageDescription(String[] data) 
+	{
+		int i = 0;
+//		kymographPrefix = data[i]; i++;
+//		kymographIndex = Integer.valueOf(data[i]); i++; 
+//		kymographName = data[i]; i++; 
+//		filenameTIFF = data[i]; i++; 
+//		capCageID = Integer.valueOf(data[i]); i++;
+//		capNFlies = Integer.valueOf(data[i]); i++;
+//		capVolume = Double.valueOf(data[i]); i++; 
+//		capPixels = Integer.valueOf(data[i]); i++; 
+//		capStimulus = data[i]; i++; 
+//		capConcentration = data[i]; i++; 
+//		capSide = data[i]; 
+	}
+		
+	public void csvImportCageData(EnumCageMeasures measureType, String[] data, boolean x, boolean y) 
+	{
+		switch(measureType) {
+		case POSITION: 		
+//			if (x && y) 
+//				ptsTop.csvImportXYDataFromRow( data, 2); 
+//			else if (!x && y) 
+//				ptsTop.csvImportYDataFromRow( data, 2);
+			break;
+		default:
+			break;
+		}
+	}
+		
+	
 	// ------------------------------------
 	
 	public String getCageNumber() 

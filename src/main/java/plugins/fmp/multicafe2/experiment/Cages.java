@@ -220,15 +220,15 @@ public class Cages
 	
 	// --------------
 	
-	public void copy (Cages cag) 
+	public void copy (Cages cagesSource) 
 	{	
 //		detect.copyParameters(cag.detect);	
 		cagesList.clear();
-		for (Cage ccag: cag.cagesList) 
+		for (Cage cageSource: cagesSource.cagesList) 
 		{
-			Cage cagi = new Cage();
-			cagi.copyCage(ccag);
-			cagesList.add(cagi);
+			Cage cageDestination = new Cage();
+			cageDestination.copyCage(cageSource);
+			cagesList.add(cageDestination);
 		}
 	}
 	
