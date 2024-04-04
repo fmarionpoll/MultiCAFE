@@ -211,32 +211,44 @@ public class Cage
 		sbf.append("\n");
 		return sbf.toString();
 	}
-	
-	
+		
 	public void csvImportCageDescription(String[] data) 
 	{
 		int i = 0;
-//		kymographPrefix = data[i]; i++;
-//		kymographIndex = Integer.valueOf(data[i]); i++; 
-//		kymographName = data[i]; i++; 
-//		filenameTIFF = data[i]; i++; 
-//		capCageID = Integer.valueOf(data[i]); i++;
-//		capNFlies = Integer.valueOf(data[i]); i++;
-//		capVolume = Double.valueOf(data[i]); i++; 
-//		capPixels = Integer.valueOf(data[i]); i++; 
-//		capStimulus = data[i]; i++; 
-//		capConcentration = data[i]; i++; 
-//		capSide = data[i]; 
+		
+		strCageNumber = data[i]; i++;
+		String cageROI_name = data[i]; i++;
+		cageNFlies = Integer.valueOf(data[i]); i++; 
+		cageAge = Integer.valueOf(data[i]); i++; 
+		strCageComment = data[i]; i++; 
+		strCageStrain = data[i]; i++; 
+		strCageSex = data[i]; i++; 
+		
+		int npoints = Integer.valueOf(data[i]); i++; 
+		if (npoints > 0)
+		{
+			int[] x = new int[npoints];
+			int[] y = new int[npoints];
+			for (int j = 0; j < npoints; j++)
+			{
+				x[i] = Integer.valueOf(data[i]); i++;
+				y[i] = Integer.valueOf(data[i]); i++;
+			}
+			Polygon2D polygon = new Polygon2D(x, y, npoints);
+			cageRoi2D = new ROI2DPolygon(polygon);
+			cageRoi2D.setName(cageROI_name);
+		}
+
 	}
 		
-	public void csvImportCageData(EnumCageMeasures measureType, String[] data, boolean x, boolean y) 
+	public void csvImportCageData(EnumCageMeasures measureType, String[] data, boolean x, boolean w) 
 	{
 		switch(measureType) {
 		case POSITION: 		
-//			if (x && y) 
-//				ptsTop.csvImportXYDataFromRow( data, 2); 
-//			else if (!x && y) 
-//				ptsTop.csvImportYDataFromRow( data, 2);
+			if (x && w) 
+				flyPositions.csvImportXYWHDataFromRow( data, 2); 
+			else if (!x && w) 
+				flyPositions.csvImportXYDataFromRow( data, 2);
 			break;
 		default:
 			break;

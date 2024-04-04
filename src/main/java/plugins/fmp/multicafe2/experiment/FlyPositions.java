@@ -592,7 +592,7 @@ public class FlyPositions
 		return true;
 	}
 	
-	public boolean csvImportXYDataFromRow(String[] data, int startAt) 
+	public boolean csvImportXYWHDataFromRow(String[] data, int startAt) 
 	{
 		if (data.length < startAt)
 			return false;
@@ -612,7 +612,7 @@ public class FlyPositions
 		return true;
 	}
 	
-	public boolean csvImportYDataFromRow(String[] data, int startAt) 
+	public boolean csvImportXYDataFromRow(String[] data, int startAt) 
 	{
 		if (data.length < startAt)
 			return false;
