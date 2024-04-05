@@ -1,9 +1,14 @@
 package plugins.fmp.multicafe2.experiment;
 
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -25,7 +30,7 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Cages 
 {	
-	public List<Cage>	cagesList			= new ArrayList<Cage>();
+	public ArrayList<Cage>	cagesList		= new ArrayList<Cage>();
 
 	// ---------- not saved to xml:
 	public long			detectFirst_Ms		= 0;
@@ -43,34 +48,34 @@ public class Cages
 	private final String ID_CAGELIMITS 		= "Cage_Limits";
 	private final String ID_FLYDETECTED 	= "Fly_Detected";
 	
-	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
+//	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	
 	
 	// ---------------------------------
 	
-	public boolean load_Capillaries(String directory) 
+	public boolean load_Cages(String directory) 
 	{
 		boolean flag = false;
 		try 
 		{
-			flag = csvLoad_Capillaries(directory);
+			flag = csvLoad_Cages(directory);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		if (!flag) {
-			flag = xmlLoadCapillaries_Measures(directory);
-		}
+//		if (!flag) {
+//			flag = xmlLoadCages_Measures(directory);
+//		}
 		return flag;
 	}
 	
-	public boolean save_Capillaries(String directory) 
+	public boolean save_Cages(String directory) 
 	{
 		if (directory == null)
 			return false;
 		
-		csvSave_Capillaries(directory);
+		csvSave_Cages(directory);
 		return true;
 	}
 		
@@ -100,15 +105,230 @@ public class Cages
 		}
 	}
 	
-	// -------------
+	// -----------------------------------------------------
 	
-	public boolean saveCagesMeasures(String directory) 
+	final String csvSep = ";";
+
+	private boolean csvLoad_Cages(String directory) throws Exception 
 	{
-		csvSaveCagesMeasures(directory);
-		String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
-		xmlWriteCagesToFileNoQuestion(tempName);
+		String pathToCsv = directory + File.separator +"CagesMeasures.csv";
+		File csvFile = new File(pathToCsv);
+		if (!csvFile.isFile()) 
+			return false;
+		
+		BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
+		String row;
+		String sep = csvSep;
+		while ((row = csvReader.readLine()) != null) {
+			if (row.charAt(0) == '#') 
+				sep = String.valueOf(row.charAt(1));
+			
+		    String[] data = row.split(sep);
+		    if (data[0] .equals( "#")) 
+		    {
+		    	switch(data[1]) {
+		    	case "DESCRIPTION":
+		    		csvLoad_Description (csvReader, sep);
+		    		break;
+		    	case "CAGES":
+		    		csvLoad_Cages_Description (csvReader, sep);
+		    		break;
+		    	case "POSITIONS":
+		    		csvLoad_Cages_Measures(csvReader, EnumCageMeasures.POSITION, sep, row.contains("xi"));
+		    		break;
+		  
+	    		default:
+	    			break;
+		    	}
+		    }
+		}
+		csvReader.close();
 		return true;
 	}
+	
+	private String csvLoad_Description (BufferedReader csvReader, String sep) 
+	{
+//		String row;
+//		try {
+//			row = csvReader.readLine();
+//			row = csvReader.readLine();
+//			String[] data = row.split(sep);
+//			cagesDescription.csvImportCagessDescriptionData(data);
+//			
+//			row = csvReader.readLine();
+//			data = row.split(sep);
+//			if ( data[0].substring(0, Math.min( data[0].length(), 5)).equals("n cap")) {
+//				int ncages = Integer.valueOf(data[1]);
+//				if (ncages >= cagesList.size())
+//					cagesList.ensureCapacity(ncages);
+//				else
+//					cagesList.subList(ncages, cagesList.size()).clear();
+//				
+//				row = csvReader.readLine();
+//				data = row.split(sep);
+//			}
+//			if (data[0] .equals( "#")) {
+//			  	return data[1];
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		return null;
+	}
+	
+	private String csvLoad_Cages_Description (BufferedReader csvReader, String sep) 
+	{
+		String row;
+		try {
+			row = csvReader.readLine();			
+			while ((row = csvReader.readLine()) != null) {
+				String[] data = row.split(sep);
+				if (data[0] .equals("#")) 
+					return data[1];
+				
+				int cageID = Integer.valueOf(data[2]);
+				Cage cage = getCageFromNumber(cageID);
+				if (cage == null) {
+					cage = new Cage();
+					cagesList.add(cage);
+				}
+				cage.csvImportCageDescription(data);
+			}
+		} catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String csvLoad_Cages_Measures(BufferedReader csvReader, EnumCageMeasures measureType, String sep, boolean x) 
+	{
+		String row;
+		final boolean y = true;
+		try {
+			while ((row = csvReader.readLine()) != null) 
+			{
+				String[] data = row.split(sep);
+				if (data[0] .equals("#")) 
+					return data[1];
+				
+				int cageID = Integer.valueOf(data[0]);
+				Cage cage = getCageFromNumber(cageID);
+				if (cage == null)
+					cage = new Cage();
+				cage.csvImportCageData(measureType, data, x, y);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	// ---------------------------------
+	
+	private boolean csvSave_Cages(String directory) 
+	{
+		Path path = Paths.get(directory);
+		if (!Files.exists(path))
+			return false;
+		
+		try {
+			FileWriter csvWriter = new FileWriter(directory + File.separator +"CagesMeasures.csv");
+			csvSave_DescriptionSection(csvWriter);
+			csvSave_MeasuresSection(csvWriter, EnumCageMeasures.POSITION);
+			csvWriter.flush();
+			csvWriter.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return true;
+	}
+	
+	private boolean csvSave_DescriptionSection(FileWriter csvWriter) 
+	{
+		try {
+//			csvWriter.append(cagesDescription.csvExportSectionHeader(csvSep));
+//			csvWriter.append(cagesDescription.csvExportExperimentDescriptors(csvSep));
+			csvWriter.append("n cages="+csvSep + Integer.toString(cagesList.size()) + "\n");
+			csvWriter.append("#"+csvSep+"#\n");
+			
+			if (cagesList.size() > 0) {
+				csvWriter.append(cagesList.get(0).csvExportCageSubSectionHeader(csvSep));
+				for (Cage cage:cagesList) 
+					csvWriter.append(cage.csvExportCageDescription(csvSep));
+				csvWriter.append("#"+csvSep+"#\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return true;
+	}
+	
+	private boolean csvSave_MeasuresSection(FileWriter csvWriter, EnumCageMeasures measureType) 
+	{
+		try {
+			if (cagesList.size() <= 1)
+				return false;
+			
+			csvWriter.append(cagesList.get(0).csvExportMeasure_SectionHeader(measureType, csvSep));
+			for (Cage cage:cagesList) 
+				csvWriter.append(cage.csvExportMeasures_OneType(measureType, csvSep));
+			
+			csvWriter.append("#"+csvSep+"#\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+//	public boolean cvsSave_CagesMeasures(String directory) 
+//	{
+//		csvSaveCagesMeasures(directory);
+//		String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
+//		xmlWriteCagesToFileNoQuestion(tempName);
+//		return true;
+//	}
+	
+//	private boolean csvSaveCagesMeasures(String directory) 
+//	{
+//		try {
+//			FileWriter csvWriter = new FileWriter(directory + File.separator + "CagesMeasures.csv");
+//			
+//			csvSaveDescriptionSection(csvWriter);
+////			csvSaveMeasuresSection(csvWriter, EnumCageMeasures.POSITION);
+//			
+//			csvWriter.flush();
+//			csvWriter.close();
+//			
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		return true;
+//	}
+	
+//	private boolean csvSaveDescriptionSection(FileWriter csvWriter) 
+//	{
+//		try {
+//			csvWriter.append("#"+csvSep+"DESCRIPTION"+csvSep+"Cages data\n");
+//			csvWriter.append("n cages="+csvSep + Integer.toString(cagesList.size()) + "\n");
+//			
+//			if (cagesList.size() > 0) 
+//				for (Cage cage:cagesList) 
+//					csvWriter.append(cage.csvExportCageDescription(csvSep));
+//			
+//			csvWriter.append("#"+csvSep+"#\n");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return true;
+//	}
+	
+	// -------------
 	
 	public boolean xmlWriteCagesToFileNoQuestion(String tempname) 
 	{
@@ -133,44 +353,6 @@ public class Cages
 		}
 	
 		return XMLUtil.saveDocument(doc, tempname);
-	}
-	
-	// -----------------------------------------------------
-	final String csvSep = ";";
-	
-	private boolean csvSaveCagesMeasures(String directory) 
-	{
-		try {
-			FileWriter csvWriter = new FileWriter(directory + File.separator + "CagesMeasures.csv");
-			
-			csvSaveDescriptionSection(csvWriter);
-//			csvSaveMeasuresSection(csvWriter, EnumCageMeasures.POSITION);
-			
-			csvWriter.flush();
-			csvWriter.close();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return true;
-	}
-	
-	private boolean csvSaveDescriptionSection(FileWriter csvWriter) 
-	{
-		try {
-			csvWriter.append("#"+csvSep+"DESCRIPTION"+csvSep+"Cages data\n");
-			csvWriter.append("n cages="+csvSep + Integer.toString(cagesList.size()) + "\n");
-			
-			if (cagesList.size() > 0) 
-				for (Cage cage:cagesList) 
-					csvWriter.append(cage.csvExportCageDescription(csvSep));
-			
-			csvWriter.append("#"+csvSep+"#\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return true;
 	}
 	
 	// ----------------------------------------------------

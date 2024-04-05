@@ -134,9 +134,9 @@ public class Cage
 	{
 		StringBuffer sbf = new StringBuffer();
 		
-		sbf.append("#"+sep+"CAPILLARIES"+sep+"describe each capillary\n");
+		sbf.append("#"+sep+"CAGES"+sep+"describe each cage\n");
 		List<String> row2 = Arrays.asList(
-				"cageNumber",
+				"cageID",
 				"roi2D_name", 
 				"nFlies", 
 				"age", 
@@ -166,7 +166,8 @@ public class Cage
 		{			
 			Polygon2D polygon = ((ROI2DPolygon) cageRoi2D).getPolygon2D();
 			row.add(Integer.toString(polygon.npoints));
-			for (int i= 0; i< npoints; i++) {
+			for (int i= 0; i< npoints; i++) 
+			{
 				row.add(Integer.toString((int) polygon.xpoints[i]));
 				row.add(Integer.toString((int) polygon.ypoints[i]));
 			}
@@ -181,7 +182,7 @@ public class Cage
 	public String csvExportMeasure_SectionHeader(EnumCageMeasures measureType, String sep) 
 	{
 		StringBuffer sbf = new StringBuffer();
-		String explanation1 = "columns="+sep+"name"+sep+"index"+sep+"npts"+sep+"xi"+sep+"yi\n";
+		String explanation1 = "\ncageID"+sep+"npts"+sep+"xi"+sep+"yi\n";
 		switch(measureType) 
 		{
 			case POSITION:
@@ -197,7 +198,7 @@ public class Cage
 	public String csvExportMeasures_OneType(EnumCageMeasures measureType, String sep) 
 	{
 		StringBuffer sbf = new StringBuffer();
-		sbf.append(cageRoi2D.getName() + sep);
+		sbf.append(strCageNumber + sep);
 		
 		switch(measureType) 
 		{
@@ -255,7 +256,6 @@ public class Cage
 		}
 	}
 		
-	
 	// ------------------------------------
 	
 	public String getCageNumber() 

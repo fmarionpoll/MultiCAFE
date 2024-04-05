@@ -637,12 +637,13 @@ public class Experiment
  	
  	public boolean loadCagesMeasures() 
 	{
-		return xmlReadDrosoTrack(null);
+		//return xmlReadDrosoTrack(null);
+ 		return cages.load_Cages(getKymosBinFullDirectory());
 	}
 	
 	public boolean saveCagesMeasures() 
 	{
-		return cages.saveCagesMeasures(getKymosBinFullDirectory());
+		return cages.save_Cages(getKymosBinFullDirectory());
 	}
 	
 	// ----------------------------------
