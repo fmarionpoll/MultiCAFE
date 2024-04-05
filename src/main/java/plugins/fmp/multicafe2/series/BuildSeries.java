@@ -223,10 +223,10 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer>
 		return seq;
 	}
 
-	void addGreenROI2DPoints(Sequence seq, List<Rectangle2D> listRectangles, boolean eraseOldPoints) 
+	void displayRectanglesAsROIs(Sequence seq, List<Rectangle2D> listRectangles, boolean eraseOldPoints) 
 	{
 		if (eraseOldPoints)
-				seq.removeAllROI();
+			seq.removeAllROI();
 		
 		for (Rectangle2D rectangle: listRectangles) 
  		{

@@ -142,7 +142,7 @@ public class Cage
 				"comment",
 				"strain",
 				"sex",
-				"roi2D", 
+				"ROI", 
 				"npoints", 
 				"x(i)", 
 				"y(i)");

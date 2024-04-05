@@ -41,7 +41,7 @@ public class FlyDetect2 extends BuildSeries
 	{
 		exp.cleanPreviousDetectedFliesROIs();
 		find_flies.initParametersForDetection(exp, options);
-		find_flies.initCagesPositions(exp, options.detectCage);
+		exp.cages.initFlyPositions(options.detectCage);
 		options.threshold = options.thresholdDiff;
 
 		if (exp.loadReferenceImage()) 
@@ -54,7 +54,6 @@ public class FlyDetect2 extends BuildSeries
 	private void findFliesInAllFrames(Experiment exp) 
 	{
 		ProgressFrame progressBar = new ProgressFrame("Detecting flies...");
-		find_flies.initCagesPositions(exp, options.detectCage);
 		seqNegative.removeAllROI();
 		
 		ImageTransformOptions transformOptions = new ImageTransformOptions();
@@ -78,7 +77,7 @@ public class FlyDetect2 extends BuildSeries
 				seqNegative.setImage(0, 0, negativeImage);
 				vNegative.setTitle(title);
 				List<Rectangle2D> listRectangles = find_flies.findFlies2( negativeImage, t_from);
-				addGreenROI2DPoints(seqNegative, listRectangles, true);
+				displayRectanglesAsROIs(seqNegative, listRectangles, true);
 				seqNegative.endUpdate();
 			} 
 			catch (InterruptedException e) {

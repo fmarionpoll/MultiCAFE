@@ -222,7 +222,8 @@ public class Cages
 					cage = new Cage();
 				cage.csvImport_MEASURE_Data(measureType, data, complete);
 			}
-		} catch (IOException e) 
+		} 
+		catch (IOException e) 
 		{
 			e.printStackTrace();
 		}
@@ -254,7 +255,7 @@ public class Cages
 	private boolean csvSave_Description(FileWriter csvWriter) 
 	{
 		try {
-			csvWriter.append("#"+csvSep+"DESCRIPTION"+csvSep+"Cages data\n");
+			csvWriter.append("#"+csvSep+"DESCRIPTION\n");
 			csvWriter.append("n cages="+csvSep + Integer.toString(cagesList.size()) + "\n");
 			
 			csvWriter.append("#"+csvSep+"#\n");
@@ -653,6 +654,8 @@ public class Cages
 		return cageFound;
 	}
 
+	// ---------------
+	
 	public List <ROI2D> getPositionsAsListOfROI2DRectanglesAtT(int t) 
 	{
 		List <ROI2D> roiRectangleList = new ArrayList<ROI2D> (cagesList.size());
@@ -670,6 +673,24 @@ public class Cages
 		for (Cage cage: cagesList) 
 			Collections.sort(cage.flyPositions.flyPositionList, new Comparators.XYTaValue_Tindex_Comparator());
 	}
+	
+	public void initFlyPositions(int option_cagenumber)
+	{
+		int nbcages = cagesList.size();
+		for (int i = 0; i < nbcages; i++) 
+		{
+			Cage cage = cagesList.get(i);
+			if (option_cagenumber != -1 && cage.getCageNumberInteger() != option_cagenumber)
+				continue;
+			if (cage.cageNFlies > 0) 
+			{
+				cage.flyPositions = new FlyPositions();
+				cage.flyPositions.ensureCapacity(detect_nframes);
+			}
+		}
+	}
+	
+	// ----------------
 	
 	public void computeBooleanMasksForCages() 
 	{
@@ -744,4 +765,5 @@ public class Cages
 		
 		return rightPixel - leftPixel;
 	}
+
 }

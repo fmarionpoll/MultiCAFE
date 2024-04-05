@@ -98,9 +98,15 @@ public class FlyPositions
 		return flyPositionList.get(i).flyIndexT;
 	}
 
-	public void addPosition (int frame, Rectangle2D rectangle, ROI2DArea roiArea) 
+	public void addPositionWithoutRoiArea (int t, Rectangle2D rectangle) 
 	{
-		FlyPosition pos = new FlyPosition(frame, rectangle, roiArea);
+		FlyPosition pos = new FlyPosition(t, rectangle);
+		flyPositionList.add(pos);
+	}
+	
+	public void addPositionWithRoiArea (int t, Rectangle2D rectangle, ROI2DArea roiArea) 
+	{
+		FlyPosition pos = new FlyPosition(t, rectangle, roiArea);
 		flyPositionList.add(pos);
 	}
 	
@@ -553,7 +559,6 @@ public class FlyPositions
 		int toIndex = flyPositionList.size();
 		if (fromIndex > 0 && fromIndex < toIndex) 
 			flyPositionList.subList(fromIndex, toIndex).clear();
-		
 	}
 
 	// --------------------------------------------------------

@@ -39,7 +39,7 @@ public class FlyDetect1 extends BuildSeries
 	{
 		exp.cleanPreviousDetectedFliesROIs();
 		find_flies.initParametersForDetection(exp, options);
-		find_flies.initCagesPositions(exp, options.detectCage);
+		exp.cages.initFlyPositions(options.detectCage);
 		
 		openFlyDetectViewers(exp);
 		findFliesInAllFrames(exp);
@@ -71,20 +71,15 @@ public class FlyDetect1 extends BuildSeries
 		ProgressFrame progressBar = new ProgressFrame("Detecting flies...");
 		ImageTransformOptions transformOptions = new ImageTransformOptions();
 		transformOptions.transformOption = options.transformop;
-		getReferenceImage (exp, 0, transformOptions);
 		ImageTransformInterface transformFunction = options.transformop.getFunction();
 		
-		int t_current = 0;
-	
-		long last_ms = exp.cages.detectLast_Ms + exp.cages.detectBin_Ms ;
-		for (long index_ms = exp.cages.detectFirst_Ms; index_ms <= last_ms; index_ms += exp.cages.detectBin_Ms ) 
+		int t_previous = 0;
+		int totalFrames = exp.seqCamData.nTotalFrames;
+		
+		for (int index = 0; index < totalFrames; index++ ) 
 		{
-			final int t_previous = t_current;
-			final int t_from = (int) ((index_ms - exp.camImageFirst_ms)/exp.camImageBin_ms);
-			if (t_from >= exp.seqCamData.nTotalFrames)
-				continue;
+			int t_from = index;
 			
-			t_current = t_from;
 			String title = "Frame #"+ t_from + "/" + exp.seqCamData.nTotalFrames;
 			progressBar.setMessage(title);
 	
@@ -100,12 +95,14 @@ public class FlyDetect1 extends BuildSeries
 				seqNegative.setImage(0, 0, workImage);
 				vNegative.setTitle(title);
 				List<Rectangle2D> listRectangles = find_flies.findFlies1 (workImage, t_from);
-				addGreenROI2DPoints(seqNegative, listRectangles, true);
+				displayRectanglesAsROIs(seqNegative, listRectangles, true);
 				seqNegative.endUpdate();
 			} 
 			catch (InterruptedException e) {
 				e.printStackTrace();
-			}					
+			}
+			
+			t_previous = t_from;
 		}
 
 		progressBar.close();

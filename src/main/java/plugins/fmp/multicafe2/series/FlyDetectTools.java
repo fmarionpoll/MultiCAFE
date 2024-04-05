@@ -16,7 +16,6 @@ import icy.system.thread.Processor;
 import plugins.fmp.multicafe2.experiment.Cage;
 import plugins.fmp.multicafe2.experiment.Cages;
 import plugins.fmp.multicafe2.experiment.Experiment;
-import plugins.fmp.multicafe2.experiment.FlyPositions;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 
@@ -148,7 +147,7 @@ public class FlyDetectTools
  		{		
 			if (options.detectCage != -1 && cage.getCageNumberInteger() != options.detectCage)
 				continue;
-			if (cage.cageNFlies <1)
+			if (cage.cageNFlies < 1)
 				continue;
 			
 			futures.add(processor.submit(new Runnable () 
@@ -172,22 +171,17 @@ public class FlyDetectTools
 		BooleanMask2D bestMask = null;
 		try {
 			bestMask = findLargestBlob(binarizedImageRoi, cageMask);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		} 
+		catch (InterruptedException e) {e.printStackTrace();}
 		return bestMask;
 	}
 	
 	Rectangle2D saveMask(BooleanMask2D bestMask, Cage cage, int t) 
-	{	
+	{
 		Rectangle2D rect = null;
-		ROI2DArea flyROI = null;
 		if (bestMask != null) 
-		{
-			flyROI = new ROI2DArea(bestMask);
-			rect = flyROI.getBounds2D();
-		}
-		cage.flyPositions.addPosition(t, rect, flyROI);
+			rect = bestMask.getOptimizedBounds();
+		cage.flyPositions.addPositionWithoutRoiArea(t, rect);
 		return rect;
 	}
 	
@@ -218,24 +212,6 @@ public class FlyDetectTools
 		}
 		BooleanMask2D bmask = new BooleanMask2D( img.getBounds(), mask); 
 		return new ROI2DArea( bmask );
-	}
-	
-	public void initCagesPositions(Experiment exp, int option_cagenumber) 
-	{
-		cages = exp.cages;
-		int nbcages = cages.cagesList.size();
-		for (int i = 0; i < nbcages; i++) 
-		{
-			Cage cage = cages.cagesList.get(i);
-			if (options.detectCage != -1 && cage.getCageNumberInteger() != option_cagenumber)
-				continue;
-			if (cage.cageNFlies > 0) 
-			{
-				FlyPositions positions = new FlyPositions();
-				positions.ensureCapacity(exp.cages.detect_nframes);
-				cage.flyPositions = positions;
-			}
-		}
 	}
 	
 	public void initParametersForDetection(Experiment exp, BuildSeriesOptions	options) 

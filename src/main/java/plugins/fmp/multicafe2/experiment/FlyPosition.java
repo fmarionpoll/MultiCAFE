@@ -15,7 +15,7 @@ public class FlyPosition
 {
 	public Rectangle2D rectPosition = new Rectangle2D.Double(Double.NaN,Double.NaN,Double.NaN,Double.NaN);
 	public ROI2DArea flyRoi 	= null;
-	public int 		flyIndexT 		= 0;
+	public int 		flyIndexT 	= 0;
 	public boolean 	bAlive 		= false;
 	public boolean 	bSleep 		= false;
 	public boolean  bPadded		= false;
@@ -34,12 +34,19 @@ public class FlyPosition
 		this.flyIndexT = indexT;
 	}
 	
+	public FlyPosition(int indexT, Rectangle2D rectangle) 
+	{
+		if (rectangle != null)
+			this.rectPosition.setRect(rectangle);
+		flyIndexT = indexT;
+	}
+	
 	public FlyPosition(int indexT, Rectangle2D rectangle, ROI2DArea roiArea) 
 	{
 		if (rectangle != null)
 			this.rectPosition.setRect(rectangle);
-		this.flyRoi = new ROI2DArea(roiArea);
-		this.flyIndexT = indexT;
+		flyRoi = new ROI2DArea(roiArea);
+		flyIndexT = indexT;
 	}
 	
 	public FlyPosition(int indexT, Rectangle2D rectangle, boolean alive) 
@@ -50,21 +57,21 @@ public class FlyPosition
 		this.bAlive = alive;
 	}
 	
-	public void copy (FlyPosition sourceVal) 
+	public void copy (FlyPosition source) 
 	{
-		flyIndexT = sourceVal.flyIndexT;
-		bAlive = sourceVal.bAlive;
-		bSleep = sourceVal.bSleep;
-		bPadded = sourceVal.bPadded;
-		distance = sourceVal.distance;
-		rectPosition.setRect(sourceVal.rectPosition); 
-		if (		sourceVal.flyRoi != null 
-				&& sourceVal.flyRoi.getBounds().height > 0 
-				&& sourceVal.flyRoi.getBounds().width > 0
+		flyIndexT = source.flyIndexT;
+		bAlive = source.bAlive;
+		bSleep = source.bSleep;
+		bPadded = source.bPadded;
+		distance = source.distance;
+		rectPosition.setRect(source.rectPosition); 
+		if (		source.flyRoi != null 
+				&& source.flyRoi.getBounds().height > 0 
+				&& source.flyRoi.getBounds().width > 0
 			) 
-			flyRoi = new ROI2DArea(sourceVal.flyRoi);
-		axis1 = sourceVal.axis1;
-		axis2 = sourceVal.axis2;
+			flyRoi = new ROI2DArea(source.flyRoi);
+		axis1 = source.axis1;
+		axis2 = source.axis2;
 	}
 	
 	Point2D getCenterRectangle() {
