@@ -101,7 +101,6 @@ public class BuildCagesAsArray extends JPanel
 					exp.cages.removeCages();
 					createROIsFromSelectedPolygon(exp);
 					exp.cages.cagesFromROIs(exp.seqCamData);
-					exp.cages.setFirstAndLastCageToZeroFly();
 					if(exp.capillaries.capillariesList.size() > 0)
 						exp.cages.transferNFliesFromCapillariesToCages(exp.capillaries.capillariesList);
 				}

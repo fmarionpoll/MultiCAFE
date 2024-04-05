@@ -46,7 +46,7 @@ public class InfosCapillaryTable extends JPanel
 	private JButton				duplicateAllButton 	= new JButton("Duplicate cell to all");
 	private JButton				getNfliesButton 	= new JButton("Get n flies from cage");
 	private JButton				getCageNoButton		= new JButton("Set cage n#");
-	private JButton				noFliesButton 		= new JButton("Cages0/0: no flies");
+	private JButton				noFliesButton 		= new JButton("Cages0/9: no flies");
 	private MultiCAFE2 			parent0 			= null; 
 	private List <Capillary> 	capillariesArrayCopy= null;
 	
@@ -269,10 +269,10 @@ public class InfosCapillaryTable extends JPanel
 	
 	private void pasteInfos(Experiment exp)
 	{
-		for (Capillary capFrom: capillariesArrayCopy ) 
+		for (Capillary capFrom : capillariesArrayCopy ) 
 		{
 			capFrom.valid = false;
-			for (Capillary capTo: exp.capillaries.capillariesList) 
+			for (Capillary capTo : exp.capillaries.capillariesList) 
 			{
 				if (!capFrom.getRoiName().equals (capTo.getRoiName()))
 					continue;
@@ -289,10 +289,11 @@ public class InfosCapillaryTable extends JPanel
 	private void setFliesNumbers(Experiment exp)
 	{
 		int ncapillaries =  exp.capillaries.capillariesList.size();
-		for (int i=0; i < ncapillaries; i++) 
+		for (int i = 0; i < ncapillaries; i++) 
 		{
 			Capillary cap = exp.capillaries.capillariesList.get(i);
-			if (i< 2 || i >= ncapillaries-2) {
+			if (i < 2 || i >= ncapillaries-2) 
+			{
 				cap.capNFlies = 0;
 			}
 			else 
@@ -320,7 +321,7 @@ public class InfosCapillaryTable extends JPanel
 		else
 			modulo2 = Integer.valueOf(cap0.getCapillarySide()) % 2;
 		
-		for (Capillary cap: exp.capillaries.capillariesList) 
+		for (Capillary cap : exp.capillaries.capillariesList) 
 		{
 			if (cap.getKymographName().equals(cap0.getKymographName()))
 				continue;

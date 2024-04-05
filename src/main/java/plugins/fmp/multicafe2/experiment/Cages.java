@@ -126,15 +126,16 @@ public class Cages
 		    String[] data = row.split(sep);
 		    if (data[0] .equals( "#")) 
 		    {
-		    	switch(data[1]) {
+		    	switch(data[1]) 
+		    	{
 		    	case "DESCRIPTION":
-		    		csvLoad_Description (csvReader, sep);
+		    		csvLoad_DESCRIPTION (csvReader, sep);
 		    		break;
 		    	case "CAGES":
-		    		csvLoad_Cages_Description (csvReader, sep);
+		    		csvLoad_CAGES (csvReader, sep);
 		    		break;
-		    	case "POSITIONS":
-		    		csvLoad_Cages_Measures(csvReader, EnumCageMeasures.POSITION, sep, row.contains("xi"));
+		    	case "POSITION":
+		    		csvLoad_Measures(csvReader, EnumCageMeasures.POSITION, sep);
 		    		break;
 		  
 	    		default:
@@ -146,66 +147,69 @@ public class Cages
 		return true;
 	}
 	
-	private String csvLoad_Description (BufferedReader csvReader, String sep) 
-	{
-//		String row;
-//		try {
-//			row = csvReader.readLine();
-//			row = csvReader.readLine();
-//			String[] data = row.split(sep);
-//			cagesDescription.csvImportCagessDescriptionData(data);
-//			
-//			row = csvReader.readLine();
-//			data = row.split(sep);
-//			if ( data[0].substring(0, Math.min( data[0].length(), 5)).equals("n cap")) {
-//				int ncages = Integer.valueOf(data[1]);
-//				if (ncages >= cagesList.size())
-//					cagesList.ensureCapacity(ncages);
-//				else
-//					cagesList.subList(ncages, cagesList.size()).clear();
-//				
-//				row = csvReader.readLine();
-//				data = row.split(sep);
-//			}
-//			if (data[0] .equals( "#")) {
-//			  	return data[1];
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		return null;
-	}
-	
-	private String csvLoad_Cages_Description (BufferedReader csvReader, String sep) 
+	private String csvLoad_DESCRIPTION (BufferedReader csvReader, String sep) 
 	{
 		String row;
 		try {
-			row = csvReader.readLine();			
-			while ((row = csvReader.readLine()) != null) {
+			while ((row = csvReader.readLine()) != null) 
+			{
 				String[] data = row.split(sep);
 				if (data[0] .equals("#")) 
 					return data[1];
 				
-				int cageID = Integer.valueOf(data[2]);
-				Cage cage = getCageFromNumber(cageID);
-				if (cage == null) {
-					cage = new Cage();
-					cagesList.add(cage);
+				if ( data[0].substring(0, Math.min( data[0].length(), 7)).equals("n cages")) 
+				{
+					int ncages = Integer.valueOf(data[1]);
+					if (ncages >= cagesList.size())
+						cagesList.ensureCapacity(ncages);
+					else
+						cagesList.subList(ncages, cagesList.size()).clear();
 				}
-				cage.csvImportCageDescription(data);
 			}
-		} catch (IOException e) 
+		} 
+		catch (IOException e) 
 		{
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	private String csvLoad_Cages_Measures(BufferedReader csvReader, EnumCageMeasures measureType, String sep, boolean x) 
+	private String csvLoad_CAGES (BufferedReader csvReader, String sep) 
 	{
 		String row;
-		final boolean y = true;
-		try {
+		try 
+		{
+			row = csvReader.readLine();			
+			while ((row = csvReader.readLine()) != null) 
+			{
+				String[] data = row.split(sep);
+				if (data[0] .equals("#")) 
+					return data[1];
+				
+				int cageID = Integer.valueOf(data[0]);
+				Cage cage = getCageFromNumber(cageID);
+				if (cage == null) 
+				{
+					cage = new Cage();
+					cagesList.add(cage);
+				}
+				cage.csvImport_CAGE_Header(data);
+			}
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String csvLoad_Measures(BufferedReader csvReader, EnumCageMeasures measureType, String sep) 
+	{
+		String row;
+		try 
+		{
+			row = csvReader.readLine();
+			boolean complete = row.contains("w(i)");
 			while ((row = csvReader.readLine()) != null) 
 			{
 				String[] data = row.split(sep);
@@ -216,7 +220,7 @@ public class Cages
 				Cage cage = getCageFromNumber(cageID);
 				if (cage == null)
 					cage = new Cage();
-				cage.csvImportCageData(measureType, data, x, y);
+				cage.csvImport_MEASURE_Data(measureType, data, complete);
 			}
 		} catch (IOException e) 
 		{
@@ -235,8 +239,8 @@ public class Cages
 		
 		try {
 			FileWriter csvWriter = new FileWriter(directory + File.separator +"CagesMeasures.csv");
-			csvSave_DescriptionSection(csvWriter);
-			csvSave_MeasuresSection(csvWriter, EnumCageMeasures.POSITION);
+			csvSave_Description(csvWriter);
+			csvSave_Measures(csvWriter, EnumCageMeasures.POSITION);
 			csvWriter.flush();
 			csvWriter.close();
 			
@@ -247,18 +251,18 @@ public class Cages
 		return true;
 	}
 	
-	private boolean csvSave_DescriptionSection(FileWriter csvWriter) 
+	private boolean csvSave_Description(FileWriter csvWriter) 
 	{
 		try {
-//			csvWriter.append(cagesDescription.csvExportSectionHeader(csvSep));
-//			csvWriter.append(cagesDescription.csvExportExperimentDescriptors(csvSep));
+			csvWriter.append("#"+csvSep+"DESCRIPTION"+csvSep+"Cages data\n");
 			csvWriter.append("n cages="+csvSep + Integer.toString(cagesList.size()) + "\n");
+			
 			csvWriter.append("#"+csvSep+"#\n");
 			
 			if (cagesList.size() > 0) {
-				csvWriter.append(cagesList.get(0).csvExportCageSubSectionHeader(csvSep));
+				csvWriter.append(cagesList.get(0).csvExport_CAGES_Header(csvSep));
 				for (Cage cage:cagesList) 
-					csvWriter.append(cage.csvExportCageDescription(csvSep));
+					csvWriter.append(cage.csvExport_CAGES_Data(csvSep));
 				csvWriter.append("#"+csvSep+"#\n");
 			}
 		} catch (IOException e) {
@@ -268,15 +272,16 @@ public class Cages
 		return true;
 	}
 	
-	private boolean csvSave_MeasuresSection(FileWriter csvWriter, EnumCageMeasures measureType) 
+	private boolean csvSave_Measures(FileWriter csvWriter, EnumCageMeasures measureType) 
 	{
-		try {
+		try 
+		{
 			if (cagesList.size() <= 1)
 				return false;
-			
-			csvWriter.append(cagesList.get(0).csvExportMeasure_SectionHeader(measureType, csvSep));
+			boolean complete = true;
+			csvWriter.append(cagesList.get(0).csvExport_MEASURE_Header(measureType, csvSep, complete));
 			for (Cage cage:cagesList) 
-				csvWriter.append(cage.csvExportMeasures_OneType(measureType, csvSep));
+				csvWriter.append(cage.csvExport_MEASURE_Data(measureType, csvSep, complete));
 			
 			csvWriter.append("#"+csvSep+"#\n");
 		} catch (IOException e) {
@@ -284,49 +289,6 @@ public class Cages
 		}
 		return true;
 	}
-	
-//	public boolean cvsSave_CagesMeasures(String directory) 
-//	{
-//		csvSaveCagesMeasures(directory);
-//		String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
-//		xmlWriteCagesToFileNoQuestion(tempName);
-//		return true;
-//	}
-	
-//	private boolean csvSaveCagesMeasures(String directory) 
-//	{
-//		try {
-//			FileWriter csvWriter = new FileWriter(directory + File.separator + "CagesMeasures.csv");
-//			
-//			csvSaveDescriptionSection(csvWriter);
-////			csvSaveMeasuresSection(csvWriter, EnumCageMeasures.POSITION);
-//			
-//			csvWriter.flush();
-//			csvWriter.close();
-//			
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		return true;
-//	}
-	
-//	private boolean csvSaveDescriptionSection(FileWriter csvWriter) 
-//	{
-//		try {
-//			csvWriter.append("#"+csvSep+"DESCRIPTION"+csvSep+"Cages data\n");
-//			csvWriter.append("n cages="+csvSep + Integer.toString(cagesList.size()) + "\n");
-//			
-//			if (cagesList.size() > 0) 
-//				for (Cage cage:cagesList) 
-//					csvWriter.append(cage.csvExportCageDescription(csvSep));
-//			
-//			csvWriter.append("#"+csvSep+"#\n");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return true;
-//	}
 	
 	// -------------
 	
@@ -354,8 +316,6 @@ public class Cages
 	
 		return XMLUtil.saveDocument(doc, tempname);
 	}
-	
-	// ----------------------------------------------------
 	
 	public boolean xmlReadCagesFromFile(Experiment exp) 
 	{
@@ -647,9 +607,11 @@ public class Cages
 			int cagenb = cage.getCageNumberInteger();
 			for (Capillary cap: capList) 
 			{
-				if (cap.capCageID != cagenb)
-					continue;
-				cage.cageNFlies = cap.capNFlies;
+				if (cap.capCageID == cagenb) 
+				{
+					cage.cageNFlies = cap.capNFlies;
+					break;
+				}
 			}
 		}
 	}

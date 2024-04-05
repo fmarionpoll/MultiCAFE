@@ -130,11 +130,11 @@ public class Cage
 
 	// ------------------------------------
 	
-	public String csvExportCageSubSectionHeader(String sep) 
+	public String csvExport_CAGES_Header(String sep) 
 	{
 		StringBuffer sbf = new StringBuffer();
 		
-		sbf.append("#"+sep+"CAGES"+sep+"describe each cage\n");
+		sbf.append("#"+sep+"CAGES\n");
 		List<String> row2 = Arrays.asList(
 				"cageID",
 				"nFlies", 
@@ -142,8 +142,8 @@ public class Cage
 				"comment",
 				"strain",
 				"sex",
-				"roi2D_name", 
-				"roi_npoints", 
+				"roi2D", 
+				"npoints", 
 				"x(i)", 
 				"y(i)");
 		sbf.append(String.join(sep, row2));
@@ -151,7 +151,7 @@ public class Cage
 		return sbf.toString();
 	}
 	
-	public String csvExportCageDescription(String sep) 
+	public String csvExport_CAGES_Data(String sep) 
 	{	
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = new ArrayList<String>();
@@ -167,7 +167,7 @@ public class Cage
 		{			
 			Polygon2D polygon = ((ROI2DPolygon) cageRoi2D).getPolygon2D();
 			row.add(Integer.toString(polygon.npoints));
-			for (int i= 0; i < polygon.npoints; i++) 
+			for (int i = 0; i < polygon.npoints; i++) 
 			{
 				row.add(Double.toString(polygon.xpoints[i]));
 				row.add(Double.toString(polygon.ypoints[i]));
@@ -180,14 +180,16 @@ public class Cage
 		return sbf.toString();
 	}
 	
-	public String csvExportMeasure_SectionHeader(EnumCageMeasures measureType, String sep) 
+	public String csvExport_MEASURE_Header(EnumCageMeasures measureType, String sep, boolean complete) 
 	{
 		StringBuffer sbf = new StringBuffer();
-		String explanation1 = "\ncageID"+sep+"npts"+sep+"xi"+sep+"yi\n";
+		String explanation =  "cageID"+sep+"npts"+sep+"x(i)"+sep+"y(i)"+sep; 
+		if(complete)
+			explanation = explanation +"w(i)"+sep+"h(i)"+sep;
 		switch(measureType) 
 		{
 			case POSITION:
-				sbf.append("#"+sep+"POSITION"+sep+ explanation1);
+				sbf.append("#"+sep+"POSITION\n"+explanation+"\n");
 				break;
 			default:
 				sbf.append("#"+sep+"UNDEFINED------------\n");
@@ -196,7 +198,7 @@ public class Cage
 		return sbf.toString();
 	}
 	
-	public String csvExportMeasures_OneType(EnumCageMeasures measureType, String sep) 
+	public String csvExport_MEASURE_Data(EnumCageMeasures measureType, String sep, boolean complete) 
 	{
 		StringBuffer sbf = new StringBuffer();
 		sbf.append(strCageNumber + sep);
@@ -204,7 +206,10 @@ public class Cage
 		switch(measureType) 
 		{
 			case POSITION:
-				flyPositions.cvsExportXYDataToRow(sbf, sep);
+				if (complete)
+					flyPositions.cvsExport_XYwh_ToRow(sbf, sep);
+				else
+					flyPositions.cvsExport_XY_ToRow(sbf, sep);
 				break;
 
 			default:
@@ -214,10 +219,9 @@ public class Cage
 		return sbf.toString();
 	}
 		
-	public void csvImportCageDescription(String[] data) 
+	public void csvImport_CAGE_Header(String[] data) 
 	{
-		int i = 0;
-		
+		int i = 0;		
 		strCageNumber = data[i]; i++;
 		cageNFlies = Integer.valueOf(data[i]); i++; 
 		cageAge = Integer.valueOf(data[i]); i++; 
@@ -243,14 +247,15 @@ public class Cage
 
 	}
 		
-	public void csvImportCageData(EnumCageMeasures measureType, String[] data, boolean x, boolean w) 
+	public void csvImport_MEASURE_Data(EnumCageMeasures measureType, String[] data, boolean complete) 
 	{
-		switch(measureType) {
-		case POSITION: 		
-			if (x && w) 
-				flyPositions.csvImportXYWHDataFromRow( data, 2); 
-			else if (!x && w) 
-				flyPositions.csvImportXYDataFromRow( data, 2);
+		switch(measureType) 
+		{
+		case POSITION: 
+			if (complete)
+				flyPositions.csvImportXYWHDataFromRow( data, 1);
+			else
+				flyPositions.csvImportXYDataFromRow( data, 1);
 			break;
 		default:
 			break;

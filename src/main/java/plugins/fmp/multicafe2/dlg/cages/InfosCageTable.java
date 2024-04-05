@@ -21,7 +21,7 @@ import plugins.fmp.multicafe2.dlg.JComponents.CageTableModel;
 import plugins.fmp.multicafe2.experiment.Cage;
 import plugins.fmp.multicafe2.experiment.Experiment;
 
-public class Table extends JPanel 
+public class InfosCageTable extends JPanel 
 {
 	/**
 	 * 
@@ -29,10 +29,11 @@ public class Table extends JPanel
 	private static final long serialVersionUID = 7599620793495187279L;
 	IcyFrame 					dialogFrame 	= null;
     private JTable 				tableView 		= new JTable();
-	private CageTableModel 		viewModel 		= null;
+	private CageTableModel 		cageTableModel 		= null;
 	private JButton				copyButton 		= new JButton("Copy table");
 	private JButton				pasteButton 	= new JButton("Paste");
 	private JButton				duplicateAllButton = new JButton("Duplicate cell to all");
+	private JButton				noFliesButton 		= new JButton("Cages0/9: no flies");
 	private MultiCAFE2 			parent0 		= null; 
 	private List <Cage> 		cageArrayCopy 	= null;
 	
@@ -43,8 +44,8 @@ public class Table extends JPanel
 		this.parent0 = parent0;
 		cageArrayCopy = cageCopy;
 		
-		viewModel = new CageTableModel(parent0.expListCombo);
-	    tableView.setModel(viewModel);
+		cageTableModel = new CageTableModel(parent0.expListCombo);
+	    tableView.setModel(cageTableModel);
 	    tableView.setPreferredScrollableViewportSize(new Dimension(500, 400));
 	    tableView.setFillsViewportHeight(true);
 	    TableColumnModel columnModel = tableView.getColumnModel();
@@ -61,6 +62,7 @@ public class Table extends JPanel
         
         JPanel panel2 = new JPanel (flowLayout);
         panel2.add(duplicateAllButton);
+        panel2.add(noFliesButton);
         topPanel.add(panel2);
         
         JPanel tablePanel = new JPanel();
@@ -119,7 +121,7 @@ public class Table extends JPanel
 							cageTo.strCageStrain 	= cageFrom.strCageStrain;
 						}
 					}
-					viewModel.fireTableDataChanged();
+					cageTableModel.fireTableDataChanged();
 				}
 			}});
 		
@@ -149,8 +151,22 @@ public class Table extends JPanel
 				        	}					
 						}
 					}
+					cageTableModel.fireTableDataChanged();
 				}
 			}});
+		
+		noFliesButton.addActionListener(new ActionListener () 
+		{ 
+			@Override public void actionPerformed( final ActionEvent e ) 
+			{
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null)
+				{
+					exp.cages.setFirstAndLastCageToZeroFly() ;
+					cageTableModel.fireTableDataChanged();
+				}
+			}});
+
 	}
 	
 	void close() {

@@ -558,7 +558,7 @@ public class FlyPositions
 
 	// --------------------------------------------------------
 	
-	public boolean cvsExportXYDataToRow(StringBuffer sbf, String sep) 
+	public boolean cvsExport_XYwh_ToRow(StringBuffer sbf, String sep) 
 	{
 		int npoints = 0;
 		if (flyPositionList != null && flyPositionList.size() > 0)
@@ -575,7 +575,7 @@ public class FlyPositions
 		return true;
 	}
 	
-	public boolean cvsExportYDataToRow(StringBuffer sbf, String sep) 
+	public boolean cvsExport_XY_ToRow(StringBuffer sbf, String sep) 
 	{
 		int npoints = 0;
 		if (flyPositionList != null && flyPositionList.size() > 0)
@@ -597,8 +597,7 @@ public class FlyPositions
 		if (data.length < startAt)
 			return false;
 		
-		int npoints = Integer.valueOf(data[startAt]);
-		
+		int npoints = Integer.valueOf(data[startAt]);	
 		if (npoints > 0) 
 		{
 			flyPositionList = new ArrayList<FlyPosition>(npoints);
@@ -606,6 +605,7 @@ public class FlyPositions
 			for (int i = 0; i < npoints; i++) { 
 				FlyPosition flyPosition = new FlyPosition();
 				flyPosition.csvImportXYWHData(data, offset);
+				flyPositionList.add(flyPosition);
 				offset += 4;
 			}
 		}
@@ -617,8 +617,7 @@ public class FlyPositions
 		if (data.length < startAt)
 			return false;
 		
-		int npoints = Integer.valueOf(data[startAt]);
-		
+		int npoints = Integer.valueOf(data[startAt]);	
 		if (npoints > 0) 
 		{
 			flyPositionList = new ArrayList<FlyPosition>(npoints);
@@ -626,6 +625,7 @@ public class FlyPositions
 			for (int i = 0; i < npoints; i++) { 
 				FlyPosition flyPosition = new FlyPosition();
 				flyPosition.csvImportXYData(data, offset);
+				flyPositionList.add(flyPosition);
 				offset += 2;
 			}
 		}
