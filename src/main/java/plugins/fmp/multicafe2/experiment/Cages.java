@@ -46,7 +46,36 @@ public class Cages
 	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	
 	
+	// ---------------------------------
+	
+	public boolean load_Capillaries(String directory) 
+	{
+		boolean flag = false;
+		try 
+		{
+			flag = csvLoad_Capillaries(directory);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+		if (!flag) {
+			flag = xmlLoadCapillaries_Measures(directory);
+		}
+		return flag;
+	}
+	
+	public boolean save_Capillaries(String directory) 
+	{
+		if (directory == null)
+			return false;
+		
+		csvSave_Capillaries(directory);
+		return true;
+	}
+		
+	// ---------------------------------
+		
 	public void clearAllMeasures(int option_detectCage) 
 	{
 		for (Cage cage: cagesList) 
