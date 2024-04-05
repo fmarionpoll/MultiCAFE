@@ -183,7 +183,7 @@ public class Cage
 	public String csvExport_MEASURE_Header(EnumCageMeasures measureType, String sep, boolean complete) 
 	{
 		StringBuffer sbf = new StringBuffer();
-		String explanation =  "cageID"+sep+"npts"+sep+"x(i)"+sep+"y(i)"+sep; 
+		String explanation =  "cageID"+sep+"npts"+sep+"t(i)"+sep+"x(i)"+sep+"y(i)"+sep; 
 		if(complete)
 			explanation = explanation +"w(i)"+sep+"h(i)"+sep;
 		switch(measureType) 

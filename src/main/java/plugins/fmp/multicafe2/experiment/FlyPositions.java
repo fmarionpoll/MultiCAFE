@@ -393,7 +393,7 @@ public class FlyPositions
 		return computeLastIntervalAlive();
 	}
 	
-	public int getTimeBinSize () 
+	private int getDeltaT () 
 	{
 		return flyPositionList.get(1).indexT - flyPositionList.get(0).indexT;
 	}
@@ -402,8 +402,8 @@ public class FlyPositions
 	{
 		if (flyPositionList.size() < 2)
 			return Double.NaN;
-		int firstIndex = firstTimeIndex / getTimeBinSize();
-		int secondIndex = secondTimeIndex / getTimeBinSize();
+		int firstIndex = firstTimeIndex / getDeltaT();
+		int secondIndex = secondTimeIndex / getDeltaT();
 		if (firstIndex < 0 || secondIndex < 0 || firstIndex >= flyPositionList.size() || secondIndex >= flyPositionList.size())
 			return Double.NaN;
 		FlyPosition pos1 = flyPositionList.get(firstIndex);
@@ -421,7 +421,7 @@ public class FlyPositions
 		if (flyPositionList.size() < 2)
 			return 0;
 		getLastIntervalAlive();
-		int index = timeIndex / getTimeBinSize();
+		int index = timeIndex / getDeltaT();
 		FlyPosition pos = flyPositionList.get(index);
 		return (pos.bAlive ? 1: 0); 
 	}
@@ -441,7 +441,7 @@ public class FlyPositions
 		if (flyPositionList.size() < 1)
 			return;
 		List <Integer> datai = getDistanceAsMoveOrNot();
-		int timeBinSize = getTimeBinSize() ;
+		int timeBinSize = getDeltaT() ;
 		int j = 0;
 		for (FlyPosition pos: flyPositionList) 
 		{
@@ -474,7 +474,7 @@ public class FlyPositions
 	{
 		if (flyPositionList.size() < 2)
 			return -1;
-		int index = timeIndex / getTimeBinSize();
+		int index = timeIndex / getDeltaT();
 		if (index >= flyPositionList.size())
 			return -1;
 		return (flyPositionList.get(index).bSleep ? 1: 0); 
@@ -606,7 +606,7 @@ public class FlyPositions
 				FlyPosition flyPosition = new FlyPosition();
 				flyPosition.csvImportXYWHData(data, offset);
 				flyPositionList.add(flyPosition);
-				offset += 4;
+				offset += 5;
 			}
 		}
 		return true;
@@ -626,7 +626,7 @@ public class FlyPositions
 				FlyPosition flyPosition = new FlyPosition();
 				flyPosition.csvImportXYData(data, offset);
 				flyPositionList.add(flyPosition);
-				offset += 2;
+				offset += 3;
 			}
 		}
 		return true;

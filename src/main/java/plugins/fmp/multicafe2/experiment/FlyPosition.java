@@ -131,7 +131,7 @@ public class FlyPosition
 			XMLUtil.setAttributeDoubleValue(node_XYTa, "hR", rectPosition.getHeight());
 		}
 		
-		XMLUtil.setAttributeIntValue(node_XYTa, "t", indexT);
+		XMLUtil.setAttributeDoubleValue(node_XYTa, "t", indexT);
 		XMLUtil.setAttributeBooleanValue(node_XYTa, "a", bAlive);
 		XMLUtil.setAttributeBooleanValue(node_XYTa, "s", bSleep);
 		
@@ -145,36 +145,34 @@ public class FlyPosition
 	
 	public boolean cvsExportXYWHData(StringBuffer sbf, String sep) 
 	{
-        sbf.append(StringUtil.toString((double) rectPosition.getX()));
-        sbf.append(sep);
-        sbf.append(StringUtil.toString((double) rectPosition.getY()));
-        sbf.append(sep);
+		cvsExportXYData(sbf, sep);
         sbf.append(StringUtil.toString((double) rectPosition.getWidth()));
         sbf.append(sep);
         sbf.append(StringUtil.toString((double) rectPosition.getHeight()));
         sbf.append(sep);
-
 		return true;
 	}
 	
 	public boolean cvsExportXYData(StringBuffer sbf, String sep) 
 	{
-
+		sbf.append(StringUtil.toString(indexT));
+	    sbf.append(sep);
         sbf.append(StringUtil.toString((double) rectPosition.getX()));
         sbf.append(sep);
         sbf.append(StringUtil.toString((double) rectPosition.getY()));
         sbf.append(sep);
-
 		return true;
 	}
 	
 	public boolean csvImportXYWHData(String[] data, int startAt) 
 	{
-		int npoints = 4;
+		int npoints = 5;
 		if (data.length < npoints+startAt-1)
 			return false;
 		
 		int offset = startAt;
+		indexT = Integer.valueOf(data[offset]);
+		offset++;
 		double xR = Double.valueOf(data[offset]);
 		offset++;
 		double yR = Double.valueOf(data[offset]);
@@ -190,11 +188,13 @@ public class FlyPosition
 	
 	public boolean csvImportXYData(String[] data, int startAt) 
 	{
-		int npoints = 4;
+		int npoints = 3;
 		if (data.length < npoints+startAt-1)
 			return false;
 		
 		int offset = startAt;
+		indexT = Integer.valueOf(data[offset]);
+		offset++;
 		double xR = Double.valueOf(data[offset]);
 		offset++;
 		double yR = Double.valueOf(data[offset]);
@@ -210,5 +210,6 @@ public class FlyPosition
 		
 		return true;
 	}
+
 	
 }
