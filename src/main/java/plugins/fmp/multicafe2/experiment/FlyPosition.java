@@ -15,7 +15,7 @@ public class FlyPosition
 {
 	public Rectangle2D rectPosition = new Rectangle2D.Double(Double.NaN,Double.NaN,Double.NaN,Double.NaN);
 	public ROI2DArea flyRoi 	= null;
-	public int 		indexT 		= 0;
+	public int 		flyIndexT 		= 0;
 	public boolean 	bAlive 		= false;
 	public boolean 	bSleep 		= false;
 	public boolean  bPadded		= false;
@@ -31,7 +31,7 @@ public class FlyPosition
 	
 	public FlyPosition(int indexT) 
 	{
-		this.indexT = indexT;
+		this.flyIndexT = indexT;
 	}
 	
 	public FlyPosition(int indexT, Rectangle2D rectangle, ROI2DArea roiArea) 
@@ -39,32 +39,32 @@ public class FlyPosition
 		if (rectangle != null)
 			this.rectPosition.setRect(rectangle);
 		this.flyRoi = new ROI2DArea(roiArea);
-		this.indexT = indexT;
+		this.flyIndexT = indexT;
 	}
 	
 	public FlyPosition(int indexT, Rectangle2D rectangle, boolean alive) 
 	{
 		if (rectangle != null)
 			this.rectPosition.setRect(rectangle);
-		this.indexT = indexT;
+		this.flyIndexT = indexT;
 		this.bAlive = alive;
 	}
 	
-	public void copy (FlyPosition aVal) 
+	public void copy (FlyPosition sourceVal) 
 	{
-		indexT = aVal.indexT;
-		bAlive = aVal.bAlive;
-		bSleep = aVal.bSleep;
-		bPadded = aVal.bPadded;
-		distance = aVal.distance;
-		rectPosition.setRect(aVal.rectPosition); 
-		if (		aVal.flyRoi != null 
-				&& aVal.flyRoi.getBounds().height > 0 
-				&& aVal.flyRoi.getBounds().width > 0
+		flyIndexT = sourceVal.flyIndexT;
+		bAlive = sourceVal.bAlive;
+		bSleep = sourceVal.bSleep;
+		bPadded = sourceVal.bPadded;
+		distance = sourceVal.distance;
+		rectPosition.setRect(sourceVal.rectPosition); 
+		if (		sourceVal.flyRoi != null 
+				&& sourceVal.flyRoi.getBounds().height > 0 
+				&& sourceVal.flyRoi.getBounds().width > 0
 			) 
-			flyRoi = new ROI2DArea(aVal.flyRoi);
-		axis1 = aVal.axis1;
-		axis2 = aVal.axis2;
+			flyRoi = new ROI2DArea(sourceVal.flyRoi);
+		axis1 = sourceVal.axis1;
+		axis2 = sourceVal.axis2;
 	}
 	
 	Point2D getCenterRectangle() {
@@ -102,7 +102,7 @@ public class FlyPosition
 				}
 			}
 			
-			indexT =  XMLUtil.getAttributeIntValue(node_XYTa, "t", 0);
+			flyIndexT =  XMLUtil.getAttributeIntValue(node_XYTa, "t", 0);
 			bAlive = XMLUtil.getAttributeBooleanValue(node_XYTa, "a", false);
 			bSleep = XMLUtil.getAttributeBooleanValue(node_XYTa, "s", false);
 		}
@@ -131,7 +131,7 @@ public class FlyPosition
 			XMLUtil.setAttributeDoubleValue(node_XYTa, "hR", rectPosition.getHeight());
 		}
 		
-		XMLUtil.setAttributeDoubleValue(node_XYTa, "t", indexT);
+		XMLUtil.setAttributeDoubleValue(node_XYTa, "t", flyIndexT);
 		XMLUtil.setAttributeBooleanValue(node_XYTa, "a", bAlive);
 		XMLUtil.setAttributeBooleanValue(node_XYTa, "s", bSleep);
 		
@@ -155,7 +155,7 @@ public class FlyPosition
 	
 	public boolean cvsExportXYData(StringBuffer sbf, String sep) 
 	{
-		sbf.append(StringUtil.toString(indexT));
+		sbf.append(StringUtil.toString(flyIndexT));
 	    sbf.append(sep);
         sbf.append(StringUtil.toString((double) rectPosition.getX()));
         sbf.append(sep);
@@ -171,7 +171,7 @@ public class FlyPosition
 			return false;
 		
 		int offset = startAt;
-		indexT = Integer.valueOf(data[offset]);
+		flyIndexT = Integer.valueOf(data[offset]);
 		offset++;
 		double xR = Double.valueOf(data[offset]);
 		offset++;
@@ -193,7 +193,7 @@ public class FlyPosition
 			return false;
 		
 		int offset = startAt;
-		indexT = Integer.valueOf(data[offset]);
+		flyIndexT = Integer.valueOf(data[offset]);
 		offset++;
 		double xR = Double.valueOf(data[offset]);
 		offset++;

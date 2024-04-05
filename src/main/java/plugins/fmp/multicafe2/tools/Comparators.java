@@ -81,7 +81,7 @@ public class Comparators
 		@Override
 		public int compare (FlyPosition o1, FlyPosition o2) 
 		{
-			return o1.indexT - o2.indexT;
+			return o1.flyIndexT - o2.flyIndexT;
 		}
 	}
 	

@@ -163,7 +163,7 @@ public class Edit extends JPanel
 				Rectangle2D rect = cage.flyPositions.flyPositionList.get(frame).rectPosition;
 				if (rect.getX() == -1 && rect.getY() == -1 ) 
 				{
-					foundT = cage.flyPositions.flyPositionList.get(frame).indexT;
+					foundT = cage.flyPositions.flyPositionList.get(frame).flyIndexT;
 					foundCage = cage.getCageNumberInteger();
 					return true;
 				}
@@ -191,7 +191,7 @@ public class Edit extends JPanel
 				Rectangle2D rect = cage.flyPositions.flyPositionList.get(frame).rectPosition;
 				if (rect.getX() == -1 && rect.getY() == -1 ) 
 				{
-					String name = "det"+cage.getCageNumber()+"_"+ cage.flyPositions.flyPositionList.get(frame).indexT;
+					String name = "det"+cage.getCageNumber()+"_"+ cage.flyPositions.flyPositionList.get(frame).flyIndexT;
 					foundCombo.addItem(name);
 				}
 			}

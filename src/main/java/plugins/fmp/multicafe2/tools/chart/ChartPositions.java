@@ -161,7 +161,7 @@ public class ChartPositions extends IcyFrame
 	
 	private void addxyPos(XYSeries seriesXY, FlyPositions positionxyt, int it, Double ypos)
 	{
-		double indexT = positionxyt.flyPositionList.get(it).indexT;
+		double indexT = positionxyt.flyPositionList.get(it).flyIndexT;
 		seriesXY.add( indexT, ypos );
 		if (globalXMax < indexT)
 			globalXMax = indexT;

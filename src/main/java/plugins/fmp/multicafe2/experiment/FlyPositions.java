@@ -95,7 +95,7 @@ public class FlyPositions
 	
 	public int getTime(int i) 
 	{
-		return flyPositionList.get(i).indexT;
+		return flyPositionList.get(i).flyIndexT;
 	}
 
 	public void addPosition (int frame, Rectangle2D rectangle, ROI2DArea roiArea) 
@@ -144,8 +144,8 @@ public class FlyPositions
 			Element node_position_i = XMLUtil.getElement(node_position_list, elementi);
 			FlyPosition pos = new FlyPosition();
 			pos.loadXYTvaluesFromXML(node_position_i);
-			if (pos.indexT < nb_items) 
-				flyPositionList.set(pos.indexT, pos);
+			if (pos.flyIndexT < nb_items) 
+				flyPositionList.set(pos.flyIndexT, pos);
 			else 
 			{
 				flyPositionList.add(pos);
@@ -201,7 +201,7 @@ public class FlyPositions
 			if (pos.distance > moveThreshold && !isalive) 
 			{
 				lastIntervalAlive = i;
-				lastTimeAlive = pos.indexT;
+				lastTimeAlive = pos.flyIndexT;
 				isalive = true;				
 			}
 			pos.bAlive = isalive;
@@ -218,7 +218,7 @@ public class FlyPositions
 			if (!isalive && pos.bAlive) 
 			{
 				lastIntervalAlive = i;
-				lastTimeAlive = pos.indexT;
+				lastTimeAlive = pos.flyIndexT;
 				isalive = true;				
 			}
 			pos.bAlive = isalive;
@@ -395,7 +395,7 @@ public class FlyPositions
 	
 	private int getDeltaT () 
 	{
-		return flyPositionList.get(1).indexT - flyPositionList.get(0).indexT;
+		return flyPositionList.get(1).flyIndexT - flyPositionList.get(0).flyIndexT;
 	}
 	
 	public Double getDistanceBetween2Points(int firstTimeIndex, int secondTimeIndex) 
