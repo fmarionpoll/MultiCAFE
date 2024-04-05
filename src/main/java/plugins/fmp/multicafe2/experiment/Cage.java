@@ -137,13 +137,15 @@ public class Cage
 		sbf.append("#"+sep+"CAGES"+sep+"describe each cage\n");
 		List<String> row2 = Arrays.asList(
 				"cageID",
-				"roi2D_name", 
 				"nFlies", 
 				"age", 
 				"comment",
 				"strain",
 				"sex",
-				"roi_npoints", "xy");
+				"roi2D_name", 
+				"roi_npoints", 
+				"x(i)", 
+				"y(i)");
 		sbf.append(String.join(sep, row2));
 		sbf.append("\n");
 		return sbf.toString();
@@ -154,22 +156,21 @@ public class Cage
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = new ArrayList<String>();
 		row.add(strCageNumber);
-		row.add(cageRoi2D.getName());
 		row.add(Integer.toString(cageNFlies));
 		row.add(Integer.toString(cageAge));
 		row.add(strCageComment);
 		row.add(strCageStrain);
 		row.add(strCageSex);
+		row.add(cageRoi2D.getName());
 		
-		int npoints = 0;
 		if (cageRoi2D != null) 
 		{			
 			Polygon2D polygon = ((ROI2DPolygon) cageRoi2D).getPolygon2D();
 			row.add(Integer.toString(polygon.npoints));
-			for (int i= 0; i< npoints; i++) 
+			for (int i= 0; i < polygon.npoints; i++) 
 			{
-				row.add(Integer.toString((int) polygon.xpoints[i]));
-				row.add(Integer.toString((int) polygon.ypoints[i]));
+				row.add(Double.toString(polygon.xpoints[i]));
+				row.add(Double.toString(polygon.ypoints[i]));
 			}
 		}
 		else
@@ -218,22 +219,22 @@ public class Cage
 		int i = 0;
 		
 		strCageNumber = data[i]; i++;
-		String cageROI_name = data[i]; i++;
 		cageNFlies = Integer.valueOf(data[i]); i++; 
 		cageAge = Integer.valueOf(data[i]); i++; 
 		strCageComment = data[i]; i++; 
 		strCageStrain = data[i]; i++; 
 		strCageSex = data[i]; i++; 
+		String cageROI_name = data[i]; i++;
 		
 		int npoints = Integer.valueOf(data[i]); i++; 
 		if (npoints > 0)
 		{
-			int[] x = new int[npoints];
-			int[] y = new int[npoints];
+			double[] x = new double[npoints];
+			double[] y = new double[npoints];
 			for (int j = 0; j < npoints; j++)
 			{
-				x[i] = Integer.valueOf(data[i]); i++;
-				y[i] = Integer.valueOf(data[i]); i++;
+				x[j] = Double.valueOf(data[i]); i++;
+				y[j] = Double.valueOf(data[i]); i++;
 			}
 			Polygon2D polygon = new Polygon2D(x, y, npoints);
 			cageRoi2D = new ROI2DPolygon(polygon);

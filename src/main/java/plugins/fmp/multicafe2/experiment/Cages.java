@@ -218,8 +218,8 @@ public class Cages
 					cage = new Cage();
 				cage.csvImportCageData(measureType, data, x, y);
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 		return null;

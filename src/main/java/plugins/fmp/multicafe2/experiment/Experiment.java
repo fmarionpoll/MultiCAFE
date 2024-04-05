@@ -638,7 +638,10 @@ public class Experiment
  	public boolean loadCagesMeasures() 
 	{
 		//return xmlReadDrosoTrack(null);
- 		return cages.load_Cages(getKymosBinFullDirectory());
+ 		boolean flag = cages.load_Cages(getKymosBinFullDirectory());
+ 		if (flag) 
+ 			cages.cagesToROIs(seqCamData);
+ 		return flag;
 	}
 	
 	public boolean saveCagesMeasures() 
