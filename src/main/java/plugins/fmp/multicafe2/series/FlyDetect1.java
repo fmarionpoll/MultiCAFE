@@ -29,6 +29,7 @@ public class FlyDetect1 extends BuildSeries
 			return;
 		
 		runFlyDetect1(exp);
+		exp.cages.orderFlyPositions();
 		if (!stopFlag)
 			exp.saveCagesMeasures() ;
 		exp.seqCamData.closeSequence();
@@ -43,7 +44,6 @@ public class FlyDetect1 extends BuildSeries
 		
 		openFlyDetectViewers(exp);
 		findFliesInAllFrames(exp);
-		exp.cages.orderFlyPositions();
 	}
 	
 	private void getReferenceImage (Experiment exp, int t, ImageTransformOptions options) 
@@ -78,23 +78,19 @@ public class FlyDetect1 extends BuildSeries
 		
 		for (int index = 0; index < totalFrames; index++ ) 
 		{
-			int t_from = index;
-			
+			int t_from = index;	
 			String title = "Frame #"+ t_from + "/" + exp.seqCamData.nTotalFrames;
 			progressBar.setMessage(title);
 	
 			IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));
 			getReferenceImage (exp, t_previous, transformOptions);
 			IcyBufferedImage workImage = transformFunction.getTransformedImage(sourceImage, transformOptions); 
-			if (workImage == null)
-				return;
-
 			try 
 			{
 				seqNegative.beginUpdate();
 				seqNegative.setImage(0, 0, workImage);
 				vNegative.setTitle(title);
-				List<Rectangle2D> listRectangles = find_flies.findFlies1 (workImage, t_from);
+				List<Rectangle2D> listRectangles = find_flies.findFlies (workImage, t_from);
 				displayRectanglesAsROIs(seqNegative, listRectangles, true);
 				seqNegative.endUpdate();
 			} 

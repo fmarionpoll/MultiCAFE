@@ -48,7 +48,7 @@ public class Cages
 	private final String ID_CAGELIMITS 		= "Cage_Limits";
 	private final String ID_FLYDETECTED 	= "Fly_Detected";
 	
-//	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
+	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	
 	
 	// ---------------------------------
@@ -60,13 +60,16 @@ public class Cages
 		{
 			flag = csvLoad_Cages(directory);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-//		if (!flag) {
-//			flag = xmlLoadCages_Measures(directory);
-//		}
+		if (!flag) {
+			String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
+			final Document doc = XMLUtil.loadDocument(tempName);
+			if (doc == null)
+				return false;
+			flag = xmlLoadCages(doc);
+		}
 		return flag;
 	}
 	
@@ -328,7 +331,7 @@ public class Cages
 		boolean wasOk = false;
 		if (filedummy != null) 
 		{
-			for (int i= 0; i< filedummy.length; i++) 
+			for (int i = 0; i < filedummy.length; i++) 
 			{
 				String csFile = filedummy[i];
 				wasOk &= xmlReadCagesFromFileNoQuestion(csFile, exp);
@@ -582,23 +585,6 @@ public class Cages
 				continue;
 			seqCamData.seq.removeROI(roi);
 		}
-	}
-	
-	public int removeAllRoiCagesFromSequence(SequenceCamData seqCamData) 
-	{
-		String cageRoot = "cage";
-		int iRoot = -1;
-		for (ROI roi: seqCamData.seq.getROIs()) 
-		{
-			if (roi.getName().contains(cageRoot)) 
-			{
-				String left = roi.getName().substring(4);
-				int item = Integer.valueOf(left);
-				iRoot = Math.max(iRoot, item);
-			}
-		}
-		iRoot++;
-		return iRoot;
 	}
 	
 	public void transferNFliesFromCapillariesToCages(List<Capillary> capList) 

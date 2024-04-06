@@ -34,7 +34,7 @@ public class BuildCagesAsArray extends JPanel
 	 * 
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
-	private JButton addPolygon2DButton 			= new JButton("Draw Polygon2D");
+	private JButton drawPolygon2DButton 		= new JButton("Draw Polygon2D");
 	private JButton createROIsFromPolygonButton = new JButton("Create/add (from Polygon 2D)");
 	private JSpinner nColumnsTextField 			= new JSpinner(new SpinnerNumberModel(10, 0, 10000, 1));
 	private JSpinner width_cageTextField 		= new JSpinner(new SpinnerNumberModel(20, 0, 10000, 1));
@@ -48,6 +48,8 @@ public class BuildCagesAsArray extends JPanel
 
 	private MultiCAFE2 parent0;
 	
+	
+	
 	void init(GridLayout capLayout, MultiCAFE2 parent0) 
 	{
 		setLayout(capLayout);
@@ -57,7 +59,7 @@ public class BuildCagesAsArray extends JPanel
 		flowLayout.setVgap(0);
 		
 		JPanel panel1 = new JPanel(flowLayout);
-		panel1.add(addPolygon2DButton);
+		panel1.add(drawPolygon2DButton);
 		panel1.add(createROIsFromPolygonButton);
 		add(panel1);
 		
@@ -106,7 +108,7 @@ public class BuildCagesAsArray extends JPanel
 				}
 			}});
 		
-		addPolygon2DButton.addActionListener(new ActionListener () 
+		drawPolygon2DButton.addActionListener(new ActionListener () 
 		{ 
 			@Override public void actionPerformed( final ActionEvent e ) 
 			{ 
@@ -193,13 +195,14 @@ public class BuildCagesAsArray extends JPanel
 				new AnnounceFrame("The roi name should not contain -cage-");
 			return;
 		}
-		
 		Polygon2D roiPolygonMin = ROI2DUtilities.orderVerticesofPolygon (((ROI2DPolygon) roi).getPolygon());
 		seqCamData.seq.removeROI(roi);
 
 		// generate cage frames
-		int iRoot = exp.cages.removeAllRoiCagesFromSequence(exp.seqCamData);
+		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
+		exp.cages.removeCages();
 		String cageRoot = "cage";
+		int iRoot = 0;
 		
 		Polygon2D roiPolygon = ROI2DUtilities.inflate( roiPolygonMin, ncolumns, nrows, width_cage, width_interval);
 		

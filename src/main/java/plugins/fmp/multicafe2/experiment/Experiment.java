@@ -89,7 +89,7 @@ public class Experiment
 	private final static String ID_IMAGESDIRECTORY 	= "imagesDirectory";
 	private final static String ID_MCEXPERIMENT 	= "MCexperiment";
 	private final static String ID_MCEXPERIMENT_XML = "MCexperiment.xml";
-	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
+
 	
 	private final static String ID_BOXID 			= "boxID";
 	private final static String ID_EXPERIMENT 		= "experiment";
@@ -271,6 +271,7 @@ public class Experiment
 		
 		if (seqKymos == null)
 			seqKymos = new SequenceKymos();
+		
 		if (loadCapillaries) 
 		{
 			loadMCCapillaries_Only();
@@ -279,7 +280,8 @@ public class Experiment
 		}
 
 		if (loadDrosoPositions)
-			xmlReadDrosoTrack(null);
+			loadCagesMeasures();
+
 		return true;
 	}
 	
@@ -929,11 +931,6 @@ public class Experiment
 		}
 	}
 
-	public String getMCDrosoTrackFullName() 
-	{
-		return strExperimentDirectory+File.separator+ID_MCDROSOTRACK_XML;
-	}
-	
 	public void updateROIsAt(int t) 
 	{
 		seqCamData.seq.beginUpdate();
@@ -973,17 +970,6 @@ public class Experiment
 			}
 		}
 		return step;
-	}
-	
-	private boolean xmlReadDrosoTrack(String filename) 
-	{
-		if (filename == null) 
-		{
-			filename = getXMLDrosoTrackLocation();
-			if (filename == null)
-				return false;
-		}
-		return cages.xmlReadCagesFromFileNoQuestion(filename, this);
 	}
 	
 	private String findFile_3Locations(String xmlFileName, int first, int second, int third) 
@@ -1174,14 +1160,5 @@ public class Experiment
 	{
 		return strExperimentDirectory+File.separator+"referenceImage.jpg";
 	}
-	
-	private String getXMLDrosoTrackLocation() 
-	{
-		String fileName = findFile_3Locations(ID_MCDROSOTRACK_XML, EXPT_DIRECTORY, BIN_DIRECTORY, IMG_DIRECTORY);
-		if (fileName == null)  
-			fileName = findFile_3Locations("drosotrack.xml", IMG_DIRECTORY, EXPT_DIRECTORY, BIN_DIRECTORY);
-		return fileName;
-	}
-	
 	
 }
