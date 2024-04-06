@@ -56,6 +56,7 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 				ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB	});
 	private OverlayThreshold overlayThreshold 	= null;
 	private MultiCAFE2 			parent0			= null;
+	ROI2DPolygon userPolygon 					= null;
 	
 	
 	
@@ -212,11 +213,11 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 				false);		
 		
 		Rectangle rectGrid = new Rectangle(0, 0, img0.getSizeX(), img0.getSizeY());
-		List<ROI2D> listPerimeters = ROI2DUtilities.getROIs2DContainingString("perimeter", exp.seqCamData.seq);
-		if (listPerimeters.size() > 0) {
-			ROI2D roi = listPerimeters.get(0);
-			rectGrid = roi.getBounds();
-			exp.seqCamData.seq.removeROI(roi);
+//		List<ROI2D> listPerimeters = ROI2DUtilities.getROIs2DContainingString("perimeter", exp.seqCamData.seq);
+		if (userPolygon != null) {
+//			ROI2D roi = listPerimeters.get(0);
+			rectGrid = userPolygon.getBounds();
+			exp.seqCamData.seq.removeROI(userPolygon);
 		}	
 		IcyBufferedImage subImg0 = IcyBufferedImageUtil.getSubImage(img0, rectGrid);
 		
@@ -287,39 +288,42 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 	private void create2DPolygon(Experiment exp) 
 	{
 		final String dummyname = "perimeter_enclosing";
-		ArrayList<ROI2D> listRois = exp.seqCamData.seq.getROI2Ds();
-		for (ROI2D roi: listRois) 
+		if (userPolygon == null)
 		{
-			if (roi.getName() .equals(dummyname))
-				return;
+			ArrayList<ROI2D> listRois = exp.seqCamData.seq.getROI2Ds();
+			for (ROI2D roi: listRois) 
+			{
+				if (roi.getName() .equals(dummyname))
+					return;
+			}
+	
+			Rectangle rect = exp.seqCamData.seq.getBounds2D();
+			List<Point2D> points = new ArrayList<Point2D>();
+			int rectleft = rect.x + rect.width /6;
+			int rectright = rect.x + rect.width*5 /6;
+			int recttop = rect.y + rect.height *2/3; 
+			if (exp.capillaries.capillariesList.size() > 0) 
+			{
+				Rectangle bound0 = exp.capillaries.capillariesList.get(0).getRoi().getBounds();
+				int last = exp.capillaries.capillariesList.size() - 1;
+				Rectangle bound1 = exp.capillaries.capillariesList.get(last).getRoi().getBounds();
+				rectleft = bound0.x;
+				rectright = bound1.x + bound1.width;
+				int diff = (rectright - rectleft)*2/60;
+				rectleft -= diff;
+				rectright += diff;
+				recttop = bound0.y+ bound0.height- (bound0.height /8);
+			}
+			
+			points.add(new Point2D.Double(rectleft, recttop));
+			points.add(new Point2D.Double(rectright, recttop));
+			points.add(new Point2D.Double(rectright, rect.y + rect.height - 4));
+			points.add(new Point2D.Double(rectleft, rect.y + rect.height - 4 ));
+			userPolygon = new ROI2DPolygon(points);
+			userPolygon.setName(dummyname);
 		}
-
-		Rectangle rect = exp.seqCamData.seq.getBounds2D();
-		List<Point2D> points = new ArrayList<Point2D>();
-		int rectleft = rect.x + rect.width /6;
-		int rectright = rect.x + rect.width*5 /6;
-		int recttop = rect.y + rect.height *2/3; 
-		if (exp.capillaries.capillariesList.size() > 0) 
-		{
-			Rectangle bound0 = exp.capillaries.capillariesList.get(0).getRoi().getBounds();
-			int last = exp.capillaries.capillariesList.size() - 1;
-			Rectangle bound1 = exp.capillaries.capillariesList.get(last).getRoi().getBounds();
-			rectleft = bound0.x;
-			rectright = bound1.x + bound1.width;
-			int diff = (rectright - rectleft)*2/60;
-			rectleft -= diff;
-			rectright += diff;
-			recttop = bound0.y+ bound0.height- (bound0.height /8);
-		}
-		
-		points.add(new Point2D.Double(rectleft, recttop));
-		points.add(new Point2D.Double(rectright, recttop));
-		points.add(new Point2D.Double(rectright, rect.y + rect.height - 4));
-		points.add(new Point2D.Double(rectleft, rect.y + rect.height - 4 ));
-		ROI2DPolygon roi = new ROI2DPolygon(points);
-		roi.setName(dummyname);
-		exp.seqCamData.seq.addROI(roi);
-		exp.seqCamData.seq.setSelectedROI(roi);
+		exp.seqCamData.seq.addROI(userPolygon);
+		exp.seqCamData.seq.setSelectedROI(userPolygon);
 	}
 	
 }

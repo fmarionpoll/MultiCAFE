@@ -102,10 +102,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			if (selectedNames.size() < 1)
 				return;
 			
-			ExperimentDirectories eDAF0 = new ExperimentDirectories(); 
-			if (eDAF0.getDirectoriesFromExptPath(parent0.expListCombo, selectedNames.get(0), null))
+			ExperimentDirectories experimentDirectories = new ExperimentDirectories(); 
+			if (experimentDirectories.getDirectoriesFromExptPath(parent0.expListCombo, selectedNames.get(0), null))
 			{
-				final int item = addExperimentFrom3NamesAnd2Lists(eDAF0);
+				final int item = addExperimentFrom3NamesAnd2Lists(experimentDirectories);
 	        	final String binSubDirectory = parent0.expListCombo.expListBinSubDirectory;
 	        	
 	        	SwingUtilities.invokeLater(new Runnable() { public void run() 
@@ -113,9 +113,9 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	        		parent0.paneExperiment.tabInfos.disableChangeFile = false;
 		        	for (int i = 1; i < selectedNames.size(); i++) 
 					{
-						ExperimentDirectories eDAF = new ExperimentDirectories(); 
-						if (eDAF.getDirectoriesFromExptPath(parent0.expListCombo, selectedNames.get(i), binSubDirectory))
-							addExperimentFrom3NamesAnd2Lists(eDAF);
+						ExperimentDirectories expDirectories = new ExperimentDirectories(); 
+						if (expDirectories.getDirectoriesFromExptPath(parent0.expListCombo, selectedNames.get(i), binSubDirectory))
+							addExperimentFrom3NamesAnd2Lists(expDirectories);
 					}
 					selectedNames.clear();
 					updateBrowseInterface();
@@ -211,6 +211,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			}
 			
 			exp.loadCagesMeasures();
+			exp.updateROIsAt(0);
 			progressFrame.setMessage("Load data: update dialogs");
 			
 			parent0.paneExperiment.updateDialogs(exp);
