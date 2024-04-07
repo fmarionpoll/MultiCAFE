@@ -48,15 +48,15 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 	private JSpinner 	thresholdSpinner 		= new JSpinner(new SpinnerNumberModel(60, 0, 10000, 1));
 	public 	JCheckBox 	overlayCheckBox			= new JCheckBox("Overlay ", false);
 	private JButton 	deleteButton 			= new JButton("Cut points within selected polygon");
-	JComboBox<ImageTransformEnums> transformForLevelsComboBox = new JComboBox<ImageTransformEnums> (
+	private JComboBox<ImageTransformEnums> transformForLevelsComboBox = new JComboBox<ImageTransformEnums> (
 		new ImageTransformEnums[] {
 				ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB, ImageTransformEnums.B_RGB, 
 				ImageTransformEnums.R2MINUS_GB, ImageTransformEnums.G2MINUS_RB, ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB,
 				ImageTransformEnums.GBMINUS_2R, ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, 
 				ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB	});
-	private OverlayThreshold overlayThreshold 	= null;
-	private MultiCAFE2 			parent0			= null;
-	ROI2DPolygon userPolygon 					= null;
+	private OverlayThreshold 	overlayThreshold 	= null;
+	private MultiCAFE2 			parent0				= null;
+	private ROI2DPolygon 		userPolygon 		= null;
 	
 	
 	
@@ -95,6 +95,15 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 	
 	private void defineActionListeners() 
 	{
+		drawPolygon2DButton.addActionListener(new ActionListener () 
+		{ 
+			@Override public void actionPerformed( final ActionEvent e ) 
+			{ 
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null)
+					create2DPolygon(exp);
+			}});
+		
 		createCagesButton.addActionListener(new ActionListener () 
 		{ 
 			@Override public void actionPerformed( final ActionEvent e ) 
@@ -130,15 +139,6 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-			}});
-		
-		drawPolygon2DButton.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) 
-			{ 
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null)
-					create2DPolygon(exp);
 			}});
 	}
 
@@ -213,9 +213,8 @@ public class BuildCagesFromContours  extends JPanel implements ChangeListener
 				false);		
 		
 		Rectangle rectGrid = new Rectangle(0, 0, img0.getSizeX(), img0.getSizeY());
-//		List<ROI2D> listPerimeters = ROI2DUtilities.getROIs2DContainingString("perimeter", exp.seqCamData.seq);
-		if (userPolygon != null) {
-//			ROI2D roi = listPerimeters.get(0);
+		if (userPolygon != null) 
+		{
 			rectGrid = userPolygon.getBounds();
 			exp.seqCamData.seq.removeROI(userPolygon);
 		}	

@@ -35,18 +35,17 @@ public class BuildCagesAsArray extends JPanel
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
 	private JButton drawPolygon2DButton 		= new JButton("Draw Polygon2D");
-	private JButton createROIsFromPolygonButton = new JButton("Create/add (from Polygon 2D)");
+	private JButton createCagesButton 			= new JButton("Create cages");
 	private JSpinner nColumnsTextField 			= new JSpinner(new SpinnerNumberModel(10, 0, 10000, 1));
 	private JSpinner width_cageTextField 		= new JSpinner(new SpinnerNumberModel(20, 0, 10000, 1));
 	private JSpinner width_intervalTextField 	= new JSpinner(new SpinnerNumberModel(3, 0, 10000, 1));
 	private JSpinner nRowsTextField 			= new JSpinner(new SpinnerNumberModel(1, 0, 10000, 1));
-	
-	private int 	ncolumns 					= 10;
-	private int 	nrows 						= 1;
-	private int 	width_cage 					= 10;
-	private int 	width_interval 				= 2;
-
-	private MultiCAFE2 parent0;
+	private int ncolumns 						= 10;
+	private int nrows 							= 1;
+	private int width_cage 						= 10;
+	private int width_interval 					= 2;
+	private MultiCAFE2 parent0					= null;
+	private ROI2DPolygon roiUserPolygon			= null;
 	
 	
 	
@@ -60,7 +59,7 @@ public class BuildCagesAsArray extends JPanel
 		
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(drawPolygon2DButton);
-		panel1.add(createROIsFromPolygonButton);
+		panel1.add(createCagesButton);
 		add(panel1);
 		
 		JLabel nColumnsLabel = new JLabel("N columns ");
@@ -91,23 +90,6 @@ public class BuildCagesAsArray extends JPanel
 	
 	private void defineActionListeners() 
 	{
-		
-		createROIsFromPolygonButton.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) 
-			{ 
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) 
-				{
-					ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
-					exp.cages.removeCages();
-					createROIsFromSelectedPolygon(exp);
-					exp.cages.cagesFromROIs(exp.seqCamData);
-					if(exp.capillaries.capillariesList.size() > 0)
-						exp.cages.transferNFliesFromCapillariesToCages(exp.capillaries.capillariesList);
-				}
-			}});
-		
 		drawPolygon2DButton.addActionListener(new ActionListener () 
 		{ 
 			@Override public void actionPerformed( final ActionEvent e ) 
@@ -115,6 +97,20 @@ public class BuildCagesAsArray extends JPanel
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
 					create2DPolygon(exp);
+			}});
+		
+		createCagesButton.addActionListener(new ActionListener () 
+		{ 
+			@Override public void actionPerformed( final ActionEvent e ) 
+			{ 
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) 
+				{
+					createROIsFromSelectedPolygon(exp);
+					exp.cages.cagesFromROIs(exp.seqCamData);
+					if(exp.capillaries.capillariesList.size() > 0)
+						exp.cages.transferNFliesFromCapillariesToCages(exp.capillaries.capillariesList);
+				}
 			}});
 	}
 	
@@ -134,43 +130,49 @@ public class BuildCagesAsArray extends JPanel
 	private void create2DPolygon(Experiment exp) 
 	{
 		final String dummyname = "perimeter_enclosing";
-		ArrayList<ROI2D> listRois = exp.seqCamData.seq.getROI2Ds();
-		for (ROI2D roi: listRois) 
+		if (roiUserPolygon == null)
 		{
-			if (roi.getName() .equals(dummyname))
-				return;
+			ArrayList<ROI2D> listRois = exp.seqCamData.seq.getROI2Ds();
+			for (ROI2D roi: listRois) 
+			{
+				if (roi.getName() .equals(dummyname))
+					return;
+			}
+	
+			Rectangle rect = exp.seqCamData.seq.getBounds2D();
+			List<Point2D> points = new ArrayList<Point2D>();
+			int rectleft = rect.x + rect.width /6;
+			int rectright = rect.x + rect.width*5 /6;
+			int recttop = rect.y + rect.height *2/3; 
+			if (exp.capillaries.capillariesList.size() > 0) 
+			{
+				Rectangle bound0 = exp.capillaries.capillariesList.get(0).getRoi().getBounds();
+				int last = exp.capillaries.capillariesList.size() - 1;
+				Rectangle bound1 = exp.capillaries.capillariesList.get(last).getRoi().getBounds();
+				rectleft = bound0.x;
+				rectright = bound1.x + bound1.width;
+				int diff = (rectright - rectleft)*2/60;
+				rectleft -= diff;
+				rectright += diff;
+				recttop = bound0.y+ bound0.height- (bound0.height /8);
+			}
+			
+			points.add(new Point2D.Double(rectleft, recttop));
+			points.add(new Point2D.Double(rectright, recttop));
+			points.add(new Point2D.Double(rectright, rect.y + rect.height - 4));
+			points.add(new Point2D.Double(rectleft, rect.y + rect.height - 4 ));
+			roiUserPolygon = new ROI2DPolygon(points);
+			roiUserPolygon.setName(dummyname);
 		}
-
-		Rectangle rect = exp.seqCamData.seq.getBounds2D();
-		List<Point2D> points = new ArrayList<Point2D>();
-		int rectleft = rect.x + rect.width /6;
-		int rectright = rect.x + rect.width*5 /6;
-		int recttop = rect.y + rect.height *2/3; 
-		if (exp.capillaries.capillariesList.size() > 0) 
-		{
-			Rectangle bound0 = exp.capillaries.capillariesList.get(0).getRoi().getBounds();
-			int last = exp.capillaries.capillariesList.size() - 1;
-			Rectangle bound1 = exp.capillaries.capillariesList.get(last).getRoi().getBounds();
-			rectleft = bound0.x;
-			rectright = bound1.x + bound1.width;
-			int diff = (rectright - rectleft)*2/60;
-			rectleft -= diff;
-			rectright += diff;
-			recttop = bound0.y+ bound0.height- (bound0.height /8);
-		}
-		
-		points.add(new Point2D.Double(rectleft, recttop));
-		points.add(new Point2D.Double(rectright, recttop));
-		points.add(new Point2D.Double(rectright, rect.y + rect.height - 4));
-		points.add(new Point2D.Double(rectleft, rect.y + rect.height - 4 ));
-		ROI2DPolygon roi = new ROI2DPolygon(points);
-		roi.setName(dummyname);
-		exp.seqCamData.seq.addROI(roi);
-		exp.seqCamData.seq.setSelectedROI(roi);
+		exp.seqCamData.seq.addROI(roiUserPolygon);
+		exp.seqCamData.seq.setSelectedROI(roiUserPolygon);
 	}
 		
 	private void createROIsFromSelectedPolygon(Experiment exp) 
 	{
+		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
+		exp.cages.removeCages();
+		
 		// read values from text boxes
 		try 
 		{ 
@@ -185,18 +187,19 @@ public class BuildCagesAsArray extends JPanel
 		}
 
 		SequenceCamData seqCamData = exp.seqCamData;
-		ROI2D roi = seqCamData.seq.getSelectedROI2D();
-		boolean flag = (roi.getName().length() > 4 && roi.getName().substring( 0 , 4 ).contains("cage"));
-		if ( ! ( roi instanceof ROI2DPolygon ) || flag) 
-		{
-			if ( ! ( roi instanceof ROI2DPolygon ) ) 
-				new AnnounceFrame("The frame must be a ROI2D POLYGON");
-			if (flag) 
-				new AnnounceFrame("The roi name should not contain -cage-");
-			return;
-		}
-		Polygon2D roiPolygonMin = ROI2DUtilities.orderVerticesofPolygon (((ROI2DPolygon) roi).getPolygon());
-		seqCamData.seq.removeROI(roi);
+//		ROI2D roi = seqCamData.seq.getSelectedROI2D();X
+//		boolean flag = (roi.getName().length() > 4 && roi.getName().substring( 0 , 4 ).contains("cage"));
+//		if ( ! ( roi instanceof ROI2DPolygon ) || flag) 
+//		{
+//			if ( ! ( roi instanceof ROI2DPolygon ) ) 
+//				new AnnounceFrame("The frame must be a ROI2D POLYGON");
+//			if (flag) 
+//				new AnnounceFrame("The roi name should not contain -cage-");
+//			return;
+//		}
+		
+		Polygon2D roiPolygonMin = ROI2DUtilities.orderVerticesofPolygon (roiUserPolygon.getPolygon());
+		seqCamData.seq.removeROI(roiUserPolygon);
 
 		// generate cage frames
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
