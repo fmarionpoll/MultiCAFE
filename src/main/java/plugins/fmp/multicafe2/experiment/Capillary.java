@@ -29,7 +29,7 @@ import plugins.fmp.multicafe2.tools.toExcel.EnumXLSExportType;
 public class Capillary implements Comparable <Capillary> 
 {
 
-	private ROI2D 						roi 			= null;
+	private ROI2D 						roiCap 			= null;
 	private ArrayList<KymoROI2D>		roisForKymo 	= new ArrayList<KymoROI2D>();
 	private String						kymographName 	= null;
 	public int							kymographIndex 	= -1;
@@ -88,7 +88,7 @@ public class Capillary implements Comparable <Capillary>
 	
 	public Capillary(ROI2D roiCapillary) 
 	{
-		this.roi = roiCapillary;
+		this.roiCap = roiCapillary;
 		this.kymographName = replace_LR_with_12(roiCapillary.getName());
 	}
 	
@@ -116,7 +116,7 @@ public class Capillary implements Comparable <Capillary>
 		kymographIndex 	= cap.kymographIndex;
 		kymographName 	= cap.kymographName;
 		version 		= cap.version;
-		roi 			= (ROI2D) cap.roi.getCopy();
+		roiCap 			= (ROI2D) cap.roiCap.getCopy();
 		filenameTIFF	= cap.filenameTIFF;
 		
 		capStimulus		= cap.capStimulus;
@@ -147,29 +147,29 @@ public class Capillary implements Comparable <Capillary>
 	
 	public ROI2D getRoi() 
 	{
-		return roi;
+		return roiCap;
 	}
 	
 	public void setRoi(ROI2D roi) 
 	{
-		this.roi = roi;
+		this.roiCap = roi;
 	}
 	
 	public void setRoiName(String name) 
 	{
-		roi.setName(name);
+		roiCap.setName(name);
 	}
 	
 	public String getRoiName() 
 	{
-		return roi.getName();
+		return roiCap.getName();
 	}
 	
 	public String getLast2ofCapillaryName() 
 	{
-		if (roi == null)
+		if (roiCap == null)
 			return "missing";
-		return roi.getName().substring(roi.getName().length() -2);
+		return roiCap.getName().substring(roiCap.getName().length() -2);
 	}
 	
 	public String getRoiNamePrefix() 
@@ -179,7 +179,7 @@ public class Capillary implements Comparable <Capillary>
 	
  	public String getCapillarySide() 
 	{
-		return roi.getName().substring(roi.getName().length() -1);
+		return roiCap.getName().substring(roiCap.getName().length() -1);
 	}
 	
 	public static String replace_LR_with_12(String name) 
@@ -194,7 +194,7 @@ public class Capillary implements Comparable <Capillary>
 	
 	public int getCageIndexFromRoiName() 
 	{
-		String name = roi.getName();
+		String name = roiCap.getName();
 		if (!name .contains("line"))
 			return -1;
 		return Integer.valueOf(name.substring(4, 5));
@@ -578,7 +578,7 @@ public class Capillary implements Comparable <Capillary>
 			capConcentration= XMLUtil.getElementValue(nodeMeta, ID_CONCL, ID_CONCL);
 			capSide 		= XMLUtil.getElementValue(nodeMeta, ID_SIDE, ".");
 			
-	        roi = ROI2DUtilities.loadFromXML_ROI(nodeMeta);
+	        roiCap = ROI2DUtilities.loadFromXML_ROI(nodeMeta);
 	        limitsOptions.loadFromXML(nodeMeta);
 	        
 	        loadFromXML_intervals(node);
@@ -601,7 +601,7 @@ public class Capillary implements Comparable <Capillary>
         		roisForKymo.add(roiInterval);
         		
         		if (i == 0) {
-        			roi = roisForKymo.get(0).getRoi();
+        			roiCap = roisForKymo.get(0).getRoi();
         		}
         	}
         }
@@ -644,7 +644,7 @@ public class Capillary implements Comparable <Capillary>
 		XMLUtil.setElementValue(nodeMeta, ID_SIDE, capSide);
 		XMLUtil.setElementValue(nodeMeta, ID_CONCL, capConcentration);
 
-		ROI2DUtilities.saveToXML_ROI(nodeMeta, roi); 
+		ROI2DUtilities.saveToXML_ROI(nodeMeta, roiCap); 
 		
 		boolean flag = saveToXML_intervals(node);
 	    return flag;
@@ -671,18 +671,18 @@ public class Capillary implements Comparable <Capillary>
 	public Point2D getCapillaryTipWithinROI2D (ROI2D roi2D) 
 	{
 		Point2D pt = null;		
-		if (roi instanceof ROI2DPolyLine) 
+		if (roiCap instanceof ROI2DPolyLine) 
 		{
-			Polyline2D line = (( ROI2DPolyLine) roi).getPolyline2D();
+			Polyline2D line = (( ROI2DPolyLine) roiCap).getPolyline2D();
 			int last = line.npoints - 1;
 			if (roi2D.contains(line.xpoints[0],  line.ypoints[0]))
 				pt = new Point2D.Double(line.xpoints[0],  line.ypoints[0]);
 			else if (roi2D.contains(line.xpoints[last],  line.ypoints[last])) 
 				pt = new Point2D.Double(line.xpoints[last],  line.ypoints[last]);
 		} 
-		else if (roi instanceof ROI2DLine) 
+		else if (roiCap instanceof ROI2DLine) 
 		{
-			Line2D line = (( ROI2DLine) roi).getLine();
+			Line2D line = (( ROI2DLine) roiCap).getLine();
 			if (roi2D.contains(line.getP1()))
 				pt = line.getP1();
 			else if (roi2D.contains(line.getP2())) 
@@ -694,18 +694,18 @@ public class Capillary implements Comparable <Capillary>
 	public Point2D getCapillaryROILowestPoint () 
 	{
 		Point2D pt = null;		
-		if (roi instanceof ROI2DPolyLine) 
+		if (roiCap instanceof ROI2DPolyLine) 
 		{
-			Polyline2D line = ((ROI2DPolyLine) roi).getPolyline2D();
+			Polyline2D line = ((ROI2DPolyLine) roiCap).getPolyline2D();
 			int last = line.npoints - 1;
 			if (line.ypoints[0] > line.ypoints[last])
 				pt = new Point2D.Double(line.xpoints[0],  line.ypoints[0]);
 			else  
 				pt = new Point2D.Double(line.xpoints[last],  line.ypoints[last]);
 		} 
-		else if (roi instanceof ROI2DLine) 
+		else if (roiCap instanceof ROI2DLine) 
 		{
-			Line2D line = ((ROI2DLine) roi).getLine();
+			Line2D line = ((ROI2DLine) roiCap).getLine();
 			if (line.getP1().getY() > line.getP2().getY())
 				pt = line.getP1();
 			else
@@ -717,14 +717,14 @@ public class Capillary implements Comparable <Capillary>
 	public Point2D getCapillaryROIFirstPoint () 
 	{
 		Point2D pt = null;		
-		if (roi instanceof ROI2DPolyLine) 
+		if (roiCap instanceof ROI2DPolyLine) 
 		{
-			Polyline2D line = ((ROI2DPolyLine) roi).getPolyline2D();
+			Polyline2D line = ((ROI2DPolyLine) roiCap).getPolyline2D();
 			pt = new Point2D.Double(line.xpoints[0],  line.ypoints[0]);
 		} 
-		else if (roi instanceof ROI2DLine) 
+		else if (roiCap instanceof ROI2DLine) 
 		{
-			Line2D line = ((ROI2DLine) roi).getLine();
+			Line2D line = ((ROI2DLine) roiCap).getLine();
 			pt = line.getP1();
 		}
 		return pt;
@@ -733,15 +733,15 @@ public class Capillary implements Comparable <Capillary>
 	public Point2D getCapillaryROILastPoint () 
 	{
 		Point2D pt = null;		
-		if (roi instanceof ROI2DPolyLine) 
+		if (roiCap instanceof ROI2DPolyLine) 
 		{
-			Polyline2D line = ((ROI2DPolyLine) roi).getPolyline2D();
+			Polyline2D line = ((ROI2DPolyLine) roiCap).getPolyline2D();
 			int last = line.npoints - 1;
 			pt = new Point2D.Double(line.xpoints[last],  line.ypoints[last]);
 		} 
-		else if (roi instanceof ROI2DLine) 
+		else if (roiCap instanceof ROI2DLine) 
 		{
-			Line2D line = ((ROI2DLine) roi).getLine();
+			Line2D line = ((ROI2DLine) roiCap).getLine();
 			pt = line.getP2();
 		}
 		return pt;
@@ -816,7 +816,7 @@ public class Capillary implements Comparable <Capillary>
 	
 	private void initROI2DForKymoList() 
 	{ 
-		roisForKymo.add(new KymoROI2D(0, roi));		
+		roisForKymo.add(new KymoROI2D(0, roiCap));		
 	}
 	
 	public void setVolumeAndPixels(double volume, int pixels) 

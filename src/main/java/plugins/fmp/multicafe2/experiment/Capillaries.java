@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe2.experiment;
 
-import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -540,20 +540,37 @@ public class Capillaries
 	
 	public Polygon2D get2DPolygonEnclosingCapillaries() 
 	{
-		Rectangle  outerRectangle = null;
+		Capillary cap0 = capillariesList.get(0);
+		
+		Point2D upperLeft = (Point2D) cap0.getCapillaryROIFirstPoint().clone();
+		Point2D lowerLeft = (Point2D) cap0.getCapillaryROILastPoint().clone();
+		Point2D upperRight = (Point2D) upperLeft.clone();
+		Point2D lowerRight = (Point2D) lowerLeft.clone();
+		
 		for (Capillary cap : capillariesList) 
 		{
-			Rectangle rect = cap.getRoi().getBounds();
-			if (outerRectangle == null) {
-				outerRectangle = rect;
-			}
-			else
-				outerRectangle.add(rect);
+			Point2D capFirst = (Point2D) cap.getCapillaryROIFirstPoint();
+			Point2D capLast = (Point2D) cap.getCapillaryROILastPoint();
+			
+			if (capFirst.getX() < upperLeft.getX()) upperLeft. setLocation(capFirst.getX(), upperLeft.getY());
+			if (capFirst.getY() < upperLeft.getY()) upperLeft. setLocation(upperLeft.getX(), capFirst.getY());
+			
+			if (capLast.getX() < lowerLeft.getX()) lowerLeft. setLocation(capLast.getX(), lowerLeft.getY());
+			if (capLast.getY() > lowerLeft.getY()) lowerLeft. setLocation(lowerLeft.getX(), capLast.getY());
+
+			if (capFirst.getX() > upperRight.getX()) upperRight. setLocation(capFirst.getX(), upperRight.getY());
+			if (capFirst.getY() < upperRight.getY()) upperRight. setLocation(upperRight.getX(), capFirst.getY());
+			
+			if (capLast.getX() > lowerRight.getX()) lowerRight. setLocation(capLast.getX(), lowerRight.getY());
+			if (capLast.getY() > lowerRight.getY()) lowerRight. setLocation(lowerRight.getX(), capLast.getY());
 		}
-		if (outerRectangle == null)
-			return null;
 		
-		return new Polygon2D(outerRectangle);
+		List<Point2D> listPoints = new ArrayList<Point2D>(4);
+		listPoints.add(upperLeft);
+		listPoints.add(lowerLeft);
+		listPoints.add(upperRight);
+		listPoints.add(upperRight);
+		return new Polygon2D(listPoints);
 	}
 	
 	public void deleteAllCapillaries() 

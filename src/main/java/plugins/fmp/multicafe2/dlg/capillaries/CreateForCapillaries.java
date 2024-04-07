@@ -21,6 +21,7 @@ import javax.swing.event.ChangeListener;
 
 import icy.gui.frame.progress.AnnounceFrame;
 import icy.roi.ROI2D;
+import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe2.MultiCAFE2;
 import plugins.fmp.multicafe2.experiment.Capillaries;
@@ -39,8 +40,8 @@ public class CreateForCapillaries extends JPanel
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
 	
-	private JButton 	addPolygon2DButton 		= new JButton("(1) Display frame");
-	private JButton 	createROIsFromPolygonButton2 = new JButton("(2) Generate capillaries from edited frame");
+	private JButton 	displayFrameButton 		= new JButton("(1) Display frame");
+	private JButton 	generateCapillariesButton = new JButton("(2) Generate capillaries from edited frame");
 	
 	private JComboBox<String> cagesJCombo 		= new JComboBox<String> (new String[] {"10", "4+(2)", "1+(2)"});
 	private JSpinner 	nbFliesPerCageJSpinner 	= new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
@@ -51,13 +52,13 @@ public class CreateForCapillaries extends JPanel
 	private JLabel		width_between_capillariesLabel = new JLabel("pixels btw. caps to");
 	private JSpinner 	width_intervalJSpinner 	= new JSpinner(new SpinnerNumberModel(53, 0, 10000, 1)); 
 	private JLabel 		width_intervalLabel 	= new JLabel("pixels btw. cages");
-	private Polygon2D 	capillariesPolygon 		= null;
 	
 	private String []	flyString				= new String[] {"fly", "flies"};
 	private String []	capString				= new String[] {"cap &", "caps &"};	
 	private JLabel 		flyLabel 				= new JLabel (flyString[0]);
 	private JLabel 		capLabel 				= new JLabel (capString[1]);
 
+	private ROI2DPolygon capillariesRoiPolygon = null;
 	private MultiCAFE2 	parent0 				= null;
 	
 	
@@ -69,8 +70,8 @@ public class CreateForCapillaries extends JPanel
 		flowLayout.setVgap(0);
 		
 		JPanel panel0 = new JPanel(flowLayout);
-		panel0.add(addPolygon2DButton);		
-		panel0.add(createROIsFromPolygonButton2);
+		panel0.add(displayFrameButton);		
+		panel0.add(generateCapillariesButton);
 		
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(new JLabel ("Grouped as"));
@@ -103,29 +104,33 @@ public class CreateForCapillaries extends JPanel
 	
 	private void defineDlgItemsListeners() 
 	{
-		addPolygon2DButton.addActionListener(new ActionListener () {
+		displayFrameButton.addActionListener(new ActionListener () {
 			@Override public void actionPerformed( final ActionEvent e ) { 
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if ((exp != null) && (exp.capillaries != null)) {
+				if (exp == null)
+					return;
+				
+				if (exp.capillaries != null) 
+				{
 					Polygon2D extPolygon = exp.capillaries.get2DPolygonEnclosingCapillaries();
 					if (extPolygon == null) {
-						extPolygon = getCapillariesPolygon(exp.seqCamData);
+						extPolygon = getCapillariesPolygon(exp.seqCamData.seq);
 					}
-					ROI2DPolygon extRect = new ROI2DPolygon(extPolygon);
+					capillariesRoiPolygon = new ROI2DPolygon(extPolygon);
 					exp.capillaries.deleteAllCapillaries();
 					exp.capillaries.updateCapillariesFromSequence(exp.seqCamData.seq);
 					exp.seqCamData.seq.removeAllROI();
 					final String dummyname = "perimeter_enclosing_capillaries";
-					extRect.setName(dummyname);
-					exp.seqCamData.seq.addROI(extRect);
-					exp.seqCamData.seq.setSelectedROI(extRect);
+					capillariesRoiPolygon.setName(dummyname);
+					exp.seqCamData.seq.addROI(capillariesRoiPolygon);
+					exp.seqCamData.seq.setSelectedROI(capillariesRoiPolygon);
 					// TODO delete kymos
 				}
 				else
-					create2DPolygon();
+					create_capillariesRoiPolygon(exp);
 			}});
 		
-		createROIsFromPolygonButton2.addActionListener(new ActionListener () {
+		generateCapillariesButton.addActionListener(new ActionListener () {
 			@Override public void actionPerformed( final ActionEvent e ) { 
 				roisGenerateFromPolygon();
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
@@ -232,47 +237,43 @@ public class CreateForCapillaries extends JPanel
 	}
 
 	// ---------------------------------
-	private void create2DPolygon() 
+	
+	private void create_capillariesRoiPolygon(Experiment exp) 
 	{
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-		if (exp == null)
-			return;
-		SequenceCamData seqCamData = exp.seqCamData;
+		Sequence seq = exp.seqCamData.seq;
 		final String dummyname = "perimeter_enclosing_capillaries";
-		if (isRoiPresent(seqCamData, dummyname))
-			return;
-		
-		ROI2DPolygon roi = new ROI2DPolygon(getCapillariesPolygon(seqCamData));
-		roi.setName(dummyname);
-		seqCamData.seq.addROI(roi);
-		seqCamData.seq.setSelectedROI(roi);
+		capillariesRoiPolygon = (ROI2DPolygon) isRoiPresent(seq, dummyname);
+		if (capillariesRoiPolygon == null)
+		{
+			capillariesRoiPolygon = new ROI2DPolygon(getCapillariesPolygon(seq));
+			capillariesRoiPolygon.setName(dummyname);
+			seq.addROI(capillariesRoiPolygon);
+		}
+
+		seq.setSelectedROI(capillariesRoiPolygon);
 	}
 	
 	
-	private boolean isRoiPresent(SequenceCamData seqCamData, String dummyname) 
+	private ROI2D isRoiPresent(Sequence seq, String dummyname) 
 	{
-		ArrayList<ROI2D> listRois = seqCamData.seq.getROI2Ds();
+		ArrayList<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi: listRois) 
 		{
 			if (roi.getName() .equals(dummyname))
-				return true;
+				return roi;
 		}
-		return false;
+		return null;
 	}
 	
-	private Polygon2D getCapillariesPolygon(SequenceCamData seqCamData)
+	private Polygon2D getCapillariesPolygon(Sequence seq)
 	{
-		if (capillariesPolygon == null)
-		{		
-			Rectangle rect = seqCamData.seq.getBounds2D();
-			List<Point2D> points = new ArrayList<Point2D>();
-			points.add(new Point2D.Double(rect.x + rect.width /5, rect.y + rect.height /5));
-			points.add(new Point2D.Double(rect.x + rect.width*4 /5, rect.y + rect.height /5));
-			points.add(new Point2D.Double(rect.x + rect.width*4 /5, rect.y + rect.height*2 /3));
-			points.add(new Point2D.Double(rect.x + rect.width /5, rect.y + rect.height *2 /3));
-			capillariesPolygon = new Polygon2D(points);
-		}
-		return capillariesPolygon;
+		Rectangle rect = seq.getBounds2D();
+		List<Point2D> points = new ArrayList<Point2D>();
+		points.add(new Point2D.Double(rect.x + rect.width /5, rect.y + rect.height /5));
+		points.add(new Point2D.Double(rect.x + rect.width*4 /5, rect.y + rect.height /5));
+		points.add(new Point2D.Double(rect.x + rect.width*4 /5, rect.y + rect.height*2 /3));
+		points.add(new Point2D.Double(rect.x + rect.width /5, rect.y + rect.height *2 /3));
+		return new Polygon2D(points);
 	}
 	
 	private void roisGenerateFromPolygon() 
@@ -301,16 +302,16 @@ public class CreateForCapillaries extends JPanel
 			new AnnounceFrame("Can't interpret one of the ROI parameters value"); 
 		}
 
-		ROI2D roi = seqCamData.seq.getSelectedROI2D();
-		if ( ! ( roi instanceof ROI2DPolygon ) ) 
-		{
-			new AnnounceFrame("The frame must be a ROI2D POLYGON");
-			return;
-		}
+//		ROI2D roi = seqCamData.seq.getSelectedROI2D();
+//		if ( ! ( roi instanceof ROI2DPolygon ) ) 
+//		{
+//			new AnnounceFrame("The frame must be a ROI2D POLYGON");
+//			return;
+//		}
 		
-		capillariesPolygon = ROI2DUtilities.orderVerticesofPolygon (((ROI2DPolygon) roi).getPolygon());
+		Polygon2D capillariesPolygon = ROI2DUtilities.orderVerticesofPolygon (capillariesRoiPolygon.getPolygon());
 		
-		seqCamData.seq.removeROI(roi);
+		seqCamData.seq.removeROI(capillariesRoiPolygon);
 
 		if (statusGroup2Mode) 
 		{	
