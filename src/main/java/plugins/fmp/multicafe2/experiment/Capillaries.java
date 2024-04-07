@@ -568,7 +568,7 @@ public class Capillaries
 		List<Point2D> listPoints = new ArrayList<Point2D>(4);
 		listPoints.add(upperLeft);
 		listPoints.add(lowerLeft);
-		listPoints.add(upperRight);
+		listPoints.add(lowerRight);
 		listPoints.add(upperRight);
 		return new Polygon2D(listPoints);
 	}
