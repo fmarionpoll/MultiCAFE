@@ -110,7 +110,7 @@ public class CreateForCapillaries extends JPanel
 				if (exp == null)
 					return;
 				
-				if (exp.capillaries != null) 
+				if (exp.capillaries != null && exp.capillaries.capillariesList.size() > 0) 
 				{
 					Polygon2D extPolygon = exp.capillaries.get2DPolygonEnclosingCapillaries();
 					if (extPolygon == null) {

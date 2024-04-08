@@ -12,12 +12,12 @@
     </parent>
 
     <!-- Project Information -->
-    <artifactId>multiCAFE2</artifactId>
-    <version>2.1.6</version>
+    <artifactId>multiCAFE</artifactId>
+    <version>2.1.7</version>
     
     <packaging>jar</packaging>
 
-    <name>MultiCAFE2</name>
+    <name>MultiCAFE</name>
     <description>This plugin allows measuring how much flies drink from capillaries filled with liquid. Capillaries are defined by the user as polyLine ROIS. We generate kymographs from these ROIs, to detect the liquid level in each capillary across time and export these values to Excel files. Cages and the position of individual flies can also be detected and exported to Excel. No provision is made to detect more than one fly by cage. Each experiment is described by a series of parameters exported along with the measures.</description>
     <url></url>
     <inceptionYear>2024</inceptionYear>
