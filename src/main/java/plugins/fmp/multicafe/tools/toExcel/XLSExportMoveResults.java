@@ -236,13 +236,13 @@ public class XLSExportMoveResults extends XLSExport
 		final int to_first_index = (int) (from_first_Ms - expAll.camImageFirst_ms) / options.buildExcelStepMs ;
 		final int to_nvalues = (int) ((from_lastMs - from_first_Ms)/options.buildExcelStepMs)+1;
 
-		for (FlyPositions row: rowsForOneExp ) 
+		for (FlyPositions rowFlyPositions: rowsForOneExp ) 
 		{
-			FlyPositions results = getResultsArrayWithThatName(row.name,  resultsArrayList);
+			FlyPositions results = getResultsArrayWithThatName(rowFlyPositions.name,  resultsArrayList);
 			if (results != null) 
 			{
 				if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null) 
-					padWithLastPreviousValue(row, to_first_index);
+					padWithLastPreviousValue(rowFlyPositions, to_first_index);
 				
 				for (long fromTime = from_first_Ms; fromTime <= from_lastMs; fromTime += options.buildExcelStepMs) 
 				{					
@@ -251,11 +251,11 @@ public class XLSExportMoveResults extends XLSExport
 						break;
 					FlyPosition aVal = results.flyPositionList.get(from_i);
 					int to_i = (int) ((fromTime - expAll.camImageFirst_ms) / options.buildExcelStepMs) ;
-					if (to_i >= row.flyPositionList.size())
+					if (to_i >= rowFlyPositions.flyPositionList.size())
 						break;
 					if (to_i < 0)
 						continue;
-					row.flyPositionList.get(to_i).copy(aVal);
+					rowFlyPositions.flyPositionList.get(to_i).copy(aVal);
 				}
 				
 			} 
@@ -263,18 +263,18 @@ public class XLSExportMoveResults extends XLSExport
 			{
 				if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null) 
 				{
-					FlyPosition posok = padWithLastPreviousValue(row, to_first_index);
+					FlyPosition posok = padWithLastPreviousValue(rowFlyPositions, to_first_index);
 					int nvalues = to_nvalues;
 					if (posok != null) 
 					{
-						if (nvalues > row.flyPositionList.size())
-							nvalues = row.flyPositionList.size();
+						if (nvalues > rowFlyPositions.flyPositionList.size())
+							nvalues = rowFlyPositions.flyPositionList.size();
 						int tofirst = to_first_index;
 						int tolast = tofirst + nvalues;
-						if (tolast > row.flyPositionList.size())
-							tolast = row.flyPositionList.size();
+						if (tolast > rowFlyPositions.flyPositionList.size())
+							tolast = rowFlyPositions.flyPositionList.size();
 						for (int toi = tofirst; toi < tolast; toi++) 
-							row.flyPositionList.get(toi).copy(posok);
+							rowFlyPositions.flyPositionList.get(toi).copy(posok);
 					}
 				}
 			}
