@@ -135,7 +135,6 @@ public class Filter  extends JPanel
 		filterExpList.getFieldValuesToCombo(cond2Combo, EnumXLSColumnHeader.EXP_COND2);
 	}
 	
-	
 	private void defineActionListeners() 
 	{
 		applyButton.addActionListener(new ActionListener () 
@@ -205,7 +204,6 @@ public class Filter  extends JPanel
 		if (cond2Check.isSelected())
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_COND2, (String) cond2Combo.getSelectedItem());
 		return filteredList;
-		
 	}
 	
 	void filterItem(List<Experiment> filteredList, EnumXLSColumnHeader header, String filter)

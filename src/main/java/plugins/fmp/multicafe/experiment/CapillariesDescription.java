@@ -265,7 +265,6 @@ public class CapillariesDescription
 	public void csvImportCapillariesDescriptionData(String[] data) 
 	{
 		int i = 0; 
-		int nitems = data.length;
 		grouping = Integer.valueOf(data[i]); i++;
 		volume = Double.valueOf(data[i]); i++; 
 		pixels = Integer.valueOf(data[i]); i++; 
@@ -279,6 +278,7 @@ public class CapillariesDescription
 		old_comment2 = data[i]; i++; 
 		old_strain = data[i]; i++; 
 		old_sex = data[i]; i++;
+		int nitems = data.length;
 		if (i < nitems) old_cond1 = data[i]; i++;
 		if (i < nitems) old_cond2 = data[i]; 
 	}

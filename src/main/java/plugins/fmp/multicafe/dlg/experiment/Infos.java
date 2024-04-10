@@ -113,8 +113,7 @@ public class Infos  extends JPanel
 		add(cond2Check, c);
 		c.gridx += delta1;
 		add(cond2Combo, c);
-//		c.gridx += delta2;
-//		add(duplicateButton, c);
+
 
 		boxIDCombo.setEditable(true);
 		exptCombo.setEditable(true);	
