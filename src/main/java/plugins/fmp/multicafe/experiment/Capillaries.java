@@ -426,14 +426,14 @@ public class Capillaries
 		}
 	}
 
-	public void initCapillariesWith10Cages(int nflies)
+	public void initCapillariesWith10Cages(int nflies, boolean optionZeroFlyFirstLastCapillary)
 	{
 		int capArraySize = capillariesList.size();
 		for (int i=0; i< capArraySize; i++)
 		{
 			Capillary cap = capillariesList.get(i);
 			cap.capNFlies = nflies;
-			if (i<= 1  || i>= capArraySize-2 )
+			if (optionZeroFlyFirstLastCapillary && (i <= 1  || i>= capArraySize-2 ))
 				cap.capNFlies = 0;
 			cap.capCageID = i/2;
 		}

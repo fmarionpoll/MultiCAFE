@@ -139,7 +139,7 @@ public class CreateForCapillaries extends JPanel
 					int nbFliesPerCage = (int) nbFliesPerCageJSpinner.getValue();
 					switch(cagesJCombo.getSelectedIndex()) {
 					case 0:
-						exp.capillaries.initCapillariesWith10Cages(nbFliesPerCage);
+						exp.capillaries.initCapillariesWith10Cages(nbFliesPerCage, true);
 						break;
 					case 1:
 						exp.capillaries.initCapillariesWith6Cages(nbFliesPerCage);
