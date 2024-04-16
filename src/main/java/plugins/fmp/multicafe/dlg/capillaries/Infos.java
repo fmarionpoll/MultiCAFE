@@ -75,7 +75,7 @@ public class Infos extends JPanel
 				if (exp != null)
 				{
 					exp.capillaries.transferDescriptionToCapillaries();
-					if (infosCapillaryTable == null) {
+					if (infosCapillaryTable != null) {
 						infosCapillaryTable.close();
 					}
 					infosCapillaryTable = new InfosCapillaryTable();
