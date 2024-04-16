@@ -54,6 +54,7 @@ public class Experiment
 	public 	long			camImageBin_ms			= -1;
 	public  long[] 			camImages_ms			= null;
 	
+	public	long 			binT0					= 0;
 	public 	long			kymoFirst_ms			= 0;
 	public 	long			kymoLast_ms				= 0;
 	public 	long			kymoBin_ms				= 60000;
@@ -80,6 +81,7 @@ public class Experiment
 	private final static String ID_TIMEFIRSTIMAGE	= "fileTimeImageFirstMinute"; 
 	private final static String ID_TIMELASTIMAGE 	= "fileTimeImageLastMinute";
 	
+	private final static String ID_BINT0			= "indexBinT0"; 
 	private final static String ID_TIMEFIRSTIMAGEMS	= "fileTimeImageFirstMs"; 
 	private final static String ID_TIMELASTIMAGEMS 	= "fileTimeImageLastMs";
 	private final static String ID_FIRSTKYMOCOLMS	= "firstKymoColMs"; 
@@ -484,6 +486,7 @@ public class Experiment
 			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, camImageFirst_ms);
 			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, camImageLast_ms);
 			
+			XMLUtil.setElementLongValue(node, ID_BINT0, binT0);
 			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, kymoFirst_ms); 
 			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, kymoLast_ms);
 			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, kymoBin_ms); 	
@@ -1079,6 +1082,7 @@ public class Experiment
 			camImageLast_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0)*60000;
 		}
 
+		binT0 			= XMLUtil.getElementLongValue(node,ID_BINT0, 0);
 		kymoFirst_ms = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1); 
 		kymoLast_ms = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
 		kymoBin_ms = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1); 	

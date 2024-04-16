@@ -85,10 +85,13 @@ public class Intervals extends JPanel
 			}});
 	}
 	
-	private void setExptParmsFromDialog(Experiment exp) {
+	private void setExptParmsFromDialog(Experiment exp) 
+	{
 		exp.camImageBin_ms = (long) (((double) binSizeJSpinner.getValue())* binUnit.getMsUnitValue());
 		double bin_ms = exp.camImageBin_ms;
-		exp.kymoFirst_ms = (long) ((double) frameFirstJSpinner.getValue() * bin_ms);
+		
+		exp.binT0 = ((Double)frameFirstJSpinner.getValue()).longValue();
+		exp.kymoFirst_ms = (long) ((double) exp.binT0 * bin_ms);
 		exp.kymoLast_ms = (long) ((double) frameLastJSpinner.getValue() * bin_ms);
 	}
 	

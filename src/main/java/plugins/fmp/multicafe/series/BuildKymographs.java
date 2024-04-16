@@ -93,8 +93,8 @@ public class BuildKymographs extends BuildSeries
 	    processor.setPriority(Processor.NORM_PRIORITY);
         ArrayList<Future<?>> futuresArray = new ArrayList<Future<?>>(nframes);
 		futuresArray.clear();
-		
-		for (int t = 0; t < exp.seqKymos.seq.getSizeT(); t++) 
+		int t0 = (int) exp.binT0;
+		for (int t = t0; t < exp.seqKymos.seq.getSizeT(); t++) 
 		{
 			final int t_index = t;
 			futuresArray.add(processor.submit(new Runnable () {
