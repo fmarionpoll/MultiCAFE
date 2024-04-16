@@ -85,27 +85,25 @@ public class Intervals extends JPanel
 			}});
 	}
 	
-	private void setExptParmsFromDialog(Experiment exp) 
-	{
+	private void setExptParmsFromDialog(Experiment exp) {
 		exp.camImageBin_ms = (long) (((double) binSizeJSpinner.getValue())* binUnit.getMsUnitValue());
-		double bin_ms = exp.camImageBin_ms;
-		
-		exp.binT0 = ((Double)frameFirstJSpinner.getValue()).longValue();
-		exp.kymoFirst_ms = (long) ((double) exp.binT0 * bin_ms);
-		exp.kymoLast_ms = (long) ((double) frameLastJSpinner.getValue() * bin_ms);
+		long bin_ms = exp.camImageBin_ms;
+		exp.binT0 = (long) frameFirstJSpinner.getValue();
+		exp.kymoFirst_ms =  exp.binT0 * bin_ms;
+		exp.kymoLast_ms = (long) frameLastJSpinner.getValue() * bin_ms;
 	}
 	
 	public void displayCamDataIntervals (Experiment exp) 
 	{
 		refreshBinSize(exp);
 		
-		double bin_ms = exp.camImageBin_ms;
-		double dFirst = exp.kymoFirst_ms/bin_ms;
-		frameFirstJSpinner.setValue(dFirst);
+		long bin_ms = exp.camImageBin_ms;
+		long dFirst = (long) exp.kymoFirst_ms/bin_ms;
+		frameFirstJSpinner.setValue((int) dFirst);
 		if(exp.kymoLast_ms <= 0)
 			exp.kymoLast_ms = (long) (exp.getSeqCamSizeT() * bin_ms);
-		double dLast = exp.kymoLast_ms/bin_ms;
-		frameLastJSpinner.setValue(dLast);
+		long dLast = (long) exp.kymoLast_ms/bin_ms;
+		frameLastJSpinner.setValue((int) dLast);
 		exp.getFileIntervalsFromSeqCamData();
 	}
 	
