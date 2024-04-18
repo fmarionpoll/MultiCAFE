@@ -111,8 +111,18 @@ public class ChartLevels extends IcyFrame
 			}
 			
 			int nflies = Integer.valueOf(description[1]);
-			if (nflies < 1) {
+			if (nflies == 0) {
 				subplot.setBackgroundPaint(Color.LIGHT_GRAY);
+				subplot.setDomainGridlinePaint(Color.WHITE);
+				subplot.setRangeGridlinePaint(Color.WHITE);
+			}
+			else if (nflies < 0) {
+				subplot.setBackgroundPaint(Color.DARK_GRAY);
+				subplot.setDomainGridlinePaint(Color.WHITE);
+				subplot.setRangeGridlinePaint(Color.WHITE);
+			}
+			else if (nflies > 1) {
+				subplot.setBackgroundPaint(Color.CYAN);
 				subplot.setDomainGridlinePaint(Color.WHITE);
 				subplot.setRangeGridlinePaint(Color.WHITE);
 			}
