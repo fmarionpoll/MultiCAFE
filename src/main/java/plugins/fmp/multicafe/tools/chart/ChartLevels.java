@@ -122,7 +122,7 @@ public class ChartLevels extends IcyFrame
 				subplot.setRangeGridlinePaint(Color.WHITE);
 			}
 			else if (nflies > 1) {
-				subplot.setBackgroundPaint(Color.CYAN);
+				subplot.setBackgroundPaint(new Color(173, 216, 230));  // r: 173, g: 216, b: 230
 				subplot.setDomainGridlinePaint(Color.WHITE);
 				subplot.setRangeGridlinePaint(Color.WHITE);
 			}
