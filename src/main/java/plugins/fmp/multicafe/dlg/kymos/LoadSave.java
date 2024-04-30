@@ -30,7 +30,7 @@ import plugins.fmp.multicafe.experiment.ImageFileDescriptor;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
 
 
-public class LoadSaveKymos extends JPanel 
+public class LoadSave extends JPanel 
 {
 	/**
 	 * 
