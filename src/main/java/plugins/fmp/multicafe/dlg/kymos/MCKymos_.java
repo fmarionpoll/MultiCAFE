@@ -29,7 +29,7 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 	public Create 		tabCreate 		= new Create();
 	public Display		tabDisplay 		= new Display();
 	public Intervals	tabIntervals 	= new Intervals();
-	public LoadSave 	tabtabLoadSave 	= new LoadSave();
+	public LoadSave 	tabLoadSave 	= new LoadSave();
 	private MultiCAFE parent0 = null;
 
 	public void init (JPanel mainPanel, String string, MultiCAFE parent0) 
@@ -54,9 +54,9 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 		tabIntervals.addPropertyChangeListener(this);
 		tabsPane.addTab("Edit", null, tabIntervals, "Time resolution of kymograph");
 
-		tabtabLoadSave.init(capLayout, parent0);
-		tabtabLoadSave.addPropertyChangeListener(this);
-		tabsPane.addTab("Load/Save", null, tabtabLoadSave, "Load/Save xml file with capillaries descriptors");
+		tabLoadSave.init(capLayout, parent0);
+		tabLoadSave.addPropertyChangeListener(this);
+		tabsPane.addTab("Load/Save", null, tabLoadSave, "Load/Save xml file with capillaries descriptors");
 
 		tabsPane.addChangeListener(this);
 		tabsPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
