@@ -33,7 +33,7 @@ import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
 import plugins.fmp.multicafe.tools.Directories;
-import plugins.fmp.multicafe.tools.KymosCanvas2D;
+
 
 
 
@@ -202,7 +202,7 @@ public class Display extends JPanel implements ViewerListener
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
+
 	void displayON()
 	{
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
@@ -215,10 +215,13 @@ public class Display extends JPanel implements ViewerListener
 			ArrayList<Viewer>vList = seqKymographs.seq.getViewers();
 			if (vList.size() == 0)
 			{
-				Viewer viewerKymographs = new Viewer(seqKymographs.seq, true);
-				KymosCanvas2D kymoCanvas2D = new KymosCanvas2D(viewerKymographs);
-				viewerKymographs.setCanvas(kymoCanvas2D);
-//				viewerKymographs.setCanvas(KymosCanvas2DPlugin.getCanvasClassName());
+				Viewer viewerKymographs = new Viewer(seqKymographs.seq, true);				
+				List<String> list = IcyCanvas.getCanvasPluginNames();
+				String pluginName = list.stream()
+						  .filter(s -> s.contains("Kymo"))
+						  .findFirst()
+						  .orElse(null);
+				viewerKymographs.setCanvas(pluginName);
 				viewerKymographs.setRepeat(false);
 				viewerKymographs.addListener(this);
 
