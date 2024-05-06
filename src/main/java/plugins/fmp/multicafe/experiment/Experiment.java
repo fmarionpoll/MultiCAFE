@@ -21,9 +21,9 @@ import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.tools.Directories;
-import plugins.fmp.multicafe.tools.ROI2DUtilities;
-import plugins.fmp.multicafe.tools.Image.ImageTransformEnums;
-import plugins.fmp.multicafe.tools.Image.ImageTransformInterface;
+import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
 

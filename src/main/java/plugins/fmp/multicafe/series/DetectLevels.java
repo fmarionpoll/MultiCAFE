@@ -12,7 +12,7 @@ import icy.type.collection.array.Array1DUtil;
 import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
-import plugins.fmp.multicafe.tools.Image.ImageTransformInterface;
+import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
 
 
 

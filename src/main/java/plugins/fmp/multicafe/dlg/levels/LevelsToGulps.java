@@ -24,8 +24,8 @@ import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.DetectGulps;
-import plugins.fmp.multicafe.tools.KymosCanvas2D;
-import plugins.fmp.multicafe.tools.Image.ImageTransformEnums;
+import plugins.fmp.multicafe.tools.Canvas2D.KymosCanvas2D;
+import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 
 
 

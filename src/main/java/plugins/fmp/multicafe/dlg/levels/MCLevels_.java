@@ -12,7 +12,7 @@ import javax.swing.JTabbedPane;
 
 import icy.gui.component.PopupPanel;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.tools.Image.ImageTransformEnums;
+import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 
 
 

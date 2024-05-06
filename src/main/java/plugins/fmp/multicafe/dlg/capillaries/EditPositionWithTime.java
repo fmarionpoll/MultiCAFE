@@ -31,8 +31,8 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.KymoROI2D;
-import plugins.fmp.multicafe.tools.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.JComponents.CapillariesWithTimeTableModel;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 

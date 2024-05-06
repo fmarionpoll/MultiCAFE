@@ -30,7 +30,7 @@ import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
 import plugins.fmp.multicafe.tools.Bresenham;
 import plugins.fmp.multicafe.tools.GaspardRigidRegistration;
-import plugins.fmp.multicafe.tools.ROI2DUtilities;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 
 
 public class BuildKymographs extends BuildSeries  

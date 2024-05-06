@@ -24,7 +24,7 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.tools.Comparators;
-import plugins.fmp.multicafe.tools.ROI2DUtilities;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 

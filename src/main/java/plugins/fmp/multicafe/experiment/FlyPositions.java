@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.tools.Comparators;
-import plugins.fmp.multicafe.tools.ROI2DMeasures;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DMeasures;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 

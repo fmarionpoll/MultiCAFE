@@ -28,7 +28,7 @@ import plugins.fmp.multicafe.experiment.Capillaries;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.experiment.SequenceKymosUtils;
-import plugins.fmp.multicafe.tools.ROI2DUtilities;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 

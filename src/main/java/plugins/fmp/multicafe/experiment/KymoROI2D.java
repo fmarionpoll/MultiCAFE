@@ -7,7 +7,7 @@ import org.w3c.dom.Node;
 import icy.file.xml.XMLPersistent;
 import icy.roi.ROI2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.tools.ROI2DUtilities;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 
 public class KymoROI2D implements XMLPersistent 
 {
