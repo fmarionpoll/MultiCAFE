@@ -33,7 +33,7 @@ public class ResourceUtilFMP {
     
 	private static Image getImage(String fileName) 
 	{
-		String name = "plugins/fmp/multicafe2/" + ICON_PATH + ALPHA_PATH + fileName;
+		String name = "plugins/fmp/multicafe/" + ICON_PATH + ALPHA_PATH + fileName;
 		InputStream url = MultiCAFE.class.getClassLoader().getResourceAsStream(name);
 		if (url == null) {
 			System.out.println("ResourceUtilFMP:getImage resource not found: at: "+ name);
