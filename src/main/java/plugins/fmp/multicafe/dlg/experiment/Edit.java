@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.dlg.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
 public class Edit   extends JPanel 

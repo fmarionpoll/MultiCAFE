@@ -21,11 +21,11 @@ import javax.swing.SwingConstants;
 
 import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.dlg.JComponents.JComboMs;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.series.BuildKymographs;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.tools.EnumStatusComputation;
+import plugins.fmp.multicafe.tools.JComponents.JComboMs;
 
 
 

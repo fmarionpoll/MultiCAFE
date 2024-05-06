@@ -28,11 +28,11 @@ import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.dlg.JComponents.CapillariesWithTimeTableModel;
 import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.KymoROI2D;
 import plugins.fmp.multicafe.tools.ROI2DUtilities;
+import plugins.fmp.multicafe.tools.JComponents.CapillariesWithTimeTableModel;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 

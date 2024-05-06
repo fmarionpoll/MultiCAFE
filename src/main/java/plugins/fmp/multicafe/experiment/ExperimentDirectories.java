@@ -16,8 +16,8 @@ import javax.swing.JOptionPane;
 
 import icy.file.FileUtil;
 import icy.gui.dialog.LoaderDialog;
-import plugins.fmp.multicafe.dlg.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe.tools.Directories;
+import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 
 
 public class ExperimentDirectories 

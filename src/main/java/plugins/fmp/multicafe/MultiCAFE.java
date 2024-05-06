@@ -11,13 +11,13 @@ import icy.plugin.PluginLauncher;
 import icy.plugin.PluginLoader;
 import icy.plugin.abstract_.PluginActionable;
 import icy.preferences.GeneralPreferences;
-import plugins.fmp.multicafe.dlg.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe.dlg.cages.MCCages_;
 import plugins.fmp.multicafe.dlg.capillaries.MCCapillaries_;
 import plugins.fmp.multicafe.dlg.excel.MCExcel_;
 import plugins.fmp.multicafe.dlg.experiment.MCExperiment_;
 import plugins.fmp.multicafe.dlg.kymos.MCKymos_;
 import plugins.fmp.multicafe.dlg.levels.MCLevels_;
+import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
 
 

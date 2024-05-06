@@ -24,9 +24,9 @@ import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
 import icy.sequence.SequenceEvent.SequenceEventSourceType;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.dlg.JComponents.SequenceNameListRenderer;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.ExperimentDirectories;
+import plugins.fmp.multicafe.tools.JComponents.SequenceNameListRenderer;
 import icy.gui.frame.progress.ProgressFrame;
 
 

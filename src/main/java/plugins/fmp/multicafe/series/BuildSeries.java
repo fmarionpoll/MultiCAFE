@@ -18,8 +18,8 @@ import icy.gui.viewer.Viewer;
 import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 import icy.system.thread.Processor;
-import plugins.fmp.multicafe.dlg.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 

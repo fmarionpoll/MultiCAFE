@@ -22,9 +22,9 @@ import javax.swing.table.TableColumnModel;
 
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.dlg.JComponents.CapillaryTableModel;
 import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.tools.JComponents.CapillaryTableModel;
 
 
 public class InfosCapillaryTable extends JPanel 

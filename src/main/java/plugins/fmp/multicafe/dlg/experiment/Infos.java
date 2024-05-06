@@ -13,8 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.dlg.JComponents.SortedComboBoxModel;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.tools.JComponents.SortedComboBoxModel;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
 

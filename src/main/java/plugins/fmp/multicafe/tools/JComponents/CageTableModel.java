@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.JComponents;
+package plugins.fmp.multicafe.tools.JComponents;
 
 
 import javax.swing.table.AbstractTableModel;
