@@ -252,6 +252,7 @@ public class BuildKymographs extends BuildSeries
 			cap_Image.setDataXY(chan, destArray);
 		}
 		seqKymo.setImage(icap, 0, cap_Image);
+		cap.cap_Integer = null;
 	}
 		
 	private void initArraysToBuildKymographImages(Experiment exp) 
