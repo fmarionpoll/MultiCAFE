@@ -97,6 +97,7 @@ public class BuildKymographs extends BuildSeries
 		for (int t = t0; t < exp.seqKymos.seq.getSizeT(); t++) 
 		{
 			final int t_index = t;
+			
 			futuresArray.add(processor.submit(new Runnable () {
 				@Override
 				public void run() {	
@@ -157,14 +158,14 @@ public class BuildKymographs extends BuildSeries
 			tasks.add(processor.submit(new Runnable () {
 				@Override
 				public void run() {	
+					final IcyBufferedImage sourceImage = loadImageFromIndex(exp, fromSourceImageIndex);
+					progressBar1.setMessage("Analyze frame: " + fromSourceImageIndex + "//" + nKymographColumns);
 					for (Capillary capi: exp.capillaries.capillariesList) 
 						analyzeImageWithCapillary(sourceImage, capi, fromSourceImageIndex, kymographColumn);
 				}}));
 			vData.setTitle("Analyzing frame: " + (fromSourceImageIndex +1)+ vDataTitle);
-//			seqData.setImage(0, 0, sourceImage); // add option??
-			progressBar1.setMessage("Analyze frame: " + fromSourceImageIndex + "//" + nKymographColumns);	
+			seqData.setImage(0, 0, sourceImage);				
 		}
-
 		waitFuturesCompletion(processor, tasks, null);
 		progressBar1.close();
 		
@@ -172,7 +173,6 @@ public class BuildKymographs extends BuildSeries
 		int sizeC = seqData.getSizeC();
 		exportCapillaryIntegerArrays_to_Kymograph(exp, seqKymos.seq, sizeC);
         progressBar2.close();
-        
 		return true;
 	}
 	

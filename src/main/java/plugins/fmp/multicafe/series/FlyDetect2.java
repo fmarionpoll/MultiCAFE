@@ -43,7 +43,6 @@ public class FlyDetect2 extends BuildSeries
 		find_flies.initParametersForDetection(exp, options);
 		exp.cages.initFlyPositions(options.detectCage);
 		options.threshold = options.thresholdDiff;
-
 		if (exp.loadReferenceImage()) 
 		{
 			openFlyDetectViewers(exp);
@@ -60,8 +59,7 @@ public class FlyDetect2 extends BuildSeries
 		ImageTransformInterface transformFunction = transformOptions.transformOption.getFunction();
 		
 		int totalFrames = exp.seqCamData.nTotalFrames;
-		for (int index = 0; index < totalFrames; index++ )  
-		{
+		for (int index = 0; index < totalFrames; index++) {
 			int t_from = index;
 			String title = "Frame #"+ t_from + "/" + exp.seqCamData.nTotalFrames;
 			progressBar.setMessage(title);
@@ -80,7 +78,6 @@ public class FlyDetect2 extends BuildSeries
 				e.printStackTrace();
 			}
 		}
-		
 		progressBar.close();
 	}
 

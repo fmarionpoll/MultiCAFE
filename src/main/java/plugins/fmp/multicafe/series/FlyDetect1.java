@@ -75,8 +75,7 @@ public class FlyDetect1 extends BuildSeries
 		int t_previous = 0;
 		int totalFrames = exp.seqCamData.nTotalFrames;
 		
-		for (int index = 0; index < totalFrames; index++ ) 
-		{
+		for (int index = 0; index < totalFrames; index++ ) {
 			int t_from = index;	
 			String title = "Frame #"+ t_from + "/" + exp.seqCamData.nTotalFrames;
 			progressBar.setMessage(title);
@@ -96,10 +95,8 @@ public class FlyDetect1 extends BuildSeries
 			catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
 			t_previous = t_from;
 		}
-
 		progressBar.close();
 	}
 }
