@@ -27,7 +27,7 @@ public class Options extends JPanel
 	JCheckBox	kymographsCheckBox		= new JCheckBox("kymos", true);
 	JCheckBox	cagesCheckBox			= new JCheckBox("cages", true);
 	JCheckBox	measuresCheckBox		= new JCheckBox("measures", true);
-	JCheckBox	graphsCheckBox			= new JCheckBox("graphs", true);
+	public JCheckBox	graphsCheckBox			= new JCheckBox("graphs", true);
 
 	public 	JCheckBox 	viewCapillariesCheckBox = new JCheckBox("capillaries", true);
 	public 	JCheckBox 	viewCagesCheckbox = new JCheckBox("cages", true);

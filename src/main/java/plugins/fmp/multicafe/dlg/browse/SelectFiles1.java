@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.experiment;
+package plugins.fmp.multicafe.dlg.browse;
 
 
 import java.awt.BorderLayout;
@@ -61,7 +61,7 @@ public class SelectFiles1 extends JPanel
 	public void initialize (MultiCAFE parent0) 
 	{
 		this.parent0 = parent0;
-		this.parent1 = parent0.paneExperiment.panelLoadSave;
+		this.parent1 = parent0.paneBrowse.panelLoadSave;
 		addPropertyChangeListener(parent1);
 		
 		JPanel mainPanel = GuiUtil.generatePanelWithoutBorder();

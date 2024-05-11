@@ -200,7 +200,7 @@ public class Adjust extends JPanel  implements PropertyChangeListener
 		if (exp == null)
 			return false;
 		
-		parent0.paneExperiment.panelLoadSave.closeViewsForCurrentExperiment(exp);
+		parent0.paneBrowse.panelLoadSave.closeViewsForCurrentExperiment(exp);
 		options.expList = parent0.expListCombo; 
 		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
 		if (allSeriesCheckBox.isSelected())

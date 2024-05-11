@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.experiment;
+package plugins.fmp.multicafe.dlg.browse;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -43,7 +43,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	private JButton 		openButton		= new JButton("Open...");
 	private JButton			searchButton 	= new JButton("Search...");
 	private JButton			closeButton		= new JButton("Close");
-	protected JCheckBox		filteredCheck	= new JCheckBox("List filtered");
+	public JCheckBox		filteredCheck	= new JCheckBox("List filtered");
 	
 	public List<String> 	selectedNames 	= new ArrayList<String> ();
 	private SelectFiles1 	dialogSelect 	= null;

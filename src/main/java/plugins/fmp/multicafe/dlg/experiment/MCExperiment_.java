@@ -41,7 +41,6 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 	public 	Filter			tabFilter		= new Filter();
 	public 	Edit			tabEdit			= new Edit();
 	public 	Intervals		tabIntervals	= new Intervals();
-	public 	LoadSaveExperiment panelLoadSave = new LoadSaveExperiment();
 	
 	private MultiCAFE 		parent0 		= null;
 
@@ -55,8 +54,6 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 		capPopupPanel.collapse();
 		mainPanel.add(capPopupPanel);
 		GridLayout tabsLayout = new GridLayout(4, 1);
-		
-		JPanel filesPanel = panelLoadSave.initPanel(parent0);
 		
 		tabInfos.init(tabsLayout, parent0);
 		tabsPane.addTab("Infos", null, tabInfos, "Define infos for this experiment/box");
@@ -77,15 +74,12 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 		
 		JPanel capPanel = capPopupPanel.getMainPanel();
 		capPanel.setLayout(new BorderLayout());
-		capPanel.add(filesPanel, BorderLayout.CENTER);
 		capPanel.add(tabsPane, BorderLayout.PAGE_END);	
 		
 		tabsPane.addChangeListener(this );
-		capPopupPanel.addComponentListener(new ComponentAdapter() 
-		{
+		capPopupPanel.addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentResized(ComponentEvent e) 
-			{
+			public void componentResized(ComponentEvent e) {
 				parent0.mainFrame.revalidate();
 				parent0.mainFrame.pack();
 				parent0.mainFrame.repaint();
@@ -112,8 +106,7 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 			return;
 		
 		final ViewerListener parent = this;
-		SwingUtilities.invokeLater(new Runnable() { public void run() 
-		{	
+		SwingUtilities.invokeLater(new Runnable() { public void run() {	
 			Viewer v = seq.getFirstViewer();
 			if (v == null) 
 				v = new Viewer(exp.seqCamData.seq, true);
@@ -133,8 +126,7 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 	{
 		Rectangle rectv = v.getBoundsInternal();
 		Rectangle rect0 = mainFrame.getBoundsInternal();
-		if (rect0.x+ rect0.width < Icy.getMainInterface().getMainFrame().getDesktopWidth()) 
-		{
+		if (rect0.x+ rect0.width < Icy.getMainInterface().getMainFrame().getDesktopWidth()) {
 			rectv.setLocation(rect0.x+ rect0.width, rect0.y);
 			v.setBounds(rectv);
 		}
@@ -143,18 +135,14 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 	@Override	
 	public void viewerChanged(ViewerEvent event) 
 	{
-		if ((event.getType() == ViewerEventType.POSITION_CHANGED)) 
-		{
-			if (event.getDim() == DimensionId.T) 
-			{
+		if ((event.getType() == ViewerEventType.POSITION_CHANGED)) {
+			if (event.getDim() == DimensionId.T) {
 				Viewer v = event.getSource(); 
 				int idViewer = v.getSequence().getId(); 
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null)
-				{
+				if (exp != null) {
 					int idCurrentExp = exp.seqCamData.seq.getId();
-					if (idViewer == idCurrentExp) 
-					{
+					if (idViewer == idCurrentExp) {
 						int t = v.getPositionT(); 
 						v.setTitle(exp.seqCamData.getDecoratedImageName(t));
 						if (parent0.paneCages.bTrapROIsEdit) 

@@ -11,6 +11,7 @@ import icy.plugin.PluginLauncher;
 import icy.plugin.PluginLoader;
 import icy.plugin.abstract_.PluginActionable;
 import icy.preferences.GeneralPreferences;
+import plugins.fmp.multicafe.dlg.browse.MCBrowse_;
 import plugins.fmp.multicafe.dlg.cages.MCCages_;
 import plugins.fmp.multicafe.dlg.capillaries.MCCapillaries_;
 import plugins.fmp.multicafe.dlg.excel.MCExcel_;
@@ -24,9 +25,10 @@ import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
 
 public class MultiCAFE extends PluginActionable  
 {
-	public IcyFrame 		mainFrame 		= new IcyFrame("MultiCAFE April 18, 2024", true, true, true, true);
+	public IcyFrame 		mainFrame 		= new IcyFrame("MultiCAFE May 11, 2024", true, true, true, true);
 	public ExperimentCombo 	expListCombo 	= new ExperimentCombo();
 	
+	public MCBrowse_ 		paneBrowse 		= new MCBrowse_();
 	public MCExperiment_ 	paneExperiment 	= new MCExperiment_();
 	public MCCapillaries_ 	paneCapillaries	= new MCCapillaries_();
 	public MCKymos_			paneKymos		= new MCKymos_();
@@ -43,6 +45,7 @@ public class MultiCAFE extends PluginActionable
 	public void run() 
 	{		
 		JPanel mainPanel = GuiUtil.generatePanelWithoutBorder();
+		paneBrowse.init(mainPanel, "Browse", this);
 		paneExperiment.init(mainPanel, "Experiments", this);
 		paneCapillaries.init(mainPanel, "Capillaries", this);
 		paneKymos.init(mainPanel, "Kymographs", this);
@@ -57,8 +60,6 @@ public class MultiCAFE extends PluginActionable
 		mainFrame.center();
 		mainFrame.setVisible(true);
 		mainFrame.addToDesktopPane();
-		
-		paneExperiment.capPopupPanel.expand();
 	}	 
 	
 	public static void main (String[] args)

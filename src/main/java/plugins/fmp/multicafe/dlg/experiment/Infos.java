@@ -48,7 +48,7 @@ public class Infos  extends JPanel
 	private JButton				duplicateButton = new JButton("Get previous");
 	
 	private MultiCAFE 			parent0 		= null;
-	boolean 					disableChangeFile = false;
+	public boolean 					disableChangeFile = false;
 	
 	
 	void init(GridLayout capLayout, MultiCAFE parent0) 
@@ -207,7 +207,7 @@ public class Infos  extends JPanel
 			model.addElement(toAdd);
     }	
 		
-	void initInfosCombos()
+	public void initInfosCombos()
 	{
 		parent0.expListCombo.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT); 
 		parent0.expListCombo.getFieldValuesToCombo(cmt1Combo, EnumXLSColumnHeader.EXP_STIM);
@@ -222,7 +222,7 @@ public class Infos  extends JPanel
 			transferPreviousExperimentInfosToDialog(exp, exp);
 	}
 	
-	void clearCombos()
+	public void clearCombos()
 	{
 		exptCombo.removeAllItems(); 
 		cmt1Combo.removeAllItems();

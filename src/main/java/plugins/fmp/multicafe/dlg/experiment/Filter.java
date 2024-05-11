@@ -51,7 +51,7 @@ public class Filter  extends JPanel
 	
 	private MultiCAFE 			parent0 			= null;
 			boolean 			disableChangeFile 	= false;
-			ExperimentCombo 	filterExpList 		= new ExperimentCombo();
+	public ExperimentCombo 	filterExpList 		= new ExperimentCombo();
 	
 	
 	void init(GridLayout capLayout, MultiCAFE parent0) 
@@ -123,7 +123,7 @@ public class Filter  extends JPanel
 	
 	public void initFilterCombos() 
 	{
-		if (!parent0.paneExperiment.panelLoadSave.filteredCheck.isSelected())
+		if (!parent0.paneBrowse.panelLoadSave.filteredCheck.isSelected())
 			filterExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsList());
 		filterExpList.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT); 
 		filterExpList.getFieldValuesToCombo(cmt1Combo, EnumXLSColumnHeader.EXP_STIM);
@@ -167,11 +167,11 @@ public class Filter  extends JPanel
 		
 		if (parent0.expListCombo.getItemCount() > 0)
 			parent0.expListCombo.setSelectedIndex(0);
-		if (setFilter != parent0.paneExperiment.panelLoadSave.filteredCheck.isSelected())
-			parent0.paneExperiment.panelLoadSave.filteredCheck.setSelected(setFilter);
+		if (setFilter != parent0.paneBrowse.panelLoadSave.filteredCheck.isSelected())
+			parent0.paneBrowse.panelLoadSave.filteredCheck.setSelected(setFilter);
 	}
 	
-	void clearAllCheckBoxes () 
+	public void clearAllCheckBoxes () 
 	{
 		boolean select = false;
 		experimentCheck.setSelected(select);
