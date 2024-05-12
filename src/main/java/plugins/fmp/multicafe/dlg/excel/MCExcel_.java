@@ -29,13 +29,13 @@ public class MCExcel_  extends JPanel implements PropertyChangeListener
 	 * 
 	 */
 	private static final long serialVersionUID = -4296207607692017074L;
-	public	PopupPanel 		capPopupPanel	= null;
+			PopupPanel 		capPopupPanel	= null;
 	private JTabbedPane 	tabsPane 		= new JTabbedPane();
-	public Options			tabCommonOptions= new Options();
+	public 	Options			tabCommonOptions= new Options();
 	private Levels			tabLevels		= new Levels();
 	private Gulps			tabGulps		= new Gulps();
 	private Move 			tabMove  		= new Move();
-	private MultiCAFE 		parent0 = null;
+	private MultiCAFE 		parent0 		= null;
 
 	
 	public void init (JPanel mainPanel, String string, MultiCAFE parent0) 

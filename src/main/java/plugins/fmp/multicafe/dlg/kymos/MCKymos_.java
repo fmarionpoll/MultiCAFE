@@ -24,13 +24,13 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 	 * 
 	 */
 	private static final long serialVersionUID = 1122367183829360097L;
-	public	PopupPanel capPopupPanel	= null;
-	JTabbedPane 		tabsPane 		= new JTabbedPane();
-	public Create 		tabCreate 		= new Create();
-	public Display		tabDisplay 		= new Display();
-	public Intervals	tabIntervals 	= new Intervals();
-	public LoadSave 	tabLoadSave 	= new LoadSave();
-	private MultiCAFE parent0 = null;
+			PopupPanel 	capPopupPanel	= null;
+			JTabbedPane tabsPane 		= new JTabbedPane();
+	public 	Create 		tabCreate 		= new Create();
+	public 	Display		tabDisplay 		= new Display();
+	public 	Intervals	tabIntervals 	= new Intervals();
+	public 	LoadSave 	tabLoadSave 	= new LoadSave();
+	private MultiCAFE 	parent0 = null;
 
 	public void init (JPanel mainPanel, String string, MultiCAFE parent0) 
 	{
@@ -102,7 +102,7 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 			Viewer v = exp.seqCamData.seq.getFirstViewer();
 			if (v != null)
 				v.toFront();
-			parent0.paneExperiment.capPopupPanel.expand();
+//			parent0.paneExperiment.capPopupPanel.expand();
 			parent0.paneExperiment.tabsPane.setSelectedIndex(0);
 		} 
 		else if (iselected == 1) 

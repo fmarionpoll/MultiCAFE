@@ -25,14 +25,14 @@ public class MCCages_ extends JPanel implements PropertyChangeListener
 	private static final long serialVersionUID = 3457738144388946607L;
 	
 			BuildCages 		tabBuildCages	= new BuildCages();
-			Infos		tabInfos		= new Infos();
+			Infos			tabInfos		= new Infos();
 			Detect1 		tabDetect1 		= new Detect1();
 
-			Detect2DetectFlies tabDetect2 = new Detect2DetectFlies();
+			Detect2DetectFlies tabDetect2 	= new Detect2DetectFlies();
 			Edit			tabEdit			= new Edit();
-	public 	LoadSaveCages 		tabFile 		= new LoadSaveCages();
+	public 	LoadSaveCages 	tabFile 		= new LoadSaveCages();
 	public 	PlotPositions 	tabGraphics 	= new PlotPositions();
-	public	PopupPanel 		capPopupPanel	= null;
+			PopupPanel 		capPopupPanel	= null;
 			JTabbedPane 	tabsPane		= new JTabbedPane();
 			int				previouslySelected	= -1;
 	public 	boolean			bTrapROIsEdit	= false;
@@ -74,7 +74,7 @@ public class MCCages_ extends JPanel implements PropertyChangeListener
 	            tabDetect1.overlayCheckBox.setSelected(selectedIndex == iTAB_DETECT1);
 	            if (selectedIndex == iTAB_DETECT1 || selectedIndex == iTAB_DETECT2) 
 	            {
-	            	parent0.paneExperiment.capPopupPanel.expand();
+//	            	parent0.paneExperiment.capPopupPanel.expand();
 	    			parent0.paneExperiment.tabsPane.setSelectedIndex(0);
 	            }
 	            

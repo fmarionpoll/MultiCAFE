@@ -50,7 +50,6 @@ public class MultiCAFE extends PluginActionable
 		paneCapillaries.init(mainPanel, "Capillaries", this);
 		paneKymos.init(mainPanel, "Kymographs", this);
 		paneLevels.init(mainPanel, "Levels", this);
-//		paneSpots.init(mainPanel, "MEASURE SPOTS", this);
 		paneCages.init(mainPanel, "Cages", this);
 		paneExcel.init(mainPanel, "Export", this);
 		

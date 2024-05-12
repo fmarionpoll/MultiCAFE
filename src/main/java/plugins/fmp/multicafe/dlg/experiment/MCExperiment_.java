@@ -34,7 +34,7 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 	 */
 	private static final long serialVersionUID = -6826269677524125173L;
 	
-	public	PopupPanel 		capPopupPanel	= null;
+			PopupPanel 		capPopupPanel	= null;
 	public 	JTabbedPane 	tabsPane 		= new JTabbedPane();
 	public 	Options 		tabOptions 		= new Options();
 	public 	Infos			tabInfos		= new Infos();
