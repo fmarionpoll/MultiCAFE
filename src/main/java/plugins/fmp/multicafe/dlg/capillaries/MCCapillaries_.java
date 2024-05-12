@@ -33,7 +33,6 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 			Edit		tabEdit			= new Edit();
 	public 	LoadSaveCapillaries tabFile	= new LoadSaveCapillaries();
 			Adjust 		tabAdjust 		= new Adjust();
-//			FilterImage tabFilterImage  = new FilterImage();
 	public 	Infos		tabInfos		= new Infos();
 	private int 		ID_INFOS 		= 1;
 	private int 		ID_ADJUST 		= 3;
@@ -76,12 +75,6 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 		tabAdjust.addPropertyChangeListener(this);
 		tabsPane.addTab("Adjust", null, tabAdjust, "Adjust ROIS position to the capillaries");
 		order++;
-		
-//		ID_FILTER = order;
-//		tabFilterImage.init(capLayout, parent0);
-//		tabFilterImage.addPropertyChangeListener(this);
-//		tabsPane.addTab("Experimental", null, tabFilterImage, "Try different filters");
-//		order++;
 		
 		tabFile.init(capLayout, parent0);
 		tabFile.addPropertyChangeListener(this);
