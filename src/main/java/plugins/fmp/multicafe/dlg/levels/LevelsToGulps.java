@@ -24,7 +24,7 @@ import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.DetectGulps;
-import plugins.fmp.multicafe.tools.Canvas2D.KymosCanvas2D;
+import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 
 
@@ -105,7 +105,7 @@ public class LevelsToGulps extends JPanel  implements PropertyChangeListener
 				if (exp != null && exp.seqCamData != null) 
 				{
 					int index = gulpTransformsComboBox.getSelectedIndex();
-					getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(index +1);
+					getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(index +1);
 				}
 			}});
 		
@@ -127,13 +127,13 @@ public class LevelsToGulps extends JPanel  implements PropertyChangeListener
 				if (exp != null && exp.seqCamData != null) 
 				{
 					if (gulpTransformDisplayButton.isSelected()) {
-						KymosCanvas2D canvas = getKymosCanvas(exp);
-						canvas.updateListOfImageTransformFunctions( gulpTransforms);
+						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
+						canvas.updateTransformsComboStep1( gulpTransforms);
 						int index = gulpTransformsComboBox.getSelectedIndex();
-						canvas.selectImageTransformFunction(index +1);
+						canvas.selectImageTransformFunctionStep1(index +1);
 					}
 					else
-						getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(0);
+						getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(0);
 				}
 			}});
 		
@@ -233,9 +233,9 @@ public class LevelsToGulps extends JPanel  implements PropertyChangeListener
 		 }
 	}
 	
-	protected KymosCanvas2D getKymosCanvas(Experiment exp) 
+	protected Canvas2DWithTransforms getKymosCanvas(Experiment exp) 
 	{
-		KymosCanvas2D canvas = (KymosCanvas2D) exp.seqKymos.seq.getFirstViewer().getCanvas();
+		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.seqKymos.seq.getFirstViewer().getCanvas();
 		return canvas;
 	}
 	

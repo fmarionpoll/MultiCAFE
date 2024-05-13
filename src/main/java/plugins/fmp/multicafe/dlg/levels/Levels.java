@@ -28,7 +28,7 @@ import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.DetectLevels;
-import plugins.fmp.multicafe.tools.Canvas2D.KymosCanvas2D;
+import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.Overlay.OverlayThreshold;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
@@ -188,7 +188,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 				if (exp != null && exp.seqKymos != null) 
 				{
 					int index = transformPass1ComboBox.getSelectedIndex();
-					getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(index +1);
+					getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(index +1);
 					updateOverlayThreshold();
 				}
 			}});
@@ -202,7 +202,7 @@ public class Levels extends JPanel implements PropertyChangeListener
 				if (exp != null && exp.seqCamData != null) 
 				{
 					int index = transformPass2ComboBox.getSelectedIndex();
-					getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(index +1);
+					getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(index +1);
 					updateOverlayThreshold();
 				}
 			}});
@@ -227,17 +227,17 @@ public class Levels extends JPanel implements PropertyChangeListener
 					boolean displayCheckOverlay = false;
 					if (transformPass1DisplayButton.isSelected()) {
 						transformPass2DisplayButton.setSelected(false);
-						KymosCanvas2D canvas = getKymosCanvas(exp);
-						canvas.updateListOfImageTransformFunctions( transformPass1);
+						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
+						canvas.updateTransformsComboStep1( transformPass1);
 						int index = transformPass1ComboBox.getSelectedIndex();
-						canvas.selectImageTransformFunction(index +1);
+						canvas.selectImageTransformFunctionStep1(index +1);
 						displayCheckOverlay = true;
 					}
 					else
 					{
 						removeOverlay(exp);
 						overlayPass1CheckBox.setSelected(false);
-						getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(0);
+						getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(0);
 						
 					}
 					overlayPass1CheckBox.setEnabled(displayCheckOverlay);
@@ -254,17 +254,17 @@ public class Levels extends JPanel implements PropertyChangeListener
 					boolean displayCheckOverlay = false;
 					if (transformPass2DisplayButton.isSelected()) {
 						transformPass1DisplayButton.setSelected(false);
-						KymosCanvas2D canvas = getKymosCanvas(exp);
-						canvas.updateListOfImageTransformFunctions( transformPass2);
+						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
+						canvas.updateTransformsComboStep1( transformPass2);
 						int index = transformPass2ComboBox.getSelectedIndex();
-						canvas.selectImageTransformFunction(index +1);
+						canvas.selectImageTransformFunctionStep1(index +1);
 						displayCheckOverlay = true;
 					}
 					else
 					{
 						removeOverlay(exp);
 						overlayPass2CheckBox.setSelected(false);
-						getKymosCanvas(exp).imageTransformFunctionsCombo.setSelectedIndex(0);
+						getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(0);
 					}
 					overlayPass1CheckBox.setEnabled(displayCheckOverlay);
 				}
@@ -421,7 +421,6 @@ public class Levels extends JPanel implements PropertyChangeListener
 		}
 	}
 	
-
 	private void stopLevelsDetection() 
 	{	
 		if (threadDetectLevels != null && !threadDetectLevels.stopFlag) 
@@ -470,9 +469,9 @@ public class Levels extends JPanel implements PropertyChangeListener
 		return rectangle;
 	}
 	
-	protected KymosCanvas2D getKymosCanvas(Experiment exp) 
+	protected Canvas2DWithTransforms getKymosCanvas(Experiment exp) 
 	{
-		KymosCanvas2D canvas = (KymosCanvas2D) exp.seqKymos.seq.getFirstViewer().getCanvas();
+		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.seqKymos.seq.getFirstViewer().getCanvas();
 		return canvas;
 	}
 	

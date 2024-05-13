@@ -10,6 +10,8 @@ import plugins.fmp.multicafe.tools.ImageTransform.Filters.None;
 import plugins.fmp.multicafe.tools.ImageTransform.Filters.RGBtoHSB;
 import plugins.fmp.multicafe.tools.ImageTransform.Filters.RGBtoHSV;
 import plugins.fmp.multicafe.tools.ImageTransform.Filters.RemoveHorizontalAverage;
+import plugins.fmp.multicafe.tools.ImageTransform.Filters.SortChan0Columns;
+import plugins.fmp.multicafe.tools.ImageTransform.Filters.SortSumDiffColumns;
 import plugins.fmp.multicafe.tools.ImageTransform.Filters.SubtractColumn;
 import plugins.fmp.multicafe.tools.ImageTransform.Filters.SubtractReferenceImage;
 import plugins.fmp.multicafe.tools.ImageTransform.Filters.SumDiff;
@@ -59,6 +61,8 @@ public enum ImageTransformEnums
 	MINUSHORIZAVG	("remove Hz traces", 		new RemoveHorizontalAverage()),
 	THRESHOLD_SINGLE("threshold 1 value",		new ThresholdSingleValue()),
 	THRESHOLD_COLORS("threshold colors",		new ThresholdColors()),
+	SORT_CHAN0COLS	("sort col/chan0", 			new SortChan0Columns()),
+	SORT_SUMDIFFCOLS("sort col/SumDiff",    	new SortSumDiffColumns()),
 	ZIGZAG			("remove spikes",			new None()),
 	NONE			("none",					new None());
 

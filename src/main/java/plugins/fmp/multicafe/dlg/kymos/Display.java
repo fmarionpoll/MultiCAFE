@@ -16,6 +16,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import icy.canvas.Canvas2D;
@@ -27,12 +28,14 @@ import icy.gui.viewer.ViewerListener;
 import icy.main.Icy;
 import icy.roi.ROI;
 import icy.sequence.Sequence;
+
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Capillaries;
 import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
 import plugins.fmp.multicafe.tools.Directories;
+import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
 
 
 
@@ -202,7 +205,6 @@ public class Display extends JPanel implements ViewerListener
 		}
 	}
 	
-
 	void displayON()
 	{
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
@@ -218,12 +220,16 @@ public class Display extends JPanel implements ViewerListener
 				Viewer viewerKymographs = new Viewer(seqKymographs.seq, true);				
 				List<String> list = IcyCanvas.getCanvasPluginNames();
 				String pluginName = list.stream()
-						  .filter(s -> s.contains("Kymo"))
+						  .filter(s -> s.contains("Canvas2DWithTransforms"))
 						  .findFirst()
 						  .orElse(null);
 				viewerKymographs.setCanvas(pluginName);
 				viewerKymographs.setRepeat(false);
 				viewerKymographs.addListener(this);
+				
+				JToolBar toolBar = viewerKymographs.getToolBar();
+				Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) viewerKymographs.getCanvas();
+				canvas.customizeToolbarStep2(toolBar);
 
 				placeKymoViewerNextToCamViewer(exp);
 				
