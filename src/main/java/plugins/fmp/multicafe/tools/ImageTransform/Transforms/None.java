@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools.ImageTransform.Filters;
+package plugins.fmp.multicafe.tools.ImageTransform.Transforms;
 
 import icy.image.IcyBufferedImage;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformFunctionAbstract;

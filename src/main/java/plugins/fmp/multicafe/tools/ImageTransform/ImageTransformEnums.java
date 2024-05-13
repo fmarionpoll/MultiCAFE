@@ -1,27 +1,27 @@
 package plugins.fmp.multicafe.tools.ImageTransform;
 
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.Deriche;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.H1H2H3;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.L1DistanceToColumn;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.LinearCombination;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.LinearCombinationNormed;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.NegativeDifference;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.None;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.RGBtoHSB;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.RGBtoHSV;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.RemoveHorizontalAverage;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.SortChan0Columns;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.SortSumDiffColumns;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.SubtractColumn;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.SubtractReferenceImage;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.SumDiff;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.ThresholdColors;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.ThresholdSingleValue;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.XDiffn;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.XYDiffn;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.YDifferenceL;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.YDiffn;
-import plugins.fmp.multicafe.tools.ImageTransform.Filters.YDiffn1D;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.Deriche;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.H1H2H3;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.L1DistanceToColumn;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.LinearCombination;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.LinearCombinationNormed;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.NegativeDifference;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.None;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.RGBtoHSB;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.RGBtoHSV;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.RemoveHorizontalAverage;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.SortChan0Columns;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.SortSumDiffColumns;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.SubtractColumn;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.SubtractReferenceImage;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.SumDiff;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.ThresholdColors;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.ThresholdSingleValue;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.XDiffn;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.XYDiffn;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.YDifferenceL;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.YDiffn;
+import plugins.fmp.multicafe.tools.ImageTransform.Transforms.YDiffn1D;
 
 public enum ImageTransformEnums 
 {
