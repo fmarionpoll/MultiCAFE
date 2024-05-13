@@ -40,7 +40,7 @@ public class SortSumDiffColumns extends ImageTransformFunctionAbstract implement
 	private void getSortOrderForColumn(IcyBufferedImage sourceImage, int columnIndex, int[][] sorted) 
 	{
 		getImageColumnValues(sourceImage, columnIndex, sorted);
-		Arrays.sort(sorted, (a, b) -> a[1] - b[1]);
+		Arrays.sort(sorted, (a, b) -> Integer.compare(b[1],  a[1]));
 	}
 	
 	private void getImageColumnValues (IcyBufferedImage sourceImage, int columnIndex, int[][] sorted) 

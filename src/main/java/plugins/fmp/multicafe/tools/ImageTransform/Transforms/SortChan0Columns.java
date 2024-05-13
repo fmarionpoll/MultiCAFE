@@ -41,7 +41,7 @@ public class SortChan0Columns extends ImageTransformFunctionAbstract implements 
 	private void getSortOrderForColumn(IcyBufferedImage sourceImage, int columnIndex, int channel, int[][] sorted) 
 	{
 		getImageColumnValues(sourceImage, columnIndex, channel, sorted);
-		Arrays.sort(sorted, (a, b) -> a[1] - b[1]);
+		Arrays.sort(sorted, (a, b) -> Integer.compare(b[1],  a[1]));
 	}
 	
 	private void getImageColumnValues (IcyBufferedImage sourceImage, int columnIndex, int channel, int[][] sorted) 
