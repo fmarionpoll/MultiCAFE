@@ -14,22 +14,19 @@ import icy.file.Saver;
 import icy.gui.frame.progress.ProgressFrame;
 import icy.gui.viewer.Viewer;
 import icy.image.IcyBufferedImage;
-
-
 import icy.sequence.Sequence;
 import icy.system.SystemUtil;
 import icy.system.thread.Processor;
-
 import icy.type.DataType;
 import icy.type.collection.array.Array1DUtil;
 import loci.formats.FormatException;
+
 import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.KymoROI2D;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
 import plugins.fmp.multicafe.tools.Bresenham;
-import plugins.fmp.multicafe.tools.GaspardRigidRegistration;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 
 
@@ -153,7 +150,11 @@ public class BuildKymographs extends BuildSeries
 			sourceImageIndex = exp.getClosestInterval(sourceImageIndex, ii_ms);
 			final int fromSourceImageIndex = sourceImageIndex;
 			final int kymographColumn =  iToColumn;	
-			final IcyBufferedImage sourceImage = loadImageFromIndex(exp, fromSourceImageIndex);
+			if (options.concurrentDisplay) {
+				IcyBufferedImage sourceImage = loadImageFromIndex(exp, fromSourceImageIndex);
+				vData.setTitle("Analyzing frame: " + (fromSourceImageIndex +1)+ vDataTitle);
+				seqData.setImage(0, 0, sourceImage);
+			}
 			
 			tasks.add(processor.submit(new Runnable () {
 				@Override
@@ -163,8 +164,7 @@ public class BuildKymographs extends BuildSeries
 					for (Capillary capi: exp.capillaries.capillariesList) 
 						analyzeImageWithCapillary(sourceImage, capi, fromSourceImageIndex, kymographColumn);
 				}}));
-			vData.setTitle("Analyzing frame: " + (fromSourceImageIndex +1)+ vDataTitle);
-			seqData.setImage(0, 0, sourceImage);				
+						
 		}
 		waitFuturesCompletion(processor, tasks, null);
 		progressBar1.close();
@@ -204,12 +204,12 @@ public class BuildKymographs extends BuildSeries
 	private IcyBufferedImage loadImageFromIndex(Experiment exp, int indexFromFrame) 
 	{
 		IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(indexFromFrame));				
-		if (options.doRegistration ) 
-		{
-			String referenceImageName = exp.seqCamData.getFileNameFromImageList(options.referenceFrame);			
-			IcyBufferedImage referenceImage = imageIORead(referenceImageName);
-			adjustImage(sourceImage, referenceImage);
-		}
+//		if (options.doRegistration ) 
+//		{
+//			String referenceImageName = exp.seqCamData.getFileNameFromImageList(options.referenceFrame);			
+//			IcyBufferedImage referenceImage = imageIORead(referenceImageName);
+//			adjustImage(sourceImage, referenceImage);
+//		}
 		return sourceImage;
 	}
 	
@@ -358,14 +358,14 @@ public class BuildKymographs extends BuildSeries
 		return x;
 	}
 
-	private void adjustImage(IcyBufferedImage workImage, IcyBufferedImage referenceImage) 
-	{
-		int referenceChannel = 0;
-		GaspardRigidRegistration.correctTranslation2D(workImage, referenceImage, referenceChannel);
-        boolean rotate = GaspardRigidRegistration.correctRotation2D(workImage, referenceImage, referenceChannel);
-        if (rotate) 
-        	GaspardRigidRegistration.correctTranslation2D(workImage, referenceImage, referenceChannel);
-	}
+//	private void adjustImage(IcyBufferedImage workImage, IcyBufferedImage referenceImage) 
+//	{
+//		int referenceChannel = 0;
+//		GaspardRigidRegistration.correctTranslation2D(workImage, referenceImage, referenceChannel);
+//        boolean rotate = GaspardRigidRegistration.correctRotation2D(workImage, referenceImage, referenceChannel);
+//        if (rotate) 
+//        	GaspardRigidRegistration.correctTranslation2D(workImage, referenceImage, referenceChannel);
+//	}
 	
 	private void closeKymoViewers() 
 	{

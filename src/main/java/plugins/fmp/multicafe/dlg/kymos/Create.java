@@ -39,10 +39,11 @@ public class Create extends JPanel implements PropertyChangeListener
 	
 	JButton 	startComputationButton 	= new JButton("Start");
 	JSpinner	diskRadiusSpinner 		= new JSpinner(new SpinnerNumberModel(3, 1, 100, 1));
-	JCheckBox 	doRegistrationCheckBox 	= new JCheckBox("registration", false);
+//	JCheckBox 	doRegistrationCheckBox 	= new JCheckBox("registration", false);
+	JCheckBox	concurrentDisplayCheckBox = new JCheckBox("concurrent display", false);
 	JCheckBox	allSeriesCheckBox 		= new JCheckBox("ALL series (current to last)", false);
-	JLabel		startFrameLabel			= new JLabel ("starting at frame");
-	JSpinner	startFrameSpinner 		= new JSpinner(new SpinnerNumberModel(0, 0, 100000, 1));
+//	JLabel		startFrameLabel			= new JLabel ("starting at frame");
+//	JSpinner	startFrameSpinner 		= new JSpinner(new SpinnerNumberModel(0, 0, 100000, 1));
 	JSpinner 	binSize					= new JSpinner(new SpinnerNumberModel(1., 1., 1000., 1.));
 	JComboMs 	binUnit 				= new JComboMs();
 			
@@ -69,9 +70,10 @@ public class Create extends JPanel implements PropertyChangeListener
 		((FlowLayout)panel0.getLayout()).setVgap(1);
 		panel0.add(startComputationButton);
 		panel0.add(allSeriesCheckBox);
-		panel0.add(doRegistrationCheckBox);
-		panel0.add(startFrameLabel);
-		panel0.add(startFrameSpinner);
+//		panel0.add(doRegistrationCheckBox);
+		panel0.add(concurrentDisplayCheckBox);
+//		panel0.add(startFrameLabel);
+//		panel0.add(startFrameSpinner);
 		add(panel0);
 		
 		JPanel panel2 = new JPanel(layoutLeft);
@@ -95,8 +97,8 @@ public class Create extends JPanel implements PropertyChangeListener
 		intervalsUnit.setSelectedIndex(2);
 		add(panel1);
 		
-		startFrameLabel.setVisible(false);
-		startFrameSpinner.setVisible(false);
+//		startFrameLabel.setVisible(false);
+//		startFrameSpinner.setVisible(false);
 		
 		enableIntervalButtons(false);
 		ButtonGroup group = new ButtonGroup();
@@ -129,16 +131,16 @@ public class Create extends JPanel implements PropertyChangeListener
 				startComputationButton.setForeground(color);
 		}});
 		
-		doRegistrationCheckBox.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) 
-			{
-				boolean flag = doRegistrationCheckBox.isSelected();
-				startFrameLabel.setVisible(flag);
-				startFrameSpinner.setVisible(flag);
-				if (flag)
-					allSeriesCheckBox.setSelected(false);
-		}});
+//		doRegistrationCheckBox.addActionListener(new ActionListener () 
+//		{ 
+//			@Override public void actionPerformed( final ActionEvent e ) 
+//			{
+//				boolean flag = doRegistrationCheckBox.isSelected();
+//				startFrameLabel.setVisible(flag);
+//				startFrameSpinner.setVisible(flag);
+//				if (flag)
+//					allSeriesCheckBox.setSelected(false);
+//		}});
 		
 		isFixedFrameButton.addActionListener(new ActionListener () 
 		{ 
@@ -182,8 +184,9 @@ public class Create extends JPanel implements PropertyChangeListener
 		//parent0.paneExcel.tabCommonOptions.getBinMs();
 				
 		options.diskRadius 		= (int) diskRadiusSpinner.getValue();
-		options.doRegistration 	= doRegistrationCheckBox.isSelected();
-		options.referenceFrame  = (int) startFrameSpinner.getValue();
+		options.doRegistration 	= false; //doRegistrationCheckBox.isSelected();
+		options.referenceFrame  = 0; //(int) startFrameSpinner.getValue();
+		options.concurrentDisplay = concurrentDisplayCheckBox.isSelected();
 		options.doCreateBinDir 	= true;
 		options.parent0Rect 	= parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = Experiment.BIN+options.t_Ms_BinDuration/1000 ;

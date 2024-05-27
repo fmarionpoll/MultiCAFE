@@ -51,6 +51,8 @@ public class BuildSeriesOptions implements XMLPersistent
 	
 	public boolean 		pass2 = false;
 	public 	boolean		directionUp2			= true;
+	public boolean		concurrentDisplay		= true;
+	
 	public 	int			detectLevel2Threshold 	= 35;
 	public ImageTransformEnums transform02 		= ImageTransformEnums.L1DIST_TO_1RSTCOL;
 	public 	boolean 	analyzePartOnly			= false;
