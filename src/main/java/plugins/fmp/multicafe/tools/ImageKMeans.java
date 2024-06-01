@@ -19,33 +19,20 @@ import plugins.nherve.toolbox.image.segmentation.DefaultSegmentationAlgorithm;
 import plugins.nherve.toolbox.image.segmentation.Segmentation;
 import plugins.nherve.toolbox.image.segmentation.SegmentationException;
 
-
-
-
 public class ImageKMeans {
-	
-	public static Segmentation doClustering(
-			Sequence seq, 
-			int nbc2, 
-			int nbi2, 
-			double stab2, 
-			int cs) 
-			throws SupportRegionException, SegmentationException, MaskException, NumberFormatException, SignatureException 
-	{
+
+	public static Segmentation doClustering(Sequence seq, int nbc2, int nbi2, double stab2, int cs)
+			throws SupportRegionException, SegmentationException, MaskException, NumberFormatException,
+			SignatureException {
 		Segmentation segmentation = null;
 		segmentation = doClusteringKM(seq, nbc2, nbi2, stab2, cs);
 		segmentation.reInitColors(seq.getImage(0, 0));
 		return segmentation;
 	}
 
-	private static Segmentation doClusteringKM(
-			Sequence currentSequence, 
-			int nbc2, 
-			int nbi2, 
-			double stab2, 
-			int cs) 
-			throws SupportRegionException, SegmentationException, MaskException, NumberFormatException, SignatureException 
-	{
+	private static Segmentation doClusteringKM(Sequence currentSequence, int nbc2, int nbi2, double stab2, int cs)
+			throws SupportRegionException, SegmentationException, MaskException, NumberFormatException,
+			SignatureException {
 		SegmentableIcyBufferedImage img = new SegmentableIcyBufferedImage(currentSequence.getFirstImage());
 
 		KMeans km2 = new KMeans(nbc2, nbi2, stab2);
@@ -53,8 +40,7 @@ public class ImageKMeans {
 
 		Segmentation seg = null;
 
-		DefaultDescriptorImpl<SegmentableIcyBufferedImage, 
-		? extends Signature> col = null;
+		DefaultDescriptorImpl<SegmentableIcyBufferedImage, ? extends Signature> col = null;
 
 		ColorPixel cd = new ColorPixel(false);
 		cd.setColorSpace(cs);
@@ -67,29 +53,23 @@ public class ImageKMeans {
 		List<IcySupportRegion> lRegions = factory.extractRegions(img);
 		IcySupportRegion[] regions = new IcySupportRegion[lRegions.size()];
 		int r = 0;
-		for (IcySupportRegion sr : lRegions) 
-		{
+		for (IcySupportRegion sr : lRegions) {
 			regions[r++] = sr;
 		}
 
 		seg = doSingleClustering(img, regions, col, km2);
 		return seg;
 	}
-	
-	private static Segmentation doSingleClustering(
-			SegmentableIcyBufferedImage img, 
-			IcySupportRegion[] regions, 
-			DefaultDescriptorImpl<SegmentableIcyBufferedImage, 
-			? extends Signature> descriptor, 
-			DefaultClusteringAlgorithmImpl<VectorSignature> algo) 
-			throws SupportRegionException, SegmentationException 
-	{
-		DefaultSegmentationAlgorithm<SegmentableIcyBufferedImage> segAlgo 
-			= new DefaultSegmentationAlgorithm<SegmentableIcyBufferedImage>(descriptor, algo);
+
+	private static Segmentation doSingleClustering(SegmentableIcyBufferedImage img, IcySupportRegion[] regions,
+			DefaultDescriptorImpl<SegmentableIcyBufferedImage, ? extends Signature> descriptor,
+			DefaultClusteringAlgorithmImpl<VectorSignature> algo) throws SupportRegionException, SegmentationException {
+		DefaultSegmentationAlgorithm<SegmentableIcyBufferedImage> segAlgo = new DefaultSegmentationAlgorithm<SegmentableIcyBufferedImage>(
+				descriptor, algo);
 		segAlgo.setLogEnabled(false);
 
 		Segmentation seg = segAlgo.segment(img, regions);
 		return seg;
 	}
-	
+
 }

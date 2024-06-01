@@ -14,29 +14,24 @@ import icy.gui.component.PopupPanel;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 
-
-
-public class MCLevels_ extends JPanel implements PropertyChangeListener 
-{
+public class MCLevels_ extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7339633966002954720L;
-			PopupPanel 	capPopupPanel		= null;
-	private JTabbedPane tabsPane 			= new JTabbedPane();
-	public 	LoadSaveLevels tabFileLevels	= new LoadSaveLevels();
-			Levels 		tabDetectLevels2 	= new Levels();
-			
-			//DetectLevelsKMeans tabDetectLevelsK = new DetectLevelsKMeans();
-			LevelsToGulps tabDetectGulps 	= new LevelsToGulps();
-			EditLevels 	tabEdit				= new EditLevels();
-			Adjust 		tabAdjust			= new Adjust();
-	public 	Graphs 		tabGraphs 			= new Graphs();
-			MultiCAFE	parent0 			= null;
+	PopupPanel capPopupPanel = null;
+	private JTabbedPane tabsPane = new JTabbedPane();
+	public LoadSaveLevels tabFileLevels = new LoadSaveLevels();
+	Levels tabDetectLevels2 = new Levels();
 
-	
-	public void init (JPanel mainPanel, String string, MultiCAFE parent0) 
-	{
+	// DetectLevelsKMeans tabDetectLevelsK = new DetectLevelsKMeans();
+	LevelsToGulps tabDetectGulps = new LevelsToGulps();
+	EditLevels tabEdit = new EditLevels();
+	Adjust tabAdjust = new Adjust();
+	public Graphs tabGraphs = new Graphs();
+	MultiCAFE parent0 = null;
+
+	public void init(JPanel mainPanel, String string, MultiCAFE parent0) {
 		this.parent0 = parent0;
 		capPopupPanel = new PopupPanel(string);
 		JPanel capPanel = capPopupPanel.getMainPanel();
@@ -45,15 +40,15 @@ public class MCLevels_ extends JPanel implements PropertyChangeListener
 		mainPanel.add(capPopupPanel);
 
 		GridLayout capLayout = new GridLayout(4, 1);
-				
+
 		tabDetectLevels2.init(capLayout, parent0);
 		tabDetectLevels2.addPropertyChangeListener(this);
 		tabsPane.addTab("Levels", null, tabDetectLevels2, "Find limits of the columns of liquid");
-		
-		tabDetectGulps.init(capLayout, parent0);	
+
+		tabDetectGulps.init(capLayout, parent0);
 		tabsPane.addTab("Gulps", null, tabDetectGulps, "Detect gulps");
 		tabDetectGulps.addPropertyChangeListener(this);
-		
+
 		tabEdit.init(capLayout, parent0);
 		tabEdit.addPropertyChangeListener(this);
 		tabsPane.addTab("Edit", null, tabEdit, "Edit Rois / measures");
@@ -61,34 +56,30 @@ public class MCLevels_ extends JPanel implements PropertyChangeListener
 		tabGraphs.init(capLayout, parent0);
 		tabGraphs.addPropertyChangeListener(this);
 		tabsPane.addTab("Graphs", null, tabGraphs, "Display results as a graph");
-		
+
 		tabFileLevels.init(capLayout, parent0);
 		tabFileLevels.addPropertyChangeListener(this);
 		tabsPane.addTab("Load/Save", null, tabFileLevels, "Load/Save kymographs");
-						
+
 		capPanel.add(tabsPane);
 		tabDetectLevels2.transformPass1ComboBox.setSelectedItem(ImageTransformEnums.RGB_DIFFS);
 		tabsPane.setSelectedIndex(0);
-		
-		capPopupPanel.addComponentListener(new ComponentAdapter() 
-		{
+
+		capPopupPanel.addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentResized(ComponentEvent e) 
-			{
+			public void componentResized(ComponentEvent e) {
 				parent0.mainFrame.revalidate();
 				parent0.mainFrame.pack();
 				parent0.mainFrame.repaint();
 			}
 		});
 	}
-	
+
 	@Override
-	public void propertyChange(PropertyChangeEvent arg0) 
-	{
-		if (arg0.getPropertyName().equals("MEASURES_SAVE")) 
-		{
+	public void propertyChange(PropertyChangeEvent arg0) {
+		if (arg0.getPropertyName().equals("MEASURES_SAVE")) {
 			tabsPane.setSelectedIndex(0);
 		}
 	}
-	
+
 }

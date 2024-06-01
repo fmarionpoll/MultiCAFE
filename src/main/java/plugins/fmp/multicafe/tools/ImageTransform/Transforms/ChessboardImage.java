@@ -13,9 +13,9 @@ import plugins.adufour.ezplug.EzVarSequence;
 
 public class ChessboardImage extends EzPlug implements Block {
 
-	private EzVarSequence	seq1;
-	private EzVarSequence	seq2;
-	private EzVarInteger	squareSize;
+	private EzVarSequence seq1;
+	private EzVarSequence seq2;
+	private EzVarInteger squareSize;
 
 	private EzVarSequence seqResult;
 
@@ -63,7 +63,8 @@ public class ChessboardImage extends EzPlug implements Block {
 	}
 
 	@Override
-	public void clean() {}
+	public void clean() {
+	}
 
 	public static Sequence createChessboardImage(Sequence s1, Sequence s2, int squareSize) {
 
@@ -77,7 +78,8 @@ public class ChessboardImage extends EzPlug implements Block {
 		resultImage.beginUpdate();
 
 		for (int ch = 0; ch < resultImage.getSizeC(); ch++) {
-			double[] resultData = Array1DUtil.arrayToDoubleArray(resultImage.getDataXY(ch), resultImage.isSignedDataType());
+			double[] resultData = Array1DUtil.arrayToDoubleArray(resultImage.getDataXY(ch),
+					resultImage.isSignedDataType());
 			double[] s1Data = Array1DUtil.arrayToDoubleArray(s1Image.getDataXY(ch), resultImage.isSignedDataType());
 			double[] s2Data = Array1DUtil.arrayToDoubleArray(s2Image.getDataXY(ch), resultImage.isSignedDataType());
 

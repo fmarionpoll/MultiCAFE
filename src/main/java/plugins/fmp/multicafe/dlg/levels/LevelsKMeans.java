@@ -29,45 +29,41 @@ import plugins.nherve.toolbox.image.segmentation.Segmentation;
 import plugins.nherve.toolbox.image.segmentation.SegmentationException;
 import plugins.nherve.toolbox.image.toolboxes.ColorSpaceTools;
 
-public class LevelsKMeans  extends JPanel 
-{
+public class LevelsKMeans extends JPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6031521157029550040L;
 
-	private JCheckBox	allKymosCheckBox 		= new JCheckBox ("all kymographs", true);
-	private String 		detectString 			= "  Detect ";
-	private JButton 	detectButton 			= new JButton(detectString);
-	private JCheckBox 	allSeriesCheckBox 		= new JCheckBox("ALL (current to last)", false);
-	private JCheckBox	leftCheckBox 			= new JCheckBox ("L", true);
-	private JCheckBox	rightCheckBox 			= new JCheckBox ("R", true);
-	private JButton		displayButton			= new JButton("Display");
-	
-	private JComboBox<String> cbColorSpace = new JComboBox<String> (new String[] {
-			ColorSpaceTools.COLOR_SPACES[ColorSpaceTools.RGB],
-			ColorSpaceTools.COLOR_SPACES[ColorSpaceTools.RGB_TO_HSV],
-			ColorSpaceTools.COLOR_SPACES[ColorSpaceTools.RGB_TO_H1H2H3]
-			});
-	private JSpinner 	tfNbCluster2  = new JSpinner(new SpinnerNumberModel(3, 1, 10, 1));
-	private JSpinner 	tfNbIteration2 = new JSpinner(new SpinnerNumberModel(100, 1, 999, 1));
-	private JSpinner 	tfStabCrit2 = new JSpinner(new SpinnerNumberModel(0.001, 0.001, 100., .1));
-	private JCheckBox 	cbSendMaskDirectly = new JCheckBox("To editor");
-	private Thread 		currentlyRunning;
-	
-	private MultiCAFE 	parent0 	= null;
-	
+	private JCheckBox allKymosCheckBox = new JCheckBox("all kymographs", true);
+	private String detectString = "  Detect ";
+	private JButton detectButton = new JButton(detectString);
+	private JCheckBox allSeriesCheckBox = new JCheckBox("ALL (current to last)", false);
+	private JCheckBox leftCheckBox = new JCheckBox("L", true);
+	private JCheckBox rightCheckBox = new JCheckBox("R", true);
+	private JButton displayButton = new JButton("Display");
+
+	private JComboBox<String> cbColorSpace = new JComboBox<String>(new String[] {
+			ColorSpaceTools.COLOR_SPACES[ColorSpaceTools.RGB], ColorSpaceTools.COLOR_SPACES[ColorSpaceTools.RGB_TO_HSV],
+			ColorSpaceTools.COLOR_SPACES[ColorSpaceTools.RGB_TO_H1H2H3] });
+	private JSpinner tfNbCluster2 = new JSpinner(new SpinnerNumberModel(3, 1, 10, 1));
+	private JSpinner tfNbIteration2 = new JSpinner(new SpinnerNumberModel(100, 1, 999, 1));
+	private JSpinner tfStabCrit2 = new JSpinner(new SpinnerNumberModel(0.001, 0.001, 100., .1));
+	private JCheckBox cbSendMaskDirectly = new JCheckBox("To editor");
+	private Thread currentlyRunning;
+
+	private MultiCAFE parent0 = null;
+
 	// -----------------------------------------------------
-	
-	void init(GridLayout capLayout, MultiCAFE parent0) 
-	{
+
+	void init(GridLayout capLayout, MultiCAFE parent0) {
 		setLayout(capLayout);
 		this.parent0 = parent0;
-		
-		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEFT); 
-		
+
+		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEFT);
+
 		JPanel panel0 = new JPanel(layoutLeft);
-		((FlowLayout)panel0.getLayout()).setVgap(0);
+		((FlowLayout) panel0.getLayout()).setVgap(0);
 		panel0.add(detectButton);
 		panel0.add(allSeriesCheckBox);
 		panel0.add(allKymosCheckBox);
@@ -75,54 +71,50 @@ public class LevelsKMeans  extends JPanel
 		panel0.add(rightCheckBox);
 		panel0.add(cbSendMaskDirectly);
 		add(panel0);
-		
+
 		JPanel panel01 = new JPanel(layoutLeft);
-		panel01.add (new JLabel("Color space"));
-		panel01.add (cbColorSpace);
-		panel01.add (new JLabel ("Clusters"));
-		panel01.add (tfNbCluster2);
-		panel01.add (new JLabel ("Iterations"));
-		panel01.add (tfNbIteration2);
+		panel01.add(new JLabel("Color space"));
+		panel01.add(cbColorSpace);
+		panel01.add(new JLabel("Clusters"));
+		panel01.add(tfNbCluster2);
+		panel01.add(new JLabel("Iterations"));
+		panel01.add(tfNbIteration2);
 		panel01.add(displayButton);
-		add (panel01);
-		
+		add(panel01);
+
 		JPanel panel1 = new JPanel(layoutLeft);
-		panel1.add (new JLabel ("Stabilization"));
-		panel1.add( tfStabCrit2);
-		add( panel1);
-		
+		panel1.add(new JLabel("Stabilization"));
+		panel1.add(tfStabCrit2);
+		add(panel1);
+
 		defineActionListeners();
 		currentlyRunning = null;
 		cbSendMaskDirectly.setSelected(false);
-		
+
 		// no detection yet
-		detectButton.setEnabled(false); 
-		allSeriesCheckBox.setEnabled(false); 
-		allKymosCheckBox.setEnabled(false); 
-		leftCheckBox.setEnabled(false); 
+		detectButton.setEnabled(false);
+		allSeriesCheckBox.setEnabled(false);
+		allKymosCheckBox.setEnabled(false);
+		leftCheckBox.setEnabled(false);
 		rightCheckBox.setEnabled(false);
 	}
-	
-	private void defineActionListeners() 
-	{	
-		displayButton.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) 
-			{ 
+
+	private void defineActionListeners() {
+		displayButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null && (currentlyRunning == null)) 
-				{
+				if (exp != null && (currentlyRunning == null)) {
 					runKMeans(exp);
 				}
-			}});
-		
+			}
+		});
+
 	}
-	
-	private int getColorSpaceFromCombo() 
-	{
+
+	private int getColorSpaceFromCombo() {
 		int cs = ColorSpaceTools.RGB;
-		switch(cbColorSpace.getSelectedIndex()) 
-		{
+		switch (cbColorSpace.getSelectedIndex()) {
 		case 1:
 			cs = ColorSpaceTools.RGB_TO_HSV;
 			break;
@@ -136,25 +128,22 @@ public class LevelsKMeans  extends JPanel
 		return cs;
 	}
 
-	private void runKMeans(Experiment exp) 
-	{
+	private void runKMeans(Experiment exp) {
 		displayButton.setEnabled(false);
 		final int nbc2 = (int) tfNbCluster2.getValue();
 		final int nbi2 = (int) tfNbIteration2.getValue();
 		final double stab2 = (double) tfStabCrit2.getValue();
 		final int cs = getColorSpaceFromCombo();
-		
-		currentlyRunning = new Thread() 
-		{
+
+		currentlyRunning = new Thread() {
 			@Override
-			public void run() 
-			{
+			public void run() {
 				try {
 					final Sequence seq = exp.seqKymos.seq;
 					final Segmentation segmentation = ImageKMeans.doClustering(seq, nbc2, nbi2, stab2, cs);
-					if (cbSendMaskDirectly.isSelected()) 
+					if (cbSendMaskDirectly.isSelected())
 						callMaskEditor(seq, segmentation);
-					else 
+					else
 						callDirect(segmentation);
 				} catch (SupportRegionException e1) {
 					System.out.println(e1.getClass().getName() + " : " + e1.getMessage());
@@ -171,16 +160,13 @@ public class LevelsKMeans  extends JPanel
 		};
 		currentlyRunning.start();
 	}
-	
-	void callMaskEditor(Sequence seq, Segmentation segmentation) 
-	{
+
+	void callMaskEditor(Sequence seq, Segmentation segmentation) {
 		final MaskEditor maskEditorPlugin = MaskEditor.getRunningInstance(true);
 		currentlyRunning = null;
-		Runnable r = new Runnable() 
-		{
+		Runnable r = new Runnable() {
 			@Override
-			public void run() 
-			{
+			public void run() {
 				maskEditorPlugin.setSegmentationForSequence(seq, segmentation);
 				maskEditorPlugin.switchOpacityOn();
 				displayButton.setEnabled(true);
@@ -192,17 +178,14 @@ public class LevelsKMeans  extends JPanel
 			System.out.println(e.getClass().getName() + " : " + e.getMessage());
 		}
 	}
-	
-	void callDirect(Segmentation segmentation)
-	{
+
+	void callDirect(Segmentation segmentation) {
 		SwimmingObject result = new SwimmingObject(segmentation);
 		Icy.getMainInterface().getSwimmingPool().add(result);
 		currentlyRunning = null;
-		Runnable r = new Runnable() 
-		{
+		Runnable r = new Runnable() {
 			@Override
-			public void run() 
-			{
+			public void run() {
 				displayButton.setEnabled(true);
 			}
 		};

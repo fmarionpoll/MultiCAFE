@@ -7,48 +7,40 @@ import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformFunctionAbstract
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformOptions;
 
-public class ThresholdSingleValue extends ImageTransformFunctionAbstract implements ImageTransformInterface
-{
+public class ThresholdSingleValue extends ImageTransformFunctionAbstract implements ImageTransformInterface {
 	@Override
-	public IcyBufferedImage getTransformedImage(IcyBufferedImage sourceImage, ImageTransformOptions options) 
-	{
+	public IcyBufferedImage getTransformedImage(IcyBufferedImage sourceImage, ImageTransformOptions options) {
 		if (sourceImage == null)
 			return null;
-		
-		IcyBufferedImage binaryMap = new IcyBufferedImage(sourceImage.getSizeX(), sourceImage.getSizeY(), 1, DataType.UBYTE);
+
+		IcyBufferedImage binaryMap = new IcyBufferedImage(sourceImage.getSizeX(), sourceImage.getSizeY(), 1,
+				DataType.UBYTE);
 		byte[] binaryMapDataBuffer = binaryMap.getDataXYAsByte(0);
-		int [] imageSourceDataBuffer = null;
+		int[] imageSourceDataBuffer = null;
 		DataType datatype = sourceImage.getDataType_();
-		if (datatype != DataType.INT) 
-		{
+		if (datatype != DataType.INT) {
 			Object sourceArray = sourceImage.getDataXY(0);
 			imageSourceDataBuffer = Array1DUtil.arrayToIntArray(sourceArray, sourceImage.isSignedDataType());
-		}
-		else
-		{
+		} else {
 			imageSourceDataBuffer = sourceImage.getDataXYAsInt(0);
 		}
-		
+
 		byte on = options.byteTRUE;
 		byte off = options.byteFALSE;
-		if (!options.ifGreater) 
-		{
+		if (!options.ifGreater) {
 			off = options.byteTRUE;
 			on = options.byteFALSE;
 		}
 
-		for (int x = 0; x < binaryMapDataBuffer.length; x++)  
-		{
+		for (int x = 0; x < binaryMapDataBuffer.length; x++) {
 			int val = imageSourceDataBuffer[x] & 0xFF;
 			if (val > options.simplethreshold)
 				binaryMapDataBuffer[x] = off;
 			else
 				binaryMapDataBuffer[x] = on;
 		}
-		
+
 		return binaryMap;
 	}
 
 }
-
-

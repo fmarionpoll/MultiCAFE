@@ -6,15 +6,13 @@ import java.util.ArrayList;
 import icy.image.IcyBufferedImage;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
 
-
-public class ImageTransformOptions 
-{
-	public ImageTransformEnums transformOption; 
+public class ImageTransformOptions {
+	public ImageTransformEnums transformOption;
 	public IcyBufferedImage backgroundImage = null;
 	public IcyBufferedImage secondImage = null;
 	public SequenceCamData seqCamData = null;
 	public int npixels_changed = 0;
-	
+
 	public int xfirst;
 	public int xlast;
 	public int yfirst;
@@ -29,24 +27,21 @@ public class ImageTransformOptions
 	public int simplethreshold = 255;
 	public int background_delta = 50;
 	public int background_jitter = 1;
-		
+
 	public int colorthreshold = 0;
 	public int colordistanceType = 0;
 	public boolean ifGreater = true;
-	
+
 	public final byte byteFALSE = 0;
 	public final byte byteTRUE = (byte) 0xFF;
 	public ArrayList<Color> colorarray = null;
-	
-	
-	public void setSingleThreshold (int simplethreshold, boolean ifGreater) 
-	{
+
+	public void setSingleThreshold(int simplethreshold, boolean ifGreater) {
 		this.simplethreshold = simplethreshold;
 		this.ifGreater = ifGreater;
 	}
-	
-	public void setColorArrayThreshold (int colordistanceType, int colorthreshold, ArrayList<Color> colorarray) 
-	{
+
+	public void setColorArrayThreshold(int colordistanceType, int colorthreshold, ArrayList<Color> colorarray) {
 		transformOption = ImageTransformEnums.THRESHOLD_COLORS;
 		this.colordistanceType = colordistanceType;
 		this.colorthreshold = colorthreshold;

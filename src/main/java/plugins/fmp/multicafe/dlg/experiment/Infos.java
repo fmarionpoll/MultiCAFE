@@ -17,56 +17,52 @@ import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.JComponents.SortedComboBoxModel;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
-
-public class Infos  extends JPanel
-{
+public class Infos extends JPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2190848825783418962L;
 
-	private JComboBox<String>	cmt1Combo		= new JComboBox<String>(new SortedComboBoxModel());
-	private JComboBox<String>	comt2Combo		= new JComboBox<String>(new SortedComboBoxModel());
-	private JComboBox<String> 	boxIDCombo		= new JComboBox<String>(new SortedComboBoxModel());
-	private JComboBox<String> 	exptCombo 		= new JComboBox<String>(new SortedComboBoxModel());
-	private JComboBox<String> 	strainCombo 	= new JComboBox<String>(new SortedComboBoxModel());
-	private JComboBox<String> 	sexCombo 		= new JComboBox<String>(new SortedComboBoxModel());
-	private JComboBox<String> 	cond1Combo 		= new JComboBox<String>(new SortedComboBoxModel());
-	private JComboBox<String> 	cond2Combo 		= new JComboBox<String>(new SortedComboBoxModel());
-	
-	private JLabel				experimentCheck	= new JLabel(EnumXLSColumnHeader.EXP_EXPT.toString());
-	private JLabel				boxIDCheck		= new JLabel(EnumXLSColumnHeader.EXP_BOXID.toString());
-	private JLabel				comment1Check	= new JLabel(EnumXLSColumnHeader.EXP_STIM.toString());
-	private JLabel				comment2Check	= new JLabel(EnumXLSColumnHeader.EXP_CONC.toString());
-	private JLabel				strainCheck		= new JLabel(EnumXLSColumnHeader.EXP_STRAIN.toString());
-	private JLabel				sexCheck		= new JLabel(EnumXLSColumnHeader.EXP_SEX.toString());
-	private JLabel				cond1Check		= new JLabel(EnumXLSColumnHeader.EXP_COND1.toString());
-	private JLabel				cond2Check		= new JLabel(EnumXLSColumnHeader.EXP_COND2.toString());
-	
-	private JButton				openButton		= new JButton("Load...");
-	private JButton				saveButton		= new JButton("Save...");
-	private JButton				duplicateButton = new JButton("Get previous");
-	
-	private MultiCAFE 			parent0 		= null;
-	public boolean 					disableChangeFile = false;
-	
-	
-	void init(GridLayout capLayout, MultiCAFE parent0) 
-	{
+	private JComboBox<String> cmt1Combo = new JComboBox<String>(new SortedComboBoxModel());
+	private JComboBox<String> comt2Combo = new JComboBox<String>(new SortedComboBoxModel());
+	private JComboBox<String> boxIDCombo = new JComboBox<String>(new SortedComboBoxModel());
+	private JComboBox<String> exptCombo = new JComboBox<String>(new SortedComboBoxModel());
+	private JComboBox<String> strainCombo = new JComboBox<String>(new SortedComboBoxModel());
+	private JComboBox<String> sexCombo = new JComboBox<String>(new SortedComboBoxModel());
+	private JComboBox<String> cond1Combo = new JComboBox<String>(new SortedComboBoxModel());
+	private JComboBox<String> cond2Combo = new JComboBox<String>(new SortedComboBoxModel());
+
+	private JLabel experimentCheck = new JLabel(EnumXLSColumnHeader.EXP_EXPT.toString());
+	private JLabel boxIDCheck = new JLabel(EnumXLSColumnHeader.EXP_BOXID.toString());
+	private JLabel comment1Check = new JLabel(EnumXLSColumnHeader.EXP_STIM.toString());
+	private JLabel comment2Check = new JLabel(EnumXLSColumnHeader.EXP_CONC.toString());
+	private JLabel strainCheck = new JLabel(EnumXLSColumnHeader.EXP_STRAIN.toString());
+	private JLabel sexCheck = new JLabel(EnumXLSColumnHeader.EXP_SEX.toString());
+	private JLabel cond1Check = new JLabel(EnumXLSColumnHeader.EXP_COND1.toString());
+	private JLabel cond2Check = new JLabel(EnumXLSColumnHeader.EXP_COND2.toString());
+
+	private JButton openButton = new JButton("Load...");
+	private JButton saveButton = new JButton("Save...");
+	private JButton duplicateButton = new JButton("Get previous");
+
+	private MultiCAFE parent0 = null;
+	public boolean disableChangeFile = false;
+
+	void init(GridLayout capLayout, MultiCAFE parent0) {
 		this.parent0 = parent0;
 		GridBagLayout layoutThis = new GridBagLayout();
 		setLayout(layoutThis);
-		
+
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.BASELINE;
 		c.ipadx = 0;
 		c.ipady = 0;
-		c.insets = new Insets(1, 2, 1, 2); 
+		c.insets = new Insets(1, 2, 1, 2);
 		int delta1 = 1;
 		int delta2 = 3;
-		
+
 		// line 0
 		c.gridx = 0;
 		c.gridy = 0;
@@ -114,80 +110,74 @@ public class Infos  extends JPanel
 		c.gridx += delta1;
 		add(cond2Combo, c);
 
-
 		boxIDCombo.setEditable(true);
-		exptCombo.setEditable(true);	
+		exptCombo.setEditable(true);
 		cmt1Combo.setEditable(true);
 		comt2Combo.setEditable(true);
 		strainCombo.setEditable(true);
 		sexCombo.setEditable(true);
 		cond1Combo.setEditable(true);
 		cond2Combo.setEditable(true);
-		
+
 		defineActionListeners();
-	}	
-	
-	private void defineActionListeners() 
-	{
-		openButton.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) 
-			{ 
+	}
+
+	private void defineActionListeners() {
+		openButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) 
-				{
-					exp.xmlLoad_MCExperiment ();
+				if (exp != null) {
+					exp.xmlLoad_MCExperiment();
 					transferPreviousExperimentInfosToDialog(exp, exp);
 				}
-			}});
-		
-		saveButton.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) 
-			{ 
+			}
+		});
+
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) 
-				{
+				if (exp != null) {
 					getExperimentInfosFromDialog(exp);
 					exp.xmlSave_MCExperiment();
 				}
-			}});
-		
-		duplicateButton.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) 
-			{ 
+			}
+		});
+
+		duplicateButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
 				duplicatePreviousDescriptors();
-			}});
+			}
+		});
 	}
-		
+
 	// set/ get
-	
-	public void transferPreviousExperimentInfosToDialog(Experiment exp_source, Experiment exp_destination) 
-	{
-		setInfoCombo(exp_destination, exp_source, boxIDCombo, EnumXLSColumnHeader.EXP_BOXID); 
-		setInfoCombo(exp_destination, exp_source, exptCombo, EnumXLSColumnHeader.EXP_EXPT) ;
-		setInfoCombo(exp_destination, exp_source, cmt1Combo, EnumXLSColumnHeader.EXP_STIM) ;
-		setInfoCombo(exp_destination, exp_source, comt2Combo, EnumXLSColumnHeader.EXP_CONC) ;
-		setInfoCombo(exp_destination, exp_source, strainCombo, EnumXLSColumnHeader.EXP_STRAIN) ;
-		setInfoCombo(exp_destination, exp_source, sexCombo, EnumXLSColumnHeader.EXP_SEX) ;
-		setInfoCombo(exp_destination, exp_source, cond1Combo, EnumXLSColumnHeader.EXP_COND1) ;
-		setInfoCombo(exp_destination, exp_source, cond2Combo, EnumXLSColumnHeader.EXP_COND2) ;
+
+	public void transferPreviousExperimentInfosToDialog(Experiment exp_source, Experiment exp_destination) {
+		setInfoCombo(exp_destination, exp_source, boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
+		setInfoCombo(exp_destination, exp_source, exptCombo, EnumXLSColumnHeader.EXP_EXPT);
+		setInfoCombo(exp_destination, exp_source, cmt1Combo, EnumXLSColumnHeader.EXP_STIM);
+		setInfoCombo(exp_destination, exp_source, comt2Combo, EnumXLSColumnHeader.EXP_CONC);
+		setInfoCombo(exp_destination, exp_source, strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
+		setInfoCombo(exp_destination, exp_source, sexCombo, EnumXLSColumnHeader.EXP_SEX);
+		setInfoCombo(exp_destination, exp_source, cond1Combo, EnumXLSColumnHeader.EXP_COND1);
+		setInfoCombo(exp_destination, exp_source, cond2Combo, EnumXLSColumnHeader.EXP_COND2);
 	}
-	
-	private void setInfoCombo(Experiment exp_dest, Experiment exp_source, JComboBox<String> combo, EnumXLSColumnHeader field) 
-	{
+
+	private void setInfoCombo(Experiment exp_dest, Experiment exp_source, JComboBox<String> combo,
+			EnumXLSColumnHeader field) {
 		String altText = exp_source.getExperimentField(field);
 		String text = exp_dest.getExperimentField(field);
-		if (text .equals(".."))
+		if (text.equals(".."))
 			exp_dest.setExperimentFieldNoTest(field, altText);
 		text = exp_dest.getExperimentField(field);
 		addItemToComboIfNew(text, combo);
 		combo.setSelectedItem(text);
 	}
 
-	public void getExperimentInfosFromDialog(Experiment exp) 
-	{
+	public void getExperimentInfosFromDialog(Experiment exp) {
 		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID, (String) boxIDCombo.getSelectedItem());
 		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT, (String) exptCombo.getSelectedItem());
 		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM, (String) cmt1Combo.getSelectedItem());
@@ -197,19 +187,17 @@ public class Infos  extends JPanel
 		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND1, (String) cond1Combo.getSelectedItem());
 		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND2, (String) cond2Combo.getSelectedItem());
 	}
-	
-	private void addItemToComboIfNew(String toAdd, JComboBox<String> combo) 
-	{
+
+	private void addItemToComboIfNew(String toAdd, JComboBox<String> combo) {
 		if (toAdd == null)
 			return;
 		SortedComboBoxModel model = (SortedComboBoxModel) combo.getModel();
-		if (model.getIndexOf(toAdd) == -1 )
+		if (model.getIndexOf(toAdd) == -1)
 			model.addElement(toAdd);
-    }	
-		
-	public void initInfosCombos()
-	{
-		parent0.expListCombo.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT); 
+	}
+
+	public void initInfosCombos() {
+		parent0.expListCombo.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
 		parent0.expListCombo.getFieldValuesToCombo(cmt1Combo, EnumXLSColumnHeader.EXP_STIM);
 		parent0.expListCombo.getFieldValuesToCombo(comt2Combo, EnumXLSColumnHeader.EXP_CONC);
 		parent0.expListCombo.getFieldValuesToCombo(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
@@ -221,10 +209,9 @@ public class Infos  extends JPanel
 		if (exp != null)
 			transferPreviousExperimentInfosToDialog(exp, exp);
 	}
-	
-	public void clearCombos()
-	{
-		exptCombo.removeAllItems(); 
+
+	public void clearCombos() {
+		exptCombo.removeAllItems();
 		cmt1Combo.removeAllItems();
 		comt2Combo.removeAllItems();
 		boxIDCombo.removeAllItems();
@@ -234,18 +221,15 @@ public class Infos  extends JPanel
 		cond2Combo.removeAllItems();
 	}
 
-	void duplicatePreviousDescriptors()
-	{
-		int iprevious = parent0.expListCombo.getSelectedIndex()-1;
+	void duplicatePreviousDescriptors() {
+		int iprevious = parent0.expListCombo.getSelectedIndex() - 1;
 		if (iprevious < 0)
 			return;
-		
+
 		Experiment exp0 = (Experiment) parent0.expListCombo.getItemAt(iprevious);
-		Experiment exp = (Experiment) parent0.expListCombo.getItemAt(iprevious+1);
+		Experiment exp = (Experiment) parent0.expListCombo.getItemAt(iprevious + 1);
 		transferPreviousExperimentInfosToDialog(exp0, exp);
 		parent0.paneCapillaries.transferPreviousExperimentCapillariesInfos(exp0, exp);
 	}
-	
 
 }
-

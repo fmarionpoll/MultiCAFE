@@ -53,325 +53,322 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 /**
-* ComboBox containing checkbox
-* @author gjj
-*/
+ * ComboBox containing checkbox
+ * 
+ * @author gjj
+ */
 class CheckComboBox extends JComboBox<Object> {
-
 
 	private static final long serialVersionUID = -7947410911737341771L;
 	private List<ObjCheckBox> cbs;
 	private Map<Object, Boolean> mapObjSelected;
 	private List<CheckComboBoxSelectionChangedListener> changedListeners = new Vector<CheckComboBoxSelectionChangedListener>();
 
-  private Object nullObject = new Object();
+	private Object nullObject = new Object();
 
-  public CheckComboBox(final Set<?> objs) {
-      this(objs, false);
-  }
+	public CheckComboBox(final Set<?> objs) {
+		this(objs, false);
+	}
 
-  public CheckComboBox(final Set<?> objs, boolean selected) {
-      resetObjs(objs, selected);
-  }
+	public CheckComboBox(final Set<?> objs, boolean selected) {
+		resetObjs(objs, selected);
+	}
 
-  public CheckComboBox(final Set<?> objs, final Set<?> selected) {
-      mapObjSelected = new LinkedHashMap<Object, Boolean>();
-      for (Object obj : objs) {
-          if (obj==null)
-              obj = nullObject;
-          mapObjSelected.put(obj, selected.contains(obj));
-      }
+	public CheckComboBox(final Set<?> objs, final Set<?> selected) {
+		mapObjSelected = new LinkedHashMap<Object, Boolean>();
+		for (Object obj : objs) {
+			if (obj == null)
+				obj = nullObject;
+			mapObjSelected.put(obj, selected.contains(obj));
+		}
 
-      reset();
-  }
+		reset();
+	}
 
+	public CheckComboBox(Map<Object, Boolean> mapObjSelected) {
+		this.mapObjSelected = mapObjSelected;
+		reset();
+	}
 
-  public CheckComboBox(Map<Object, Boolean> mapObjSelected) {
-      this.mapObjSelected = mapObjSelected;
-      reset();
-  }
+	public void addSelectionChangedListener(CheckComboBoxSelectionChangedListener l) {
+		if (l == null) {
+			return;
+		}
+		changedListeners.add(l);
+	}
 
-  public void addSelectionChangedListener (CheckComboBoxSelectionChangedListener l) {
-      if (l==null) {
-          return;
-      }
-      changedListeners.add(l);
-  }
+	public void removeSelectionChangedListener(CheckComboBoxSelectionChangedListener l) {
+		changedListeners.remove(l);
+	}
 
-  public void removeSelectionChangedListener (CheckComboBoxSelectionChangedListener l) {
-      changedListeners.remove(l);
-  }
+	public void resetObjs(final Set<?> objs, boolean selected) {
+		mapObjSelected = new LinkedHashMap<Object, Boolean>();
+		for (Object obj : objs) {
+			mapObjSelected.put(obj, selected);
+		}
 
-  public void resetObjs(final Set<?> objs, boolean selected) {
-      mapObjSelected = new LinkedHashMap<Object, Boolean>();
-      for (Object obj : objs) {
-          mapObjSelected.put(obj, selected);
-      }
+		reset();
+	}
 
-      reset();
-  }
+	public Object[] getSelectedItems() {
+		Set<Object> ret = new TreeSet<Object>(); // alphabetically
+		for (Map.Entry<Object, Boolean> entry : mapObjSelected.entrySet()) {
+			Object obj = entry.getKey();
+			Boolean selected = entry.getValue();
 
-  public Object[] getSelectedItems() {
-      Set<Object> ret = new TreeSet<Object>(); // alphabetically
-      for (Map.Entry<Object,Boolean> entry : mapObjSelected.entrySet()) {
-           Object obj = entry.getKey();
-           Boolean selected = entry.getValue();
+			if (selected) {
+				ret.add(obj);
+			}
+		}
 
-           if (selected) {
-               ret.add(obj);
-           }
-       }
+		if (ret.isEmpty())
+			return null;
 
-      if (ret.isEmpty()) return null;
-      
-      return ret.toArray(new Object[ret.size()]);
-  }
-  
-  public boolean isItemSelected( String text ) {
+		return ret.toArray(new Object[ret.size()]);
+	}
 
-	  Set<?> ret = new TreeSet(); // alphabetically
-      for (Map.Entry<Object,Boolean> entry : mapObjSelected.entrySet()) {
-           Object obj = entry.getKey();
-           Boolean selected = entry.getValue();
-           
-           if ( obj.toString().compareTo( text ) == 0 ) return selected;
-       }
+	public boolean isItemSelected(String text) {
 
-      return false;
+		Set<?> ret = new TreeSet(); // alphabetically
+		for (Map.Entry<Object, Boolean> entry : mapObjSelected.entrySet()) {
+			Object obj = entry.getKey();
+			Boolean selected = entry.getValue();
+
+			if (obj.toString().compareTo(text) == 0)
+				return selected;
+		}
+
+		return false;
 //      if (ret.isEmpty()) return null;
 //      
 //      return ret.toArray(new Object[ret.size()]);
-  }
-  
-  public void setItemColor( String text , Color color ) {
+	}
 
-      for (Map.Entry<Object,Boolean> entry : mapObjSelected.entrySet()) {
-           Object obj = entry.getKey();
-           if(text.equals(obj))
-           for(ObjCheckBox b:cbs)
-        	   if(b.getObj().equals(obj))
-        	   {
-        		  b.setBackground(color);
-        		   break;
-        	   }
-       }
+	public void setItemColor(String text, Color color) {
+
+		for (Map.Entry<Object, Boolean> entry : mapObjSelected.entrySet()) {
+			Object obj = entry.getKey();
+			if (text.equals(obj))
+				for (ObjCheckBox b : cbs)
+					if (b.getObj().equals(obj)) {
+						b.setBackground(color);
+						break;
+					}
+		}
 
 //      if (ret.isEmpty()) return null;
 //      
 //      return ret.toArray(new Object[ret.size()]);
-  }
+	}
 
-  public void addSelectedItems(Collection<?> c) {
-      if (c==null) return;
+	public void addSelectedItems(Collection<?> c) {
+		if (c == null)
+			return;
 
-      for (Object obj : c) {
-          if (mapObjSelected.containsKey(obj)) {
-              mapObjSelected.put(obj, true);
-          }
-      }
+		for (Object obj : c) {
+			if (mapObjSelected.containsKey(obj)) {
+				mapObjSelected.put(obj, true);
+			}
+		}
 
-      reset();
-      repaint();
-  }
+		reset();
+		repaint();
+	}
 
-  public void addSelectedItems(Object[] objs) {
-      if (objs==null) return;
+	public void addSelectedItems(Object[] objs) {
+		if (objs == null)
+			return;
 
-      for (Object obj : objs) {
-          if (mapObjSelected.containsKey(obj)) {
-              mapObjSelected.put(obj, true);
-          }
-      }
+		for (Object obj : objs) {
+			if (mapObjSelected.containsKey(obj)) {
+				mapObjSelected.put(obj, true);
+			}
+		}
 
-      reset();
-      repaint();
-  }
+		reset();
+		repaint();
+	}
 
-  private void reset() {
-      this.removeAllItems();
-      
-      initCBs();
+	private void reset() {
+		this.removeAllItems();
 
-      this.addItem(new String());
-      for (JCheckBox cb : cbs) {
-          this.addItem(cb);
-      }
+		initCBs();
 
-      setRenderer(new CheckBoxRenderer(cbs));
-      addActionListener(this);
-  }
+		this.addItem(new String());
+		for (JCheckBox cb : cbs) {
+			this.addItem(cb);
+		}
 
-  private void initCBs() {
-           cbs = new Vector<ObjCheckBox>();
+		setRenderer(new CheckBoxRenderer(cbs));
+		addActionListener(this);
+	}
 
-           boolean selectedAll = true;
-           boolean selectedNone = true;
+	private void initCBs() {
+		cbs = new Vector<ObjCheckBox>();
 
-           ObjCheckBox cb;
-           for (Map.Entry<Object,Boolean> entry : mapObjSelected.entrySet()) {
-               Object obj = entry.getKey();
-               Boolean selected = entry.getValue();
+		boolean selectedAll = true;
+		boolean selectedNone = true;
 
-               if (selected) {
-                   selectedNone = false;
-               } else {
-                   selectedAll = false;
-               }
+		ObjCheckBox cb;
+		for (Map.Entry<Object, Boolean> entry : mapObjSelected.entrySet()) {
+			Object obj = entry.getKey();
+			Boolean selected = entry.getValue();
 
-               cb = new ObjCheckBox(obj);
-               cb.setSelected(selected);
-               cbs.add(cb);
-           }
+			if (selected) {
+				selectedNone = false;
+			} else {
+				selectedAll = false;
+			}
 
-           cb = new ObjCheckBox("Select all");
-           cb.setSelected(selectedAll);
-           cbs.add(cb);
+			cb = new ObjCheckBox(obj);
+			cb.setSelected(selected);
+			cbs.add(cb);
+		}
 
-           cb = new ObjCheckBox("Select none");
-           cb.setSelected(selectedNone);
-           cbs.add(cb);
-   }
+		cb = new ObjCheckBox("Select all");
+		cb.setSelected(selectedAll);
+		cbs.add(cb);
 
-   private void checkBoxSelectionChanged(int index) {
-           int n = cbs.size();
-           if (index<0 || index>=n) return;
+		cb = new ObjCheckBox("Select none");
+		cb.setSelected(selectedNone);
+		cbs.add(cb);
+	}
 
-           //Set selectedObj = getSelected();
-           if (index<n-2) {
-               ObjCheckBox cb = cbs.get(index);
-               if (cb.getObj()==nullObject) {
-                   return;
-               }
+	private void checkBoxSelectionChanged(int index) {
+		int n = cbs.size();
+		if (index < 0 || index >= n)
+			return;
 
-               if (cb.isSelected()) {
-                   cb.setSelected(false);
-                   mapObjSelected.put(cb.getObj(), false);
+		// Set selectedObj = getSelected();
+		if (index < n - 2) {
+			ObjCheckBox cb = cbs.get(index);
+			if (cb.getObj() == nullObject) {
+				return;
+			}
 
-                   cbs.get(n-2).setSelected(false); //Select all
-                   cbs.get(n-1).setSelected(getSelectedItems()==null); // select none
-               } else {
-                   cb.setSelected(true);
-                   mapObjSelected.put(cb.getObj(), true);
+			if (cb.isSelected()) {
+				cb.setSelected(false);
+				mapObjSelected.put(cb.getObj(), false);
 
-                   Object[] sobjs = getSelectedItems();
-                   cbs.get(n-2).setSelected(sobjs!=null && sobjs.length==n-2); // Select all
-                   cbs.get(n-1).setSelected(false); // select none
-               }
-           } else if (index==n-2) {
-               for (Object obj : mapObjSelected.keySet()) {
-                   if (obj!=nullObject)
-                       mapObjSelected.put(obj, true);
-               }
+				cbs.get(n - 2).setSelected(false); // Select all
+				cbs.get(n - 1).setSelected(getSelectedItems() == null); // select none
+			} else {
+				cb.setSelected(true);
+				mapObjSelected.put(cb.getObj(), true);
 
-               for (int i=0; i<n-1; i++) {
-                   if (cbs.get(i)!=nullObject)
-                       cbs.get(i).setSelected(true);
-               }
-               cbs.get(n-1).setSelected(false);
-           } else { // if (index==n-1)
-               for (Object obj : mapObjSelected.keySet()) {
-                   mapObjSelected.put(obj, false);
-               }
+				Object[] sobjs = getSelectedItems();
+				cbs.get(n - 2).setSelected(sobjs != null && sobjs.length == n - 2); // Select all
+				cbs.get(n - 1).setSelected(false); // select none
+			}
+		} else if (index == n - 2) {
+			for (Object obj : mapObjSelected.keySet()) {
+				if (obj != nullObject)
+					mapObjSelected.put(obj, true);
+			}
 
-               for (int i=0; i<n-1; i++) {
-                       cbs.get(i).setSelected(false);
-               }
-               cbs.get(n-1).setSelected(true);
-           }
-           
-   }
+			for (int i = 0; i < n - 1; i++) {
+				if (cbs.get(i) != nullObject)
+					cbs.get(i).setSelected(true);
+			}
+			cbs.get(n - 1).setSelected(false);
+		} else { // if (index==n-1)
+			for (Object obj : mapObjSelected.keySet()) {
+				mapObjSelected.put(obj, false);
+			}
 
-   @Override
-   public void actionPerformed(ActionEvent e) {
-       int sel = getSelectedIndex();
+			for (int i = 0; i < n - 1; i++) {
+				cbs.get(i).setSelected(false);
+			}
+			cbs.get(n - 1).setSelected(true);
+		}
 
-       if (sel == 0) {
-               getUI().setPopupVisible(this, false);
-       } else if (sel > 0) {
-               checkBoxSelectionChanged(sel-1);
-               for (CheckComboBoxSelectionChangedListener l : changedListeners) {
-                   l.selectionChanged(sel-1);
-               }
-       }
+	}
 
-       this.setSelectedIndex(-1); // clear selection
-   }
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		int sel = getSelectedIndex();
 
-   @Override
-   public void setPopupVisible(boolean flag)
-   {
-           //TODO this not work, fix it
-           // Not code here prevents the populist from closing
-   }
+		if (sel == 0) {
+			getUI().setPopupVisible(this, false);
+		} else if (sel > 0) {
+			checkBoxSelectionChanged(sel - 1);
+			for (CheckComboBoxSelectionChangedListener l : changedListeners) {
+				l.selectionChanged(sel - 1);
+			}
+		}
 
-   // checkbox renderer for combobox
-   class CheckBoxRenderer implements ListCellRenderer<Object> {
-       private final DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
-       private javax.swing.JSeparator separator;
-       private final List<ObjCheckBox> cbs;
-       //private final Set objs;
+		this.setSelectedIndex(-1); // clear selection
+	}
 
-       public CheckBoxRenderer(final List<ObjCheckBox> cbs) {
-           //setOpaque(true);
-           this.cbs = cbs;
-           //this.objs = objs;
-           separator = new javax.swing.JSeparator(javax.swing.JSeparator.HORIZONTAL);
-       }
+	@Override
+	public void setPopupVisible(boolean flag) {
+		// TODO this not work, fix it
+		// Not code here prevents the populist from closing
+	}
 
-       //@Override
-       public Component getListCellRendererComponent(
-                               JList<?> list,
-                               Object value,
-                               int index,
-                               boolean isSelected,
-                               boolean cellHasFocus) {          
-           if (index > 0 && index <= cbs.size()) {
-                   ObjCheckBox cb = cbs.get(index-1);
-                   if (cb.getObj()==nullObject) {
-                       return separator;
-                   }
+	// checkbox renderer for combobox
+	class CheckBoxRenderer implements ListCellRenderer<Object> {
+		private final DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
+		private javax.swing.JSeparator separator;
+		private final List<ObjCheckBox> cbs;
+		// private final Set objs;
 
-                   //cb.setBackground(isSelected ? Color.blue : Color.white);
-                   //cb.setForeground(isSelected ? Color.white : Color.black);
+		public CheckBoxRenderer(final List<ObjCheckBox> cbs) {
+			// setOpaque(true);
+			this.cbs = cbs;
+			// this.objs = objs;
+			separator = new javax.swing.JSeparator(javax.swing.JSeparator.HORIZONTAL);
+		}
 
-                   return cb;
-           }
+		// @Override
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+				boolean cellHasFocus) {
+			if (index > 0 && index <= cbs.size()) {
+				ObjCheckBox cb = cbs.get(index - 1);
+				if (cb.getObj() == nullObject) {
+					return separator;
+				}
 
-           String str;
-           Object[] objs = getSelectedItems();
-           Vector<String> strs = new Vector<String>();
-           if (objs==null) {
-               str = "Select display options";
-           } else {
-               for (Object obj : objs) {
-                   strs.add(obj.toString());
-               }
-               str = strs.toString();
-           }
-           return defaultRenderer.getListCellRendererComponent(list, str, index, isSelected, cellHasFocus);
-       }
-   }
+				// cb.setBackground(isSelected ? Color.blue : Color.white);
+				// cb.setForeground(isSelected ? Color.white : Color.black);
 
-   class ObjCheckBox extends JCheckBox {
-       /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private final Object obj;
-       public ObjCheckBox(final Object obj) {
-           super(obj.toString());
-           this.obj = obj;
-       }
+				return cb;
+			}
 
-       public Object getObj() {
-           return obj;
-       }
-   }
+			String str;
+			Object[] objs = getSelectedItems();
+			Vector<String> strs = new Vector<String>();
+			if (objs == null) {
+				str = "Select display options";
+			} else {
+				for (Object obj : objs) {
+					strs.add(obj.toString());
+				}
+				str = strs.toString();
+			}
+			return defaultRenderer.getListCellRendererComponent(list, str, index, isSelected, cellHasFocus);
+		}
+	}
+
+	class ObjCheckBox extends JCheckBox {
+		/**
+		* 
+		*/
+		private static final long serialVersionUID = 1L;
+		private final Object obj;
+
+		public ObjCheckBox(final Object obj) {
+			super(obj.toString());
+			this.obj = obj;
+		}
+
+		public Object getObj() {
+			return obj;
+		}
+	}
 
 }
 
 interface CheckComboBoxSelectionChangedListener extends java.util.EventListener {
-   public void selectionChanged(int idx);
+	public void selectionChanged(int idx);
 }
-
-

@@ -5,9 +5,7 @@ import icy.gui.viewer.Viewer;
 import icy.plugin.abstract_.Plugin;
 import icy.plugin.interface_.PluginCanvas;
 
-
-public class Canvas2DWithTransformsPlugin extends Plugin implements PluginCanvas
-{
+public class Canvas2DWithTransformsPlugin extends Plugin implements PluginCanvas {
 	@Override
 	public String getCanvasClassName() {
 //		return KymosCanvas2DPlugin.class.getName();
@@ -15,8 +13,7 @@ public class Canvas2DWithTransformsPlugin extends Plugin implements PluginCanvas
 	}
 
 	@Override
-	public IcyCanvas createCanvas(Viewer viewer) 
-	{		
+	public IcyCanvas createCanvas(Viewer viewer) {
 		return new Canvas2DWithTransforms(viewer);
 	}
 

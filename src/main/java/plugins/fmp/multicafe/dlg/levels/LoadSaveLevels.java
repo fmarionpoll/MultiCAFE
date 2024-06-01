@@ -16,28 +16,23 @@ import icy.gui.util.FontUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 
-
-
-
-public class LoadSaveLevels  extends JPanel 
-{
+public class LoadSaveLevels extends JPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3973928400949966679L;
 
-	private JButton		loadMeasuresButton		= new JButton("Load");
-	private JButton		saveMeasuresButton		= new JButton("Save");
-	private MultiCAFE 	parent0 				= null;
-	
-	void init(GridLayout capLayout, MultiCAFE parent0) 
-	{
+	private JButton loadMeasuresButton = new JButton("Load");
+	private JButton saveMeasuresButton = new JButton("Save");
+	private MultiCAFE parent0 = null;
+
+	void init(GridLayout capLayout, MultiCAFE parent0) {
 		setLayout(capLayout);
 		this.parent0 = parent0;
-	
-		JLabel loadsaveText = new JLabel ("-> File (xml) ", SwingConstants.RIGHT); 
+
+		JLabel loadsaveText = new JLabel("-> File (xml) ", SwingConstants.RIGHT);
 		loadsaveText.setFont(FontUtil.setStyle(loadsaveText.getFont(), Font.ITALIC));
-		
+
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
 		flowLayout.setVgap(0);
 		JPanel panel1 = new JPanel(flowLayout);
@@ -46,53 +41,47 @@ public class LoadSaveLevels  extends JPanel
 		panel1.add(saveMeasuresButton);
 		panel1.validate();
 		add(panel1);
-		
+
 		defineActionListeners();
 	}
-	
-	private void defineActionListeners() 
-	{
-		loadMeasuresButton.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) 
-			{ 
-				Experiment exp =(Experiment)  parent0.expListCombo.getSelectedItem();
+
+	private void defineActionListeners() {
+		loadMeasuresButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
 					dlg_levels_loadCapillaries_Measures(exp);
-			}}); 
-		
-		saveMeasuresButton.addActionListener(new ActionListener () 
-		{ 
-			@Override public void actionPerformed( final ActionEvent e ) 
-			{ 
-				Experiment exp =(Experiment)  parent0.expListCombo.getSelectedItem();
-				if (exp != null)
-				{
+			}
+		});
+
+		saveMeasuresButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
 					dlg_levels_saveCapillaries_Measures(exp);
 					firePropertyChange("MEASURES_SAVE", false, true);
 				}
-			}});	
+			}
+		});
 	}
 
-	public boolean dlg_levels_loadCapillaries_Measures(Experiment exp) 
-	{
+	public boolean dlg_levels_loadCapillaries_Measures(Experiment exp) {
 		boolean flag = false;
-		if (exp.seqKymos != null ) 
-		{
+		if (exp.seqKymos != null) {
 			ProgressFrame progress = new ProgressFrame("load capillary measures");
 			flag = exp.loadCapillaries();
-			if (flag) 
+			if (flag)
 				exp.seqKymos.transferCapillariesMeasuresToKymos(exp.capillaries);
 			progress.close();
 		}
 		return flag;
 	}
-	
-	public boolean dlg_levels_saveCapillaries_Measures(Experiment exp) 
-	{
+
+	public boolean dlg_levels_saveCapillaries_Measures(Experiment exp) {
 		boolean flag = true;
-		if (exp.seqKymos != null ) 
-		{
+		if (exp.seqKymos != null) {
 			ProgressFrame progress = new ProgressFrame("save capillary measures");
 			flag = exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
 			progress.close();

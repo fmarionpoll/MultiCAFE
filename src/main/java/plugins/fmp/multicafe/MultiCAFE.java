@@ -21,29 +21,25 @@ import plugins.fmp.multicafe.dlg.levels.MCLevels_;
 import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
 
+public class MultiCAFE extends PluginActionable {
+	public IcyFrame mainFrame = new IcyFrame("MultiCAFE May 27, 2024", true, true, true, true);
+	public ExperimentCombo expListCombo = new ExperimentCombo();
 
+	public MCBrowse_ paneBrowse = new MCBrowse_();
+	public MCExperiment_ paneExperiment = new MCExperiment_();
+	public MCCapillaries_ paneCapillaries = new MCCapillaries_();
+	public MCKymos_ paneKymos = new MCKymos_();
+	public MCLevels_ paneLevels = new MCLevels_();
+	public MCSpots_ paneSpots = new MCSpots_();
+	public MCCages_ paneCages = new MCCages_();
+	public MCExcel_ paneExcel = new MCExcel_();
 
-public class MultiCAFE extends PluginActionable  
-{
-	public IcyFrame 		mainFrame 		= new IcyFrame("MultiCAFE May 27, 2024", true, true, true, true);
-	public ExperimentCombo 	expListCombo 	= new ExperimentCombo();
-	
-	public MCBrowse_ 		paneBrowse 		= new MCBrowse_();
-	public MCExperiment_ 	paneExperiment 	= new MCExperiment_();
-	public MCCapillaries_ 	paneCapillaries	= new MCCapillaries_();
-	public MCKymos_			paneKymos		= new MCKymos_();
-	public MCLevels_ 		paneLevels 		= new MCLevels_();
-	public MCSpots_			paneSpots		= new MCSpots_();
-	public MCCages_ 		paneCages 		= new MCCages_();
-	public MCExcel_			paneExcel		= new MCExcel_();
-	
-	public JTabbedPane 		tabsPane 		= new JTabbedPane();
-	
-	//-------------------------------------------------------------------
-	
+	public JTabbedPane tabsPane = new JTabbedPane();
+
+	// -------------------------------------------------------------------
+
 	@Override
-	public void run() 
-	{		
+	public void run() {
 		JPanel mainPanel = GuiUtil.generatePanelWithoutBorder();
 		paneBrowse.init(mainPanel, "Browse", this);
 		paneExperiment.init(mainPanel, "Experiment", this);
@@ -52,21 +48,19 @@ public class MultiCAFE extends PluginActionable
 		paneLevels.init(mainPanel, "Levels", this);
 		paneCages.init(mainPanel, "Cages", this);
 		paneExcel.init(mainPanel, "Export", this);
-		
+
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(mainPanel, BorderLayout.WEST);
 		mainFrame.pack();
 		mainFrame.center();
 		mainFrame.setVisible(true);
 		mainFrame.addToDesktopPane();
-	}	 
-	
-	public static void main (String[] args)
-	{
+	}
+
+	public static void main(String[] args) {
 		Icy.main(args);
 		GeneralPreferences.setSequencePersistence(false);
 		PluginLauncher.start(PluginLoader.getPlugin(MultiCAFE.class.getName()));
 	}
 
 }
-

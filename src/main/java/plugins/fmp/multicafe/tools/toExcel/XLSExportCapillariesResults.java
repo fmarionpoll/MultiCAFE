@@ -6,76 +6,66 @@ import org.apache.poi.ss.util.CellReference;
 import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.Experiment;
 
-
-
-public class XLSExportCapillariesResults extends XLSExport 
-{	
-	public void exportToFile(String filename, XLSExportOptions opt) 
-	{	
+public class XLSExportCapillariesResults extends XLSExport {
+	public void exportToFile(String filename, XLSExportOptions opt) {
 		System.out.println("XLSExpoportCapillaries:exportToFile() - start output");
 		options = opt;
 		expList = options.expList;
-		
+
 		boolean loadCapillaries = true;
-		boolean loadDrosoTrack =  options.onlyalive;
+		boolean loadDrosoTrack = options.onlyalive;
 		expList.loadListOfMeasuresFromAllExperiments(loadCapillaries, loadDrosoTrack);
 		expList.chainExperimentsUsingKymoIndexes(options.collateSeries);
 		expList.setFirstImageForAllExperiments(options.collateSeries);
 		expAll = expList.get_MsTime_of_StartAndEnd_AllExperiments(options);
-	
+
 		ProgressFrame progress = new ProgressFrame("Export data to Excel");
 		int nbexpts = expList.getItemCount();
 		progress.setLength(nbexpts);
 
-		try 
-		{ 
+		try {
 			int column = 1;
 			int iSeries = 0;
 			workbook = xlsInitWorkbook();
-			for (int index = options.firstExp; index <= options.lastExp; index++) 
-			{
+			for (int index = options.firstExp; index <= options.lastExp; index++) {
 				Experiment exp = expList.getItemAt(index);
 				if (exp.chainToPreviousExperiment != null)
 					continue;
-				progress.setMessage("Export experiment "+ (index+1) +" of "+ nbexpts);
+				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
 				String charSeries = CellReference.convertNumToColString(iSeries);
-				
-				if (options.topLevel) 
-				{	
+
+				if (options.topLevel) {
 					getDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPRAW);
 					getDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVEL);
 				}
-				
-				if (options.lrPI && options.topLevel) 		
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVEL_LR);
-				if (options.topLevelDelta) 	
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVELDELTA);
-				if (options.lrPI && options.topLevelDelta) 	
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVELDELTA_LR);
-				
 
-				if (options.bottomLevel) 	
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.BOTTOMLEVEL);		
-				if (options.derivative) 	
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.DERIVEDVALUES);	
-				
+				if (options.lrPI && options.topLevel)
+					getDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVEL_LR);
+				if (options.topLevelDelta)
+					getDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVELDELTA);
+				if (options.lrPI && options.topLevelDelta)
+					getDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVELDELTA_LR);
+
+				if (options.bottomLevel)
+					getDataAndExport(exp, column, charSeries, EnumXLSExportType.BOTTOMLEVEL);
+				if (options.derivative)
+					getDataAndExport(exp, column, charSeries, EnumXLSExportType.DERIVEDVALUES);
+
 				if (!options.collateSeries || exp.chainToPreviousExperiment == null)
-					column += expList.maxSizeOfCapillaryArrays +2;
+					column += expList.maxSizeOfCapillaryArrays + 2;
 				iSeries++;
 				progress.incPosition();
 			}
-			progress.setMessage( "Save Excel file to disk... ");
+			progress.setMessage("Save Excel file to disk... ");
 			FileOutputStream fileOut = new FileOutputStream(filename);
 			workbook.write(fileOut);
-	        fileOut.close();
-	        workbook.close();
-	        progress.close();
-		} 
-		catch (IOException e) 
-		{
+			fileOut.close();
+			workbook.close();
+			progress.close();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		System.out.println("XLSExpoportCapillaries:exportToFile() XLS output finished");
 	}
-	
+
 }
