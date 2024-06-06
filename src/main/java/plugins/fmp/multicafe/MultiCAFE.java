@@ -1,6 +1,7 @@
 package plugins.fmp.multicafe;
 
 import java.awt.BorderLayout;
+
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -22,7 +23,7 @@ import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
 
 public class MultiCAFE extends PluginActionable {
-	public IcyFrame mainFrame = new IcyFrame("MultiCAFE May 27, 2024", true, true, true, true);
+	public IcyFrame mainFrame = new IcyFrame("MultiCAFE June 6, 2024", true, true, true, true);
 	public ExperimentCombo expListCombo = new ExperimentCombo();
 
 	public MCBrowse_ paneBrowse = new MCBrowse_();

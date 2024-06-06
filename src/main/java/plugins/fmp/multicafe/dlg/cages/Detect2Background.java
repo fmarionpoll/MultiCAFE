@@ -32,7 +32,7 @@ import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.Overlay.OverlayThreshold;
 
-public class Detect2BuildBackground extends JPanel implements ChangeListener, PropertyChangeListener {
+public class Detect2Background extends JPanel implements ChangeListener, PropertyChangeListener {
 	private static final long serialVersionUID = 1L;
 
 	private MultiCAFE parent0 = null;

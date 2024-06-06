@@ -25,7 +25,7 @@ public class MCCages_ extends JPanel implements PropertyChangeListener {
 	Infos tabInfos = new Infos();
 	Detect1 tabDetect1 = new Detect1();
 
-	Detect2DetectFlies tabDetect2 = new Detect2DetectFlies();
+	Detect2_ tabDetect2 = new Detect2_();
 	Edit tabEdit = new Edit();
 	public LoadSaveCages tabFile = new LoadSaveCages();
 	public PlotPositions tabGraphics = new PlotPositions();

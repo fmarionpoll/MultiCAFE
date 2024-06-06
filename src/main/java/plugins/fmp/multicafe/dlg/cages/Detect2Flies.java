@@ -15,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
@@ -32,23 +31,23 @@ import plugins.fmp.multicafe.series.FlyDetect2;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.Overlay.OverlayThreshold;
 
-public class Detect2 extends JPanel implements ChangeListener, PropertyChangeListener, PopupMenuListener {
+public class Detect2Flies extends JPanel implements ChangeListener, PropertyChangeListener, PopupMenuListener {
 	private static final long serialVersionUID = -5257698990389571518L;
 	private MultiCAFE parent0 = null;
 
-	private String detectString = "Detect..";
+	private String detectString = "Detect...";
 	private JButton startComputationButton = new JButton(detectString);
+	private JComboBox<String> allCagesComboBox = new JComboBox<String>(new String[] { "all cages" });
 	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
 
-	private JSpinner thresholdDiffSpinner = new JSpinner(new SpinnerNumberModel(100, 0, 255, 1));
-	private JSpinner jitterTextField = new JSpinner(new SpinnerNumberModel(5, 0, 1000, 1));
+	private JCheckBox objectLowsizeCheckBox = new JCheckBox("size >");
 	private JSpinner objectLowsizeSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 9999, 1));
+	private JCheckBox objectUpsizeCheckBox = new JCheckBox("<");
 	private JSpinner objectUpsizeSpinner = new JSpinner(new SpinnerNumberModel(500, 0, 9999, 1));
-	private JCheckBox objectLowsizeCheckBox = new JCheckBox("object > ");
-	private JCheckBox objectUpsizeCheckBox = new JCheckBox("object < ");
+	private JSpinner thresholdDiffSpinner = new JSpinner(new SpinnerNumberModel(100, 0, 255, 1));
 
+	private JSpinner jitterTextField = new JSpinner(new SpinnerNumberModel(5, 0, 1000, 1));
 	private JSpinner limitRatioSpinner = new JSpinner(new SpinnerNumberModel(4, 0, 1000, 1));
-	private JComboBox<String> allCagesComboBox = new JComboBox<String>(new String[] { "all cages" });
 
 	private FlyDetect2 flyDetect2 = null;
 	private OverlayThreshold overlayThreshold2 = null;
@@ -70,21 +69,21 @@ public class Detect2 extends JPanel implements ChangeListener, PropertyChangeLis
 
 		allCagesComboBox.addPopupMenuListener(this);
 
-		objectLowsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
-		objectUpsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
+//		objectLowsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
+//		objectUpsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
 		JPanel panel3 = new JPanel(flowLayout);
 		panel3.add(objectLowsizeCheckBox);
 		panel3.add(objectLowsizeSpinner);
 		panel3.add(objectUpsizeCheckBox);
 		panel3.add(objectUpsizeSpinner);
-		panel3.add(new JLabel("threshold ", SwingConstants.RIGHT));
+		panel3.add(new JLabel("threshold"));
 		panel3.add(thresholdDiffSpinner);
 		add(panel3);
 
 		JPanel panel4 = new JPanel(flowLayout);
-		panel4.add(new JLabel("length/width<", SwingConstants.RIGHT));
+		panel4.add(new JLabel("length/width<"));
 		panel4.add(limitRatioSpinner);
-		panel4.add(new JLabel("         jitter <= ", SwingConstants.RIGHT));
+		panel4.add(new JLabel("jitter <="));
 		panel4.add(jitterTextField);
 		add(panel4);
 

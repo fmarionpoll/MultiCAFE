@@ -11,14 +11,14 @@ import javax.swing.event.ChangeListener;
 
 import plugins.fmp.multicafe.MultiCAFE;
 
-public class Detect2DetectFlies extends JPanel implements PropertyChangeListener {
+public class Detect2_ extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	Detect2 tabDetect2 = new Detect2();
-	Detect2BuildBackground tabBackground = new Detect2BuildBackground();
+	Detect2Background tabDetectBackground = new Detect2Background();
+	Detect2Flies tabDetect2Flies = new Detect2Flies();
 	JTabbedPane tabsPane = new JTabbedPane();
 	int previouslySelected = -1;
 
@@ -30,7 +30,7 @@ public class Detect2DetectFlies extends JPanel implements PropertyChangeListener
 	public void init(GridLayout capLayout, MultiCAFE parent0) {
 		this.parent0 = parent0;
 
-		createTabs();
+		createTabs(capLayout);
 		tabsPane.setSelectedIndex(0);
 		add(tabsPane);
 
@@ -43,22 +43,22 @@ public class Detect2DetectFlies extends JPanel implements PropertyChangeListener
 		});
 	}
 
-	void createTabs() {
-		GridLayout capLayout = new GridLayout(4, 1);
+	void createTabs(GridLayout capLayout) {
+//		GridLayout capLayout = new GridLayout(4, 1);
 //		tabsPane.setTabPlacement(JTabbedPane.LEFT);
 		tabsPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		int iTab = 0;
 		iTAB_BACKGND = iTab;
-		tabBackground.init(capLayout, parent0);
-		tabBackground.addPropertyChangeListener(this);
-		tabsPane.addTab("Build background" + "", null, tabBackground, "Build background without flies");
+		tabDetectBackground.init(capLayout, parent0);
+		tabDetectBackground.addPropertyChangeListener(this);
+		tabsPane.addTab("Build background" + "", null, tabDetectBackground, "Build background without flies");
 
 		iTab++;
 		iTAB_DETECT2 = iTab;
-		tabDetect2.init(capLayout, parent0);
-		tabDetect2.addPropertyChangeListener(this);
-		tabsPane.addTab("Detect flies", null, tabDetect2, "Detect flies position using background subtraction");
+		tabDetect2Flies.init(capLayout, parent0);
+		tabDetect2Flies.addPropertyChangeListener(this);
+		tabsPane.addTab("Detect flies", null, tabDetect2Flies, "Detect flies position using background subtraction");
 	}
 
 	@Override

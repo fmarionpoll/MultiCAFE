@@ -17,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
@@ -90,16 +89,16 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 
 		JPanel panel2 = new JPanel(flowLayout);
 		transformComboBox.setSelectedIndex(1);
-		panel2.add(new JLabel("source ", SwingConstants.RIGHT));
+		panel2.add(new JLabel("source "));
 		panel2.add(transformComboBox);
-		panel2.add(new JLabel("bkgnd ", SwingConstants.RIGHT));
+		panel2.add(new JLabel("bkgnd "));
 		panel2.add(backgroundComboBox);
-		panel2.add(new JLabel("threshold ", SwingConstants.RIGHT));
+		panel2.add(new JLabel("threshold "));
 		panel2.add(thresholdSpinner);
 		add(panel2);
 
-		objectLowsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
-		objectUpsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
+//		objectLowsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
+//		objectUpsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
 		JPanel panel3 = new JPanel(flowLayout);
 		panel3.add(objectLowsizeCheckBox);
 		panel3.add(objectLowsizeSpinner);
@@ -109,9 +108,9 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		add(panel3);
 
 		JPanel panel4 = new JPanel(flowLayout);
-		panel4.add(new JLabel("length/width<", SwingConstants.RIGHT));
+		panel4.add(new JLabel("length/width<"));
 		panel4.add(limitRatioSpinner);
-		panel4.add(new JLabel("         jitter <= ", SwingConstants.RIGHT));
+		panel4.add(new JLabel("jitter <= "));
 		panel4.add(jitterTextField);
 		panel4.add(overlayCheckBox);
 		add(panel4);
