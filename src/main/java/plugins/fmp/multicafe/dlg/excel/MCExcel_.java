@@ -50,7 +50,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		tabCommonOptions.addPropertyChangeListener(this);
 
 		tabLevels.init(capLayout);
-		tabsPane.addTab("Capillaries", null, tabLevels, "Export capillary levels to file");
+		tabsPane.addTab("Levels", null, tabLevels, "Export capillary levels to file");
 		tabLevels.addPropertyChangeListener(this);
 
 		tabGulps.init(capLayout);
