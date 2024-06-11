@@ -328,9 +328,11 @@ public class Display extends JPanel implements ViewerListener {
 	private void selectCapillary(Experiment exp, int isel) {
 		Capillaries capillaries = exp.capillaries;
 		for (Capillary cap : capillaries.capillariesList) {
-			cap.getRoi().setSelected(false);
-			Capillary capSel = capillaries.capillariesList.get(isel);
-			capSel.getRoi().setSelected(true);
+			if (cap.getRoi() != null) {
+				cap.getRoi().setSelected(false);
+				Capillary capSel = capillaries.capillariesList.get(isel);
+				capSel.getRoi().setSelected(true);
+			}
 		}
 	}
 

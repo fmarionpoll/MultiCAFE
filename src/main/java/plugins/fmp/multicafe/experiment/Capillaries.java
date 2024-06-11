@@ -233,6 +233,8 @@ public class Capillaries {
 		capillariesDescription.copy(cap.capillariesDescription);
 		capillariesList.clear();
 		for (Capillary ccap : cap.capillariesList) {
+			if (ccap == null || ccap.getRoi() == null)
+				continue;
 			Capillary capi = new Capillary();
 			capi.copy(ccap);
 			capillariesList.add(capi);

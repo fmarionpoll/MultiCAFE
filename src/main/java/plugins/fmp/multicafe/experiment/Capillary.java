@@ -105,7 +105,7 @@ public class Capillary implements Comparable<Capillary> {
 		kymographIndex = cap.kymographIndex;
 		kymographName = cap.kymographName;
 		version = cap.version;
-		roiCap = (ROI2D) cap.roiCap.getCopy();
+		roiCap = cap.roiCap != null ? (ROI2D) cap.roiCap.getCopy(): null;
 		filenameTIFF = cap.filenameTIFF;
 
 		capStimulus = cap.capStimulus;
@@ -145,7 +145,9 @@ public class Capillary implements Comparable<Capillary> {
 	}
 
 	public String getRoiName() {
-		return roiCap.getName();
+		if (roiCap != null)
+			return roiCap.getName();
+		return null;			
 	}
 
 	public String getLast2ofCapillaryName() {

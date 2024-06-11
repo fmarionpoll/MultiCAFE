@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import plugins.fmp.multicafe.MultiCAFE;
@@ -35,6 +36,8 @@ public class Filter extends JPanel {
 	private JComboBox<String> sexCombo = new JComboBox<String>(new SortedComboBoxModel());
 	private JComboBox<String> cond1Combo = new JComboBox<String>(new SortedComboBoxModel());
 	private JComboBox<String> cond2Combo = new JComboBox<String>(new SortedComboBoxModel());
+//	private JComboBox<String> comboStimCheck = new JComboBox<String>(new SortedComboBoxModel());
+//	private JComboBox<String> comboConcCheck = new JComboBox<String>(new SortedComboBoxModel());
 
 	private JCheckBox experimentCheck = new JCheckBox(EnumXLSColumnHeader.EXP_EXPT.toString());
 	private JCheckBox boxIDCheck = new JCheckBox(EnumXLSColumnHeader.EXP_BOXID.toString());
@@ -44,6 +47,9 @@ public class Filter extends JPanel {
 	private JCheckBox sexCheck = new JCheckBox(EnumXLSColumnHeader.EXP_SEX.toString());
 	private JCheckBox cond1Check = new JCheckBox(EnumXLSColumnHeader.EXP_COND1.toString());
 	private JCheckBox cond2Check = new JCheckBox(EnumXLSColumnHeader.EXP_COND2.toString());
+//	private JCheckBox capStimCheck = new JCheckBox(EnumXLSColumnHeader.CAP_STIM.toString());
+//	private JCheckBox capConcCheck = new JCheckBox(EnumXLSColumnHeader.CAP_CONC.toString());
+
 	private JButton applyButton = new JButton("Apply");
 	private JButton clearButton = new JButton("Clear");
 
@@ -63,58 +69,38 @@ public class Filter extends JPanel {
 		c.ipadx = 0;
 		c.ipady = 0;
 		c.insets = new Insets(1, 2, 1, 2);
-		int delta1 = 1;
-		int delta2 = 3;
 
-		// line 0
-		c.gridx = 0;
 		c.gridy = 0;
-		add(experimentCheck, c);
-		c.gridx += delta1;
-		add(exptCombo, c);
-		c.gridx += delta2;
-		add(boxIDCheck, c);
-		c.gridx += delta1;
-		add(boxIDCombo, c);
-		c.gridx += delta2;
-		add(applyButton, c);
-
-		// line 1
+		addLineOfElements(c, experimentCheck, exptCombo, boxIDCheck, boxIDCombo, applyButton);
 		c.gridy = 1;
-		c.gridx = 0;
-		add(comment1Check, c);
-		c.gridx += delta1;
-		add(cmt1Combo, c);
-		c.gridx += delta2;
-		add(comment2Check, c);
-		c.gridx += delta1;
-		add(comt2Combo, c);
-		c.gridx += delta2;
-		add(clearButton, c);
-
-		// line 2
+		addLineOfElements(c, comment1Check, cmt1Combo, comment2Check, comt2Combo, clearButton);
 		c.gridy = 2;
-		c.gridx = 0;
-		add(strainCheck, c);
-		c.gridx += delta1;
-		add(strainCombo, c);
-		c.gridx += delta2;
-		add(sexCheck, c);
-		c.gridx += delta1;
-		add(sexCombo, c);
-
-		// line 3
+		addLineOfElements(c, strainCheck, strainCombo, sexCheck, sexCombo, null);
 		c.gridy = 3;
-		c.gridx = 0;
-		add(cond1Check, c);
-		c.gridx += delta1;
-		add(cond1Combo, c);
-		c.gridx += delta2;
-		add(cond2Check, c);
-		c.gridx += delta1;
-		add(cond2Combo, c);
+		addLineOfElements(c, cond1Check, cond1Combo, cond2Check, cond2Combo, null);
 
 		defineActionListeners();
+	}
+
+	void addLineOfElements(GridBagConstraints c, JComponent element1, JComponent element2, JComponent element3,
+			JComponent element4, JComponent element5) {
+		c.gridx = 0;
+		int delta1 = 1;
+		int delta2 = 3;
+		if (element1 != null)
+			add(element1, c);
+		c.gridx += delta1;
+		if (element2 != null)
+			add(element2, c);
+		c.gridx += delta2;
+		if (element3 != null)
+			add(element3, c);
+		c.gridx += delta1;
+		if (element4 != null)
+			add(element4, c);
+		c.gridx += delta2;
+		if (element5 != null)
+			add(element5, c);
 	}
 
 	public void initFilterCombos() {
