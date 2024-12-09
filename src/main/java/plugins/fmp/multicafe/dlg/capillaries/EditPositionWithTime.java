@@ -29,9 +29,9 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.KymoROI2D;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.JComponents.CapillariesWithTimeTableModel;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
@@ -196,7 +196,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 	private void addFrameAroundCapillaries(int t, Experiment exp) {
 		ArrayList<ROI2D> listRoisAtT = new ArrayList<ROI2D>();
 		for (Capillary cap : exp.capillaries.capillariesList) {
-			KymoROI2D kymoROI2D = cap.getROI2DKymoAtIntervalT(t);
+			ROI2DAlongT kymoROI2D = cap.getROI2DKymoAtIntervalT(t);
 			listRoisAtT.add(kymoROI2D.getRoi());
 		}
 		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingCapillaries(listRoisAtT);
