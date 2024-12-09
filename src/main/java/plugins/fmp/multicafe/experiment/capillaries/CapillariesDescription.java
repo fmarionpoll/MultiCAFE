@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.capillaries;
 
 import java.util.Arrays;
 import java.util.List;

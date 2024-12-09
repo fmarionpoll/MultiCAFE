@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.cages;
 
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
@@ -21,6 +21,9 @@ import org.w3c.dom.Node;
 import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment.SequenceCamData;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.JComponents.Dialog;
 import plugins.kernel.roi.roi2d.ROI2DArea;

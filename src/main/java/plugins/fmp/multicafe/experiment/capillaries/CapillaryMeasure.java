@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.capillaries;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;

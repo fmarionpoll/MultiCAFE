@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.capillaries;
 
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
@@ -23,6 +23,8 @@ import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.experiment.KymoIntervals;
+import plugins.fmp.multicafe.experiment.KymoROI2D;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;

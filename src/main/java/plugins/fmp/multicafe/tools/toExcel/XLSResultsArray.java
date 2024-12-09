@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import plugins.fmp.multicafe.experiment.Capillaries;
-import plugins.fmp.multicafe.experiment.Capillary;
+import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Comparators;
 
 public class XLSResultsArray {

@@ -12,10 +12,10 @@ import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import icy.type.collection.array.Array1DUtil;
 import icy.type.geom.Polyline2D;
-import plugins.fmp.multicafe.experiment.Capillary;
-import plugins.fmp.multicafe.experiment.CapillaryMeasure;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.capillaries.CapillaryMeasure;
 
 public class DetectGulps extends BuildSeries {
 

@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.capillaries;
 
 import java.awt.geom.Point2D;
 import java.util.List;
@@ -62,7 +62,7 @@ public class Level2D extends Polyline2D {
 		return pol;
 	}
 
-	Level2D expandPolylineToNewSize(int imageSize) {
+	public Level2D expandPolylineToNewSize(int imageSize) {
 		double[] nxpoints = new double[imageSize];
 		double[] nypoints = new double[imageSize];
 		for (int j = 0; j < npoints; j++) {
@@ -80,7 +80,7 @@ public class Level2D extends Polyline2D {
 		return new Level2D(nxpoints, nypoints, imageSize);
 	}
 
-	Level2D contractPolylineToNewSize(int imageSize) {
+	public Level2D contractPolylineToNewSize(int imageSize) {
 		double[] nxpoints = new double[imageSize];
 		double[] nypoints = new double[imageSize];
 		for (int i = 0; i < imageSize; i++) {
@@ -91,7 +91,7 @@ public class Level2D extends Polyline2D {
 		return new Level2D(nxpoints, nypoints, imageSize);
 	}
 
-	Level2D cropPolylineToNewSize(int imageSize) {
+	public Level2D cropPolylineToNewSize(int imageSize) {
 		double[] nxpoints = new double[imageSize];
 		double[] nypoints = new double[imageSize];
 		for (int i = 0; i < imageSize; i++) {

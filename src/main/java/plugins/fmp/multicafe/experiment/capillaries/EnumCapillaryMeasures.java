@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.capillaries;
 
 public enum EnumCapillaryMeasures {
 	TOPLEVEL("TOPLEVEL", "top capillary limit"), BOTTOMLEVEL("BOTTOMLEVEL", "bottom capillary limit"),
