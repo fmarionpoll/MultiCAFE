@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.dlg.capillaries;
 
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -12,8 +13,6 @@ import javax.swing.JPanel;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-
-import java.awt.Component;
 
 public class Edit extends JPanel {
 	/**
@@ -39,7 +38,7 @@ public class Edit extends JPanel {
 		add(panel1);
 
 		defineActionListeners();
-		this.setParent0(parent0);
+		this.parent0 = parent0;
 	}
 
 	private void defineActionListeners() {
@@ -51,25 +50,17 @@ public class Edit extends JPanel {
 		});
 	}
 
-	public MultiCAFE getParent0() {
-		return parent0;
-	}
-
-	public void setParent0(MultiCAFE parent0) {
-		this.parent0 = parent0;
-	}
-
 	private Point getFramePosition() {
-		Point spot = new Point();
+		Point point = new Point();
 		Component currComponent = (Component) editCapillariesButton;
 		int index = 0;
 		while (currComponent != null && index < 12) {
 			Point relativeLocation = currComponent.getLocation();
-			spot.translate(relativeLocation.x, relativeLocation.y);
+			point.translate(relativeLocation.x, relativeLocation.y);
 			currComponent = currComponent.getParent();
 			index++;
 		}
-		return spot;
+		return point;
 	}
 
 	public void openDialog() {
