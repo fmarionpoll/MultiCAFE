@@ -3,6 +3,8 @@ package plugins.fmp.multicafe.experiment;
 import java.util.Iterator;
 import java.util.List;
 import icy.roi.ROI2D;
+import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 

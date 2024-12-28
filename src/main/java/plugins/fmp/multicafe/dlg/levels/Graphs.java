@@ -17,9 +17,9 @@ import icy.sequence.Sequence;
 import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment.Capillaries;
-import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.chart.ChartLevels;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
 

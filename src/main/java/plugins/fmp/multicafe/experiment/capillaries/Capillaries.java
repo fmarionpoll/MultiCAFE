@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.capillaries;
 
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
@@ -23,7 +23,9 @@ import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.experiment.KymoIntervals;
 import plugins.fmp.multicafe.tools.Comparators;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
 import plugins.kernel.roi.roi2d.ROI2DShape;
@@ -405,7 +407,7 @@ public class Capillaries {
 			capillariesListTimeIntervals = new KymoIntervals();
 
 			for (Capillary cap : capillariesList) {
-				for (KymoROI2D roiFK : cap.getROIsForKymo()) {
+				for (ROI2DAlongT roiFK : cap.getROIsForKymo()) {
 					Long[] interval = { roiFK.getStart(), (long) -1 };
 					capillariesListTimeIntervals.addIfNew(interval);
 				}
@@ -419,11 +421,11 @@ public class Capillaries {
 		int item = capillariesListTimeIntervals.addIfNew(interval);
 
 		for (Capillary cap : capillariesList) {
-			List<KymoROI2D> listROI2DForKymo = cap.getROIsForKymo();
+			List<ROI2DAlongT> listROI2DForKymo = cap.getROIsForKymo();
 			ROI2D roi = cap.getRoi();
 			if (item > 0)
 				roi = (ROI2D) listROI2DForKymo.get(item - 1).getRoi().getCopy();
-			listROI2DForKymo.add(item, new KymoROI2D(start, roi));
+			listROI2DForKymo.add(item, new ROI2DAlongT(start, roi));
 		}
 		return item;
 	}

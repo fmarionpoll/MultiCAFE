@@ -22,11 +22,11 @@ import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polyline2D;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment.Capillary;
-import plugins.fmp.multicafe.experiment.CapillaryMeasure;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.Level2D;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.capillaries.CapillaryMeasure;
+import plugins.fmp.multicafe.tools.Level2D;
 
 public class EditLevels extends JPanel {
 	/**

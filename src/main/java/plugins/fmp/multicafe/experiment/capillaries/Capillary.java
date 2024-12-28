@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.capillaries;
 
 import java.awt.Color;
 import java.awt.geom.Line2D;
@@ -15,6 +15,7 @@ import icy.roi.ROI2D;
 import icy.type.geom.Polyline2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
@@ -24,7 +25,7 @@ import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 public class Capillary implements Comparable<Capillary> {
 
 	private ROI2D roiCap = null;
-	private ArrayList<KymoROI2D> roisForKymo = new ArrayList<KymoROI2D>();
+	private ArrayList<ROI2DAlongT> roisForKymo = new ArrayList<ROI2DAlongT>();
 	private String kymographName = null;
 	public int kymographIndex = -1;
 	private String kymographPrefix = null;
@@ -542,7 +543,7 @@ public class Capillary implements Comparable<Capillary> {
 		if (nitems > 0) {
 			for (int i = 0; i < nitems; i++) {
 				Node node_i = XMLUtil.setElement(nodeMeta2, ID_INTERVAL + i);
-				KymoROI2D roiInterval = new KymoROI2D();
+				ROI2DAlongT roiInterval = new ROI2DAlongT();
 				roiInterval.loadFromXML(node_i);
 				roisForKymo.add(roiInterval);
 
@@ -697,24 +698,24 @@ public class Capillary implements Comparable<Capillary> {
 	}
 	// --------------------------------------------
 
-	public List<KymoROI2D> getROIsForKymo() {
+	public List<ROI2DAlongT> getROIsForKymo() {
 		if (roisForKymo.size() < 1)
 			initROI2DForKymoList();
 		return roisForKymo;
 	}
 
-	public KymoROI2D getROI2DKymoAt(int i) {
+	public ROI2DAlongT getROI2DKymoAt(int i) {
 		if (roisForKymo.size() < 1)
 			initROI2DForKymoList();
 		return roisForKymo.get(i);
 	}
 
-	public KymoROI2D getROI2DKymoAtIntervalT(long t) {
+	public ROI2DAlongT getROI2DKymoAtIntervalT(long t) {
 		if (roisForKymo.size() < 1)
 			initROI2DForKymoList();
 
-		KymoROI2D capRoi = null;
-		for (KymoROI2D item : roisForKymo) {
+		ROI2DAlongT capRoi = null;
+		for (ROI2DAlongT item : roisForKymo) {
 			if (t < item.getStart())
 				break;
 			capRoi = item;
@@ -723,8 +724,8 @@ public class Capillary implements Comparable<Capillary> {
 	}
 
 	public void removeROI2DIntervalStartingAt(long start) {
-		KymoROI2D itemFound = null;
-		for (KymoROI2D item : roisForKymo) {
+		ROI2DAlongT itemFound = null;
+		for (ROI2DAlongT item : roisForKymo) {
 			if (start != item.getStart())
 				continue;
 			itemFound = item;
@@ -734,7 +735,7 @@ public class Capillary implements Comparable<Capillary> {
 	}
 
 	private void initROI2DForKymoList() {
-		roisForKymo.add(new KymoROI2D(0, roiCap));
+		roisForKymo.add(new ROI2DAlongT(0, roiCap));
 	}
 
 	public void setVolumeAndPixels(double volume, int pixels) {

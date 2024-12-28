@@ -2,9 +2,9 @@ package plugins.fmp.multicafe.series;
 
 import java.util.ArrayList;
 
-import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 
 public class ClipCagesMeasuresToSmallest extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {

@@ -30,10 +30,10 @@ import icy.roi.ROI;
 import icy.sequence.Sequence;
 
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment.Capillaries;
-import plugins.fmp.multicafe.experiment.Capillary;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
+import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Directories;
 import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
 
