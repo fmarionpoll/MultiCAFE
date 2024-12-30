@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -30,11 +29,7 @@ import icy.file.SequenceFileImporter;
 import icy.gui.viewer.Viewer;
 import icy.image.IcyBufferedImage;
 import icy.roi.ROI;
-import icy.roi.ROI2D;
 import icy.sequence.Sequence;
-import plugins.fmp.multicafe.experiment.cages.Cage;
-import plugins.fmp.multicafe.tools.Comparators;
-import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class SequenceCamData {
 	public Sequence seq = null;
@@ -224,23 +219,6 @@ public class SequenceCamData {
 			e.printStackTrace();
 		}
 		return filetime;
-	}
-
-	public List<Cage> getCagesFromROIs() {
-		List<ROI2D> roiList = seq.getROI2Ds();
-		Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
-		List<Cage> cageList = new ArrayList<Cage>();
-		for (ROI2D roi : roiList) {
-			String csName = roi.getName();
-			if (!(roi instanceof ROI2DPolygon))
-				continue;
-			if ((csName.length() > 4 && csName.substring(0, 4).contains("cage") || csName.contains("Polygon2D"))) {
-				Cage cage = new Cage();
-				cage.cageRoi2D = roi;
-				cageList.add(cage);
-			}
-		}
-		return cageList;
 	}
 
 	public void displayViewerAtRectangle(Rectangle parent0Rect) {
