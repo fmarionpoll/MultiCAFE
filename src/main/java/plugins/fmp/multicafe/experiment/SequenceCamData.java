@@ -134,16 +134,6 @@ public class SequenceCamData {
 		}
 	}
 
-	public String getFileNameNoPath(int t) {
-		String csName = null;
-		csName = imagesList.get(t);
-		if (csName != null) {
-			Path path = Paths.get(csName);
-			return path.getName(path.getNameCount() - 1).toString();
-		}
-		return csName;
-	}
-
 	// --------------------------
 
 	public IcyBufferedImage getSeqImage(int t, int z) {
