@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -294,12 +293,6 @@ public class Experiment {
 			capillaries.transferCapillaryRoiToSequence(seqCamData.seq);
 
 		return (seqCamData != null && seqCamData.seq != null);
-	}
-
-	public boolean loadKymosImages() {
-		if (seqKymos != null)
-			seqKymos.loadImages();
-		return (seqKymos != null && seqKymos.seq != null);
 	}
 
 	public SequenceCamData openSequenceCamData() {
