@@ -5,12 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
 import icy.gui.frame.progress.ProgressFrame;
-import icy.gui.viewer.Viewer;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageCursor;
 import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.tools.ViewerFMP;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformOptions;
 
@@ -18,8 +18,8 @@ public class BuildBackground extends BuildSeries {
 	public Sequence seqData = new Sequence();
 	public Sequence seqReference = null;
 
-	private Viewer vData = null;
-	private Viewer vReference = null;
+	private ViewerFMP vData = null;
+	private ViewerFMP vReference = null;
 
 	private FlyDetectTools flyDetectTools = new FlyDetectTools();
 
@@ -51,11 +51,11 @@ public class BuildBackground extends BuildSeries {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
 					seqData = newSequence("data recorded", exp.seqCamData.getSeqImage(0, 0));
-					vData = new Viewer(seqData, true);
+					vData = new ViewerFMP(seqData, true, true);
 
 					seqReference = newSequence("referenceImage", exp.seqCamData.refImage);
 					exp.seqReference = seqReference;
-					vReference = new Viewer(seqReference, true);
+					vReference = new ViewerFMP(seqReference, true, true);
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
