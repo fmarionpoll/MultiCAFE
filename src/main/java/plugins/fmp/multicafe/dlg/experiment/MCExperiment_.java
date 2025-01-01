@@ -16,13 +16,14 @@ import icy.gui.component.PopupPanel;
 import icy.gui.frame.IcyFrame;
 import icy.gui.viewer.Viewer;
 import icy.gui.viewer.ViewerEvent;
+import icy.gui.viewer.ViewerEvent.ViewerEventType;
 import icy.gui.viewer.ViewerListener;
 import icy.main.Icy;
-import icy.gui.viewer.ViewerEvent.ViewerEventType;
 import icy.sequence.DimensionId;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.tools.ViewerFMP;
 
 public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListener {
 	/**
@@ -98,9 +99,9 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 		final ViewerListener parent = this;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				Viewer v = seq.getFirstViewer();
+				ViewerFMP v = (ViewerFMP) seq.getFirstViewer();
 				if (v == null)
-					v = new Viewer(exp.seqCamData.seq, true);
+					v = new ViewerFMP(exp.seqCamData.seq, true, true);
 
 				if (v != null) {
 					placeViewerNextToDialogBox(v, parent0.mainFrame);

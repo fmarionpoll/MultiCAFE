@@ -26,10 +26,10 @@ import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 import icy.file.Loader;
 import icy.file.SequenceFileImporter;
-import icy.gui.viewer.Viewer;
 import icy.image.IcyBufferedImage;
 import icy.roi.ROI;
 import icy.sequence.Sequence;
+import plugins.fmp.multicafe.tools.ViewerFMP;
 
 public class SequenceCamData {
 	public Sequence seq = null;
@@ -215,9 +215,9 @@ public class SequenceCamData {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					Viewer v = seq.getFirstViewer();
+					ViewerFMP v = (ViewerFMP) seq.getFirstViewer();
 					if (v == null)
-						v = new Viewer(seq, true);
+						v = new ViewerFMP(seq, true, true);
 					Rectangle rectv = v.getBoundsInternal();
 					rectv.setLocation(parent0Rect.x + parent0Rect.width, parent0Rect.y);
 					v.setBounds(rectv);

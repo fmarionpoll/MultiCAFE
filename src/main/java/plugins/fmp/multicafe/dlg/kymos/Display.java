@@ -28,13 +28,13 @@ import icy.gui.viewer.ViewerListener;
 import icy.main.Icy;
 import icy.roi.ROI;
 import icy.sequence.Sequence;
-
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Directories;
+import plugins.fmp.multicafe.tools.ViewerFMP;
 import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
 
 public class Display extends JPanel implements ViewerListener {
@@ -199,7 +199,7 @@ public class Display extends JPanel implements ViewerListener {
 
 			ArrayList<Viewer> vList = seqKymographs.seq.getViewers();
 			if (vList.size() == 0) {
-				Viewer viewerKymographs = new Viewer(seqKymographs.seq, true);
+				ViewerFMP viewerKymographs = new ViewerFMP(seqKymographs.seq, true, true);
 				List<String> list = IcyCanvas.getCanvasPluginNames();
 				String pluginName = list.stream().filter(s -> s.contains("Canvas2DWithTransforms")).findFirst()
 						.orElse(null);
