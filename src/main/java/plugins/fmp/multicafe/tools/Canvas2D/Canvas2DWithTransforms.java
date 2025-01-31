@@ -12,11 +12,11 @@ import icy.canvas.Canvas2D;
 import icy.gui.component.button.IcyButton;
 import icy.gui.viewer.Viewer;
 import icy.image.IcyBufferedImage;
+import icy.resource.icon.IcyIcon;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.resource.ResourceUtilFMP;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
-import icy.resource.icon.IcyIcon;
 
 public class Canvas2DWithTransforms extends Canvas2D {
 	/**
@@ -104,7 +104,6 @@ public class Canvas2DWithTransforms extends Canvas2D {
 
 		int offsetX = (int) (rectCanvas.width / getScaleX() / 2);
 		double scaleY = rectCanvas.getHeight() / rectImage.getHeight();
-		;
 		double scaleX = scaleY;
 		setMouseImagePos(offsetX, rectImage.height / 2);
 		setScale(scaleX, scaleY, true, true);
