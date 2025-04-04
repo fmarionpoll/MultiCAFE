@@ -166,7 +166,7 @@ public class BuildKymographs extends BuildSeries {
 	}
 
 	private void analyzeImageWithCapillary(IcyBufferedImage sourceImage, Capillary cap, int t, int kymographColumn) {
-		ROI2DAlongT kymoROI2D = cap.getROI2DKymoAtIntervalT(t);
+		ROI2DAlongT kymoROI2DatT = cap.getROI2DKymoAtIntervalT(t);
 		int sizeC = sourceImage.getSizeC();
 
 		for (int chan = 0; chan < sizeC; chan++) {
@@ -177,7 +177,7 @@ public class BuildKymographs extends BuildSeries {
 
 			int cnt = 0;
 			int sourceImageWidth = sourceImage.getWidth();
-			for (ArrayList<int[]> mask : kymoROI2D.getMasksList()) {
+			for (ArrayList<int[]> mask : kymoROI2DatT.getMasksList()) {
 				int sum = 0;
 				for (int[] m : mask)
 					sum += sourceImageChannel[m[0] + m[1] * sourceImageWidth];
@@ -218,7 +218,7 @@ public class BuildKymographs extends BuildSeries {
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					exportOneCapillaryIntegerArray_to_Kymograph(seqKymo, indexCap, cap, cap_Image, sizeC);
+					export_One_CapillaryIntegerArray_to_Kymograph(seqKymo, indexCap, cap, cap_Image, sizeC);
 				}
 			}));
 		}
@@ -228,7 +228,7 @@ public class BuildKymographs extends BuildSeries {
 		seqKymo.endUpdate();
 	}
 
-	private void exportOneCapillaryIntegerArray_to_Kymograph(Sequence seqKymo, int icap, Capillary cap,
+	private void export_One_CapillaryIntegerArray_to_Kymograph(Sequence seqKymo, int icap, Capillary cap,
 			IcyBufferedImage cap_Image, int sizeC) {
 		ArrayList<int[]> cap_Integer = cap.cap_Integer;
 		boolean isSignedDataType = cap_Image.isSignedDataType();
