@@ -54,6 +54,7 @@ public class DetectLevels extends BuildSeries {
 		final int jitter = 10;
 		final ImageTransformInterface transformPass1 = options.transform01.getFunction();
 		final ImageTransformInterface transformPass2 = options.transform02.getFunction();
+		final Rectangle searchRect = options.searchArea;
 
 		for (int tKymo = tFirsKymo; tKymo <= tLastKymo; tKymo++) {
 			final Capillary capi = exp.capillaries.capillariesList.get(tKymo);
@@ -73,9 +74,6 @@ public class DetectLevels extends BuildSeries {
 					IcyBufferedImage rawImage = imageIORead(seqKymos.getFileNameFromImageList(capi.kymographIndex));
 					int imageWidth = rawImage.getSizeX();
 					int imageHeight = rawImage.getSizeY();
-					Rectangle searchRect = new Rectangle(0, 0, rawImage.getSizeX() - 1, rawImage.getSizeY() - 1);
-					if (options.analyzePartOnly)
-						searchRect = options.searchArea;
 
 					if (options.pass1)
 						detectPass1(rawImage, transformPass1, capi, imageWidth, imageHeight, searchRect, jitter);

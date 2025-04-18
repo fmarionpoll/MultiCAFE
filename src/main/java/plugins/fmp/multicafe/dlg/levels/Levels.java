@@ -367,8 +367,8 @@ public class Levels extends JPanel implements PropertyChangeListener {
 		options.detectLevel2Threshold = (int) threshold2Spinner.getValue();
 
 		options.analyzePartOnly = fromCheckBox.isSelected();
-		if (fromCheckBox.isSelected() && searchRectangleROI2D != null)
-			options.searchArea = getSearchAreaFromSearchRectangle(exp);
+		options.searchArea = getSearchAreaFromSearchRectangle(exp,
+				fromCheckBox.isSelected() && searchRectangleROI2D != null);
 
 		options.spanDiffTop = (int) spanTopSpinner.getValue();
 		options.detectL = leftCheckBox.isSelected();
@@ -420,18 +420,29 @@ public class Levels extends JPanel implements PropertyChangeListener {
 		exp.seqKymos.seq.setSelectedROI(searchRectangleROI2D);
 	}
 
-	private Rectangle getSearchAreaFromSearchRectangle(Experiment exp) {
-		Rectangle rectangle = searchRectangleROI2D.getBounds();
+	private Rectangle getSearchAreaFromSearchRectangle(Experiment exp, boolean fitSmallerRectangle) {
 		Rectangle seqRectangle = exp.seqKymos.seq.getBounds2D();
-		if (rectangle.x < 0)
-			rectangle.x = 0;
-		if (rectangle.y < 0)
-			rectangle.y = 0;
-		if ((rectangle.width + rectangle.x) > seqRectangle.width)
-			rectangle.width = seqRectangle.width - 1 - rectangle.x;
-		if ((rectangle.height + rectangle.y) > (seqRectangle.height - 1))
-			rectangle.height = seqRectangle.height - 1 - rectangle.y;
-		return rectangle;
+		seqRectangle.height -= 1;
+		seqRectangle.width -= 1;
+		if (fitSmallerRectangle) {
+			Rectangle rectangle = searchRectangleROI2D.getBounds();
+			if (rectangle.x < 0) {
+				rectangle.width += rectangle.x;
+				rectangle.x = 0;
+			}
+			if (rectangle.y < 0) {
+				rectangle.height += rectangle.y;
+				rectangle.y = 0;
+			}
+			if ((rectangle.width + rectangle.x) > seqRectangle.width)
+				rectangle.width = seqRectangle.width - rectangle.x;
+			if ((rectangle.height + rectangle.y) > (seqRectangle.height))
+				rectangle.height = seqRectangle.height - rectangle.y;
+			System.out.println(rectangle);
+			return rectangle;
+		}
+
+		return seqRectangle;
 	}
 
 	protected Canvas2DWithTransforms getKymosCanvas(Experiment exp) {
