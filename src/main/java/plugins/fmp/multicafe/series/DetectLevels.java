@@ -67,11 +67,11 @@ public class DetectLevels extends BuildSeries {
 			capi.ptsDerivative.clear();
 			capi.ptsGulps.gulps.clear();
 			capi.limitsOptions.copyFrom(options);
+			final IcyBufferedImage rawImage = imageIORead(seqKymos.getFileNameFromImageList(capi.kymographIndex));
 
 			futures.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					IcyBufferedImage rawImage = imageIORead(seqKymos.getFileNameFromImageList(capi.kymographIndex));
 					int imageWidth = rawImage.getSizeX();
 					int imageHeight = rawImage.getSizeY();
 

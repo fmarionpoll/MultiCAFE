@@ -144,11 +144,13 @@ public class BuildKymographs extends BuildSeries {
 				seqData.setImage(0, 0, sourceImage);
 			}
 
+			final IcyBufferedImage sourceImage = loadImageFromIndex(exp, fromSourceImageIndex);
+			progressBar1.setMessage("Analyze frame: " + fromSourceImageIndex + "//" + nKymographColumns);
+
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					final IcyBufferedImage sourceImage = loadImageFromIndex(exp, fromSourceImageIndex);
-					progressBar1.setMessage("Analyze frame: " + fromSourceImageIndex + "//" + nKymographColumns);
+
 					for (Capillary capi : exp.capillaries.capillariesList)
 						analyzeImageWithCapillary(sourceImage, capi, fromSourceImageIndex, kymographColumn);
 				}
