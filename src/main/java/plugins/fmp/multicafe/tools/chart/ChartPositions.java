@@ -50,9 +50,9 @@ public class ChartPositions extends IcyFrame {
 		List<XYSeriesCollection> xyDataSetList = new ArrayList<XYSeriesCollection>();
 		MaxMinDouble yMaxMin = new MaxMinDouble();
 		int count = 0;
-		for (Cell cage : cageList) {
-			if (cage.flyPositions != null && cage.flyPositions.flyPositionList.size() > 0) {
-				ChartData chartData = getDataSet(cage, option);
+		for (Cell cell : cageList) {
+			if (cell.flyPositions != null && cell.flyPositions.flyPositionList.size() > 0) {
+				ChartData chartData = getDataSet(cell, option);
 				XYSeriesCollection xyDataset = chartData.xyDataset;
 				yMaxMin = chartData.yMaxMin;
 				if (count != 0)

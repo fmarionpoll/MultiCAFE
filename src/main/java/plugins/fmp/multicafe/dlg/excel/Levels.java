@@ -30,7 +30,7 @@ public class Levels extends JPanel {
 
 	JCheckBox lrPICheckBox = new JCheckBox("L+R & pref index", true);
 	JLabel lrPILabel = new JLabel("compute PI only if L+R > ");
-	JCheckBox sumPerCageCheckBox = new JCheckBox("sum/cage", false);
+	JCheckBox sumPerCageCheckBox = new JCheckBox("sum/cell", false);
 	JSpinner lrPIThresholdJSpinner = new JSpinner(new SpinnerNumberModel(0.0, 0., 100., 0.01));
 
 	void init(GridLayout capLayout) {

@@ -124,13 +124,13 @@ public class XLSExport {
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
 					desc_getChoiceTestType(capList, t));
 			if (exp.cages.cellList.size() > t / 2) {
-				Cell cage = exp.cages.cellList.get(t / 2); // cap.capCageID);
+				Cell cell = exp.cages.cellList.get(t / 2); // cap.capCageID);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose,
-						cage.strCellStrain);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.strCellSex);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.cellAge);
+						cell.strCellStrain);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cell.strCellSex);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cell.cellAge);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose,
-						cage.strCellComment);
+						cell.strCellComment);
 			}
 		}
 		pt.x = col0;
@@ -362,7 +362,7 @@ public class XLSExport {
 			XLSResults row = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCellID, xlsOption, nFrames);
 			row.stimulus = cap.capStimulus;
 			row.concentration = cap.capConcentration;
-			row.cageID = cap.capCellID;
+			row.cellID = cap.capCellID;
 			rowListForOneExp.addRow(row);
 		}
 		rowListForOneExp.sortRowsByName();
@@ -578,15 +578,15 @@ public class XLSExport {
 	}
 
 	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
-		for (Cell cage : exp.cages.cellList) {
-			String roiname = cage.cellRoi2D.getName();
+		for (Cell cell : exp.cages.cellList) {
+			String roiname = cell.cellRoi2D.getName();
 			if (roiname.length() < 4 || !roiname.substring(0, 4).contains("cage"))
 				continue;
 
 			String cagenumberString = roiname.substring(4);
 			int cagenumber = Integer.valueOf(cagenumberString);
 			int ilastalive = 0;
-			if (cage.cellNFlies > 0) {
+			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
 				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cagenumber)) {
 					expi = expi.chainToNextExperiment;
@@ -617,7 +617,7 @@ public class XLSExport {
 				XLSResults row = rowListForOneExp.getRow(iRow);
 				if (row.nflies == 0 || row.valuesOut == null)
 					continue;
-				if (row.cageID != row_master.cageID)
+				if (row.cellID != row_master.cellID)
 					continue;
 				if (row.name.equals(row_master.name))
 					continue;

@@ -100,8 +100,8 @@ public class PlotPositions extends JPanel implements SequenceListener {
 
 		if (aliveCheckbox.isSelected()) {
 			double threshold = (double) aliveThresholdSpinner.getValue();
-			for (Cell cage : exp.cages.cellList) {
-				FlyPositions posSeries = cage.flyPositions;
+			for (Cell cell : exp.cages.cellList) {
+				FlyPositions posSeries = cell.flyPositions;
 				posSeries.moveThreshold = threshold;
 				posSeries.computeIsAlive();
 			}
@@ -110,8 +110,8 @@ public class PlotPositions extends JPanel implements SequenceListener {
 		}
 
 		if (sleepCheckbox.isSelected()) {
-			for (Cell cage : exp.cages.cellList) {
-				FlyPositions posSeries = cage.flyPositions;
+			for (Cell cell : exp.cages.cellList) {
+				FlyPositions posSeries = cell.flyPositions;
 				posSeries.computeSleep();
 			}
 			displayYPos("flies asleep", sleepChart, rectv, ptRelative, exp, EnumXLSExportType.SLEEP);

@@ -171,12 +171,12 @@ public class Cage {
 					return data[1];
 
 				int cageID = Integer.valueOf(data[0]);
-				Cell cage = getCageFromNumber(cageID);
-				if (cage == null) {
-					cage = new Cell();
-					cellList.add(cage);
+				Cell cell = getCellFromNumber(cageID);
+				if (cell == null) {
+					cell = new Cell();
+					cellList.add(cell);
 				}
-				cage.csvImport_CAGE_Header(data);
+				cell.csvImport_CAGE_Header(data);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -195,7 +195,7 @@ public class Cage {
 					return data[1];
 
 				int cellID = Integer.valueOf(data[0]);
-				Cell cell = getCageFromNumber(cellID);
+				Cell cell = getCellFromNumber(cellID);
 				if (cell == null)
 					cell = new Cell();
 				cell.csvImport_MEASURE_Data(measureType, data, complete);
@@ -479,8 +479,8 @@ public class Cage {
 	public void cageToROIs(SequenceCamData seqCamData) {
 		List<ROI2D> cageLimitROIList = getRoisWithCageName(seqCamData);
 		seqCamData.seq.removeROIs(cageLimitROIList, false);
-		for (Cell cage : cellList)
-			cageLimitROIList.add(cage.cellRoi2D);
+		for (Cell cell : cellList)
+			cageLimitROIList.add(cell.cellRoi2D);
 		seqCamData.seq.addROIs(cageLimitROIList, true);
 	}
 
@@ -523,12 +523,12 @@ public class Cage {
 	}
 
 	public void transferNFliesFromCageToCapillaries(List<Capillary> capList) {
-		for (Cell cage : cellList) {
-			int cagenb = cage.getCellNumberInteger();
+		for (Cell cell : cellList) {
+			int cellnb = cell.getCellNumberInteger();
 			for (Capillary cap : capList) {
-				if (cap.capCellID != cagenb)
+				if (cap.capCellID != cellnb)
 					continue;
-				cap.capNFlies = cage.cellNFlies;
+				cap.capNFlies = cell.cellNFlies;
 			}
 		}
 	}
@@ -540,15 +540,15 @@ public class Cage {
 		}
 	}
 
-	public Cell getCageFromNumber(int number) {
-		Cell cageFound = null;
-		for (Cell cage : cellList) {
-			if (number == cage.getCellNumberInteger()) {
-				cageFound = cage;
+	public Cell getCellFromNumber(int number) {
+		Cell cellFound = null;
+		for (Cell cell : cellList) {
+			if (number == cell.getCellNumberInteger()) {
+				cellFound = cell;
 				break;
 			}
 		}
-		return cageFound;
+		return cellFound;
 	}
 
 	// ---------------

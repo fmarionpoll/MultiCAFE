@@ -19,7 +19,7 @@ import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cell;
-import plugins.fmp.multicafe.tools.JComponents.CageTableModel;
+import plugins.fmp.multicafe.tools.JComponents.CellTableModel;
 
 public class InfosCageTable extends JPanel {
 	/**
@@ -28,7 +28,7 @@ public class InfosCageTable extends JPanel {
 	private static final long serialVersionUID = 7599620793495187279L;
 	IcyFrame dialogFrame = null;
 	private JTable tableView = new JTable();
-	private CageTableModel cageTableModel = null;
+	private CellTableModel cageTableModel = null;
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
@@ -42,7 +42,7 @@ public class InfosCageTable extends JPanel {
 		this.parent0 = parent0;
 		cageArrayCopy = cageCopy;
 
-		cageTableModel = new CageTableModel(parent0.expListCombo);
+		cageTableModel = new CellTableModel(parent0.expListCombo);
 		tableView.setModel(cageTableModel);
 		tableView.setPreferredScrollableViewportSize(new Dimension(500, 400));
 		tableView.setFillsViewportHeight(true);
@@ -125,25 +125,25 @@ public class InfosCageTable extends JPanel {
 					int rowIndex = tableView.getSelectedRow();
 					int columnIndex = tableView.getSelectedColumn();
 					if (rowIndex >= 0) {
-						Cell cage0 = exp.cages.cellList.get(rowIndex);
-						for (Cell cage : exp.cages.cellList) {
-							if (cage.cellRoi2D.getName().equals(cage0.cellRoi2D.getName()))
+						Cell cell0 = exp.cages.cellList.get(rowIndex);
+						for (Cell cell : exp.cages.cellList) {
+							if (cell.cellRoi2D.getName().equals(cell0.cellRoi2D.getName()))
 								continue;
 							switch (columnIndex) {
 							case 1:
-								cage.cellNFlies = cage0.cellNFlies;
+								cell.cellNFlies = cell0.cellNFlies;
 								break;
 							case 2:
-								cage.strCellStrain = cage0.strCellStrain;
+								cell.strCellStrain = cell0.strCellStrain;
 								break;
 							case 3:
-								cage.strCellSex = cage0.strCellSex;
+								cell.strCellSex = cell0.strCellSex;
 								break;
 							case 4:
-								cage.cellAge = cage0.cellAge;
+								cell.cellAge = cell0.cellAge;
 								break;
 							case 5:
-								cage.strCellComment = cage0.strCellComment;
+								cell.strCellComment = cell0.strCellComment;
 								break;
 							default:
 								break;

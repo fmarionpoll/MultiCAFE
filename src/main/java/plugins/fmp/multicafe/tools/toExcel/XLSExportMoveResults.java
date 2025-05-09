@@ -130,9 +130,9 @@ public class XLSExportMoveResults extends XLSExport {
 		int ncages = expAll.cages.cellList.size();
 		rowsForOneExp = new ArrayList<FlyPositions>(ncages);
 		for (int i = 0; i < ncages; i++) {
-			Cell cage = expAll.cages.cellList.get(i);
-			FlyPositions row = new FlyPositions(cage.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
-			row.nflies = cage.cellNFlies;
+			Cell cell = expAll.cages.cellList.get(i);
+			FlyPositions row = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
+			row.nflies = cell.cellNFlies;
 			rowsForOneExp.add(row);
 		}
 		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name_Comparator());
@@ -149,36 +149,36 @@ public class XLSExportMoveResults extends XLSExport {
 			double pixelsize = 32. / expi.capillaries.capillariesList.get(0).capPixels;
 
 			List<FlyPositions> resultsArrayList = new ArrayList<FlyPositions>(expi.cages.cellList.size());
-			for (Cell cage : expi.cages.cellList) {
-				FlyPositions results = new FlyPositions(cage.cellRoi2D.getName(), xlsOption, len,
+			for (Cell cell : expi.cages.cellList) {
+				FlyPositions results = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, len,
 						options.buildExcelStepMs);
-				results.nflies = cage.cellNFlies;
+				results.nflies = cell.cellNFlies;
 				if (results.nflies > 0) {
 					results.setPixelSize(pixelsize);
 
 					switch (xlsOption) {
 					case DISTANCE:
-						results.excelComputeDistanceBetweenPoints(cage.flyPositions, (int) expi.camImageBin_ms,
+						results.excelComputeDistanceBetweenPoints(cell.flyPositions, (int) expi.camImageBin_ms,
 								options.buildExcelStepMs);
 						break;
 					case ISALIVE:
-						results.excelComputeIsAlive(cage.flyPositions, (int) expi.camImageBin_ms,
+						results.excelComputeIsAlive(cell.flyPositions, (int) expi.camImageBin_ms,
 								options.buildExcelStepMs);
 						break;
 					case SLEEP:
-						results.excelComputeSleep(cage.flyPositions, (int) expi.camImageBin_ms,
+						results.excelComputeSleep(cell.flyPositions, (int) expi.camImageBin_ms,
 								options.buildExcelStepMs);
 						break;
 					case XYTOPCAGE:
-						results.excelComputeNewPointsOrigin(cage.getCenterTopCell(), cage.flyPositions,
+						results.excelComputeNewPointsOrigin(cell.getCenterTopCell(), cell.flyPositions,
 								(int) expi.camImageBin_ms, options.buildExcelStepMs);
 						break;
 					case XYTIPCAPS:
-						results.excelComputeNewPointsOrigin(cage.getCenterTipCapillaries(exp.capillaries),
-								cage.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
+						results.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(exp.capillaries),
+								cell.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
 						break;
 					case ELLIPSEAXES:
-						results.excelComputeEllipse(cage.flyPositions, (int) expi.camImageBin_ms,
+						results.excelComputeEllipse(cell.flyPositions, (int) expi.camImageBin_ms,
 								options.buildExcelStepMs);
 						break;
 					case XYIMAGE:
@@ -294,21 +294,21 @@ public class XLSExportMoveResults extends XLSExport {
 	}
 
 	private void trimDeadsFromRowMoveData(Experiment exp) {
-		for (Cell cage : exp.cages.cellList) {
-			int cagenumber = Integer.valueOf(cage.cellRoi2D.getName().substring(4));
+		for (Cell cell : exp.cages.cellList) {
+			int cellNumberr = Integer.valueOf(cell.cellRoi2D.getName().substring(4));
 			int ilastalive = 0;
-			if (cage.cellNFlies > 0) {
+			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cagenumber)) {
+				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cellNumberr)) {
 					expi = expi.chainToNextExperiment;
 				}
-				long lastIntervalFlyAlive_Ms = expi.cages.getLastIntervalFlyAlive(cagenumber) * expi.cages.detectBin_Ms;
+				long lastIntervalFlyAlive_Ms = expi.cages.getLastIntervalFlyAlive(cellNumberr) * expi.cages.detectBin_Ms;
 				long lastMinuteAlive = lastIntervalFlyAlive_Ms + expi.camImageFirst_ms - expAll.camImageFirst_ms;
 				ilastalive = (int) (lastMinuteAlive / options.buildExcelStepMs);
 			}
 			for (FlyPositions row : rowsForOneExp) {
 				int rowCageNumber = Integer.valueOf(row.name.substring(4));
-				if (rowCageNumber == cagenumber) {
+				if (rowCageNumber == cellNumberr) {
 					row.clearValues(ilastalive + 1);
 				}
 			}

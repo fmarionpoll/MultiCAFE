@@ -95,17 +95,17 @@ public class FlyDetectTools {
 		final ROI2DArea binarizedImageRoi = binarizeImage(workimage, options.threshold);
 		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(cages.cellList.size());
 
-		for (Cell cage : cages.cellList) {
-			if (options.detectCage != -1 && cage.getCellNumberInteger() != options.detectCage)
+		for (Cell cell : cages.cellList) {
+			if (options.detectCage != -1 && cell.getCellNumberInteger() != options.detectCage)
 				continue;
-			if (cage.cellNFlies < 1)
+			if (cell.cellNFlies < 1)
 				continue;
 
 			futures.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					BooleanMask2D bestMask = getBestMask(binarizedImageRoi, cage.cellMask2D);
-					Rectangle2D rect = saveMask(bestMask, cage, t);
+					BooleanMask2D bestMask = getBestMask(binarizedImageRoi, cell.cellMask2D);
+					Rectangle2D rect = saveMask(bestMask, cell, t);
 					if (rect != null)
 						listRectangles.add(rect);
 				}
@@ -127,11 +127,11 @@ public class FlyDetectTools {
 		return bestMask;
 	}
 
-	Rectangle2D saveMask(BooleanMask2D bestMask, Cell cage, int t) {
+	Rectangle2D saveMask(BooleanMask2D bestMask, Cell cell, int t) {
 		Rectangle2D rect = null;
 		if (bestMask != null)
 			rect = bestMask.getOptimizedBounds();
-		cage.flyPositions.addPositionWithoutRoiArea(t, rect);
+		cell.flyPositions.addPositionWithoutRoiArea(t, rect);
 		return rect;
 	}
 
@@ -167,10 +167,10 @@ public class FlyDetectTools {
 		cages = exp.cages;
 		cages.computeBooleanMasksForCells();
 		rectangleAllCages = null;
-		for (Cell cage : cages.cellList) {
-			if (cage.cellNFlies < 1)
+		for (Cell cell : cages.cellList) {
+			if (cell.cellNFlies < 1)
 				continue;
-			Rectangle rect = cage.cellRoi2D.getBounds();
+			Rectangle rect = cell.cellRoi2D.getBounds();
 			if (rectangleAllCages == null)
 				rectangleAllCages = new Rectangle(rect);
 			else

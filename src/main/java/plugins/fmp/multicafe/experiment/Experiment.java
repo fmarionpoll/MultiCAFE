@@ -854,8 +854,8 @@ public class Experiment {
 
 	public void saveDetRoisToPositions() {
 		List<ROI2D> detectedROIsList = seqCamData.seq.getROI2Ds();
-		for (Cell cage : cages.cellList) {
-			cage.transferRoisToPositions(detectedROIsList);
+		for (Cell cell : cages.cellList) {
+			cell.transferRoisToPositions(detectedROIsList);
 		}
 	}
 

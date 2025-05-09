@@ -207,14 +207,14 @@ public class ChartLevels extends IcyFrame {
 		List<XYSeriesCollection> xyList = new ArrayList<XYSeriesCollection>();
 		for (int iRow = 0; iRow < resultsArray1.size(); iRow++) {
 			XLSResults xlsResults = resultsArray1.getRow(iRow);
-			if (oldcage != xlsResults.cageID) {
+			if (oldcage != xlsResults.cellID) {
 				xyDataset = new XYSeriesCollection();
-				oldcage = xlsResults.cageID;
+				oldcage = xlsResults.cellID;
 				xyList.add(xyDataset);
 			}
 
 			XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.name.substring(4));
-			seriesXY.setDescription("cage " + xlsResults.cageID + "_" + xlsResults.nflies);
+			seriesXY.setDescription("cell " + xlsResults.cellID + "_" + xlsResults.nflies);
 			if (resultsArray2 != null)
 				appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow));
 

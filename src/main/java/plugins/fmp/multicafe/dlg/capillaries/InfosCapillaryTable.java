@@ -35,13 +35,13 @@ public class InfosCapillaryTable extends JPanel {
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicateLRButton = new JButton("Duplicate cell to L/R");
-	private JButton duplicateCageButton = new JButton("Duplicate cage stim");
+	private JButton duplicateCageButton = new JButton("Duplicate cell stim");
 
 	private JButton exchangeLRButton = new JButton("Exchg L/R");
 
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
-	private JButton getNfliesButton = new JButton("Get n flies from cage");
-	private JButton getCageNoButton = new JButton("Set cage n#");
+	private JButton getNfliesButton = new JButton("Get n flies from cell");
+	private JButton getCageNoButton = new JButton("Set cell n#");
 	private JButton noFliesButton = new JButton("Cages0/9: no flies");
 	private MultiCAFE parent0 = null;
 	private List<Capillary> capillariesArrayCopy = null;

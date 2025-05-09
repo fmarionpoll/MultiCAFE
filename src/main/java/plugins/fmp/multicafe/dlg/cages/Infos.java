@@ -102,7 +102,7 @@ public class Infos extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				lengthSpinner.setValue(78.);
-				measureButton.setText("get span between 1rst and last cage");
+				measureButton.setText("get span between 1rst and last cell");
 				measureButton.setVisible(true);
 			}
 		});

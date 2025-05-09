@@ -145,7 +145,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 
 		boolean flag = true;
 		if (exp.cages.cellList.size() < 1) {
-			System.out.println("BuildSeries:checkBoundsForCages ! skipped experiment with no cage: "
+			System.out.println("BuildSeries:checkBoundsForCages ! skipped experiment with no cell: "
 					+ exp.getExperimentDirectory());
 			flag = false;
 		}

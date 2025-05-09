@@ -13,7 +13,7 @@ public class XLSResults {
 
 	public int dimension = 0;
 	public int nflies = 1;
-	public int cageID = 0;
+	public int cellID = 0;
 	public EnumXLSExportType exportType = null;
 	public ArrayList<Integer> dataInt = null;
 	public double[] valuesOut = null;
@@ -21,14 +21,14 @@ public class XLSResults {
 	public XLSResults(String name, int nflies, int cageID, EnumXLSExportType exportType) {
 		this.name = name;
 		this.nflies = nflies;
-		this.cageID = cageID;
+		this.cellID = cageID;
 		this.exportType = exportType;
 	}
 
 	public XLSResults(String name, int nflies, int cageID, EnumXLSExportType exportType, int nFrames) {
 		this.name = name;
 		this.nflies = nflies;
-		this.cageID = cageID;
+		this.cellID = cageID;
 		this.exportType = exportType;
 		initValuesArray(nFrames);
 	}
