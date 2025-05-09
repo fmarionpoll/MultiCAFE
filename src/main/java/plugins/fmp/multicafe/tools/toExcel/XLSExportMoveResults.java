@@ -127,9 +127,9 @@ public class XLSExportMoveResults extends XLSExport {
 		expAll.camImageFirst_ms = expAll.firstImage_FileTime.toMillis();
 		expAll.camImageLast_ms = expAll.lastImage_FileTime.toMillis();
 		int nFrames = (int) ((expAll.camImageLast_ms - expAll.camImageFirst_ms) / options.buildExcelStepMs + 1);
-		int ncages = expAll.cages.cellList.size();
-		rowsForOneExp = new ArrayList<FlyPositions>(ncages);
-		for (int i = 0; i < ncages; i++) {
+		int ncells = expAll.cages.cellList.size();
+		rowsForOneExp = new ArrayList<FlyPositions>(ncells);
+		for (int i = 0; i < ncells; i++) {
 			Cell cell = expAll.cages.cellList.get(i);
 			FlyPositions row = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
 			row.nflies = cell.cellNFlies;
@@ -295,20 +295,20 @@ public class XLSExportMoveResults extends XLSExport {
 
 	private void trimDeadsFromRowMoveData(Experiment exp) {
 		for (Cell cell : exp.cages.cellList) {
-			int cellNumberr = Integer.valueOf(cell.cellRoi2D.getName().substring(4));
+			int cellNumber = Integer.valueOf(cell.cellRoi2D.getName().substring(4));
 			int ilastalive = 0;
 			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cellNumberr)) {
+				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
-				long lastIntervalFlyAlive_Ms = expi.cages.getLastIntervalFlyAlive(cellNumberr) * expi.cages.detectBin_Ms;
+				long lastIntervalFlyAlive_Ms = expi.cages.getLastIntervalFlyAlive(cellNumber) * expi.cages.detectBin_Ms;
 				long lastMinuteAlive = lastIntervalFlyAlive_Ms + expi.camImageFirst_ms - expAll.camImageFirst_ms;
 				ilastalive = (int) (lastMinuteAlive / options.buildExcelStepMs);
 			}
 			for (FlyPositions row : rowsForOneExp) {
 				int rowCageNumber = Integer.valueOf(row.name.substring(4));
-				if (rowCageNumber == cellNumberr) {
+				if (rowCageNumber == cellNumber) {
 					row.clearValues(ilastalive + 1);
 				}
 			}

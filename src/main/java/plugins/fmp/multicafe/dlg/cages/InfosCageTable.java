@@ -86,8 +86,8 @@ public class InfosCageTable extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					cageArrayCopy.clear();
-					for (Cell cage : exp.cages.cellList) {
-						cageArrayCopy.add(cage);
+					for (Cell cell : exp.cages.cellList) {
+						cageArrayCopy.add(cell);
 					}
 					pasteButton.setEnabled(true);
 				}
@@ -99,17 +99,17 @@ public class InfosCageTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					for (Cell cageFrom : cageArrayCopy) {
-						cageFrom.valid = false;
-						for (Cell cageTo : exp.cages.cellList) {
-							if (!cageFrom.cellRoi2D.getName().equals(cageTo.cellRoi2D.getName()))
+					for (Cell cellFrom : cageArrayCopy) {
+						cellFrom.valid = false;
+						for (Cell cellTo : exp.cages.cellList) {
+							if (!cellFrom.cellRoi2D.getName().equals(cellTo.cellRoi2D.getName()))
 								continue;
-							cageFrom.valid = true;
-							cageTo.cellNFlies = cageFrom.cellNFlies;
-							cageTo.cellAge = cageFrom.cellAge;
-							cageTo.strCellComment = cageFrom.strCellComment;
-							cageTo.strCellSex = cageFrom.strCellSex;
-							cageTo.strCellStrain = cageFrom.strCellStrain;
+							cellFrom.valid = true;
+							cellTo.cellNFlies = cellFrom.cellNFlies;
+							cellTo.cellAge = cellFrom.cellAge;
+							cellTo.strCellComment = cellFrom.strCellComment;
+							cellTo.strCellSex = cellFrom.strCellSex;
+							cellTo.strCellStrain = cellFrom.strCellStrain;
 						}
 					}
 					cageTableModel.fireTableDataChanged();

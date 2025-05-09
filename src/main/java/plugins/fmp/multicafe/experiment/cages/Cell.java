@@ -202,7 +202,7 @@ public class Cell {
 		i++;
 		strCellSex = data[i];
 		i++;
-		String cageROI_name = data[i];
+		String cellROI_name = data[i];
 		i++;
 
 		int npoints = Integer.valueOf(data[i]);
@@ -218,7 +218,7 @@ public class Cell {
 			}
 			Polygon2D polygon = new Polygon2D(x, y, npoints);
 			cellRoi2D = new ROI2DPolygon(polygon);
-			cellRoi2D.setName(cageROI_name);
+			cellRoi2D.setName(cellROI_name);
 		}
 
 	}
@@ -245,16 +245,16 @@ public class Cell {
 	}
 
 	public int getCellNumberInteger() {
-		int cagenb = -1;
+		int cellnb = -1;
 		strCellNumber = getCellNumber();
 		if (strCellNumber != null) {
 			try {
 				return Integer.parseInt(strCellNumber);
 			} catch (NumberFormatException e) {
-				return cagenb;
+				return cellnb;
 			}
 		}
-		return cagenb;
+		return cellnb;
 	}
 
 	public void clearMeasures() {

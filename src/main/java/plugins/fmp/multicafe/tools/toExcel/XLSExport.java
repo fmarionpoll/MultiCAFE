@@ -583,15 +583,15 @@ public class XLSExport {
 			if (roiname.length() < 4 || !roiname.substring(0, 4).contains("cage"))
 				continue;
 
-			String cagenumberString = roiname.substring(4);
-			int cagenumber = Integer.valueOf(cagenumberString);
+			String cellNumberString = roiname.substring(4);
+			int cellNumber = Integer.valueOf(cellNumberString);
 			int ilastalive = 0;
 			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cagenumber)) {
+				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
-				int lastIntervalFlyAlive = expi.cages.getLastIntervalFlyAlive(cagenumber);
+				int lastIntervalFlyAlive = expi.cages.getLastIntervalFlyAlive(cellNumber);
 				int lastMinuteAlive = (int) (lastIntervalFlyAlive * expi.camImageBin_ms
 						+ (expi.camImageFirst_ms - expAll.camImageFirst_ms));
 				ilastalive = (int) (lastMinuteAlive / expAll.kymoBin_ms);
@@ -601,7 +601,7 @@ public class XLSExport {
 
 			for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
 				XLSResults row = rowListForOneExp.getRow(iRow);
-				if (desc_getCageFromCapillaryName(row.name) == cagenumber)
+				if (desc_getCageFromCapillaryName(row.name) == cellNumber)
 					row.clearValues(ilastalive);
 			}
 		}

@@ -22,7 +22,7 @@ public class FlyDetectTools {
 	public List<BooleanMask2D> cageMaskList = new ArrayList<BooleanMask2D>();
 	public Rectangle rectangleAllCages = null;
 	public BuildSeriesOptions options = null;
-	public Cage cages = null;
+	public Cage box = null;
 
 	// -----------------------------------------------------
 
@@ -89,13 +89,13 @@ public class FlyDetectTools {
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("detectFlies");
 		processor.setPriority(Processor.NORM_PRIORITY);
-		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(cages.cellList.size());
+		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(box.cellList.size());
 		futures.clear();
 
 		final ROI2DArea binarizedImageRoi = binarizeImage(workimage, options.threshold);
-		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(cages.cellList.size());
+		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(box.cellList.size());
 
-		for (Cell cell : cages.cellList) {
+		for (Cell cell : box.cellList) {
 			if (options.detectCage != -1 && cell.getCellNumberInteger() != options.detectCage)
 				continue;
 			if (cell.cellNFlies < 1)
@@ -164,10 +164,10 @@ public class FlyDetectTools {
 		exp.cages.detect_nframes = (int) (((exp.cages.detectLast_Ms - exp.cages.detectFirst_Ms)
 				/ exp.cages.detectBin_Ms) + 1);
 		exp.cages.clearAllMeasures(options.detectCage);
-		cages = exp.cages;
-		cages.computeBooleanMasksForCells();
+		box = exp.cages;
+		box.computeBooleanMasksForCells();
 		rectangleAllCages = null;
-		for (Cell cell : cages.cellList) {
+		for (Cell cell : box.cellList) {
 			if (cell.cellNFlies < 1)
 				continue;
 			Rectangle rect = cell.cellRoi2D.getBounds();

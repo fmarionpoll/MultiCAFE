@@ -18,17 +18,17 @@ public class XLSResults {
 	public ArrayList<Integer> dataInt = null;
 	public double[] valuesOut = null;
 
-	public XLSResults(String name, int nflies, int cageID, EnumXLSExportType exportType) {
+	public XLSResults(String name, int nflies, int cellID, EnumXLSExportType exportType) {
 		this.name = name;
 		this.nflies = nflies;
-		this.cellID = cageID;
+		this.cellID = cellID;
 		this.exportType = exportType;
 	}
 
-	public XLSResults(String name, int nflies, int cageID, EnumXLSExportType exportType, int nFrames) {
+	public XLSResults(String name, int nflies, int cellID, EnumXLSExportType exportType, int nFrames) {
 		this.name = name;
 		this.nflies = nflies;
-		this.cellID = cageID;
+		this.cellID = cellID;
 		this.exportType = exportType;
 		initValuesArray(nFrames);
 	}

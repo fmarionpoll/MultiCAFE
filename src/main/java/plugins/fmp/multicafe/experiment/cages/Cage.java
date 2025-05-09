@@ -408,10 +408,10 @@ public class Cage {
 		return true;
 	}
 
-	private boolean isPresent(Cell cagenew) {
+	private boolean isPresent(Cell cellNew) {
 		boolean flag = false;
 		for (Cell cell : cellList) {
-			if (cell.cellRoi2D.getName().contentEquals(cagenew.cellRoi2D.getName())) {
+			if (cell.cellRoi2D.getName().contentEquals(cellNew.cellRoi2D.getName())) {
 				flag = true;
 				break;
 			}

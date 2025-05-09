@@ -202,14 +202,14 @@ public class ChartLevels extends IcyFrame {
 			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExportType.BOTTOMLEVEL, subtractEvaporation);
 
 		XYSeriesCollection xyDataset = null;
-		int oldcage = -1;
+		int oldCell = -1;
 
 		List<XYSeriesCollection> xyList = new ArrayList<XYSeriesCollection>();
 		for (int iRow = 0; iRow < resultsArray1.size(); iRow++) {
 			XLSResults xlsResults = resultsArray1.getRow(iRow);
-			if (oldcage != xlsResults.cellID) {
+			if (oldCell != xlsResults.cellID) {
 				xyDataset = new XYSeriesCollection();
-				oldcage = xlsResults.cellID;
+				oldCell = xlsResults.cellID;
 				xyList.add(xyDataset);
 			}
 
