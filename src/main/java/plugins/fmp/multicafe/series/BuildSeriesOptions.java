@@ -32,7 +32,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 	boolean detectTop = true;
 	boolean detectBottom = true;
 
-	public int detectCage = -1;
+	public int detectCell = -1;
 	public boolean detectL = true;
 	public boolean detectR = true;
 	public boolean detectAllKymos = true;

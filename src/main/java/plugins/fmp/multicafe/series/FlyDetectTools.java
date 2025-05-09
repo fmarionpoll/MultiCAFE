@@ -19,18 +19,18 @@ import plugins.fmp.multicafe.experiment.cageBox.Cell;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyDetectTools {
-	public List<BooleanMask2D> cageMaskList = new ArrayList<BooleanMask2D>();
+	public List<BooleanMask2D> cellMaskList = new ArrayList<BooleanMask2D>();
 	public Rectangle rectangleAllCells = null;
 	public BuildSeriesOptions options = null;
 	public CageBox box = null;
 
 	// -----------------------------------------------------
 
-	BooleanMask2D findLargestBlob(ROI2DArea roiAll, BooleanMask2D cageMask) throws InterruptedException {
-		if (cageMask == null)
+	BooleanMask2D findLargestBlob(ROI2DArea roiAll, BooleanMask2D cellMask) throws InterruptedException {
+		if (cellMask == null)
 			return null;
 
-		ROI2DArea roi = new ROI2DArea(roiAll.getBooleanMask(true).getIntersection(cageMask));
+		ROI2DArea roi = new ROI2DArea(roiAll.getBooleanMask(true).getIntersection(cellMask));
 
 		// find largest component in the threshold
 		int max = 0;
@@ -96,7 +96,7 @@ public class FlyDetectTools {
 		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(box.cellList.size());
 
 		for (Cell cell : box.cellList) {
-			if (options.detectCage != -1 && cell.getCellNumberInteger() != options.detectCage)
+			if (options.detectCell != -1 && cell.getCellNumberInteger() != options.detectCell)
 				continue;
 			if (cell.cellNFlies < 1)
 				continue;
@@ -117,10 +117,10 @@ public class FlyDetectTools {
 		return listRectangles;
 	}
 
-	BooleanMask2D getBestMask(ROI2DArea binarizedImageRoi, BooleanMask2D cageMask) {
+	BooleanMask2D getBestMask(ROI2DArea binarizedImageRoi, BooleanMask2D cellMask) {
 		BooleanMask2D bestMask = null;
 		try {
-			bestMask = findLargestBlob(binarizedImageRoi, cageMask);
+			bestMask = findLargestBlob(binarizedImageRoi, cellMask);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -163,7 +163,7 @@ public class FlyDetectTools {
 		this.options = options;
 		exp.cageBox.detect_nframes = (int) (((exp.cageBox.detectLast_Ms - exp.cageBox.detectFirst_Ms)
 				/ exp.cageBox.detectBin_Ms) + 1);
-		exp.cageBox.clearAllMeasures(options.detectCage);
+		exp.cageBox.clearAllMeasures(options.detectCell);
 		box = exp.cageBox;
 		box.computeBooleanMasksForCells();
 		rectangleAllCells = null;

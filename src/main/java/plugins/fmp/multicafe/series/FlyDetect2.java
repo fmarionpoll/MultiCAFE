@@ -35,7 +35,7 @@ public class FlyDetect2 extends BuildSeries {
 	private void runFlyDetect2(Experiment exp) {
 		exp.cleanPreviousDetectedFliesROIs();
 		find_flies.initParametersForDetection(exp, options);
-		exp.cageBox.initFlyPositions(options.detectCage);
+		exp.cageBox.initFlyPositions(options.detectCell);
 		options.threshold = options.thresholdDiff;
 		if (exp.loadReferenceImage()) {
 			openFlyDetectViewers(exp);

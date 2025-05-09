@@ -44,13 +44,13 @@ public class ClipCageMeasuresToSmallest extends BuildSeries {
 		return found;
 	}
 
-	private int findMinLength(Experiment exp, int t, int tcage) {
+	private int findMinLength(Experiment exp, int t, int tCell) {
 		Capillary tcap = exp.capillaries.capillariesList.get(t);
 		int minLength = tcap.ptsTop.polylineLevel.npoints;
 		for (int tt = t; tt < exp.capillaries.capillariesList.size(); tt++) {
 			Capillary ttcap = exp.capillaries.capillariesList.get(tt);
-			int ttcage = ttcap.capCellID;
-			if (ttcage == tcage) {
+			int ttCell = ttcap.capCellID;
+			if (ttCell == tCell) {
 				int dataLength = ttcap.ptsTop.polylineLevel.npoints;
 				if (dataLength < minLength)
 					minLength = dataLength;

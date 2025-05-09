@@ -70,6 +70,7 @@ public class Options extends JPanel {
 		viewCellsCheckbox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
+				displayROIsCategory(viewCellsCheckbox.isSelected(), "cell");
 				displayROIsCategory(viewCellsCheckbox.isSelected(), "cage");
 			}
 		});

@@ -102,7 +102,7 @@ public class MCCage_ extends JPanel implements PropertyChangeListener {
 		int iTab = 0;
 		tabBuildCells.init(capLayout, parent0);
 		tabBuildCells.addPropertyChangeListener(this);
-		tabsPane.addTab("Cage", null, tabBuildCells, "Define cells");
+		tabsPane.addTab("Cells", null, tabBuildCells, "Define cells");
 
 		iTab++;
 		iTAB_INFOS = iTab;

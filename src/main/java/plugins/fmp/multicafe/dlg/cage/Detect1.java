@@ -222,7 +222,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = exp.getBinSubDirectory();
 
-		options.detectCage = cellsComboBox.getSelectedIndex() - 1;
+		options.detectCell = cellsComboBox.getSelectedIndex() - 1;
 
 		return options;
 	}

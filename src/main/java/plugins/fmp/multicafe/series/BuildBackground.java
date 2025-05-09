@@ -66,7 +66,7 @@ public class BuildBackground extends BuildSeries {
 	private void runBuildBackground(Experiment exp) {
 		exp.cleanPreviousDetectedFliesROIs();
 		flyDetectTools.initParametersForDetection(exp, options);
-		exp.cageBox.initFlyPositions(options.detectCage);
+		exp.cageBox.initFlyPositions(options.detectCell);
 		options.threshold = options.thresholdDiff;
 
 		openBackgroundViewers(exp);
