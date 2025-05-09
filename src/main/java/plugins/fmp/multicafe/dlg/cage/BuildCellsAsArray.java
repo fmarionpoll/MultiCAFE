@@ -3,9 +3,9 @@ package plugins.fmp.multicafe.dlg.cage;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class BuildCellsAsArray extends JPanel {
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
 	private JButton drawPolygon2DButton = new JButton("Draw Polygon2D");
-	private JButton createCagesButton = new JButton("Create cages");
+	private JButton createCellsButton = new JButton("Create cells");
 	private JSpinner nColumnsTextField = new JSpinner(new SpinnerNumberModel(10, 0, 10000, 1));
 	private JSpinner width_cageTextField = new JSpinner(new SpinnerNumberModel(20, 0, 10000, 1));
 	private JSpinner width_intervalTextField = new JSpinner(new SpinnerNumberModel(3, 0, 10000, 1));
@@ -52,27 +52,27 @@ public class BuildCellsAsArray extends JPanel {
 
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(drawPolygon2DButton);
-		panel1.add(createCagesButton);
+		panel1.add(createCellsButton);
 		add(panel1);
 
 		JLabel nColumnsLabel = new JLabel("N columns ");
 		JLabel nRowsLabel = new JLabel("N rows ");
-		JLabel cagewidthLabel = new JLabel("cage width ");
-		JLabel btwcagesLabel = new JLabel("between cages ");
+		JLabel cellWidthLabel = new JLabel("cell width ");
+		JLabel betweenCellsLabel = new JLabel("between cells ");
 		nColumnsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		cagewidthLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		btwcagesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		cellWidthLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		betweenCellsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		nRowsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(cagewidthLabel);
+		panel2.add(cellWidthLabel);
 		panel2.add(width_cageTextField);
 		panel2.add(nColumnsLabel);
 		panel2.add(nColumnsTextField);
 		add(panel2);
 
 		JPanel panel3 = new JPanel(flowLayout);
-		panel3.add(btwcagesLabel);
+		panel3.add(betweenCellsLabel);
 		panel3.add(width_intervalTextField);
 		panel3.add(nRowsLabel);
 		panel3.add(nRowsTextField);
@@ -91,15 +91,15 @@ public class BuildCellsAsArray extends JPanel {
 			}
 		});
 
-		createCagesButton.addActionListener(new ActionListener() {
+		createCellsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
-					exp.cages.cageFromROIs(exp.seqCamData);
+					exp.cageBox.cageFromROIs(exp.seqCamData);
 					if (exp.capillaries.capillariesList.size() > 0)
-						exp.cages.transferNFliesFromCapillariesToCage(exp.capillaries.capillariesList);
+						exp.cageBox.transferNFliesFromCapillariesToCage(exp.capillaries.capillariesList);
 				}
 			}
 		});
@@ -108,7 +108,7 @@ public class BuildCellsAsArray extends JPanel {
 	void updateNColumnsFieldFromSequence() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			int nrois = exp.cages.cellList.size();
+			int nrois = exp.cageBox.cellList.size();
 			if (nrois > 0) {
 				nColumnsTextField.setValue(nrois);
 				ncolumns = nrois;
@@ -155,7 +155,7 @@ public class BuildCellsAsArray extends JPanel {
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
-		exp.cages.clearCellList();
+		exp.cageBox.clearCellList();
 
 		// read values from text boxes
 		try {
@@ -184,7 +184,7 @@ public class BuildCellsAsArray extends JPanel {
 
 		// generate cage frames
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
-		exp.cages.clearCellList();
+		exp.cageBox.clearCellList();
 		String cageRoot = "cage";
 		int iRoot = 0;
 

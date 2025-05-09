@@ -189,7 +189,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					parent0.paneLevels.tabGraphs.displayGraphsPanels(exp);
 			}
 
-			exp.loadCagesMeasures();
+			exp.loadCageMeasures();
 			exp.updateROIsAt(0);
 			progressFrame.setMessage("Load data: update dialogs");
 

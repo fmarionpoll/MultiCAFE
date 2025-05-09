@@ -19,7 +19,7 @@ import plugins.fmp.multicafe.experiment.SequenceKymos;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.series.AdjustMeasuresToDimensions;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
-import plugins.fmp.multicafe.series.ClipCagesMeasuresToSmallest;
+import plugins.fmp.multicafe.series.ClipCageMeasuresToSmallest;
 import plugins.fmp.multicafe.series.CropMeasuresToDimensions;
 import plugins.fmp.multicafe.series.CurvesRestoreLength;
 
@@ -44,7 +44,7 @@ public class Adjust extends JPanel implements PropertyChangeListener {
 
 	private AdjustMeasuresToDimensions threadAdjust = null;
 	private CurvesRestoreLength threadRestore = null;
-	private ClipCagesMeasuresToSmallest threadClip = null;
+	private ClipCageMeasuresToSmallest threadClip = null;
 	private CropMeasuresToDimensions threadCrop = null;
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
@@ -231,7 +231,7 @@ public class Adjust extends JPanel implements PropertyChangeListener {
 	}
 
 	private void series_clipStart() {
-		threadClip = new ClipCagesMeasuresToSmallest();
+		threadClip = new ClipCageMeasuresToSmallest();
 		BuildSeriesOptions options = threadClip.options;
 		if (initBuildParameters(options)) {
 			threadClip.addPropertyChangeListener(this);

@@ -21,7 +21,7 @@ public class MCCage_ extends JPanel implements PropertyChangeListener {
 	 */
 	private static final long serialVersionUID = 3457738144388946607L;
 
-	BuildCells tabBuildCages = new BuildCells();
+	BuildCells tabBuildCells = new BuildCells();
 	Infos tabInfos = new Infos();
 	Detect1 tabDetect1 = new Detect1();
 
@@ -62,7 +62,7 @@ public class MCCage_ extends JPanel implements PropertyChangeListener {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				int selectedIndex = tabsPane.getSelectedIndex();
-				tabBuildCages.tabBuildCages2.overlayCheckBox.setSelected(selectedIndex == 0);
+				tabBuildCells.tabBuildCells2.overlayCheckBox.setSelected(selectedIndex == 0);
 
 				tabDetect1.overlayCheckBox.setSelected(selectedIndex == iTAB_DETECT1);
 				if (selectedIndex == iTAB_DETECT1 || selectedIndex == iTAB_DETECT2) {
@@ -79,7 +79,7 @@ public class MCCage_ extends JPanel implements PropertyChangeListener {
 						parent0.paneExperiment.tabOptions.displayROIsCategory(
 								parent0.paneExperiment.tabOptions.viewCapillariesCheckBox.isSelected(), "line");
 						parent0.paneExperiment.tabOptions.displayROIsCategory(
-								parent0.paneExperiment.tabOptions.viewCagesCheckbox.isSelected(), "cell");
+								parent0.paneExperiment.tabOptions.viewCellsCheckbox.isSelected(), "cell");
 					}
 					bTrapROIsEdit = false;
 				}
@@ -100,15 +100,15 @@ public class MCCage_ extends JPanel implements PropertyChangeListener {
 
 	void createTabs(GridLayout capLayout) {
 		int iTab = 0;
-		tabBuildCages.init(capLayout, parent0);
-		tabBuildCages.addPropertyChangeListener(this);
-		tabsPane.addTab("Cages", null, tabBuildCages, "Define cages");
+		tabBuildCells.init(capLayout, parent0);
+		tabBuildCells.addPropertyChangeListener(this);
+		tabsPane.addTab("Cage", null, tabBuildCells, "Define cells");
 
 		iTab++;
 		iTAB_INFOS = iTab;
 		tabInfos.init(capLayout, parent0);
 		tabInfos.addPropertyChangeListener(this);
-		tabsPane.addTab("Infos", null, tabInfos, "Display infos about cages and flies positions");
+		tabsPane.addTab("Infos", null, tabInfos, "Display infos about cells and flies positions");
 
 		iTab++;
 		iTAB_DETECT1 = iTab;
@@ -136,13 +136,13 @@ public class MCCage_ extends JPanel implements PropertyChangeListener {
 		iTab++;
 		tabFile.init(capLayout, parent0);
 		tabFile.addPropertyChangeListener(this);
-		tabsPane.addTab("Load/Save", null, tabFile, "Load/save cages and flies position");
+		tabsPane.addTab("Load/Save", null, tabFile, "Load/save cells and flies position");
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("LOAD_DATA")) {
-			tabBuildCages.tabBuildCages1.updateNColumnsFieldFromSequence();
+			tabBuildCells.tabBuildCells1.updateNColumnsFieldFromSequence();
 		}
 	}
 

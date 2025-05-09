@@ -37,7 +37,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 	private String detectString = "Detect...";
 	private JButton startComputationButton = new JButton(detectString);
-	private JComboBox<String> allCagesComboBox = new JComboBox<String>(new String[] { "all cages" });
+	private JComboBox<String> allCellsComboBox = new JComboBox<String>(new String[] { "all cells" });
 	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
 
 	private JCheckBox objectLowsizeCheckBox = new JCheckBox("size >");
@@ -63,11 +63,11 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(startComputationButton);
-		panel1.add(allCagesComboBox);
+		panel1.add(allCellsComboBox);
 		panel1.add(allCheckBox);
 		add(panel1);
 
-		allCagesComboBox.addPopupMenuListener(this);
+		allCellsComboBox.addPopupMenuListener(this);
 
 //		objectLowsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
 //		objectUpsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -119,7 +119,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		if (e.getSource() == thresholdDiffSpinner) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null)
-				exp.cages.detect_threshold = (int) thresholdDiffSpinner.getValue();
+				exp.cageBox.detect_threshold = (int) thresholdDiffSpinner.getValue();
 		}
 	}
 
@@ -204,12 +204,12 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		int nitems = 1;
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
-			nitems = exp.cages.cellList.size() + 1;
-		if (allCagesComboBox.getItemCount() != nitems) {
-			allCagesComboBox.removeAllItems();
-			allCagesComboBox.addItem("all cages");
-			for (Cell cell : exp.cages.cellList) {
-				allCagesComboBox.addItem(cell.getCellNumber());
+			nitems = exp.cageBox.cellList.size() + 1;
+		if (allCellsComboBox.getItemCount() != nitems) {
+			allCellsComboBox.removeAllItems();
+			allCellsComboBox.addItem("all cells");
+			for (Cell cell : exp.cageBox.cellList) {
+				allCellsComboBox.addItem(cell.getCellNumber());
 			}
 		}
 	}

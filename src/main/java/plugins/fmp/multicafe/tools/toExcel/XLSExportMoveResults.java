@@ -96,7 +96,7 @@ public class XLSExportMoveResults extends XLSExport {
 
 	private void getMoveDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
 		// loop to get all capillaries into expAll and init rows for this experiment
-		expAll.cages.copy(exp.cages);
+		expAll.cageBox.copy(exp.cageBox);
 		expAll.capillaries.copy(exp.capillaries);
 		expAll.firstImage_FileTime = exp.firstImage_FileTime;
 		expAll.lastImage_FileTime = exp.lastImage_FileTime;
@@ -120,17 +120,17 @@ public class XLSExportMoveResults extends XLSExport {
 
 		Experiment expi = exp.chainToNextExperiment;
 		while (expi != null) {
-			expAll.cages.mergeLists(expi.cages);
+			expAll.cageBox.mergeLists(expi.cageBox);
 			expAll.lastImage_FileTime = expi.lastImage_FileTime;
 			expi = expi.chainToNextExperiment;
 		}
 		expAll.camImageFirst_ms = expAll.firstImage_FileTime.toMillis();
 		expAll.camImageLast_ms = expAll.lastImage_FileTime.toMillis();
 		int nFrames = (int) ((expAll.camImageLast_ms - expAll.camImageFirst_ms) / options.buildExcelStepMs + 1);
-		int ncells = expAll.cages.cellList.size();
+		int ncells = expAll.cageBox.cellList.size();
 		rowsForOneExp = new ArrayList<FlyPositions>(ncells);
 		for (int i = 0; i < ncells; i++) {
-			Cell cell = expAll.cages.cellList.get(i);
+			Cell cell = expAll.cageBox.cellList.get(i);
 			FlyPositions row = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
 			row.nflies = cell.cellNFlies;
 			rowsForOneExp.add(row);
@@ -148,8 +148,8 @@ public class XLSExportMoveResults extends XLSExport {
 				continue;
 			double pixelsize = 32. / expi.capillaries.capillariesList.get(0).capPixels;
 
-			List<FlyPositions> resultsArrayList = new ArrayList<FlyPositions>(expi.cages.cellList.size());
-			for (Cell cell : expi.cages.cellList) {
+			List<FlyPositions> resultsArrayList = new ArrayList<FlyPositions>(expi.cageBox.cellList.size());
+			for (Cell cell : expi.cageBox.cellList) {
 				FlyPositions results = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, len,
 						options.buildExcelStepMs);
 				results.nflies = cell.cellNFlies;
@@ -294,15 +294,15 @@ public class XLSExportMoveResults extends XLSExport {
 	}
 
 	private void trimDeadsFromRowMoveData(Experiment exp) {
-		for (Cell cell : exp.cages.cellList) {
+		for (Cell cell : exp.cageBox.cellList) {
 			int cellNumber = Integer.valueOf(cell.cellRoi2D.getName().substring(4));
 			int ilastalive = 0;
 			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cellNumber)) {
+				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cageBox.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
-				long lastIntervalFlyAlive_Ms = expi.cages.getLastIntervalFlyAlive(cellNumber) * expi.cages.detectBin_Ms;
+				long lastIntervalFlyAlive_Ms = expi.cageBox.getLastIntervalFlyAlive(cellNumber) * expi.cageBox.detectBin_Ms;
 				long lastMinuteAlive = lastIntervalFlyAlive_Ms + expi.camImageFirst_ms - expAll.camImageFirst_ms;
 				ilastalive = (int) (lastMinuteAlive / options.buildExcelStepMs);
 			}

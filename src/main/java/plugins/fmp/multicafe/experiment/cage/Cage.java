@@ -147,12 +147,13 @@ public class Cage {
 				if (data[0].equals("#"))
 					return data[1];
 
-				if (data[0].substring(0, Math.min(data[0].length(), 7)).equals("n cages")) {
-					int ncages = Integer.valueOf(data[1]);
-					if (ncages >= cellList.size())
-						cellList.ensureCapacity(ncages);
+				String test = data[0].substring(0, Math.min(data[0].length(), 7));
+				if (test.equals("n cages") || test.equals("n cells")) {
+					int ncells = Integer.valueOf(data[1]);
+					if (ncells >= cellList.size())
+						cellList.ensureCapacity(ncells);
 					else
-						cellList.subList(ncages, cellList.size()).clear();
+						cellList.subList(ncells, cellList.size()).clear();
 				}
 			}
 		} catch (IOException e) {
@@ -314,7 +315,7 @@ public class Cage {
 		if (flag) {
 			cageToROIs(exp.seqCamData);
 		} else {
-			System.out.println("Cages:xmlReadCagesFromFileNoQuestion() failed to load cages from file");
+			System.out.println("Cages:xmlReadCageFromFileNoQuestion() failed to load cages from file");
 			return false;
 		}
 		return true;
@@ -348,10 +349,10 @@ public class Cage {
 
 	// --------------
 
-	public void copy(Cage cagesSource) {
+	public void copy(Cage cageSource) {
 //		detect.copyParameters(cag.detect);	
 		cellList.clear();
-		for (Cell cellSource : cagesSource.cellList) {
+		for (Cell cellSource : cageSource.cellList) {
 			Cell cellDestination = new Cell();
 			cellDestination.copyCell(cellSource);
 			cellList.add(cellDestination);
@@ -360,13 +361,13 @@ public class Cage {
 
 	// --------------
 
-	private void transferDataToCage_v0(List<ROI2D> cageLimitROIList, List<FlyPositions> flyPositionsList) {
+	private void transferDataToCage_v0(List<ROI2D> cellLimitROIList, List<FlyPositions> flyPositionsList) {
 		cellList.clear();
-		Collections.sort(cageLimitROIList, new Comparators.ROI2D_Name_Comparator());
-		int ncages = cageLimitROIList.size();
-		for (int index = 0; index < ncages; index++) {
+		Collections.sort(cellLimitROIList, new Comparators.ROI2D_Name_Comparator());
+		int ncells = cellLimitROIList.size();
+		for (int index = 0; index < ncells; index++) {
 			Cell cell = new Cell();
-			cell.cellRoi2D = cageLimitROIList.get(index);
+			cell.cellRoi2D = cellLimitROIList.get(index);
 			cell.flyPositions = flyPositionsList.get(index);
 			cellList.add(cell);
 		}
@@ -441,7 +442,7 @@ public class Cage {
 	}
 
 	private void removeOrphanCells(List<ROI2D> roiList) {
-		// remove cages with names not in the list
+		// remove cells with names not in the list
 		Iterator<Cell> iterator = cellList.iterator();
 		while (iterator.hasNext()) {
 			Cell cell = iterator.next();
@@ -630,7 +631,7 @@ public class Cage {
 		return isavailable;
 	}
 
-	public int getHorizontalSpanOfCages() {
+	public int getHorizontalSpanOfCells() {
 		int leftPixel = -1;
 		int rightPixel = -1;
 

@@ -42,7 +42,7 @@ public class InfosCapillaryTable extends JPanel {
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
 	private JButton getNfliesButton = new JButton("Get n flies from cell");
 	private JButton getCageNoButton = new JButton("Set cell n#");
-	private JButton noFliesButton = new JButton("Cages0/9: no flies");
+	private JButton noFliesButton = new JButton("Cells 0/9: no flies");
 	private MultiCAFE parent0 = null;
 	private List<Capillary> capillariesArrayCopy = null;
 
@@ -172,8 +172,8 @@ public class InfosCapillaryTable extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null && exp.cages.cellList.size() > 0) {
-					exp.cages.transferNFliesFromCageToCapillaries(exp.capillaries.capillariesList);
+				if (exp != null && exp.cageBox.cellList.size() > 0) {
+					exp.cageBox.transferNFliesFromCageToCapillaries(exp.capillaries.capillariesList);
 					capillaryTableModel.fireTableDataChanged();
 				}
 			}
@@ -184,7 +184,7 @@ public class InfosCapillaryTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.cages.setCellNbFromName(exp.capillaries.capillariesList);
+					exp.cageBox.setCellNbFromName(exp.capillaries.capillariesList);
 					capillaryTableModel.fireTableDataChanged();
 				}
 			}

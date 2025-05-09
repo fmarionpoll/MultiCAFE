@@ -41,7 +41,7 @@ public class CreateForCapillaries extends JPanel {
 	private JButton displayFrameButton = new JButton("(1) Display frame");
 	private JButton generateCapillariesButton = new JButton("(2) Generate capillaries from edited frame");
 
-	private JComboBox<String> cagesJCombo = new JComboBox<String>(new String[] { "10", "4+(2)", "1+(2)" });
+	private JComboBox<String> cellsJCombo = new JComboBox<String>(new String[] { "10", "4+(2)", "1+(2)" });
 	private JSpinner nbFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
 
 	private JLabel widthLabel = new JLabel("with a ratio of");
@@ -49,7 +49,7 @@ public class CreateForCapillaries extends JPanel {
 	private JSpinner width_between_capillariesJSpinner = new JSpinner(new SpinnerNumberModel(30, 0, 10000, 1));
 	private JLabel width_between_capillariesLabel = new JLabel("pixels btw. caps to");
 	private JSpinner width_intervalJSpinner = new JSpinner(new SpinnerNumberModel(53, 0, 10000, 1));
-	private JLabel width_intervalLabel = new JLabel("pixels btw. cages");
+	private JLabel width_intervalLabel = new JLabel("pixels btw. cells");
 
 	private String[] flyString = new String[] { "fly", "flies" };
 	private String[] capString = new String[] { "cap &", "caps &" };
@@ -70,9 +70,9 @@ public class CreateForCapillaries extends JPanel {
 
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(new JLabel("Grouped as"));
-		panel1.add(cagesJCombo);
-		cagesJCombo.setPreferredSize(new Dimension(60, 20));
-		panel1.add(new JLabel("cages each with"));
+		panel1.add(cellsJCombo);
+		cellsJCombo.setPreferredSize(new Dimension(60, 20));
+		panel1.add(new JLabel("cells each with"));
 		panel1.add(nCapillariesPerCage);
 		nCapillariesPerCage.setPreferredSize(new Dimension(40, 20));
 		panel1.add(capLabel);
@@ -132,12 +132,12 @@ public class CreateForCapillaries extends JPanel {
 				if (exp != null) {
 					SequenceKymosUtils.transferCamDataROIStoKymo(exp);
 					int nbFliesPerCage = (int) nbFliesPerCageJSpinner.getValue();
-					switch (cagesJCombo.getSelectedIndex()) {
+					switch (cellsJCombo.getSelectedIndex()) {
 					case 0:
-						exp.capillaries.initCapillariesWith10Cages(nbFliesPerCage, true);
+						exp.capillaries.initCapillariesWith10Cells(nbFliesPerCage, true);
 						break;
 					case 1:
-						exp.capillaries.initCapillariesWith6Cages(nbFliesPerCage);
+						exp.capillaries.initCapillariesWith6Cells(nbFliesPerCage);
 						break;
 					default:
 						break;
@@ -181,8 +181,8 @@ public class CreateForCapillaries extends JPanel {
 
 	private int getNbCapillaries() {
 		int nCapillaries = (int) nCapillariesPerCage.getValue();
-		int selectedCagesArrangement = cagesJCombo.getSelectedIndex();
-		switch (selectedCagesArrangement) {
+		int selectedCellsArrangement = cellsJCombo.getSelectedIndex();
+		switch (selectedCellsArrangement) {
 		case 2: // "4+ (2)"
 			nCapillaries = nCapillaries * 4 + 2 * 2; //
 			break;
@@ -216,8 +216,8 @@ public class CreateForCapillaries extends JPanel {
 	int getCapillariesGrouping() {
 		int nCapillaries = (int) nCapillariesPerCage.getValue();
 		int grouping = nCapillaries;
-		int selectedCagesArrangement = cagesJCombo.getSelectedIndex();
-		if (selectedCagesArrangement == 3)
+		int selectedCellsArrangement = cellsJCombo.getSelectedIndex();
+		if (selectedCellsArrangement == 3)
 			grouping = 1;
 		return grouping;
 	}

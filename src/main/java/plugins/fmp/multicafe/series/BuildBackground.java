@@ -28,7 +28,7 @@ public class BuildBackground extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {
 		if (!loadDrosoTrack(exp))
 			return;
-		if (!checkBoundsForCages(exp))
+		if (!checkBoundsForCells(exp))
 			return;
 
 		runBuildBackground(exp);
@@ -66,7 +66,7 @@ public class BuildBackground extends BuildSeries {
 	private void runBuildBackground(Experiment exp) {
 		exp.cleanPreviousDetectedFliesROIs();
 		flyDetectTools.initParametersForDetection(exp, options);
-		exp.cages.initFlyPositions(options.detectCage);
+		exp.cageBox.initFlyPositions(options.detectCage);
 		options.threshold = options.thresholdDiff;
 
 		openBackgroundViewers(exp);
@@ -93,8 +93,8 @@ public class BuildBackground extends BuildSeries {
 		transformOptions.backgroundImage = imageIORead(
 				exp.seqCamData.getFileNameFromImageList(options.backgroundFirst));
 
-		long first_ms = exp.cages.detectFirst_Ms + (options.backgroundFirst * exp.camImageBin_ms);
-		final int t_first = (int) ((first_ms - exp.cages.detectFirst_Ms) / exp.camImageBin_ms);
+		long first_ms = exp.cageBox.detectFirst_Ms + (options.backgroundFirst * exp.camImageBin_ms);
+		final int t_first = (int) ((first_ms - exp.cageBox.detectFirst_Ms) / exp.camImageBin_ms);
 
 		int t_last = options.backgroundFirst + options.backgroundNFrames;
 		if (t_last > exp.seqCamData.nTotalFrames)

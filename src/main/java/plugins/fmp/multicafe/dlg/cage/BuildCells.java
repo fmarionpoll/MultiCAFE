@@ -17,8 +17,8 @@ public class BuildCells extends JPanel implements PropertyChangeListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	BuildCellsAsArray tabBuildCages1 = new BuildCellsAsArray();
-	BuildCellsFromContours tabBuildCages2 = new BuildCellsFromContours();
+	BuildCellsAsArray tabBuildCells1 = new BuildCellsAsArray();
+	BuildCellsFromContours tabBuildCells2 = new BuildCellsFromContours();
 	JTabbedPane tabsPane = new JTabbedPane();
 	int iTAB_CAGES1 = 0;
 	int iTAB_CAGES2 = 1;
@@ -46,15 +46,15 @@ public class BuildCells extends JPanel implements PropertyChangeListener {
 
 		int iTab = 0;
 		iTAB_CAGES1 = iTab;
-		tabBuildCages1.init(capLayout, parent0);
-		tabBuildCages1.addPropertyChangeListener(this);
-		tabsPane.addTab("Define array cols/rows", null, tabBuildCages1, "Build cells as an array of rectangles");
+		tabBuildCells1.init(capLayout, parent0);
+		tabBuildCells1.addPropertyChangeListener(this);
+		tabsPane.addTab("Define array cols/rows", null, tabBuildCells1, "Build cells as an array of rectangles");
 
 		iTab++;
 		iTAB_CAGES2 = iTab;
-		tabBuildCages2.init(capLayout, parent0);
-		tabBuildCages2.addPropertyChangeListener(this);
-		tabsPane.addTab("Detect contours of cages", null, tabBuildCages2, "Detect contours to build cells");
+		tabBuildCells2.init(capLayout, parent0);
+		tabBuildCells2.addPropertyChangeListener(this);
+		tabsPane.addTab("Detect contours of cells", null, tabBuildCells2, "Detect contours to build cells");
 	}
 
 	@Override
@@ -65,6 +65,6 @@ public class BuildCells extends JPanel implements PropertyChangeListener {
 	}
 
 	private void displayOverlay(boolean activateOverlay) {
-		tabBuildCages2.overlayCheckBox.setSelected(activateOverlay);
+		tabBuildCells2.overlayCheckBox.setSelected(activateOverlay);
 	}
 }

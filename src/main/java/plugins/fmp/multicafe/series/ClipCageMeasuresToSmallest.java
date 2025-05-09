@@ -6,7 +6,7 @@ import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 
-public class ClipCagesMeasuresToSmallest extends BuildSeries {
+public class ClipCageMeasuresToSmallest extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {
 		exp.xmlLoad_MCExperiment();
 		exp.loadMCCapillaries();

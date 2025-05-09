@@ -41,7 +41,7 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 	 */
 	private static final long serialVersionUID = -121724000730795396L;
 	private JButton drawPolygon2DButton = new JButton("Draw Polygon2D");
-	private JButton createCagesButton = new JButton("Create cages");
+	private JButton createCellsButton = new JButton("Create cells");
 	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(60, 0, 10000, 1));
 	public JCheckBox overlayCheckBox = new JCheckBox("Overlay ", false);
 	private JButton deleteButton = new JButton("Cut points within selected polygon");
@@ -64,7 +64,7 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(drawPolygon2DButton);
-		panel1.add(createCagesButton);
+		panel1.add(createCellsButton);
 		add(panel1);
 
 		JLabel videochannel = new JLabel("detect from ");
@@ -96,15 +96,15 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 			}
 		});
 
-		createCagesButton.addActionListener(new ActionListener() {
+		createCellsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
-					exp.cages.cageFromROIs(exp.seqCamData);
+					exp.cageBox.cageFromROIs(exp.seqCamData);
 					if (exp.capillaries.capillariesList.size() > 0)
-						exp.cages.transferNFliesFromCapillariesToCage(exp.capillaries.capillariesList);
+						exp.cageBox.transferNFliesFromCapillariesToCage(exp.capillaries.capillariesList);
 				}
 			}
 		});
@@ -145,8 +145,8 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 			overlayThreshold.setSequence(seqCamData);
 			seqCamData.seq.addOverlay(overlayThreshold);
 		}
-		exp.cages.detect_threshold = (int) thresholdSpinner.getValue();
-		overlayThreshold.setThresholdTransform(exp.cages.detect_threshold,
+		exp.cageBox.detect_threshold = (int) thresholdSpinner.getValue();
+		overlayThreshold.setThresholdTransform(exp.cageBox.detect_threshold,
 				(ImageTransformEnums) transformForLevelsComboBox.getSelectedItem(), false);
 		seqCamData.seq.overlayChanged(overlayThreshold);
 		seqCamData.seq.dataChanged();
@@ -179,7 +179,7 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
-		exp.cages.clearCellList();
+		exp.cageBox.clearCellList();
 
 		int t = exp.seqCamData.currentFrame;
 		IcyBufferedImage img0 = IcyBufferedImageUtil.convertToType(overlayThreshold.getTransformedImage(t),

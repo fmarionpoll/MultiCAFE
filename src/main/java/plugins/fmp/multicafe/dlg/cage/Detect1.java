@@ -52,7 +52,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 	private JComboBox<ImageTransformEnums> backgroundComboBox = new JComboBox<>(new ImageTransformEnums[] {
 			ImageTransformEnums.NONE, ImageTransformEnums.SUBTRACT_TM1, ImageTransformEnums.SUBTRACT_T0 });
 
-	private JComboBox<String> allCagesComboBox = new JComboBox<String>(new String[] { "all cages" });
+	private JComboBox<String> cellsComboBox = new JComboBox<String>(new String[] { "all cells" });
 	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(60, 0, 255, 1));
 	private JSpinner jitterTextField = new JSpinner(new SpinnerNumberModel(5, 0, 1000, 1));
 	private JSpinner objectLowsizeSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 9999, 1));
@@ -79,13 +79,13 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(startComputationButton);
-		panel1.add(allCagesComboBox);
+		panel1.add(cellsComboBox);
 		panel1.add(allCheckBox);
 		panel1.add(new JLabel("n flies "));
 		panel1.add(nFliesPresentSpinner);
 		add(panel1);
 
-		allCagesComboBox.addPopupMenuListener(this);
+		cellsComboBox.addPopupMenuListener(this);
 
 		JPanel panel2 = new JPanel(flowLayout);
 		transformComboBox.setSelectedIndex(1);
@@ -171,7 +171,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		seqCamData.seq.addOverlay(overlayThreshold1);
 		boolean ifGreater = true;
 		ImageTransformEnums transformOp = (ImageTransformEnums) transformComboBox.getSelectedItem();
-		overlayThreshold1.setThresholdSingle(exp.cages.detect_threshold, transformOp, ifGreater);
+		overlayThreshold1.setThresholdSingle(exp.cageBox.detect_threshold, transformOp, ifGreater);
 		overlayThreshold1.painterChanged();
 	}
 
@@ -185,7 +185,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		if (e.getSource() == thresholdSpinner) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				exp.cages.detect_threshold = (int) thresholdSpinner.getValue();
+				exp.cageBox.detect_threshold = (int) thresholdSpinner.getValue();
 				updateOverlay(exp);
 			}
 		}
@@ -222,7 +222,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = exp.getBinSubDirectory();
 
-		options.detectCage = allCagesComboBox.getSelectedIndex() - 1;
+		options.detectCage = cellsComboBox.getSelectedIndex() - 1;
 
 		return options;
 	}
@@ -263,12 +263,12 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		int nitems = 1;
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
-			nitems = exp.cages.cellList.size() + 1;
-		if (allCagesComboBox.getItemCount() != nitems) {
-			allCagesComboBox.removeAllItems();
-			allCagesComboBox.addItem("all cages");
-			for (Cell cell : exp.cages.cellList) {
-				allCagesComboBox.addItem(cell.getCellNumber());
+			nitems = exp.cageBox.cellList.size() + 1;
+		if (cellsComboBox.getItemCount() != nitems) {
+			cellsComboBox.removeAllItems();
+			cellsComboBox.addItem("all cells");
+			for (Cell cell : exp.cageBox.cellList) {
+				cellsComboBox.addItem(cell.getCellNumber());
 			}
 		}
 	}

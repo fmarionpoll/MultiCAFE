@@ -25,13 +25,13 @@ public class Infos extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -3325915033686366985L;
-	private JButton editCagesButton = new JButton("Edit cages infos...");
+	private JButton editCageButton = new JButton("Edit cage infos...");
 	private MultiCAFE parent0 = null;
 	private InfosCageTable dialog = null;
-	private List<Cell> cagesArrayCopy = new ArrayList<Cell>();
+	private List<Cell> cellsArrayCopy = new ArrayList<Cell>();
 
 	JRadioButton useCapillaries = new JRadioButton("capillary");
-	JRadioButton useCages = new JRadioButton("cages");
+	JRadioButton useCage = new JRadioButton("cage");
 	JRadioButton useManual = new JRadioButton("manual entry");
 	ButtonGroup useGroup = new ButtonGroup();
 
@@ -49,13 +49,13 @@ public class Infos extends JPanel {
 		JPanel panel0a = new JPanel(flowLayout);
 		panel0a.add(new JLabel("Use as reference: "));
 		panel0a.add(useCapillaries);
-		panel0a.add(useCages);
+		panel0a.add(useCage);
 		panel0a.add(useManual);
 		add(panel0a);
 		useGroup.add(useCapillaries);
-		useGroup.add(useCages);
+		useGroup.add(useCage);
 		useGroup.add(useManual);
-		useCages.setSelected(true);
+		useCage.setSelected(true);
 
 		JPanel panel00 = new JPanel(flowLayout);
 		panel00.add(new JLabel("length in mm:", SwingConstants.RIGHT));
@@ -69,22 +69,22 @@ public class Infos extends JPanel {
 		add(panel0);
 
 		JPanel panel1 = new JPanel(flowLayout);
-		panel1.add(editCagesButton);
+		panel1.add(editCageButton);
 		add(panel1);
 
 		defineActionListeners();
 	}
 
 	private void defineActionListeners() {
-		editCagesButton.addActionListener(new ActionListener() {
+		editCageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					exp.capillaries.transferDescriptionToCapillaries();
-					exp.cages.transferNFliesFromCapillariesToCage(exp.capillaries.capillariesList);
+					exp.cageBox.transferNFliesFromCapillariesToCage(exp.capillaries.capillariesList);
 					dialog = new InfosCageTable();
-					dialog.initialize(parent0, cagesArrayCopy);
+					dialog.initialize(parent0, cellsArrayCopy);
 				}
 			}
 		});
@@ -98,7 +98,7 @@ public class Infos extends JPanel {
 			}
 		});
 
-		useCages.addActionListener(new ActionListener() {
+		useCage.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				lengthSpinner.setValue(78.);
@@ -119,8 +119,8 @@ public class Infos extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				if (useCapillaries.isSelected()) {
 					measureFirstCapillary();
-				} else if (useCages.isSelected()) {
-					measureCagesSpan();
+				} else if (useCage.isSelected()) {
+					measureCellsSpan();
 				}
 			}
 		});
@@ -132,12 +132,12 @@ public class Infos extends JPanel {
 			pixelsSpinner.setValue(npixels);
 	}
 
-	void measureCagesSpan() {
+	void measureCellsSpan() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
 			exp.capillaries.updateCapillariesFromSequence(exp.seqCamData.seq);
 			if (exp.capillaries.capillariesList.size() > 0) {
-				int npixels = exp.cages.getHorizontalSpanOfCages();
+				int npixels = exp.cageBox.getHorizontalSpanOfCells();
 				if (npixels > 0)
 					pixelsSpinner.setValue(npixels);
 			}

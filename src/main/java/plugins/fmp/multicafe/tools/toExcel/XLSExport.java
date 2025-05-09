@@ -123,8 +123,8 @@ public class XLSExport {
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
 					desc_getChoiceTestType(capList, t));
-			if (exp.cages.cellList.size() > t / 2) {
-				Cell cell = exp.cages.cellList.get(t / 2); // cap.capCageID);
+			if (exp.cageBox.cellList.size() > t / 2) {
+				Cell cell = exp.cageBox.cellList.get(t / 2); // cap.capCageID);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose,
 						cell.strCellStrain);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cell.strCellSex);
@@ -342,7 +342,7 @@ public class XLSExport {
 			return null;
 
 		// loop to get all capillaries into expAll and init rows for this experiment
-		expAll.cages.copy(exp.cages);
+		expAll.cageBox.copy(exp.cageBox);
 		expAll.capillaries.copy(exp.capillaries);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
 		expAll.copyExperimentFields(exp);
@@ -578,7 +578,7 @@ public class XLSExport {
 	}
 
 	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
-		for (Cell cell : exp.cages.cellList) {
+		for (Cell cell : exp.cageBox.cellList) {
 			String roiname = cell.cellRoi2D.getName();
 			if (roiname.length() < 4 || !roiname.substring(0, 4).contains("cage"))
 				continue;
@@ -588,10 +588,10 @@ public class XLSExport {
 			int ilastalive = 0;
 			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cellNumber)) {
+				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cageBox.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
-				int lastIntervalFlyAlive = expi.cages.getLastIntervalFlyAlive(cellNumber);
+				int lastIntervalFlyAlive = expi.cageBox.getLastIntervalFlyAlive(cellNumber);
 				int lastMinuteAlive = (int) (lastIntervalFlyAlive * expi.camImageBin_ms
 						+ (expi.camImageFirst_ms - expAll.camImageFirst_ms));
 				ilastalive = (int) (lastMinuteAlive / expAll.kymoBin_ms);

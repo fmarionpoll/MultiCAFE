@@ -22,12 +22,12 @@ public class Options extends JPanel {
 	private static final long serialVersionUID = 6565346204580890307L;
 
 	JCheckBox kymographsCheckBox = new JCheckBox("kymos", true);
-	JCheckBox cagesCheckBox = new JCheckBox("cages", true);
+	JCheckBox cellsCheckBox = new JCheckBox("cells", true);
 	JCheckBox measuresCheckBox = new JCheckBox("measures", true);
 	public JCheckBox graphsCheckBox = new JCheckBox("graphs", true);
 
 	public JCheckBox viewCapillariesCheckBox = new JCheckBox("capillaries", true);
-	public JCheckBox viewCagesCheckbox = new JCheckBox("cages", true);
+	public JCheckBox viewCellsCheckbox = new JCheckBox("cells", true);
 	JCheckBox viewFlyCheckbox = new JCheckBox("flies center", false);
 	JCheckBox viewFlyRectCheckbox = new JCheckBox("flies rect", false);
 	private MultiCAFE parent0 = null;
@@ -42,7 +42,7 @@ public class Options extends JPanel {
 		JPanel panel2 = new JPanel(layout);
 		panel2.add(new JLabel("Load: "));
 		panel2.add(kymographsCheckBox);
-		panel2.add(cagesCheckBox);
+		panel2.add(cellsCheckBox);
 		panel2.add(measuresCheckBox);
 		panel2.add(graphsCheckBox);
 		panel2.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
@@ -51,7 +51,7 @@ public class Options extends JPanel {
 		JPanel panel1 = new JPanel(layout);
 		panel1.add(new JLabel("View : "));
 		panel1.add(viewCapillariesCheckBox);
-		panel1.add(viewCagesCheckbox);
+		panel1.add(viewCellsCheckbox);
 		panel1.add(viewFlyCheckbox);
 		panel1.add(viewFlyRectCheckbox);
 		add(panel1);
@@ -67,10 +67,10 @@ public class Options extends JPanel {
 			}
 		});
 
-		viewCagesCheckbox.addActionListener(new ActionListener() {
+		viewCellsCheckbox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				displayROIsCategory(viewCagesCheckbox.isSelected(), "cage");
+				displayROIsCategory(viewCellsCheckbox.isSelected(), "cage");
 			}
 		});
 

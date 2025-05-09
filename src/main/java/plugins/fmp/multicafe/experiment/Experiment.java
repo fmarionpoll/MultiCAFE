@@ -41,7 +41,7 @@ public class Experiment {
 	public SequenceKymos seqKymos = null;
 	public Sequence seqReference = null;
 	public Capillaries capillaries = new Capillaries();
-	public Cage cages = new Cage();
+	public Cage cageBox = new Cage();
 
 	public FileTime firstImage_FileTime;
 	public FileTime lastImage_FileTime;
@@ -254,7 +254,7 @@ public class Experiment {
 		}
 
 		if (loadDrosoPositions)
-			loadCagesMeasures();
+			loadCageMeasures();
 
 		return true;
 	}
@@ -567,15 +567,15 @@ public class Experiment {
 		return capillaries.save_Capillaries(getKymosBinFullDirectory());
 	}
 
-	public boolean loadCagesMeasures() {
-		boolean flag = cages.load_Cage(getKymosBinFullDirectory());
+	public boolean loadCageMeasures() {
+		boolean flag = cageBox.load_Cage(getKymosBinFullDirectory());
 		if (flag)
-			cages.cageToROIs(seqCamData);
+			cageBox.cageToROIs(seqCamData);
 		return flag;
 	}
 
-	public boolean saveCagesMeasures() {
-		return cages.save_Cage(getKymosBinFullDirectory());
+	public boolean saveCageMeasures() {
+		return cageBox.save_Cage(getKymosBinFullDirectory());
 	}
 
 	// ----------------------------------
@@ -848,13 +848,13 @@ public class Experiment {
 			if (roi.getName().contains("det"))
 				seqCamData.seq.removeROI(roi);
 		}
-		seqCamData.seq.addROIs(cages.getPositionsAsListOfROI2DRectanglesAtT(t), false);
+		seqCamData.seq.addROIs(cageBox.getPositionsAsListOfROI2DRectanglesAtT(t), false);
 		seqCamData.seq.endUpdate();
 	}
 
 	public void saveDetRoisToPositions() {
 		List<ROI2D> detectedROIsList = seqCamData.seq.getROI2Ds();
-		for (Cell cell : cages.cellList) {
+		for (Cell cell : cageBox.cellList) {
 			cell.transferRoisToPositions(detectedROIsList);
 		}
 	}

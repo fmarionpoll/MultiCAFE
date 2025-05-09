@@ -20,7 +20,7 @@ import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyDetectTools {
 	public List<BooleanMask2D> cageMaskList = new ArrayList<BooleanMask2D>();
-	public Rectangle rectangleAllCages = null;
+	public Rectangle rectangleAllCells = null;
 	public BuildSeriesOptions options = null;
 	public Cage box = null;
 
@@ -161,20 +161,20 @@ public class FlyDetectTools {
 
 	public void initParametersForDetection(Experiment exp, BuildSeriesOptions options) {
 		this.options = options;
-		exp.cages.detect_nframes = (int) (((exp.cages.detectLast_Ms - exp.cages.detectFirst_Ms)
-				/ exp.cages.detectBin_Ms) + 1);
-		exp.cages.clearAllMeasures(options.detectCage);
-		box = exp.cages;
+		exp.cageBox.detect_nframes = (int) (((exp.cageBox.detectLast_Ms - exp.cageBox.detectFirst_Ms)
+				/ exp.cageBox.detectBin_Ms) + 1);
+		exp.cageBox.clearAllMeasures(options.detectCage);
+		box = exp.cageBox;
 		box.computeBooleanMasksForCells();
-		rectangleAllCages = null;
+		rectangleAllCells = null;
 		for (Cell cell : box.cellList) {
 			if (cell.cellNFlies < 1)
 				continue;
 			Rectangle rect = cell.cellRoi2D.getBounds();
-			if (rectangleAllCages == null)
-				rectangleAllCages = new Rectangle(rect);
+			if (rectangleAllCells == null)
+				rectangleAllCells = new Rectangle(rect);
 			else
-				rectangleAllCages.add(rect);
+				rectangleAllCells.add(rect);
 		}
 	}
 

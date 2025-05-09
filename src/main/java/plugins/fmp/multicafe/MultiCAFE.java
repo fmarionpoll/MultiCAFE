@@ -32,7 +32,7 @@ public class MultiCAFE extends PluginActionable {
 	public MCKymos_ paneKymos = new MCKymos_();
 	public MCLevels_ paneLevels = new MCLevels_();
 	public MCSpots_ paneSpots = new MCSpots_();
-	public MCCage_ paneCages = new MCCage_();
+	public MCCage_ paneCage = new MCCage_();
 	public MCExcel_ paneExcel = new MCExcel_();
 
 	public JTabbedPane tabsPane = new JTabbedPane();
@@ -47,7 +47,7 @@ public class MultiCAFE extends PluginActionable {
 		paneCapillaries.init(mainPanel, "Capillaries", this);
 		paneKymos.init(mainPanel, "Kymographs", this);
 		paneLevels.init(mainPanel, "Levels", this);
-		paneCages.init(mainPanel, "Cages", this);
+		paneCage.init(mainPanel, "Cage", this);
 		paneExcel.init(mainPanel, "Export", this);
 
 		mainFrame.setLayout(new BorderLayout());

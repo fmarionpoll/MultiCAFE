@@ -21,8 +21,8 @@ public class LoadSaveCage extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
-	private JButton openCagesButton = new JButton("Load...");
-	private JButton saveCagesButton = new JButton("Save...");
+	private JButton openCageButton = new JButton("Load...");
+	private JButton saveCageButton = new JButton("Save...");
 	private MultiCAFE parent0 = null;
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
@@ -35,8 +35,8 @@ public class LoadSaveCage extends JPanel {
 		JLabel loadsaveText = new JLabel("-> File (xml) ", SwingConstants.RIGHT);
 		loadsaveText.setFont(FontUtil.setStyle(loadsaveText.getFont(), Font.ITALIC));
 		panel1.add(loadsaveText);
-		panel1.add(openCagesButton);
-		panel1.add(saveCagesButton);
+		panel1.add(openCageButton);
+		panel1.add(saveCageButton);
 		panel1.validate();
 		add(panel1);
 
@@ -44,49 +44,47 @@ public class LoadSaveCage extends JPanel {
 	}
 
 	private void defineActionListeners() {
-		openCagesButton.addActionListener(new ActionListener() {
+		openCageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					loadCages(exp);
+					loadCage(exp);
 					firePropertyChange("LOAD_DATA", false, true);
-					parent0.paneCages.tabsPane.setSelectedIndex(3);
+					parent0.paneCage.tabsPane.setSelectedIndex(3);
 				}
 			}
 		});
 
-		saveCagesButton.addActionListener(new ActionListener() {
+		saveCageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					saveCagesAndMeasures(exp);
-					parent0.paneCages.tabsPane.setSelectedIndex(3);
+					saveCageAndMeasures(exp);
+					parent0.paneCage.tabsPane.setSelectedIndex(3);
 				}
 			}
 		});
 	}
 
-	public boolean loadCages(Experiment exp) {
+	public boolean loadCage(Experiment exp) {
 		if (exp == null)
 			return false;
 		ProgressFrame progress = new ProgressFrame("load fly positions");
 
-		boolean flag = exp.loadCagesMeasures();
+		boolean flag = exp.loadCageMeasures();
 		if (flag) {
-//			parent0.paneCages.tabGraphics.moveCheckbox.setEnabled(true);
-//			parent0.paneCages.tabGraphics.displayResultsButton.setEnabled(true);
 			exp.updateROIsAt(0);
 		}
 		progress.close();
 		return flag;
 	}
 
-	public void saveCagesAndMeasures(Experiment exp) {
+	public void saveCageAndMeasures(Experiment exp) {
 		if (exp != null) {
-			exp.cages.cageFromROIs(exp.seqCamData);
-			exp.saveCagesMeasures();
+			exp.cageBox.cageFromROIs(exp.seqCamData);
+			exp.saveCageMeasures();
 		}
 	}
 
