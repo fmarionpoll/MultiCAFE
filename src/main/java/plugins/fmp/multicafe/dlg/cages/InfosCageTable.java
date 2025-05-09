@@ -18,7 +18,7 @@ import javax.swing.table.TableColumnModel;
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment.cages.Cell;
 import plugins.fmp.multicafe.tools.JComponents.CageTableModel;
 
 public class InfosCageTable extends JPanel {
@@ -34,11 +34,11 @@ public class InfosCageTable extends JPanel {
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
 	private JButton noFliesButton = new JButton("Cages0/9: no flies");
 	private MultiCAFE parent0 = null;
-	private List<Cage> cageArrayCopy = null;
+	private List<Cell> cageArrayCopy = null;
 
 	// -------------------------
 
-	public void initialize(MultiCAFE parent0, List<Cage> cageCopy) {
+	public void initialize(MultiCAFE parent0, List<Cell> cageCopy) {
 		this.parent0 = parent0;
 		cageArrayCopy = cageCopy;
 
@@ -86,7 +86,7 @@ public class InfosCageTable extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					cageArrayCopy.clear();
-					for (Cage cage : exp.cages.cagesList) {
+					for (Cell cage : exp.cages.cellList) {
 						cageArrayCopy.add(cage);
 					}
 					pasteButton.setEnabled(true);
@@ -99,17 +99,17 @@ public class InfosCageTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					for (Cage cageFrom : cageArrayCopy) {
+					for (Cell cageFrom : cageArrayCopy) {
 						cageFrom.valid = false;
-						for (Cage cageTo : exp.cages.cagesList) {
-							if (!cageFrom.cageRoi2D.getName().equals(cageTo.cageRoi2D.getName()))
+						for (Cell cageTo : exp.cages.cellList) {
+							if (!cageFrom.cellRoi2D.getName().equals(cageTo.cellRoi2D.getName()))
 								continue;
 							cageFrom.valid = true;
-							cageTo.cageNFlies = cageFrom.cageNFlies;
-							cageTo.cageAge = cageFrom.cageAge;
-							cageTo.strCageComment = cageFrom.strCageComment;
-							cageTo.strCageSex = cageFrom.strCageSex;
-							cageTo.strCageStrain = cageFrom.strCageStrain;
+							cageTo.cellNFlies = cageFrom.cellNFlies;
+							cageTo.cellAge = cageFrom.cellAge;
+							cageTo.strCellComment = cageFrom.strCellComment;
+							cageTo.strCellSex = cageFrom.strCellSex;
+							cageTo.strCellStrain = cageFrom.strCellStrain;
 						}
 					}
 					cageTableModel.fireTableDataChanged();
@@ -125,25 +125,25 @@ public class InfosCageTable extends JPanel {
 					int rowIndex = tableView.getSelectedRow();
 					int columnIndex = tableView.getSelectedColumn();
 					if (rowIndex >= 0) {
-						Cage cage0 = exp.cages.cagesList.get(rowIndex);
-						for (Cage cage : exp.cages.cagesList) {
-							if (cage.cageRoi2D.getName().equals(cage0.cageRoi2D.getName()))
+						Cell cage0 = exp.cages.cellList.get(rowIndex);
+						for (Cell cage : exp.cages.cellList) {
+							if (cage.cellRoi2D.getName().equals(cage0.cellRoi2D.getName()))
 								continue;
 							switch (columnIndex) {
 							case 1:
-								cage.cageNFlies = cage0.cageNFlies;
+								cage.cellNFlies = cage0.cellNFlies;
 								break;
 							case 2:
-								cage.strCageStrain = cage0.strCageStrain;
+								cage.strCellStrain = cage0.strCellStrain;
 								break;
 							case 3:
-								cage.strCageSex = cage0.strCageSex;
+								cage.strCellSex = cage0.strCellSex;
 								break;
 							case 4:
-								cage.cageAge = cage0.cageAge;
+								cage.cellAge = cage0.cellAge;
 								break;
 							case 5:
-								cage.strCageComment = cage0.strCageComment;
+								cage.strCellComment = cage0.strCellComment;
 								break;
 							default:
 								break;
@@ -160,7 +160,7 @@ public class InfosCageTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.cages.setFirstAndLastCageToZeroFly();
+					exp.cages.setFirstAndLastCellToZeroFly();
 					cageTableModel.fireTableDataChanged();
 				}
 			}
@@ -172,7 +172,7 @@ public class InfosCageTable extends JPanel {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			exp.cages.transferNFliesFromCagesToCapillaries(exp.capillaries.capillariesList);
+			exp.cages.transferNFliesFromCageToCapillaries(exp.capillaries.capillariesList);
 			parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);
 		}
 	}

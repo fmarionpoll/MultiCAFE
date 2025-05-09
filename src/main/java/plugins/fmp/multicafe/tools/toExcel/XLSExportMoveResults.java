@@ -12,7 +12,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment.cages.Cell;
 import plugins.fmp.multicafe.experiment.cages.FlyPosition;
 import plugins.fmp.multicafe.experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.tools.Comparators;
@@ -127,12 +127,12 @@ public class XLSExportMoveResults extends XLSExport {
 		expAll.camImageFirst_ms = expAll.firstImage_FileTime.toMillis();
 		expAll.camImageLast_ms = expAll.lastImage_FileTime.toMillis();
 		int nFrames = (int) ((expAll.camImageLast_ms - expAll.camImageFirst_ms) / options.buildExcelStepMs + 1);
-		int ncages = expAll.cages.cagesList.size();
+		int ncages = expAll.cages.cellList.size();
 		rowsForOneExp = new ArrayList<FlyPositions>(ncages);
 		for (int i = 0; i < ncages; i++) {
-			Cage cage = expAll.cages.cagesList.get(i);
-			FlyPositions row = new FlyPositions(cage.cageRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
-			row.nflies = cage.cageNFlies;
+			Cell cage = expAll.cages.cellList.get(i);
+			FlyPositions row = new FlyPositions(cage.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
+			row.nflies = cage.cellNFlies;
 			rowsForOneExp.add(row);
 		}
 		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name_Comparator());
@@ -148,11 +148,11 @@ public class XLSExportMoveResults extends XLSExport {
 				continue;
 			double pixelsize = 32. / expi.capillaries.capillariesList.get(0).capPixels;
 
-			List<FlyPositions> resultsArrayList = new ArrayList<FlyPositions>(expi.cages.cagesList.size());
-			for (Cage cage : expi.cages.cagesList) {
-				FlyPositions results = new FlyPositions(cage.cageRoi2D.getName(), xlsOption, len,
+			List<FlyPositions> resultsArrayList = new ArrayList<FlyPositions>(expi.cages.cellList.size());
+			for (Cell cage : expi.cages.cellList) {
+				FlyPositions results = new FlyPositions(cage.cellRoi2D.getName(), xlsOption, len,
 						options.buildExcelStepMs);
-				results.nflies = cage.cageNFlies;
+				results.nflies = cage.cellNFlies;
 				if (results.nflies > 0) {
 					results.setPixelSize(pixelsize);
 
@@ -170,7 +170,7 @@ public class XLSExportMoveResults extends XLSExport {
 								options.buildExcelStepMs);
 						break;
 					case XYTOPCAGE:
-						results.excelComputeNewPointsOrigin(cage.getCenterTopCage(), cage.flyPositions,
+						results.excelComputeNewPointsOrigin(cage.getCenterTopCell(), cage.flyPositions,
 								(int) expi.camImageBin_ms, options.buildExcelStepMs);
 						break;
 					case XYTIPCAPS:
@@ -294,10 +294,10 @@ public class XLSExportMoveResults extends XLSExport {
 	}
 
 	private void trimDeadsFromRowMoveData(Experiment exp) {
-		for (Cage cage : exp.cages.cagesList) {
-			int cagenumber = Integer.valueOf(cage.cageRoi2D.getName().substring(4));
+		for (Cell cage : exp.cages.cellList) {
+			int cagenumber = Integer.valueOf(cage.cellRoi2D.getName().substring(4));
 			int ilastalive = 0;
-			if (cage.cageNFlies > 0) {
+			if (cage.cellNFlies > 0) {
 				Experiment expi = exp;
 				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cagenumber)) {
 					expi = expi.chainToNextExperiment;

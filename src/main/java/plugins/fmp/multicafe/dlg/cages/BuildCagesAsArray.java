@@ -97,9 +97,9 @@ public class BuildCagesAsArray extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
-					exp.cages.cagesFromROIs(exp.seqCamData);
+					exp.cages.cageFromROIs(exp.seqCamData);
 					if (exp.capillaries.capillariesList.size() > 0)
-						exp.cages.transferNFliesFromCapillariesToCages(exp.capillaries.capillariesList);
+						exp.cages.transferNFliesFromCapillariesToCage(exp.capillaries.capillariesList);
 				}
 			}
 		});
@@ -108,7 +108,7 @@ public class BuildCagesAsArray extends JPanel {
 	void updateNColumnsFieldFromSequence() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			int nrois = exp.cages.cagesList.size();
+			int nrois = exp.cages.cellList.size();
 			if (nrois > 0) {
 				nColumnsTextField.setValue(nrois);
 				ncolumns = nrois;
@@ -155,7 +155,7 @@ public class BuildCagesAsArray extends JPanel {
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
-		exp.cages.removeCages();
+		exp.cages.clearCellList();
 
 		// read values from text boxes
 		try {
@@ -184,7 +184,7 @@ public class BuildCagesAsArray extends JPanel {
 
 		// generate cage frames
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
-		exp.cages.removeCages();
+		exp.cages.clearCellList();
 		String cageRoot = "cage";
 		int iRoot = 0;
 

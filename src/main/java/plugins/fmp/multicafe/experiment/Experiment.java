@@ -19,8 +19,8 @@ import icy.image.ImageUtil;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.experiment.cages.Cell;
 import plugins.fmp.multicafe.experiment.cages.Cage;
-import plugins.fmp.multicafe.experiment.cages.Cages;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Directories;
@@ -41,7 +41,7 @@ public class Experiment {
 	public SequenceKymos seqKymos = null;
 	public Sequence seqReference = null;
 	public Capillaries capillaries = new Capillaries();
-	public Cages cages = new Cages();
+	public Cage cages = new Cage();
 
 	public FileTime firstImage_FileTime;
 	public FileTime lastImage_FileTime;
@@ -568,14 +568,14 @@ public class Experiment {
 	}
 
 	public boolean loadCagesMeasures() {
-		boolean flag = cages.load_Cages(getKymosBinFullDirectory());
+		boolean flag = cages.load_Cage(getKymosBinFullDirectory());
 		if (flag)
-			cages.cagesToROIs(seqCamData);
+			cages.cageToROIs(seqCamData);
 		return flag;
 	}
 
 	public boolean saveCagesMeasures() {
-		return cages.save_Cages(getKymosBinFullDirectory());
+		return cages.save_Cage(getKymosBinFullDirectory());
 	}
 
 	// ----------------------------------
@@ -854,7 +854,7 @@ public class Experiment {
 
 	public void saveDetRoisToPositions() {
 		List<ROI2D> detectedROIsList = seqCamData.seq.getROI2Ds();
-		for (Cage cage : cages.cagesList) {
+		for (Cell cage : cages.cellList) {
 			cage.transferRoisToPositions(detectedROIsList);
 		}
 	}

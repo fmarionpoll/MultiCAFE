@@ -14,7 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment.cages.Cell;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 
@@ -115,22 +115,22 @@ public class XLSExport {
 					cap.getSideDescriptor(xlsExportOption));
 			outputStimAndConc_according_to_DataOption(sheet, xlsExportOption, cap, transpose, x, y);
 
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CAGEINDEX.getValue(), transpose, cap.capCageID);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CAGEINDEX.getValue(), transpose, cap.capCellID);
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
-					charSeries + cap.capCageID);
+					charSeries + cap.capCellID);
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, cap.capNFlies);
 
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
 					desc_getChoiceTestType(capList, t));
-			if (exp.cages.cagesList.size() > t / 2) {
-				Cage cage = exp.cages.cagesList.get(t / 2); // cap.capCageID);
+			if (exp.cages.cellList.size() > t / 2) {
+				Cell cage = exp.cages.cellList.get(t / 2); // cap.capCageID);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose,
-						cage.strCageStrain);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.strCageSex);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.cageAge);
+						cage.strCellStrain);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.strCellSex);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.cellAge);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose,
-						cage.strCageComment);
+						cage.strCellComment);
 			}
 		}
 		pt.x = col0;
@@ -359,10 +359,10 @@ public class XLSExport {
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(ncapillaries);
 		for (int i = 0; i < ncapillaries; i++) {
 			Capillary cap = expAll.capillaries.capillariesList.get(i);
-			XLSResults row = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID, xlsOption, nFrames);
+			XLSResults row = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCellID, xlsOption, nFrames);
 			row.stimulus = cap.capStimulus;
 			row.concentration = cap.capConcentration;
-			row.cageID = cap.capCageID;
+			row.cageID = cap.capCellID;
 			rowListForOneExp.addRow(row);
 		}
 		rowListForOneExp.sortRowsByName();
@@ -578,15 +578,15 @@ public class XLSExport {
 	}
 
 	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
-		for (Cage cage : exp.cages.cagesList) {
-			String roiname = cage.cageRoi2D.getName();
+		for (Cell cage : exp.cages.cellList) {
+			String roiname = cage.cellRoi2D.getName();
 			if (roiname.length() < 4 || !roiname.substring(0, 4).contains("cage"))
 				continue;
 
 			String cagenumberString = roiname.substring(4);
 			int cagenumber = Integer.valueOf(cagenumberString);
 			int ilastalive = 0;
-			if (cage.cageNFlies > 0) {
+			if (cage.cellNFlies > 0) {
 				Experiment expi = exp;
 				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cagenumber)) {
 					expi = expi.chainToNextExperiment;

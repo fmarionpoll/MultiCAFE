@@ -38,12 +38,12 @@ public class XLSResultsArray {
 
 	public XLSResults getNextRow(int irow) {
 		XLSResults rowL = resultsList.get(irow);
-		int cageL = getCageFromKymoFileName(rowL.name);
+		int cellL = getCageFromKymoFileName(rowL.name);
 		XLSResults rowR = null;
 		if (irow + 1 < resultsList.size()) {
 			rowR = resultsList.get(irow + 1);
-			int cageR = getCageFromKymoFileName(rowR.name);
-			if (cageR != cageL)
+			int cellR = getCageFromKymoFileName(rowR.name);
+			if (cellR != cellL)
 				rowR = null;
 		}
 		return rowR;
@@ -208,7 +208,7 @@ public class XLSResultsArray {
 		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
 		for (Capillary cap : caps.capillariesList) {
 			checkIfSameStimulusAndConcentration(cap);
-			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID,
+			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCellID,
 					xlsExportOptions.exportType, nOutputFrames);
 			results.dataInt = cap.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
 					xlsExportOptions.buildExcelStepMs);

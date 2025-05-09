@@ -14,15 +14,15 @@ import icy.roi.BooleanMask2D;
 import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment.cages.Cell;
 import plugins.fmp.multicafe.experiment.cages.Cage;
-import plugins.fmp.multicafe.experiment.cages.Cages;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyDetectTools {
 	public List<BooleanMask2D> cageMaskList = new ArrayList<BooleanMask2D>();
 	public Rectangle rectangleAllCages = null;
 	public BuildSeriesOptions options = null;
-	public Cages cages = null;
+	public Cage cages = null;
 
 	// -----------------------------------------------------
 
@@ -89,22 +89,22 @@ public class FlyDetectTools {
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("detectFlies");
 		processor.setPriority(Processor.NORM_PRIORITY);
-		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(cages.cagesList.size());
+		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(cages.cellList.size());
 		futures.clear();
 
 		final ROI2DArea binarizedImageRoi = binarizeImage(workimage, options.threshold);
-		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(cages.cagesList.size());
+		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(cages.cellList.size());
 
-		for (Cage cage : cages.cagesList) {
-			if (options.detectCage != -1 && cage.getCageNumberInteger() != options.detectCage)
+		for (Cell cage : cages.cellList) {
+			if (options.detectCage != -1 && cage.getCellNumberInteger() != options.detectCage)
 				continue;
-			if (cage.cageNFlies < 1)
+			if (cage.cellNFlies < 1)
 				continue;
 
 			futures.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					BooleanMask2D bestMask = getBestMask(binarizedImageRoi, cage.cageMask2D);
+					BooleanMask2D bestMask = getBestMask(binarizedImageRoi, cage.cellMask2D);
 					Rectangle2D rect = saveMask(bestMask, cage, t);
 					if (rect != null)
 						listRectangles.add(rect);
@@ -127,7 +127,7 @@ public class FlyDetectTools {
 		return bestMask;
 	}
 
-	Rectangle2D saveMask(BooleanMask2D bestMask, Cage cage, int t) {
+	Rectangle2D saveMask(BooleanMask2D bestMask, Cell cage, int t) {
 		Rectangle2D rect = null;
 		if (bestMask != null)
 			rect = bestMask.getOptimizedBounds();
@@ -165,12 +165,12 @@ public class FlyDetectTools {
 				/ exp.cages.detectBin_Ms) + 1);
 		exp.cages.clearAllMeasures(options.detectCage);
 		cages = exp.cages;
-		cages.computeBooleanMasksForCages();
+		cages.computeBooleanMasksForCells();
 		rectangleAllCages = null;
-		for (Cage cage : cages.cagesList) {
-			if (cage.cageNFlies < 1)
+		for (Cell cage : cages.cellList) {
+			if (cage.cellNFlies < 1)
 				continue;
-			Rectangle rect = cage.cageRoi2D.getBounds();
+			Rectangle rect = cage.cellRoi2D.getBounds();
 			if (rectangleAllCages == null)
 				rectangleAllCages = new Rectangle(rect);
 			else
