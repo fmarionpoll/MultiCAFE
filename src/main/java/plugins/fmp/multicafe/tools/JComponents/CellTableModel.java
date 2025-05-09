@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.tools.JComponents;
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cage.Cell;
+import plugins.fmp.multicafe.experiment.cageBox.Cell;
 
 public class CellTableModel extends AbstractTableModel {
 	/**

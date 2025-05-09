@@ -18,7 +18,7 @@ import javax.swing.table.TableColumnModel;
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cage.Cell;
+import plugins.fmp.multicafe.experiment.cageBox.Cell;
 import plugins.fmp.multicafe.tools.JComponents.CellTableModel;
 
 public class InfosCageTable extends JPanel {
@@ -172,7 +172,7 @@ public class InfosCageTable extends JPanel {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			exp.cageBox.transferNFliesFromCageToCapillaries(exp.capillaries.capillariesList);
+			exp.cageBox.transferNFliesFromCageBoxToCapillaries(exp.capillaries.capillariesList);
 			parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);
 		}
 	}

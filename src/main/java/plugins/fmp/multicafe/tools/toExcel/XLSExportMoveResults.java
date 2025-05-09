@@ -12,9 +12,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cage.Cell;
-import plugins.fmp.multicafe.experiment.cage.FlyPosition;
-import plugins.fmp.multicafe.experiment.cage.FlyPositions;
+import plugins.fmp.multicafe.experiment.cageBox.Cell;
+import plugins.fmp.multicafe.experiment.cageBox.FlyPosition;
+import plugins.fmp.multicafe.experiment.cageBox.FlyPositions;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 
@@ -52,7 +52,7 @@ public class XLSExportMoveResults extends XLSExport {
 
 				if (options.xyImage)
 					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYIMAGE);
-				if (options.xyCage)
+				if (options.xyCell)
 					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTOPCAGE);
 				if (options.xyCapillaries)
 					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTIPCAPS);
@@ -307,8 +307,8 @@ public class XLSExportMoveResults extends XLSExport {
 				ilastalive = (int) (lastMinuteAlive / options.buildExcelStepMs);
 			}
 			for (FlyPositions row : rowsForOneExp) {
-				int rowCageNumber = Integer.valueOf(row.name.substring(4));
-				if (rowCageNumber == cellNumber) {
+				int rowCellNumber = Integer.valueOf(row.name.substring(4));
+				if (rowCellNumber == cellNumber) {
 					row.clearValues(ilastalive + 1);
 				}
 			}
@@ -336,7 +336,7 @@ public class XLSExportMoveResults extends XLSExport {
 		boolean transpose = options.transpose;
 		for (FlyPositions row : rowsForOneExp) {
 			pt.y = column_dataArea;
-			int col = getRowIndexFromCageName(row.name) * 2;
+			int col = getRowIndexFromCellName(row.name) * 2;
 			pt.x = rowSeries + col;
 			if (row.nflies < 1)
 				continue;

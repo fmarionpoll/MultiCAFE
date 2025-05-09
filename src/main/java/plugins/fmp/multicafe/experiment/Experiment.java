@@ -19,8 +19,8 @@ import icy.image.ImageUtil;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.experiment.cage.Cage;
-import plugins.fmp.multicafe.experiment.cage.Cell;
+import plugins.fmp.multicafe.experiment.cageBox.CageBox;
+import plugins.fmp.multicafe.experiment.cageBox.Cell;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Directories;
@@ -41,7 +41,7 @@ public class Experiment {
 	public SequenceKymos seqKymos = null;
 	public Sequence seqReference = null;
 	public Capillaries capillaries = new Capillaries();
-	public Cage cageBox = new Cage();
+	public CageBox cageBox = new CageBox();
 
 	public FileTime firstImage_FileTime;
 	public FileTime lastImage_FileTime;
@@ -570,12 +570,12 @@ public class Experiment {
 	public boolean loadCageMeasures() {
 		boolean flag = cageBox.load_Cage(getKymosBinFullDirectory());
 		if (flag)
-			cageBox.cageToROIs(seqCamData);
+			cageBox.cageBoxToROIs(seqCamData);
 		return flag;
 	}
 
 	public boolean saveCageMeasures() {
-		return cageBox.save_Cage(getKymosBinFullDirectory());
+		return cageBox.save_CageBox(getKymosBinFullDirectory());
 	}
 
 	// ----------------------------------

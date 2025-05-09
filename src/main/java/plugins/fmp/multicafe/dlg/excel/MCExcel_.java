@@ -135,7 +135,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 	private XLSExportOptions getMoveOptions(Experiment exp) {
 		XLSExportOptions options = new XLSExportOptions();
 		options.xyImage = tabMove.xyCenterCheckBox.isSelected();
-		options.xyCage = tabMove.xyCageCheckBox.isSelected();
+		options.xyCell = tabMove.xyCageCheckBox.isSelected();
 		options.xyCapillaries = tabMove.xyTipCapsCheckBox.isSelected();
 		options.distance = tabMove.distanceCheckBox.isSelected();
 		options.alive = tabMove.aliveCheckBox.isSelected();
@@ -157,7 +157,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		options.sumGulps = false;
 		options.lrPI = tabLevels.lrPICheckBox.isSelected();
 		options.lrPIThreshold = (double) tabLevels.lrPIThresholdJSpinner.getValue();
-		options.sumPerCage = tabLevels.sumPerCageCheckBox.isSelected();
+		options.sumPerCell = tabLevels.sumPerCageCheckBox.isSelected();
 		options.t0 = tabLevels.t0CheckBox.isSelected();
 		options.subtractEvaporation = tabLevels.subtractEvaporationCheckBox.isSelected();
 		getCommonOptions(options, exp);
@@ -170,7 +170,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		options.topLevelDelta = false;
 		options.bottomLevel = false;
 		options.derivative = tabGulps.derivativeCheckBox.isSelected();
-		options.sumPerCage = false;
+		options.sumPerCell = false;
 		options.t0 = false;
 		options.sumGulps = tabGulps.sumGulpsCheckBox.isSelected();
 		options.lrPI = tabGulps.sumCheckBox.isSelected();

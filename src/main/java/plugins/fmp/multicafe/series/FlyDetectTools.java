@@ -14,15 +14,15 @@ import icy.roi.BooleanMask2D;
 import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cage.Cage;
-import plugins.fmp.multicafe.experiment.cage.Cell;
+import plugins.fmp.multicafe.experiment.cageBox.CageBox;
+import plugins.fmp.multicafe.experiment.cageBox.Cell;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyDetectTools {
 	public List<BooleanMask2D> cageMaskList = new ArrayList<BooleanMask2D>();
 	public Rectangle rectangleAllCells = null;
 	public BuildSeriesOptions options = null;
-	public Cage box = null;
+	public CageBox box = null;
 
 	// -----------------------------------------------------
 

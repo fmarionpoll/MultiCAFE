@@ -14,7 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cage.Cell;
+import plugins.fmp.multicafe.experiment.cageBox.Cell;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 
@@ -124,7 +124,7 @@ public class XLSExport {
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
 					desc_getChoiceTestType(capList, t));
 			if (exp.cageBox.cellList.size() > t / 2) {
-				Cell cell = exp.cageBox.cellList.get(t / 2); // cap.capCageID);
+				Cell cell = exp.cageBox.cellList.get(t / 2);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose,
 						cell.strCellStrain);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cell.strCellSex);
@@ -245,7 +245,7 @@ public class XLSExport {
 		}
 	}
 
-	protected int desc_getCageFromCapillaryName(String name) {
+	protected int desc_getCellFromCapillaryName(String name) {
 		if (!name.contains("line"))
 			return -1;
 		String num = name.substring(4, 5);
@@ -271,8 +271,8 @@ public class XLSExport {
 		return numFromName;
 	}
 
-	protected int getRowIndexFromCageName(String name) {
-		if (!name.contains("cage"))
+	protected int getRowIndexFromCellName(String name) {
+		if (!name.contains("cage") || !name.contains("cell"))
 			return -1;
 		String num = name.substring(4, name.length());
 		int numFromName = Integer.valueOf(num);
@@ -328,8 +328,8 @@ public class XLSExport {
 			xlsExportResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 		}
 
-		if (options.sumPerCage) {
-			combineDataForOneCage(rowListForOneExp, exp);
+		if (options.sumPerCell) {
+			combineDataForOneCell(rowListForOneExp, exp);
 			sheet = xlsInitSheet(xlsExport.toString() + "_cage", xlsExport);
 			xlsExportResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 		}
@@ -580,7 +580,10 @@ public class XLSExport {
 	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
 		for (Cell cell : exp.cageBox.cellList) {
 			String roiname = cell.cellRoi2D.getName();
-			if (roiname.length() < 4 || !roiname.substring(0, 4).contains("cage"))
+			if (roiname.length() < 4)
+				continue;
+			String test = roiname.substring(0, 4);
+			if (!test.contains("cage") || test.contains("cell"))
 				continue;
 
 			String cellNumberString = roiname.substring(4);
@@ -588,7 +591,8 @@ public class XLSExport {
 			int ilastalive = 0;
 			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cageBox.isFlyAlive(cellNumber)) {
+				while (expi.chainToNextExperiment != null
+						&& expi.chainToNextExperiment.cageBox.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
 				int lastIntervalFlyAlive = expi.cageBox.getLastIntervalFlyAlive(cellNumber);
@@ -601,13 +605,13 @@ public class XLSExport {
 
 			for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
 				XLSResults row = rowListForOneExp.getRow(iRow);
-				if (desc_getCageFromCapillaryName(row.name) == cellNumber)
+				if (desc_getCellFromCapillaryName(row.name) == cellNumber)
 					row.clearValues(ilastalive);
 			}
 		}
 	}
 
-	private void combineDataForOneCage(XLSResultsArray rowListForOneExp, Experiment exp) {
+	private void combineDataForOneCell(XLSResultsArray rowListForOneExp, Experiment exp) {
 		for (int iRow0 = 0; iRow0 < rowListForOneExp.size(); iRow0++) {
 			XLSResults row_master = rowListForOneExp.getRow(iRow0);
 			if (row_master.nflies == 0 || row_master.valuesOut == null)

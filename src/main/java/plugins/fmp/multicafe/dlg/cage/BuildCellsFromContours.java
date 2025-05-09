@@ -102,9 +102,9 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
-					exp.cageBox.cageFromROIs(exp.seqCamData);
+					exp.cageBox.cageBoxFromROIs(exp.seqCamData);
 					if (exp.capillaries.capillariesList.size() > 0)
-						exp.cageBox.transferNFliesFromCapillariesToCage(exp.capillaries.capillariesList);
+						exp.cageBox.transferNFliesFromCapillariesToCageBox(exp.capillaries.capillariesList);
 				}
 			}
 		});

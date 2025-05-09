@@ -19,8 +19,8 @@ import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cage.Cell;
-import plugins.fmp.multicafe.experiment.cage.FlyPositions;
+import plugins.fmp.multicafe.experiment.cageBox.Cell;
+import plugins.fmp.multicafe.experiment.cageBox.FlyPositions;
 import plugins.fmp.multicafe.tools.chart.ChartPositions;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
 

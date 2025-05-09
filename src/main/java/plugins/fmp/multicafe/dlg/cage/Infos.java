@@ -18,7 +18,7 @@ import javax.swing.SwingConstants;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cage.Cell;
+import plugins.fmp.multicafe.experiment.cageBox.Cell;
 
 public class Infos extends JPanel {
 	/**
@@ -82,7 +82,7 @@ public class Infos extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					exp.capillaries.transferDescriptionToCapillaries();
-					exp.cageBox.transferNFliesFromCapillariesToCage(exp.capillaries.capillariesList);
+					exp.cageBox.transferNFliesFromCapillariesToCageBox(exp.capillaries.capillariesList);
 					dialog = new InfosCageTable();
 					dialog.initialize(parent0, cellsArrayCopy);
 				}

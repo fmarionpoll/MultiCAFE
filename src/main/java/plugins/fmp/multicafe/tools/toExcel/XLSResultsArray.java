@@ -38,18 +38,18 @@ public class XLSResultsArray {
 
 	public XLSResults getNextRow(int irow) {
 		XLSResults rowL = resultsList.get(irow);
-		int cellL = getCageFromKymoFileName(rowL.name);
+		int cellL = getCellFromKymoFileName(rowL.name);
 		XLSResults rowR = null;
 		if (irow + 1 < resultsList.size()) {
 			rowR = resultsList.get(irow + 1);
-			int cellR = getCageFromKymoFileName(rowR.name);
+			int cellR = getCellFromKymoFileName(rowR.name);
 			if (cellR != cellL)
 				rowR = null;
 		}
 		return rowR;
 	}
 
-	protected int getCageFromKymoFileName(String name) {
+	protected int getCellFromKymoFileName(String name) {
 		if (!name.contains("line"))
 			return -1;
 		return Integer.valueOf(name.substring(4, 5));

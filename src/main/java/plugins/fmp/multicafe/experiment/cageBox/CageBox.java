@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment.cage;
+package plugins.fmp.multicafe.experiment.cageBox;
 
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
@@ -30,7 +30,7 @@ import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
-public class Cage {
+public class CageBox {
 	public ArrayList<Cell> cellList = new ArrayList<Cell>();
 
 	// ---------- not saved to xml:
@@ -56,7 +56,7 @@ public class Cage {
 	public boolean load_Cage(String directory) {
 		boolean flag = false;
 		try {
-			flag = csvLoad_Cage(directory);
+			flag = csvLoad_CageBox(directory);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -66,16 +66,16 @@ public class Cage {
 			final Document doc = XMLUtil.loadDocument(tempName);
 			if (doc == null)
 				return false;
-			flag = xmlLoadCage(doc);
+			flag = xmlLoadCageBox(doc);
 		}
 		return flag;
 	}
 
-	public boolean save_Cage(String directory) {
+	public boolean save_CageBox(String directory) {
 		if (directory == null)
 			return false;
 
-		csvSave_Cage(directory);
+		csvSave_CageBox(directory);
 		return true;
 	}
 
@@ -93,7 +93,7 @@ public class Cage {
 		cellList.clear();
 	}
 
-	public void mergeLists(Cage cagem) {
+	public void mergeLists(CageBox cagem) {
 		for (Cell cellm : cagem.cellList) {
 			if (!isPresent(cellm))
 				cellList.add(cellm);
@@ -104,7 +104,7 @@ public class Cage {
 
 	final String csvSep = ";";
 
-	private boolean csvLoad_Cage(String directory) throws Exception {
+	private boolean csvLoad_CageBox(String directory) throws Exception {
 		String pathToCsv = directory + File.separator + "CagesMeasures.csv";
 		File csvFile = new File(pathToCsv);
 		if (!csvFile.isFile())
@@ -124,7 +124,7 @@ public class Cage {
 					csvLoad_DESCRIPTION(csvReader, sep);
 					break;
 				case "CAGES":
-					csvLoad_CAGE(csvReader, sep);
+					csvLoad_CageBox(csvReader, sep);
 					break;
 				case "POSITION":
 					csvLoad_Measures(csvReader, EnumCellMeasures.POSITION, sep);
@@ -162,7 +162,7 @@ public class Cage {
 		return null;
 	}
 
-	private String csvLoad_CAGE(BufferedReader csvReader, String sep) {
+	private String csvLoad_CageBox(BufferedReader csvReader, String sep) {
 		String row;
 		try {
 			row = csvReader.readLine();
@@ -209,7 +209,7 @@ public class Cage {
 
 	// ---------------------------------
 
-	private boolean csvSave_Cage(String directory) {
+	private boolean csvSave_CageBox(String directory) {
 		Path path = Paths.get(directory);
 		if (!Files.exists(path))
 			return false;
@@ -266,7 +266,7 @@ public class Cage {
 
 	// -------------
 
-	public boolean xmlWriteCageToFileNoQuestion(String tempname) {
+	public boolean xmlWriteCageBoxToFileNoQuestion(String tempname) {
 		if (tempname == null)
 			return false;
 		final Document doc = XMLUtil.createDocument(true);
@@ -289,7 +289,7 @@ public class Cage {
 		return XMLUtil.saveDocument(doc, tempname);
 	}
 
-	public boolean xmlReadCageFromFile(Experiment exp) {
+	public boolean xmlReadCageBoxFromFile(Experiment exp) {
 		String[] filedummy = null;
 		String filename = exp.getExperimentDirectory();
 		File file = new File(filename);
@@ -299,21 +299,21 @@ public class Cage {
 		if (filedummy != null) {
 			for (int i = 0; i < filedummy.length; i++) {
 				String csFile = filedummy[i];
-				wasOk &= xmlReadCageFromFileNoQuestion(csFile, exp);
+				wasOk &= xmlReadCageBoxFromFileNoQuestion(csFile, exp);
 			}
 		}
 		return wasOk;
 	}
 
-	public boolean xmlReadCageFromFileNoQuestion(String tempname, Experiment exp) {
+	public boolean xmlReadCageBoxFromFileNoQuestion(String tempname, Experiment exp) {
 		if (tempname == null)
 			return false;
 		final Document doc = XMLUtil.loadDocument(tempname);
 		if (doc == null)
 			return false;
-		boolean flag = xmlLoadCage(doc);
+		boolean flag = xmlLoadCageBox(doc);
 		if (flag) {
-			cageToROIs(exp.seqCamData);
+			cageBoxToROIs(exp.seqCamData);
 		} else {
 			System.out.println("Cages:xmlReadCageFromFileNoQuestion() failed to load cages from file");
 			return false;
@@ -321,7 +321,7 @@ public class Cage {
 		return true;
 	}
 
-	private boolean xmlLoadCage(Document doc) {
+	private boolean xmlLoadCageBox(Document doc) {
 		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_DROSOTRACK);
 		if (node == null)
 			return false;
@@ -340,7 +340,7 @@ public class Cage {
 			if (xmlLoadCageLimits_v0(node, cellLimitROIList)) {
 				List<FlyPositions> flyPositionsList = new ArrayList<FlyPositions>();
 				xmlLoadFlyPositions_v0(node, flyPositionsList);
-				transferDataToCage_v0(cellLimitROIList, flyPositionsList);
+				transferDataToCageBox_v0(cellLimitROIList, flyPositionsList);
 			} else
 				return false;
 		}
@@ -349,7 +349,7 @@ public class Cage {
 
 	// --------------
 
-	public void copy(Cage cageSource) {
+	public void copy(CageBox cageSource) {
 //		detect.copyParameters(cag.detect);	
 		cellList.clear();
 		for (Cell cellSource : cageSource.cellList) {
@@ -361,7 +361,7 @@ public class Cage {
 
 	// --------------
 
-	private void transferDataToCage_v0(List<ROI2D> cellLimitROIList, List<FlyPositions> flyPositionsList) {
+	private void transferDataToCageBox_v0(List<ROI2D> cellLimitROIList, List<FlyPositions> flyPositionsList) {
 		cellList.clear();
 		Collections.sort(cellLimitROIList, new Comparators.ROI2D_Name_Comparator());
 		int ncells = cellLimitROIList.size();
@@ -373,19 +373,19 @@ public class Cage {
 		}
 	}
 
-	private boolean xmlLoadCageLimits_v0(Node node, List<ROI2D> cageLimitROIList) {
+	private boolean xmlLoadCageLimits_v0(Node node, List<ROI2D> cellLimitROIList) {
 		if (node == null)
 			return false;
 		Element xmlVal = XMLUtil.getElement(node, ID_CAGELIMITS);
 		if (xmlVal == null)
 			return false;
-		cageLimitROIList.clear();
+		cellLimitROIList.clear();
 		int nb_items = XMLUtil.getAttributeIntValue(xmlVal, ID_NBITEMS, 0);
 		for (int i = 0; i < nb_items; i++) {
 			ROI2DPolygon roi = (ROI2DPolygon) ROI.create("plugins.kernel.roi.roi2d.ROI2DPolygon");
 			Element subnode = XMLUtil.getElement(xmlVal, "cage" + i);
 			roi.loadFromXML(subnode);
-			cageLimitROIList.add((ROI2D) roi);
+			cellLimitROIList.add((ROI2D) roi);
 		}
 		return true;
 	}
@@ -461,14 +461,16 @@ public class Cage {
 		}
 	}
 
-	private List<ROI2D> getRoisWithCageName(SequenceCamData seqCamData) {
+	private List<ROI2D> getRoisWithCageBoxName(SequenceCamData seqCamData) {
 		List<ROI2D> roiList = seqCamData.seq.getROI2Ds();
 		List<ROI2D> cageList = new ArrayList<ROI2D>();
 		for (ROI2D roi : roiList) {
 			String csName = roi.getName();
 			if ((roi instanceof ROI2DPolygon) || (roi instanceof ROI2DArea)) {
 //				if (( csName.contains( "cage") 
-				if ((csName.length() > 4 && csName.substring(0, 4).contains("cage") || csName.contains("Polygon2D")))
+				if ((csName.length() > 4
+						&& (csName.substring(0, 4).contains("cage") || csName.substring(0, 4).contains("cell"))
+						|| csName.contains("Polygon2D")))
 					cageList.add(roi);
 			}
 		}
@@ -477,20 +479,20 @@ public class Cage {
 
 	// --------------
 
-	public void cageToROIs(SequenceCamData seqCamData) {
-		List<ROI2D> cageLimitROIList = getRoisWithCageName(seqCamData);
+	public void cageBoxToROIs(SequenceCamData seqCamData) {
+		List<ROI2D> cageLimitROIList = getRoisWithCageBoxName(seqCamData);
 		seqCamData.seq.removeROIs(cageLimitROIList, false);
 		for (Cell cell : cellList)
 			cageLimitROIList.add(cell.cellRoi2D);
 		seqCamData.seq.addROIs(cageLimitROIList, true);
 	}
 
-	public void cageFromROIs(SequenceCamData seqCamData) {
-		List<ROI2D> roiList = getRoisWithCageName(seqCamData);
+	public void cageBoxFromROIs(SequenceCamData seqCamData) {
+		List<ROI2D> roiList = getRoisWithCageBoxName(seqCamData);
 		Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
 		addMissingCells(roiList);
 		removeOrphanCells(roiList);
-		Collections.sort(cellList, new Comparators.Cage_Name_Comparator());
+		Collections.sort(cellList, new Comparators.Cell_Name_Comparator());
 	}
 
 	public void setFirstAndLastCellToZeroFly() {
@@ -511,7 +513,7 @@ public class Cage {
 		}
 	}
 
-	public void transferNFliesFromCapillariesToCage(List<Capillary> capList) {
+	public void transferNFliesFromCapillariesToCageBox(List<Capillary> capList) {
 		for (Cell cell : cellList) {
 			int cagenb = cell.getCellNumberInteger();
 			for (Capillary cap : capList) {
@@ -523,7 +525,7 @@ public class Cage {
 		}
 	}
 
-	public void transferNFliesFromCageToCapillaries(List<Capillary> capList) {
+	public void transferNFliesFromCageBoxToCapillaries(List<Capillary> capList) {
 		for (Cell cell : cellList) {
 			int cellnb = cell.getCellNumberInteger();
 			for (Capillary cap : capList) {

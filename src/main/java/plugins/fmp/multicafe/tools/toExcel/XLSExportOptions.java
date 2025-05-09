@@ -4,7 +4,7 @@ import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 
 public class XLSExportOptions {
 	public boolean xyImage = true;
-	public boolean xyCage = true;
+	public boolean xyCell = true;
 	public boolean xyCapillaries = true;
 	public boolean ellipseAxes = false;
 
@@ -25,7 +25,7 @@ public class XLSExportOptions {
 	public boolean crosscorrelationLR = false;
 	public int nbinscorrelation = 40;
 
-	public boolean sumPerCage = true;
+	public boolean sumPerCell = true;
 	public boolean t0 = true;
 	public boolean onlyalive = true;
 	public boolean subtractEvaporation = true;
