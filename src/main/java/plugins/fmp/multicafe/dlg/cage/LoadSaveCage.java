@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cages;
+package plugins.fmp.multicafe.dlg.cage;
 
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -16,7 +16,7 @@ import icy.gui.util.FontUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 
-public class LoadSaveCages extends JPanel {
+public class LoadSaveCage extends JPanel {
 	/**
 	 * 
 	 */

@@ -13,7 +13,7 @@ import icy.plugin.PluginLoader;
 import icy.plugin.abstract_.PluginActionable;
 import icy.preferences.GeneralPreferences;
 import plugins.fmp.multicafe.dlg.browse.MCBrowse_;
-import plugins.fmp.multicafe.dlg.cages.MCCages_;
+import plugins.fmp.multicafe.dlg.cage.MCCage_;
 import plugins.fmp.multicafe.dlg.capillaries.MCCapillaries_;
 import plugins.fmp.multicafe.dlg.excel.MCExcel_;
 import plugins.fmp.multicafe.dlg.experiment.MCExperiment_;
@@ -32,7 +32,7 @@ public class MultiCAFE extends PluginActionable {
 	public MCKymos_ paneKymos = new MCKymos_();
 	public MCLevels_ paneLevels = new MCLevels_();
 	public MCSpots_ paneSpots = new MCSpots_();
-	public MCCages_ paneCages = new MCCages_();
+	public MCCage_ paneCages = new MCCage_();
 	public MCExcel_ paneExcel = new MCExcel_();
 
 	public JTabbedPane tabsPane = new JTabbedPane();

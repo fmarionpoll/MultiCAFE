@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cages;
+package plugins.fmp.multicafe.dlg.cage;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;

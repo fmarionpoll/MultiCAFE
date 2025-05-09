@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cages;
+package plugins.fmp.multicafe.dlg.cage;
 
 import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
@@ -11,14 +11,14 @@ import javax.swing.event.ChangeListener;
 
 import plugins.fmp.multicafe.MultiCAFE;
 
-public class BuildCages extends JPanel implements PropertyChangeListener {
+public class BuildCells extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	BuildCagesAsArray tabBuildCages1 = new BuildCagesAsArray();
-	BuildCagesFromContours tabBuildCages2 = new BuildCagesFromContours();
+	BuildCellsAsArray tabBuildCages1 = new BuildCellsAsArray();
+	BuildCellsFromContours tabBuildCages2 = new BuildCellsFromContours();
 	JTabbedPane tabsPane = new JTabbedPane();
 	int iTAB_CAGES1 = 0;
 	int iTAB_CAGES2 = 1;

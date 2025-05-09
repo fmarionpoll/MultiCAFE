@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cages;
+package plugins.fmp.multicafe.dlg.cage;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -15,19 +15,19 @@ import javax.swing.event.ChangeListener;
 import icy.gui.component.PopupPanel;
 import plugins.fmp.multicafe.MultiCAFE;
 
-public class MCCages_ extends JPanel implements PropertyChangeListener {
+public class MCCage_ extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3457738144388946607L;
 
-	BuildCages tabBuildCages = new BuildCages();
+	BuildCells tabBuildCages = new BuildCells();
 	Infos tabInfos = new Infos();
 	Detect1 tabDetect1 = new Detect1();
 
 	Detect2_ tabDetect2 = new Detect2_();
 	Edit tabEdit = new Edit();
-	public LoadSaveCages tabFile = new LoadSaveCages();
+	public LoadSaveCage tabFile = new LoadSaveCage();
 	public PlotPositions tabGraphics = new PlotPositions();
 	PopupPanel capPopupPanel = null;
 	JTabbedPane tabsPane = new JTabbedPane();
