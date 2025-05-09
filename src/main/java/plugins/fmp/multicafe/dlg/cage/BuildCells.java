@@ -48,13 +48,13 @@ public class BuildCells extends JPanel implements PropertyChangeListener {
 		iTAB_CAGES1 = iTab;
 		tabBuildCages1.init(capLayout, parent0);
 		tabBuildCages1.addPropertyChangeListener(this);
-		tabsPane.addTab("Define array cols/rows", null, tabBuildCages1, "Build cages as an array of cells");
+		tabsPane.addTab("Define array cols/rows", null, tabBuildCages1, "Build cells as an array of rectangles");
 
 		iTab++;
 		iTAB_CAGES2 = iTab;
 		tabBuildCages2.init(capLayout, parent0);
 		tabBuildCages2.addPropertyChangeListener(this);
-		tabsPane.addTab("Detect contours of cages", null, tabBuildCages2, "Detect contours to build cages");
+		tabsPane.addTab("Detect contours of cages", null, tabBuildCages2, "Detect contours to build cells");
 	}
 
 	@Override
