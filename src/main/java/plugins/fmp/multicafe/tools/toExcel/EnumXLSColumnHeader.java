@@ -6,12 +6,31 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum EnumXLSColumnHeader {
-	PATH("Path", 0), DATE("Date", 1), EXP_BOXID("Box_ID", 2), CAM("Cam", 3), EXP_EXPT("Expmt", 4), CAGEID("Cage_ID", 5),
-	EXP_STIM("Stim", 6), EXP_CONC("Conc", 7), EXP_STRAIN("Strain", 8), EXP_SEX("Sex", 9), EXP_COND1("Cond1", 10),
-	EXP_COND2("Cond2", 11), CAP("Cap", 12), CAP_VOLUME("Cap_ul", 13), CAP_PIXELS("Cap_npixels", 14),
-	CHOICE_NOCHOICE("Choice", 15), CAP_STIM("Cap_stimulus", 16), CAP_CONC("Cap_concentration", 17),
-	CAP_NFLIES("Nflies", 18), CAP_CAGEINDEX("Cell", 19), DUM4("Dum4", 20), CAGE_STRAIN("Cell_strain", 21),
-	CAGE_SEX("Cell_sex", 22), CAGE_AGE("Cell_age", 23), CAGE_COMMENT("Cell_comment", 24);
+	PATH("Path", 0), 
+	DATE("Date", 1), 
+	EXP_BOXID("Box_ID", 2), 
+	CAM("Cam", 3), 
+	EXP_EXPT("Expmt", 4),
+	EXP_STIM("Stim", 5), 
+	EXP_CONC("Conc", 6), 
+	EXP_STRAIN("Strain", 7), 
+	EXP_SEX("Sex", 8), 
+	EXP_COND1("Cond1", 9),
+	EXP_COND2("Cond2", 10), 
+	CAP("Cap", 11), 
+	CAP_VOLUME("Cap_ul", 12), 
+	CAP_PIXELS("Cap_npixels", 13),
+	CHOICE_NOCHOICE("Choice", 14), 
+	CAP_STIM("Cap_stimulus", 15), 
+	CAP_CONC("Cap_concentration", 16),
+	CAP_NFLIES("Nflies", 17), 
+	CAP_CAGEINDEX("Cell", 18), 
+	CAGEID("Cell_ID", 19), 
+	CAGE_STRAIN("Cell_strain", 20),
+	CAGE_SEX("Cell_sex", 21), 
+	CAGE_AGE("Cell_age", 22), 
+	CAGE_COMMENT("Cell_comment", 23), 
+	DUM4("Dum4", 24);
 
 	private final String name;
 	private final int value;
