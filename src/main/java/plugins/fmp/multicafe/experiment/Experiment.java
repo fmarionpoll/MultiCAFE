@@ -535,7 +535,7 @@ public class Experiment {
 	}
 
 	public boolean loadCageMeasures() {
-		boolean flag = cageBox.load_Cage(getKymosBinFullDirectory());
+		boolean flag = cageBox.load_CageBox(getKymosBinFullDirectory());
 		if (flag)
 			cageBox.cageBoxToROIs(seqCamData);
 		return flag;

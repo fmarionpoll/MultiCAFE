@@ -53,7 +53,7 @@ public class CageBox {
 
 	// ---------------------------------
 
-	public boolean load_Cage(String directory) {
+	public boolean load_CageBox(String directory) {
 		boolean flag = false;
 		try {
 			flag = csvLoad_CageBox(directory);
@@ -123,7 +123,7 @@ public class CageBox {
 				case "DESCRIPTION":
 					csvLoad_DESCRIPTION(csvReader, sep);
 					break;
-				case "CAGES":
+				case "CAGE":
 					csvLoad_CageBox(csvReader, sep);
 					break;
 				case "POSITION":
@@ -285,7 +285,6 @@ public class CageBox {
 			cell.xmlSaveCell(xmlVal, index);
 			index++;
 		}
-
 		return XMLUtil.saveDocument(doc, tempname);
 	}
 
