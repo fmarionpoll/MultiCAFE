@@ -178,7 +178,8 @@ public class Capillary implements Comparable<Capillary> {
 		String name = roiCap.getName();
 		if (!name.contains("line"))
 			return -1;
-		return Integer.valueOf(name.substring(4, 6));
+		String stringNumber = name.substring(4, 5);
+		return Integer.valueOf(stringNumber);
 	}
 
 	public String getSideDescriptor(EnumXLSExportType xlsExportOption) {
