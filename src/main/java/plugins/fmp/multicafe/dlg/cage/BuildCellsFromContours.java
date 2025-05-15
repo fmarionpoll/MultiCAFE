@@ -63,6 +63,7 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 		flowLayout.setVgap(0);
 
 		JPanel panel1 = new JPanel(flowLayout);
+		panel1.add(drawPolygon2DButton);
 		panel1.add(createCellsButton);
 		add(panel1);
 
@@ -77,7 +78,6 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 		add(panel2);
 
 		JPanel panel3 = new JPanel(flowLayout);
-		panel3.add(drawPolygon2DButton);
 		panel3.add(deleteButton);
 		add(panel3);
 
