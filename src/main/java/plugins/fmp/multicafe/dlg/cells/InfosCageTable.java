@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cage;
+package plugins.fmp.multicafe.dlg.cells;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -18,7 +18,7 @@ import javax.swing.table.TableColumnModel;
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cageBox.Cell;
+import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.tools.JComponents.CellTableModel;
 
 public class InfosCageTable extends JPanel {

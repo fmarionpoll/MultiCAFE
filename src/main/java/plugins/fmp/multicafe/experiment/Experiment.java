@@ -19,10 +19,10 @@ import icy.image.ImageUtil;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.experiment.cageBox.CageBox;
-import plugins.fmp.multicafe.experiment.cageBox.Cell;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.cells.Cells;
+import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.tools.Directories;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
@@ -41,7 +41,7 @@ public class Experiment {
 	public SequenceKymos seqKymos = null;
 	public Sequence seqReference = null;
 	public Capillaries capillaries = new Capillaries();
-	public CageBox cageBox = new CageBox();
+	public Cells cageBox = new Cells();
 
 	public FileTime firstImage_FileTime;
 	public FileTime lastImage_FileTime;

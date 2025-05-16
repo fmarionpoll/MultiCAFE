@@ -6,9 +6,9 @@ import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cageBox.Cell;
-import plugins.fmp.multicafe.experiment.cageBox.FlyPosition;
-import plugins.fmp.multicafe.experiment.cageBox.FlyPositions;
+import plugins.fmp.multicafe.experiment.cells.Cell;
+import plugins.fmp.multicafe.experiment.cells.FlyPosition;
+import plugins.fmp.multicafe.experiment.cells.FlyPositions;
 import plugins.fmp.multicafe.tools.toExcel.XLSResults;
 
 public class Comparators {

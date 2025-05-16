@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cage;
+package plugins.fmp.multicafe.dlg.cells;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -18,7 +18,7 @@ import javax.swing.SwingConstants;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cageBox.Cell;
+import plugins.fmp.multicafe.experiment.cells.Cell;
 
 public class Infos extends JPanel {
 	/**

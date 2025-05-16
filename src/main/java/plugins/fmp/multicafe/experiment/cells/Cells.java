@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment.cageBox;
+package plugins.fmp.multicafe.experiment.cells;
 
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
@@ -30,7 +30,7 @@ import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
-public class CageBox {
+public class Cells {
 	public ArrayList<Cell> cellList = new ArrayList<Cell>();
 
 	// ---------- not saved to xml:
@@ -93,7 +93,7 @@ public class CageBox {
 		cellList.clear();
 	}
 
-	public void mergeLists(CageBox cagem) {
+	public void mergeLists(Cells cagem) {
 		for (Cell cellm : cagem.cellList) {
 			if (!isPresent(cellm))
 				cellList.add(cellm);
@@ -348,7 +348,7 @@ public class CageBox {
 
 	// --------------
 
-	public void copy(CageBox cageSource) {
+	public void copy(Cells cageSource) {
 //		detect.copyParameters(cag.detect);	
 		cellList.clear();
 		for (Cell cellSource : cageSource.cellList) {

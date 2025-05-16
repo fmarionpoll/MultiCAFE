@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cage;
+package plugins.fmp.multicafe.dlg.cells;
 
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -51,7 +51,7 @@ public class LoadSaveCage extends JPanel {
 				if (exp != null) {
 					loadCage(exp);
 					firePropertyChange("LOAD_DATA", false, true);
-					parent0.paneCage.tabsPane.setSelectedIndex(3);
+					parent0.paneCells.tabsPane.setSelectedIndex(3);
 				}
 			}
 		});
@@ -62,7 +62,7 @@ public class LoadSaveCage extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					saveCageAndMeasures(exp);
-					parent0.paneCage.tabsPane.setSelectedIndex(3);
+					parent0.paneCells.tabsPane.setSelectedIndex(3);
 				}
 			}
 		});

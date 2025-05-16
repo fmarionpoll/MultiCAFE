@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cage;
+package plugins.fmp.multicafe.dlg.cells;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -25,7 +25,7 @@ import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
-import plugins.fmp.multicafe.experiment.cageBox.Cell;
+import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.FlyDetect2;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;

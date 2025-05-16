@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cage;
+package plugins.fmp.multicafe.dlg.cells;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -15,7 +15,7 @@ import javax.swing.event.ChangeListener;
 import icy.gui.component.PopupPanel;
 import plugins.fmp.multicafe.MultiCAFE;
 
-public class MCCage_ extends JPanel implements PropertyChangeListener {
+public class MCCells_ extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */
