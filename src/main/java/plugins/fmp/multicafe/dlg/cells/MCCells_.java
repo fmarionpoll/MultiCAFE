@@ -36,10 +36,10 @@ public class MCCells_ extends JPanel implements PropertyChangeListener {
 	int previouslySelected = -1;
 	public boolean bTrapROIsEdit = false;
 
-	//int iTAB_CAGE2 = 1;
-	int iTAB_CAGEARRAY = 1;
-	int iTAB_CAGECONTOUR = iTAB_CAGEARRAY + 1;
-	int iTAB_INFOS = iTAB_CAGECONTOUR+1; //iTAB_CAGE2 + 1;
+	int iTAB_CAGE2 = 1;
+//	int iTAB_CAGEARRAY = 1;
+//	int iTAB_CAGECONTOUR = iTAB_CAGEARRAY + 1;
+	int iTAB_INFOS = iTAB_CAGE2 + 1;
 	int iTAB_DETECT1 = iTAB_INFOS + 1;
 	int iTAB_DETECT2 = iTAB_DETECT1 + 1;
 	int iTAB_EDIT = iTAB_DETECT2 + 1;
