@@ -150,7 +150,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		else
 			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
 
-		options.btrackWhite = true;
+		options.btrackWhite = false; //true;
 		options.blimitLow = objectLowsizeCheckBox.isSelected();
 		options.blimitUp = objectUpsizeCheckBox.isSelected();
 		options.limitLow = (int) objectLowsizeSpinner.getValue();

@@ -19,7 +19,7 @@ public class Detect2_ extends JPanel implements PropertyChangeListener {
 
 	Detect2Background tabDetectBackground = new Detect2Background();
 	Detect2Flies tabDetect2Flies = new Detect2Flies();
-	JTabbedPane tabsPane = new JTabbedPane();
+	JTabbedPane tabsPane = new JTabbedPane(JTabbedPane.LEFT);
 	int previouslySelected = -1;
 
 	int iTAB_BACKGND = 0;
@@ -52,13 +52,13 @@ public class Detect2_ extends JPanel implements PropertyChangeListener {
 		iTAB_BACKGND = iTab;
 		tabDetectBackground.init(capLayout, parent0);
 		tabDetectBackground.addPropertyChangeListener(this);
-		tabsPane.addTab("Build background" + "", null, tabDetectBackground, "Build background without flies");
+		tabsPane.addTab("Bkgnd" + "", null, tabDetectBackground, "Build background without flies");
 
 		iTab++;
 		iTAB_DETECT2 = iTab;
 		tabDetect2Flies.init(capLayout, parent0);
 		tabDetect2Flies.addPropertyChangeListener(this);
-		tabsPane.addTab("Detect flies", null, tabDetect2Flies, "Detect flies position using background subtraction");
+		tabsPane.addTab("Flies", null, tabDetect2Flies, "Detect flies position using background subtraction");
 	}
 
 	@Override
