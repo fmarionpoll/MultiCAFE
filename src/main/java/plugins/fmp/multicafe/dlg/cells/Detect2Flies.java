@@ -1,10 +1,13 @@
 package plugins.fmp.multicafe.dlg.cells;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -14,6 +17,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JToggleButton;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -28,6 +32,7 @@ import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.FlyDetect2;
+import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.Overlay.OverlayThreshold;
 
@@ -42,6 +47,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 	private JCheckBox objectLowsizeCheckBox = new JCheckBox("size >");
 	private JSpinner objectLowsizeSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 9999, 1));
+	
 	private JCheckBox objectUpsizeCheckBox = new JCheckBox("<");
 	private JSpinner objectUpsizeSpinner = new JSpinner(new SpinnerNumberModel(500, 0, 9999, 1));
 	private JSpinner thresholdDiffSpinner = new JSpinner(new SpinnerNumberModel(100, 0, 255, 1));
@@ -51,6 +57,9 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 	private FlyDetect2 flyDetect2 = null;
 	private OverlayThreshold overlayThreshold2 = null;
+	private JToggleButton transformPass1DisplayButton = new JToggleButton("View");
+	private JCheckBox overlayPass1CheckBox = new JCheckBox("overlay");
+
 
 	// ----------------------------------------------------
 
@@ -68,27 +77,51 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		add(panel1);
 
 		allCellsComboBox.addPopupMenuListener(this);
+		
+		JPanel panel2 = new JPanel(flowLayout);
+		panel2.add(new JLabel("threshold"));
+		panel2.add(thresholdDiffSpinner);
+		panel2.add(transformPass1DisplayButton);
+		panel2.add(overlayPass1CheckBox);
+		
+		add(panel2);
 
-//		objectLowsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
-//		objectUpsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
 		JPanel panel3 = new JPanel(flowLayout);
 		panel3.add(objectLowsizeCheckBox);
 		panel3.add(objectLowsizeSpinner);
+		objectLowsizeSpinner.setPreferredSize(new Dimension(40, 20));
 		panel3.add(objectUpsizeCheckBox);
 		panel3.add(objectUpsizeSpinner);
-		panel3.add(new JLabel("threshold"));
-		panel3.add(thresholdDiffSpinner);
+		objectUpsizeSpinner.setPreferredSize(new Dimension(40, 20));
 		add(panel3);
 
 		JPanel panel4 = new JPanel(flowLayout);
 		panel4.add(new JLabel("length/width<"));
 		panel4.add(limitRatioSpinner);
+		limitRatioSpinner.setPreferredSize(new Dimension(40, 20));
 		panel4.add(new JLabel("jitter <="));
 		panel4.add(jitterTextField);
+		jitterTextField.setPreferredSize(new Dimension(40, 20));
 		add(panel4);
 
 		defineActionListeners();
+		defineItemListeners();
+		
 		thresholdDiffSpinner.addChangeListener(this);
+	}
+	
+	private void defineItemListeners() {
+		overlayPass1CheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					if (overlayPass1CheckBox.isSelected())
+						updateOverlay(exp);
+					else
+						removeOverlay(exp);
+				}
+			}
+		});
 	}
 
 	private void defineActionListeners() {
@@ -112,6 +145,29 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 				startComputationButton.setForeground(color);
 			}
 		});
+		
+		transformPass1DisplayButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					boolean displayCheckOverlay = false;
+					if (transformPass1DisplayButton.isSelected()) {
+						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
+						canvas.updateTransformsComboStep1(transformPass1);
+						int index = transformPass1ComboBox.getSelectedIndex();
+						canvas.selectImageTransformFunctionStep1(index + 1);
+						displayCheckOverlay = true;
+					} else {
+						removeOverlay(exp);
+						overlayPass1CheckBox.setSelected(false);
+						getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(0);
+					}
+					overlayPass1CheckBox.setEnabled(displayCheckOverlay);
+				}
+			}
+		});
+		
 	}
 
 	@Override
@@ -224,6 +280,28 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 	public void popupMenuCanceled(PopupMenuEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+	
+//	void updateOverlayThreshold() {
+//		if (overlayThreshold2 == null)
+//			return;
+//
+//		boolean ifGreater = true;
+//		int threshold = 0;
+//		ImageTransformEnums transform = ImageTransformEnums.NONE;
+//		if (transformPass1DisplayButton.isSelected()) {
+//			ifGreater = (direction1ComboBox.getSelectedIndex() == 0);
+//			threshold = (int) threshold1Spinner.getValue();
+//			transform = (ImageTransformEnums) transformPass1ComboBox.getSelectedItem();
+//		} else
+//			return;
+//		overlayThreshold2.setThresholdSingle(threshold, transform, ifGreater);
+//		overlayThreshold2.painterChanged();
+//	}
+
+	void removeOverlay(Experiment exp) {
+		if (exp.seqKymos != null && exp.seqKymos.seq != null)
+			exp.seqKymos.seq.removeOverlay(overlayThreshold2);
 	}
 
 }
