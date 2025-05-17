@@ -19,7 +19,7 @@ public class BuildCells extends JPanel implements PropertyChangeListener {
 
 	BuildCellsAsArray tabBuildCells1 = new BuildCellsAsArray();
 	BuildCellsFromContours tabBuildCells2 = new BuildCellsFromContours();
-	JTabbedPane tabsPane = new JTabbedPane();
+	JTabbedPane tabsPane = new JTabbedPane(JTabbedPane.LEFT);
 	int iTAB_CAGES1 = 0;
 	int iTAB_CAGES2 = 1;
 	MultiCAFE parent0 = null;

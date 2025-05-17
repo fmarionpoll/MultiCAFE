@@ -21,9 +21,9 @@ public class MCCells_ extends JPanel implements PropertyChangeListener {
 	 */
 	private static final long serialVersionUID = 3457738144388946607L;
 
-	//BuildCells tabBuildCells = new BuildCells();
-	BuildCellsAsArray tabBuildCellsAsArray = new BuildCellsAsArray();
-	BuildCellsFromContours tabBuildCellsFromContours = new BuildCellsFromContours();
+	BuildCells tabBuildCells = new BuildCells();
+//	BuildCellsAsArray tabBuildCellsAsArray = new BuildCellsAsArray();
+//	BuildCellsFromContours tabBuildCellsFromContours = new BuildCellsFromContours();
 	Infos tabInfos = new Infos();
 	Detect1 tabDetect1 = new Detect1();
 
@@ -66,7 +66,7 @@ public class MCCells_ extends JPanel implements PropertyChangeListener {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				int selectedIndex = tabsPane.getSelectedIndex();
-				tabBuildCellsFromContours.overlayCheckBox.setSelected(selectedIndex == 0);
+				tabBuildCells.tabBuildCells2.overlayCheckBox.setSelected(selectedIndex == 0);
 
 				tabDetect1.overlayCheckBox.setSelected(selectedIndex == iTAB_DETECT1);
 				if (selectedIndex == iTAB_DETECT1 || selectedIndex == iTAB_DETECT2) {
@@ -104,15 +104,18 @@ public class MCCells_ extends JPanel implements PropertyChangeListener {
 
 	void createTabs(GridLayout capLayout) {
 		int iTab = 0;
-		tabBuildCellsAsArray.init(capLayout, parent0);
-		tabBuildCellsAsArray.addPropertyChangeListener(this);
-		tabsPane.addTab("Cells1", null, tabBuildCellsAsArray, "Define cells as an array");
+		tabBuildCells.init(capLayout, parent0);
+		tabBuildCells.addPropertyChangeListener(this);
+		tabsPane.addTab("Cells", null, tabBuildCells, "Define cells as an array or detect");
+//		tabBuildCellsAsArray.init(capLayout, parent0);
+//		tabBuildCellsAsArray.addPropertyChangeListener(this);
+//		tabsPane.addTab("Cells1", null, tabBuildCellsAsArray, "Define cells as an array")
 
-		iTab++;
-		iTAB_CAGECONTOUR = iTab;
-		tabBuildCellsFromContours.init(capLayout, parent0);
-		tabBuildCellsFromContours.addPropertyChangeListener(this);
-		tabsPane.addTab("Cells2", null, tabBuildCellsFromContours, "Define cells semi-automatically");
+//		iTab++;
+//		iTAB_CAGECONTOUR = iTab;
+//		tabBuildCellsFromContours.init(capLayout, parent0);
+//		tabBuildCellsFromContours.addPropertyChangeListener(this);
+//		tabsPane.addTab("Cells2", null, tabBuildCellsFromContours, "Define cells semi-automatically");
 		
 		iTab++;
 		iTAB_INFOS = iTab;
@@ -152,7 +155,7 @@ public class MCCells_ extends JPanel implements PropertyChangeListener {
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("LOAD_DATA")) {
-			tabBuildCellsAsArray.updateNColumnsFieldFromSequence();
+			tabBuildCells.tabBuildCells1.updateNColumnsFieldFromSequence();
 		}
 	}
 
