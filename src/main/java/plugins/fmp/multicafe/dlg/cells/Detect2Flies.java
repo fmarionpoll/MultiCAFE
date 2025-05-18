@@ -46,7 +46,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 	private JCheckBox objectLowsizeCheckBox = new JCheckBox("size >");
 	private JSpinner objectLowsizeSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 9999, 1));
-	
+
 	private JCheckBox objectUpsizeCheckBox = new JCheckBox("<");
 	private JSpinner objectUpsizeSpinner = new JSpinner(new SpinnerNumberModel(500, 0, 9999, 1));
 	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(100, 0, 255, 1));
@@ -58,7 +58,6 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 	private OverlayThreshold overlayThreshold = null;
 	private JToggleButton viewButton = new JToggleButton("View");
 	private JCheckBox overlayCheckBox = new JCheckBox("overlay");
-
 
 	// ----------------------------------------------------
 
@@ -76,13 +75,13 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		add(panel1);
 
 		allCellsComboBox.addPopupMenuListener(this);
-		
+
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(new JLabel("threshold"));
 		panel2.add(thresholdSpinner);
 		panel2.add(viewButton);
 		panel2.add(overlayCheckBox);
-		
+
 		add(panel2);
 
 		JPanel panel3 = new JPanel(flowLayout);
@@ -105,10 +104,10 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 		defineActionListeners();
 		defineItemListeners();
-		
+
 		thresholdSpinner.addChangeListener(this);
 	}
-	
+
 	private void defineItemListeners() {
 		overlayCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -144,22 +143,24 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 				startComputationButton.setForeground(color);
 			}
 		});
-		
+
 		viewButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					boolean displayCheckOverlay = false;
-					if (!viewButton.isSelected()) {
+					boolean displayCheckOverlay = viewButton.isSelected();
+					if (!displayCheckOverlay) {
 						removeOverlay(exp);
 						overlayCheckBox.setSelected(false);
+					} else {
+						updateOverlay(exp, exp.cageBox.detect_threshold);
 					}
 					overlayCheckBox.setEnabled(displayCheckOverlay);
 				}
 			}
 		});
-		
+
 	}
 
 	@Override
@@ -198,7 +199,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		else
 			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
 
-		options.btrackWhite = false; //true;
+		options.btrackWhite = false;
 		options.blimitLow = objectLowsizeCheckBox.isSelected();
 		options.blimitUp = objectUpsizeCheckBox.isSelected();
 		options.limitLow = (int) objectLowsizeSpinner.getValue();
@@ -273,7 +274,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		// TODO Auto-generated method stub
 
 	}
-	
+
 //	void updateOverlayThreshold() {
 //		if (overlayThreshold2 == null)
 //			return;

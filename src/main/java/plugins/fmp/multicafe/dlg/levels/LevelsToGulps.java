@@ -117,7 +117,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
 						canvas.updateTransformsComboStep1(gulpTransforms);
 						int index = gulpTransformsComboBox.getSelectedIndex();
-						canvas.selectImageTransformFunctionStep1(index + 1);
+						canvas.selectImageTransformFunctionStep1(index + 1, null);
 					} else
 						getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(0);
 				}

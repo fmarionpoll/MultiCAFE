@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -12,6 +13,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import icy.canvas.IcyCanvas;
 import icy.gui.component.PopupPanel;
 import icy.gui.frame.IcyFrame;
 import icy.gui.viewer.Viewer;
@@ -100,8 +102,13 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				ViewerFMP v = (ViewerFMP) seq.getFirstViewer();
-				if (v == null)
+				if (v == null) {
 					v = new ViewerFMP(exp.seqCamData.seq, true, true);
+					List<String> list = IcyCanvas.getCanvasPluginNames();
+					String pluginName = list.stream().filter(s -> s.contains("Canvas2DWithTransforms")).findFirst()
+							.orElse(null);
+					v.setCanvas(pluginName);
+				}
 
 				if (v != null) {
 					placeViewerNextToDialogBox(v, parent0.mainFrame);

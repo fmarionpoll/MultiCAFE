@@ -214,7 +214,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
 						canvas.updateTransformsComboStep1(transformPass1);
 						int index = transformPass1ComboBox.getSelectedIndex();
-						canvas.selectImageTransformFunctionStep1(index + 1);
+						canvas.selectImageTransformFunctionStep1(index + 1, null);
 						displayCheckOverlay = true;
 					} else {
 						removeOverlay(exp);
@@ -238,7 +238,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
 						canvas.updateTransformsComboStep1(transformPass2);
 						int index = transformPass2ComboBox.getSelectedIndex();
-						canvas.selectImageTransformFunctionStep1(index + 1);
+						canvas.selectImageTransformFunctionStep1(index + 1, null);
 						displayCheckOverlay = true;
 					} else {
 						removeOverlay(exp);

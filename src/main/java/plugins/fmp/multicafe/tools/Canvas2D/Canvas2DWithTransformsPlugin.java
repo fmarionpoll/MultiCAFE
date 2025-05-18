@@ -8,8 +8,8 @@ import icy.plugin.interface_.PluginCanvas;
 public class Canvas2DWithTransformsPlugin extends Plugin implements PluginCanvas {
 	@Override
 	public String getCanvasClassName() {
-//		return KymosCanvas2DPlugin.class.getName();
-		return "KymosView";
+		return Canvas2DWithTransformsPlugin.class.getName();
+//		return "FMPView";
 	}
 
 	@Override
