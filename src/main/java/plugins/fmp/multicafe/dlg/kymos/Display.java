@@ -27,6 +27,7 @@ import icy.gui.viewer.ViewerEvent;
 import icy.gui.viewer.ViewerListener;
 import icy.main.Icy;
 import icy.roi.ROI;
+import icy.sequence.DimensionId;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
@@ -338,15 +339,14 @@ public class Display extends JPanel implements ViewerListener {
 
 	@Override
 	public void viewerChanged(ViewerEvent event) {
-		if (event.getType() == ViewerEvent.ViewerEventType.POSITION_CHANGED) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-			if (exp != null) {
-				Viewer v = exp.seqKymos.seq.getFirstViewer();
-				int t = v.getPositionT();
-				t = selectKymographImage(t);
-				if (t >= 0)
-					selectKymographComboItem(t);
-			}
+		if ((event.getType() == ViewerEvent.ViewerEventType.POSITION_CHANGED) && (event.getDim() == DimensionId.T)) {
+			Viewer v = event.getSource();
+			int t = v.getPositionT();
+			if (t >= 0)
+				selectKymographComboItem(t);
+
+			String title = kymographsCombo.getItemAt(t) + "  :" + viewsCombo.getSelectedItem() + " s";
+			v.setTitle(title);
 		}
 	}
 
@@ -357,11 +357,6 @@ public class Display extends JPanel implements ViewerListener {
 
 	public void updateResultsAvailable(Experiment exp) {
 		isActionEnabled = false;
-		// isActionEnabled: hack to select the right directory and then add subsequent
-		// available dir without calling actionListener
-		// see
-		// https://stackoverflow.com/questions/13434688/calling-additem-on-an-empty-jcombobox-triggers-actionperformed-event
-		// when JComboBox is empty, adding the first item will trigger setSelected(0)
 		viewsCombo.removeAllItems();
 		List<String> list = Directories.getSortedListOfSubDirectoriesWithTIFF(exp.getExperimentDirectory());
 		for (int i = 0; i < list.size(); i++) {
@@ -376,13 +371,6 @@ public class Display extends JPanel implements ViewerListener {
 		if (select == null)
 			select = ".";
 		viewsCombo.setSelectedItem(select);
-	}
-
-	public String getBinSubdirectory() {
-		String name = (String) viewsCombo.getSelectedItem();
-		if (name != null && !name.contains("bin_"))
-			name = null;
-		return name;
 	}
 
 	private void changeBinSubdirectory(String localString) {
