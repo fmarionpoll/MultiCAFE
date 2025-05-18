@@ -40,13 +40,13 @@ public class Levels extends JPanel implements PropertyChangeListener {
 	private JComboBox<String> direction1ComboBox = new JComboBox<String>(
 			new String[] { " threshold >", " threshold <" });
 	private JSpinner threshold1Spinner = new JSpinner(new SpinnerNumberModel(35, 1, 255, 1));
-	ImageTransformEnums[] transformPass1 = new ImageTransformEnums[] { ImageTransformEnums.R_RGB,
+	private ImageTransformEnums[] transformPass1 = new ImageTransformEnums[] { ImageTransformEnums.R_RGB,
 			ImageTransformEnums.G_RGB, ImageTransformEnums.B_RGB, ImageTransformEnums.R2MINUS_GB,
 			ImageTransformEnums.G2MINUS_RB, ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB,
 			ImageTransformEnums.GBMINUS_2R, ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B,
 			ImageTransformEnums.RGB_DIFFS, ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB,
 			ImageTransformEnums.B_HSB };
-	JComboBox<ImageTransformEnums> transformPass1ComboBox = new JComboBox<ImageTransformEnums>(transformPass1);
+	public JComboBox<ImageTransformEnums> transformPass1ComboBox = new JComboBox<ImageTransformEnums>(transformPass1);
 	private JToggleButton transformPass1DisplayButton = new JToggleButton("View");
 	private JCheckBox overlayPass1CheckBox = new JCheckBox("overlay");
 
@@ -54,12 +54,12 @@ public class Levels extends JPanel implements PropertyChangeListener {
 	private JComboBox<String> direction2ComboBox = new JComboBox<String>(
 			new String[] { " threshold >", " threshold <" });
 	private JSpinner threshold2Spinner = new JSpinner(new SpinnerNumberModel(40, 1, 255, 1));
-	ImageTransformEnums[] transformPass2 = new ImageTransformEnums[] { ImageTransformEnums.YDIFFN,
+	private ImageTransformEnums[] transformPass2 = new ImageTransformEnums[] { ImageTransformEnums.YDIFFN,
 			ImageTransformEnums.YDIFFN2, ImageTransformEnums.DERICHE, ImageTransformEnums.DERICHE_COLOR,
 			ImageTransformEnums.MINUSHORIZAVG, ImageTransformEnums.COLORDISTANCE_L1_Y,
 			ImageTransformEnums.COLORDISTANCE_L2_Y, ImageTransformEnums.SUBTRACT_1RSTCOL,
 			ImageTransformEnums.L1DIST_TO_1RSTCOL };
-	JComboBox<ImageTransformEnums> transformPass2ComboBox = new JComboBox<ImageTransformEnums>(transformPass2);
+	private JComboBox<ImageTransformEnums> transformPass2ComboBox = new JComboBox<ImageTransformEnums>(transformPass2);
 	private JToggleButton transformPass2DisplayButton = new JToggleButton("View");
 	private JCheckBox overlayPass2CheckBox = new JCheckBox("overlay");
 
@@ -174,7 +174,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null && exp.seqKymos != null) {
 					int index = transformPass1ComboBox.getSelectedIndex();
-					getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(index + 1);
+					getKymosCanvas(exp).transformsCombo1.setSelectedIndex(index + 1);
 					updateOverlayThreshold();
 				}
 			}
@@ -187,7 +187,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null && exp.seqCamData != null) {
 					int index = transformPass2ComboBox.getSelectedIndex();
-					getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(index + 1);
+					getKymosCanvas(exp).transformsCombo1.setSelectedIndex(index + 1);
 					updateOverlayThreshold();
 				}
 			}
@@ -214,12 +214,12 @@ public class Levels extends JPanel implements PropertyChangeListener {
 						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
 						canvas.updateTransformsComboStep1(transformPass1);
 						int index = transformPass1ComboBox.getSelectedIndex();
-						canvas.selectImageTransformFunctionStep1(index + 1, null);
+						canvas.selectIndexStep1(index + 1, null);
 						displayCheckOverlay = true;
 					} else {
 						removeOverlay(exp);
 						overlayPass1CheckBox.setSelected(false);
-						getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(0);
+						getKymosCanvas(exp).transformsCombo1.setSelectedIndex(0);
 
 					}
 					overlayPass1CheckBox.setEnabled(displayCheckOverlay);
@@ -238,12 +238,12 @@ public class Levels extends JPanel implements PropertyChangeListener {
 						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
 						canvas.updateTransformsComboStep1(transformPass2);
 						int index = transformPass2ComboBox.getSelectedIndex();
-						canvas.selectImageTransformFunctionStep1(index + 1, null);
+						canvas.selectIndexStep1(index + 1, null);
 						displayCheckOverlay = true;
 					} else {
 						removeOverlay(exp);
 						overlayPass2CheckBox.setSelected(false);
-						getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(0);
+						getKymosCanvas(exp).transformsCombo1.setSelectedIndex(0);
 					}
 					overlayPass1CheckBox.setEnabled(displayCheckOverlay);
 				}

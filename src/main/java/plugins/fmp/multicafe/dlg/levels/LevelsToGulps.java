@@ -93,7 +93,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null && exp.seqCamData != null) {
 					int index = gulpTransformsComboBox.getSelectedIndex();
-					getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(index + 1);
+					getKymosCanvas(exp).transformsCombo1.setSelectedIndex(index + 1);
 				}
 			}
 		});
@@ -117,9 +117,9 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
 						canvas.updateTransformsComboStep1(gulpTransforms);
 						int index = gulpTransformsComboBox.getSelectedIndex();
-						canvas.selectImageTransformFunctionStep1(index + 1, null);
+						canvas.selectIndexStep1(index + 1, null);
 					} else
-						getKymosCanvas(exp).imageTransformFunctionsComboStep1.setSelectedIndex(0);
+						getKymosCanvas(exp).transformsCombo1.setSelectedIndex(0);
 				}
 			}
 		});

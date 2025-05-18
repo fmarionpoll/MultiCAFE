@@ -21,10 +21,8 @@ public class Detect2_ extends JPanel implements PropertyChangeListener {
 	Detect2Flies tabDetect2Flies = new Detect2Flies();
 	JTabbedPane tabsPane = new JTabbedPane(JTabbedPane.LEFT);
 	int previouslySelected = -1;
-
 	int iTAB_BACKGND = 0;
 	int iTAB_DETECT2 = 1;
-
 	MultiCAFE parent0 = null;
 
 	public void init(GridLayout capLayout, MultiCAFE parent0) {

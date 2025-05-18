@@ -45,7 +45,6 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 	private JSpinner backgroundJitterSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 255, 1));
 	private JSpinner backgroundDeltaSpinner = new JSpinner(new SpinnerNumberModel(20, 0, 255, 1));
 
-	// private JCheckBox viewsCheckBox = new JCheckBox("view ref img", true);
 	private JButton loadButton = new JButton("Load...");
 	private JButton saveButton = new JButton("Save...");
 	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
@@ -189,7 +188,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 		seqCamData.seq.addOverlay(ov);
 
 		boolean ifGreater = true;
-		ImageTransformEnums transformOp = ImageTransformEnums.NONE; // SUBTRACT; //SUBTRACT_REF;
+		ImageTransformEnums transformOp = ImageTransformEnums.NONE;
 		int threshold = (int) backgroundThresholdSpinner.getValue();
 		ov.setThresholdSingle(threshold, transformOp, ifGreater);
 		ov.painterChanged();
