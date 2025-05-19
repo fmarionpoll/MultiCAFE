@@ -135,8 +135,9 @@ public class BuildKymographs extends BuildSeries {
 
 		tasks.clear();
 		for (long ii_ms = exp.kymoFirst_ms; ii_ms <= exp.kymoLast_ms; ii_ms += exp.kymoBin_ms, iToColumn++) {
-			sourceImageIndex = exp.findNearestIntervalWithBinarySearch(ii_ms, 0,
-					exp.seqCamData.nTotalFrames);
+			if (stopFlag)
+				break;
+			sourceImageIndex = exp.findNearestIntervalWithBinarySearch(ii_ms, 0, exp.seqCamData.nTotalFrames);
 			final int fromSourceImageIndex = sourceImageIndex;
 			final int kymographColumn = iToColumn;
 			if (options.concurrentDisplay) {

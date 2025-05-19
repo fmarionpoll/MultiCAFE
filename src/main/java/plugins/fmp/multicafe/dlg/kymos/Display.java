@@ -64,9 +64,9 @@ public class Display extends JPanel implements ViewerListener {
 		layout.setVgap(0);
 
 		JPanel panel1 = new JPanel(layout);
-		panel1.add(new JLabel("views"));
+		panel1.add(new JLabel("bin size"));
 		panel1.add(viewsCombo);
-		panel1.add(new JLabel(" kymograph"));
+		panel1.add(new JLabel(" kymograph from"));
 		int bWidth = 30;
 		int bHeight = 21;
 		panel1.add(previousButton, BorderLayout.WEST);
