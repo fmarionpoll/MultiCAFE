@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.dlg.cells;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
@@ -168,17 +169,6 @@ public class BuildCellsAsArray extends JPanel {
 		}
 
 		SequenceCamData seqCamData = exp.seqCamData;
-//		ROI2D roi = seqCamData.seq.getSelectedROI2D();X
-//		boolean flag = (roi.getName().length() > 4 && roi.getName().substring( 0 , 4 ).contains("cage"));
-//		if ( ! ( roi instanceof ROI2DPolygon ) || flag) 
-//		{
-//			if ( ! ( roi instanceof ROI2DPolygon ) ) 
-//				new AnnounceFrame("The frame must be a ROI2D POLYGON");
-//			if (flag) 
-//				new AnnounceFrame("The roi name should not contain -cage-");
-//			return;
-//		}
-
 		Polygon2D roiPolygonMin = ROI2DUtilities.orderVerticesofPolygon(roiUserPolygon.getPolygon());
 		seqCamData.seq.removeROI(roiUserPolygon);
 
@@ -249,6 +239,7 @@ public class BuildCellsAsArray extends JPanel {
 
 				ROI2DPolygon roiP = new ROI2DPolygon(points);
 				roiP.setName(cageRoot + String.format("%03d", iRoot));
+				roiP.setColor(Color.MAGENTA);
 				iRoot++;
 				seqCamData.seq.addROI(roiP);
 			}

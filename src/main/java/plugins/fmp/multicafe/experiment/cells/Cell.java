@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.experiment.cells;
 
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -93,6 +94,7 @@ public class Cell {
 		if (xmlVal2 != null) {
 			cellRoi2D = (ROI2D) ROI.createFromXML(xmlVal2);
 			cellRoi2D.setSelected(false);
+			cellRoi2D.setColor(Color.MAGENTA);
 		}
 		return true;
 	}
@@ -219,6 +221,7 @@ public class Cell {
 			Polygon2D polygon = new Polygon2D(x, y, npoints);
 			cellRoi2D = new ROI2DPolygon(polygon);
 			cellRoi2D.setName(cellROI_name);
+			cellRoi2D.setColor(Color.MAGENTA);
 		}
 
 	}

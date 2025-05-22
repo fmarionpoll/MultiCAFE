@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.dlg.cells;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
@@ -217,6 +218,7 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 					roiP.translate(rectGrid.x, rectGrid.y);
 					int cagenb = cap.getCellIndexFromRoiName();
 					roiP.setName("cage" + String.format("%03d", cagenb));
+					roiP.setColor(Color.MAGENTA);
 					cap.capCellID = cagenb;
 					exp.seqCamData.seq.addROI(roiP);
 				}
