@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.experiment.cells;
 
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
@@ -39,6 +40,7 @@ public class FlyPosition {
 		if (rectangle != null)
 			this.rectPosition.setRect(rectangle);
 		flyRoi = new ROI2DArea(roiArea);
+		flyRoi.setColor(Color.YELLOW);
 		flyIndexT = indexT;
 	}
 
@@ -56,8 +58,10 @@ public class FlyPosition {
 		bPadded = source.bPadded;
 		distance = source.distance;
 		rectPosition.setRect(source.rectPosition);
-		if (source.flyRoi != null && source.flyRoi.getBounds().height > 0 && source.flyRoi.getBounds().width > 0)
+		if (source.flyRoi != null && source.flyRoi.getBounds().height > 0 && source.flyRoi.getBounds().width > 0) {
 			flyRoi = new ROI2DArea(source.flyRoi);
+			flyRoi.setColor(Color.YELLOW);
+		}
 		axis1 = source.axis1;
 		axis2 = source.axis2;
 	}
@@ -103,6 +107,7 @@ public class FlyPosition {
 			if (flyRoi == null)
 				flyRoi = new ROI2DArea();
 			flyRoi.loadFromXML(node_roi);
+			flyRoi.setColor(Color.YELLOW);
 		}
 
 		return false;
