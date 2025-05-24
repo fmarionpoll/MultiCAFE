@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.series;
 
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -194,8 +195,9 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 			seq.removeAllROI();
 
 		for (Rectangle2D rectangle : listRectangles) {
-			ROI2DRectangle flyPoint = new ROI2DRectangle(rectangle);
-			seq.addROI(flyPoint);
+			ROI2DRectangle flyRectangle = new ROI2DRectangle(rectangle);
+			flyRectangle.setColor(Color.YELLOW);
+			seq.addROI(flyRectangle);
 		}
 	}
 

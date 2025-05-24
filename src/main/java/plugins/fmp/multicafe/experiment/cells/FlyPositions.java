@@ -13,7 +13,6 @@ import icy.util.XMLUtil;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DMeasures;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
-import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyPositions {
 	public Double moveThreshold = 50.;
@@ -85,11 +84,6 @@ public class FlyPositions {
 
 	public void addPositionWithoutRoiArea(int t, Rectangle2D rectangle) {
 		FlyPosition pos = new FlyPosition(t, rectangle);
-		flyPositionList.add(pos);
-	}
-
-	public void addPositionWithRoiArea(int t, Rectangle2D rectangle, ROI2DArea roiArea) {
-		FlyPosition pos = new FlyPosition(t, rectangle, roiArea);
 		flyPositionList.add(pos);
 	}
 
@@ -476,11 +470,9 @@ public class FlyPositions {
 		for (FlyPosition pos : flyPositionList) {
 			pos.rectPosition.setRect(pos.rectPosition.getX() * pixelsize, pos.rectPosition.getY() * pixelsize,
 					pos.rectPosition.getWidth() * pixelsize, pos.rectPosition.getHeight() * pixelsize);
-
 			pos.axis1 = pos.axis1 * pixelsize;
 			pos.axis2 = pos.axis2 * pixelsize;
 		}
-
 		origin.setLocation(origin.getX() * pixelsize, origin.getY() * pixelsize);
 	}
 

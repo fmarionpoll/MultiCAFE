@@ -306,6 +306,7 @@ public class Cell {
 		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.rectPosition);
 		flyRoiR.setName("detR" + getCellNumber() + "_" + t);
 		flyRoiR.setT(t);
+		flyRoiR.setColor(Color.YELLOW);
 		return flyRoiR;
 	}
 

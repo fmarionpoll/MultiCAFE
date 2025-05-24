@@ -10,12 +10,11 @@ import java.util.concurrent.Future;
 import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.roi.BooleanMask2D;
-
 import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cells.Cells;
 import plugins.fmp.multicafe.experiment.cells.Cell;
+import plugins.fmp.multicafe.experiment.cells.Cells;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyDetectTools {
@@ -105,7 +104,7 @@ public class FlyDetectTools {
 				@Override
 				public void run() {
 					BooleanMask2D bestMask = getBestMask(binarizedImageRoi, cell.cellMask2D);
-					Rectangle2D rect = saveMask(bestMask, cell, t);
+					Rectangle2D rect = saveBestMask(bestMask, cell, t);
 					if (rect != null)
 						listRectangles.add(rect);
 				}
@@ -127,7 +126,7 @@ public class FlyDetectTools {
 		return bestMask;
 	}
 
-	Rectangle2D saveMask(BooleanMask2D bestMask, Cell cell, int t) {
+	Rectangle2D saveBestMask(BooleanMask2D bestMask, Cell cell, int t) {
 		Rectangle2D rect = null;
 		if (bestMask != null)
 			rect = bestMask.getOptimizedBounds();
