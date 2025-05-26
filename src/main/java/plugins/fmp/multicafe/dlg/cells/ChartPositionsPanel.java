@@ -21,10 +21,11 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.experiment.cells.FlyPositions;
+import plugins.fmp.multicafe.tools.chart.ChartLevels;
 import plugins.fmp.multicafe.tools.chart.ChartPositions;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
 
-public class PlotPositions extends JPanel implements SequenceListener {
+public class ChartPositionsPanel extends JPanel implements SequenceListener {
 	/**
 	 * 
 	 */
@@ -34,6 +35,7 @@ public class PlotPositions extends JPanel implements SequenceListener {
 	private ChartPositions distanceChart = null;
 	private ChartPositions aliveChart = null;
 	private ChartPositions sleepChart = null;
+	
 	private MultiCAFE parent0 = null;
 
 	public JCheckBox moveCheckbox = new JCheckBox("y position", true);
@@ -88,15 +90,17 @@ public class PlotPositions extends JPanel implements SequenceListener {
 		exp.seqCamData.seq.addListener(this);
 
 		if (moveCheckbox.isSelected()) {
-			displayYPos("flies Y positions", ypositionsChart, rectv, ptRelative, exp, EnumXLSExportType.XYTOPCAGE);
+			ypositionsChart = plotYToChart("flies Y positions", ypositionsChart, rectv, ptRelative, exp, EnumXLSExportType.XYTOPCAGE);
 			ptRelative.y += deltay;
-		}
+		} else if (ypositionsChart != null)
+			closeChart(ypositionsChart);
 
 		if (distanceCheckbox.isSelected()) {
-			displayYPos("distance between positions at t+1 and t", distanceChart, rectv, ptRelative, exp,
+			distanceChart = plotYToChart("distance between positions at t+1 and t", distanceChart, rectv, ptRelative, exp,
 					EnumXLSExportType.DISTANCE);
 			ptRelative.y += deltay;
-		}
+		} else if (distanceChart != null)
+			closeChart(distanceChart);
 
 		if (aliveCheckbox.isSelected()) {
 			double threshold = (double) aliveThresholdSpinner.getValue();
@@ -105,43 +109,48 @@ public class PlotPositions extends JPanel implements SequenceListener {
 				posSeries.moveThreshold = threshold;
 				posSeries.computeIsAlive();
 			}
-			displayYPos("flies alive", aliveChart, rectv, ptRelative, exp, EnumXLSExportType.ISALIVE);
+			aliveChart = plotYToChart("flies alive", aliveChart, rectv, ptRelative, exp, EnumXLSExportType.ISALIVE);
 			ptRelative.y += deltay;
-		}
+		} else if (aliveChart != null)
+			closeChart(aliveChart);
 
 		if (sleepCheckbox.isSelected()) {
 			for (Cell cell : exp.cageBox.cellList) {
 				FlyPositions posSeries = cell.flyPositions;
 				posSeries.computeSleep();
 			}
-			displayYPos("flies asleep", sleepChart, rectv, ptRelative, exp, EnumXLSExportType.SLEEP);
+			sleepChart = plotYToChart("flies asleep", sleepChart, rectv, ptRelative, exp, EnumXLSExportType.SLEEP);
 			ptRelative.y += deltay;
-		}
+		} else if (sleepChart != null)
+			closeChart(sleepChart);
 	}
 
-	private void displayYPos(String title, ChartPositions iChart, Rectangle rectv, Point ptRelative, Experiment exp,
+	private ChartPositions plotYToChart(String title, ChartPositions iChart, Rectangle rectv, Point ptRelative, Experiment exp,
 			EnumXLSExportType option) {
-		if (iChart == null || !iChart.mainChartPanel.isValid()) {
-			iChart = new ChartPositions();
-			iChart.createPanel(title);
-			iChart.setLocationRelativeToRectangle(rectv, ptRelative);
-		}
+		if (iChart!= null)
+			iChart.mainChartFrame.dispose();
+		
+		iChart = new ChartPositions();
+		iChart.createPanel(title);
+		iChart.setLocationRelativeToRectangle(rectv, ptRelative);
 		iChart.displayData(exp.cageBox.cellList, option);
 		iChart.mainChartFrame.toFront();
+		iChart.mainChartFrame.requestFocus();
+		return iChart;
+	}
+	
+	private ChartPositions closeChart(ChartPositions chart) {
+		if (chart != null)
+			chart.mainChartFrame.dispose();
+		chart = null;
+		return chart;
 	}
 
 	public void closeAllCharts() {
-		close(ypositionsChart);
-		close(distanceChart);
-		close(aliveChart);
-		close(sleepChart);
-	}
-
-	private void close(ChartPositions chart) {
-		if (chart != null) {
-			chart.mainChartFrame.close();
-			chart = null;
-		}
+		ypositionsChart = closeChart(ypositionsChart);
+		distanceChart = closeChart(distanceChart);
+		aliveChart = closeChart(aliveChart);
+		sleepChart = closeChart(sleepChart);
 	}
 
 	@Override

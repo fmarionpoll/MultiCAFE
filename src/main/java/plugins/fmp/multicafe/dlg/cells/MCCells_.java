@@ -30,7 +30,7 @@ public class MCCells_ extends JPanel implements PropertyChangeListener {
 	Detect2_ tabDetect2 = new Detect2_();
 	Edit tabEdit = new Edit();
 	public LoadSaveCage tabFile = new LoadSaveCage();
-	public PlotPositions tabGraphics = new PlotPositions();
+	public ChartPositionsPanel tabGraphics = new ChartPositionsPanel();
 	PopupPanel capPopupPanel = null;
 	JTabbedPane tabsPane = new JTabbedPane();
 	int previouslySelected = -1;

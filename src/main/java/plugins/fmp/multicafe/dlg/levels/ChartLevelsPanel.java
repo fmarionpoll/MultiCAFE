@@ -23,7 +23,7 @@ import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.chart.ChartLevels;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
 
-public class Graphs extends JPanel implements SequenceListener {
+public class ChartLevelsPanel extends JPanel implements SequenceListener {
 	/**
 	 * 
 	 */
@@ -32,6 +32,7 @@ public class Graphs extends JPanel implements SequenceListener {
 	private ChartLevels plotDelta = null;
 	private ChartLevels plotDerivative = null;
 	private ChartLevels plotSumgulps = null;
+	
 	private MultiCAFE parent0 = null;
 
 	private JCheckBox limitsCheckbox = new JCheckBox("top/bottom", true);
