@@ -21,8 +21,8 @@ import icy.sequence.Sequence;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.experiment.cells.Cells;
 import plugins.fmp.multicafe.experiment.cells.Cell;
+import plugins.fmp.multicafe.experiment.cells.Cells;
 import plugins.fmp.multicafe.tools.Directories;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
@@ -229,12 +229,16 @@ public class Experiment {
 	}
 
 	public void closeSequences() {
-		if (seqKymos != null)
+		if (seqKymos != null) {
 			seqKymos.closeSequence();
-		if (seqCamData != null)
+		}
+		if (seqCamData != null) {
 			seqCamData.closeSequence();
-		if (seqReference != null)
+		}
+		if (seqReference != null) {
 			seqReference.close();
+		}
+
 	}
 
 	public boolean openMeasures(boolean loadCapillaries, boolean loadDrosoPositions) {
@@ -543,6 +547,11 @@ public class Experiment {
 
 	public boolean saveCageMeasures() {
 		return cageBox.save_CageBox(getKymosBinFullDirectory());
+	}
+
+	public void saveCageAndMeasures() {
+		cageBox.cageBoxFromROIs(seqCamData);
+		saveCageMeasures();
 	}
 
 	// ----------------------------------

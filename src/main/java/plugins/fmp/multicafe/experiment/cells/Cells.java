@@ -488,10 +488,12 @@ public class Cells {
 
 	public void cageBoxFromROIs(SequenceCamData seqCamData) {
 		List<ROI2D> roiList = getRoisWithCageBoxName(seqCamData);
-		Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
-		addMissingCells(roiList);
-		removeOrphanCells(roiList);
-		Collections.sort(cellList, new Comparators.Cell_Name_Comparator());
+		if (roiList.size() > 0) {
+			Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
+			addMissingCells(roiList);
+			removeOrphanCells(roiList);
+			Collections.sort(cellList, new Comparators.Cell_Name_Comparator());
+		}
 	}
 
 	public void setFirstAndLastCellToZeroFly() {

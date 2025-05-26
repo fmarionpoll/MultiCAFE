@@ -28,8 +28,7 @@ public class FlyDetect2 extends BuildSeries {
 		if (!stopFlag)
 			exp.saveCageMeasures();
 		exp.seqCamData.closeSequence();
-		if (!viewInternalImages)
-			closeSequence(seqNegative);
+		closeSequence(seqNegative);
 	}
 
 	private void runFlyDetect2(Experiment exp) {
