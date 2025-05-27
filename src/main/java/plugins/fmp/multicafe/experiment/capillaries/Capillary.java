@@ -106,7 +106,7 @@ public class Capillary implements Comparable<Capillary> {
 		kymographIndex = cap.kymographIndex;
 		kymographName = cap.kymographName;
 		version = cap.version;
-		roiCap = cap.roiCap != null ? (ROI2D) cap.roiCap.getCopy(): null;
+		roiCap = cap.roiCap != null ? (ROI2D) cap.roiCap.getCopy() : null;
 		filenameTIFF = cap.filenameTIFF;
 
 		capStimulus = cap.capStimulus;
@@ -148,7 +148,7 @@ public class Capillary implements Comparable<Capillary> {
 	public String getRoiName() {
 		if (roiCap != null)
 			return roiCap.getName();
-		return null;			
+		return null;
 	}
 
 	public String getLast2ofCapillaryName() {
@@ -187,6 +187,8 @@ public class Capillary implements Comparable<Capillary> {
 		capSide = getCapillarySide();
 		switch (xlsExportOption) {
 		case DISTANCE:
+			value = capSide + "(DIST)";
+			break;
 		case ISALIVE:
 			value = capSide + "(L=R)";
 			break;
