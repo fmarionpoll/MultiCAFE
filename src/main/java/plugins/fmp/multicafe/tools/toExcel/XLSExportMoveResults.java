@@ -85,7 +85,7 @@ public class XLSExportMoveResults extends XLSExport {
 		getMoveDataFromOneExperimentSeries(exp, xlsExport);
 		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
 		int colmax = xlsExportResultsArrayToSheet(sheet, xlsExport, col0, charSeries);
-		System.out.println("colmax-move="+ colmax);
+		System.out.println("colmax-move=" + colmax);
 
 		if (options.onlyalive) {
 			trimDeadsFromRowMoveData(exp);
@@ -95,7 +95,7 @@ public class XLSExportMoveResults extends XLSExport {
 		return colmax;
 	}
 
-	private XLSResultsArray getMoveDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
+	private void getMoveDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
 		// loop to get all capillaries into expAll and init rows for this experiment
 		expAll.cageBox.copy(exp.cageBox);
 		expAll.capillaries.copy(exp.capillaries);
@@ -124,8 +124,8 @@ public class XLSExportMoveResults extends XLSExport {
 		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name_Comparator());
 	}
 
-	private XLSResultsArray getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
-		XLSResultsArray rowListForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsOption);
+	private void getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
+		getMoveDescriptorsForOneExperiment(exp, xlsOption);
 		Experiment expi = exp.getFirstChainedExperiment(true);
 
 		while (expi != null) {
@@ -144,8 +144,8 @@ public class XLSExportMoveResults extends XLSExport {
 
 					switch (xlsOption) {
 					case DISTANCE:
-						flyPositionsResults.excelComputeDistanceBetweenPoints(cell.flyPositions, (int) expi.camImageBin_ms,
-								options.buildExcelStepMs);
+						flyPositionsResults.excelComputeDistanceBetweenPoints(cell.flyPositions,
+								(int) expi.camImageBin_ms, options.buildExcelStepMs);
 						break;
 					case ISALIVE:
 						flyPositionsResults.excelComputeIsAlive(cell.flyPositions, (int) expi.camImageBin_ms,
@@ -182,7 +182,6 @@ public class XLSExportMoveResults extends XLSExport {
 		}
 		for (FlyPositions row : rowsForOneExp)
 			row.checkIsAliveFromAliveArray();
-		return rowListForOneExp;
 	}
 
 	private FlyPositions getResultsArrayWithThatName(String testname, List<FlyPositions> resultsArrayList) {
@@ -286,10 +285,12 @@ public class XLSExportMoveResults extends XLSExport {
 			int ilastalive = 0;
 			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cageBox.isFlyAlive(cellNumber)) {
+				while (expi.chainToNextExperiment != null
+						&& expi.chainToNextExperiment.cageBox.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
-				long lastIntervalFlyAlive_Ms = expi.cageBox.getLastIntervalFlyAlive(cellNumber) * expi.cageBox.detectBin_Ms;
+				long lastIntervalFlyAlive_Ms = expi.cageBox.getLastIntervalFlyAlive(cellNumber)
+						* expi.cageBox.detectBin_Ms;
 				long lastMinuteAlive = lastIntervalFlyAlive_Ms + expi.camImageFirst_ms - expAll.camImageFirst_ms;
 				ilastalive = (int) (lastMinuteAlive / options.buildExcelStepMs);
 			}
