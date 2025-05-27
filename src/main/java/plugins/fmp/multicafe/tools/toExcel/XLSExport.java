@@ -321,6 +321,7 @@ public class XLSExport {
 		XLSResultsArray rowListForOneExp = getCapDataFromOneExperimentSeries(exp, xlsExport);
 		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
 		int colmax = xlsExportResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
+		System.out.println("colmax-cap="+ colmax);
 
 		if (options.onlyalive) {
 			trimDeadsFromArrayList(rowListForOneExp, exp);

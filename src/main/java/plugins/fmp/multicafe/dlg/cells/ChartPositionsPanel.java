@@ -21,7 +21,6 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.experiment.cells.FlyPositions;
-import plugins.fmp.multicafe.tools.chart.ChartLevels;
 import plugins.fmp.multicafe.tools.chart.ChartPositions;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
 

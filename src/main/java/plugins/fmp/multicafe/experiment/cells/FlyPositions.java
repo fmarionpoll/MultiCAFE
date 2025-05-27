@@ -224,34 +224,34 @@ public class FlyPositions {
 
 	// -----------------------------------------------------------
 
-	public void excelComputeDistanceBetweenPoints(FlyPositions flyPositions, int dataStepMs, int excelStepMs) {
-		if (flyPositions.flyPositionList.size() <= 0)
+	public void excelComputeDistanceBetweenPoints(FlyPositions flyPositionsSource, int dataStepMs, int excelStepMs) {
+		if (flyPositionsSource.flyPositionList.size() <= 0)
 			return;
 
-		flyPositions.computeDistanceBetweenConsecutivePoints();
-		flyPositions.computeCumulatedDistance();
+		flyPositionsSource.computeDistanceBetweenConsecutivePoints();
+		flyPositionsSource.computeCumulatedDistance();
 
 		int excel_startMs = 0;
 		int n_excel_intervals = flyPositionList.size();
 		int excel_endMs = n_excel_intervals * excelStepMs;
-		int n_data_intervals = flyPositions.flyPositionList.size();
+		int n_data_intervals = flyPositionsSource.flyPositionList.size();
 
 		double sumDistance_previous = 0.;
 
 		for (int excel_Ms = excel_startMs; excel_Ms < excel_endMs; excel_Ms += excelStepMs) {
 			int excel_bin = excel_Ms / excelStepMs;
-			FlyPosition excel_pos = flyPositionList.get(excel_bin);
+			FlyPosition dataFlyPositionThis = flyPositionList.get(excel_bin);
 
 			int data_bin = excel_Ms / dataStepMs;
 			int data_bin_remainder = excel_Ms % dataStepMs;
-			FlyPosition data_pos = flyPositions.flyPositionList.get(data_bin);
+			FlyPosition dataFlyPositionSource = flyPositionsSource.flyPositionList.get(data_bin);
 
 			double delta = 0.;
 			if (data_bin_remainder != 0 && (data_bin + 1 < n_data_intervals)) {
-				delta = flyPositions.flyPositionList.get(data_bin + 1).distance * data_bin_remainder / dataStepMs;
+				delta = flyPositionsSource.flyPositionList.get(data_bin + 1).distance * data_bin_remainder / dataStepMs;
 			}
-			excel_pos.distance = data_pos.sumDistance - sumDistance_previous + delta;
-			sumDistance_previous = data_pos.sumDistance;
+			dataFlyPositionThis.distance = dataFlyPositionSource.sumDistance - sumDistance_previous + delta;
+			sumDistance_previous = dataFlyPositionSource.sumDistance;
 		}
 	}
 

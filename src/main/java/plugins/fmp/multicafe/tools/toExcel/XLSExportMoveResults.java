@@ -30,7 +30,6 @@ public class XLSExportMoveResults extends XLSExport {
 		boolean loadCapillaries = true;
 		boolean loadDrosoTrack = true;
 		expList.loadListOfMeasuresFromAllExperiments(loadCapillaries, loadDrosoTrack);
-//		expList.chainExperimentsUsingCamIndexes(options.collateSeries);
 		expList.chainExperimentsUsingKymoIndexes(options.collateSeries);
 		expList.setFirstImageForAllExperiments(options.collateSeries);
 		expAll = expList.get_MsTime_of_StartAndEnd_AllExperiments(options);
@@ -83,9 +82,11 @@ public class XLSExportMoveResults extends XLSExport {
 	}
 
 	private int getMoveDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
-		getMoveDataFromOneSeriesOfExperiments(exp, xlsExport);
+		getMoveDataFromOneExperimentSeries(exp, xlsExport);
 		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
 		int colmax = xlsExportResultsArrayToSheet(sheet, xlsExport, col0, charSeries);
+		System.out.println("colmax-move="+ colmax);
+
 		if (options.onlyalive) {
 			trimDeadsFromRowMoveData(exp);
 			sheet = xlsInitSheet(xlsExport.toString() + "_alive", xlsExport);
@@ -94,29 +95,14 @@ public class XLSExportMoveResults extends XLSExport {
 		return colmax;
 	}
 
-	private void getMoveDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
+	private XLSResultsArray getMoveDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
 		// loop to get all capillaries into expAll and init rows for this experiment
 		expAll.cageBox.copy(exp.cageBox);
 		expAll.capillaries.copy(exp.capillaries);
 		expAll.firstImage_FileTime = exp.firstImage_FileTime;
 		expAll.lastImage_FileTime = exp.lastImage_FileTime;
 		expAll.setExperimentDirectory(exp.getExperimentDirectory());
-		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
-		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
-		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_STIM));
-		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_CONC));
-		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_SEX,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
-		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STRAIN,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
-		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND1,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_COND1));
-		expAll.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND2,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_COND2));
+		expAll.copyExperimentFields(exp);
 
 		Experiment expi = exp.chainToNextExperiment;
 		while (expi != null) {
@@ -138,8 +124,8 @@ public class XLSExportMoveResults extends XLSExport {
 		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name_Comparator());
 	}
 
-	private void getMoveDataFromOneSeriesOfExperiments(Experiment exp, EnumXLSExportType xlsOption) {
-		getMoveDescriptorsForOneExperiment(exp, xlsOption);
+	private XLSResultsArray getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
+		XLSResultsArray rowListForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsOption);
 		Experiment expi = exp.getFirstChainedExperiment(true);
 
 		while (expi != null) {
@@ -150,35 +136,35 @@ public class XLSExportMoveResults extends XLSExport {
 
 			List<FlyPositions> resultsArrayList = new ArrayList<FlyPositions>(expi.cageBox.cellList.size());
 			for (Cell cell : expi.cageBox.cellList) {
-				FlyPositions results = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, len,
+				FlyPositions flyPositionsResults = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, len,
 						options.buildExcelStepMs);
-				results.nflies = cell.cellNFlies;
-				if (results.nflies > 0) {
-					results.setPixelSize(pixelsize);
+				flyPositionsResults.nflies = cell.cellNFlies;
+				if (flyPositionsResults.nflies > 0) {
+					flyPositionsResults.setPixelSize(pixelsize);
 
 					switch (xlsOption) {
 					case DISTANCE:
-						results.excelComputeDistanceBetweenPoints(cell.flyPositions, (int) expi.camImageBin_ms,
+						flyPositionsResults.excelComputeDistanceBetweenPoints(cell.flyPositions, (int) expi.camImageBin_ms,
 								options.buildExcelStepMs);
 						break;
 					case ISALIVE:
-						results.excelComputeIsAlive(cell.flyPositions, (int) expi.camImageBin_ms,
+						flyPositionsResults.excelComputeIsAlive(cell.flyPositions, (int) expi.camImageBin_ms,
 								options.buildExcelStepMs);
 						break;
 					case SLEEP:
-						results.excelComputeSleep(cell.flyPositions, (int) expi.camImageBin_ms,
+						flyPositionsResults.excelComputeSleep(cell.flyPositions, (int) expi.camImageBin_ms,
 								options.buildExcelStepMs);
 						break;
 					case XYTOPCAGE:
-						results.excelComputeNewPointsOrigin(cell.getCenterTopCell(), cell.flyPositions,
+						flyPositionsResults.excelComputeNewPointsOrigin(cell.getCenterTopCell(), cell.flyPositions,
 								(int) expi.camImageBin_ms, options.buildExcelStepMs);
 						break;
 					case XYTIPCAPS:
-						results.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(exp.capillaries),
+						flyPositionsResults.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(exp.capillaries),
 								cell.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
 						break;
 					case ELLIPSEAXES:
-						results.excelComputeEllipse(cell.flyPositions, (int) expi.camImageBin_ms,
+						flyPositionsResults.excelComputeEllipse(cell.flyPositions, (int) expi.camImageBin_ms,
 								options.buildExcelStepMs);
 						break;
 					case XYIMAGE:
@@ -186,8 +172,8 @@ public class XLSExportMoveResults extends XLSExport {
 						break;
 					}
 
-					results.convertPixelsToPhysicalValues();
-					resultsArrayList.add(results);
+					flyPositionsResults.convertPixelsToPhysicalValues();
+					resultsArrayList.add(flyPositionsResults);
 				}
 				// here add resultsArrayList to expAll
 				addMoveResultsTo_rowsForOneExp(expi, resultsArrayList);
@@ -196,6 +182,7 @@ public class XLSExportMoveResults extends XLSExport {
 		}
 		for (FlyPositions row : rowsForOneExp)
 			row.checkIsAliveFromAliveArray();
+		return rowListForOneExp;
 	}
 
 	private FlyPositions getResultsArrayWithThatName(String testname, List<FlyPositions> resultsArrayList) {
