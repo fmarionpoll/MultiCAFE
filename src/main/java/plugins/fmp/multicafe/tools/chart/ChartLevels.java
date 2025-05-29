@@ -34,7 +34,7 @@ import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
-import plugins.fmp.multicafe.tools.toExcel.XLSExport;
+import plugins.fmp.multicafe.tools.toExcel.XLSExportCapillariesResults;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multicafe.tools.toExcel.XLSResults;
 import plugins.fmp.multicafe.tools.toExcel.XLSResultsArray;
@@ -231,7 +231,7 @@ public class ChartLevels extends IcyFrame {
 		options.t0 = true;
 		options.subtractEvaporation = subtractEvaporation;
 
-		XLSExport xlsExport = new XLSExport();
+		XLSExportCapillariesResults xlsExport = new XLSExportCapillariesResults();
 		return xlsExport.getCapDataFromOneExperiment(exp, exportType, options);
 	}
 

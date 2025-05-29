@@ -23,7 +23,7 @@ import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
 import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
 
 public class MultiCAFE extends PluginActionable {
-	public IcyFrame mainFrame = new IcyFrame("MultiCAFE May 27, 2025", true, true, true, true);
+	public IcyFrame mainFrame = new IcyFrame("MultiCAFE May 29, 2025", true, true, true, true);
 	public ExperimentCombo expListCombo = new ExperimentCombo();
 
 	public MCBrowse_ paneBrowse = new MCBrowse_();

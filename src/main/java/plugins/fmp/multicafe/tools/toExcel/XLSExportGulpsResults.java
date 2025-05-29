@@ -6,7 +6,8 @@ import org.apache.poi.ss.util.CellReference;
 import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.Experiment;
 
-public class XLSExportGulpsResults extends XLSExport {
+
+public class XLSExportGulpsResults extends XLSExportCapillariesResults {
 	// -----------------------
 
 	public void exportToFile(String filename, XLSExportOptions opt) {
@@ -17,7 +18,6 @@ public class XLSExportGulpsResults extends XLSExport {
 		boolean loadCapillaries = true;
 		boolean loadDrosoTrack = options.onlyalive;
 		expList.loadListOfMeasuresFromAllExperiments(loadCapillaries, loadDrosoTrack);
-//		expList.chainExperimentsUsingCamIndexes(options.collateSeries);
 		expList.chainExperimentsUsingKymoIndexes(options.collateSeries);
 		expList.setFirstImageForAllExperiments(options.collateSeries);
 
@@ -40,26 +40,26 @@ public class XLSExportGulpsResults extends XLSExport {
 				String charSeries = CellReference.convertNumToColString(iSeries);
 
 				if (options.derivative)
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.DERIVEDVALUES);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.DERIVEDVALUES);
 				if (options.sumGulps)
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.SUMGULPS);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.SUMGULPS);
 				if (options.lrPI && options.sumGulps)
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.SUMGULPS_LR);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.SUMGULPS_LR);
 				if (options.nbGulps)
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.NBGULPS);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.NBGULPS);
 				if (options.amplitudeGulps)
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.AMPLITUDEGULPS);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.AMPLITUDEGULPS);
 				if (options.tToNextGulp)
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.TTOGULP);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TTOGULP);
 				if (options.tToNextGulp_LR)
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.TTOGULP_LR);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TTOGULP_LR);
 				if (options.autocorrelation) {
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.AUTOCORREL);
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.AUTOCORREL_LR);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.AUTOCORREL);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.AUTOCORREL_LR);
 				}
 				if (options.crosscorrelation) {
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.CROSSCORREL);
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.CROSSCORREL_LR);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.CROSSCORREL);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.CROSSCORREL_LR);
 				}
 
 				if (!options.collateSeries || exp.chainToPreviousExperiment == null)
