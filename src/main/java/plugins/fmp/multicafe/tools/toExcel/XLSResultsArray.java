@@ -35,5 +35,10 @@ public class XLSResultsArray {
 	public void sortRowsByName() {
 		Collections.sort(resultsList, new Comparators.XLSResults_Name_Comparator());
 	}
+	
+	public void subtractDeltaT(int i, int j) {
+		for (XLSResults row : resultsList)
+			row.subtractDeltaT(1, 1); // options.buildExcelStepMs);
+	}
 
 }

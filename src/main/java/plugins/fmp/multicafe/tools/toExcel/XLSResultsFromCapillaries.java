@@ -94,12 +94,6 @@ public class XLSResultsFromCapillaries extends XLSResultsArray{
 		}
 	}
 
-
-	public void subtractDeltaT(int i, int j) {
-		for (XLSResults row : resultsList)
-			row.subtractDeltaT(1, 1); // options.buildExcelStepMs);
-	}
-
 	private int getLen(XLSResults rowL, XLSResults rowR) {
 		int lenL = rowL.valuesOut.length;
 		int lenR = rowR.valuesOut.length;

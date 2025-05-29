@@ -16,10 +16,10 @@ import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.experiment.cells.FlyPosition;
 import plugins.fmp.multicafe.experiment.cells.FlyPositions;
 import plugins.fmp.multicafe.tools.Comparators;
-import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
+
 
 public class XLSExportMoveResults extends XLSExport {
-	ExperimentCombo expList = null;
+	
 	List<FlyPositions> rowsForOneExp = new ArrayList<FlyPositions>();
 
 	public void exportToFile(String filename, XLSExportOptions opt) {
@@ -65,7 +65,7 @@ public class XLSExportMoveResults extends XLSExport {
 					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.SLEEP);
 
 				if (!options.collateSeries || exp.chainToPreviousExperiment == null)
-					column += expList.maxSizeOfCapillaryArrays + 2;
+					column += expList.maxSizeOfCapillaryArrays/2 + 2;
 				iSeries++;
 				progress.incPosition();
 			}

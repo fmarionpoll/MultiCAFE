@@ -74,7 +74,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 	}
 	
 	int getCapillaryDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
-		XLSResultsFromCapillaries rowListForOneExp = getCapDataFromOneExperimentSeries(exp, xlsExport);
+		XLSResultsArray rowListForOneExp = getCapDataFromOneExperimentSeries(exp, xlsExport);
 		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
 		int colmax = xlsExportResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 
@@ -197,8 +197,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 		}
 	}
 	
-	private XLSResultsFromCapillaries getCapDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsExportType) {
-		XLSResultsFromCapillaries rowListForOneExp = (XLSResultsFromCapillaries) getDescriptorsForOneExperiment(exp, xlsExportType);
+	private XLSResultsArray getCapDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsExportType) {
+		XLSResultsArray rowListForOneExp = getDescriptorsForOneExperiment(exp, xlsExportType);
 		Experiment expi = exp.getFirstChainedExperiment(true);
 
 		while (expi != null) {
