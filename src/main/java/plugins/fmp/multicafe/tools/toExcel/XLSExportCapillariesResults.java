@@ -1,6 +1,5 @@
 package plugins.fmp.multicafe.tools.toExcel;
 
-import java.awt.Point;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.apache.poi.ss.util.CellReference;
@@ -43,14 +42,12 @@ public class XLSExportCapillariesResults extends XLSExport {
 					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPRAW);
 					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVEL);
 				}
-
 				if (options.lrPI && options.topLevel)
 					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVEL_LR);
 				if (options.topLevelDelta)
 					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVELDELTA);
 				if (options.lrPI && options.topLevelDelta)
 					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVELDELTA_LR);
-
 				if (options.bottomLevel)
 					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.BOTTOMLEVEL);
 				if (options.derivative)
@@ -92,55 +89,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 		return colmax;
 	}
-	
-	private int xlsExportResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet,
-			EnumXLSExportType xlsExportOption, int col0, String charSeries) {
-		Point pt = new Point(col0, 0);
-		writeExperiment_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
-		pt = writeExperiment_data(rowListForOneExp, sheet, xlsExportOption, pt);
-		return pt.x;
-	}
 
-	private Point writeExperiment_data(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExportType option,
-			Point pt_main) {
-		int rowSeries = pt_main.x + 2;
-		int column_dataArea = pt_main.y;
-		Point pt = new Point(pt_main);
-		writeExperiment_data_as_rows(rowListForOneExp, sheet, column_dataArea, rowSeries, pt);
-		pt_main.x = pt.x + 1;
-		return pt_main;
-	}
-	
-	private void writeExperiment_data_as_rows(XLSResultsArray rowListForOneExp, XSSFSheet sheet, int column_dataArea,
-			int rowSeries, Point pt) {
-		for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
-			XLSResults row = rowListForOneExp.getRow(iRow);
-			writeExperiment_data_single_row(sheet, column_dataArea, rowSeries, pt, row);
-		}
-	}
-	
-	private void writeExperiment_data_single_row(XSSFSheet sheet, int column_dataArea, int rowSeries, Point pt, XLSResults row) {
-		boolean transpose = options.transpose;
-		pt.y = column_dataArea;
-		int col = getRowIndexFromKymoFileName(row.name);
-		pt.x = rowSeries + col;
-		if (row.valuesOut == null)
-			return;
-
-		for (long coltime = expAll.camImageFirst_ms; coltime < expAll.camImageLast_ms; coltime += options.buildExcelStepMs, pt.y++) {
-			int i_from = (int) ((coltime - expAll.camImageFirst_ms) / options.buildExcelStepMs);
-			if (i_from >= row.valuesOut.length)
-				break;
-			double value = row.valuesOut[i_from];
-			if (!Double.isNaN(value)) {
-				XLSUtils.setValue(sheet, pt, transpose, value);
-				if (i_from < row.padded_out.length && row.padded_out[i_from])
-					XLSUtils.getCell(sheet, pt, transpose).setCellStyle(xssfCellStyle_red);
-			}
-		}
-		pt.x++;
-	}
-	
 	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
 		for (Cell cell : exp.cageBox.cellList) {
 			String roiname = cell.cellRoi2D.getName();

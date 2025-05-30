@@ -20,7 +20,7 @@ import plugins.fmp.multicafe.tools.Comparators;
 
 public class XLSExportMoveResults extends XLSExport {
 	
-	List<FlyPositions> rowsForOneExp = new ArrayList<FlyPositions>();
+//	List<FlyPositions> rowsForOneExp = new ArrayList<FlyPositions>();
 
 	public void exportToFile(String filename, XLSExportOptions opt) {
 		System.out.println("XLSExpoportMove:exportToFile() start output");
@@ -65,7 +65,7 @@ public class XLSExportMoveResults extends XLSExport {
 					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.SLEEP);
 
 				if (!options.collateSeries || exp.chainToPreviousExperiment == null)
-					column += expList.maxSizeOfCapillaryArrays/2 + 2;
+					column += expList.maxSizeOfCapillaryArrays + 2; // TODO check - may be: expList.maxSizeOfCapillaryArrays/2 + 2
 				iSeries++;
 				progress.incPosition();
 			}
@@ -82,50 +82,21 @@ public class XLSExportMoveResults extends XLSExport {
 	}
 
 	private int getMoveDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
-		getMoveDataFromOneExperimentSeries(exp, xlsExport);
+		XLSResultsArray rowListForOneExp = getMoveDataFromOneExperimentSeries(exp, xlsExport);
 		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
-		int colmax = xlsExportResultsArrayToSheet(sheet, xlsExport, col0, charSeries);
-		System.out.println("colmax-move=" + colmax);
+		int colmax = xlsExportResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 
 		if (options.onlyalive) {
 			trimDeadsFromRowMoveData(exp);
 			sheet = xlsInitSheet(xlsExport.toString() + "_alive", xlsExport);
-			xlsExportResultsArrayToSheet(sheet, xlsExport, col0, charSeries);
+			xlsExportResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 		}
+		
 		return colmax;
 	}
 
-	private void getMoveDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
-		// loop to get all capillaries into expAll and init rows for this experiment
-		expAll.cageBox.copy(exp.cageBox);
-		expAll.capillaries.copy(exp.capillaries);
-		expAll.firstImage_FileTime = exp.firstImage_FileTime;
-		expAll.lastImage_FileTime = exp.lastImage_FileTime;
-		expAll.setExperimentDirectory(exp.getExperimentDirectory());
-		expAll.copyExperimentFields(exp);
-
-		Experiment expi = exp.chainToNextExperiment;
-		while (expi != null) {
-			expAll.cageBox.mergeLists(expi.cageBox);
-			expAll.lastImage_FileTime = expi.lastImage_FileTime;
-			expi = expi.chainToNextExperiment;
-		}
-		expAll.camImageFirst_ms = expAll.firstImage_FileTime.toMillis();
-		expAll.camImageLast_ms = expAll.lastImage_FileTime.toMillis();
-		int nFrames = (int) ((expAll.camImageLast_ms - expAll.camImageFirst_ms) / options.buildExcelStepMs + 1);
-		int ncells = expAll.cageBox.cellList.size();
-		rowsForOneExp = new ArrayList<FlyPositions>(ncells);
-		for (int i = 0; i < ncells; i++) {
-			Cell cell = expAll.cageBox.cellList.get(i);
-			FlyPositions row = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
-			row.nflies = cell.cellNFlies;
-			rowsForOneExp.add(row);
-		}
-		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name_Comparator());
-	}
-
-	private void getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
-		getMoveDescriptorsForOneExperiment(exp, xlsOption);
+	private XLSResultsArray getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
+		XLSResultsArray rowListForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsOption);
 		Experiment expi = exp.getFirstChainedExperiment(true);
 
 		while (expi != null) {
@@ -180,7 +151,7 @@ public class XLSExportMoveResults extends XLSExport {
 			}
 			expi = expi.chainToNextExperiment;
 		}
-		for (FlyPositions row : rowsForOneExp)
+		for (FlyPositions row : resultsArrayList)
 			row.checkIsAliveFromAliveArray();
 	}
 
@@ -303,22 +274,23 @@ public class XLSExportMoveResults extends XLSExport {
 		}
 	}
 
-	private int xlsExportResultsArrayToSheet(XSSFSheet sheet, EnumXLSExportType xlsExportOption, int col0,
+	private int xlsExportResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExportType xlsExportOption, int col0,
 			String charSeries) {
 		Point pt = new Point(col0, 0);
 		writeExperiment_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
-		pt = writeData2(sheet, xlsExportOption, pt);
+		//pt = writeData2(rowListForOneExp, sheet, xlsExportOption, pt);
+		pt = writeExperiment_data(rowListForOneExp, sheet, xlsExportOption, pt);
 		return pt.x;
 	}
 
-	private Point writeData2(XSSFSheet sheet, EnumXLSExportType option, Point pt_main) {
-		int rowseries = pt_main.x + 2;
-		int columndataarea = pt_main.y;
-		Point pt = new Point(pt_main);
-		writeRows(sheet, columndataarea, rowseries, pt);
-		pt_main.x = pt.x + 1;
-		return pt_main;
-	}
+//	private Point writeData2(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExportType option, Point pt_main) {
+//		int rowseries = pt_main.x + 2;
+//		int columndataarea = pt_main.y;
+//		Point pt = new Point(pt_main);
+//		writeRows(sheet, columndataarea, rowseries, pt);
+//		pt_main.x = pt.x + 1;
+//		return pt_main;
+//	}
 
 	private void writeRows(XSSFSheet sheet, int column_dataArea, int rowSeries, Point pt) {
 		boolean transpose = options.transpose;
@@ -386,4 +358,47 @@ public class XLSExportMoveResults extends XLSExport {
 		}
 	}
 
+	private XLSResultsArray getMoveDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
+		if (expAll == null)
+			return null;
+
+		
+		// loop to get all capillaries into expAll and init rows for this experiment
+		expAll.cageBox.copy(exp.cageBox);
+		expAll.capillaries.copy(exp.capillaries);
+		expAll.firstImage_FileTime = exp.firstImage_FileTime;
+		expAll.lastImage_FileTime = exp.lastImage_FileTime;
+		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
+		expAll.copyExperimentFields(exp);
+		expAll.setExperimentDirectory(exp.getExperimentDirectory());
+
+		Experiment expi = exp.chainToNextExperiment;
+		while (expi != null) {
+			expAll.cageBox.mergeLists(expi.cageBox);
+			expAll.lastImage_FileTime = expi.lastImage_FileTime;
+			expi = expi.chainToNextExperiment;
+		}
+		
+		expAll.camImageFirst_ms = expAll.firstImage_FileTime.toMillis();
+		expAll.camImageLast_ms = expAll.lastImage_FileTime.toMillis();
+		int nFrames = (int) ((expAll.camImageLast_ms - expAll.camImageFirst_ms) / options.buildExcelStepMs + 1);
+		int ncells = expAll.cageBox.cellList.size();
+		
+		XLSResultsArray rowListForOneExp = new XLSResultsArray(ncells);
+		
+		for (int i = 0; i < ncells; i++) {
+			Cell cell = expAll.cageBox.cellList.get(i);
+//			FlyPositions row = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
+//			row.nflies = cell.cellNFlies;
+//			rowsForOneExp.add(row);
+			XLSResults row = new XLSResults(cell.cellRoi2D.getName(), cell.cellNFlies, cell.cellID, xlsOption, nFrames);
+//			row.stimulus = cell.cellStimulus;
+//			row.concentration = cap.capConcentration;
+//			row.cellID = cap.capCellID;
+			rowListForOneExp.addRow(row);
+		}
+//		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name_Comparator());
+		rowListForOneExp.sortRowsByName();
+		return rowListForOneExp;
+	}
 }
