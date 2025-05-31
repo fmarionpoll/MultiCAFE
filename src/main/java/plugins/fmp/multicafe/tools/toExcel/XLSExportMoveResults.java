@@ -151,8 +151,10 @@ public class XLSExportMoveResults extends XLSExport {
 			}
 			expi = expi.chainToNextExperiment;
 		}
-		for (FlyPositions row : resultsArrayList)
-			row.checkIsAliveFromAliveArray();
+//		for (FlyPositions row : resultsArrayList)
+//			row.checkIsAliveFromAliveArray();
+		
+		return rowListForOneExp;
 	}
 
 	private FlyPositions getResultsArrayWithThatName(String testname, List<FlyPositions> resultsArrayList) {
@@ -274,7 +276,7 @@ public class XLSExportMoveResults extends XLSExport {
 		}
 	}
 
-	private int xlsExportResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExportType xlsExportOption, int col0,
+	protected int xlsExportResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExportType xlsExportOption, int col0,
 			String charSeries) {
 		Point pt = new Point(col0, 0);
 		writeExperiment_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
@@ -388,10 +390,11 @@ public class XLSExportMoveResults extends XLSExport {
 		
 		for (int i = 0; i < ncells; i++) {
 			Cell cell = expAll.cageBox.cellList.get(i);
+			cell.flyPositions.checkIsAliveFromAliveArray();
 //			FlyPositions row = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
 //			row.nflies = cell.cellNFlies;
 //			rowsForOneExp.add(row);
-			XLSResults row = new XLSResults(cell.cellRoi2D.getName(), cell.cellNFlies, cell.cellID, xlsOption, nFrames);
+			XLSResults row = new XLSResults(cell.cellRoi2D.getName(), cell.cellNFlies, i, xlsOption, nFrames);
 //			row.stimulus = cell.cellStimulus;
 //			row.concentration = cap.capConcentration;
 //			row.cellID = cap.capCellID;
