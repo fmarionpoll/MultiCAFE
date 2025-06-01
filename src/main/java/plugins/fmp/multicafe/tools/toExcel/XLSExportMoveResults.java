@@ -84,12 +84,12 @@ public class XLSExportMoveResults extends XLSExport {
 	private int getMoveDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
 		XLSResultsArray rowListForOneExp = getMoveDataFromOneExperimentSeries(exp, xlsExport);
 		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
-		int colmax = xlsExportResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
+		int colmax = xlsExportMoveResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 
 		if (options.onlyalive) {
-			trimDeadsFromRowMoveData(exp);
+			trimDeadsFromRowMoveData(rowListForOneExp, exp);
 			sheet = xlsInitSheet(xlsExport.toString() + "_alive", xlsExport);
-			xlsExportResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
+			xlsExportMoveResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 		}
 		
 		return colmax;
@@ -100,12 +100,13 @@ public class XLSExportMoveResults extends XLSExport {
 		Experiment expi = exp.getFirstChainedExperiment(true);
 
 		while (expi != null) {
+			
 			int len = 1 + (int) (expi.camImageLast_ms - expi.camImageFirst_ms) / options.buildExcelStepMs;
 			if (len == 0)
 				continue;
 			double pixelsize = 32. / expi.capillaries.capillariesList.get(0).capPixels;
 
-			List<FlyPositions> resultsArrayList = new ArrayList<FlyPositions>(expi.cageBox.cellList.size());
+			List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cageBox.cellList.size());
 			for (Cell cell : expi.cageBox.cellList) {
 				FlyPositions flyPositionsResults = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, len,
 						options.buildExcelStepMs);
@@ -144,15 +145,14 @@ public class XLSExportMoveResults extends XLSExport {
 					}
 
 					flyPositionsResults.convertPixelsToPhysicalValues();
-					resultsArrayList.add(flyPositionsResults);
+					positionsArrayList.add(flyPositionsResults);
 				}
 				// here add resultsArrayList to expAll
-				addMoveResultsTo_rowsForOneExp(expi, resultsArrayList);
-			}
+				//addMoveResultsTo_rowsForOneExp(expi, resultsArrayList);
+				addResultsTo_rowsForOneExp(rowListForOneExp, expi, positionsArrayList);
 			expi = expi.chainToNextExperiment;
 		}
-//		for (FlyPositions row : resultsArrayList)
-//			row.checkIsAliveFromAliveArray();
+
 		
 		return rowListForOneExp;
 	}
@@ -252,7 +252,7 @@ public class XLSExportMoveResults extends XLSExport {
 		return index;
 	}
 
-	private void trimDeadsFromRowMoveData(Experiment exp) {
+	private void trimDeadsFromRowMoveData(XLSResultsArray rowListForOneExp, Experiment exp) {
 		for (Cell cell : exp.cageBox.cellList) {
 			int cellNumber = Integer.valueOf(cell.cellRoi2D.getName().substring(4));
 			int ilastalive = 0;
@@ -267,16 +267,24 @@ public class XLSExportMoveResults extends XLSExport {
 				long lastMinuteAlive = lastIntervalFlyAlive_Ms + expi.camImageFirst_ms - expAll.camImageFirst_ms;
 				ilastalive = (int) (lastMinuteAlive / options.buildExcelStepMs);
 			}
-			for (FlyPositions row : rowsForOneExp) {
+			if (ilastalive > 0)
+				ilastalive += 1;
+
+//			for (FlyPositions row : rowsForOneExp) {
+//				int rowCellNumber = Integer.valueOf(row.name.substring(4));
+//				if (rowCellNumber == cellNumber) {
+//					row.clearValues(ilastalive + 1);
+//				}
+			for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
+				XLSResults row = rowListForOneExp.getRow(iRow);
 				int rowCellNumber = Integer.valueOf(row.name.substring(4));
-				if (rowCellNumber == cellNumber) {
-					row.clearValues(ilastalive + 1);
-				}
+				if (rowCellNumber == cellNumber) 
+					row.clearValues(ilastalive);
 			}
 		}
 	}
 
-	protected int xlsExportResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExportType xlsExportOption, int col0,
+	protected int xlsExportMoveResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExportType xlsExportOption, int col0,
 			String charSeries) {
 		Point pt = new Point(col0, 0);
 		writeExperiment_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
@@ -294,71 +302,71 @@ public class XLSExportMoveResults extends XLSExport {
 //		return pt_main;
 //	}
 
-	private void writeRows(XSSFSheet sheet, int column_dataArea, int rowSeries, Point pt) {
-		boolean transpose = options.transpose;
-		for (FlyPositions row : rowsForOneExp) {
-			pt.y = column_dataArea;
-			int col = getRowIndexFromCellName(row.name) * 2;
-			pt.x = rowSeries + col;
-			if (row.nflies < 1)
-				continue;
-
-			long last = expAll.camImageLast_ms - expAll.camImageFirst_ms;
-			if (options.fixedIntervals)
-				last = options.endAll_Ms - options.startAll_Ms;
-
-			for (long coltime = 0; coltime <= last; coltime += options.buildExcelStepMs, pt.y++) {
-				int i_from = (int) (coltime / options.buildExcelStepMs);
-				if (i_from >= row.flyPositionList.size())
-					break;
-
-				double valueL = Double.NaN;
-				double valueR = Double.NaN;
-				FlyPosition pos = row.flyPositionList.get(i_from);
-
-				switch (row.exportType) {
-				case DISTANCE:
-					valueL = pos.distance;
-					valueR = valueL;
-					break;
-				case ISALIVE:
-					valueL = pos.bAlive ? 1 : 0;
-					valueR = valueL;
-					break;
-				case SLEEP:
-					valueL = pos.bSleep ? 1 : 0;
-					valueR = valueL;
-					break;
-				case XYTOPCAGE:
-				case XYTIPCAPS:
-				case XYIMAGE:
-					valueL = pos.rectPosition.getX() + pos.rectPosition.getWidth() / 2.;
-					valueR = pos.rectPosition.getY() + pos.rectPosition.getHeight() / 2.;
-					break;
-				case ELLIPSEAXES:
-					valueL = pos.axis1;
-					valueR = pos.axis2;
-					break;
-				default:
-					break;
-				}
-
-				if (!Double.isNaN(valueL)) {
-					XLSUtils.setValue(sheet, pt, transpose, valueL);
-					if (pos.bPadded)
-						XLSUtils.getCell(sheet, pt, transpose).setCellStyle(xssfCellStyle_red);
-				}
-				if (!Double.isNaN(valueR)) {
-					pt.x++;
-					XLSUtils.setValue(sheet, pt, transpose, valueR);
-					if (pos.bPadded)
-						XLSUtils.getCell(sheet, pt, transpose).setCellStyle(xssfCellStyle_red);
-					pt.x--;
-				}
-			}
-			pt.x += 2;
-		}
-	}
+//	private void writeRows(XSSFSheet sheet, int column_dataArea, int rowSeries, Point pt) {
+//		boolean transpose = options.transpose;
+//		for (FlyPositions row : rowsForOneExp) {
+//			pt.y = column_dataArea;
+//			int col = getRowIndexFromCellName(row.name) * 2;
+//			pt.x = rowSeries + col;
+//			if (row.nflies < 1)
+//				continue;
+//
+//			long last = expAll.camImageLast_ms - expAll.camImageFirst_ms;
+//			if (options.fixedIntervals)
+//				last = options.endAll_Ms - options.startAll_Ms;
+//
+//			for (long coltime = 0; coltime <= last; coltime += options.buildExcelStepMs, pt.y++) {
+//				int i_from = (int) (coltime / options.buildExcelStepMs);
+//				if (i_from >= row.flyPositionList.size())
+//					break;
+//
+//				double valueL = Double.NaN;
+//				double valueR = Double.NaN;
+//				FlyPosition pos = row.flyPositionList.get(i_from);
+//
+//				switch (row.exportType) {
+//				case DISTANCE:
+//					valueL = pos.distance;
+//					valueR = valueL;
+//					break;
+//				case ISALIVE:
+//					valueL = pos.bAlive ? 1 : 0;
+//					valueR = valueL;
+//					break;
+//				case SLEEP:
+//					valueL = pos.bSleep ? 1 : 0;
+//					valueR = valueL;
+//					break;
+//				case XYTOPCAGE:
+//				case XYTIPCAPS:
+//				case XYIMAGE:
+//					valueL = pos.rectPosition.getX() + pos.rectPosition.getWidth() / 2.;
+//					valueR = pos.rectPosition.getY() + pos.rectPosition.getHeight() / 2.;
+//					break;
+//				case ELLIPSEAXES:
+//					valueL = pos.axis1;
+//					valueR = pos.axis2;
+//					break;
+//				default:
+//					break;
+//				}
+//
+//				if (!Double.isNaN(valueL)) {
+//					XLSUtils.setValue(sheet, pt, transpose, valueL);
+//					if (pos.bPadded)
+//						XLSUtils.getCell(sheet, pt, transpose).setCellStyle(xssfCellStyle_red);
+//				}
+//				if (!Double.isNaN(valueR)) {
+//					pt.x++;
+//					XLSUtils.setValue(sheet, pt, transpose, valueR);
+//					if (pos.bPadded)
+//						XLSUtils.getCell(sheet, pt, transpose).setCellStyle(xssfCellStyle_red);
+//					pt.x--;
+//				}
+//			}
+//			pt.x += 2;
+//		}
+//	}
 
 	private XLSResultsArray getMoveDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
 		if (expAll == null)
