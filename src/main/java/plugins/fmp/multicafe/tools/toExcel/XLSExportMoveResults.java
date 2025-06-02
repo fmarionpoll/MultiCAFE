@@ -33,6 +33,7 @@ public class XLSExportMoveResults extends XLSExport {
 		expList.chainExperimentsUsingKymoIndexes(options.collateSeries);
 		expList.setFirstImageForAllExperiments(options.collateSeries);
 		expAll = expList.get_MsTime_of_StartAndEnd_AllExperiments(options);
+		expList.maxSizeOfCellArrays = expAll.cageBox.cellList.size();
 
 		ProgressFrame progress = new ProgressFrame("Export data to Excel");
 		int nbexpts = expList.getItemCount();
@@ -65,7 +66,7 @@ public class XLSExportMoveResults extends XLSExport {
 					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.SLEEP);
 
 				if (!options.collateSeries || exp.chainToPreviousExperiment == null)
-					column += expList.maxSizeOfCapillaryArrays + 2; // TODO check - may be: expList.maxSizeOfCapillaryArrays/2 + 2
+					column += expList.maxSizeOfCellArrays + 2; // TODO check - may be: expList.maxSizeOfCapillaryArrays/2 + 2
 				iSeries++;
 				progress.incPosition();
 			}
@@ -96,67 +97,77 @@ public class XLSExportMoveResults extends XLSExport {
 	}
 
 	private XLSResultsArray getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
-		XLSResultsArray rowListForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsOption);
+		XLSResultsArray moveDescriptorsForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsOption);
 		Experiment expi = exp.getFirstChainedExperiment(true);
-
+		List<FlyPositions> dummyPositionsArrayList = new ArrayList<FlyPositions>(0);
+		
 		while (expi != null) {
-			
-			int len = 1 + (int) (expi.camImageLast_ms - expi.camImageFirst_ms) / options.buildExcelStepMs;
-			if (len == 0)
+			int nframes = 1 + (int) (expi.camImageLast_ms - expi.camImageFirst_ms) / options.buildExcelStepMs;
+			if (nframes == 0)
 				continue;
-			double pixelsize = 32. / expi.capillaries.capillariesList.get(0).capPixels;
-
-			List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cageBox.cellList.size());
-			for (Cell cell : expi.cageBox.cellList) {
-				FlyPositions flyPositionsResults = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, len,
-						options.buildExcelStepMs);
-				flyPositionsResults.nflies = cell.cellNFlies;
-				if (flyPositionsResults.nflies > 0) {
-					flyPositionsResults.setPixelSize(pixelsize);
-
-					switch (xlsOption) {
-					case DISTANCE:
-						flyPositionsResults.excelComputeDistanceBetweenPoints(cell.flyPositions,
-								(int) expi.camImageBin_ms, options.buildExcelStepMs);
-						break;
-					case ISALIVE:
-						flyPositionsResults.excelComputeIsAlive(cell.flyPositions, (int) expi.camImageBin_ms,
-								options.buildExcelStepMs);
-						break;
-					case SLEEP:
-						flyPositionsResults.excelComputeSleep(cell.flyPositions, (int) expi.camImageBin_ms,
-								options.buildExcelStepMs);
-						break;
-					case XYTOPCAGE:
-						flyPositionsResults.excelComputeNewPointsOrigin(cell.getCenterTopCell(), cell.flyPositions,
-								(int) expi.camImageBin_ms, options.buildExcelStepMs);
-						break;
-					case XYTIPCAPS:
-						flyPositionsResults.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(exp.capillaries),
-								cell.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
-						break;
-					case ELLIPSEAXES:
-						flyPositionsResults.excelComputeEllipse(cell.flyPositions, (int) expi.camImageBin_ms,
-								options.buildExcelStepMs);
-						break;
-					case XYIMAGE:
-					default:
-						break;
-					}
-
-					flyPositionsResults.convertPixelsToPhysicalValues();
-					positionsArrayList.add(flyPositionsResults);
-				}
-				// here add resultsArrayList to expAll
-				//addMoveResultsTo_rowsForOneExp(expi, resultsArrayList);
-				addResultsTo_rowsForOneExp(rowListForOneExp, expi, positionsArrayList);
+			
+			List<FlyPositions> positionsArrayList = computeMoveResults(expi, xlsOption, options, nframes);
+			// here add resultsArrayList to expAll
+			addMoveResultsTo_rowsForOneExp(expi, positionsArrayList);
+			//addResultsTo_rowsForOneExp(rowListForOneExp, expi, positionsArrayList);
 			expi = expi.chainToNextExperiment;
 		}
-
 		
-		return rowListForOneExp;
+		XLSResultsArray xlsResultsArray= combine (moveDescriptorsForOneExp, dummyPositionsArrayList);
+		return xlsResultsArray;
+	}
+	
+	private XLSResultsArray combine (XLSResultsArray moveDescriptorsForOneExp, List<FlyPositions> positionsArrayList) {
+		return moveDescriptorsForOneExp;
 	}
 
+
+	protected List<FlyPositions> computeMoveResults(Experiment expi, EnumXLSExportType xlsOption, XLSExportOptions options, int nFrames) {
+		List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cageBox.cellList.size());
+		double pixelsize = 32. / expi.capillaries.capillariesList.get(0).capPixels;
+		for (Cell cell : expi.cageBox.cellList) {
+			FlyPositions flyPositionsResults = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames,
+					options.buildExcelStepMs);
+			flyPositionsResults.nflies = cell.cellNFlies;
+			if (flyPositionsResults.nflies < 0) {
+				flyPositionsResults.setPixelSize(pixelsize);
+				switch (xlsOption) {
+				case DISTANCE:
+					flyPositionsResults.excelComputeDistanceBetweenPoints(cell.flyPositions,
+							(int) expi.camImageBin_ms, options.buildExcelStepMs);
+					break;
+				case ISALIVE:
+					flyPositionsResults.excelComputeIsAlive(cell.flyPositions, (int) expi.camImageBin_ms,
+							options.buildExcelStepMs);
+					break;
+				case SLEEP:
+					flyPositionsResults.excelComputeSleep(cell.flyPositions, (int) expi.camImageBin_ms,
+							options.buildExcelStepMs);
+					break;
+				case XYTOPCAGE:
+					flyPositionsResults.excelComputeNewPointsOrigin(cell.getCenterTopCell(), cell.flyPositions,
+							(int) expi.camImageBin_ms, options.buildExcelStepMs);
+					break;
+				case XYTIPCAPS:
+					flyPositionsResults.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(expi.capillaries),
+							cell.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
+					break;
+				case ELLIPSEAXES:
+					flyPositionsResults.excelComputeEllipse(cell.flyPositions, (int) expi.camImageBin_ms,
+							options.buildExcelStepMs);
+					break;
+				case XYIMAGE:
+				default:
+					break;
+				}
+				flyPositionsResults.convertPixelsToPhysicalValues();
+				positionsArrayList.add(flyPositionsResults);
+			}
+		}
+		return positionsArrayList;
+	}
+	
+	
 	private FlyPositions getResultsArrayWithThatName(String testname, List<FlyPositions> resultsArrayList) {
 		FlyPositions resultsFound = null;
 		for (FlyPositions results : resultsArrayList) {
@@ -168,7 +179,7 @@ public class XLSExportMoveResults extends XLSExport {
 		return resultsFound;
 	}
 
-	private void addMoveResultsTo_rowsForOneExp(Experiment expi, List<FlyPositions> resultsArrayList) {
+	private void addMoveResultsTo_rowsForOneExp(Experiment expi, List<FlyPositions> rowsForOneExp) {
 		long start_Ms = expi.camImageFirst_ms - expAll.camImageFirst_ms;
 		long end_Ms = expi.camImageLast_ms - expAll.camImageFirst_ms;
 		if (options.fixedIntervals) {
@@ -189,7 +200,7 @@ public class XLSExportMoveResults extends XLSExport {
 		final int to_nvalues = (int) ((from_lastMs - from_first_Ms) / options.buildExcelStepMs) + 1;
 
 		for (FlyPositions rowFlyPositions : rowsForOneExp) {
-			FlyPositions results = getResultsArrayWithThatName(rowFlyPositions.name, resultsArrayList);
+			FlyPositions results = getResultsArrayWithThatName(rowFlyPositions.name, rowsForOneExp);
 			if (results != null) {
 				if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null)
 					padWithLastPreviousValue(rowFlyPositions, to_first_index);
