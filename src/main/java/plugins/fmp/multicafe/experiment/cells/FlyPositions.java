@@ -492,7 +492,7 @@ public class FlyPositions {
 		sbf.append(Integer.toString(npoints) + sep);
 		if (npoints > 0) {
 			for (int i = 0; i < npoints; i++) {
-				flyPositionList.get(i).cvsExportXYWHData(sbf, sep);
+				flyPositionList.get(i).cvsExportXYWeightHeightData(sbf, sep);
 			}
 		}
 		return true;
@@ -522,7 +522,7 @@ public class FlyPositions {
 			int offset = startAt + 1;
 			for (int i = 0; i < npoints; i++) {
 				FlyPosition flyPosition = new FlyPosition();
-				flyPosition.csvImportXYWHData(data, offset);
+				flyPosition.csvImportXYWeightHeightData(data, offset);
 				flyPositionList.add(flyPosition);
 				offset += 5;
 			}

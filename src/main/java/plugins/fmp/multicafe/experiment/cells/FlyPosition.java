@@ -138,7 +138,7 @@ public class FlyPosition {
 
 	// --------------------------------------------
 
-	public boolean cvsExportXYWHData(StringBuffer sbf, String sep) {
+	public boolean cvsExportXYWeightHeightData(StringBuffer sbf, String sep) {
 		cvsExportXYData(sbf, sep);
 		sbf.append(StringUtil.toString((double) rectPosition.getWidth()));
 		sbf.append(sep);
@@ -157,7 +157,7 @@ public class FlyPosition {
 		return true;
 	}
 
-	public boolean csvImportXYWHData(String[] data, int startAt) {
+	public boolean csvImportXYWeightHeightData(String[] data, int startAt) {
 		int npoints = 5;
 		if (data.length < npoints + startAt - 1)
 			return false;
