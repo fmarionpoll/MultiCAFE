@@ -138,26 +138,54 @@ public class FlyPosition {
 
 	// --------------------------------------------
 
-	public boolean cvsExportXYWeightHeightData(StringBuffer sbf, String sep) {
-		cvsExportXYData(sbf, sep);
+//	public boolean cvsExportRectangle(StringBuffer sbf, String sep) {
+//		cvsExportXY(sbf, sep);
+//		cvsExportT(sbf, sep);
+//		cvsExportX(sbf, sep);
+//		cvsExportY(sbf, sep);
+//		cvsExportWidth(sbf, sep);
+//		cvsExportHeight(sbf, sep);
+//		return true;
+//	}
+//
+//	public boolean cvsExportXY(StringBuffer sbf, String sep) {
+//		cvsExportT(sbf, sep);
+//		cvsExportX(sbf, sep);
+//		cvsExportY(sbf, sep);
+//		return true;
+//	}
+	
+	public boolean cvsExportT(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString(flyIndexT));
+		sbf.append(sep);
+		return true;
+	}
+	
+	public boolean cvsExportX(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString((double) rectPosition.getX()));
+		sbf.append(sep);
+		return true;
+	}
+	
+	public boolean cvsExportY(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString((double) rectPosition.getY()));
+		sbf.append(sep);
+		return true;
+	}
+	
+	public boolean cvsExportWidth(StringBuffer sbf, String sep) {
 		sbf.append(StringUtil.toString((double) rectPosition.getWidth()));
 		sbf.append(sep);
+		return true;
+	}
+	
+	public boolean cvsExportHeight(StringBuffer sbf, String sep) {
 		sbf.append(StringUtil.toString((double) rectPosition.getHeight()));
 		sbf.append(sep);
 		return true;
 	}
 
-	public boolean cvsExportXYData(StringBuffer sbf, String sep) {
-		sbf.append(StringUtil.toString(flyIndexT));
-		sbf.append(sep);
-		sbf.append(StringUtil.toString((double) rectPosition.getX()));
-		sbf.append(sep);
-		sbf.append(StringUtil.toString((double) rectPosition.getY()));
-		sbf.append(sep);
-		return true;
-	}
-
-	public boolean csvImportXYWeightHeightData(String[] data, int startAt) {
+	public boolean csvImportRectangle(String[] data, int startAt) {
 		int npoints = 5;
 		if (data.length < npoints + startAt - 1)
 			return false;
@@ -178,7 +206,7 @@ public class FlyPosition {
 		return true;
 	}
 
-	public boolean csvImportXYData(String[] data, int startAt) {
+	public boolean csvImportXY(String[] data, int startAt) {
 		int npoints = 3;
 		if (data.length < npoints + startAt - 1)
 			return false;
@@ -199,6 +227,35 @@ public class FlyPosition {
 			rectPosition.setRect(xR, yR, wR, hR);
 		}
 
+		return true;
+	}
+	
+	public boolean cvsImportT(String strData) {
+		flyIndexT = Integer.valueOf(strData);
+		return true;
+	}
+	
+	public boolean cvsImportX(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString((double) rectPosition.getX()));
+		sbf.append(sep);
+		return true;
+	}
+	
+	public boolean cvsImportY(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString((double) rectPosition.getY()));
+		sbf.append(sep);
+		return true;
+	}
+	
+	public boolean cvsImportWidth(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString((double) rectPosition.getWidth()));
+		sbf.append(sep);
+		return true;
+	}
+	
+	public boolean cvsImportHeight(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString((double) rectPosition.getHeight()));
+		sbf.append(sep);
 		return true;
 	}
 

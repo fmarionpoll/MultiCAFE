@@ -190,6 +190,7 @@ public class Cells {
 		try {
 			row = csvReader.readLine();
 			boolean complete = row.contains("w(i)");
+			boolean v0 = row.contains("x(i)");
 			while ((row = csvReader.readLine()) != null) {
 				String[] data = row.split(sep);
 				if (data[0].equals("#"))
@@ -199,7 +200,10 @@ public class Cells {
 				Cell cell = getCellFromNumber(cellID);
 				if (cell == null)
 					cell = new Cell();
-				cell.csvImport_MEASURE_Data(measureType, data, complete);
+				if (v0)
+					cell.csvImport_MEASURE_Data_v0(measureType, data, complete);
+				else
+					cell.csvImport_MEASURE_Data_Parameters(data);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

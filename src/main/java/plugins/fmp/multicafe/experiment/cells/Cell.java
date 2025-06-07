@@ -157,9 +157,10 @@ public class Cell {
 
 	public String csvExport_MEASURE_Header(EnumCellMeasures measureType, String sep, boolean complete) {
 		StringBuffer sbf = new StringBuffer();
-		String explanation = "cellID" + sep + "npts" + sep + "t(i)" + sep + "x(i)" + sep + "y(i)" + sep;
-		if (complete)
-			explanation = explanation + "w(i)" + sep + "h(i)" + sep;
+//		String explanation = "cellID" + sep + "npts" + sep + "t(i)" + sep + "x(i)" + sep + "y(i)" + sep;
+//		if (complete)
+//			explanation = explanation + "w(i)" + sep + "h(i)" + sep;
+		String explanation = "cellID" + sep + "parm"+ sep +"npts";
 		switch (measureType) {
 		case POSITION:
 			sbf.append("#" + sep + "POSITION\n" + explanation + "\n");
@@ -173,23 +174,20 @@ public class Cell {
 
 	public String csvExport_MEASURE_Data(EnumCellMeasures measureType, String sep, boolean complete) {
 		StringBuffer sbf = new StringBuffer();
-		sbf.append(strCellNumber + sep);
-
 		switch (measureType) {
 		case POSITION:
-			if (complete)
-				flyPositions.cvsExport_XYwh_ToRow(sbf, sep);
-			else
-				flyPositions.cvsExport_XY_ToRow(sbf, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "t(i)", strCellNumber, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "x(i)", strCellNumber, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "y(i)", strCellNumber, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "w(i)", strCellNumber, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "h(i)", strCellNumber, sep);
 			break;
-
 		default:
 			break;
 		}
-		sbf.append("\n");
 		return sbf.toString();
 	}
-
+	
 	public void csvImport_CAGE_Header(String[] data) {
 		int i = 0;
 		strCellNumber = data[i];
@@ -226,17 +224,31 @@ public class Cell {
 
 	}
 
-	public void csvImport_MEASURE_Data(EnumCellMeasures measureType, String[] data, boolean complete) {
+	public void csvImport_MEASURE_Data_v0(EnumCellMeasures measureType, String[] data, boolean complete) {
 		switch (measureType) {
 		case POSITION:
 			if (complete)
-				flyPositions.csvImportXYWHDataFromRow(data, 1);
+				flyPositions.csvImport_Rectangle_FromRow(data, 1);
 			else
-				flyPositions.csvImportXYDataFromRow(data, 1);
+				flyPositions.csvImport_XY_FromRow(data, 1);
 			break;
 		default:
 			break;
 		}
+	}
+	
+	public void csvImport_MEASURE_Data_Parameters(String[] data) {
+		char measureType = data[1].charAt(0);
+		if (measureType == 't')
+			flyPositions.cvsImport_Parameter_FromRow(sbf, "t(i)", strCellNumber, sep);
+		else if (measureType == 'x')
+			flyPositions.cvsImport_Parameter_FromRow(sbf, "x(i)", strCellNumber, sep);
+		else if (measureType == 'y')
+			flyPositions.cvsImport_Parameter_FromRow(sbf, "y(i)", strCellNumber, sep);
+		else if (measureType == 'w')
+			flyPositions.cvsImport_Parameter_FromRow(sbf, "w(i)", strCellNumber, sep);
+		else if (measureType == 'h')
+			flyPositions.cvsImport_Parameter_FromRow(sbf, "h(i)", strCellNumber, sep);
 	}
 
 	// ------------------------------------
