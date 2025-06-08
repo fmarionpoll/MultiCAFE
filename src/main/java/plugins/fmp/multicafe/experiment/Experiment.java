@@ -121,7 +121,6 @@ public class Experiment {
 		this.seqKymos = new SequenceKymos();
 		strExperimentDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
-
 		xmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML));
 	}
 
@@ -149,12 +148,12 @@ public class Experiment {
 		return strExperimentDirectory;
 	}
 
-	public String toString() {
-		return strExperimentDirectory;
-	}
-
 	public void setExperimentDirectory(String fileName) {
 		strExperimentDirectory = ExperimentDirectories.getParentIf(fileName, BIN);
+	}
+
+	public String toString() {
+		return strExperimentDirectory;
 	}
 
 	public String getKymosBinFullDirectory() {
@@ -539,14 +538,28 @@ public class Experiment {
 	}
 
 	public boolean loadCageMeasures() {
-		boolean flag = cageBox.load_CageBox(getKymosBinFullDirectory());
+		String pathToMeasures = getExperimentDirectory() + File.separator + "CagesMeasures.csv";
+		File f = new File(pathToMeasures);
+		if (!f.exists())
+			moveCageMeasuresToExperimentDirectory(pathToMeasures);
+
+		boolean flag = cageBox.load_CageBox(getExperimentDirectory());
 		if (flag)
 			cageBox.cageBoxToROIs(seqCamData);
 		return flag;
 	}
 
+	private boolean moveCageMeasuresToExperimentDirectory(String pathToMeasures) {
+		boolean flag = false;
+		String pathToOldCsv = getKymosBinFullDirectory() + File.separator + "CagesMeasures.csv";
+		File fileToMove = new File(pathToOldCsv);
+		if (fileToMove.exists())
+			flag = fileToMove.renameTo(new File(pathToMeasures));
+		return flag;
+	}
+
 	public boolean saveCageMeasures() {
-		return cageBox.save_CageBox(getKymosBinFullDirectory());
+		return cageBox.save_CageBox(getExperimentDirectory()); // .getKymosBinFullDirectory());
 	}
 
 	public void saveCageAndMeasures() {
