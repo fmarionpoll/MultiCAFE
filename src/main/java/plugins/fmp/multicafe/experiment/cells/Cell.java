@@ -160,7 +160,7 @@ public class Cell {
 //		String explanation = "cellID" + sep + "npts" + sep + "t(i)" + sep + "x(i)" + sep + "y(i)" + sep;
 //		if (complete)
 //			explanation = explanation + "w(i)" + sep + "h(i)" + sep;
-		String explanation = "cellID" + sep + "parm"+ sep +"npts";
+		String explanation = "cellID" + sep + "parm" + sep + "npts";
 		switch (measureType) {
 		case POSITION:
 			sbf.append("#" + sep + "POSITION\n" + explanation + "\n");
@@ -187,7 +187,7 @@ public class Cell {
 		}
 		return sbf.toString();
 	}
-	
+
 	public void csvImport_CAGE_Header(String[] data) {
 		int i = 0;
 		strCellNumber = data[i];
@@ -236,19 +236,9 @@ public class Cell {
 			break;
 		}
 	}
-	
+
 	public void csvImport_MEASURE_Data_Parameters(String[] data) {
-		char measureType = data[1].charAt(0);
-		if (measureType == 't')
-			flyPositions.cvsImport_Parameter_FromRow(sbf, "t(i)", strCellNumber, sep);
-		else if (measureType == 'x')
-			flyPositions.cvsImport_Parameter_FromRow(sbf, "x(i)", strCellNumber, sep);
-		else if (measureType == 'y')
-			flyPositions.cvsImport_Parameter_FromRow(sbf, "y(i)", strCellNumber, sep);
-		else if (measureType == 'w')
-			flyPositions.cvsImport_Parameter_FromRow(sbf, "w(i)", strCellNumber, sep);
-		else if (measureType == 'h')
-			flyPositions.cvsImport_Parameter_FromRow(sbf, "h(i)", strCellNumber, sep);
+		flyPositions.cvsImport_Parameter_FromRow(data);
 	}
 
 	// ------------------------------------

@@ -154,31 +154,31 @@ public class FlyPosition {
 //		cvsExportY(sbf, sep);
 //		return true;
 //	}
-	
+
 	public boolean cvsExportT(StringBuffer sbf, String sep) {
 		sbf.append(StringUtil.toString(flyIndexT));
 		sbf.append(sep);
 		return true;
 	}
-	
+
 	public boolean cvsExportX(StringBuffer sbf, String sep) {
 		sbf.append(StringUtil.toString((double) rectPosition.getX()));
 		sbf.append(sep);
 		return true;
 	}
-	
+
 	public boolean cvsExportY(StringBuffer sbf, String sep) {
 		sbf.append(StringUtil.toString((double) rectPosition.getY()));
 		sbf.append(sep);
 		return true;
 	}
-	
+
 	public boolean cvsExportWidth(StringBuffer sbf, String sep) {
 		sbf.append(StringUtil.toString((double) rectPosition.getWidth()));
 		sbf.append(sep);
 		return true;
 	}
-	
+
 	public boolean cvsExportHeight(StringBuffer sbf, String sep) {
 		sbf.append(StringUtil.toString((double) rectPosition.getHeight()));
 		sbf.append(sep);
@@ -229,33 +229,33 @@ public class FlyPosition {
 
 		return true;
 	}
-	
+
 	public boolean cvsImportT(String strData) {
 		flyIndexT = Integer.valueOf(strData);
 		return true;
 	}
-	
-	public boolean cvsImportX(StringBuffer sbf, String sep) {
-		sbf.append(StringUtil.toString((double) rectPosition.getX()));
-		sbf.append(sep);
+
+	public boolean cvsImportX(String strData) {
+		double value = Double.valueOf(strData);
+		rectPosition.x = value;
 		return true;
 	}
-	
-	public boolean cvsImportY(StringBuffer sbf, String sep) {
-		sbf.append(StringUtil.toString((double) rectPosition.getY()));
-		sbf.append(sep);
+
+	public boolean cvsImportY(String strData) {
+		double value = Double.valueOf(strData);
+		rectPosition.y = value;
 		return true;
 	}
-	
-	public boolean cvsImportWidth(StringBuffer sbf, String sep) {
-		sbf.append(StringUtil.toString((double) rectPosition.getWidth()));
-		sbf.append(sep);
+
+	public boolean cvsImportWidth(String strData) {
+		double value = Double.valueOf(strData);
+		rectPosition.width = value;
 		return true;
 	}
-	
-	public boolean cvsImportHeight(StringBuffer sbf, String sep) {
-		sbf.append(StringUtil.toString((double) rectPosition.getHeight()));
-		sbf.append(sep);
+
+	public boolean cvsImportHeight(String strData) {
+		double value = Double.valueOf(strData);
+		rectPosition.height = value;
 		return true;
 	}
 

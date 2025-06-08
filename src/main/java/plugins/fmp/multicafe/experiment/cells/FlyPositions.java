@@ -484,39 +484,67 @@ public class FlyPositions {
 
 	// --------------------------------------------------------
 
-	public boolean cvsExport_Parameter_ToRow(StringBuffer sbf, String measure, String strCellNumber,  String sep) {
+	public boolean cvsExport_Parameter_ToRow(StringBuffer sbf, String measure, String strCellNumber, String sep) {
 		int npoints = 0;
 		if (flyPositionList != null && flyPositionList.size() > 0)
 			npoints = flyPositionList.size();
 
 		sbf.append(strCellNumber + sep);
-		sbf.append(measure+sep);
+		sbf.append(measure + sep);
 		sbf.append(Integer.toString(npoints) + sep);
 		if (npoints > 0) {
 			char measureType = measure.charAt(0);
 			if (measureType == 't')
-				for (int i = 0; i < npoints; i++) 
+				for (int i = 0; i < npoints; i++)
 					flyPositionList.get(i).cvsExportT(sbf, sep);
 			else if (measureType == 'x')
-				for (int i = 0; i < npoints; i++) 
+				for (int i = 0; i < npoints; i++)
 					flyPositionList.get(i).cvsExportX(sbf, sep);
 			else if (measureType == 'y')
-				for (int i = 0; i < npoints; i++) 
+				for (int i = 0; i < npoints; i++)
 					flyPositionList.get(i).cvsExportY(sbf, sep);
 			else if (measureType == 'w')
-				for (int i = 0; i < npoints; i++) 
+				for (int i = 0; i < npoints; i++)
 					flyPositionList.get(i).cvsExportWidth(sbf, sep);
 			else if (measureType == 'h')
-				for (int i = 0; i < npoints; i++) 
+				for (int i = 0; i < npoints; i++)
 					flyPositionList.get(i).cvsExportHeight(sbf, sep);
 		}
 		sbf.append("\n");
 		return true;
 	}
-	
+
 	public boolean cvsImport_Parameter_FromRow(String[] data) {
 		if (data.length < 1)
 			return false;
+
+		char measureType = data[1].charAt(0);
+		int npoints = Integer.valueOf(data[2]);
+		if (flyPositionList.size() != npoints) {
+			flyPositionList = new ArrayList<FlyPosition>(npoints);
+			for (int i = 0; i < npoints; i++) {
+				FlyPosition flyPosition = new FlyPosition();
+				flyPositionList.add(flyPosition);
+			}
+		}
+		int offset = 3;
+
+		if (measureType == 't')
+			for (int i = 0; i < npoints; i++)
+				flyPositionList.get(i).cvsImportT(data[i + offset]);
+		else if (measureType == 'x')
+			for (int i = 0; i < npoints; i++)
+				flyPositionList.get(i).cvsImportX(data[i + offset]);
+		else if (measureType == 'y')
+			for (int i = 0; i < npoints; i++)
+				flyPositionList.get(i).cvsImportY(data[i + offset]);
+		else if (measureType == 'w')
+			for (int i = 0; i < npoints; i++)
+				flyPositionList.get(i).cvsImportWidth(data[i + offset]);
+		else if (measureType == 'h')
+			for (int i = 0; i < npoints; i++)
+				flyPositionList.get(i).cvsImportHeight(data[i + offset]);
+
 		return true;
 	}
 
