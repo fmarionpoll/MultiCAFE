@@ -99,12 +99,10 @@ public class ChartPositions extends IcyFrame {
 		if (itmax > 0) {
 			switch (option) {
 			case DISTANCE:
-				double previousY = results.flyPositionList.get(0).rectPosition.getY()
-						+ results.flyPositionList.get(0).rectPosition.getHeight() / 2;
+				double previousY = results.flyPositionList.get(0).x + results.flyPositionList.get(0).h / 2;
 
 				for (int it = 0; it < itmax; it++) {
-					double currentY = results.flyPositionList.get(it).rectPosition.getY()
-							+ results.flyPositionList.get(it).rectPosition.getHeight() / 2;
+					double currentY = results.flyPositionList.get(it).y + results.flyPositionList.get(it).h / 2;
 					double ypos = currentY - previousY;
 					addxyPos(seriesXY, results, it, ypos);
 					previousY = currentY;
@@ -136,7 +134,7 @@ public class ChartPositions extends IcyFrame {
 				Rectangle rect1 = cell.cellRoi2D.getBounds();
 				double yOrigin = rect1.getY() + rect1.getHeight();
 				for (int it = 0; it < itmax; it++) {
-					Rectangle2D itRect = results.flyPositionList.get(it).rectPosition;
+					Rectangle2D itRect = results.flyPositionList.get(it).getRectangle2D();
 					double ypos = yOrigin - itRect.getY();
 					addxyPos(seriesXY, results, it, ypos);
 				}

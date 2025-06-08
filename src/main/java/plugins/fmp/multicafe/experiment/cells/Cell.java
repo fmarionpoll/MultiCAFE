@@ -305,7 +305,7 @@ public class Cell {
 			return null;
 		FlyPosition aValue = flyPositions.flyPositionList.get(t);
 
-		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.rectPosition);
+		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.getRectangle2D());
 		flyRoiR.setName("detR" + getCellNumber() + "_" + t);
 		flyRoiR.setT(t);
 		flyRoiR.setColor(Color.YELLOW);
@@ -320,7 +320,7 @@ public class Cell {
 				continue;
 			Rectangle2D rect = ((ROI2DRectangle) roi).getRectangle();
 			int t = roi.getT();
-			flyPositions.flyPositionList.get(t).rectPosition = rect;
+			flyPositions.flyPositionList.get(t).setRectangle2D(rect);
 		}
 	}
 

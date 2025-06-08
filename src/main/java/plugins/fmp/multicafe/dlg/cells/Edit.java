@@ -146,7 +146,7 @@ public class Edit extends JPanel {
 			for (Cell cell : exp.cageBox.cellList) {
 				if (frame >= cell.flyPositions.flyPositionList.size())
 					continue;
-				Rectangle2D rect = cell.flyPositions.flyPositionList.get(frame).rectPosition;
+				Rectangle2D rect = cell.flyPositions.flyPositionList.get(frame).getRectangle2D();
 				if (rect.getX() == -1 && rect.getY() == -1) {
 					foundT = cell.flyPositions.flyPositionList.get(frame).flyIndexT;
 					foundCell = cell.getCellNumberInteger();
@@ -169,7 +169,7 @@ public class Edit extends JPanel {
 			for (Cell cell : exp.cageBox.cellList) {
 				if (frame >= cell.flyPositions.flyPositionList.size())
 					continue;
-				Rectangle2D rect = cell.flyPositions.flyPositionList.get(frame).rectPosition;
+				Rectangle2D rect = cell.flyPositions.flyPositionList.get(frame).getRectangle2D();
 				if (rect.getX() == -1 && rect.getY() == -1) {
 					String name = "det" + cell.getCellNumber() + "_"
 							+ cell.flyPositions.flyPositionList.get(frame).flyIndexT;
@@ -198,7 +198,7 @@ public class Edit extends JPanel {
 		int cageNumber = getCageNumberFromName(csName);
 		if (cageNumber >= 0) {
 			Cell cell = exp.cageBox.getCellFromNumber(cageNumber);
-			Rectangle2D rect0 = cell.flyPositions.flyPositionList.get(frame).rectPosition;
+			Rectangle2D rect0 = cell.flyPositions.flyPositionList.get(frame).getRectangle2D();
 			if (rect0.getX() == -1 && rect0.getY() == -1) {
 				Rectangle rect = cell.cellRoi2D.getBounds();
 				Point2D point2 = new Point2D.Double(rect.x + rect.width / 2, rect.y + rect.height / 2);

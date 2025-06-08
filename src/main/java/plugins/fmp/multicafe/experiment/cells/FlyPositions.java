@@ -63,15 +63,15 @@ public class FlyPositions {
 	}
 
 	public Rectangle2D getRectangle(int i) {
-		return flyPositionList.get(i).rectPosition;
+		return flyPositionList.get(i).getRectangle2D();
 	}
 
 	public Rectangle2D getValidPointAtOrBefore(int index) {
 		Rectangle2D rect = new Rectangle2D.Double(-1, -1, Double.NaN, Double.NaN);
 		for (int i = index; i >= 0; i--) {
 			FlyPosition xyVal = flyPositionList.get(i);
-			if (xyVal.rectPosition.getX() >= 0 && xyVal.rectPosition.getY() >= 0) {
-				rect = xyVal.rectPosition;
+			if (xyVal.x >= 0 && xyVal.y >= 0) {
+				rect = xyVal.getRectangle2D();
 				break;
 			}
 		}
@@ -294,8 +294,8 @@ public class FlyPositions {
 			FlyPosition pos_from = flyPositions.flyPositionList.get(index);
 			FlyPosition pos_to = flyPositionList.get(it_out);
 			pos_to.copy(pos_from);
-			pos_to.rectPosition.setRect(pos_to.rectPosition.getX() - deltaX, pos_to.rectPosition.getY() - deltaY,
-					pos_to.rectPosition.getWidth(), pos_to.rectPosition.getHeight());
+			pos_to.x -= deltaX;
+			pos_to.y -= deltaY;
 		}
 	}
 
@@ -359,7 +359,7 @@ public class FlyPositions {
 			return Double.NaN;
 		FlyPosition pos1 = flyPositionList.get(firstIndex);
 		FlyPosition pos2 = flyPositionList.get(secondIndex);
-		if (pos1.rectPosition.getX() < 0 || pos2.rectPosition.getX() < 0)
+		if (pos1.x < 0 || pos2.x < 0)
 			return Double.NaN;
 
 		Point2D point2 = pos2.getCenterRectangle();
@@ -431,8 +431,8 @@ public class FlyPositions {
 		if (deltaX == 0 && deltaY == 0)
 			return;
 		for (FlyPosition pos : flyPositionList) {
-			pos.rectPosition.setRect(pos.rectPosition.getX() - deltaX, pos.rectPosition.getY() - deltaY,
-					pos.rectPosition.getWidth(), pos.rectPosition.getHeight());
+			pos.x -= deltaX;
+			pos.y -= deltaY;
 		}
 	}
 
@@ -450,9 +450,9 @@ public class FlyPositions {
 				}
 				pos.axis1 = ellipsoidValues[0];
 				pos.axis2 = ellipsoidValues[1];
-			} else if (pos.rectPosition != null) {
-				pos.axis1 = pos.rectPosition.getHeight();
-				pos.axis2 = pos.rectPosition.getWidth();
+			} else if (pos.x != Double.NaN && pos.y != Double.NaN) {
+				pos.axis1 = pos.h;
+				pos.axis2 = pos.w;
 				if (pos.axis2 > pos.axis1) {
 					double x = pos.axis1;
 					pos.axis1 = pos.axis2;
@@ -468,8 +468,10 @@ public class FlyPositions {
 
 	public void convertPixelsToPhysicalValues() {
 		for (FlyPosition pos : flyPositionList) {
-			pos.rectPosition.setRect(pos.rectPosition.getX() * pixelsize, pos.rectPosition.getY() * pixelsize,
-					pos.rectPosition.getWidth() * pixelsize, pos.rectPosition.getHeight() * pixelsize);
+			pos.x *= pixelsize;
+			pos.y *= pixelsize;
+			pos.w *= pixelsize;
+			pos.h *= pixelsize;
 			pos.axis1 = pos.axis1 * pixelsize;
 			pos.axis2 = pos.axis2 * pixelsize;
 		}
