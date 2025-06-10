@@ -290,13 +290,13 @@ public class Cell {
 		return pt;
 	}
 
-	public void copyCell(Cell cell) {
-		cellRoi2D = cell.cellRoi2D;
-		cellNFlies = cell.cellNFlies;
-		strCellComment = cell.strCellComment;
-		strCellNumber = cell.strCellNumber;
+	public void copyCell(Cell cellFrom) {
+		cellRoi2D = cellFrom.cellRoi2D;
+		cellNFlies = cellFrom.cellNFlies;
+		strCellComment = cellFrom.strCellComment;
+		strCellNumber = cellFrom.strCellNumber;
 		valid = false;
-		flyPositions.copyXYTaSeries(cell.flyPositions);
+		flyPositions.copyPositions(cellFrom.flyPositions);
 	}
 
 	public ROI2DRectangle getRoiRectangleFromPositionAtT(int t) {

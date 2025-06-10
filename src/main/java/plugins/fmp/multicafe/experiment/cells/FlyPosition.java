@@ -56,6 +56,10 @@ public class FlyPosition {
 		this.bAlive = alive;
 	}
 
+	public FlyPosition(FlyPosition flyPosSource) {
+		this.copy(flyPosSource);
+	}
+
 	public void copy(FlyPosition source) {
 		flyIndexT = source.flyIndexT;
 		bAlive = source.bAlive;

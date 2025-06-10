@@ -87,15 +87,18 @@ public class FlyPositions {
 		flyPositionList.add(pos);
 	}
 
-	public void copyXYTaSeries(FlyPositions xySer) {
-		moveThreshold = xySer.moveThreshold;
-		sleepThreshold = xySer.sleepThreshold;
-		lastTimeAlive = xySer.lastIntervalAlive;
-		flyPositionList = new ArrayList<FlyPosition>(xySer.flyPositionList.size());
-		flyPositionList.addAll(flyPositionList);
-		name = xySer.name;
-		exportType = xySer.exportType;
-		binsize = xySer.binsize;
+	public void copyPositions(FlyPositions positionsFrom) {
+		moveThreshold = positionsFrom.moveThreshold;
+		sleepThreshold = positionsFrom.sleepThreshold;
+		lastTimeAlive = positionsFrom.lastIntervalAlive;
+		flyPositionList = new ArrayList<FlyPosition>(positionsFrom.flyPositionList.size());
+		for (FlyPosition flyPosFrom : positionsFrom.flyPositionList) {
+			FlyPosition flyPos = new FlyPosition(flyPosFrom);
+			flyPositionList.add(flyPos);
+		}
+		name = positionsFrom.name;
+		exportType = positionsFrom.exportType;
+		binsize = positionsFrom.binsize;
 	}
 
 	// -----------------------------------------------
