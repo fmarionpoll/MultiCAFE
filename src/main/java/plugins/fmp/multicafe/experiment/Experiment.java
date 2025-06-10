@@ -559,7 +559,7 @@ public class Experiment {
 	}
 
 	public boolean saveCageMeasures() {
-		return cageBox.save_CageBox(getExperimentDirectory()); // .getKymosBinFullDirectory());
+		return cageBox.save_CageBox(getExperimentDirectory());
 	}
 
 	public void saveCageAndMeasures() {
