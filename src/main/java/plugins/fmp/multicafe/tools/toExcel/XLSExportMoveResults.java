@@ -97,6 +97,7 @@ public class XLSExportMoveResults extends XLSExport {
 	private XLSResultsArray getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
 		XLSResultsArray moveDescriptorsForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsOption);
 		Experiment expi = exp.getFirstChainedExperiment(true);
+
 		List<FlyPositions> dummyPositionsArrayList = new ArrayList<FlyPositions>(0);
 
 		while (expi != null) {
@@ -410,7 +411,7 @@ public class XLSExportMoveResults extends XLSExport {
 //			row.nflies = cell.cellNFlies;
 //			rowsForOneExp.add(row);
 			XLSResults row = new XLSResults(cell.cellRoi2D.getName(), cell.cellNFlies, i, xlsOption, nFrames);
-			add positions to results row!
+			/* add positions to results row! */
 //			row.stimulus = cell.cellStimulus;
 //			row.concentration = cap.capConcentration;
 //			row.cellID = cap.capCellID;
