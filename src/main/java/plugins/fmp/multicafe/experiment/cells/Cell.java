@@ -42,6 +42,12 @@ public class Cell {
 	private final String ID_SEX = "sex";
 	private final String ID_STRAIN = "strain";
 
+	public String getRoiName() {
+		if (cellRoi2D != null)
+			return cellRoi2D.getName();
+		return null;
+	}
+
 	public boolean xmlSaveCell(Node node, int index) {
 		if (node == null)
 			return false;

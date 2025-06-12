@@ -3,6 +3,9 @@ package plugins.fmp.multicafe.tools.toExcel;
 import java.awt.Point;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -296,7 +299,7 @@ public class XLSExportMoveResults extends XLSExport {
 	protected int xlsExportMoveResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet,
 			EnumXLSExportType xlsExportOption, int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
-		writeExperiment_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
+		writeExperiment_Cell_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
 		// pt = writeData2(rowListForOneExp, sheet, xlsExportOption, pt);
 		pt = writeExperiment_data(rowListForOneExp, sheet, xlsExportOption, pt);
 		return pt.x;
@@ -420,5 +423,92 @@ public class XLSExportMoveResults extends XLSExport {
 //		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name_Comparator());
 		rowListForOneExp.sortRowsByName();
 		return rowListForOneExp;
+	}
+
+	protected Point writeExperiment_Cell_descriptors(Experiment exp, String charSeries, XSSFSheet sheet, Point pt,
+			EnumXLSExportType xlsExportOption) {
+		boolean transpose = options.transpose;
+		int row = pt.y;
+		int col0 = pt.x;
+		XLSUtils.setValue(sheet, pt, transpose, "..");
+		pt.x++;
+		XLSUtils.setValue(sheet, pt, transpose, "..");
+		pt.x++;
+		int colseries = pt.x;
+		int len = EnumXLSColumnHeader.values().length;
+		for (int i = 0; i < len; i++) {
+			XLSUtils.setValue(sheet, pt, transpose, "--");
+			pt.x++;
+		}
+		pt.x = colseries;
+
+		String filename = exp.getExperimentDirectory();
+		if (filename == null)
+			filename = exp.seqCamData.getImagesDirectory();
+		Path path = Paths.get(filename);
+
+		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		String date = df.format(exp.chainImageFirst_ms);
+
+		String name0 = path.toString();
+		int pos = name0.indexOf("cam");
+		String cam = "-";
+		if (pos > 0) {
+			int pos5 = pos + 5;
+			if (pos5 >= name0.length())
+				pos5 = name0.length() - 1;
+			cam = name0.substring(pos, pos5);
+		}
+
+		String sheetName = sheet.getSheetName();
+
+		int rowmax = -1;
+		for (EnumXLSColumnHeader dumb : EnumXLSColumnHeader.values()) {
+			if (rowmax < dumb.getValue())
+				rowmax = dumb.getValue();
+		}
+
+		List<Cell> cellList = exp.cageBox.cellList;
+		for (int t = 0; t < cellList.size(); t++) {
+			Cell cell = cellList.get(t);
+			String name = cell.getRoiName();
+			int col = getRowIndexFromKymoFileName(name);
+			if (col >= 0)
+				pt.x = colseries + col;
+			int x = pt.x;
+			int y = row;
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.PATH.getValue(), transpose, name0);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
+
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_BOXID.getValue(), transpose,
+					exp.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_EXPT.getValue(), transpose,
+					exp.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STIM.getValue(), transpose,
+					exp.getExperimentField(EnumXLSColumnHeader.EXP_STIM));
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_CONC.getValue(), transpose,
+					exp.getExperimentField(EnumXLSColumnHeader.EXP_CONC));
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STRAIN.getValue(), transpose,
+					exp.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_SEX.getValue(), transpose,
+					exp.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_COND1.getValue(), transpose,
+					exp.getExperimentField(EnumXLSColumnHeader.EXP_COND1));
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_COND2.getValue(), transpose,
+					exp.getExperimentField(EnumXLSColumnHeader.EXP_COND2));
+			// ..............
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
+			// ..............
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cell.strCellStrain);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cell.strCellSex);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cell.cellAge);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose,
+					cell.strCellComment);
+
+		}
+		pt.x = col0;
+		pt.y = rowmax + 1;
+		return pt;
 	}
 }
