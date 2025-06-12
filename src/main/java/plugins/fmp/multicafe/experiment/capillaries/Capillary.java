@@ -200,9 +200,9 @@ public class Capillary implements Comparable<Capillary> {
 			else
 				value = "PI";
 			break;
-		case XYIMAGE:
-		case XYTOPCAGE:
-		case XYTIPCAPS:
+		case XYIMAGEC:
+		case XYTOPCAGEC:
+		case XYTIPCAPSC:
 			if (capSide.equals("L"))
 				value = "x";
 			else

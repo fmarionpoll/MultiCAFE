@@ -13,7 +13,7 @@ public enum EnumXLSExportType {
 	AUTOCORREL("autocorrel", "n observ"), AUTOCORREL_LR("autocorrel_LR", "n observ"),
 	CROSSCORREL("crosscorrel", "n observ"), CROSSCORREL_LR("crosscorrel_LR", "n observ"),
 
-	XYIMAGE("xy-image", "mm"), XYTOPCAGE("xy-topcell", "mm"), XYTIPCAPS("xy-tipcaps", "mm"),
+	XYIMAGEC("xy-image", "mm"), XYTOPCAGEC("xy-topcell", "mm"), XYTIPCAPSC("xy-tipcaps", "mm"),
 	ELLIPSEAXES("ellipse-axes", "mm"), DISTANCE("distance", "mm"), ISALIVE("_alive", "yes/no"),
 	SLEEP("sleep", "yes, no");
 

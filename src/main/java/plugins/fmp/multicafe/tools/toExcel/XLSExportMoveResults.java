@@ -48,11 +48,11 @@ public class XLSExportMoveResults extends XLSExport {
 				String charSeries = CellReference.convertNumToColString(iSeries);
 
 				if (options.xyImage)
-					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYIMAGE);
+					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYIMAGEC);
 				if (options.xyCell)
-					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTOPCAGE);
+					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTOPCAGEC);
 				if (options.xyCapillaries)
-					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTIPCAPS);
+					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTIPCAPSC);
 				if (options.ellipseAxes)
 					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.ELLIPSEAXES);
 				if (options.distance)
@@ -143,11 +143,11 @@ public class XLSExportMoveResults extends XLSExport {
 					flyPositionsResults.excelComputeSleep(cell.flyPositions, (int) expi.camImageBin_ms,
 							options.buildExcelStepMs);
 					break;
-				case XYTOPCAGE:
+				case XYTOPCAGEC:
 					flyPositionsResults.excelComputeNewPointsOrigin(cell.getCenterTopCell(), cell.flyPositions,
 							(int) expi.camImageBin_ms, options.buildExcelStepMs);
 					break;
-				case XYTIPCAPS:
+				case XYTIPCAPSC:
 					flyPositionsResults.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(expi.capillaries),
 							cell.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
 					break;
@@ -155,7 +155,7 @@ public class XLSExportMoveResults extends XLSExport {
 					flyPositionsResults.excelComputeEllipse(cell.flyPositions, (int) expi.camImageBin_ms,
 							options.buildExcelStepMs);
 					break;
-				case XYIMAGE:
+				case XYIMAGEC:
 				default:
 					break;
 				}
