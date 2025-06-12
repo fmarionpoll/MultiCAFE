@@ -152,6 +152,14 @@ public class XLSExportCapillariesResults extends XLSExport {
 		}
 	}
 
+	protected int xlsExportCapillaryResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet,
+			EnumXLSExportType xlsExportOption, int col0, String charSeries) {
+		Point pt = new Point(col0, 0);
+		writeExperiment_Capillary_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
+		pt = writeExperiment_data(rowListForOneExp, sheet, xlsExportOption, pt);
+		return pt.x;
+	}
+
 	private XLSResultsArray getCapDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsExportType) {
 		XLSResultsArray rowListForOneExp = getDescriptorsForOneExperiment(exp, xlsExportType);
 		Experiment expi = exp.getFirstChainedExperiment(true);
@@ -407,14 +415,6 @@ public class XLSExportCapillariesResults extends XLSExport {
 		}
 	}
 
-	protected int xlsExportCapillaryResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet,
-			EnumXLSExportType xlsExportOption, int col0, String charSeries) {
-		Point pt = new Point(col0, 0);
-		writeExperiment_Capillary_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
-		pt = writeExperiment_data(rowListForOneExp, sheet, xlsExportOption, pt);
-		return pt.x;
-	}
-
 	protected Point writeExperiment_Capillary_descriptors(Experiment exp, String charSeries, XSSFSheet sheet, Point pt,
 			EnumXLSExportType xlsExportOption) {
 		boolean transpose = options.transpose;
@@ -459,8 +459,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 		}
 
 		List<Capillary> capList = exp.capillaries.capillariesList;
-		for (int t = 0; t < capList.size(); t++) {
-			Capillary cap = capList.get(t);
+		for (int index = 0; index < capList.size(); index++) {
+			Capillary cap = capList.get(index);
 			String name = cap.getRoiName();
 			int col = getRowIndexFromKymoFileName(name);
 			if (col >= 0)
@@ -504,9 +504,9 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
-					desc_getChoiceTestType(capList, t));
-			if (exp.cageBox.cellList.size() > t / 2) {
-				Cell cell = exp.cageBox.cellList.get(t / 2);
+					desc_getChoiceTestType(capList, index));
+			if (exp.cageBox.cellList.size() > index / 2) {
+				Cell cell = exp.cageBox.cellList.get(index / 2);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose,
 						cell.strCellStrain);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cell.strCellSex);

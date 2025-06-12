@@ -97,6 +97,15 @@ public class XLSExportMoveResults extends XLSExport {
 		return colmax;
 	}
 
+	protected int xlsExportMoveResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet,
+			EnumXLSExportType xlsExportOption, int col0, String charSeries) {
+		Point pt = new Point(col0, 0);
+		writeExperiment_Cell_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
+		// pt = writeData2(rowListForOneExp, sheet, xlsExportOption, pt);
+		pt = writeExperiment_data(rowListForOneExp, sheet, xlsExportOption, pt);
+		return pt.x;
+	}
+
 	private XLSResultsArray getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
 		XLSResultsArray moveDescriptorsForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsOption);
 		Experiment expi = exp.getFirstChainedExperiment(true);
@@ -296,15 +305,6 @@ public class XLSExportMoveResults extends XLSExport {
 		}
 	}
 
-	protected int xlsExportMoveResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet,
-			EnumXLSExportType xlsExportOption, int col0, String charSeries) {
-		Point pt = new Point(col0, 0);
-		writeExperiment_Cell_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
-		// pt = writeData2(rowListForOneExp, sheet, xlsExportOption, pt);
-		pt = writeExperiment_data(rowListForOneExp, sheet, xlsExportOption, pt);
-		return pt.x;
-	}
-
 //	private Point writeData2(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExportType option, Point pt_main) {
 //		int rowseries = pt_main.x + 2;
 //		int columndataarea = pt_main.y;
@@ -469,10 +469,10 @@ public class XLSExportMoveResults extends XLSExport {
 		}
 
 		List<Cell> cellList = exp.cageBox.cellList;
-		for (int t = 0; t < cellList.size(); t++) {
-			Cell cell = cellList.get(t);
+		for (int index = 0; index < cellList.size(); index++) {
+			Cell cell = cellList.get(index);
 			String name = cell.getRoiName();
-			int col = getRowIndexFromKymoFileName(name);
+			int col = getRowIndexFromCellName(name);
 			if (col >= 0)
 				pt.x = colseries + col;
 			int x = pt.x;
