@@ -409,11 +409,12 @@ public class XLSExportMoveResults extends XLSExport {
 
 		for (int i = 0; i < ncells; i++) {
 			Cell cell = expAll.cageBox.cellList.get(i);
-			cell.flyPositions.checkIsAliveFromAliveArray();
+//			cell.flyPositions.checkIsAliveFromAliveArray();
 //			FlyPositions row = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
 //			row.nflies = cell.cellNFlies;
 //			rowsForOneExp.add(row);
-			XLSResults row = new XLSResults(cell.cellRoi2D.getName(), cell.cellNFlies, i, xlsOption, nFrames);
+			XLSResults row = new XLSResults(cell.cellRoi2D.getName(), cell.cellNFlies, cell.getCellNumberInteger(),
+					xlsOption, nFrames);
 			/* add positions to results row! */
 //			row.stimulus = cell.cellStimulus;
 //			row.concentration = cap.capConcentration;
