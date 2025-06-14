@@ -48,19 +48,19 @@ public class XLSExportMoveResults extends XLSExport {
 				String charSeries = CellReference.convertNumToColString(iSeries);
 
 				if (options.xyImage)
-					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYIMAGEC);
+					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYIMAGEC);
 				if (options.xyCell)
-					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTOPCAGEC);
+					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTOPCAGEC);
 				if (options.xyCapillaries)
-					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTIPCAPSC);
+					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTIPCAPSC);
 				if (options.ellipseAxes)
-					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.ELLIPSEAXES);
+					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.ELLIPSEAXES);
 				if (options.distance)
-					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.DISTANCE);
+					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.DISTANCE);
 				if (options.alive)
-					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.ISALIVE);
+					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.ISALIVE);
 				if (options.sleep)
-					getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.SLEEP);
+					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.SLEEP);
 
 				if (!options.collateSeries || exp.chainToPreviousExperiment == null)
 					column += expList.maxSizeOfCellArrays + 2; // TODO check - may be:
@@ -80,9 +80,10 @@ public class XLSExportMoveResults extends XLSExport {
 		System.out.println("XLSExpoportMove:exportToFile() - output finished");
 	}
 
-	private int getMoveDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
-		XLSResultsArray rowListForOneExp = getMoveDataFromOneExperimentSeries(exp, xlsExport);
+	private int o1_getMoveDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
 		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
+
+		XLSResultsArray rowListForOneExp = o2_getMoveDataFromOneExperimentSeries(exp, xlsExport);
 		int colmax = xlsExportMoveResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 
 		if (options.onlyalive) {
@@ -103,76 +104,31 @@ public class XLSExportMoveResults extends XLSExport {
 		return pt.x;
 	}
 
-	private XLSResultsArray getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
+	private ArrayList<FlyPositions> o2_getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
 		XLSResultsArray moveDescriptorsForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsOption);
 		Experiment expi = exp.getFirstChainedExperiment(true);
 
-		List<FlyPositions> dummyPositionsArrayList = new ArrayList<FlyPositions>(0);
-
+		// List<FlyPositions> dummyPositionsArrayList = new ArrayList<FlyPositions>(0);
 		while (expi != null) {
 			int nframes = 1 + (int) (expi.camImageLast_ms - expi.camImageFirst_ms) / options.buildExcelStepMs;
 			if (nframes == 0)
 				continue;
 
-			List<FlyPositions> positionsArrayList = computeMoveResults(expi, xlsOption, options, nframes);
+			double pixelsize = 32. / expi.capillaries.capillariesList.get(0).capPixels;
+			List<FlyPositions> positionsArrayList = FlyPositions.computeMoveResults(expi, xlsOption, options, nframes,
+					pixelsize);
 			// here add resultsArrayList to expAll
 			addMoveResultsTo_rowsForOneExp(expi, positionsArrayList);
 			// addResultsTo_rowsForOneExp(rowListForOneExp, expi, positionsArrayList);
 			expi = expi.chainToNextExperiment;
 		}
 
-		XLSResultsArray xlsResultsArray = combine(moveDescriptorsForOneExp, dummyPositionsArrayList);
+//		XLSResultsArray xlsResultsArray = combine(moveDescriptorsForOneExp, dummyPositionsArrayList);
 		return xlsResultsArray;
 	}
 
 	private XLSResultsArray combine(XLSResultsArray moveDescriptorsForOneExp, List<FlyPositions> positionsArrayList) {
 		return moveDescriptorsForOneExp;
-	}
-
-	protected List<FlyPositions> computeMoveResults(Experiment expi, EnumXLSExportType xlsOption,
-			XLSExportOptions options, int nFrames) {
-		List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cageBox.cellList.size());
-		double pixelsize = 32. / expi.capillaries.capillariesList.get(0).capPixels;
-		for (Cell cell : expi.cageBox.cellList) {
-			FlyPositions flyPositionsResults = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames,
-					options.buildExcelStepMs);
-			flyPositionsResults.nflies = cell.cellNFlies;
-			if (flyPositionsResults.nflies < 0) {
-				flyPositionsResults.setPixelSize(pixelsize);
-				switch (xlsOption) {
-				case DISTANCE:
-					flyPositionsResults.excelComputeDistanceBetweenPoints(cell.flyPositions, (int) expi.camImageBin_ms,
-							options.buildExcelStepMs);
-					break;
-				case ISALIVE:
-					flyPositionsResults.excelComputeIsAlive(cell.flyPositions, (int) expi.camImageBin_ms,
-							options.buildExcelStepMs);
-					break;
-				case SLEEP:
-					flyPositionsResults.excelComputeSleep(cell.flyPositions, (int) expi.camImageBin_ms,
-							options.buildExcelStepMs);
-					break;
-				case XYTOPCAGEC:
-					flyPositionsResults.excelComputeNewPointsOrigin(cell.getCenterTopCell(), cell.flyPositions,
-							(int) expi.camImageBin_ms, options.buildExcelStepMs);
-					break;
-				case XYTIPCAPSC:
-					flyPositionsResults.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(expi.capillaries),
-							cell.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
-					break;
-				case ELLIPSEAXES:
-					flyPositionsResults.excelComputeEllipse(cell.flyPositions, (int) expi.camImageBin_ms,
-							options.buildExcelStepMs);
-					break;
-				case XYIMAGEC:
-				default:
-					break;
-				}
-				flyPositionsResults.convertPixelsToPhysicalValues();
-				positionsArrayList.add(flyPositionsResults);
-			}
-		}
-		return positionsArrayList;
 	}
 
 	private FlyPositions getResultsArrayWithThatName(String testname, List<FlyPositions> resultsArrayList) {
@@ -381,7 +337,6 @@ public class XLSExportMoveResults extends XLSExport {
 		if (expAll == null)
 			return null;
 
-		// loop to get all capillaries into expAll and init rows for this experiment
 		expAll.cageBox.copy(exp.cageBox);
 		expAll.capillaries.copy(exp.capillaries);
 		expAll.firstImage_FileTime = exp.firstImage_FileTime;
@@ -406,19 +361,15 @@ public class XLSExportMoveResults extends XLSExport {
 
 		for (int i = 0; i < ncells; i++) {
 			Cell cell = expAll.cageBox.cellList.get(i);
-//			cell.flyPositions.checkIsAliveFromAliveArray();
+			cell.flyPositions.checkIsAliveFromAliveArray();
 //			FlyPositions row = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
-//			row.nflies = cell.cellNFlies;
-//			rowsForOneExp.add(row);
+
 			XLSResults row = new XLSResults(cell.cellRoi2D.getName(), cell.cellNFlies, cell.getCellNumberInteger(),
 					xlsOption, nFrames);
 			/* add positions to results row! */
-//			row.stimulus = cell.cellStimulus;
-//			row.concentration = cap.capConcentration;
-//			row.cellID = cap.capCellID;
+
 			rowListForOneExp.addRow(row);
 		}
-//		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name_Comparator());
 		rowListForOneExp.sortRowsByName();
 		return rowListForOneExp;
 	}
@@ -428,17 +379,7 @@ public class XLSExportMoveResults extends XLSExport {
 		boolean transpose = options.transpose;
 		int row = pt.y;
 		int col0 = pt.x;
-		XLSUtils.setValue(sheet, pt, transpose, "..");
-		pt.x++;
-		XLSUtils.setValue(sheet, pt, transpose, "..");
-		pt.x++;
-		int colseries = pt.x;
-		int len = EnumXLSColumnHeader.values().length;
-		for (int i = 0; i < len; i++) {
-			XLSUtils.setValue(sheet, pt, transpose, "--");
-			pt.x++;
-		}
-		pt.x = colseries;
+		int colseries = writeSeparator_Between_Experiments(sheet, pt, transpose);
 
 		int rowmax = -1;
 		for (EnumXLSColumnHeader dumb : EnumXLSColumnHeader.values()) {
@@ -448,21 +389,16 @@ public class XLSExportMoveResults extends XLSExport {
 
 		ArrayList<EnumMeasure> measures = xlsExportOption.toMeasures();
 		List<Cell> cellList = exp.cageBox.cellList;
-		int indexCol = col0;
+		int x = colseries;
+		int y = row;
 		for (int index = 0; index < cellList.size(); index++) {
 			Cell cell = cellList.get(index);
 			for (int j = 0; j < measures.size(); j++) {
-				int x = indexCol;
-				indexCol++;
-				// int col = getRowIndexFromCellName(cell.getRoiName());
-				// if (col >= 0)
-				// x = colseries + col;
-				int y = row;
 				XLSExportExperimentParameters(sheet, transpose, x, y, exp);
 				XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
-
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, // sheet.getSheetName();
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose,
 						measures.get(j).toString());
+				x++;
 			}
 		}
 		pt.x = col0;

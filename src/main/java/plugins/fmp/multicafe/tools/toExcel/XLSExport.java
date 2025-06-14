@@ -420,4 +420,12 @@ public class XLSExport {
 		return choiceText;
 	}
 
+	protected int writeSeparator_Between_Experiments(XSSFSheet sheet, Point pt, boolean transpose) {
+		XLSUtils.setValue(sheet, pt, transpose, "..");
+		pt.x++;
+		XLSUtils.setValue(sheet, pt, transpose, "..");
+		pt.x++;
+		return pt.x;
+	}
+
 }

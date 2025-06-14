@@ -364,19 +364,14 @@ public class XLSExportCapillariesResults extends XLSExport {
 		boolean transpose = options.transpose;
 		int row = pt.y;
 		int col0 = pt.x;
-		XLSUtils.setValue(sheet, pt, transpose, "..");
-		pt.x++;
-		XLSUtils.setValue(sheet, pt, transpose, "..");
-		pt.x++;
-		int colseries = pt.x;
+		int colseries = writeSeparator_Between_Experiments(sheet, pt, transpose);
+
 		int len = EnumXLSColumnHeader.values().length;
 		for (int i = 0; i < len; i++) {
 			XLSUtils.setValue(sheet, pt, transpose, "--");
 			pt.x++;
 		}
 		pt.x = colseries;
-
-		String sheetName = sheet.getSheetName();
 
 		int rowmax = -1;
 		for (EnumXLSColumnHeader dumb : EnumXLSColumnHeader.values()) {
@@ -400,7 +395,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 				Cell cell = exp.cageBox.cellList.get(index / 2);
 				XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
 			}
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheet.getSheetName());
 		}
 		pt.x = col0;
 		pt.y = rowmax + 1;

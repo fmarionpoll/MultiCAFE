@@ -10,9 +10,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DMeasures;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
 
 public class FlyPositions {
 	public Double moveThreshold = 50.;
@@ -321,6 +323,51 @@ public class FlyPositions {
 			excel_pos.axis1 = data_pos.axis1;
 			excel_pos.axis2 = data_pos.axis2;
 		}
+	}
+
+	static public List<FlyPositions> computeMoveResults(Experiment expi, EnumXLSExportType xlsOption,
+			XLSExportOptions options, int nFrames, double pixelsize) {
+		List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cageBox.cellList.size());
+		for (Cell cell : expi.cageBox.cellList) {
+			FlyPositions flyPositions = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames,
+					options.buildExcelStepMs);
+			flyPositions.nflies = cell.cellNFlies;
+			if (flyPositions.nflies < 0) {
+				flyPositions.setPixelSize(pixelsize);
+				switch (xlsOption) {
+				case DISTANCE:
+					flyPositions.excelComputeDistanceBetweenPoints(cell.flyPositions, (int) expi.camImageBin_ms,
+							options.buildExcelStepMs);
+					break;
+				case ISALIVE:
+					flyPositions.excelComputeIsAlive(cell.flyPositions, (int) expi.camImageBin_ms,
+							options.buildExcelStepMs);
+					break;
+				case SLEEP:
+					flyPositions.excelComputeSleep(cell.flyPositions, (int) expi.camImageBin_ms,
+							options.buildExcelStepMs);
+					break;
+				case XYTOPCAGEC:
+					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTopCell(), cell.flyPositions,
+							(int) expi.camImageBin_ms, options.buildExcelStepMs);
+					break;
+				case XYTIPCAPSC:
+					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(expi.capillaries),
+							cell.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
+					break;
+				case ELLIPSEAXES:
+					flyPositions.excelComputeEllipse(cell.flyPositions, (int) expi.camImageBin_ms,
+							options.buildExcelStepMs);
+					break;
+				case XYIMAGEC:
+				default:
+					break;
+				}
+				flyPositions.convertPixelsToPhysicalValues();
+				positionsArrayList.add(flyPositions);
+			}
+		}
+		return positionsArrayList;
 	}
 
 	// ------------------------------------------------------------
