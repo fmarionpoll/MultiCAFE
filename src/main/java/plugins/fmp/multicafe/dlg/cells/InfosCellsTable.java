@@ -21,7 +21,7 @@ import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.tools.JComponents.CellTableModel;
 
-public class InfosCageTable extends JPanel {
+public class InfosCellsTable extends JPanel {
 	/**
 	 * 
 	 */
@@ -107,9 +107,9 @@ public class InfosCageTable extends JPanel {
 							cellFrom.valid = true;
 							cellTo.cellNFlies = cellFrom.cellNFlies;
 							cellTo.cellAge = cellFrom.cellAge;
-							cellTo.strCellComment = cellFrom.strCellComment;
-							cellTo.strCellSex = cellFrom.strCellSex;
-							cellTo.strCellStrain = cellFrom.strCellStrain;
+							cellTo.cellComment = cellFrom.cellComment;
+							cellTo.cellSex = cellFrom.cellSex;
+							cellTo.cellStrain = cellFrom.cellStrain;
 						}
 					}
 					cageTableModel.fireTableDataChanged();
@@ -134,16 +134,16 @@ public class InfosCageTable extends JPanel {
 								cell.cellNFlies = cell0.cellNFlies;
 								break;
 							case 2:
-								cell.strCellStrain = cell0.strCellStrain;
+								cell.cellStrain = cell0.cellStrain;
 								break;
 							case 3:
-								cell.strCellSex = cell0.strCellSex;
+								cell.cellSex = cell0.cellSex;
 								break;
 							case 4:
 								cell.cellAge = cell0.cellAge;
 								break;
 							case 5:
-								cell.strCellComment = cell0.strCellComment;
+								cell.cellComment = cell0.cellComment;
 								break;
 							default:
 								break;

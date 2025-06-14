@@ -26,10 +26,10 @@ public class Cell {
 	public FlyPositions flyPositions = new FlyPositions();
 	public int cellNFlies = 0;
 	public int cellAge = 5;
-	public String strCellComment = "..";
-	public String strCellSex = "..";
-	public String strCellStrain = "..";
-	private String strCellNumber = null;
+	public String cellComment = "..";
+	public String cellSex = "..";
+	public String cellStrain = "..";
+	private String cellNumber = null;
 	public boolean valid = false;
 	public boolean bDetect = true;
 	public boolean initialflyRemoved = false;
@@ -62,9 +62,9 @@ public class Cell {
 	public boolean xmlSaveCellParameters(Element xmlVal) {
 		XMLUtil.setElementIntValue(xmlVal, ID_NFLIES, cellNFlies);
 		XMLUtil.setElementIntValue(xmlVal, ID_AGE, cellAge);
-		XMLUtil.setElementValue(xmlVal, ID_COMMENT, strCellComment);
-		XMLUtil.setElementValue(xmlVal, ID_SEX, strCellSex);
-		XMLUtil.setElementValue(xmlVal, ID_STRAIN, strCellStrain);
+		XMLUtil.setElementValue(xmlVal, ID_COMMENT, cellComment);
+		XMLUtil.setElementValue(xmlVal, ID_SEX, cellSex);
+		XMLUtil.setElementValue(xmlVal, ID_STRAIN, cellStrain);
 		return true;
 	}
 
@@ -108,9 +108,9 @@ public class Cell {
 	public boolean xmlLoadCellParameters(Element xmlVal) {
 		cellNFlies = XMLUtil.getElementIntValue(xmlVal, ID_NFLIES, cellNFlies);
 		cellAge = XMLUtil.getElementIntValue(xmlVal, ID_AGE, cellAge);
-		strCellComment = XMLUtil.getElementValue(xmlVal, ID_COMMENT, strCellComment);
-		strCellSex = XMLUtil.getElementValue(xmlVal, ID_SEX, strCellSex);
-		strCellStrain = XMLUtil.getElementValue(xmlVal, ID_STRAIN, strCellStrain);
+		cellComment = XMLUtil.getElementValue(xmlVal, ID_COMMENT, cellComment);
+		cellSex = XMLUtil.getElementValue(xmlVal, ID_SEX, cellSex);
+		cellStrain = XMLUtil.getElementValue(xmlVal, ID_STRAIN, cellStrain);
 		return true;
 	}
 
@@ -139,12 +139,12 @@ public class Cell {
 	public String csvExport_CELL_Data(String sep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = new ArrayList<String>();
-		row.add(strCellNumber);
+		row.add(cellNumber);
 		row.add(Integer.toString(cellNFlies));
 		row.add(Integer.toString(cellAge));
-		row.add(strCellComment);
-		row.add(strCellStrain);
-		row.add(strCellSex);
+		row.add(cellComment);
+		row.add(cellStrain);
+		row.add(cellSex);
 		row.add(cellRoi2D.getName());
 
 		if (cellRoi2D != null) {
@@ -182,11 +182,11 @@ public class Cell {
 		StringBuffer sbf = new StringBuffer();
 		switch (measureType) {
 		case POSITION:
-			flyPositions.cvsExport_Parameter_ToRow(sbf, "t(i)", strCellNumber, sep);
-			flyPositions.cvsExport_Parameter_ToRow(sbf, "x(i)", strCellNumber, sep);
-			flyPositions.cvsExport_Parameter_ToRow(sbf, "y(i)", strCellNumber, sep);
-			flyPositions.cvsExport_Parameter_ToRow(sbf, "w(i)", strCellNumber, sep);
-			flyPositions.cvsExport_Parameter_ToRow(sbf, "h(i)", strCellNumber, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "t(i)", cellNumber, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "x(i)", cellNumber, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "y(i)", cellNumber, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "w(i)", cellNumber, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "h(i)", cellNumber, sep);
 			break;
 		default:
 			break;
@@ -196,17 +196,17 @@ public class Cell {
 
 	public void csvImport_CAGE_Header(String[] data) {
 		int i = 0;
-		strCellNumber = data[i];
+		cellNumber = data[i];
 		i++;
 		cellNFlies = Integer.valueOf(data[i]);
 		i++;
 		cellAge = Integer.valueOf(data[i]);
 		i++;
-		strCellComment = data[i];
+		cellComment = data[i];
 		i++;
-		strCellStrain = data[i];
+		cellStrain = data[i];
 		i++;
-		strCellSex = data[i];
+		cellSex = data[i];
 		i++;
 		String cellROI_name = data[i];
 		i++;
@@ -250,17 +250,17 @@ public class Cell {
 	// ------------------------------------
 
 	public String getCellNumber() {
-		if (strCellNumber == null)
-			strCellNumber = cellRoi2D.getName().substring(cellRoi2D.getName().length() - 3);
-		return strCellNumber;
+		if (cellNumber == null)
+			cellNumber = cellRoi2D.getName().substring(cellRoi2D.getName().length() - 3);
+		return cellNumber;
 	}
 
 	public int getCellNumberInteger() {
 		int cellnb = -1;
-		strCellNumber = getCellNumber();
-		if (strCellNumber != null) {
+		cellNumber = getCellNumber();
+		if (cellNumber != null) {
 			try {
-				return Integer.parseInt(strCellNumber);
+				return Integer.parseInt(cellNumber);
 			} catch (NumberFormatException e) {
 				return cellnb;
 			}
@@ -299,8 +299,10 @@ public class Cell {
 	public void copyCell(Cell cellFrom) {
 		cellRoi2D = cellFrom.cellRoi2D;
 		cellNFlies = cellFrom.cellNFlies;
-		strCellComment = cellFrom.strCellComment;
-		strCellNumber = cellFrom.strCellNumber;
+		cellComment = cellFrom.cellComment;
+		cellNumber = cellFrom.cellNumber;
+		cellStrain = cellFrom.cellStrain;
+		cellSex = cellFrom.cellSex;
 		valid = false;
 		flyPositions.copyPositions(cellFrom.flyPositions);
 	}

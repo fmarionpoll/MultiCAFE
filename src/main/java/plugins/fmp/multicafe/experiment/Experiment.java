@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -601,6 +602,15 @@ public class Experiment {
 	public String getExperimentField(EnumXLSColumnHeader fieldEnumCode) {
 		String strField = null;
 		switch (fieldEnumCode) {
+		case EXP_PATH:
+			strField = getPath();
+			break;
+		case EXP_DATE:
+			strField = getDate();
+			break;
+		case EXP_CAM:
+			strField = getCam();
+			break;
 		case EXP_STIM:
 			strField = field_comment1;
 			break;
@@ -627,6 +637,31 @@ public class Experiment {
 			break;
 		default:
 			break;
+		}
+		return strField;
+	}
+
+	private String getPath() {
+		String filename = getExperimentDirectory();
+		if (filename == null)
+			filename = seqCamData.getImagesDirectory();
+		Path path = Paths.get(filename);
+		return path.toString();
+	}
+
+	private String getDate() {
+		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		return df.format(chainImageFirst_ms);
+	}
+
+	private String getCam() {
+		String strField = getPath();
+		int pos = strField.indexOf("cam");
+		if (pos > 0) {
+			int pos5 = pos + 5;
+			if (pos5 >= strField.length())
+				pos5 = strField.length() - 1;
+			strField = strField.substring(pos, pos5);
 		}
 		return strField;
 	}

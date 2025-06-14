@@ -3,9 +3,6 @@ package plugins.fmp.multicafe.tools.toExcel;
 import java.awt.Point;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -442,25 +439,6 @@ public class XLSExportMoveResults extends XLSExport {
 			pt.x++;
 		}
 		pt.x = colseries;
-
-		String filename = exp.getExperimentDirectory();
-		if (filename == null)
-			filename = exp.seqCamData.getImagesDirectory();
-		Path path = Paths.get(filename);
-
-		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-		String date = df.format(exp.chainImageFirst_ms);
-
-		String name0 = path.toString();
-		int pos = name0.indexOf("cam");
-		String cam = "-";
-		if (pos > 0) {
-			int pos5 = pos + 5;
-			if (pos5 >= name0.length())
-				pos5 = name0.length() - 1;
-			cam = name0.substring(pos, pos5);
-		}
-
 		String sheetName = sheet.getSheetName();
 
 		int rowmax = -1;
@@ -472,41 +450,15 @@ public class XLSExportMoveResults extends XLSExport {
 		List<Cell> cellList = exp.cageBox.cellList;
 		for (int index = 0; index < cellList.size(); index++) {
 			Cell cell = cellList.get(index);
-			String name = cell.getRoiName();
-			int col = getRowIndexFromCellName(name);
+			int col = getRowIndexFromCellName(cell.getRoiName());
 			if (col >= 0)
 				pt.x = colseries + col;
 			int x = pt.x;
 			int y = row;
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.PATH.getValue(), transpose, name0);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
 
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_BOXID.getValue(), transpose,
-					exp.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_EXPT.getValue(), transpose,
-					exp.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STIM.getValue(), transpose,
-					exp.getExperimentField(EnumXLSColumnHeader.EXP_STIM));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_CONC.getValue(), transpose,
-					exp.getExperimentField(EnumXLSColumnHeader.EXP_CONC));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STRAIN.getValue(), transpose,
-					exp.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_SEX.getValue(), transpose,
-					exp.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_COND1.getValue(), transpose,
-					exp.getExperimentField(EnumXLSColumnHeader.EXP_COND1));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_COND2.getValue(), transpose,
-					exp.getExperimentField(EnumXLSColumnHeader.EXP_COND2));
-			// ..............
+			XLSExportExperimentParameters(sheet, transpose, x, y, exp);
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
-			// ..............
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cell.strCellStrain);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cell.strCellSex);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cell.cellAge);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose,
-					cell.strCellComment);
-
+			XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
 		}
 		pt.x = col0;
 		pt.y = rowmax + 1;

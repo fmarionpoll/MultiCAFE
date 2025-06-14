@@ -6,18 +6,22 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum EnumXLSColumnHeader {
-	PATH("Path", 0, XLSMeasureType.COMMON), DATE("Date", 1, XLSMeasureType.COMMON),
-	EXP_BOXID("Box_ID", 2, XLSMeasureType.COMMON), CAM("Cam", 3, XLSMeasureType.COMMON),
+	EXP_PATH("Path", 0, XLSMeasureType.COMMON), EXP_DATE("Date", 1, XLSMeasureType.COMMON),
+	EXP_BOXID("Box_ID", 2, XLSMeasureType.COMMON), EXP_CAM("Cam", 3, XLSMeasureType.COMMON),
 	EXP_EXPT("Expmt", 4, XLSMeasureType.COMMON), EXP_STIM("Stim", 5, XLSMeasureType.COMMON),
-	EXP_CONC("Conc", 6, XLSMeasureType.COMMON), EXP_STRAIN("Strain", 7, XLSMeasureType.COMMON),
-	EXP_SEX("Sex", 8, XLSMeasureType.COMMON), EXP_COND1("Cond1", 9, XLSMeasureType.COMMON),
-	EXP_COND2("Cond2", 10, XLSMeasureType.COMMON), CAP("Cap", 11, XLSMeasureType.CAP),
-	CAP_VOLUME("Cap_ul", 12, XLSMeasureType.CAP), CAP_PIXELS("Cap_npixels", 13, XLSMeasureType.CAP),
-	CHOICE_NOCHOICE("Choice", 14, XLSMeasureType.CAP), CAP_STIM("Cap_stimulus", 15, XLSMeasureType.CAP),
-	CAP_CONC("Cap_concentration", 16, XLSMeasureType.CAP), CAP_NFLIES("Nflies", 17, XLSMeasureType.CAP),
-	CAP_CAGEINDEX("Cell", 18, XLSMeasureType.COMMON), CAGEID("Cell_ID", 19, XLSMeasureType.COMMON),
-	CAGE_STRAIN("Cell_strain", 20, XLSMeasureType.COMMON), CAGE_SEX("Cell_sex", 21, XLSMeasureType.COMMON),
-	CAGE_AGE("Cell_age", 22, XLSMeasureType.COMMON), CAGE_COMMENT("Cell_comment", 23, XLSMeasureType.COMMON),
+	EXP_CONC("Conc", 6, XLSMeasureType.COMMON), EXP_COND1("Cond1", 9, XLSMeasureType.COMMON),
+	EXP_COND2("Cond2", 10, XLSMeasureType.COMMON), EXP_STRAIN("Strain", 7, XLSMeasureType.COMMON),
+	EXP_SEX("Sex", 8, XLSMeasureType.COMMON),
+	//
+	CAP("Cap", 11, XLSMeasureType.CAP), CAP_VOLUME("Cap_ul", 12, XLSMeasureType.CAP),
+	CAP_PIXELS("Cap_npixels", 13, XLSMeasureType.CAP), CHOICE_NOCHOICE("Choice", 14, XLSMeasureType.CAP),
+	CAP_STIM("Cap_stimulus", 15, XLSMeasureType.CAP), CAP_CONC("Cap_concentration", 16, XLSMeasureType.CAP),
+	CAP_NFLIES("Nflies", 17, XLSMeasureType.CAP), // CAP_CAGEINDEX("Cell", 18, XLSMeasureType.CAP),
+	//
+	CELL_INDEX("Cell", 18, XLSMeasureType.COMMON), CELL_ID("Cell_ID", 19, XLSMeasureType.COMMON),
+	CELL_STRAIN("Cell_strain", 20, XLSMeasureType.COMMON), CELL_SEX("Cell_sex", 21, XLSMeasureType.COMMON),
+	CELL_AGE("Cell_age", 22, XLSMeasureType.COMMON), CELL_COMMENT("Cell_comment", 23, XLSMeasureType.COMMON),
+	//
 	DUM4("Dum4", 24, XLSMeasureType.COMMON);
 
 	private final String name;

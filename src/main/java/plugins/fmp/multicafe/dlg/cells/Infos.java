@@ -27,7 +27,7 @@ public class Infos extends JPanel {
 	private static final long serialVersionUID = -3325915033686366985L;
 	private JButton editCageButton = new JButton("Edit cage infos...");
 	private MultiCAFE parent0 = null;
-	private InfosCageTable dialog = null;
+	private InfosCellsTable dialog = null;
 	private List<Cell> cellsArrayCopy = new ArrayList<Cell>();
 
 	JRadioButton useCapillaries = new JRadioButton("capillary");
@@ -83,7 +83,7 @@ public class Infos extends JPanel {
 				if (exp != null) {
 					exp.capillaries.transferDescriptionToCapillaries();
 					exp.cageBox.transferNFliesFromCapillariesToCageBox(exp.capillaries.capillariesList);
-					dialog = new InfosCageTable();
+					dialog = new InfosCellsTable();
 					dialog.initialize(parent0, cellsArrayCopy);
 				}
 			}

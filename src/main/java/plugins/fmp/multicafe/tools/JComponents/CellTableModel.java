@@ -83,13 +83,13 @@ public class CellTableModel extends AbstractTableModel {
 			case 1:
 				return cell.cellNFlies;
 			case 2:
-				return cell.strCellStrain;
+				return cell.cellStrain;
 			case 3:
-				return cell.strCellSex;
+				return cell.cellSex;
 			case 4:
 				return cell.cellAge;
 			case 5:
-				return cell.strCellComment;
+				return cell.cellComment;
 			}
 		}
 		return null;
@@ -121,16 +121,16 @@ public class CellTableModel extends AbstractTableModel {
 				cell.cellNFlies = (int) aValue;
 				break;
 			case 2:
-				cell.strCellStrain = aValue.toString();
+				cell.cellStrain = aValue.toString();
 				break;
 			case 3:
-				cell.strCellSex = aValue.toString();
+				cell.cellSex = aValue.toString();
 				break;
 			case 4:
 				cell.cellAge = (int) aValue;
 				break;
 			case 5:
-				cell.strCellComment = aValue.toString();
+				cell.cellComment = aValue.toString();
 				break;
 			}
 		}
