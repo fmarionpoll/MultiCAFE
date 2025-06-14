@@ -439,7 +439,6 @@ public class XLSExportMoveResults extends XLSExport {
 			pt.x++;
 		}
 		pt.x = colseries;
-		String sheetName = sheet.getSheetName();
 
 		int rowmax = -1;
 		for (EnumXLSColumnHeader dumb : EnumXLSColumnHeader.values()) {
@@ -447,18 +446,24 @@ public class XLSExportMoveResults extends XLSExport {
 				rowmax = dumb.getValue();
 		}
 
+		ArrayList<EnumMeasure> measures = xlsExportOption.toMeasures();
 		List<Cell> cellList = exp.cageBox.cellList;
+		int indexCol = col0;
 		for (int index = 0; index < cellList.size(); index++) {
 			Cell cell = cellList.get(index);
-			int col = getRowIndexFromCellName(cell.getRoiName());
-			if (col >= 0)
-				pt.x = colseries + col;
-			int x = pt.x;
-			int y = row;
+			for (int j = 0; j < measures.size(); j++) {
+				int x = indexCol;
+				indexCol++;
+				// int col = getRowIndexFromCellName(cell.getRoiName());
+				// if (col >= 0)
+				// x = colseries + col;
+				int y = row;
+				XLSExportExperimentParameters(sheet, transpose, x, y, exp);
+				XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
 
-			XLSExportExperimentParameters(sheet, transpose, x, y, exp);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
-			XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, // sheet.getSheetName();
+						measures.get(j).toString());
+			}
 		}
 		pt.x = col0;
 		pt.y = rowmax + 1;

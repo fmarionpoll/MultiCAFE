@@ -315,7 +315,7 @@ public class XLSExport {
 		}
 	}
 
-	void XLSExportExperimentParameters(XSSFSheet sheet, boolean transpose, int x, int y, Experiment exp) {
+	protected void XLSExportExperimentParameters(XSSFSheet sheet, boolean transpose, int x, int y, Experiment exp) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_PATH.getValue(), transpose,
 				exp.getExperimentField(EnumXLSColumnHeader.EXP_PATH));
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_DATE.getValue(), transpose,
@@ -340,8 +340,8 @@ public class XLSExport {
 				exp.getExperimentField(EnumXLSColumnHeader.EXP_COND2));
 	}
 
-	void XLSExportCellParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries, Experiment exp,
-			Cell cell) {
+	protected void XLSExportCellParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
+			Experiment exp, Cell cell) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_INDEX.getValue(), transpose,
 				cell.getCellNumberInteger());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_ID.getValue(), transpose,
@@ -352,7 +352,7 @@ public class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_COMMENT.getValue(), transpose, cell.cellComment);
 	}
 
-	void XLSExportCapillaryParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
+	protected void XLSExportCapillaryParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
 			Experiment exp, Capillary cap, EnumXLSExportType xlsExportOption, int index) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose,
 				exp.capillaries.capillariesDescription.volume);

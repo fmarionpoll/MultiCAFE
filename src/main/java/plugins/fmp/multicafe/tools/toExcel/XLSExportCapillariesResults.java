@@ -396,11 +396,11 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 			XLSExportExperimentParameters(sheet, transpose, x, y, exp);
 			XLSExportCapillaryParameters(sheet, transpose, x, y, charSeries, exp, cap, xlsExportOption, index);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
 			if (exp.cageBox.cellList.size() > index / 2) {
 				Cell cell = exp.cageBox.cellList.get(index / 2);
 				XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
 			}
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
 		}
 		pt.x = col0;
 		pt.y = rowmax + 1;
