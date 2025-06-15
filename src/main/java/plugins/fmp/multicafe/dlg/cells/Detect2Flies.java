@@ -185,7 +185,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		if (e.getSource() == thresholdSpinner) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null)
-				exp.cageBox.detect_threshold = (int) thresholdSpinner.getValue();
+				exp.cells.detect_threshold = (int) thresholdSpinner.getValue();
 		}
 	}
 
@@ -277,11 +277,11 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		int nitems = 1;
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
-			nitems = exp.cageBox.cellList.size() + 1;
+			nitems = exp.cells.cellList.size() + 1;
 		if (allCellsComboBox.getItemCount() != nitems) {
 			allCellsComboBox.removeAllItems();
 			allCellsComboBox.addItem("all cells");
-			for (Cell cell : exp.cageBox.cellList) {
+			for (Cell cell : exp.cells.cellList) {
 				allCellsComboBox.addItem(cell.getCellNumber());
 			}
 		}

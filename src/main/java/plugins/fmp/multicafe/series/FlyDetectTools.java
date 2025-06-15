@@ -160,10 +160,10 @@ public class FlyDetectTools {
 
 	public void initParametersForDetection(Experiment exp, BuildSeriesOptions options) {
 		this.options = options;
-		exp.cageBox.detect_nframes = (int) (((exp.cageBox.detectLast_Ms - exp.cageBox.detectFirst_Ms)
-				/ exp.cageBox.detectBin_Ms) + 1);
-		exp.cageBox.clearAllMeasures(options.detectCell);
-		box = exp.cageBox;
+		exp.cells.detect_nframes = (int) (((exp.cells.detectLast_Ms - exp.cells.detectFirst_Ms)
+				/ exp.cells.detectBin_Ms) + 1);
+		exp.cells.clearAllMeasures(options.detectCell);
+		box = exp.cells;
 		box.computeBooleanMasksForCells();
 		rectangleAllCells = null;
 		for (Cell cell : box.cellList) {

@@ -327,8 +327,8 @@ public class FlyPositions {
 
 	static public List<FlyPositions> computeMoveResults(Experiment expi, EnumXLSExportType xlsOption,
 			XLSExportOptions options, int nFrames, double pixelsize) {
-		List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cageBox.cellList.size());
-		for (Cell cell : expi.cageBox.cellList) {
+		List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cells.cellList.size());
+		for (Cell cell : expi.cells.cellList) {
 			FlyPositions flyPositions = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames,
 					options.buildExcelStepMs);
 			flyPositions.nflies = cell.cellNFlies;

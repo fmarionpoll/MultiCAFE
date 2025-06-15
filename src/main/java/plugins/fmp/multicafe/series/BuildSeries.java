@@ -132,20 +132,20 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 	}
 
 	protected boolean checkBoundsForCells(Experiment exp) {
-		exp.cageBox.detectBin_Ms = options.t_Ms_BinDuration;
+		exp.cells.detectBin_Ms = options.t_Ms_BinDuration;
 		if (options.isFrameFixed) {
-			exp.cageBox.detectFirst_Ms = options.t_Ms_First;
-			exp.cageBox.detectLast_Ms = options.t_Ms_Last;
-			if (exp.cageBox.detectLast_Ms > exp.camImageLast_ms)
-				exp.cageBox.detectLast_Ms = exp.camImageLast_ms;
+			exp.cells.detectFirst_Ms = options.t_Ms_First;
+			exp.cells.detectLast_Ms = options.t_Ms_Last;
+			if (exp.cells.detectLast_Ms > exp.camImageLast_ms)
+				exp.cells.detectLast_Ms = exp.camImageLast_ms;
 		} else {
-			exp.cageBox.detectFirst_Ms = exp.camImageFirst_ms;
-			exp.cageBox.detectLast_Ms = exp.camImageLast_ms;
+			exp.cells.detectFirst_Ms = exp.camImageFirst_ms;
+			exp.cells.detectLast_Ms = exp.camImageLast_ms;
 		}
-		exp.cageBox.detect_threshold = options.threshold;
+		exp.cells.detect_threshold = options.threshold;
 
 		boolean flag = true;
-		if (exp.cageBox.cellList.size() < 1) {
+		if (exp.cells.cellList.size() < 1) {
 			System.out.println("BuildSeries:checkBoundsForCells ! skipped experiment with no cell: "
 					+ exp.getExperimentDirectory());
 			flag = false;

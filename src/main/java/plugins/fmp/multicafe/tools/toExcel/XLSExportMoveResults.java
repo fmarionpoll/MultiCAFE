@@ -31,7 +31,7 @@ public class XLSExportMoveResults extends XLSExport {
 		expList.chainExperimentsUsingKymoIndexes(options.collateSeries);
 		expList.setFirstImageForAllExperiments(options.collateSeries);
 		expAll = expList.get_MsTime_of_StartAndEnd_AllExperiments(options);
-		expList.maxSizeOfCellArrays = expAll.cageBox.cellList.size();
+		expList.maxSizeOfCellArrays = expAll.cells.cellList.size();
 
 		ProgressFrame progress = new ProgressFrame("Export data to Excel");
 		int nbexpts = expList.getItemCount();
@@ -235,17 +235,17 @@ public class XLSExportMoveResults extends XLSExport {
 	}
 
 	private void trimDeadsFromRowMoveData(XLSResultsArray rowListForOneExp, Experiment exp) {
-		for (Cell cell : exp.cageBox.cellList) {
+		for (Cell cell : exp.cells.cellList) {
 			int cellNumber = Integer.valueOf(cell.cellRoi2D.getName().substring(4));
 			int ilastalive = 0;
 			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
 				while (expi.chainToNextExperiment != null
-						&& expi.chainToNextExperiment.cageBox.isFlyAlive(cellNumber)) {
+						&& expi.chainToNextExperiment.cells.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
-				long lastIntervalFlyAlive_Ms = expi.cageBox.getLastIntervalFlyAlive(cellNumber)
-						* expi.cageBox.detectBin_Ms;
+				long lastIntervalFlyAlive_Ms = expi.cells.getLastIntervalFlyAlive(cellNumber)
+						* expi.cells.detectBin_Ms;
 				long lastMinuteAlive = lastIntervalFlyAlive_Ms + expi.camImageFirst_ms - expAll.camImageFirst_ms;
 				ilastalive = (int) (lastMinuteAlive / options.buildExcelStepMs);
 			}
@@ -345,7 +345,7 @@ public class XLSExportMoveResults extends XLSExport {
 		if (expAll == null)
 			return null;
 
-		expAll.cageBox.copy(exp.cageBox);
+		expAll.cells.copy(exp.cells);
 		expAll.capillaries.copy(exp.capillaries);
 		expAll.firstImage_FileTime = exp.firstImage_FileTime;
 		expAll.lastImage_FileTime = exp.lastImage_FileTime;
@@ -355,7 +355,7 @@ public class XLSExportMoveResults extends XLSExport {
 
 		Experiment expi = exp.chainToNextExperiment;
 		while (expi != null) {
-			expAll.cageBox.mergeLists(expi.cageBox);
+			expAll.cells.mergeLists(expi.cells);
 			expAll.lastImage_FileTime = expi.lastImage_FileTime;
 			expi = expi.chainToNextExperiment;
 		}
@@ -363,12 +363,12 @@ public class XLSExportMoveResults extends XLSExport {
 		expAll.camImageFirst_ms = expAll.firstImage_FileTime.toMillis();
 		expAll.camImageLast_ms = expAll.lastImage_FileTime.toMillis();
 		int nFrames = (int) ((expAll.camImageLast_ms - expAll.camImageFirst_ms) / options.buildExcelStepMs + 1);
-		int ncells = expAll.cageBox.cellList.size();
+		int ncells = expAll.cells.cellList.size();
 
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(ncells);
 
 		for (int i = 0; i < ncells; i++) {
-			Cell cell = expAll.cageBox.cellList.get(i);
+			Cell cell = expAll.cells.cellList.get(i);
 			cell.flyPositions.checkIsAliveFromAliveArray();
 //			FlyPositions row = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
 
@@ -396,7 +396,7 @@ public class XLSExportMoveResults extends XLSExport {
 		}
 
 		ArrayList<EnumMeasure> measures = xlsExportOption.toMeasures();
-		List<Cell> cellList = exp.cageBox.cellList;
+		List<Cell> cellList = exp.cells.cellList;
 		int x = colseries;
 		int y = row;
 		for (int index = 0; index < cellList.size(); index++) {

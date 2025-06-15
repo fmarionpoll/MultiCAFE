@@ -64,7 +64,7 @@ public class CellTableModel extends AbstractTableModel {
 	public int getRowCount() {
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			return exp.cageBox.cellList.size();
+			return exp.cells.cellList.size();
 		}
 		return 0;
 	}
@@ -74,7 +74,7 @@ public class CellTableModel extends AbstractTableModel {
 		Cell cell = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			cell = exp.cageBox.cellList.get(rowIndex);
+			cell = exp.cells.cellList.get(rowIndex);
 		}
 		if (cell != null) {
 			switch (columnIndex) {
@@ -110,7 +110,7 @@ public class CellTableModel extends AbstractTableModel {
 		Cell cell = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			cell = exp.cageBox.cellList.get(rowIndex);
+			cell = exp.cells.cellList.get(rowIndex);
 		}
 		if (cell != null) {
 			switch (columnIndex) {

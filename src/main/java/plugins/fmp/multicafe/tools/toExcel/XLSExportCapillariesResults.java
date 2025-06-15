@@ -185,7 +185,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 			EnumXLSExportType xlsOption, XLSExportOptions options) {
 
 		// loop to get all capillaries into expAll and init rows for this experiment
-		expAll.cageBox.copy(exp.cageBox);
+		expAll.cells.copy(exp.cells);
 		expAll.capillaries.copy(exp.capillaries);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
 		expAll.copyExperimentFields(exp);
@@ -291,7 +291,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 	}
 
 	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
-		for (Cell cell : exp.cageBox.cellList) {
+		for (Cell cell : exp.cells.cellList) {
 			String roiname = cell.cellRoi2D.getName();
 			if (roiname.length() < 4)
 				continue;
@@ -305,10 +305,10 @@ public class XLSExportCapillariesResults extends XLSExport {
 			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
 				while (expi.chainToNextExperiment != null
-						&& expi.chainToNextExperiment.cageBox.isFlyAlive(cellNumber)) {
+						&& expi.chainToNextExperiment.cells.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
-				int lastIntervalFlyAlive = expi.cageBox.getLastIntervalFlyAlive(cellNumber);
+				int lastIntervalFlyAlive = expi.cells.getLastIntervalFlyAlive(cellNumber);
 				int lastMinuteAlive = (int) (lastIntervalFlyAlive * expi.camImageBin_ms
 						+ (expi.camImageFirst_ms - expAll.camImageFirst_ms));
 				ilastalive = (int) (lastMinuteAlive / expAll.kymoBin_ms);
@@ -473,8 +473,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 			XLSExportExperimentParameters(sheet, transpose, x, y, exp);
 			XLSExportCapillaryParameters(sheet, transpose, x, y, charSeries, exp, cap, xlsExportOption, index);
-			if (exp.cageBox.cellList.size() > index / 2) {
-				Cell cell = exp.cageBox.cellList.get(index / 2);
+			if (exp.cells.cellList.size() > index / 2) {
+				Cell cell = exp.cells.cellList.get(index / 2);
 				XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
 			}
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheet.getSheetName());

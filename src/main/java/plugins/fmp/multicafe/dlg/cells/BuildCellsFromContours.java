@@ -103,9 +103,9 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
-					exp.cageBox.cageBoxFromROIs(exp.seqCamData);
+					exp.cells.cageBoxFromROIs(exp.seqCamData);
 					if (exp.capillaries.capillariesList.size() > 0)
-						exp.cageBox.transferNFliesFromCapillariesToCageBox(exp.capillaries.capillariesList);
+						exp.cells.transferNFliesFromCapillariesToCageBox(exp.capillaries.capillariesList);
 				}
 			}
 		});
@@ -146,8 +146,8 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 			overlayThreshold.setSequence(seqCamData);
 			seqCamData.seq.addOverlay(overlayThreshold);
 		}
-		exp.cageBox.detect_threshold = (int) thresholdSpinner.getValue();
-		overlayThreshold.setThresholdTransform(exp.cageBox.detect_threshold,
+		exp.cells.detect_threshold = (int) thresholdSpinner.getValue();
+		overlayThreshold.setThresholdTransform(exp.cells.detect_threshold,
 				(ImageTransformEnums) transformForLevelsComboBox.getSelectedItem(), false);
 		seqCamData.seq.overlayChanged(overlayThreshold);
 		seqCamData.seq.dataChanged();
@@ -180,7 +180,7 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
-		exp.cageBox.clearCellList();
+		exp.cells.clearCellList();
 
 		int t = exp.seqCamData.currentFrame;
 		IcyBufferedImage img0 = IcyBufferedImageUtil.convertToType(overlayThreshold.getTransformedImage(t),

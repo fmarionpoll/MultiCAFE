@@ -86,7 +86,7 @@ public class InfosCellsTable extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					cageArrayCopy.clear();
-					for (Cell cell : exp.cageBox.cellList) {
+					for (Cell cell : exp.cells.cellList) {
 						cageArrayCopy.add(cell);
 					}
 					pasteButton.setEnabled(true);
@@ -101,7 +101,7 @@ public class InfosCellsTable extends JPanel {
 				if (exp != null) {
 					for (Cell cellFrom : cageArrayCopy) {
 						cellFrom.valid = false;
-						for (Cell cellTo : exp.cageBox.cellList) {
+						for (Cell cellTo : exp.cells.cellList) {
 							if (!cellFrom.cellRoi2D.getName().equals(cellTo.cellRoi2D.getName()))
 								continue;
 							cellFrom.valid = true;
@@ -125,8 +125,8 @@ public class InfosCellsTable extends JPanel {
 					int rowIndex = tableView.getSelectedRow();
 					int columnIndex = tableView.getSelectedColumn();
 					if (rowIndex >= 0) {
-						Cell cell0 = exp.cageBox.cellList.get(rowIndex);
-						for (Cell cell : exp.cageBox.cellList) {
+						Cell cell0 = exp.cells.cellList.get(rowIndex);
+						for (Cell cell : exp.cells.cellList) {
 							if (cell.cellRoi2D.getName().equals(cell0.cellRoi2D.getName()))
 								continue;
 							switch (columnIndex) {
@@ -160,7 +160,7 @@ public class InfosCellsTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.cageBox.setFirstAndLastCellToZeroFly();
+					exp.cells.setFirstAndLastCellToZeroFly();
 					cageTableModel.fireTableDataChanged();
 				}
 			}
@@ -172,7 +172,7 @@ public class InfosCellsTable extends JPanel {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			exp.cageBox.transferNFliesFromCageBoxToCapillaries(exp.capillaries.capillariesList);
+			exp.cells.transferNFliesFromCageBoxToCapillaries(exp.capillaries.capillariesList);
 			parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);
 		}
 	}
