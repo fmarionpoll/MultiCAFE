@@ -544,7 +544,7 @@ public class Experiment {
 		if (!f.exists())
 			moveCageMeasuresToExperimentDirectory(pathToMeasures);
 
-		boolean flag = cells.load_CageBox(getExperimentDirectory());
+		boolean flag = cells.load_Cells(getExperimentDirectory());
 		if (flag)
 			cells.cageBoxToROIs(seqCamData);
 		return flag;
@@ -560,7 +560,7 @@ public class Experiment {
 	}
 
 	public boolean saveCageMeasures() {
-		return cells.save_CageBox(getExperimentDirectory());
+		return cells.save_Cells(getExperimentDirectory());
 	}
 
 	public void saveCageAndMeasures() {

@@ -53,7 +53,7 @@ public class Cells {
 
 	// ---------------------------------
 
-	public boolean load_CageBox(String directory) {
+	public boolean load_Cells(String directory) {
 		boolean flag = false;
 		try {
 			flag = csvLoad_CageBox(directory);
@@ -71,7 +71,7 @@ public class Cells {
 		return flag;
 	}
 
-	public boolean save_CageBox(String directory) {
+	public boolean save_Cells(String directory) {
 		if (directory == null)
 			return false;
 

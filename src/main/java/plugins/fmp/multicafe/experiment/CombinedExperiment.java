@@ -24,14 +24,7 @@ public class CombinedExperiment extends Experiment {
 		firstImage_FileTime = expi.firstImage_FileTime;
 		expi = listExperiment.get(listExperiment.size() - 1);
 		lastImage_FileTime = expi.lastImage_FileTime;
-	}
-
-	public void loadCapillaryMeasures() {
-
-	}
-
-	public void loadFlyPositions() {
-
+		// TODO: load capillaries descriptors and load cells descriptors
 	}
 
 	private void setAllConnectedExperiments() {
@@ -47,6 +40,14 @@ public class CombinedExperiment extends Experiment {
 		Experiment expi = listExperiment.get(0);
 		listExperiment = new ArrayList<Experiment>(1);
 		listExperiment.add(expi);
+	}
+
+	public void loadCapillaryMeasures() {
+
+	}
+
+	public void loadFlyPositions() {
+
 	}
 
 }
