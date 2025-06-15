@@ -82,8 +82,10 @@ public class XLSExportMoveResults extends XLSExport {
 
 	private int o1_getMoveDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
 		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
-
-		XLSResultsArray rowListForOneExp = o2_getMoveDataFromOneExperimentSeries(exp, xlsExport);
+		XLSResultsArray moveDescriptorsForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsExport);
+		// TODO
+		XLSResultsArray rowListForOneExp = new XLSResultsArray();
+		o2_getMoveDataFromOneExperimentSeries(exp, xlsExport);
 		int colmax = xlsExportMoveResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 
 		if (options.onlyalive) {
@@ -104,10 +106,8 @@ public class XLSExportMoveResults extends XLSExport {
 		return pt.x;
 	}
 
-	private ArrayList<FlyPositions> o2_getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsOption) {
-		XLSResultsArray moveDescriptorsForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsOption);
+	private void o2_getMoveDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsExport) {
 		Experiment expi = exp.getFirstChainedExperiment(true);
-
 		// List<FlyPositions> dummyPositionsArrayList = new ArrayList<FlyPositions>(0);
 		while (expi != null) {
 			int nframes = 1 + (int) (expi.camImageLast_ms - expi.camImageFirst_ms) / options.buildExcelStepMs;
@@ -115,7 +115,7 @@ public class XLSExportMoveResults extends XLSExport {
 				continue;
 
 			double pixelsize = 32. / expi.capillaries.capillariesList.get(0).capPixels;
-			List<FlyPositions> positionsArrayList = FlyPositions.computeMoveResults(expi, xlsOption, options, nframes,
+			List<FlyPositions> positionsArrayList = FlyPositions.computeMoveResults(expi, xlsExport, options, nframes,
 					pixelsize);
 			// here add resultsArrayList to expAll
 			addMoveResultsTo_rowsForOneExp(expi, positionsArrayList);
@@ -124,12 +124,12 @@ public class XLSExportMoveResults extends XLSExport {
 		}
 
 //		XLSResultsArray xlsResultsArray = combine(moveDescriptorsForOneExp, dummyPositionsArrayList);
-		return xlsResultsArray;
+//		return positionsArrayList;
 	}
 
-	private XLSResultsArray combine(XLSResultsArray moveDescriptorsForOneExp, List<FlyPositions> positionsArrayList) {
-		return moveDescriptorsForOneExp;
-	}
+//	private XLSResultsArray combine(XLSResultsArray moveDescriptorsForOneExp, List<FlyPositions> positionsArrayList) {
+//		return moveDescriptorsForOneExp;
+//	}
 
 	private FlyPositions getResultsArrayWithThatName(String testname, List<FlyPositions> resultsArrayList) {
 		FlyPositions resultsFound = null;
@@ -142,19 +142,19 @@ public class XLSExportMoveResults extends XLSExport {
 		return resultsFound;
 	}
 
-	private void addMoveResultsTo_rowsForOneExp(Experiment expi, List<FlyPositions> rowsForOneExp) {
+	private List<FlyPositions> addMoveResultsTo_rowsForOneExp(Experiment expi, List<FlyPositions> rowsForOneExp) {
 		long start_Ms = expi.camImageFirst_ms - expAll.camImageFirst_ms;
 		long end_Ms = expi.camImageLast_ms - expAll.camImageFirst_ms;
 		if (options.fixedIntervals) {
 			if (start_Ms < options.startAll_Ms)
 				start_Ms = options.startAll_Ms;
 			if (start_Ms > expi.camImageLast_ms)
-				return;
+				return rowsForOneExp;
 
 			if (end_Ms > options.endAll_Ms)
 				end_Ms = options.endAll_Ms;
 			if (end_Ms > expi.camImageFirst_ms)
-				return;
+				return rowsForOneExp;
 		}
 
 		final long from_first_Ms = start_Ms + expAll.camImageFirst_ms;
@@ -166,7 +166,7 @@ public class XLSExportMoveResults extends XLSExport {
 			FlyPositions results = getResultsArrayWithThatName(rowFlyPositions.name, rowsForOneExp);
 			if (results != null) {
 				if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null)
-					padWithLastPreviousValue(rowFlyPositions, to_first_index);
+					padFlyPositionsWithLastPreviousValue(rowFlyPositions, to_first_index);
 
 				for (long fromTime = from_first_Ms; fromTime <= from_lastMs; fromTime += options.buildExcelStepMs) {
 					int from_i = (int) ((fromTime - from_first_Ms) / options.buildExcelStepMs);
@@ -183,7 +183,7 @@ public class XLSExportMoveResults extends XLSExport {
 
 			} else {
 				if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null) {
-					FlyPosition posok = padWithLastPreviousValue(rowFlyPositions, to_first_index);
+					FlyPosition posok = padFlyPositionsWithLastPreviousValue(rowFlyPositions, to_first_index);
 					int nvalues = to_nvalues;
 					if (posok != null) {
 						if (nvalues > rowFlyPositions.flyPositionList.size())
@@ -198,15 +198,16 @@ public class XLSExportMoveResults extends XLSExport {
 				}
 			}
 		}
+		return rowsForOneExp;
 	}
 
-	private FlyPosition padWithLastPreviousValue(FlyPositions row, int transfer_first_index) {
+	private FlyPosition padFlyPositionsWithLastPreviousValue(FlyPositions flyPositions, int transfer_first_index) {
 		FlyPosition posok = null;
-		int index = getIndexOfFirstNonEmptyValueBackwards(row, transfer_first_index);
+		int index = getIndexOfFirstNonEmptyValueBackwards(flyPositions, transfer_first_index);
 		if (index >= 0) {
-			posok = row.flyPositionList.get(index);
+			posok = flyPositions.flyPositionList.get(index);
 			for (int i = index + 1; i < transfer_first_index; i++) {
-				FlyPosition pos = row.flyPositionList.get(i);
+				FlyPosition pos = flyPositions.flyPositionList.get(i);
 				pos.copy(posok);
 				pos.bPadded = true;
 			}
@@ -214,10 +215,10 @@ public class XLSExportMoveResults extends XLSExport {
 		return posok;
 	}
 
-	private int getIndexOfFirstNonEmptyValueBackwards(FlyPositions row, int fromindex) {
+	private int getIndexOfFirstNonEmptyValueBackwards(FlyPositions flyPositions, int fromindex) {
 		int index = -1;
 		for (int i = fromindex; i >= 0; i--) {
-			FlyPosition pos = row.flyPositionList.get(i);
+			FlyPosition pos = flyPositions.flyPositionList.get(i);
 			if (!Double.isNaN(pos.x)) {
 				index = i;
 				break;

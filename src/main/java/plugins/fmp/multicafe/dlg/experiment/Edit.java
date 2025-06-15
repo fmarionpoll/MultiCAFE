@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
+import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
 public class Edit extends JPanel {
@@ -34,7 +34,7 @@ public class Edit extends JPanel {
 	private JButton applyButton = new JButton("Apply");
 	private MultiCAFE parent0 = null;
 	boolean disableChangeFile = false;
-	ExperimentCombo editExpList = new ExperimentCombo();
+	ExperimentsJComboBox editExpList = new ExperimentsJComboBox();
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		this.parent0 = parent0;

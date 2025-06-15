@@ -19,12 +19,12 @@ import plugins.fmp.multicafe.dlg.excel.MCExcel_;
 import plugins.fmp.multicafe.dlg.experiment.MCExperiment_;
 import plugins.fmp.multicafe.dlg.kymos.MCKymos_;
 import plugins.fmp.multicafe.dlg.levels.MCLevels_;
-import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
+import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
 
 public class MultiCAFE extends PluginActionable {
-	public IcyFrame mainFrame = new IcyFrame("MultiCAFE June 14, 2025", true, true, true, true);
-	public ExperimentCombo expListCombo = new ExperimentCombo();
+	public IcyFrame mainFrame = new IcyFrame("MultiCAFE June 15, 2025", true, true, true, true);
+	public ExperimentsJComboBox expListCombo = new ExperimentsJComboBox();
 
 	public MCBrowse_ paneBrowse = new MCBrowse_();
 	public MCExperiment_ paneExperiment = new MCExperiment_();

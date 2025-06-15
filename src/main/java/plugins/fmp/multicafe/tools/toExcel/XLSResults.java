@@ -6,8 +6,8 @@ import java.util.List;
 
 public class XLSResults {
 	public String name = null;
-	String stimulus = null;
-	String concentration = null;
+	public String stimulus = null;
+	public String concentration = null;
 	int nadded = 1;
 	boolean[] padded_out = null;
 
@@ -152,6 +152,45 @@ public class XLSResults {
 			valuesOut[i] += dataToAdd.valuesOut[i];
 		}
 		nadded += 1;
+	}
+
+	public double padWithLastPreviousValue(long to_first_index) {
+		double dvalue = 0;
+		if (to_first_index >= valuesOut.length)
+			return dvalue;
+
+		int index = getIndexOfFirstNonEmptyValueBackwards(to_first_index);
+		if (index >= 0) {
+			dvalue = valuesOut[index];
+			for (int i = index + 1; i < to_first_index; i++) {
+				valuesOut[i] = dvalue;
+				padded_out[i] = true;
+			}
+		}
+		return dvalue;
+	}
+
+	private int getIndexOfFirstNonEmptyValueBackwards(long fromindex) {
+		int index = -1;
+		int ifrom = (int) fromindex;
+		for (int i = ifrom; i >= 0; i--) {
+			if (!Double.isNaN(valuesOut[i])) {
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+
+	public static XLSResults getResultsArrayWithThatName(String testname, XLSResultsArray resultsArrayList) {
+		XLSResults resultsFound = null;
+		for (XLSResults results : resultsArrayList.resultsList) {
+			if (results.name.equals(testname)) {
+				resultsFound = results;
+				break;
+			}
+		}
+		return resultsFound;
 	}
 
 }

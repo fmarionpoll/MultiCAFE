@@ -10,9 +10,9 @@ public class CellTableModel extends AbstractTableModel {
 	 * 
 	 */
 	private static final long serialVersionUID = -3501225818220221949L;
-	private ExperimentCombo expList = null;
+	private ExperimentsJComboBox expList = null;
 
-	public CellTableModel(ExperimentCombo expList) {
+	public CellTableModel(ExperimentsJComboBox expList) {
 		super();
 		this.expList = expList;
 	}

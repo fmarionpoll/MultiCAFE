@@ -96,7 +96,7 @@ public class FlyPosition {
 
 	// --------------------------------------------
 
-	public boolean loadXYTvaluesFromXML(Node node) {
+	public boolean xmlLoadPosition(Node node) {
 		if (node == null)
 			return false;
 
@@ -137,7 +137,7 @@ public class FlyPosition {
 		return false;
 	}
 
-	public boolean saveXYTvaluesToXML(Node node) {
+	public boolean xmlSavePosition(Node node) {
 		if (node == null)
 			return false;
 

@@ -105,7 +105,7 @@ public class FlyPositions {
 
 	// -----------------------------------------------
 
-	public boolean loadXYTseriesFromXML(Node node) {
+	public boolean xmlLoadXYTPositions(Node node) {
 		if (node == null)
 			return false;
 
@@ -128,7 +128,7 @@ public class FlyPositions {
 			String elementi = "i" + i;
 			Element node_position_i = XMLUtil.getElement(node_position_list, elementi);
 			FlyPosition pos = new FlyPosition();
-			pos.loadXYTvaluesFromXML(node_position_i);
+			pos.xmlLoadPosition(node_position_i);
 			if (pos.flyIndexT < nb_items)
 				flyPositionList.set(pos.flyIndexT, pos);
 			else {
@@ -142,7 +142,7 @@ public class FlyPositions {
 		return true;
 	}
 
-	public boolean saveXYTseriesToXML(Node node) {
+	public boolean xmlSaveXYTPositions(Node node) {
 		if (node == null)
 			return false;
 
@@ -158,7 +158,7 @@ public class FlyPositions {
 		for (FlyPosition pos : flyPositionList) {
 			String elementi = "i" + i;
 			Element node_position_i = XMLUtil.addElement(node_position_list, elementi);
-			pos.saveXYTvaluesToXML(node_position_i);
+			pos.xmlSavePosition(node_position_i);
 			i++;
 		}
 		return true;

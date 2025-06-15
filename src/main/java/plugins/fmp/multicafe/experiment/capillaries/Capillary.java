@@ -511,7 +511,7 @@ public class Capillary implements Comparable<Capillary> {
 
 	// -----------------------------------------------------------------------------
 
-	public boolean loadFromXML_CapillaryOnly(Node node) {
+	public boolean xmlLoad_CapillaryOnly(Node node) {
 		final Node nodeMeta = XMLUtil.getElement(node, ID_META);
 		boolean flag = (nodeMeta != null);
 		if (flag) {
@@ -532,12 +532,12 @@ public class Capillary implements Comparable<Capillary> {
 			roiCap = ROI2DUtilities.loadFromXML_ROI(nodeMeta);
 			limitsOptions.loadFromXML(nodeMeta);
 
-			loadFromXML_intervals(node);
+			xmlLoad_Intervals(node);
 		}
 		return flag;
 	}
 
-	private boolean loadFromXML_intervals(Node node) {
+	private boolean xmlLoad_Intervals(Node node) {
 		roisForKymo.clear();
 		final Node nodeMeta2 = XMLUtil.getElement(node, ID_INTERVALS);
 		if (nodeMeta2 == null)
@@ -558,7 +558,7 @@ public class Capillary implements Comparable<Capillary> {
 		return true;
 	}
 
-	public boolean loadFromXML_MeasuresOnly(Node node) {
+	public boolean xmlLoad_MeasuresOnly(Node node) {
 		String header = getLast2ofCapillaryName() + "_";
 		boolean result = ptsTop.loadCapillaryLimitFromXML(node, ID_TOPLEVEL, header) > 0;
 		result |= ptsBottom.loadCapillaryLimitFromXML(node, ID_BOTTOMLEVEL, header) > 0;
@@ -569,7 +569,7 @@ public class Capillary implements Comparable<Capillary> {
 
 	// -----------------------------------------------------------------------------
 
-	public boolean saveToXML_CapillaryOnly(Node node) {
+	public boolean xmlSave_CapillaryOnly(Node node) {
 		final Node nodeMeta = XMLUtil.setElement(node, ID_META);
 		if (nodeMeta == null)
 			return false;
@@ -594,11 +594,11 @@ public class Capillary implements Comparable<Capillary> {
 
 		ROI2DUtilities.saveToXML_ROI(nodeMeta, roiCap);
 
-		boolean flag = saveToXML_intervals(node);
+		boolean flag = xmlSave_Intervals(node);
 		return flag;
 	}
 
-	private boolean saveToXML_intervals(Node node) {
+	private boolean xmlSave_Intervals(Node node) {
 		final Node nodeMeta2 = XMLUtil.setElement(node, ID_INTERVALS);
 		if (nodeMeta2 == null)
 			return false;
@@ -749,7 +749,7 @@ public class Capillary implements Comparable<Capillary> {
 
 	// -----------------------------------------------------------------------------
 
-	public String csvExportCapillarySubSectionHeader(String sep) {
+	public String csvExport_CapillarySubSectionHeader(String sep) {
 		StringBuffer sbf = new StringBuffer();
 
 		sbf.append("#" + sep + "CAPILLARIES" + sep + "describe each capillary\n");
@@ -760,7 +760,7 @@ public class Capillary implements Comparable<Capillary> {
 		return sbf.toString();
 	}
 
-	public String csvExportCapillaryDescription(String sep) {
+	public String csvExport_CapillaryDescription(String sep) {
 		StringBuffer sbf = new StringBuffer();
 		if (kymographPrefix == null)
 			kymographPrefix = getLast2ofCapillaryName();
@@ -773,7 +773,7 @@ public class Capillary implements Comparable<Capillary> {
 		return sbf.toString();
 	}
 
-	public String csvExportMeasure_SectionHeader(EnumCapillaryMeasures measureType, String sep) {
+	public String csvExport_MeasureSectionHeader(EnumCapillaryMeasures measureType, String sep) {
 		StringBuffer sbf = new StringBuffer();
 		String explanation1 = "columns=" + sep + "name" + sep + "index" + sep + "npts" + sep + "yi\n";
 		String explanation2 = "columns=" + sep + "name" + sep + "index" + sep + " n_gulps(i)" + sep + " ..." + sep
@@ -798,7 +798,7 @@ public class Capillary implements Comparable<Capillary> {
 		return sbf.toString();
 	}
 
-	public String csvExportMeasures_OneType(EnumCapillaryMeasures measureType, String sep) {
+	public String csvExport_MeasuresOneType(EnumCapillaryMeasures measureType, String sep) {
 		StringBuffer sbf = new StringBuffer();
 		sbf.append(kymographPrefix + sep + kymographIndex + sep);
 
@@ -824,7 +824,7 @@ public class Capillary implements Comparable<Capillary> {
 
 	// --------------------------------------------
 
-	public void csvImportCapillaryDescription(String[] data) {
+	public void csvImport_CapillaryDescription(String[] data) {
 		int i = 0;
 		kymographPrefix = data[i];
 		i++;
@@ -849,7 +849,7 @@ public class Capillary implements Comparable<Capillary> {
 		capSide = data[i];
 	}
 
-	public void csvImportCapillaryData(EnumCapillaryMeasures measureType, String[] data, boolean x, boolean y) {
+	public void csvImport_CapillaryData(EnumCapillaryMeasures measureType, String[] data, boolean x, boolean y) {
 		switch (measureType) {
 		case TOPLEVEL:
 			if (x && y)

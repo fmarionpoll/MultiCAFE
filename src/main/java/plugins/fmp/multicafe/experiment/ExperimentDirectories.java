@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import icy.file.FileUtil;
 import icy.gui.dialog.LoaderDialog;
 import plugins.fmp.multicafe.tools.Directories;
-import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
+import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 
 public class ExperimentDirectories {
 	public String cameraImagesDirectory = null;
@@ -100,7 +100,7 @@ public class ExperimentDirectories {
 		return isOK;
 	}
 
-	public boolean getDirectoriesFromDialog(ExperimentCombo expListCombo, String rootDirectory, boolean createResults) {
+	public boolean getDirectoriesFromDialog(ExperimentsJComboBox expListCombo, String rootDirectory, boolean createResults) {
 		cameraImagesList = getV2ImagesListFromDialog(rootDirectory);
 		if (!checkCameraImagesList())
 			return false;
@@ -117,7 +117,7 @@ public class ExperimentDirectories {
 		return true;
 	}
 
-	public boolean getDirectoriesFromExptPath(ExperimentCombo expListCombo, String exptDirectory,
+	public boolean getDirectoriesFromExptPath(ExperimentsJComboBox expListCombo, String exptDirectory,
 			String binSubDirectory) {
 		String strDirectory = getImagesDirectoryAsParentFromFileName(exptDirectory);
 		cameraImagesList = getV2ImagesListFromPath(strDirectory);

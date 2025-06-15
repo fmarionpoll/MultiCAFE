@@ -11,12 +11,13 @@ import javax.swing.JComboBox;
 import icy.gui.frame.progress.ProgressFrame;
 import icy.system.SystemUtil;
 import icy.system.thread.Processor;
+import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
 
-public class ExperimentCombo extends JComboBox<Experiment> {
+public class ExperimentsJComboBox extends JComboBox<Experiment> {
 
 	/**
 	 * 
@@ -28,7 +29,7 @@ public class ExperimentCombo extends JComboBox<Experiment> {
 	public int maxSizeOfCellArrays = 0;
 	public String expListBinSubDirectory = null;
 
-	public ExperimentCombo() {
+	public ExperimentsJComboBox() {
 	}
 
 	@Override
@@ -37,8 +38,8 @@ public class ExperimentCombo extends JComboBox<Experiment> {
 		expListBinSubDirectory = null;
 	}
 
-	public Experiment get_MsTime_of_StartAndEnd_AllExperiments(XLSExportOptions options) {
-		Experiment expAll = new Experiment();
+	public CombinedExperiment get_MsTime_of_StartAndEnd_AllExperiments(XLSExportOptions options) {
+		CombinedExperiment expAll = new CombinedExperiment();
 		Experiment exp0 = getItemAt(0);
 		if (options.fixedIntervals) {
 			expAll.camImageFirst_ms = options.startAll_Ms;
@@ -164,52 +165,6 @@ public class ExperimentCombo extends JComboBox<Experiment> {
 	private void resetChaining(Experiment expi) {
 		expi.chainToPreviousExperiment = null;
 		expi.chainToNextExperiment = null;
-	}
-
-	public void chainExperimentsUsingCamIndexes(boolean collate) {
-		for (int i = 0; i < getItemCount(); i++) {
-			Experiment expi = getItemAt(i);
-			if (!collate) {
-				resetChaining(expi);
-				continue;
-			}
-
-			for (int j = 0; j < getItemCount(); j++) {
-				if (i == j)
-					continue;
-				Experiment expj = getItemAt(j);
-				if (!isSameDescriptors(expi, expj))
-					continue;
-
-				// same exp series: if before, insert eventually
-				if (expj.camImageLast_ms < expi.camImageFirst_ms) {
-					if (expi.chainToPreviousExperiment == null)
-						expi.chainToPreviousExperiment = expj;
-					else if (expj.camImageLast_ms > expi.chainToPreviousExperiment.camImageLast_ms) {
-						(expi.chainToPreviousExperiment).chainToNextExperiment = expj;
-						expj.chainToPreviousExperiment = expi.chainToPreviousExperiment;
-						expj.chainToNextExperiment = expi;
-						expi.chainToPreviousExperiment = expj;
-					}
-					continue;
-				}
-				// same exp series: if after, insert eventually
-				if (expj.camImageFirst_ms >= expi.camImageLast_ms) {
-					if (expi.chainToNextExperiment == null)
-						expi.chainToNextExperiment = expj;
-					else if (expj.camImageFirst_ms < expi.chainToNextExperiment.camImageFirst_ms) {
-						(expi.chainToNextExperiment).chainToPreviousExperiment = expj;
-						expj.chainToNextExperiment = (expi.chainToNextExperiment);
-						expj.chainToPreviousExperiment = expi;
-						expi.chainToNextExperiment = expj;
-					}
-					continue;
-				}
-				// it should never arrive here
-				System.out.println("ExperimentCombo:chainExperimentsUsingCamIndexes() error in chaining "
-						+ expi.getExperimentDirectory() + " with ->" + expj.getExperimentDirectory());
-			}
-		}
 	}
 
 	public void chainExperimentsUsingKymoIndexes(boolean collate) {

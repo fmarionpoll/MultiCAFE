@@ -9,6 +9,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import icy.gui.frame.progress.ProgressFrame;
+import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.experiment.cells.Cell;
@@ -74,7 +75,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 	}
 
 	int getCapillaryDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
-		XLSResultsArray rowListForOneExp = getCapDataFromOneExperimentSeries(exp, xlsExport);
+		XLSResultsArray rowListForOneExp = expAll.getXLSResultArray_CapillaryData_From_CombinedExperiment(exp, xlsExport, options);
 		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
 		int colmax = xlsExportCapillaryResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 
@@ -121,7 +122,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 			for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
 				XLSResults row = rowListForOneExp.getRow(iRow);
-				if (desc_getCellFromCapillaryName(row.name) == cellNumber)
+				if (desc_getIndex_CellFromCapillaryName(row.name) == cellNumber)
 					row.clearValues(ilastalive);
 			}
 		}
@@ -157,96 +158,13 @@ public class XLSExportCapillariesResults extends XLSExport {
 		return pt.x;
 	}
 
-	private XLSResultsArray getCapDataFromOneExperimentSeries(Experiment exp, EnumXLSExportType xlsExportType) {
-		XLSResultsArray rowListForOneExp = getDescriptorsForOneExperiment(exp, xlsExportType);
-		Experiment expi = exp.getFirstChainedExperiment(true);
-
-		while (expi != null) {
-			int nOutputFrames = getNOutputFrames(expi);
-			if (nOutputFrames > 1) {
-				XLSResultsFromCapillaries resultsArrayList = new XLSResultsFromCapillaries(
-						expi.capillaries.capillariesList.size());
-				options.compensateEvaporation = false;
-				switch (xlsExportType) {
-				case BOTTOMLEVEL:
-				case NBGULPS:
-				case AMPLITUDEGULPS:
-				case TTOGULP:
-				case TTOGULP_LR:
-
-				case DERIVEDVALUES:
-				case SUMGULPS:
-				case SUMGULPS_LR:
-
-				case AUTOCORREL:
-				case AUTOCORREL_LR:
-				case CROSSCORREL:
-				case CROSSCORREL_LR:
-					resultsArrayList.getResults1(expi.capillaries, xlsExportType, nOutputFrames, exp.kymoBin_ms,
-							options);
-					break;
-
-				case TOPLEVEL:
-				case TOPLEVEL_LR:
-				case TOPLEVELDELTA:
-				case TOPLEVELDELTA_LR:
-					options.compensateEvaporation = options.subtractEvaporation;
-
-				case TOPRAW:
-					resultsArrayList.getResults_T0(expi.capillaries, xlsExportType, nOutputFrames, exp.kymoBin_ms,
-							options);
-					break;
-
-				default:
-					break;
-				}
-				addResultsTo_rowsForOneExp(rowListForOneExp, expi, resultsArrayList);
-			}
-			expi = expi.chainToNextExperiment;
-		}
-
-		switch (xlsExportType) {
-		case TOPLEVELDELTA:
-		case TOPLEVELDELTA_LR:
-			rowListForOneExp.subtractDeltaT(1, 1); // options.buildExcelStepMs);
-			break;
-		default:
-			break;
-		}
-		return rowListForOneExp;
-	}
-
-	private int getNOutputFrames(Experiment expi) {
-		int nOutputFrames = (int) ((expi.kymoLast_ms - expi.kymoFirst_ms) / options.buildExcelStepMs + 1);
-		if (nOutputFrames <= 1) {
-			if (expi.seqKymos.imageWidthMax == 0)
-				expi.loadKymographs();
-			expi.kymoLast_ms = expi.kymoFirst_ms + expi.seqKymos.imageWidthMax * expi.kymoBin_ms;
-			if (expi.kymoLast_ms <= 0)
-				exportError(expi, -1);
-			nOutputFrames = (int) ((expi.kymoLast_ms - expi.kymoFirst_ms) / options.buildExcelStepMs + 1);
-
-			if (nOutputFrames <= 1) {
-				nOutputFrames = expi.seqCamData.nTotalFrames;
-				exportError(expi, nOutputFrames);
-			}
-		}
-		return nOutputFrames;
-	}
-
-	private void exportError(Experiment expi, int nOutputFrames) {
-		String error = "XLSExport:ExportError() ERROR in " + expi.getExperimentDirectory() + "\n nOutputFrames="
-				+ nOutputFrames + " kymoFirstCol_Ms=" + expi.kymoFirst_ms + " kymoLastCol_Ms=" + expi.kymoLast_ms;
-		System.out.println(error);
-	}
-
 	public XLSResultsArray getCapDataFromOneExperiment(Experiment exp, EnumXLSExportType exportType,
 			XLSExportOptions options) {
 		this.options = options;
-		expAll = new Experiment();
+		expAll = new CombinedExperiment();
 		expAll.camImageLast_ms = exp.camImageLast_ms;
 		expAll.camImageFirst_ms = exp.camImageFirst_ms;
-		return getCapDataFromOneExperimentSeries(exp, exportType);
+		return expAll.getXLSResultArray_CapillaryData_From_CombinedExperiment(exp, exportType, options);
 	}
 
 //	private void addResultsTo_rowsForOneExp(XLSResultsArray rowListForOneExp, Experiment expi,
@@ -326,38 +244,6 @@ public class XLSExportCapillariesResults extends XLSExport {
 //			}
 //		}
 //	}
-
-	private XLSResultsArray getDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
-		if (expAll == null)
-			return null;
-
-		// loop to get all capillaries into expAll and init rows for this experiment
-		expAll.cageBox.copy(exp.cageBox);
-		expAll.capillaries.copy(exp.capillaries);
-		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
-		expAll.copyExperimentFields(exp);
-		expAll.setExperimentDirectory(exp.getExperimentDirectory());
-
-		Experiment expi = exp.chainToNextExperiment;
-		while (expi != null) {
-			expAll.capillaries.mergeLists(expi.capillaries);
-			expi = expi.chainToNextExperiment;
-		}
-
-		int nFrames = (int) ((expAll.camImageLast_ms - expAll.camImageFirst_ms) / options.buildExcelStepMs + 1);
-		int ncapillaries = expAll.capillaries.capillariesList.size();
-		XLSResultsArray rowListForOneExp = new XLSResultsArray(ncapillaries);
-		for (int i = 0; i < ncapillaries; i++) {
-			Capillary cap = expAll.capillaries.capillariesList.get(i);
-			XLSResults row = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCellID, xlsOption, nFrames);
-			row.stimulus = cap.capStimulus;
-			row.concentration = cap.capConcentration;
-			row.cellID = cap.capCellID;
-			rowListForOneExp.addRow(row);
-		}
-		rowListForOneExp.sortRowsByName();
-		return rowListForOneExp;
-	}
 
 	protected Point writeExperiment_Capillary_descriptors(Experiment exp, String charSeries, XSSFSheet sheet, Point pt,
 			EnumXLSExportType xlsExportOption) {

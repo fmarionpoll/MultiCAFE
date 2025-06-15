@@ -10,10 +10,10 @@ public class CapillaryTableModel extends AbstractTableModel {
 	 * 
 	 */
 	private static final long serialVersionUID = 6325792669154093747L;
-	private ExperimentCombo expList = null;
+	private ExperimentsJComboBox expList = null;
 	String columnNames[] = { "Name", "Cell", "N flies", "Volume", "Stimulus", "Concentration" };
 
-	public CapillaryTableModel(ExperimentCombo expList) {
+	public CapillaryTableModel(ExperimentsJComboBox expList) {
 		super();
 		this.expList = expList;
 	}

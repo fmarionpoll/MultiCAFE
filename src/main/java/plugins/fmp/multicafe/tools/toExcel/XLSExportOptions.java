@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe.tools.toExcel;
 
-import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
+import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 
 public class XLSExportOptions {
 	public boolean xyImage = true;
@@ -50,7 +50,7 @@ public class XLSExportOptions {
 
 	public int firstExp = -1;
 	public int lastExp = -1;
-	public ExperimentCombo expList = null;
+	public ExperimentsJComboBox expList = null;
 
 	// internal parameters
 	public boolean trim_alive = false;

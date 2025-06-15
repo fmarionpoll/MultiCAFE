@@ -79,7 +79,7 @@ public class Cell {
 
 	public boolean xmlSaveFlyPositions(Element xmlVal) {
 		Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_FLYPOSITIONS);
-		flyPositions.saveXYTseriesToXML(xmlVal2);
+		flyPositions.xmlSaveXYTPositions(xmlVal2);
 		return true;
 	}
 
@@ -117,7 +117,7 @@ public class Cell {
 	public boolean xmlLoadFlyPositions(Element xmlVal) {
 		Element xmlVal2 = XMLUtil.getElement(xmlVal, ID_FLYPOSITIONS);
 		if (xmlVal2 != null) {
-			flyPositions.loadXYTseriesFromXML(xmlVal2);
+			flyPositions.xmlLoadXYTPositions(xmlVal2);
 			return true;
 		}
 		return false;

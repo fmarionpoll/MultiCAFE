@@ -98,7 +98,7 @@ public class Capillaries {
 		Collections.sort(capillariesList);
 		for (Capillary cap : capillariesList) {
 			Node nodecapillary = XMLUtil.setElement(node, ID_CAPILLARY_ + i);
-			cap.saveToXML_CapillaryOnly(nodecapillary);
+			cap.xmlSave_CapillaryOnly(nodecapillary);
 			i++;
 		}
 		return true;
@@ -148,7 +148,7 @@ public class Capillaries {
 			Node node = XMLUtil.getRootElement(capdoc, true);
 			Capillary cap = capillariesList.get(i);
 			cap.kymographIndex = i;
-			flag |= cap.loadFromXML_MeasuresOnly(node);
+			flag |= cap.xmlLoad_MeasuresOnly(node);
 		}
 		return flag;
 	}
@@ -197,7 +197,7 @@ public class Capillaries {
 		for (int i = 0; i < nitems; i++) {
 			Node nodecapillary = XMLUtil.getElement(node, ID_CAPILLARY_ + i);
 			Capillary cap = new Capillary();
-			cap.loadFromXML_CapillaryOnly(nodecapillary);
+			cap.xmlLoad_CapillaryOnly(nodecapillary);
 //			if (capillariesDescription.grouping == 2 && (cap.capStimulus != null && cap.capStimulus.equals(".."))) 
 //			{
 //				if (cap.getCapillarySide().equals("R")) 
@@ -225,7 +225,7 @@ public class Capillaries {
 			String csFile = directory + cap.getKymographName() + ".xml";
 			final Document capdoc = XMLUtil.loadDocument(csFile);
 			Node node = XMLUtil.getRootElement(capdoc, true);
-			cap.loadFromXML_CapillaryOnly(node);
+			cap.xmlLoad_CapillaryOnly(node);
 		}
 	}
 
@@ -568,7 +568,7 @@ public class Capillaries {
 					cap = new Capillary();
 					capillariesList.add(cap);
 				}
-				cap.csvImportCapillaryDescription(data);
+				cap.csvImport_CapillaryDescription(data);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -619,7 +619,7 @@ public class Capillaries {
 				Capillary cap = getCapillaryFromRoiNamePrefix(data[0]);
 				if (cap == null)
 					cap = new Capillary();
-				cap.csvImportCapillaryData(measureType, data, x, y);
+				cap.csvImport_CapillaryData(measureType, data, x, y);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -662,9 +662,9 @@ public class Capillaries {
 			csvWriter.append("#" + csvSep + "#\n");
 
 			if (capillariesList.size() > 0) {
-				csvWriter.append(capillariesList.get(0).csvExportCapillarySubSectionHeader(csvSep));
+				csvWriter.append(capillariesList.get(0).csvExport_CapillarySubSectionHeader(csvSep));
 				for (Capillary cap : capillariesList)
-					csvWriter.append(cap.csvExportCapillaryDescription(csvSep));
+					csvWriter.append(cap.csvExport_CapillaryDescription(csvSep));
 				csvWriter.append("#" + csvSep + "#\n");
 			}
 		} catch (IOException e) {
@@ -679,9 +679,9 @@ public class Capillaries {
 			if (capillariesList.size() <= 1)
 				return false;
 
-			csvWriter.append(capillariesList.get(0).csvExportMeasure_SectionHeader(measureType, csvSep));
+			csvWriter.append(capillariesList.get(0).csvExport_MeasureSectionHeader(measureType, csvSep));
 			for (Capillary cap : capillariesList)
-				csvWriter.append(cap.csvExportMeasures_OneType(measureType, csvSep));
+				csvWriter.append(cap.csvExport_MeasuresOneType(measureType, csvSep));
 
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {

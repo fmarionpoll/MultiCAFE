@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.tools.JComponents.ExperimentCombo;
+import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 import plugins.fmp.multicafe.tools.JComponents.SortedComboBoxModel;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
@@ -55,7 +55,7 @@ public class Filter extends JPanel {
 
 	private MultiCAFE parent0 = null;
 	boolean disableChangeFile = false;
-	public ExperimentCombo filterExpList = new ExperimentCombo();
+	public ExperimentsJComboBox filterExpList = new ExperimentsJComboBox();
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		this.parent0 = parent0;

@@ -405,7 +405,7 @@ public class Cells {
 		for (int i = 0; i < nb_items; i++) {
 			Element subnode = XMLUtil.getElement(xmlVal, "cage" + ielement);
 			FlyPositions pos = new FlyPositions();
-			pos.loadXYTseriesFromXML(subnode);
+			pos.xmlLoadXYTPositions(subnode);
 			flyPositionsList.add(pos);
 			ielement++;
 		}
