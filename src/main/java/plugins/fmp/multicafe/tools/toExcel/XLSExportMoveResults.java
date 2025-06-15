@@ -10,6 +10,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import icy.gui.frame.progress.ProgressFrame;
+import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.experiment.cells.FlyPosition;
@@ -37,33 +38,39 @@ public class XLSExportMoveResults extends XLSExport {
 		progress.setLength(nbexpts);
 
 		try {
-			int column = 1;
+			int xlsRow = 1;
 			int iSeries = 0;
 			workbook = xlsInitWorkbook();
 			for (int index = options.firstExp; index <= options.lastExp; index++) {
 				Experiment exp = expList.getItemAt(index);
 				if (exp.chainToPreviousExperiment != null)
 					continue;
+
+				CombinedExperiment expCombined = new CombinedExperiment(exp);
+				expCombined.setCollateExperimentsOption(options.collateSeries);
+				expCombined.loadExperimentDescriptors();
+				expCombined.loadFlyPositions();
+
 				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
 				String charSeries = CellReference.convertNumToColString(iSeries);
 
 				if (options.xyImage)
-					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYIMAGEC);
+					o1_getMoveDataAndExport(expCombined, xlsRow, charSeries, EnumXLSExportType.XYIMAGEC);
 				if (options.xyCell)
-					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTOPCAGEC);
+					o1_getMoveDataAndExport(expCombined, xlsRow, charSeries, EnumXLSExportType.XYTOPCAGEC);
 				if (options.xyCapillaries)
-					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.XYTIPCAPSC);
+					o1_getMoveDataAndExport(expCombined, xlsRow, charSeries, EnumXLSExportType.XYTIPCAPSC);
 				if (options.ellipseAxes)
-					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.ELLIPSEAXES);
+					o1_getMoveDataAndExport(expCombined, xlsRow, charSeries, EnumXLSExportType.ELLIPSEAXES);
 				if (options.distance)
-					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.DISTANCE);
+					o1_getMoveDataAndExport(expCombined, xlsRow, charSeries, EnumXLSExportType.DISTANCE);
 				if (options.alive)
-					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.ISALIVE);
+					o1_getMoveDataAndExport(expCombined, xlsRow, charSeries, EnumXLSExportType.ISALIVE);
 				if (options.sleep)
-					o1_getMoveDataAndExport(exp, column, charSeries, EnumXLSExportType.SLEEP);
+					o1_getMoveDataAndExport(expCombined, xlsRow, charSeries, EnumXLSExportType.SLEEP);
 
 				if (!options.collateSeries || exp.chainToPreviousExperiment == null)
-					column += expList.maxSizeOfCellArrays + 2; // TODO check - may be:
+					xlsRow += expList.maxSizeOfCellArrays + 2; // TODO check - may be:
 																// expList.maxSizeOfCapillaryArrays/2 + 2
 				iSeries++;
 				progress.incPosition();

@@ -39,8 +39,9 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 	}
 
 	public CombinedExperiment get_MsTime_of_StartAndEnd_AllExperiments(XLSExportOptions options) {
-		CombinedExperiment expAll = new CombinedExperiment();
 		Experiment exp0 = getItemAt(0);
+		CombinedExperiment expAll = new CombinedExperiment(exp0);
+
 		if (options.fixedIntervals) {
 			expAll.camImageFirst_ms = options.startAll_Ms;
 			expAll.camImageLast_ms = options.endAll_Ms;
