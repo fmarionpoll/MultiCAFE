@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -148,12 +149,13 @@ public class XLSExport {
 		return workbook;
 	}
 
-	XSSFSheet xlsInitSheet(String title, EnumXLSExportType xlsExport) {
+	XSSFSheet xlsGetSheet(String title, EnumXLSExportType xlsExport) {
 		XSSFSheet sheet = workbook.getSheet(title);
 		if (sheet == null) {
 			sheet = workbook.createSheet(title);
 			int row = writeTop_descriptors(sheet, xlsExport);
 			writeTop_timeIntervals(sheet, row, xlsExport);
+			sheet.setActiveCell(new CellAddress(1, 0));
 		}
 		return sheet;
 	}

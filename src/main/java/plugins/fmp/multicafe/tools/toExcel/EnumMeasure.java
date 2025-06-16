@@ -1,8 +1,8 @@
 package plugins.fmp.multicafe.tools.toExcel;
 
 public enum EnumMeasure {
-	T("t", "s"), X("x", "mm"), Y("y", "mm"), W("w", "mm"), H("h", "mm"), ALIVE("alive", "0/1"), SLEEP("sleep", "0/1"),
-	DISTANCE("distance", "mm"), CUMDIST("cumdist", "mm"), OTHER("other", "??");
+	TS("t", "s"), TI("i", "n"), X("x", "mm"), Y("y", "mm"), W("w", "mm"), H("h", "mm"), ALIVE("alive", "0/1"),
+	SLEEP("sleep", "0/1"), DISTANCE("distance", "mm"), CUMDIST("cumdist", "mm"), OTHER("other", "??");
 
 	private String label;
 	private String unit;

@@ -78,18 +78,18 @@ public class XLSExportCapillariesResults extends XLSExport {
 	int getCapillaryDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
 		XLSResultsArray rowListForOneExp = getXLSResultArray_CapillaryData_From_CombinedExperiment(exp, xlsExport,
 				options);
-		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
+		XSSFSheet sheet = xlsGetSheet(xlsExport.toString(), xlsExport);
 		int colmax = xlsExportCapillaryResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 
 		if (options.onlyalive) {
 			trimDeadsFromArrayList(rowListForOneExp, exp);
-			sheet = xlsInitSheet(xlsExport.toString() + "_alive", xlsExport);
+			sheet = xlsGetSheet(xlsExport.toString() + "_alive", xlsExport);
 			xlsExportCapillaryResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 		}
 
 		if (options.sumPerCell) {
 			combineDataForOneCell(rowListForOneExp, exp);
-			sheet = xlsInitSheet(xlsExport.toString() + "_cage", xlsExport);
+			sheet = xlsGetSheet(xlsExport.toString() + "_cage", xlsExport);
 			xlsExportCapillaryResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 		}
 

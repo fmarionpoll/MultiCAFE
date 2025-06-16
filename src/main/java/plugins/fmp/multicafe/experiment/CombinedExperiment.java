@@ -21,11 +21,18 @@ public class CombinedExperiment extends Experiment {
 	public void loadExperimentDescriptors() {
 		Experiment expi = listExperiment.get(0);
 		copyExperimentFields(expi);
+		copyOtherExperimentFields(expi);
 		firstImage_FileTime = expi.firstImage_FileTime;
 		expi = listExperiment.get(listExperiment.size() - 1);
 		lastImage_FileTime = expi.lastImage_FileTime;
 		// TODO: load capillaries descriptors and load cells descriptors
 		// loadMCCapillaries_Descriptors(filename)
+	}
+
+	private void copyOtherExperimentFields(Experiment source) {
+		setImagesDirectory(source.getImagesDirectory());
+		setExperimentDirectory(source.getExperimentDirectory());
+		setBinSubDirectory(source.getBinSubDirectory());
 	}
 
 	private void setAllConnectedExperiments() {

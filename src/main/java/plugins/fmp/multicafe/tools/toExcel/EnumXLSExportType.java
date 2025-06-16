@@ -26,13 +26,14 @@ public enum EnumXLSExportType {
 	CROSSCORREL("crosscorrel", "n observ", Arrays.asList(EnumMeasure.OTHER), XLSMeasureType.CAP),
 	CROSSCORREL_LR("crosscorrel_LR", "n observ", Arrays.asList(EnumMeasure.OTHER), XLSMeasureType.CAP),
 
-	XYIMAGEC("xy-image", "mm", Arrays.asList(EnumMeasure.T, EnumMeasure.X, EnumMeasure.Y), XLSMeasureType.MOVE),
-	XYTOPCAGEC("xy-topcell", "mm", Arrays.asList(EnumMeasure.T, EnumMeasure.X, EnumMeasure.Y), XLSMeasureType.MOVE),
-	XYTIPCAPSC("xy-tipcaps", "mm", Arrays.asList(EnumMeasure.T, EnumMeasure.X, EnumMeasure.Y), XLSMeasureType.MOVE),
-	ELLIPSEAXES("ellipse-axes", "mm", Arrays.asList(EnumMeasure.T, EnumMeasure.W, EnumMeasure.H), XLSMeasureType.MOVE),
-	DISTANCE("distance", "mm", Arrays.asList(EnumMeasure.T, EnumMeasure.DISTANCE), XLSMeasureType.MOVE),
-	ISALIVE("_alive", "yes/no", Arrays.asList(EnumMeasure.T, EnumMeasure.ALIVE), XLSMeasureType.MOVE),
-	SLEEP("sleep", "yes, no", Arrays.asList(EnumMeasure.T, EnumMeasure.SLEEP), XLSMeasureType.MOVE);
+	XYIMAGE("xy-image", "mm", Arrays.asList(EnumMeasure.TI, EnumMeasure.TS, EnumMeasure.X, EnumMeasure.Y),
+			XLSMeasureType.MOVE),
+	XYTOPCELL("xy-topcell", "mm", Arrays.asList(EnumMeasure.TS, EnumMeasure.X, EnumMeasure.Y), XLSMeasureType.MOVE),
+	XYTIPCAPS("xy-tipcaps", "mm", Arrays.asList(EnumMeasure.TS, EnumMeasure.X, EnumMeasure.Y), XLSMeasureType.MOVE),
+	ELLIPSEAXES("ellipse-axes", "mm", Arrays.asList(EnumMeasure.TS, EnumMeasure.W, EnumMeasure.H), XLSMeasureType.MOVE),
+	DISTANCE("distance", "mm", Arrays.asList(EnumMeasure.TS, EnumMeasure.DISTANCE), XLSMeasureType.MOVE),
+	ISALIVE("_alive", "yes/no", Arrays.asList(EnumMeasure.TS, EnumMeasure.ALIVE), XLSMeasureType.MOVE),
+	SLEEP("sleep", "yes, no", Arrays.asList(EnumMeasure.TS, EnumMeasure.SLEEP), XLSMeasureType.MOVE);
 
 	private String label;
 	private String unit;

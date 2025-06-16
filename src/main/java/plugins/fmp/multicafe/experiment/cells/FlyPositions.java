@@ -347,11 +347,11 @@ public class FlyPositions {
 					flyPositions.excelComputeSleep(cell.flyPositions, (int) expi.camImageBin_ms,
 							options.buildExcelStepMs);
 					break;
-				case XYTOPCAGEC:
+				case XYTOPCELL:
 					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTopCell(), cell.flyPositions,
 							(int) expi.camImageBin_ms, options.buildExcelStepMs);
 					break;
-				case XYTIPCAPSC:
+				case XYTIPCAPS:
 					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(expi.capillaries),
 							cell.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
 					break;
@@ -359,7 +359,7 @@ public class FlyPositions {
 					flyPositions.excelComputeEllipse(cell.flyPositions, (int) expi.camImageBin_ms,
 							options.buildExcelStepMs);
 					break;
-				case XYIMAGEC:
+				case XYIMAGE:
 				default:
 					break;
 				}
