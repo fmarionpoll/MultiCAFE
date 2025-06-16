@@ -173,7 +173,7 @@ public class InfosCapillaryTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null && exp.cells.cellList.size() > 0) {
-					exp.cells.transferNFliesFromCageBoxToCapillaries(exp.capillaries.capillariesList);
+					exp.cells.transferNFliesFromCellsToCapillaries(exp.capillaries.capillariesList);
 					capillaryTableModel.fireTableDataChanged();
 				}
 			}

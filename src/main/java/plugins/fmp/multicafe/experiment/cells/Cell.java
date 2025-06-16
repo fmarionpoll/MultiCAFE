@@ -336,4 +336,10 @@ public class Cell {
 		cellMask2D = cellRoi2D.getBooleanMask2D(0, 0, 1, true);
 	}
 
+	public void initTmsForFlyPositions(long[] intervalsMs) {
+		for (FlyPosition flyPosition : flyPositions.flyPositionList) {
+			flyPosition.tMs = intervalsMs[flyPosition.flyIndexT];
+		}
+	}
+
 }

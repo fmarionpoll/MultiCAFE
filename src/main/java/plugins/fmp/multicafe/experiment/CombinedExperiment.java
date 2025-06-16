@@ -49,8 +49,11 @@ public class CombinedExperiment extends Experiment {
 	}
 
 	public void loadFlyPositions() {
-		// convert T into Tms (add time_first? - time_first expi(0))
-
+		long time_start_ms = firstImage_FileTime.toMillis();
+		for (Experiment expi : listExperiment) {
+			expi.initTmsForFlyPositions(time_start_ms);
+			cells.cellList.addAll(expi.cells.cellList);
+		}
 	}
 
 }

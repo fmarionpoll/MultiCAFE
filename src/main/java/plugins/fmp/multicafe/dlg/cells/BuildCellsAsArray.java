@@ -98,7 +98,7 @@ public class BuildCellsAsArray extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
-					exp.cells.cageBoxFromROIs(exp.seqCamData);
+					exp.cells.cellsFromROIs(exp.seqCamData);
 					if (exp.capillaries.capillariesList.size() > 0)
 						exp.cells.transferNFliesFromCapillariesToCageBox(exp.capillaries.capillariesList);
 				}

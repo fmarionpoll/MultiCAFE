@@ -83,7 +83,7 @@ public class LoadSaveCage extends JPanel {
 
 	public void saveCageAndMeasures(Experiment exp) {
 		if (exp != null) {
-			exp.cells.cageBoxFromROIs(exp.seqCamData);
+			exp.cells.cellsFromROIs(exp.seqCamData);
 			exp.saveCageMeasures();
 		}
 	}

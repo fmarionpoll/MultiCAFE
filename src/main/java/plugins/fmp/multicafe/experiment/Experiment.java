@@ -332,11 +332,8 @@ public class Experiment {
 		}
 	}
 
-	public long[] build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList() {
+	public long[] build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(long firstImage_ms) {
 		camImages_ms = new long[seqCamData.nTotalFrames];
-
-		FileTime firstImage_FileTime = seqCamData.getFileTimeFromStructuredName(0);
-		long firstImage_ms = firstImage_FileTime.toMillis();
 		for (int i = 0; i < seqCamData.nTotalFrames; i++) {
 			FileTime image_FileTime = seqCamData.getFileTimeFromStructuredName(i);
 			long image_ms = image_FileTime.toMillis() - firstImage_ms;
@@ -345,11 +342,15 @@ public class Experiment {
 		return camImages_ms;
 	}
 
+	public void initTmsForFlyPositions(long time_start_ms) {
+		build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(time_start_ms);
+		cells.initCellsTmsForFlyPositions(camImages_ms);
+	}
+
 	public int findNearestIntervalWithBinarySearch(long value, int low, int high) {
 		int result = -1;
 		if (high - low > 1) {
 			int mid = (low + high) / 2;
-
 			if (camImages_ms[mid] > value)
 				result = findNearestIntervalWithBinarySearch(value, low, mid);
 			else if (camImages_ms[mid] < value)
@@ -358,7 +359,6 @@ public class Experiment {
 				result = mid;
 		} else
 			result = Math.abs(value - camImages_ms[low]) < Math.abs(value - camImages_ms[high]) ? low : high;
-
 		return result;
 	}
 
@@ -546,7 +546,7 @@ public class Experiment {
 
 		boolean flag = cells.load_Cells(getExperimentDirectory());
 		if (flag)
-			cells.cageBoxToROIs(seqCamData);
+			cells.cellsToROIs(seqCamData);
 		return flag;
 	}
 
@@ -564,7 +564,7 @@ public class Experiment {
 	}
 
 	public void saveCageAndMeasures() {
-		cells.cageBoxFromROIs(seqCamData);
+		cells.cellsFromROIs(seqCamData);
 		saveCageMeasures();
 	}
 

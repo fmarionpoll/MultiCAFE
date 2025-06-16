@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -121,7 +122,8 @@ public class BuildKymographs extends BuildSeries {
 
 		final int nKymographColumns = (int) ((exp.kymoLast_ms - exp.kymoFirst_ms) / exp.kymoBin_ms + 1);
 		int iToColumn = 0;
-		exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList();
+		FileTime firstImage_FileTime = exp.seqCamData.getFileTimeFromStructuredName(0);
+		exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(firstImage_FileTime.toMillis());
 		int sourceImageIndex = exp.findNearestIntervalWithBinarySearch(exp.kymoFirst_ms, 0,
 				exp.seqCamData.nTotalFrames);
 		String vDataTitle = new String(" / " + nKymographColumns);

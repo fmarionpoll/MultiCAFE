@@ -66,7 +66,7 @@ public class Cells {
 			final Document doc = XMLUtil.loadDocument(tempName);
 			if (doc == null)
 				return false;
-			flag = xmlLoadCageBox(doc);
+			flag = xmlLoadCells(doc);
 		}
 		return flag;
 	}
@@ -75,7 +75,7 @@ public class Cells {
 		if (directory == null)
 			return false;
 
-		csvSave_CageBox(directory);
+		csvSave_Cells(directory);
 		return true;
 	}
 
@@ -213,7 +213,7 @@ public class Cells {
 
 	// ---------------------------------
 
-	private boolean csvSave_CageBox(String directory) {
+	private boolean csvSave_Cells(String directory) {
 		Path path = Paths.get(directory);
 		if (!Files.exists(path))
 			return false;
@@ -270,7 +270,7 @@ public class Cells {
 
 	// -------------
 
-	public boolean xmlWriteCageBoxToFileNoQuestion(String tempname) {
+	public boolean xmlWriteCellsToFileNoQuestion(String tempname) {
 		if (tempname == null)
 			return false;
 		final Document doc = XMLUtil.createDocument(true);
@@ -292,7 +292,7 @@ public class Cells {
 		return XMLUtil.saveDocument(doc, tempname);
 	}
 
-	public boolean xmlReadCageBoxFromFile(Experiment exp) {
+	public boolean xmlReadCellsFromFile(Experiment exp) {
 		String[] filedummy = null;
 		String filename = exp.getExperimentDirectory();
 		File file = new File(filename);
@@ -302,21 +302,21 @@ public class Cells {
 		if (filedummy != null) {
 			for (int i = 0; i < filedummy.length; i++) {
 				String csFile = filedummy[i];
-				wasOk &= xmlReadCageBoxFromFileNoQuestion(csFile, exp);
+				wasOk &= xmlReadCellsFromFileNoQuestion(csFile, exp);
 			}
 		}
 		return wasOk;
 	}
 
-	public boolean xmlReadCageBoxFromFileNoQuestion(String tempname, Experiment exp) {
+	public boolean xmlReadCellsFromFileNoQuestion(String tempname, Experiment exp) {
 		if (tempname == null)
 			return false;
 		final Document doc = XMLUtil.loadDocument(tempname);
 		if (doc == null)
 			return false;
-		boolean flag = xmlLoadCageBox(doc);
+		boolean flag = xmlLoadCells(doc);
 		if (flag) {
-			cageBoxToROIs(exp.seqCamData);
+			cellsToROIs(exp.seqCamData);
 		} else {
 			System.out.println("Cages:xmlReadCageFromFileNoQuestion() failed to load cages from file");
 			return false;
@@ -324,7 +324,7 @@ public class Cells {
 		return true;
 	}
 
-	private boolean xmlLoadCageBox(Document doc) {
+	private boolean xmlLoadCells(Document doc) {
 		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_DROSOTRACK);
 		if (node == null)
 			return false;
@@ -464,7 +464,7 @@ public class Cells {
 		}
 	}
 
-	private List<ROI2D> getRoisWithCageBoxName(SequenceCamData seqCamData) {
+	private List<ROI2D> getRoisWithCellName(SequenceCamData seqCamData) {
 		List<ROI2D> roiList = seqCamData.seq.getROI2Ds();
 		List<ROI2D> cageList = new ArrayList<ROI2D>();
 		for (ROI2D roi : roiList) {
@@ -482,16 +482,16 @@ public class Cells {
 
 	// --------------
 
-	public void cageBoxToROIs(SequenceCamData seqCamData) {
-		List<ROI2D> cageLimitROIList = getRoisWithCageBoxName(seqCamData);
+	public void cellsToROIs(SequenceCamData seqCamData) {
+		List<ROI2D> cageLimitROIList = getRoisWithCellName(seqCamData);
 		seqCamData.seq.removeROIs(cageLimitROIList, false);
 		for (Cell cell : cellList)
 			cageLimitROIList.add(cell.cellRoi2D);
 		seqCamData.seq.addROIs(cageLimitROIList, true);
 	}
 
-	public void cageBoxFromROIs(SequenceCamData seqCamData) {
-		List<ROI2D> roiList = getRoisWithCageBoxName(seqCamData);
+	public void cellsFromROIs(SequenceCamData seqCamData) {
+		List<ROI2D> roiList = getRoisWithCellName(seqCamData);
 		if (roiList.size() > 0) {
 			Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
 			addMissingCells(roiList);
@@ -530,7 +530,7 @@ public class Cells {
 		}
 	}
 
-	public void transferNFliesFromCageBoxToCapillaries(List<Capillary> capList) {
+	public void transferNFliesFromCellsToCapillaries(List<Capillary> capList) {
 		for (Cell cell : cellList) {
 			int cellnb = cell.getCellNumberInteger();
 			for (Capillary cap : capList) {
@@ -591,6 +591,12 @@ public class Cells {
 
 	// ----------------
 
+	public void initCellsTmsForFlyPositions(long[] intervalsMs) {
+		for (Cell cell : cellList) {
+			cell.initTmsForFlyPositions(intervalsMs);
+		}
+	}
+
 	public void computeBooleanMasksForCells() {
 		for (Cell cell : cellList) {
 			try {
@@ -641,7 +647,6 @@ public class Cells {
 	public int getHorizontalSpanOfCells() {
 		int leftPixel = -1;
 		int rightPixel = -1;
-
 		for (Cell cell : cellList) {
 			ROI2D roiCell = cell.cellRoi2D;
 			Rectangle2D rect = roiCell.getBounds2D();
@@ -652,7 +657,6 @@ public class Cells {
 			if (right > rightPixel)
 				rightPixel = right;
 		}
-
 		return rightPixel - leftPixel;
 	}
 

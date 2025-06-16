@@ -172,7 +172,7 @@ public class InfosCellsTable extends JPanel {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			exp.cells.transferNFliesFromCageBoxToCapillaries(exp.capillaries.capillariesList);
+			exp.cells.transferNFliesFromCellsToCapillaries(exp.capillaries.capillariesList);
 			parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);
 		}
 	}
