@@ -54,6 +54,121 @@ public class XLSExportMoveResults extends XLSExport {
 				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
 				String charSeries = CellReference.convertNumToColString(iSeries);
 
+				xlsRow += o2_getMoveDataAndExport(expCombined, xlsRow, charSeries, options);
+
+				iSeries++;
+				progress.incPosition();
+			}
+			progress.setMessage("Save Excel file to disk... ");
+			FileOutputStream fileOut = new FileOutputStream(filename);
+			workbook.write(fileOut);
+			fileOut.close();
+			workbook.close();
+			progress.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("XLSExpoportMove:exportToFile() - output finished");
+	}
+
+	private int o2_getMoveDataAndExport(Experiment exp, int col0, String charSeries, XLSExportOptions options) {
+		XSSFSheet sheet = xlsInitSheet(EnumXLSExportType.XYTOPCAGEC.toString(), EnumXLSExportType.XYTOPCAGEC);
+		for (Cell cell : exp.cells.cellList) {
+
+		}
+		XLSResultsArray moveDescriptorsForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsExport);
+
+		// TODO
+		XLSResultsArray rowListForOneExp = new XLSResultsArray();
+		o2_getMoveDataFromOneExperimentSeries(exp, xlsExport);
+		int colmax = xlsExportMoveResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
+		if (options.onlyalive) {
+			trimDeadsFromRowMoveData(rowListForOneExp, exp);
+			sheet = xlsInitSheet(xlsExport.toString() + "_alive", xlsExport);
+			xlsExportMoveResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
+		}
+		return colmax;
+	}
+
+	protected Point writeExperiment_Cell_descriptors(Experiment exp, String charSeries, XSSFSheet sheet, Point pt,
+			EnumXLSExportType xlsExportOption) {
+		boolean transpose = options.transpose;
+		int row = pt.y;
+		int col0 = pt.x;
+		int colseries = writeSeparator_Between_Experiments(sheet, pt, transpose);
+
+		int rowmax = -1;
+		for (EnumXLSColumnHeader dumb : EnumXLSColumnHeader.values()) {
+			if (rowmax < dumb.getValue())
+				rowmax = dumb.getValue();
+		}
+
+		ArrayList<EnumMeasure> measures = xlsExportOption.toMeasures();
+		List<Cell> cellList = exp.cells.cellList;
+		int x = colseries;
+		int y = row;
+		for (int index = 0; index < cellList.size(); index++) {
+			Cell cell = cellList.get(index);
+			for (int j = 0; j < measures.size(); j++) {
+				XLSExportExperimentParameters(sheet, transpose, x, y, exp);
+				XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose,
+						measures.get(j).toString());
+				x++;
+			}
+		}
+		pt.x = col0;
+		pt.y = rowmax + 1;
+		return pt;
+	}
+
+	private XLSResults o2_getMoveDescriptorsForOneExperiment(CombinedExperiment expCombined, Cell cell,
+			EnumXLSExportType xlsOption) {
+
+		int nFrames = (int) ((expCombined.camImageLast_ms - expCombined.camImageFirst_ms) / options.buildExcelStepMs
+				+ 1);
+		cell.flyPositions.checkIsAliveFromAliveArray();
+//			FlyPositions row = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames, options.buildExcelStepMs);
+		XLSResults row = new XLSResults(cell.cellRoi2D.getName(), cell.cellNFlies, cell.getCellNumberInteger(),
+				xlsOption, nFrames);
+
+		return row;
+	}
+
+	public void o1_exportToFile(String filename, XLSExportOptions opt) {
+		System.out.println("XLSExpoportMove:exportToFile() start output");
+		options = opt;
+		expList = options.expList;
+
+		boolean loadCapillaries = true;
+		boolean loadDrosoTrack = true;
+		expList.loadListOfMeasuresFromAllExperiments(loadCapillaries, loadDrosoTrack);
+		expList.chainExperimentsUsingKymoIndexes(options.collateSeries);
+		expList.setFirstImageForAllExperiments(options.collateSeries);
+		expAll = expList.get_MsTime_of_StartAndEnd_AllExperiments(options);
+		expList.maxSizeOfCellArrays = expAll.cells.cellList.size();
+
+		ProgressFrame progress = new ProgressFrame("Export data to Excel");
+		int nbexpts = expList.getItemCount();
+		progress.setLength(nbexpts);
+
+		try {
+			int xlsRow = 1;
+			int iSeries = 0;
+			workbook = xlsInitWorkbook();
+			for (int index = options.firstExp; index <= options.lastExp; index++) {
+				Experiment exp = expList.getItemAt(index);
+				if (exp.chainToPreviousExperiment != null)
+					continue;
+
+				CombinedExperiment expCombined = new CombinedExperiment(exp);
+				expCombined.setCollateExperimentsOption(options.collateSeries);
+				expCombined.loadExperimentDescriptors();
+				expCombined.loadFlyPositions();
+
+				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
+				String charSeries = CellReference.convertNumToColString(iSeries);
+
 				if (options.xyImage)
 					o1_getMoveDataAndExport(expCombined, xlsRow, charSeries, EnumXLSExportType.XYIMAGEC);
 				if (options.xyCell)
@@ -89,7 +204,9 @@ public class XLSExportMoveResults extends XLSExport {
 
 	private int o1_getMoveDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
 		XSSFSheet sheet = xlsInitSheet(xlsExport.toString(), xlsExport);
+
 		XLSResultsArray moveDescriptorsForOneExp = getMoveDescriptorsForOneExperiment(exp, xlsExport);
+
 		// TODO
 		XLSResultsArray rowListForOneExp = new XLSResultsArray();
 		o2_getMoveDataFromOneExperimentSeries(exp, xlsExport);
@@ -97,6 +214,7 @@ public class XLSExportMoveResults extends XLSExport {
 
 		if (options.onlyalive) {
 			trimDeadsFromRowMoveData(rowListForOneExp, exp);
+
 			sheet = xlsInitSheet(xlsExport.toString() + "_alive", xlsExport);
 			xlsExportMoveResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 		}
@@ -240,12 +358,10 @@ public class XLSExportMoveResults extends XLSExport {
 			int ilastalive = 0;
 			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null
-						&& expi.chainToNextExperiment.cells.isFlyAlive(cellNumber)) {
+				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cells.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
-				long lastIntervalFlyAlive_Ms = expi.cells.getLastIntervalFlyAlive(cellNumber)
-						* expi.cells.detectBin_Ms;
+				long lastIntervalFlyAlive_Ms = expi.cells.getLastIntervalFlyAlive(cellNumber) * expi.cells.detectBin_Ms;
 				long lastMinuteAlive = lastIntervalFlyAlive_Ms + expi.camImageFirst_ms - expAll.camImageFirst_ms;
 				ilastalive = (int) (lastMinuteAlive / options.buildExcelStepMs);
 			}
@@ -382,35 +498,4 @@ public class XLSExportMoveResults extends XLSExport {
 		return rowListForOneExp;
 	}
 
-	protected Point writeExperiment_Cell_descriptors(Experiment exp, String charSeries, XSSFSheet sheet, Point pt,
-			EnumXLSExportType xlsExportOption) {
-		boolean transpose = options.transpose;
-		int row = pt.y;
-		int col0 = pt.x;
-		int colseries = writeSeparator_Between_Experiments(sheet, pt, transpose);
-
-		int rowmax = -1;
-		for (EnumXLSColumnHeader dumb : EnumXLSColumnHeader.values()) {
-			if (rowmax < dumb.getValue())
-				rowmax = dumb.getValue();
-		}
-
-		ArrayList<EnumMeasure> measures = xlsExportOption.toMeasures();
-		List<Cell> cellList = exp.cells.cellList;
-		int x = colseries;
-		int y = row;
-		for (int index = 0; index < cellList.size(); index++) {
-			Cell cell = cellList.get(index);
-			for (int j = 0; j < measures.size(); j++) {
-				XLSExportExperimentParameters(sheet, transpose, x, y, exp);
-				XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose,
-						measures.get(j).toString());
-				x++;
-			}
-		}
-		pt.x = col0;
-		pt.y = rowmax + 1;
-		return pt;
-	}
 }
