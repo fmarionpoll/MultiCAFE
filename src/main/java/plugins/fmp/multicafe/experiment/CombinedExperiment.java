@@ -25,6 +25,7 @@ public class CombinedExperiment extends Experiment {
 		expi = listExperiment.get(listExperiment.size() - 1);
 		lastImage_FileTime = expi.lastImage_FileTime;
 		// TODO: load capillaries descriptors and load cells descriptors
+		// loadMCCapillaries_Descriptors(filename)
 	}
 
 	private void setAllConnectedExperiments() {
@@ -43,10 +44,12 @@ public class CombinedExperiment extends Experiment {
 	}
 
 	public void loadCapillaryMeasures() {
+		// convert T into Tms (add time_first? - time_first expi(0))
 
 	}
 
 	public void loadFlyPositions() {
+		// convert T into Tms (add time_first? - time_first expi(0))
 
 	}
 

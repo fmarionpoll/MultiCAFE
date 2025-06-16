@@ -20,6 +20,7 @@ public class FlyPosition {
 	public double h = Double.NaN;
 	public ROI2DArea flyRoi = null;
 	public int flyIndexT = 0;
+	public double Tms = 0.;
 	public boolean bAlive = false;
 	public boolean bSleep = false;
 	public boolean bPadded = false;
@@ -65,6 +66,7 @@ public class FlyPosition {
 		bAlive = source.bAlive;
 		bSleep = source.bSleep;
 		bPadded = source.bPadded;
+		Tms = source.Tms;
 		distance = source.distance;
 		x = source.x;
 		y = source.y;
