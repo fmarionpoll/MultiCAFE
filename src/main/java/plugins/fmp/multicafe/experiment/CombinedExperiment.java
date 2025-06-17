@@ -29,6 +29,14 @@ public class CombinedExperiment extends Experiment {
 		// loadMCCapillaries_Descriptors(filename)
 	}
 
+	public void loadExperimentCamFileNames() {
+		Experiment expi = listExperiment.get(0);
+		while (expi != null) {
+			seqCamData.imagesList.addAll(expi.seqCamData.imagesList);
+			expi = expi.chainToNextExperiment;
+		}
+	}
+
 	private void copyOtherExperimentFields(Experiment source) {
 		setImagesDirectory(source.getImagesDirectory());
 		setExperimentDirectory(source.getExperimentDirectory());

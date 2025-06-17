@@ -13,6 +13,7 @@ import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
@@ -110,24 +111,27 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 
 		for (int i = 0; i < getItemCount(); i++) {
 			final int it = i;
-			final Experiment exp = getItemAt(it);
+			final Experiment expi = getItemAt(it);
+			progress.setMessage("Load experiment " + it + " of " + nexpts);
+			if (expi.seqCamData == null)
+				expi.seqCamData = new SequenceCamData();
 
 			futuresArray.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					progress.setMessage("Load experiment " + it + " of " + nexpts);
-					exp.setBinSubDirectory(expListBinSubDirectory);
+					expi.setBinSubDirectory(expListBinSubDirectory);
 					if (expListBinSubDirectory == null)
-						exp.checkKymosDirectory(exp.getBinSubDirectory());
-					exp.openMeasures(loadCapillaries, loadDrosoTrack);
-					if (maxSizeOfCapillaryArrays < exp.capillaries.capillariesList.size()) {
-						maxSizeOfCapillaryArrays = exp.capillaries.capillariesList.size();
+						expi.checkKymosDirectory(expi.getBinSubDirectory());
+					expi.openMeasures(loadCapillaries, loadDrosoTrack);
+					if (maxSizeOfCapillaryArrays < expi.capillaries.capillariesList.size()) {
+						maxSizeOfCapillaryArrays = expi.capillaries.capillariesList.size();
 						if (maxSizeOfCapillaryArrays % 2 != 0)
 							maxSizeOfCapillaryArrays += 1;
 					}
-					progress.incPosition();
+
 				}
 			}));
+			progress.incPosition();
 		}
 		waitFuturesCompletion(processor, futuresArray, progress);
 
