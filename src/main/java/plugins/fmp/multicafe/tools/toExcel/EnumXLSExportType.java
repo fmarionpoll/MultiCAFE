@@ -26,9 +26,9 @@ public enum EnumXLSExportType {
 	CROSSCORREL("crosscorrel", "n observ", Arrays.asList(EnumMeasure.OTHER), XLSMeasureType.CAP),
 	CROSSCORREL_LR("crosscorrel_LR", "n observ", Arrays.asList(EnumMeasure.OTHER), XLSMeasureType.CAP),
 
-	XYIMAGE("xy-image", "mm", Arrays.asList(EnumMeasure.TI, EnumMeasure.TS, EnumMeasure.X, EnumMeasure.Y),
+	XYIMAGE("xy-image", "mm", Arrays.asList(EnumMeasure.TS, EnumMeasure.X, EnumMeasure.Y), XLSMeasureType.MOVE),
+	XYTOPCELL("xy-topcell", "mm", Arrays.asList(EnumMeasure.TI, EnumMeasure.TS, EnumMeasure.X, EnumMeasure.Y),
 			XLSMeasureType.MOVE),
-	XYTOPCELL("xy-topcell", "mm", Arrays.asList(EnumMeasure.TS, EnumMeasure.X, EnumMeasure.Y), XLSMeasureType.MOVE),
 	XYTIPCAPS("xy-tipcaps", "mm", Arrays.asList(EnumMeasure.TS, EnumMeasure.X, EnumMeasure.Y), XLSMeasureType.MOVE),
 	ELLIPSEAXES("ellipse-axes", "mm", Arrays.asList(EnumMeasure.TS, EnumMeasure.W, EnumMeasure.H), XLSMeasureType.MOVE),
 	DISTANCE("distance", "mm", Arrays.asList(EnumMeasure.TS, EnumMeasure.DISTANCE), XLSMeasureType.MOVE),

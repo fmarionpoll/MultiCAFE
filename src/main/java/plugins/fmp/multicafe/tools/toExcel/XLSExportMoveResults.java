@@ -24,7 +24,7 @@ public class XLSExportMoveResults extends XLSExport {
 		expList = options.expList;
 
 		boolean loadCapillaries = true;
-		boolean loadDrosoTrack = options.onlyalive;// true;
+		boolean loadDrosoTrack = true; // options.onlyalive;// true;
 		expList.loadListOfMeasuresFromAllExperiments(loadCapillaries, loadDrosoTrack);
 		expList.chainExperimentsUsingKymoIndexes(options.collateSeries);
 		expList.setFirstImageForAllExperiments(options.collateSeries);
@@ -118,6 +118,12 @@ public class XLSExportMoveResults extends XLSExport {
 		long last = expAll.camImageLast_ms - expAll.camImageFirst_ms;
 		if (options.fixedIntervals)
 			last = options.endAll_Ms - options.startAll_Ms;
+		if (exportType == EnumMeasure.TI)
+			cell.flyPositions.computeDistanceBetweenConsecutivePoints();
+		else if (exportType == EnumMeasure.SLEEP)
+			cell.flyPositions.computeSleep();
+		else if (exportType == EnumMeasure.ALIVE)
+			cell.flyPositions.computeIsAlive();
 
 		for (long coltime = 0; coltime <= last; coltime += options.buildExcelStepMs, pt.y++) {
 			int i_from = (int) (coltime / options.buildExcelStepMs);
