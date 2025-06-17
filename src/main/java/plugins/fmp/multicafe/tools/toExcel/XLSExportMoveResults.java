@@ -15,7 +15,6 @@ import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.experiment.cells.FlyPosition;
-import plugins.fmp.multicafe.experiment.cells.FlyPositions;
 
 public class XLSExportMoveResults extends XLSExport {
 	//
@@ -102,77 +101,74 @@ public class XLSExportMoveResults extends XLSExport {
 				y += EnumXLSColumnHeader.DUM4.getValue();
 				XLSUtils.setValue(sheet, x, y, options.transpose, measures.get(j).toString());
 				y++;
+				writeData(sheet, cell, x, y, measures.get(j));
 				x++;
 			}
 		}
 		sheet.setActiveCell(new CellAddress(x, y));
 	}
 
-	private void writeData(XSSFSheet sheet, CombinedExperiment expCombined, int column_dataArea, int rowSeries,
-			Point pt) {
+	private void writeData(XSSFSheet sheet, Cell cell, int x, int y, EnumMeasure exportType) {
 		boolean transpose = options.transpose;
-		for (FlyPositions row : rowsForOneExp) {
-			pt.y = column_dataArea;
-			int col = getRowIndexFromCellName(row.name) * 2;
-			pt.x = rowSeries + col;
-			if (row.nflies < 1)
-				continue;
 
-			long last = expAll.camImageLast_ms - expAll.camImageFirst_ms;
-			if (options.fixedIntervals)
-				last = options.endAll_Ms - options.startAll_Ms;
+		Point pt = new Point(x, y);
+		if (cell.cellNFlies < 1)
+			return;
 
-			for (long coltime = 0; coltime <= last; coltime += options.buildExcelStepMs, pt.y++) {
-				int i_from = (int) (coltime / options.buildExcelStepMs);
-				if (i_from >= row.flyPositionList.size())
-					break;
+		long last = expAll.camImageLast_ms - expAll.camImageFirst_ms;
+		if (options.fixedIntervals)
+			last = options.endAll_Ms - options.startAll_Ms;
 
-				double valueL = Double.NaN;
-				double valueR = Double.NaN;
-				FlyPosition pos = row.flyPositionList.get(i_from);
+		for (long coltime = 0; coltime <= last; coltime += options.buildExcelStepMs, pt.y++) {
+			int i_from = (int) (coltime / options.buildExcelStepMs);
+			if (i_from >= cell.flyPositions.flyPositionList.size())
+				break;
 
-				switch (row.exportType) {
-				case DISTANCE:
-					valueL = pos.distance;
-					valueR = valueL;
-					break;
-				case ISALIVE:
-					valueL = pos.bAlive ? 1 : 0;
-					valueR = valueL;
-					break;
-				case SLEEP:
-					valueL = pos.bSleep ? 1 : 0;
-					valueR = valueL;
-					break;
-				case XYTOPCAGE:
-				case XYTIPCAPS:
-				case XYIMAGE:
-					valueL = pos.rectPosition.getX() + pos.rectPosition.getWidth() / 2.;
-					valueR = pos.rectPosition.getY() + pos.rectPosition.getHeight() / 2.;
-					break;
-				case ELLIPSEAXES:
-					valueL = pos.axis1;
-					valueR = pos.axis2;
-					break;
-				default:
-					break;
-				}
+			double value = Double.NaN;
+			FlyPosition pos = cell.flyPositions.flyPositionList.get(i_from);
 
-				if (!Double.isNaN(valueL)) {
-					XLSUtils.setValue(sheet, pt, transpose, valueL);
-					if (pos.bPadded)
-						XLSUtils.getCell(sheet, pt, transpose).setCellStyle(xssfCellStyle_red);
-				}
-				if (!Double.isNaN(valueR)) {
-					pt.x++;
-					XLSUtils.setValue(sheet, pt, transpose, valueR);
-					if (pos.bPadded)
-						XLSUtils.getCell(sheet, pt, transpose).setCellStyle(xssfCellStyle_red);
-					pt.x--;
-				}
+			switch (exportType) {
+			case TI:
+				value = pos.flyIndexT;
+				break;
+			case TS:
+				value = pos.tMs / 60000.;
+				break;
+			case X:
+				value = pos.x;
+				break;
+			case Y:
+				value = pos.y;
+				break;
+			case W:
+				value = pos.w;
+				break;
+			case H:
+				value = pos.h;
+				break;
+			case DISTANCE:
+				value = pos.distance;
+				break;
+			case ALIVE:
+				value = pos.bAlive ? 1 : 0;
+				break;
+			case SLEEP:
+				value = pos.bSleep ? 1 : 0;
+				break;
+
+			default:
+				break;
 			}
-			pt.x += 2;
+
+			if (!Double.isNaN(value)) {
+				XLSUtils.setValue(sheet, pt, transpose, value);
+				if (pos.bPadded)
+					XLSUtils.getCell(sheet, pt, transpose).setCellStyle(xssfCellStyle_red);
+			}
+
 		}
+		pt.x += 2;
+
 	}
 
 }
