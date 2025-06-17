@@ -40,7 +40,7 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 
 	public CombinedExperiment get_MsTime_of_StartAndEnd_AllExperiments(XLSExportOptions options) {
 		Experiment exp0 = getItemAt(0);
-		CombinedExperiment expAll = new CombinedExperiment(exp0);
+		CombinedExperiment expAll = new CombinedExperiment(exp0, false);
 
 		if (options.fixedIntervals) {
 			expAll.camImageFirst_ms = options.startAll_Ms;
@@ -282,9 +282,9 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 			combo.addItem(text);
 	}
 
-	public List<Experiment> getExperimentsAsList() {
+	public ArrayList<Experiment> getExperimentsAsList() {
 		int nitems = getItemCount();
-		List<Experiment> expList = new ArrayList<Experiment>(nitems);
+		ArrayList<Experiment> expList = new ArrayList<Experiment>(nitems);
 		for (int i = 0; i < nitems; i++)
 			expList.add(getItemAt(i));
 		return expList;

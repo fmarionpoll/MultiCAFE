@@ -42,8 +42,7 @@ public class XLSExportMoveResults extends XLSExport {
 				if (exp.chainToPreviousExperiment != null)
 					continue;
 
-				CombinedExperiment combinedExp = new CombinedExperiment(exp);
-				combinedExp.setCollateExperimentsOption(options.collateSeries);
+				CombinedExperiment combinedExp = new CombinedExperiment(exp, options.collateSeries);
 				combinedExp.loadExperimentDescriptors();
 				combinedExp.loadExperimentCamFileNames();
 				combinedExp.loadFlyPositions();

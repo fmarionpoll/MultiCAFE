@@ -357,7 +357,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 	public XLSResultsArray getCapDataFromOneExperiment(Experiment exp, EnumXLSExportType exportType,
 			XLSExportOptions options) {
 		this.options = options;
-		expAll = new CombinedExperiment(exp);
+		expAll = new CombinedExperiment(exp, false);
 		expAll.camImageLast_ms = exp.camImageLast_ms;
 		expAll.camImageFirst_ms = exp.camImageFirst_ms;
 		return getXLSResultArray_CapillaryData_From_CombinedExperiment(exp, exportType, options);

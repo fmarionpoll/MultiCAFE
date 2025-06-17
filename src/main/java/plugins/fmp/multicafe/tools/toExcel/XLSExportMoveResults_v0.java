@@ -3,6 +3,7 @@ package plugins.fmp.multicafe.tools.toExcel;
 import java.awt.Point;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.util.CellReference;
@@ -29,6 +30,7 @@ public class XLSExportMoveResults_v0 extends XLSExport {
 		expList.setFirstImageForAllExperiments(options.collateSeries);
 		expAll = expList.get_MsTime_of_StartAndEnd_AllExperiments(options);
 		expList.maxSizeOfCellArrays = expAll.cells.cellList.size();
+		ArrayList<Experiment> listExperiments = expList.getExperimentsAsList();
 
 		ProgressFrame progress = new ProgressFrame("Export data to Excel");
 		int nbexpts = expList.getItemCount();
@@ -43,8 +45,7 @@ public class XLSExportMoveResults_v0 extends XLSExport {
 				if (exp.chainToPreviousExperiment != null)
 					continue;
 
-				CombinedExperiment expCombined = new CombinedExperiment(exp);
-				expCombined.setCollateExperimentsOption(options.collateSeries);
+				CombinedExperiment expCombined = new CombinedExperiment(exp, options.collateSeries);
 				expCombined.loadExperimentDescriptors();
 				expCombined.loadFlyPositions();
 

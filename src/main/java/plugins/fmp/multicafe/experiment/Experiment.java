@@ -544,7 +544,7 @@ public class Experiment {
 			moveCageMeasuresToExperimentDirectory(pathToMeasures);
 
 		boolean flag = cells.load_Cells(getExperimentDirectory());
-		if (flag)
+		if (flag & seqCamData.seq != null)
 			cells.cellsToROIs(seqCamData);
 		return flag;
 	}
