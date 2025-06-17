@@ -245,7 +245,6 @@ public class Experiment {
 		if (seqCamData == null)
 			seqCamData = new SequenceCamData();
 		xmlLoad_MCExperiment();
-
 		getFileIntervalsFromSeqCamData();
 
 		if (seqKymos == null)

@@ -16,19 +16,18 @@ import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cells.Cell;
 
 public class XLSExportMoveResults extends XLSExport {
-
+	//
 	public void exportToFile(String filename, XLSExportOptions opt) {
 		System.out.println("XLSExpoportMove:exportToFile() start output");
 		options = opt;
 		expList = options.expList;
 
 		boolean loadCapillaries = true;
-		boolean loadDrosoTrack = true;
+		boolean loadDrosoTrack = options.onlyalive;// true;
 		expList.loadListOfMeasuresFromAllExperiments(loadCapillaries, loadDrosoTrack);
 		expList.chainExperimentsUsingKymoIndexes(options.collateSeries);
 		expList.setFirstImageForAllExperiments(options.collateSeries);
 		expAll = expList.get_MsTime_of_StartAndEnd_AllExperiments(options);
-		expList.maxSizeOfCellArrays = expAll.cells.cellList.size();
 
 		ProgressFrame progress = new ProgressFrame("Export data to Excel");
 		int nbexpts = expList.getItemCount();

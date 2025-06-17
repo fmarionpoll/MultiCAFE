@@ -15,6 +15,7 @@ import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.experiment.cells.Cell;
 
 public class XLSExportCapillariesResults extends XLSExport {
+	//
 	public void exportToFile(String filename, XLSExportOptions opt) {
 		System.out.println("XLSExpoportCapillaries:exportToFile() - start output");
 		options = opt;
@@ -304,8 +305,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 			int ilastalive = 0;
 			if (cell.cellNFlies > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null
-						&& expi.chainToNextExperiment.cells.isFlyAlive(cellNumber)) {
+				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cells.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
 				int lastIntervalFlyAlive = expi.cells.getLastIntervalFlyAlive(cellNumber);

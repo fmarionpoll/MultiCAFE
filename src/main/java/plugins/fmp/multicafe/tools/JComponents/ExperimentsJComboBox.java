@@ -13,7 +13,6 @@ import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
@@ -113,8 +112,6 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 			final int it = i;
 			final Experiment expi = getItemAt(it);
 			progress.setMessage("Load experiment " + it + " of " + nexpts);
-			if (expi.seqCamData == null)
-				expi.seqCamData = new SequenceCamData();
 
 			futuresArray.add(processor.submit(new Runnable() {
 				@Override
