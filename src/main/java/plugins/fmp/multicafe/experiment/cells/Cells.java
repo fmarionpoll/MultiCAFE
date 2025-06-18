@@ -201,7 +201,12 @@ public class Cells {
 				if (data[0].equals("#"))
 					return data[1];
 
-				int cellID = Integer.valueOf(data[0]);
+				int cellID = -1;
+				try {
+				cellID = Integer.valueOf(data[0]);
+					} catch (NumberFormatException e) {
+					    System.out.println("Invalid integer input: " + data[0]);
+					}
 				Cell cell = getCellFromNumber(cellID);
 				if (cell == null)
 					cell = new Cell();
