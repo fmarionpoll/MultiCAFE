@@ -342,4 +342,7 @@ public class Cell {
 		}
 	}
 
+	public void addFlyPositionsFromOtherCell(Cell cellExpi) {
+		flyPositions.flyPositionList.addAll(cellExpi.flyPositions.flyPositionList);
+	}
 }

@@ -2,8 +2,10 @@ package plugins.fmp.multicafe.experiment;
 
 import java.util.ArrayList;
 
+import plugins.fmp.multicafe.experiment.cells.Cell;
+
 public class CombinedExperiment extends Experiment {
-	ArrayList<Experiment> groupedExperiment = null;
+	ArrayList<Experiment> experimentList = null;
 	boolean collateExperiments = false;
 
 //	public CombinedExperiment(Experiment exp) {
@@ -12,26 +14,26 @@ public class CombinedExperiment extends Experiment {
 //	}
 
 	public CombinedExperiment(Experiment exp, boolean collate) {
-		groupedExperiment = new ArrayList<Experiment>(1);
-		groupedExperiment.add(exp);
+		experimentList = new ArrayList<Experiment>(1);
+		experimentList.add(exp);
 		this.collateExperiments = collate;
 		if (collateExperiments)
 			setGroupedExperiment(exp);
 	}
 
 	public void loadExperimentDescriptors() {
-		Experiment expi = groupedExperiment.get(0);
+		Experiment expi = experimentList.get(0);
 		copyExperimentFields(expi);
 		copyOtherExperimentFields(expi);
 		firstImage_FileTime = expi.firstImage_FileTime;
-		expi = groupedExperiment.get(groupedExperiment.size() - 1);
+		expi = experimentList.get(experimentList.size() - 1);
 		lastImage_FileTime = expi.lastImage_FileTime;
 		// TODO: load capillaries descriptors and load cells descriptors
 		// loadMCCapillaries_Descriptors(filename)
 	}
 
 	public void loadExperimentCamFileNames() {
-		Experiment expi = groupedExperiment.get(0);
+		Experiment expi = experimentList.get(0);
 		while (expi != null) {
 			seqCamData.imagesList.addAll(expi.seqCamData.imagesList);
 			expi = expi.chainToNextExperiment;
@@ -46,17 +48,17 @@ public class CombinedExperiment extends Experiment {
 
 	private void setGroupedExperiment(Experiment exp) {
 		Experiment expi = exp.getFirstChainedExperiment(true);
-		groupedExperiment = new ArrayList<Experiment>(1);
+		experimentList = new ArrayList<Experiment>(1);
 		while (expi != null) {
-			groupedExperiment.add(expi);
+			experimentList.add(expi);
 			expi = expi.chainToNextExperiment;
 		}
 	}
 
 	public void setSingleExperiment() {
-		Experiment expi = groupedExperiment.get(0);
-		groupedExperiment = new ArrayList<Experiment>(1);
-		groupedExperiment.add(expi);
+		Experiment expi = experimentList.get(0);
+		experimentList = new ArrayList<Experiment>(1);
+		experimentList.add(expi);
 	}
 
 	public void loadCapillaryMeasures() {
@@ -66,10 +68,23 @@ public class CombinedExperiment extends Experiment {
 
 	public void loadFlyPositions() {
 		long time_start_ms = firstImage_FileTime.toMillis();
-		for (Experiment expi : groupedExperiment) {
+		Experiment exp = experimentList.get(0);
+		exp.initTmsForFlyPositions(time_start_ms);
+		cells.cellList.addAll(exp.cells.cellList);
+
+		for (int i = 1; i < experimentList.size(); i++) {
+			Experiment expi = experimentList.get(i);
 			expi.initTmsForFlyPositions(time_start_ms);
-			cells.cellList.addAll(expi.cells.cellList);
+			for (Cell cell : cells.cellList) {
+				String cellName = cell.getRoiName();
+				for (Cell cellExpi : expi.cells.cellList) {
+					if (!cellName.equals(cellExpi.getRoiName()))
+						continue;
+					cell.addFlyPositionsFromOtherCell(cellExpi);
+				}
+			}
 		}
+
 	}
 
 }

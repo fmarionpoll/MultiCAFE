@@ -256,8 +256,9 @@ public class Experiment {
 				return false;
 		}
 
-		if (loadDrosoPositions)
+		if (loadDrosoPositions) {
 			loadCageMeasures();
+		}
 
 		return true;
 	}
