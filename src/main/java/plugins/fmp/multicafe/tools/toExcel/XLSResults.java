@@ -14,18 +14,18 @@ public class XLSResults {
 	public int dimension = 0;
 	public int nflies = 1;
 	public int cellID = 0;
-	public EnumXLSExportType exportType = null;
+	public EnumXLSExport exportType = null;
 	public ArrayList<Integer> dataInt = null;
 	public double[] valuesOut = null;
 
-	public XLSResults(String name, int nflies, int cellID, EnumXLSExportType exportType) {
+	public XLSResults(String name, int nflies, int cellID, EnumXLSExport exportType) {
 		this.name = name;
 		this.nflies = nflies;
 		this.cellID = cellID;
 		this.exportType = exportType;
 	}
 
-	public XLSResults(String name, int nflies, int cellID, EnumXLSExportType exportType, int nFrames) {
+	public XLSResults(String name, int nflies, int cellID, EnumXLSExport exportType, int nFrames) {
 		this.name = name;
 		this.nflies = nflies;
 		this.cellID = cellID;
@@ -61,12 +61,12 @@ public class XLSResults {
 		nflies = 0;
 	}
 
-	public void transferDataIntToValuesOut(double scalingFactorToPhysicalUnits, EnumXLSExportType xlsExport) {
+	public void transferDataIntToValuesOut(double scalingFactorToPhysicalUnits, EnumXLSExport xlsExport) {
 		if (dimension == 0 || dataInt == null || dataInt.size() < 1)
 			return;
 
 		boolean removeZeros = false;
-		if (xlsExport == EnumXLSExportType.AMPLITUDEGULPS)
+		if (xlsExport == EnumXLSExport.AMPLITUDEGULPS)
 			removeZeros = true;
 
 		int len = Math.min(dimension, dataInt.size());

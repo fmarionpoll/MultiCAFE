@@ -13,7 +13,7 @@ import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DMeasures;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
 
 public class FlyPositions {
@@ -24,7 +24,7 @@ public class FlyPositions {
 	public ArrayList<FlyPosition> flyPositionList = new ArrayList<FlyPosition>();
 
 	public String name = null;
-	public EnumXLSExportType exportType = null;
+	public EnumXLSExport exportType = null;
 	public int binsize = 1;
 	public Point2D origin = new Point2D.Double(0, 0);
 	public double pixelsize = 1.;
@@ -40,7 +40,7 @@ public class FlyPositions {
 	public FlyPositions() {
 	}
 
-	public FlyPositions(String name, EnumXLSExportType exportType, int nFrames, int binsize) {
+	public FlyPositions(String name, EnumXLSExport exportType, int nFrames, int binsize) {
 		this.name = name;
 		this.exportType = exportType;
 		this.binsize = binsize;
@@ -325,7 +325,7 @@ public class FlyPositions {
 		}
 	}
 
-	static public List<FlyPositions> computeMoveResults(Experiment expi, EnumXLSExportType xlsOption,
+	static public List<FlyPositions> computeMoveResults(Experiment expi, EnumXLSExport xlsOption,
 			XLSExportOptions options, int nFrames, double pixelsize) {
 		List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cells.cellList.size());
 		for (Cell cell : expi.cells.cellList) {

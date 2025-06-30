@@ -51,19 +51,19 @@ public class XLSExportMoveResults extends XLSExport {
 				String charSeries = CellReference.convertNumToColString(iSeries);
 
 				if (options.xyImage)
-					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExportType.XYIMAGE);
+					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.XYIMAGE);
 				if (options.xyCell)
-					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExportType.XYTOPCELL);
+					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.XYTOPCELL);
 				if (options.xyCapillaries)
-					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExportType.XYTIPCAPS);
+					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.XYTIPCAPS);
 				if (options.ellipseAxes)
-					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExportType.ELLIPSEAXES);
+					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.ELLIPSEAXES);
 				if (options.distance)
-					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExportType.DISTANCE);
+					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.DISTANCE);
 				if (options.alive)
-					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExportType.ISALIVE);
+					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.ISALIVE);
 				if (options.sleep)
-					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExportType.SLEEP);
+					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.SLEEP);
 
 				iSeries++;
 				progress.incPosition();
@@ -81,7 +81,7 @@ public class XLSExportMoveResults extends XLSExport {
 	}
 
 	private void exportMoveDataFromExpCombined(CombinedExperiment combinedExp, String charSeries,
-			XLSExportOptions options, EnumXLSExportType xlsExportOption) {
+			XLSExportOptions options, EnumXLSExport xlsExportOption) {
 		XSSFSheet sheet = xlsGetSheet(xlsExportOption.toString(), xlsExportOption);
 		CellAddress cellAddress = sheet.getActiveCell();
 		int x = cellAddress.getRow();

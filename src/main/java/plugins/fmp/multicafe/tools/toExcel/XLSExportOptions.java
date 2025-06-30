@@ -55,5 +55,5 @@ public class XLSExportOptions {
 	// internal parameters
 	public boolean trim_alive = false;
 	public boolean compensateEvaporation = false;
-	public EnumXLSExportType exportType;
+	public EnumXLSExport exportType;
 }

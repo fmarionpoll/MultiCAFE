@@ -23,7 +23,7 @@ import icy.gui.util.GuiUtil;
 import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.experiment.cells.FlyPositions;
 import plugins.fmp.multicafe.tools.MaxMinDouble;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 
 public class ChartPositions extends IcyFrame {
 	public JPanel mainChartPanel = null;
@@ -46,7 +46,7 @@ public class ChartPositions extends IcyFrame {
 		pt = new Point(rectv.x + deltapt.x, rectv.y + deltapt.y);
 	}
 
-	public void displayData(List<Cell> cellList, EnumXLSExportType option) {
+	public void displayData(List<Cell> cellList, EnumXLSExport option) {
 		List<XYSeriesCollection> xyDataSetList = new ArrayList<XYSeriesCollection>();
 		MaxMinDouble yMaxMin = new MaxMinDouble();
 		int count = 0;
@@ -92,7 +92,7 @@ public class ChartPositions extends IcyFrame {
 		mainChartFrame.setVisible(true);
 	}
 
-	private MaxMinDouble addPointsToXYSeries(Cell cell, EnumXLSExportType option, XYSeries seriesXY) {
+	private MaxMinDouble addPointsToXYSeries(Cell cell, EnumXLSExport option, XYSeries seriesXY) {
 		FlyPositions results = cell.flyPositions;
 		int itmax = results.flyPositionList.size();
 		MaxMinDouble yMaxMin = null;
@@ -152,7 +152,7 @@ public class ChartPositions extends IcyFrame {
 			globalXMax = indexT;
 	}
 
-	private ChartData getDataSet(Cell cell, EnumXLSExportType option) {
+	private ChartData getDataSet(Cell cell, EnumXLSExport option) {
 		XYSeriesCollection xyDataset = new XYSeriesCollection();
 		String name = cell.cellRoi2D.getName();
 		XYSeries seriesXY = new XYSeries(name);

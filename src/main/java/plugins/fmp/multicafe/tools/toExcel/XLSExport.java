@@ -30,15 +30,15 @@ public class XLSExport {
 
 	// ------------------------------------------------
 
-	int writeTop_descriptors(XSSFSheet sheet, EnumXLSExportType xlsExport) {
+	int writeTop_descriptors(XSSFSheet sheet, EnumXLSExport xlsExport) {
 		Point pt = new Point(0, 0);
 		int x = 0;
 		boolean transpose = options.transpose;
 		int columnIndex = 0;
 		for (EnumXLSColumnHeader dumb : EnumXLSColumnHeader.values()) {
-			XLSMeasureType columnType = dumb.toType();
+			EnumXLSMeasure columnType = dumb.toType();
 			dumb.setValue(columnIndex);
-			if (columnType == XLSMeasureType.COMMON || xlsExport.toType() == columnType) {
+			if (columnType == EnumXLSMeasure.COMMON || xlsExport.toType() == columnType) {
 				XLSUtils.setValue(sheet, x, columnIndex, transpose, dumb.getName());
 				columnIndex++;
 			}
@@ -47,7 +47,7 @@ public class XLSExport {
 		return pt.y;
 	}
 
-	void writeTop_timeIntervals(XSSFSheet sheet, int row, EnumXLSExportType xlsExport) {
+	void writeTop_timeIntervals(XSSFSheet sheet, int row, EnumXLSExport xlsExport) {
 		switch (xlsExport) {
 		case AUTOCORREL:
 		case CROSSCORREL:
@@ -149,7 +149,7 @@ public class XLSExport {
 		return workbook;
 	}
 
-	XSSFSheet xlsGetSheet(String title, EnumXLSExportType xlsExport) {
+	XSSFSheet xlsGetSheet(String title, EnumXLSExport xlsExport) {
 		XSSFSheet sheet = workbook.getSheet(title);
 		if (sheet == null) {
 			sheet = workbook.createSheet(title);
@@ -160,7 +160,7 @@ public class XLSExport {
 		return sheet;
 	}
 
-	protected Point writeExperiment_data(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExportType option,
+	protected Point writeExperiment_data(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExport option,
 			Point pt_main) {
 		int rowSeries = pt_main.x + 2;
 		int column_dataArea = pt_main.y;
@@ -239,7 +239,7 @@ public class XLSExport {
 	}
 
 	protected void XLSExportCapillaryParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
-			Experiment exp, Capillary cap, EnumXLSExportType xlsExportOption, int index) {
+			Experiment exp, Capillary cap, EnumXLSExport xlsExportOption, int index) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose,
 				exp.capillaries.capillariesDescription.volume);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose,
@@ -253,7 +253,7 @@ public class XLSExport {
 				desc_getChoiceTestType(exp.capillaries.capillariesList, index));
 	}
 
-	private void outputStimAndConc_according_to_DataOption(XSSFSheet sheet, EnumXLSExportType xlsExportOption,
+	private void outputStimAndConc_according_to_DataOption(XSSFSheet sheet, EnumXLSExport xlsExportOption,
 			Capillary cap, boolean transpose, int x, int y) {
 		switch (xlsExportOption) {
 		case TOPLEVEL_LR:

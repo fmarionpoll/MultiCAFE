@@ -156,7 +156,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray{
 
 	// ---------------------------------------------------
 
-	public void getResults1(Capillaries caps, EnumXLSExportType exportType, int nOutputFrames, long kymoBinCol_Ms,
+	public void getResults1(Capillaries caps, EnumXLSExport exportType, int nOutputFrames, long kymoBinCol_Ms,
 			XLSExportOptions xlsExportOptions) {
 		xlsExportOptions.exportType = exportType;
 		buildDataForPass1(caps, nOutputFrames, kymoBinCol_Ms, xlsExportOptions, false);
@@ -165,7 +165,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray{
 		buildDataForPass2(xlsExportOptions);
 	}
 
-	public void getResults_T0(Capillaries caps, EnumXLSExportType exportType, int nOutputFrames, long kymoBinCol_Ms,
+	public void getResults_T0(Capillaries caps, EnumXLSExport exportType, int nOutputFrames, long kymoBinCol_Ms,
 			XLSExportOptions xlsExportOptions) {
 		xlsExportOptions.exportType = exportType;
 		buildDataForPass1(caps, nOutputFrames, kymoBinCol_Ms, xlsExportOptions, xlsExportOptions.t0);

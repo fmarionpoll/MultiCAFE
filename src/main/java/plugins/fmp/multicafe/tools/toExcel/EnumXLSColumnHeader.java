@@ -6,29 +6,29 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum EnumXLSColumnHeader {
-	EXP_PATH("Path", 0, XLSMeasureType.COMMON), EXP_DATE("Date", 1, XLSMeasureType.COMMON),
-	EXP_BOXID("Box_ID", 2, XLSMeasureType.COMMON), EXP_CAM("Cam", 3, XLSMeasureType.COMMON),
-	EXP_EXPT("Expmt", 4, XLSMeasureType.COMMON), EXP_STIM("Stim", 5, XLSMeasureType.COMMON),
-	EXP_CONC("Conc", 6, XLSMeasureType.COMMON), EXP_COND1("Cond1", 9, XLSMeasureType.COMMON),
-	EXP_COND2("Cond2", 10, XLSMeasureType.COMMON), EXP_STRAIN("Strain", 7, XLSMeasureType.COMMON),
-	EXP_SEX("Sex", 8, XLSMeasureType.COMMON),
+	EXP_PATH("Path", 0, EnumXLSMeasure.COMMON), EXP_DATE("Date", 1, EnumXLSMeasure.COMMON),
+	EXP_BOXID("Box_ID", 2, EnumXLSMeasure.COMMON), EXP_CAM("Cam", 3, EnumXLSMeasure.COMMON),
+	EXP_EXPT("Expmt", 4, EnumXLSMeasure.COMMON), EXP_STIM("Stim", 5, EnumXLSMeasure.COMMON),
+	EXP_CONC("Conc", 6, EnumXLSMeasure.COMMON), EXP_COND1("Cond1", 9, EnumXLSMeasure.COMMON),
+	EXP_COND2("Cond2", 10, EnumXLSMeasure.COMMON), EXP_STRAIN("Strain", 7, EnumXLSMeasure.COMMON),
+	EXP_SEX("Sex", 8, EnumXLSMeasure.COMMON),
 	//
-	CAP("Cap", 11, XLSMeasureType.CAP), CAP_VOLUME("Cap_ul", 12, XLSMeasureType.CAP),
-	CAP_PIXELS("Cap_npixels", 13, XLSMeasureType.CAP), CHOICE_NOCHOICE("Choice", 14, XLSMeasureType.CAP),
-	CAP_STIM("Cap_stimulus", 15, XLSMeasureType.CAP), CAP_CONC("Cap_concentration", 16, XLSMeasureType.CAP),
-	CAP_NFLIES("Nflies", 17, XLSMeasureType.CAP), // CAP_CAGEINDEX("Cell", 18, XLSMeasureType.CAP),
+	CAP("Cap", 11, EnumXLSMeasure.CAP), CAP_VOLUME("Cap_ul", 12, EnumXLSMeasure.CAP),
+	CAP_PIXELS("Cap_npixels", 13, EnumXLSMeasure.CAP), CHOICE_NOCHOICE("Choice", 14, EnumXLSMeasure.CAP),
+	CAP_STIM("Cap_stimulus", 15, EnumXLSMeasure.CAP), CAP_CONC("Cap_concentration", 16, EnumXLSMeasure.CAP),
+	CAP_NFLIES("Nflies", 17, EnumXLSMeasure.CAP), // CAP_CAGEINDEX("Cell", 18, XLSMeasureType.CAP),
 	//
-	CELL_INDEX("Cell", 18, XLSMeasureType.COMMON), CELL_ID("Cell_ID", 19, XLSMeasureType.COMMON),
-	CELL_STRAIN("Cell_strain", 20, XLSMeasureType.COMMON), CELL_SEX("Cell_sex", 21, XLSMeasureType.COMMON),
-	CELL_AGE("Cell_age", 22, XLSMeasureType.COMMON), CELL_COMMENT("Cell_comment", 23, XLSMeasureType.COMMON),
+	CELL_INDEX("Cell", 18, EnumXLSMeasure.COMMON), CELL_ID("Cell_ID", 19, EnumXLSMeasure.COMMON),
+	CELL_STRAIN("Cell_strain", 20, EnumXLSMeasure.COMMON), CELL_SEX("Cell_sex", 21, EnumXLSMeasure.COMMON),
+	CELL_AGE("Cell_age", 22, EnumXLSMeasure.COMMON), CELL_COMMENT("Cell_comment", 23, EnumXLSMeasure.COMMON),
 	//
-	DUM4("Dum4", 24, XLSMeasureType.COMMON);
+	DUM4("Dum4", 24, EnumXLSMeasure.COMMON);
 
 	private final String name;
 	private int value;
-	private final XLSMeasureType type;
+	private final EnumXLSMeasure type;
 
-	EnumXLSColumnHeader(String label, int value, XLSMeasureType type) {
+	EnumXLSColumnHeader(String label, int value, EnumXLSMeasure type) {
 		this.name = label;
 		this.value = value;
 		this.type = type;
@@ -64,7 +64,7 @@ public enum EnumXLSColumnHeader {
 		return name;
 	}
 
-	public XLSMeasureType toType() {
+	public EnumXLSMeasure toType() {
 		return type;
 	}
 

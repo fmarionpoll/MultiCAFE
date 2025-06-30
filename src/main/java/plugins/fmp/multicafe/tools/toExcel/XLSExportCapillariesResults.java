@@ -45,19 +45,19 @@ public class XLSExportCapillariesResults extends XLSExport {
 				String charSeries = CellReference.convertNumToColString(iSeries);
 
 				if (options.topLevel) {
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPRAW);
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVEL);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPRAW);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVEL);
 				}
 				if (options.lrPI && options.topLevel)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVEL_LR);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVEL_LR);
 				if (options.topLevelDelta)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVELDELTA);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVELDELTA);
 				if (options.lrPI && options.topLevelDelta)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TOPLEVELDELTA_LR);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVELDELTA_LR);
 				if (options.bottomLevel)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.BOTTOMLEVEL);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.BOTTOMLEVEL);
 				if (options.derivative)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.DERIVEDVALUES);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.DERIVEDVALUES);
 
 				if (!options.collateSeries || exp.chainToPreviousExperiment == null)
 					column += expList.maxSizeOfCapillaryArrays + 2;
@@ -76,7 +76,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 		System.out.println("XLSExpoportCapillaries:exportToFile() XLS output finished");
 	}
 
-	int getCapillaryDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType xlsExport) {
+	int getCapillaryDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExport xlsExport) {
 		XLSResultsArray rowListForOneExp = getXLSResultArray_CapillaryData_From_CombinedExperiment(exp, xlsExport,
 				options);
 		XSSFSheet sheet = xlsGetSheet(xlsExport.toString(), xlsExport);
@@ -98,7 +98,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 	}
 
 	public XLSResultsArray getXLSResultArray_CapillaryData_From_CombinedExperiment(Experiment exp,
-			EnumXLSExportType xlsExportType, XLSExportOptions options) {
+			EnumXLSExport xlsExportType, XLSExportOptions options) {
 		XLSResultsArray rowListForOneExp = getXLSResultsArray_Descriptors_From_CombinedExperiment(exp, xlsExportType,
 				options);
 		Experiment expi = exp.getFirstChainedExperiment(true);
@@ -183,7 +183,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 	}
 
 	private XLSResultsArray getXLSResultsArray_Descriptors_From_CombinedExperiment(Experiment exp,
-			EnumXLSExportType xlsOption, XLSExportOptions options) {
+			EnumXLSExport xlsOption, XLSExportOptions options) {
 
 		// loop to get all capillaries into expAll and init rows for this experiment
 		expAll.cells.copy(exp.cells);
@@ -218,7 +218,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 		if (resultsArrayList.resultsList.size() < 1)
 			return;
 
-		EnumXLSExportType xlsoption = resultsArrayList.getRow(0).exportType;
+		EnumXLSExport xlsoption = resultsArrayList.getRow(0).exportType;
 
 		long offsetChain = expi.camImageFirst_ms - expi.chainImageFirst_ms;
 		long start_Ms = expi.kymoFirst_ms + offsetChain; // TODO check when collate?
@@ -347,14 +347,14 @@ public class XLSExportCapillariesResults extends XLSExport {
 	}
 
 	protected int xlsExportCapillaryResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet,
-			EnumXLSExportType xlsExportOption, int col0, String charSeries) {
+			EnumXLSExport xlsExportOption, int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		writeExperiment_Capillary_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
 		pt = writeExperiment_data(rowListForOneExp, sheet, xlsExportOption, pt);
 		return pt.x;
 	}
 
-	public XLSResultsArray getCapDataFromOneExperiment(Experiment exp, EnumXLSExportType exportType,
+	public XLSResultsArray getCapDataFromOneExperiment(Experiment exp, EnumXLSExport exportType,
 			XLSExportOptions options) {
 		this.options = options;
 		expAll = new CombinedExperiment(exp, false);
@@ -442,7 +442,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 //	}
 
 	protected Point writeExperiment_Capillary_descriptors(Experiment exp, String charSeries, XSSFSheet sheet, Point pt,
-			EnumXLSExportType xlsExportOption) {
+			EnumXLSExport xlsExportOption) {
 		boolean transpose = options.transpose;
 		int row = pt.y;
 		int col0 = pt.x;

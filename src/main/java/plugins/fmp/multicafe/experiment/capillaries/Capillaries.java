@@ -27,7 +27,7 @@ import plugins.fmp.multicafe.experiment.KymoIntervals;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Capillaries {
@@ -432,7 +432,7 @@ public class Capillaries {
 		return capillariesListTimeIntervals.get(selectedItem)[0];
 	}
 
-	public double getScalingFactorToPhysicalUnits(EnumXLSExportType xlsoption) {
+	public double getScalingFactorToPhysicalUnits(EnumXLSExport xlsoption) {
 		double scalingFactorToPhysicalUnits;
 		switch (xlsoption) {
 		case NBGULPS:

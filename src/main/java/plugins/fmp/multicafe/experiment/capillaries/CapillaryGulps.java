@@ -14,7 +14,7 @@ import icy.roi.ROI2D;
 import icy.type.geom.Polyline2D;
 import icy.util.StringUtil;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 public class CapillaryGulps {
@@ -93,7 +93,7 @@ public class CapillaryGulps {
 		return data_out;
 	}
 
-	public ArrayList<Integer> getMeasuresFromGulps(EnumXLSExportType option, int npoints, long seriesBinMs,
+	public ArrayList<Integer> getMeasuresFromGulps(EnumXLSExport option, int npoints, long seriesBinMs,
 			long outputBinMs) {
 		ArrayList<Integer> data_in = null;
 		switch (option) {

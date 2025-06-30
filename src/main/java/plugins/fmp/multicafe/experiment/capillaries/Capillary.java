@@ -18,7 +18,7 @@ import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
@@ -182,7 +182,7 @@ public class Capillary implements Comparable<Capillary> {
 		return Integer.valueOf(stringNumber);
 	}
 
-	public String getSideDescriptor(EnumXLSExportType xlsExportOption) {
+	public String getSideDescriptor(EnumXLSExport xlsExportOption) {
 		String value = null;
 		capSide = getCapillarySide();
 		switch (xlsExportOption) {
@@ -245,7 +245,7 @@ public class Capillary implements Comparable<Capillary> {
 
 	// -----------------------------------------
 
-	public boolean isThereAnyMeasuresDone(EnumXLSExportType option) {
+	public boolean isThereAnyMeasuresDone(EnumXLSExport option) {
 		boolean yes = false;
 		switch (option) {
 		case DERIVEDVALUES:
@@ -265,7 +265,7 @@ public class Capillary implements Comparable<Capillary> {
 		return yes;
 	}
 
-	public ArrayList<Integer> getCapillaryMeasuresForXLSPass1(EnumXLSExportType option, long seriesBinMs,
+	public ArrayList<Integer> getCapillaryMeasuresForXLSPass1(EnumXLSExport option, long seriesBinMs,
 			long outputBinMs) {
 		ArrayList<Integer> datai = null;
 		switch (option) {
@@ -380,7 +380,7 @@ public class Capillary implements Comparable<Capillary> {
 		ptsGulps.addNewGulpFromPoints(gulpPoints);
 	}
 
-	public int getLastMeasure(EnumXLSExportType option) {
+	public int getLastMeasure(EnumXLSExport option) {
 		int lastMeasure = 0;
 		switch (option) {
 		case DERIVEDVALUES:
@@ -403,7 +403,7 @@ public class Capillary implements Comparable<Capillary> {
 		return lastMeasure;
 	}
 
-	public int getLastDeltaMeasure(EnumXLSExportType option) {
+	public int getLastDeltaMeasure(EnumXLSExport option) {
 		int lastMeasure = 0;
 		switch (option) {
 		case DERIVEDVALUES:
@@ -426,7 +426,7 @@ public class Capillary implements Comparable<Capillary> {
 		return lastMeasure;
 	}
 
-	public int getT0Measure(EnumXLSExportType option) {
+	public int getT0Measure(EnumXLSExport option) {
 		int t0Measure = 0;
 		switch (option) {
 		case DERIVEDVALUES:

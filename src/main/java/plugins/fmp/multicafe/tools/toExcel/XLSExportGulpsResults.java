@@ -40,26 +40,26 @@ public class XLSExportGulpsResults extends XLSExportCapillariesResults {
 				String charSeries = CellReference.convertNumToColString(iSeries);
 
 				if (options.derivative)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.DERIVEDVALUES);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.DERIVEDVALUES);
 				if (options.sumGulps)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.SUMGULPS);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.SUMGULPS);
 				if (options.lrPI && options.sumGulps)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.SUMGULPS_LR);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.SUMGULPS_LR);
 				if (options.nbGulps)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.NBGULPS);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.NBGULPS);
 				if (options.amplitudeGulps)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.AMPLITUDEGULPS);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.AMPLITUDEGULPS);
 				if (options.tToNextGulp)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TTOGULP);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TTOGULP);
 				if (options.tToNextGulp_LR)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.TTOGULP_LR);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TTOGULP_LR);
 				if (options.autocorrelation) {
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.AUTOCORREL);
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.AUTOCORREL_LR);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.AUTOCORREL);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.AUTOCORREL_LR);
 				}
 				if (options.crosscorrelation) {
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.CROSSCORREL);
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExportType.CROSSCORREL_LR);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.CROSSCORREL);
+					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.CROSSCORREL_LR);
 				}
 
 				if (!options.collateSeries || exp.chainToPreviousExperiment == null)

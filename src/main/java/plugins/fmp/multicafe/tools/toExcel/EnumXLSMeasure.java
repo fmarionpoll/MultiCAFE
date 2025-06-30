@@ -1,11 +1,11 @@
 package plugins.fmp.multicafe.tools.toExcel;
 
-public enum XLSMeasureType {
+public enum EnumXLSMeasure {
 	CAP("capillary"), MOVE("move"), COMMON("common");
 
 	private String label;
 
-	XLSMeasureType(String label) {
+	EnumXLSMeasure(String label) {
 		this.label = label;
 	}
 

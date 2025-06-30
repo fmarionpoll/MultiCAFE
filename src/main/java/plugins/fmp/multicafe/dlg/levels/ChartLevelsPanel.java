@@ -21,7 +21,7 @@ import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.chart.ChartLevels;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 
 public class ChartLevelsPanel extends JPanel implements SequenceListener {
 	/**
@@ -107,34 +107,34 @@ public class ChartLevelsPanel extends JPanel implements SequenceListener {
 		int dy = 10;
 		exp.seqKymos.seq.addListener(this);
 
-		if (limitsCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExportType.TOPLEVEL)
-				&& isThereAnyDataToDisplay(exp, EnumXLSExportType.BOTTOMLEVEL)) {
-			plotTopAndBottom = plotToChart(exp, "top + bottom levels", EnumXLSExportType.TOPLEVEL, plotTopAndBottom,
+		if (limitsCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.TOPLEVEL)
+				&& isThereAnyDataToDisplay(exp, EnumXLSExport.BOTTOMLEVEL)) {
+			plotTopAndBottom = plotToChart(exp, "top + bottom levels", EnumXLSExport.TOPLEVEL, plotTopAndBottom,
 					rectv);
 			rectv.translate(dx, dy);
 		} else if (plotTopAndBottom != null)
 			closeChart(plotTopAndBottom);
 
-		if (deltaCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExportType.TOPLEVELDELTA)) {
-			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumXLSExportType.TOPLEVELDELTA, plotDelta, rectv);
+		if (deltaCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.TOPLEVELDELTA)) {
+			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumXLSExport.TOPLEVELDELTA, plotDelta, rectv);
 			rectv.translate(dx, dy);
 		} else if (plotDelta != null)
 			closeChart(plotDelta);
 
-		if (derivativeCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExportType.DERIVEDVALUES)) {
-			plotDerivative = plotToChart(exp, "Derivative", EnumXLSExportType.DERIVEDVALUES, plotDerivative, rectv);
+		if (derivativeCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.DERIVEDVALUES)) {
+			plotDerivative = plotToChart(exp, "Derivative", EnumXLSExport.DERIVEDVALUES, plotDerivative, rectv);
 			rectv.translate(dx, dy);
 		} else if (plotDerivative != null)
 			closeChart(plotDerivative);
 
-		if (consumptionCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExportType.SUMGULPS)) {
-			plotSumgulps = plotToChart(exp, "Cumulated gulps", EnumXLSExportType.SUMGULPS, plotSumgulps, rectv);
+		if (consumptionCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.SUMGULPS)) {
+			plotSumgulps = plotToChart(exp, "Cumulated gulps", EnumXLSExport.SUMGULPS, plotSumgulps, rectv);
 			rectv.translate(dx, dy);
 		} else if (plotSumgulps != null)
 			closeChart(plotSumgulps);
 	}
 
-	private ChartLevels plotToChart(Experiment exp, String title, EnumXLSExportType option, ChartLevels iChart,
+	private ChartLevels plotToChart(Experiment exp, String title, EnumXLSExport option, ChartLevels iChart,
 			Rectangle rectv) {
 		if (iChart != null)
 			iChart.mainChartFrame.dispose();
@@ -161,7 +161,7 @@ public class ChartLevelsPanel extends JPanel implements SequenceListener {
 		return chart;
 	}
 
-	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExportType option) {
+	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExport option) {
 		boolean flag = false;
 		Capillaries capillaries = exp.capillaries;
 		for (Capillary cap : capillaries.capillariesList) {

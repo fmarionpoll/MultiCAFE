@@ -33,7 +33,7 @@ import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportCapillariesResults;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multicafe.tools.toExcel.XLSResults;
@@ -78,7 +78,7 @@ public class ChartLevels extends IcyFrame {
 		pt = new Point(rectv.x, rectv.y);
 	}
 
-	public void displayData(Experiment exp, EnumXLSExportType option, String title, boolean subtractEvaporation) {
+	public void displayData(Experiment exp, EnumXLSExport option, String title, boolean subtractEvaporation) {
 		xyChartList.clear();
 		ymax = 0;
 		ymin = 0;
@@ -194,12 +194,12 @@ public class ChartLevels extends IcyFrame {
 			v.setPositionT(isel);
 	}
 
-	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumXLSExportType exportType,
+	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumXLSExport exportType,
 			boolean subtractEvaporation) {
 		XLSResultsArray resultsArray1 = getDataAsResultsArray(exp, exportType, subtractEvaporation);
 		XLSResultsArray resultsArray2 = null;
-		if (exportType == EnumXLSExportType.TOPLEVEL)
-			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExportType.BOTTOMLEVEL, subtractEvaporation);
+		if (exportType == EnumXLSExport.TOPLEVEL)
+			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExport.BOTTOMLEVEL, subtractEvaporation);
 
 		XYSeriesCollection xyDataset = null;
 		int oldCell = -1;
@@ -224,7 +224,7 @@ public class ChartLevels extends IcyFrame {
 		return xyList;
 	}
 
-	private XLSResultsArray getDataAsResultsArray(Experiment exp, EnumXLSExportType exportType,
+	private XLSResultsArray getDataAsResultsArray(Experiment exp, EnumXLSExport exportType,
 			boolean subtractEvaporation) {
 		XLSExportOptions options = new XLSExportOptions();
 		options.buildExcelStepMs = 60000;
