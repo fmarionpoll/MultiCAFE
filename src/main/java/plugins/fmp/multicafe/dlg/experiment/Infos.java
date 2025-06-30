@@ -44,6 +44,7 @@ public class Infos extends JPanel {
 	private JButton openButton = new JButton("Load...");
 	private JButton saveButton = new JButton("Save...");
 	private JButton duplicateButton = new JButton("Get previous");
+	private JButton zoomOnTimeStamp = new JButton("zoom top");
 
 	private MultiCAFE parent0 = null;
 	public boolean disableChangeFile = false;
@@ -109,6 +110,8 @@ public class Infos extends JPanel {
 		add(cond2Check, c);
 		c.gridx += delta1;
 		add(cond2Combo, c);
+		c.gridx += delta1;
+		add(zoomOnTimeStamp, c);
 
 		boxIDCombo.setEditable(true);
 		exptCombo.setEditable(true);
@@ -149,6 +152,13 @@ public class Infos extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				duplicatePreviousDescriptors();
+			}
+		});
+
+		zoomOnTimeStamp.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				// TODO
 			}
 		});
 	}
