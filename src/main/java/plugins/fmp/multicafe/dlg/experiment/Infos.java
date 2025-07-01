@@ -12,6 +12,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import icy.canvas.Canvas2D;
+import icy.gui.viewer.Viewer;
+import icy.sequence.Sequence;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.JComponents.SortedComboBoxModel;
@@ -159,7 +162,9 @@ public class Infos extends JPanel {
 		zoomButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				// TODO
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null)
+					zoomToUpperCorner(exp);
 			}
 		});
 	}
@@ -241,6 +246,17 @@ public class Infos extends JPanel {
 		Experiment exp = (Experiment) parent0.expListCombo.getItemAt(iprevious + 1);
 		transferPreviousExperimentInfosToDialog(exp0, exp);
 		parent0.paneCapillaries.transferPreviousExperimentCapillariesInfos(exp0, exp);
+	}
+
+	void zoomToUpperCorner(Experiment exp) {
+		Sequence seq = exp.seqCamData.seq;
+		Viewer v = seq.getFirstViewer();
+		if (v != null) {
+			Canvas2D canvas = (Canvas2D) v.getCanvas();
+			canvas.setScale(2., 2., true);
+			canvas.setOffset(0, 0, true);
+		}
+
 	}
 
 }
