@@ -23,7 +23,7 @@ import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
 
 public class MultiCAFE extends PluginActionable {
-	public IcyFrame mainFrame = new IcyFrame("MultiCAFE July 1, 2025", true, true, true, true);
+	public IcyFrame mainFrame = new IcyFrame("MultiCAFE July 21, 2025", true, true, true, true);
 	public ExperimentsJComboBox expListCombo = new ExperimentsJComboBox();
 
 	public MCBrowse_ paneBrowse = new MCBrowse_();
@@ -46,8 +46,8 @@ public class MultiCAFE extends PluginActionable {
 		paneExperiment.init(mainPanel, "Experiment", this);
 		paneCapillaries.init(mainPanel, "Capillaries", this);
 		paneKymos.init(mainPanel, "Kymographs", this);
-		paneLevels.init(mainPanel, "Levels", this);
-		paneCells.init(mainPanel, "Cells", this);
+		paneLevels.init(mainPanel, "Capillary levels", this);
+		paneCells.init(mainPanel, "Fly positions", this);
 		paneExcel.init(mainPanel, "Export", this);
 
 		mainFrame.setLayout(new BorderLayout());
