@@ -103,7 +103,7 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
-					exp.cells.cellsFromROIs(exp.seqCamData);
+					exp.cells.cagesFromROIs(exp.seqCamData);
 					if (exp.capillaries.capillariesList.size() > 0)
 						exp.cells.transferNFliesFromCapillariesToCageBox(exp.capillaries.capillariesList);
 				}
@@ -180,7 +180,7 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.seqCamData.seq);
-		exp.cells.clearCellList();
+		exp.cells.clearCageList();
 
 		int t = exp.seqCamData.currentFrame;
 		IcyBufferedImage img0 = IcyBufferedImageUtil.convertToType(overlayThreshold.getTransformedImage(t),
@@ -216,10 +216,10 @@ public class BuildCellsFromContours extends JPanel implements ChangeListener {
 					blobsfound.add(blobi);
 					ROI2DPolygon roiP = new ROI2DPolygon(blobs.getBlobPolygon2D(blobi));
 					roiP.translate(rectGrid.x, rectGrid.y);
-					int cagenb = cap.getCellIndexFromRoiName();
+					int cagenb = cap.getCageIndexFromRoiName();
 					roiP.setName("cage" + String.format("%03d", cagenb));
 					roiP.setColor(Color.MAGENTA);
-					cap.capCellID = cagenb;
+					cap.capCageID = cagenb;
 					exp.seqCamData.seq.addROI(roiP);
 				}
 			}

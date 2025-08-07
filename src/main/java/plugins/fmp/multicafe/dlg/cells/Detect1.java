@@ -26,7 +26,7 @@ import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
-import plugins.fmp.multicafe.experiment.cells.Cell;
+import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.FlyDetect1;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
@@ -263,12 +263,12 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		int nitems = 1;
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
-			nitems = exp.cells.cellList.size() + 1;
+			nitems = exp.cells.cageList.size() + 1;
 		if (cellsComboBox.getItemCount() != nitems) {
 			cellsComboBox.removeAllItems();
 			cellsComboBox.addItem("all cells");
-			for (Cell cell : exp.cells.cellList) {
-				cellsComboBox.addItem(cell.getCellNumber());
+			for (Cage cell : exp.cells.cageList) {
+				cellsComboBox.addItem(cell.getCageNumber());
 			}
 		}
 	}

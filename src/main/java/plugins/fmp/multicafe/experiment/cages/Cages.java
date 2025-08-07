@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment.cells;
+package plugins.fmp.multicafe.experiment.cages;
 
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
@@ -30,8 +30,8 @@ import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
-public class Cells {
-	public ArrayList<Cell> cellList = new ArrayList<Cell>();
+public class Cages {
+	public ArrayList<Cage> cageList = new ArrayList<Cage>();
 
 	// ---------- not saved to xml:
 	public long detectFirst_Ms = 0;
@@ -53,7 +53,7 @@ public class Cells {
 
 	// ---------------------------------
 
-	public boolean load_Cells(String directory) {
+	public boolean load_Cages(String directory) {
 		boolean flag = false;
 		try {
 			flag = csvLoad_CageBox(directory);
@@ -66,37 +66,37 @@ public class Cells {
 			final Document doc = XMLUtil.loadDocument(tempName);
 			if (doc == null)
 				return false;
-			flag = xmlLoadCells(doc);
+			flag = xmlLoadCages(doc);
 		}
 		return flag;
 	}
 
-	public boolean save_Cells(String directory) {
+	public boolean save_Cages(String directory) {
 		if (directory == null)
 			return false;
 
-		csvSave_Cells(directory);
+		csvSave_Cages(directory);
 		return true;
 	}
 
 	// ---------------------------------
 
 	public void clearAllMeasures(int option_detectCage) {
-		for (Cell cell : cellList) {
-			int cellnb = cell.getCellNumberInteger();
-			if (option_detectCage < 0 || option_detectCage == cellnb)
-				cell.clearMeasures();
+		for (Cage cage : cageList) {
+			int cageIndex = cage.getCageIndex();
+			if (option_detectCage < 0 || option_detectCage == cageIndex)
+				cage.clearMeasures();
 		}
 	}
 
-	public void clearCellList() {
-		cellList.clear();
+	public void clearCageList() {
+		cageList.clear();
 	}
 
-	public void mergeLists(Cells cagem) {
-		for (Cell cellm : cagem.cellList) {
-			if (!isPresent(cellm))
-				cellList.add(cellm);
+	public void mergeLists(Cages cagem) {
+		for (Cage inputCagem : cagem.cageList) {
+			if (!isPresent(inputCagem))
+				cageList.add(inputCagem);
 		}
 	}
 
@@ -127,7 +127,7 @@ public class Cells {
 					csvLoad_CageBox(csvReader, sep);
 					break;
 				case "POSITION":
-					csvLoad_Measures(csvReader, EnumCellMeasures.POSITION, sep);
+					csvLoad_Measures(csvReader, EnumCageMeasures.POSITION, sep);
 					break;
 
 				default:
@@ -149,11 +149,11 @@ public class Cells {
 
 				String test = data[0].substring(0, Math.min(data[0].length(), 7));
 				if (test.equals("n cages") || test.equals("n cells")) {
-					int ncells = Integer.valueOf(data[1]);
-					if (ncells >= cellList.size())
-						cellList.ensureCapacity(ncells);
+					int ncages = Integer.valueOf(data[1]);
+					if (ncages >= cageList.size())
+						cageList.ensureCapacity(ncages);
 					else
-						cellList.subList(ncells, cellList.size()).clear();
+						cageList.subList(ncages, cageList.size()).clear();
 				}
 			}
 		} catch (IOException e) {
@@ -177,12 +177,12 @@ public class Cells {
 				} catch (NumberFormatException e) {
 					System.out.println("Invalid integer input: " + data[0]);
 				}
-				Cell cell = getCellFromNumber(cageID);
-				if (cell == null) {
-					cell = new Cell();
-					cellList.add(cell);
+				Cage cage = getCageFromNumber(cageID);
+				if (cage == null) {
+					cage = new Cage();
+					cageList.add(cage);
 				}
-				cell.csvImport_CAGE_Header(data);
+				cage.csvImport_CAGE_Header(data);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -190,7 +190,7 @@ public class Cells {
 		return null;
 	}
 
-	private String csvLoad_Measures(BufferedReader csvReader, EnumCellMeasures measureType, String sep) {
+	private String csvLoad_Measures(BufferedReader csvReader, EnumCageMeasures measureType, String sep) {
 		String row;
 		try {
 			row = csvReader.readLine();
@@ -201,19 +201,19 @@ public class Cells {
 				if (data[0].equals("#"))
 					return data[1];
 
-				int cellID = -1;
+				int cageID = -1;
 				try {
-				cellID = Integer.valueOf(data[0]);
+				cageID = Integer.valueOf(data[0]);
 					} catch (NumberFormatException e) {
 					    System.out.println("Invalid integer input: " + data[0]);
 					}
-				Cell cell = getCellFromNumber(cellID);
-				if (cell == null)
-					cell = new Cell();
+				Cage cage = getCageFromNumber(cageID);
+				if (cage == null)
+					cage = new Cage();
 				if (v0)
-					cell.csvImport_MEASURE_Data_v0(measureType, data, complete);
+					cage.csvImport_MEASURE_Data_v0(measureType, data, complete);
 				else
-					cell.csvImport_MEASURE_Data_Parameters(data);
+					cage.csvImport_MEASURE_Data_Parameters(data);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -223,7 +223,7 @@ public class Cells {
 
 	// ---------------------------------
 
-	private boolean csvSave_Cells(String directory) {
+	private boolean csvSave_Cages(String directory) {
 		Path path = Paths.get(directory);
 		if (!Files.exists(path))
 			return false;
@@ -231,7 +231,7 @@ public class Cells {
 		try {
 			FileWriter csvWriter = new FileWriter(directory + File.separator + "CagesMeasures.csv");
 			csvSave_Description(csvWriter);
-			csvSave_Measures(csvWriter, EnumCellMeasures.POSITION);
+			csvSave_Measures(csvWriter, EnumCageMeasures.POSITION);
 			csvWriter.flush();
 			csvWriter.close();
 
@@ -245,14 +245,14 @@ public class Cells {
 	private boolean csvSave_Description(FileWriter csvWriter) {
 		try {
 			csvWriter.append("#" + csvSep + "DESCRIPTION\n");
-			csvWriter.append("n cells=" + csvSep + Integer.toString(cellList.size()) + "\n");
+			csvWriter.append("n cages=" + csvSep + Integer.toString(cageList.size()) + "\n");
 
 			csvWriter.append("#" + csvSep + "#\n");
 
-			if (cellList.size() > 0) {
-				csvWriter.append(cellList.get(0).csvExport_CELL_Header(csvSep));
-				for (Cell cell : cellList)
-					csvWriter.append(cell.csvExport_CELL_Data(csvSep));
+			if (cageList.size() > 0) {
+				csvWriter.append(cageList.get(0).csvExport_CAGE_Header(csvSep));
+				for (Cage cage : cageList)
+					csvWriter.append(cage.csvExport_CAGE_Data(csvSep));
 				csvWriter.append("#" + csvSep + "#\n");
 			}
 		} catch (IOException e) {
@@ -262,14 +262,14 @@ public class Cells {
 		return true;
 	}
 
-	private boolean csvSave_Measures(FileWriter csvWriter, EnumCellMeasures measureType) {
+	private boolean csvSave_Measures(FileWriter csvWriter, EnumCageMeasures measureType) {
 		try {
-			if (cellList.size() <= 1)
+			if (cageList.size() <= 1)
 				return false;
 			boolean complete = true;
-			csvWriter.append(cellList.get(0).csvExport_MEASURE_Header(measureType, csvSep, complete));
-			for (Cell cell : cellList)
-				csvWriter.append(cell.csvExport_MEASURE_Data(measureType, csvSep, complete));
+			csvWriter.append(cageList.get(0).csvExport_MEASURE_Header(measureType, csvSep, complete));
+			for (Cage cage : cageList)
+				csvWriter.append(cage.csvExport_MEASURE_Data(measureType, csvSep, complete));
 
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {
@@ -280,7 +280,7 @@ public class Cells {
 
 	// -------------
 
-	public boolean xmlWriteCellsToFileNoQuestion(String tempname) {
+	public boolean xmlWriteCagesToFileNoQuestion(String tempname) {
 		if (tempname == null)
 			return false;
 		final Document doc = XMLUtil.createDocument(true);
@@ -293,16 +293,16 @@ public class Cells {
 
 		int index = 0;
 		Element xmlVal = XMLUtil.addElement(node, ID_CAGES);
-		int ncells = cellList.size();
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, ncells);
-		for (Cell cell : cellList) {
-			cell.xmlSaveCell(xmlVal, index);
+		int nCages = cageList.size();
+		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, nCages);
+		for (Cage cage : cageList) {
+			cage.xmlSaveCagel(xmlVal, index);
 			index++;
 		}
 		return XMLUtil.saveDocument(doc, tempname);
 	}
 
-	public boolean xmlReadCellsFromFile(Experiment exp) {
+	public boolean xmlReadCagesFromFile(Experiment exp) {
 		String[] filedummy = null;
 		String filename = exp.getExperimentDirectory();
 		File file = new File(filename);
@@ -312,21 +312,21 @@ public class Cells {
 		if (filedummy != null) {
 			for (int i = 0; i < filedummy.length; i++) {
 				String csFile = filedummy[i];
-				wasOk &= xmlReadCellsFromFileNoQuestion(csFile, exp);
+				wasOk &= xmlReadCagesFromFileNoQuestion(csFile, exp);
 			}
 		}
 		return wasOk;
 	}
 
-	public boolean xmlReadCellsFromFileNoQuestion(String tempname, Experiment exp) {
+	public boolean xmlReadCagesFromFileNoQuestion(String tempname, Experiment exp) {
 		if (tempname == null)
 			return false;
 		final Document doc = XMLUtil.loadDocument(tempname);
 		if (doc == null)
 			return false;
-		boolean flag = xmlLoadCells(doc);
+		boolean flag = xmlLoadCages(doc);
 		if (flag) {
-			cellsToROIs(exp.seqCamData);
+			cagesToROIs(exp.seqCamData);
 		} else {
 			System.out.println("Cages:xmlReadCageFromFileNoQuestion() failed to load cages from file");
 			return false;
@@ -334,26 +334,26 @@ public class Cells {
 		return true;
 	}
 
-	private boolean xmlLoadCells(Document doc) {
+	private boolean xmlLoadCages(Document doc) {
 		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_DROSOTRACK);
 		if (node == null)
 			return false;
 
-		cellList.clear();
+		cageList.clear();
 		Element xmlVal = XMLUtil.getElement(node, ID_CAGES);
 		if (xmlVal != null) {
-			int ncells = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
-			for (int index = 0; index < ncells; index++) {
-				Cell cell = new Cell();
-				cell.xmlLoadCell(xmlVal, index);
-				cellList.add(cell);
+			int nCages = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
+			for (int index = 0; index < nCages; index++) {
+				Cage cage = new Cage();
+				cage.xmlLoadCage(xmlVal, index);
+				cageList.add(cage);
 			}
 		} else {
-			List<ROI2D> cellLimitROIList = new ArrayList<ROI2D>();
-			if (xmlLoadCageLimits_v0(node, cellLimitROIList)) {
+			List<ROI2D> cageLimitROIList = new ArrayList<ROI2D>();
+			if (xmlLoadCageLimits_v0(node, cageLimitROIList)) {
 				List<FlyPositions> flyPositionsList = new ArrayList<FlyPositions>();
 				xmlLoadFlyPositions_v0(node, flyPositionsList);
-				transferDataToCageBox_v0(cellLimitROIList, flyPositionsList);
+				transferDataToCageBox_v0(cageLimitROIList, flyPositionsList);
 			} else
 				return false;
 		}
@@ -362,43 +362,43 @@ public class Cells {
 
 	// --------------
 
-	public void copy(Cells cageSource) {
+	public void copy(Cages cagesArray) {
 //		detect.copyParameters(cag.detect);	
-		cellList.clear();
-		for (Cell cellSource : cageSource.cellList) {
-			Cell cellDestination = new Cell();
-			cellDestination.copyCell(cellSource);
-			cellList.add(cellDestination);
+		cageList.clear();
+		for (Cage cageSource : cagesArray.cageList) {
+			Cage cageDestination = new Cage();
+			cageDestination.copyCage(cageSource);
+			cageList.add(cageDestination);
 		}
 	}
 
 	// --------------
 
-	private void transferDataToCageBox_v0(List<ROI2D> cellLimitROIList, List<FlyPositions> flyPositionsList) {
-		cellList.clear();
-		Collections.sort(cellLimitROIList, new Comparators.ROI2D_Name_Comparator());
-		int ncells = cellLimitROIList.size();
-		for (int index = 0; index < ncells; index++) {
-			Cell cell = new Cell();
-			cell.cellRoi2D = cellLimitROIList.get(index);
-			cell.flyPositions = flyPositionsList.get(index);
-			cellList.add(cell);
+	private void transferDataToCageBox_v0(List<ROI2D> cageLimitROIList, List<FlyPositions> flyPositionsList) {
+		cageList.clear();
+		Collections.sort(cageLimitROIList, new Comparators.ROI2D_Name_Comparator());
+		int nCages = cageLimitROIList.size();
+		for (int index = 0; index < nCages; index++) {
+			Cage cage = new Cage();
+			cage.cageRoi2D = cageLimitROIList.get(index);
+			cage.flyPositions = flyPositionsList.get(index);
+			cageList.add(cage);
 		}
 	}
 
-	private boolean xmlLoadCageLimits_v0(Node node, List<ROI2D> cellLimitROIList) {
+	private boolean xmlLoadCageLimits_v0(Node node, List<ROI2D> cageLimitROIList) {
 		if (node == null)
 			return false;
 		Element xmlVal = XMLUtil.getElement(node, ID_CAGELIMITS);
 		if (xmlVal == null)
 			return false;
-		cellLimitROIList.clear();
+		cageLimitROIList.clear();
 		int nb_items = XMLUtil.getAttributeIntValue(xmlVal, ID_NBITEMS, 0);
 		for (int i = 0; i < nb_items; i++) {
 			ROI2DPolygon roi = (ROI2DPolygon) ROI.create("plugins.kernel.roi.roi2d.ROI2DPolygon");
 			Element subnode = XMLUtil.getElement(xmlVal, "cage" + i);
 			roi.loadFromXML(subnode);
-			cellLimitROIList.add((ROI2D) roi);
+			cageLimitROIList.add((ROI2D) roi);
 		}
 		return true;
 	}
@@ -422,10 +422,10 @@ public class Cells {
 		return true;
 	}
 
-	private boolean isPresent(Cell cellNew) {
+	private boolean isPresent(Cage cageNew) {
 		boolean flag = false;
-		for (Cell cell : cellList) {
-			if (cell.cellRoi2D.getName().contentEquals(cellNew.cellRoi2D.getName())) {
+		for (Cage cage : cageList) {
+			if (cage.cageRoi2D.getName().contentEquals(cageNew.cageRoi2D.getName())) {
 				flag = true;
 				break;
 			}
@@ -433,35 +433,35 @@ public class Cells {
 		return flag;
 	}
 
-	private void addMissingCells(List<ROI2D> roiList) {
+	private void addMissingCages(List<ROI2D> roiList) {
 		for (ROI2D roi : roiList) {
 			boolean found = false;
 			if (roi.getName() == null)
 				break;
-			for (Cell cell : cellList) {
-				if (cell.cellRoi2D == null)
+			for (Cage cage : cageList) {
+				if (cage.cageRoi2D == null)
 					break;
-				if (roi.getName().equals(cell.cellRoi2D.getName())) {
+				if (roi.getName().equals(cage.cageRoi2D.getName())) {
 					found = true;
 					break;
 				}
 			}
 			if (!found) {
-				Cell cell = new Cell();
-				cell.cellRoi2D = roi;
-				cellList.add(cell);
+				Cage cage = new Cage();
+				cage.cageRoi2D = roi;
+				cageList.add(cage);
 			}
 		}
 	}
 
-	private void removeOrphanCells(List<ROI2D> roiList) {
-		// remove cells with names not in the list
-		Iterator<Cell> iterator = cellList.iterator();
+	private void removeOrphanCages(List<ROI2D> roiList) {
+		// remove cages with names not in the list
+		Iterator<Cage> iterator = cageList.iterator();
 		while (iterator.hasNext()) {
-			Cell cell = iterator.next();
+			Cage cage = iterator.next();
 			boolean found = false;
-			if (cell.cellRoi2D != null) {
-				String cageRoiName = cell.cellRoi2D.getName();
+			if (cage.cageRoi2D != null) {
+				String cageRoiName = cage.cageRoi2D.getName();
 				for (ROI2D roi : roiList) {
 					if (roi.getName().equals(cageRoiName)) {
 						found = true;
@@ -474,7 +474,7 @@ public class Cells {
 		}
 	}
 
-	private List<ROI2D> getRoisWithCellName(SequenceCamData seqCamData) {
+	private List<ROI2D> getRoisWithCageName(SequenceCamData seqCamData) {
 		List<ROI2D> roiList = seqCamData.seq.getROI2Ds();
 		List<ROI2D> cageList = new ArrayList<ROI2D>();
 		for (ROI2D roi : roiList) {
@@ -492,28 +492,28 @@ public class Cells {
 
 	// --------------
 
-	public void cellsToROIs(SequenceCamData seqCamData) {
-		List<ROI2D> cageLimitROIList = getRoisWithCellName(seqCamData);
+	public void cagesToROIs(SequenceCamData seqCamData) {
+		List<ROI2D> cageLimitROIList = getRoisWithCageName(seqCamData);
 		seqCamData.seq.removeROIs(cageLimitROIList, false);
-		for (Cell cell : cellList)
-			cageLimitROIList.add(cell.cellRoi2D);
+		for (Cage cage : cageList)
+			cageLimitROIList.add(cage.cageRoi2D);
 		seqCamData.seq.addROIs(cageLimitROIList, true);
 	}
 
-	public void cellsFromROIs(SequenceCamData seqCamData) {
-		List<ROI2D> roiList = getRoisWithCellName(seqCamData);
+	public void cagesFromROIs(SequenceCamData seqCamData) {
+		List<ROI2D> roiList = getRoisWithCageName(seqCamData);
 		if (roiList.size() > 0) {
 			Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
-			addMissingCells(roiList);
-			removeOrphanCells(roiList);
-			Collections.sort(cellList, new Comparators.Cell_Name_Comparator());
+			addMissingCages(roiList);
+			removeOrphanCages(roiList);
+			Collections.sort(cageList, new Comparators.Cage_Name_Comparator());
 		}
 	}
 
-	public void setFirstAndLastCellToZeroFly() {
-		for (Cell cell : cellList) {
-			if (cell.cellRoi2D.getName().contains("000") || cell.cellRoi2D.getName().contains("009"))
-				cell.cellNFlies = 0;
+	public void setFirstAndLastCageToZeroFly() {
+		for (Cage cage : cageList) {
+			if (cage.cageRoi2D.getName().contains("000") || cage.cageRoi2D.getName().contains("009"))
+				cage.cageNFlies = 0;
 		}
 	}
 
@@ -529,52 +529,52 @@ public class Cells {
 	}
 
 	public void transferNFliesFromCapillariesToCageBox(List<Capillary> capList) {
-		for (Cell cell : cellList) {
-			int cagenb = cell.getCellNumberInteger();
+		for (Cage cage : cageList) {
+			int cagenb = cage.getCageIndex();
 			for (Capillary cap : capList) {
-				if (cap.capCellID == cagenb) {
-					cell.cellNFlies = cap.capNFlies;
+				if (cap.capCageID == cagenb) {
+					cage.cageNFlies = cap.capNFlies;
 					break;
 				}
 			}
 		}
 	}
 
-	public void transferNFliesFromCellsToCapillaries(List<Capillary> capList) {
-		for (Cell cell : cellList) {
-			int cellnb = cell.getCellNumberInteger();
+	public void transferNFliesFromCagesToCapillaries(List<Capillary> capList) {
+		for (Cage cage : cageList) {
+			int cageIndex = cage.getCageIndex();
 			for (Capillary cap : capList) {
-				if (cap.capCellID != cellnb)
+				if (cap.capCageID != cageIndex)
 					continue;
-				cap.capNFlies = cell.cellNFlies;
+				cap.capNFlies = cage.cageNFlies;
 			}
 		}
 	}
 
-	public void setCellNbFromName(List<Capillary> capList) {
+	public void setCageNbFromName(List<Capillary> capList) {
 		for (Capillary cap : capList) {
-			int cellnb = cap.getCellIndexFromRoiName();
-			cap.capCellID = cellnb;
+			int cageIndex = cap.getCageIndexFromRoiName();
+			cap.capCageID = cageIndex;
 		}
 	}
 
-	public Cell getCellFromNumber(int number) {
-		Cell cellFound = null;
-		for (Cell cell : cellList) {
-			if (number == cell.getCellNumberInteger()) {
-				cellFound = cell;
+	public Cage getCageFromNumber(int number) {
+		Cage cageFound = null;
+		for (Cage cage : cageList) {
+			if (number == cage.getCageIndex()) {
+				cageFound = cage;
 				break;
 			}
 		}
-		return cellFound;
+		return cageFound;
 	}
 
 	// ---------------
 
 	public List<ROI2D> getPositionsAsListOfROI2DRectanglesAtT(int t) {
-		List<ROI2D> roiRectangleList = new ArrayList<ROI2D>(cellList.size());
-		for (Cell cell : cellList) {
-			ROI2D roiRectangle = cell.getRoiRectangleFromPositionAtT(t);
+		List<ROI2D> roiRectangleList = new ArrayList<ROI2D>(cageList.size());
+		for (Cage cage : cageList) {
+			ROI2D roiRectangle = cage.getRoiRectangleFromPositionAtT(t);
 			if (roiRectangle != null)
 				roiRectangleList.add(roiRectangle);
 		}
@@ -582,35 +582,35 @@ public class Cells {
 	}
 
 	public void orderFlyPositions() {
-		for (Cell cell : cellList)
-			Collections.sort(cell.flyPositions.flyPositionList, new Comparators.XYTaValue_Tindex_Comparator());
+		for (Cage cage : cageList)
+			Collections.sort(cage.flyPositions.flyPositionList, new Comparators.XYTaValue_Tindex_Comparator());
 	}
 
 	public void initFlyPositions(int option_cagenumber) {
-		int nbcells = cellList.size();
-		for (int i = 0; i < nbcells; i++) {
-			Cell cell = cellList.get(i);
-			if (option_cagenumber != -1 && cell.getCellNumberInteger() != option_cagenumber)
+		int nCages = cageList.size();
+		for (int i = 0; i < nCages; i++) {
+			Cage cage = cageList.get(i);
+			if (option_cagenumber != -1 && cage.getCageIndex() != option_cagenumber)
 				continue;
-			if (cell.cellNFlies > 0) {
-				cell.flyPositions = new FlyPositions();
-				cell.flyPositions.ensureCapacity(detect_nframes);
+			if (cage.cageNFlies > 0) {
+				cage.flyPositions = new FlyPositions();
+				cage.flyPositions.ensureCapacity(detect_nframes);
 			}
 		}
 	}
 
 	// ----------------
 
-	public void initCellsTmsForFlyPositions(long[] intervalsMs) {
-		for (Cell cell : cellList) {
-			cell.initTmsForFlyPositions(intervalsMs);
+	public void initCagesTmsForFlyPositions(long[] intervalsMs) {
+		for (Cage cage : cageList) {
+			cage.initTmsForFlyPositions(intervalsMs);
 		}
 	}
 
-	public void computeBooleanMasksForCells() {
-		for (Cell cell : cellList) {
+	public void computeBooleanMasksForCages() {
+		for (Cage cage : cageList) {
 			try {
-				cell.computeCageBooleanMask2D();
+				cage.computeCageBooleanMask2D();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -620,10 +620,10 @@ public class Cells {
 
 	public int getLastIntervalFlyAlive(int cagenumber) {
 		int flypos = -1;
-		for (Cell cell : cellList) {
-			String cellNumberString = cell.cellRoi2D.getName().substring(4);
-			if (Integer.valueOf(cellNumberString) == cagenumber) {
-				flypos = cell.flyPositions.getLastIntervalAlive();
+		for (Cage cage : cageList) {
+			String cageNumberString = cage.cageRoi2D.getName().substring(4);
+			if (Integer.valueOf(cageNumberString) == cagenumber) {
+				flypos = cage.flyPositions.getLastIntervalAlive();
 				break;
 			}
 		}
@@ -632,10 +632,10 @@ public class Cells {
 
 	public boolean isFlyAlive(int cagenumber) {
 		boolean isalive = false;
-		for (Cell cell : cellList) {
-			String cellNumberString = cell.cellRoi2D.getName().substring(4);
-			if (Integer.valueOf(cellNumberString) == cagenumber) {
-				isalive = (cell.flyPositions.getLastIntervalAlive() > 0);
+		for (Cage cage : cageList) {
+			String cageNumberString = cage.cageRoi2D.getName().substring(4);
+			if (Integer.valueOf(cageNumberString) == cagenumber) {
+				isalive = (cage.flyPositions.getLastIntervalAlive() > 0);
 				break;
 			}
 		}
@@ -644,9 +644,9 @@ public class Cells {
 
 	public boolean isDataAvailable(int cagenumber) {
 		boolean isavailable = false;
-		for (Cell cell : cellList) {
-			String cellNumberString = cell.cellRoi2D.getName().substring(4);
-			if (Integer.valueOf(cellNumberString) == cagenumber) {
+		for (Cage cage : cageList) {
+			String cageNumberString = cage.cageRoi2D.getName().substring(4);
+			if (Integer.valueOf(cageNumberString) == cagenumber) {
 				isavailable = true;
 				break;
 			}
@@ -654,12 +654,12 @@ public class Cells {
 		return isavailable;
 	}
 
-	public int getHorizontalSpanOfCells() {
+	public int getHorizontalSpanOfCages() {
 		int leftPixel = -1;
 		int rightPixel = -1;
-		for (Cell cell : cellList) {
-			ROI2D roiCell = cell.cellRoi2D;
-			Rectangle2D rect = roiCell.getBounds2D();
+		for (Cage cage : cageList) {
+			ROI2D roiCage = cage.cageRoi2D;
+			Rectangle2D rect = roiCage.getBounds2D();
 			int left = (int) rect.getX();
 			int right = left + (int) rect.getWidth();
 			if (leftPixel < 0 || left < leftPixel)

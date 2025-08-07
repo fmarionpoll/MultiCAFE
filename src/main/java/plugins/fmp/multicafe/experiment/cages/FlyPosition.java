@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment.cells;
+package plugins.fmp.multicafe.experiment.cages;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;

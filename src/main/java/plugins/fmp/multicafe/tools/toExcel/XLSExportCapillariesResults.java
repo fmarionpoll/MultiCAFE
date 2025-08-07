@@ -11,8 +11,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.experiment.cells.Cell;
 
 public class XLSExportCapillariesResults extends XLSExport {
 	//
@@ -124,7 +124,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 				case AUTOCORREL_LR:
 				case CROSSCORREL:
 				case CROSSCORREL_LR:
-					resultsArrayList.getResults1(expi.capillaries, xlsExportType, nOutputFrames, exp.kymoBin_ms,
+					resultsArrayList.getResults1(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms,
 							options);
 					break;
 
@@ -133,12 +133,12 @@ public class XLSExportCapillariesResults extends XLSExport {
 				case TOPLEVELDELTA:
 				case TOPLEVELDELTA_LR:
 					options.compensateEvaporation = options.subtractEvaporation;
-					resultsArrayList.getResults_T0(expi.capillaries, xlsExportType, nOutputFrames, exp.kymoBin_ms,
+					resultsArrayList.getResults_T0(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms,
 							options);
 					break;
 
 				case TOPRAW:
-					resultsArrayList.getResults_T0(expi.capillaries, xlsExportType, nOutputFrames, exp.kymoBin_ms,
+					resultsArrayList.getResults_T0(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms,
 							options);
 					break;
 
@@ -206,10 +206,10 @@ public class XLSExportCapillariesResults extends XLSExport {
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(ncapillaries);
 		for (int i = 0; i < ncapillaries; i++) {
 			Capillary cap = expAll.capillaries.capillariesList.get(i);
-			XLSResults row = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCellID, xlsOption, nFrames);
+			XLSResults row = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID, xlsOption, nFrames);
 			row.stimulus = cap.capStimulus;
 			row.concentration = cap.capConcentration;
-			row.cellID = cap.capCellID;
+			row.cellID = cap.capCageID;
 			rowListForOneExp.addRow(row);
 		}
 		rowListForOneExp.sortRowsByName();
@@ -295,8 +295,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 	}
 
 	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
-		for (Cell cell : exp.cells.cellList) {
-			String roiname = cell.cellRoi2D.getName();
+		for (Cage cell : exp.cells.cageList) {
+			String roiname = cell.cageRoi2D.getName();
 			if (roiname.length() < 4)
 				continue;
 			String test = roiname.substring(0, 4);
@@ -306,7 +306,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 			String cellNumberString = roiname.substring(4);
 			int cellNumber = Integer.valueOf(cellNumberString);
 			int ilastalive = 0;
-			if (cell.cellNFlies > 0) {
+			if (cell.cageNFlies > 0) {
 				Experiment expi = exp;
 				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cells.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
@@ -476,8 +476,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 			XLSExportExperimentParameters(sheet, transpose, x, y, exp);
 			XLSExportCapillaryParameters(sheet, transpose, x, y, charSeries, exp, cap, xlsExportOption, index);
-			if (exp.cells.cellList.size() > index / 2) {
-				Cell cell = exp.cells.cellList.get(index / 2);
+			if (exp.cells.cageList.size() > index / 2) {
+				Cage cell = exp.cells.cageList.get(index / 2);
 				XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
 			}
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheet.getSheetName());

@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment.cells;
+package plugins.fmp.multicafe.experiment.cages;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -327,11 +327,11 @@ public class FlyPositions {
 
 	static public List<FlyPositions> computeMoveResults(Experiment expi, EnumXLSExport xlsOption,
 			XLSExportOptions options, int nFrames, double pixelsize) {
-		List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cells.cellList.size());
-		for (Cell cell : expi.cells.cellList) {
-			FlyPositions flyPositions = new FlyPositions(cell.cellRoi2D.getName(), xlsOption, nFrames,
+		List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cells.cageList.size());
+		for (Cage cell : expi.cells.cageList) {
+			FlyPositions flyPositions = new FlyPositions(cell.cageRoi2D.getName(), xlsOption, nFrames,
 					options.buildExcelStepMs);
-			flyPositions.nflies = cell.cellNFlies;
+			flyPositions.nflies = cell.cageNFlies;
 			if (flyPositions.nflies < 0) {
 				flyPositions.setPixelSize(pixelsize);
 				switch (xlsOption) {
@@ -348,7 +348,7 @@ public class FlyPositions {
 							options.buildExcelStepMs);
 					break;
 				case XYTOPCELL:
-					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTopCell(), cell.flyPositions,
+					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTopCage(), cell.flyPositions,
 							(int) expi.camImageBin_ms, options.buildExcelStepMs);
 					break;
 				case XYTIPCAPS:

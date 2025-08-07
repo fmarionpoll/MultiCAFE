@@ -6,9 +6,9 @@ import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cells.Cell;
-import plugins.fmp.multicafe.experiment.cells.FlyPosition;
-import plugins.fmp.multicafe.experiment.cells.FlyPositions;
+import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment.cages.FlyPosition;
+import plugins.fmp.multicafe.experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.tools.toExcel.XLSResults;
 
 public class Comparators {
@@ -54,10 +54,10 @@ public class Comparators {
 		}
 	}
 
-	public static class Cell_Name_Comparator implements Comparator<Cell> {
+	public static class Cage_Name_Comparator implements Comparator<Cage> {
 		@Override
-		public int compare(Cell o1, Cell o2) {
-			return o1.cellRoi2D.getName().compareTo(o2.cellRoi2D.getName());
+		public int compare(Cage o1, Cage o2) {
+			return o1.cageRoi2D.getName().compareTo(o2.cageRoi2D.getName());
 		}
 	}
 

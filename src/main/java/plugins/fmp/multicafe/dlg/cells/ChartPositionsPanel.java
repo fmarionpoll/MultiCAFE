@@ -19,8 +19,8 @@ import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cells.Cell;
-import plugins.fmp.multicafe.experiment.cells.FlyPositions;
+import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.tools.chart.ChartPositions;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 
@@ -103,7 +103,7 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 
 		if (aliveCheckbox.isSelected()) {
 			double threshold = (double) aliveThresholdSpinner.getValue();
-			for (Cell cell : exp.cells.cellList) {
+			for (Cage cell : exp.cells.cageList) {
 				FlyPositions posSeries = cell.flyPositions;
 				posSeries.moveThreshold = threshold;
 				posSeries.computeIsAlive();
@@ -114,7 +114,7 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 			closeChart(aliveChart);
 
 		if (sleepCheckbox.isSelected()) {
-			for (Cell cell : exp.cells.cellList) {
+			for (Cage cell : exp.cells.cageList) {
 				FlyPositions posSeries = cell.flyPositions;
 				posSeries.computeSleep();
 			}
@@ -132,7 +132,7 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 		iChart = new ChartPositions();
 		iChart.createPanel(title);
 		iChart.setLocationRelativeToRectangle(rectv, ptRelative);
-		iChart.displayData(exp.cells.cellList, option);
+		iChart.displayData(exp.cells.cageList, option);
 		iChart.mainChartFrame.toFront();
 		iChart.mainChartFrame.requestFocus();
 		return iChart;

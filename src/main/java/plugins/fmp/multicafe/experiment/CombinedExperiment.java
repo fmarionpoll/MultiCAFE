@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.experiment;
 
 import java.util.ArrayList;
 
-import plugins.fmp.multicafe.experiment.cells.Cell;
+import plugins.fmp.multicafe.experiment.cages.Cage;
 
 public class CombinedExperiment extends Experiment {
 	ArrayList<Experiment> experimentList = null;
@@ -70,17 +70,17 @@ public class CombinedExperiment extends Experiment {
 		long time_start_ms = firstImage_FileTime.toMillis();
 		Experiment exp = experimentList.get(0);
 		exp.initTmsForFlyPositions(time_start_ms);
-		cells.cellList.addAll(exp.cells.cellList);
+		cells.cageList.addAll(exp.cells.cageList);
 
 		for (int i = 1; i < experimentList.size(); i++) {
 			Experiment expi = experimentList.get(i);
 			expi.initTmsForFlyPositions(time_start_ms);
-			for (Cell cell : cells.cellList) {
+			for (Cage cell : cells.cageList) {
 				String cellName = cell.getRoiName();
-				for (Cell cellExpi : expi.cells.cellList) {
+				for (Cage cellExpi : expi.cells.cageList) {
 					if (!cellName.equals(cellExpi.getRoiName()))
 						continue;
-					cell.addFlyPositionsFromOtherCell(cellExpi);
+					cell.addFlyPositionsFromOtherCage(cellExpi);
 				}
 			}
 		}

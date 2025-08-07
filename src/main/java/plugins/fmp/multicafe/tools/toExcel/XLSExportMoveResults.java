@@ -13,8 +13,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cells.Cell;
-import plugins.fmp.multicafe.experiment.cells.FlyPosition;
+import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment.cages.FlyPosition;
 
 public class XLSExportMoveResults extends XLSExport {
 	//
@@ -89,10 +89,10 @@ public class XLSExportMoveResults extends XLSExport {
 		x = writeSeparator_Between_Experiments(sheet, new Point(x, y), options.transpose);
 
 		ArrayList<EnumMeasure> measures = xlsExportOption.toMeasures();
-		List<Cell> cellList = combinedExp.cells.cellList;
+		List<Cage> cellList = combinedExp.cells.cageList;
 
 		for (int index = 0; index < cellList.size(); index++) {
-			Cell cell = cellList.get(index);
+			Cage cell = cellList.get(index);
 			for (int j = 0; j < measures.size(); j++) {
 				y = 0;
 				XLSExportExperimentParameters(sheet, options.transpose, x, y, combinedExp);
@@ -107,11 +107,11 @@ public class XLSExportMoveResults extends XLSExport {
 		sheet.setActiveCell(new CellAddress(x, y));
 	}
 
-	private void writeData(XSSFSheet sheet, Cell cell, int x, int y, EnumMeasure exportType) {
+	private void writeData(XSSFSheet sheet, Cage cell, int x, int y, EnumMeasure exportType) {
 		boolean transpose = options.transpose;
 
 		Point pt = new Point(x, y);
-		if (cell.cellNFlies < 1)
+		if (cell.cageNFlies < 1)
 			return;
 
 		long last = expAll.camImageLast_ms - expAll.camImageFirst_ms;

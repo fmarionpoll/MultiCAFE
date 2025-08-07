@@ -20,10 +20,10 @@ import icy.image.ImageUtil;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment.cages.Cages;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.experiment.cells.Cell;
-import plugins.fmp.multicafe.experiment.cells.Cells;
 import plugins.fmp.multicafe.tools.Directories;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
@@ -42,7 +42,7 @@ public class Experiment {
 	public SequenceKymos seqKymos = null;
 	public Sequence seqReference = null;
 	public Capillaries capillaries = new Capillaries();
-	public Cells cells = new Cells();
+	public Cages cells = new Cages();
 
 	public FileTime firstImage_FileTime;
 	public FileTime lastImage_FileTime;
@@ -344,7 +344,7 @@ public class Experiment {
 
 	public void initTmsForFlyPositions(long time_start_ms) {
 		build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(time_start_ms);
-		cells.initCellsTmsForFlyPositions(camImages_ms);
+		cells.initCagesTmsForFlyPositions(camImages_ms);
 	}
 
 	public int findNearestIntervalWithBinarySearch(long value, int low, int high) {
@@ -544,9 +544,9 @@ public class Experiment {
 		if (!f.exists())
 			moveCageMeasuresToExperimentDirectory(pathToMeasures);
 
-		boolean flag = cells.load_Cells(getExperimentDirectory());
+		boolean flag = cells.load_Cages(getExperimentDirectory());
 		if (flag & seqCamData.seq != null)
-			cells.cellsToROIs(seqCamData);
+			cells.cagesToROIs(seqCamData);
 		return flag;
 	}
 
@@ -560,11 +560,11 @@ public class Experiment {
 	}
 
 	public boolean saveCageMeasures() {
-		return cells.save_Cells(getExperimentDirectory());
+		return cells.save_Cages(getExperimentDirectory());
 	}
 
 	public void saveCageAndMeasures() {
-		cells.cellsFromROIs(seqCamData);
+		cells.cagesFromROIs(seqCamData);
 		saveCageMeasures();
 	}
 
@@ -878,7 +878,7 @@ public class Experiment {
 
 	public void saveDetRoisToPositions() {
 		List<ROI2D> detectedROIsList = seqCamData.seq.getROI2Ds();
-		for (Cell cell : cells.cellList) {
+		for (Cage cell : cells.cageList) {
 			cell.transferRoisToPositions(detectedROIsList);
 		}
 	}

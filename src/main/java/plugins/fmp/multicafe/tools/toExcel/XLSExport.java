@@ -13,8 +13,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.experiment.cells.Cell;
 import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 
 public class XLSExport {
@@ -227,15 +227,15 @@ public class XLSExport {
 	}
 
 	protected void XLSExportCellParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
-			Experiment exp, Cell cell) {
+			Experiment exp, Cage cell) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_INDEX.getValue(), transpose,
-				cell.getCellNumberInteger());
+				cell.getCageIndex());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_ID.getValue(), transpose,
-				charSeries + cell.getCellNumber());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_STRAIN.getValue(), transpose, cell.cellStrain);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_SEX.getValue(), transpose, cell.cellSex);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_AGE.getValue(), transpose, cell.cellAge);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_COMMENT.getValue(), transpose, cell.cellComment);
+				charSeries + cell.getCageNumber());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_STRAIN.getValue(), transpose, cell.cageStrain);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_SEX.getValue(), transpose, cell.cageSex);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_AGE.getValue(), transpose, cell.cageAge);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_COMMENT.getValue(), transpose, cell.cageComment);
 	}
 
 	protected void XLSExportCapillaryParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,

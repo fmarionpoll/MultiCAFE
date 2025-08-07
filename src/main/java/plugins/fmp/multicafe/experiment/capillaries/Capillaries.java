@@ -277,7 +277,7 @@ public class Capillaries {
 			Capillary cap0 = getCapillaryFromRoiName(nameL);
 			if (cap0 != null) {
 //				cap.capNFlies = cap0.capNFlies;
-				cap.capCellID = cap0.capCellID;
+				cap.capCageID = cap0.capCageID;
 			}
 		}
 	}
@@ -366,7 +366,7 @@ public class Capillaries {
 			cap.capNFlies = nflies;
 			if (optionZeroFlyFirstLastCapillary && (i <= 1 || i >= capArraySize - 2))
 				cap.capNFlies = 0;
-			cap.capCellID = i / 2;
+			cap.capCageID = i / 2;
 		}
 	}
 
@@ -377,13 +377,13 @@ public class Capillaries {
 			cap.capNFlies = 1;
 			if (i <= 1) {
 				cap.capNFlies = 0;
-				cap.capCellID = 0;
+				cap.capCageID = 0;
 			} else if (i >= capArraySize - 2) {
 				cap.capNFlies = 0;
-				cap.capCellID = 5;
+				cap.capCageID = 5;
 			} else {
 				cap.capNFlies = nflies;
-				cap.capCellID = 1 + (i - 2) / 4;
+				cap.capCageID = 1 + (i - 2) / 4;
 			}
 		}
 	}

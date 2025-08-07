@@ -145,7 +145,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		exp.cells.detect_threshold = options.threshold;
 
 		boolean flag = true;
-		if (exp.cells.cellList.size() < 1) {
+		if (exp.cells.cageList.size() < 1) {
 			System.out.println("BuildSeries:checkBoundsForCells ! skipped experiment with no cell: "
 					+ exp.getExperimentDirectory());
 			flag = false;

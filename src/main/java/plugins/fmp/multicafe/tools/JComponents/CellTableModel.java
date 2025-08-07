@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.tools.JComponents;
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cells.Cell;
+import plugins.fmp.multicafe.experiment.cages.Cage;
 
 public class CellTableModel extends AbstractTableModel {
 	/**
@@ -64,32 +64,32 @@ public class CellTableModel extends AbstractTableModel {
 	public int getRowCount() {
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			return exp.cells.cellList.size();
+			return exp.cells.cageList.size();
 		}
 		return 0;
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Cell cell = null;
+		Cage cell = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			cell = exp.cells.cellList.get(rowIndex);
+			cell = exp.cells.cageList.get(rowIndex);
 		}
 		if (cell != null) {
 			switch (columnIndex) {
 			case 0:
-				return cell.cellRoi2D.getName();
+				return cell.cageRoi2D.getName();
 			case 1:
-				return cell.cellNFlies;
+				return cell.cageNFlies;
 			case 2:
-				return cell.cellStrain;
+				return cell.cageStrain;
 			case 3:
-				return cell.cellSex;
+				return cell.cageSex;
 			case 4:
-				return cell.cellAge;
+				return cell.cageAge;
 			case 5:
-				return cell.cellComment;
+				return cell.cageComment;
 			}
 		}
 		return null;
@@ -107,30 +107,30 @@ public class CellTableModel extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		Cell cell = null;
+		Cage cell = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			cell = exp.cells.cellList.get(rowIndex);
+			cell = exp.cells.cageList.get(rowIndex);
 		}
 		if (cell != null) {
 			switch (columnIndex) {
 			case 0:
-				cell.cellRoi2D.setName(aValue.toString());
+				cell.cageRoi2D.setName(aValue.toString());
 				break;
 			case 1:
-				cell.cellNFlies = (int) aValue;
+				cell.cageNFlies = (int) aValue;
 				break;
 			case 2:
-				cell.cellStrain = aValue.toString();
+				cell.cageStrain = aValue.toString();
 				break;
 			case 3:
-				cell.cellSex = aValue.toString();
+				cell.cageSex = aValue.toString();
 				break;
 			case 4:
-				cell.cellAge = (int) aValue;
+				cell.cageAge = (int) aValue;
 				break;
 			case 5:
-				cell.cellComment = aValue.toString();
+				cell.cageComment = aValue.toString();
 				break;
 			}
 		}

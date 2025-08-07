@@ -18,7 +18,7 @@ import javax.swing.SwingConstants;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cells.Cell;
+import plugins.fmp.multicafe.experiment.cages.Cage;
 
 public class Infos extends JPanel {
 	/**
@@ -28,7 +28,7 @@ public class Infos extends JPanel {
 	private JButton editCageButton = new JButton("Edit cage infos...");
 	private MultiCAFE parent0 = null;
 	private InfosCellsTable dialog = null;
-	private List<Cell> cellsArrayCopy = new ArrayList<Cell>();
+	private List<Cage> cellsArrayCopy = new ArrayList<Cage>();
 
 	JRadioButton useCapillaries = new JRadioButton("capillary");
 	JRadioButton useCage = new JRadioButton("cage");
@@ -137,7 +137,7 @@ public class Infos extends JPanel {
 		if (exp != null) {
 			exp.capillaries.updateCapillariesFromSequence(exp.seqCamData.seq);
 			if (exp.capillaries.capillariesList.size() > 0) {
-				int npixels = exp.cells.getHorizontalSpanOfCells();
+				int npixels = exp.cells.getHorizontalSpanOfCages();
 				if (npixels > 0)
 					pixelsSpinner.setValue(npixels);
 			}

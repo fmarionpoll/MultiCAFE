@@ -25,7 +25,7 @@ import javax.swing.event.PopupMenuListener;
 import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cells.Cell;
+import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.FlyDetect2;
 import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
@@ -277,12 +277,12 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		int nitems = 1;
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
-			nitems = exp.cells.cellList.size() + 1;
+			nitems = exp.cells.cageList.size() + 1;
 		if (allCellsComboBox.getItemCount() != nitems) {
 			allCellsComboBox.removeAllItems();
 			allCellsComboBox.addItem("all cells");
-			for (Cell cell : exp.cells.cellList) {
-				allCellsComboBox.addItem(cell.getCellNumber());
+			for (Cage cell : exp.cells.cageList) {
+				allCellsComboBox.addItem(cell.getCageNumber());
 			}
 		}
 	}
