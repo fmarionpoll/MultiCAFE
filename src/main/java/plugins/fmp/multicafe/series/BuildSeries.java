@@ -131,21 +131,21 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		}
 	}
 
-	protected boolean checkBoundsForCells(Experiment exp) {
-		exp.cells.detectBin_Ms = options.t_Ms_BinDuration;
+	protected boolean checkBoundsForCages(Experiment exp) {
+		exp.cages.detectBin_Ms = options.t_Ms_BinDuration;
 		if (options.isFrameFixed) {
-			exp.cells.detectFirst_Ms = options.t_Ms_First;
-			exp.cells.detectLast_Ms = options.t_Ms_Last;
-			if (exp.cells.detectLast_Ms > exp.camImageLast_ms)
-				exp.cells.detectLast_Ms = exp.camImageLast_ms;
+			exp.cages.detectFirst_Ms = options.t_Ms_First;
+			exp.cages.detectLast_Ms = options.t_Ms_Last;
+			if (exp.cages.detectLast_Ms > exp.camImageLast_ms)
+				exp.cages.detectLast_Ms = exp.camImageLast_ms;
 		} else {
-			exp.cells.detectFirst_Ms = exp.camImageFirst_ms;
-			exp.cells.detectLast_Ms = exp.camImageLast_ms;
+			exp.cages.detectFirst_Ms = exp.camImageFirst_ms;
+			exp.cages.detectLast_Ms = exp.camImageLast_ms;
 		}
-		exp.cells.detect_threshold = options.threshold;
+		exp.cages.detect_threshold = options.threshold;
 
 		boolean flag = true;
-		if (exp.cells.cageList.size() < 1) {
+		if (exp.cages.cageList.size() < 1) {
 			System.out.println("BuildSeries:checkBoundsForCells ! skipped experiment with no cell: "
 					+ exp.getExperimentDirectory());
 			flag = false;

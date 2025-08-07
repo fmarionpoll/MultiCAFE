@@ -5,14 +5,14 @@ import javax.swing.table.AbstractTableModel;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;
 
-public class CellTableModel extends AbstractTableModel {
+public class CageTableModel extends AbstractTableModel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3501225818220221949L;
 	private ExperimentsJComboBox expList = null;
 
-	public CellTableModel(ExperimentsJComboBox expList) {
+	public CageTableModel(ExperimentsJComboBox expList) {
 		super();
 		this.expList = expList;
 	}
@@ -64,7 +64,7 @@ public class CellTableModel extends AbstractTableModel {
 	public int getRowCount() {
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			return exp.cells.cageList.size();
+			return exp.cages.cageList.size();
 		}
 		return 0;
 	}
@@ -74,7 +74,7 @@ public class CellTableModel extends AbstractTableModel {
 		Cage cell = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			cell = exp.cells.cageList.get(rowIndex);
+			cell = exp.cages.cageList.get(rowIndex);
 		}
 		if (cell != null) {
 			switch (columnIndex) {
@@ -110,7 +110,7 @@ public class CellTableModel extends AbstractTableModel {
 		Cage cell = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			cell = exp.cells.cageList.get(rowIndex);
+			cell = exp.cages.cageList.get(rowIndex);
 		}
 		if (cell != null) {
 			switch (columnIndex) {

@@ -52,7 +52,7 @@ public class XLSExportMoveResults extends XLSExport {
 
 				if (options.xyImage)
 					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.XYIMAGE);
-				if (options.xyCell)
+				if (options.xyCage)
 					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.XYTOPCELL);
 				if (options.xyCapillaries)
 					exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.XYTIPCAPS);
@@ -89,14 +89,14 @@ public class XLSExportMoveResults extends XLSExport {
 		x = writeSeparator_Between_Experiments(sheet, new Point(x, y), options.transpose);
 
 		ArrayList<EnumMeasure> measures = xlsExportOption.toMeasures();
-		List<Cage> cellList = combinedExp.cells.cageList;
+		List<Cage> cellList = combinedExp.cages.cageList;
 
 		for (int index = 0; index < cellList.size(); index++) {
 			Cage cell = cellList.get(index);
 			for (int j = 0; j < measures.size(); j++) {
 				y = 0;
 				XLSExportExperimentParameters(sheet, options.transpose, x, y, combinedExp);
-				XLSExportCellParameters(sheet, options.transpose, x, y, charSeries, combinedExp, cell);
+				xlsExportCageParameters(sheet, options.transpose, x, y, charSeries, combinedExp, cell);
 				y += EnumXLSColumnHeader.DUM4.getValue();
 				XLSUtils.setValue(sheet, x, y, options.transpose, measures.get(j).toString());
 				y++;

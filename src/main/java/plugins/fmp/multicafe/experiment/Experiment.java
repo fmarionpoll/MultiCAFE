@@ -42,7 +42,7 @@ public class Experiment {
 	public SequenceKymos seqKymos = null;
 	public Sequence seqReference = null;
 	public Capillaries capillaries = new Capillaries();
-	public Cages cells = new Cages();
+	public Cages cages = new Cages();
 
 	public FileTime firstImage_FileTime;
 	public FileTime lastImage_FileTime;
@@ -344,7 +344,7 @@ public class Experiment {
 
 	public void initTmsForFlyPositions(long time_start_ms) {
 		build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(time_start_ms);
-		cells.initCagesTmsForFlyPositions(camImages_ms);
+		cages.initCagesTmsForFlyPositions(camImages_ms);
 	}
 
 	public int findNearestIntervalWithBinarySearch(long value, int low, int high) {
@@ -544,9 +544,9 @@ public class Experiment {
 		if (!f.exists())
 			moveCageMeasuresToExperimentDirectory(pathToMeasures);
 
-		boolean flag = cells.load_Cages(getExperimentDirectory());
+		boolean flag = cages.load_Cages(getExperimentDirectory());
 		if (flag & seqCamData.seq != null)
-			cells.cagesToROIs(seqCamData);
+			cages.cagesToROIs(seqCamData);
 		return flag;
 	}
 
@@ -560,11 +560,11 @@ public class Experiment {
 	}
 
 	public boolean saveCageMeasures() {
-		return cells.save_Cages(getExperimentDirectory());
+		return cages.save_Cages(getExperimentDirectory());
 	}
 
 	public void saveCageAndMeasures() {
-		cells.cagesFromROIs(seqCamData);
+		cages.cagesFromROIs(seqCamData);
 		saveCageMeasures();
 	}
 
@@ -872,13 +872,13 @@ public class Experiment {
 			if (roi.getName().contains("det"))
 				seqCamData.seq.removeROI(roi);
 		}
-		seqCamData.seq.addROIs(cells.getPositionsAsListOfROI2DRectanglesAtT(t), false);
+		seqCamData.seq.addROIs(cages.getPositionsAsListOfROI2DRectanglesAtT(t), false);
 		seqCamData.seq.endUpdate();
 	}
 
 	public void saveDetRoisToPositions() {
 		List<ROI2D> detectedROIsList = seqCamData.seq.getROI2Ds();
-		for (Cage cell : cells.cageList) {
+		for (Cage cell : cages.cageList) {
 			cell.transferRoisToPositions(detectedROIsList);
 		}
 	}

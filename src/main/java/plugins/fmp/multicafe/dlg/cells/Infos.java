@@ -27,7 +27,7 @@ public class Infos extends JPanel {
 	private static final long serialVersionUID = -3325915033686366985L;
 	private JButton editCageButton = new JButton("Edit cage infos...");
 	private MultiCAFE parent0 = null;
-	private InfosCellsTable dialog = null;
+	private InfosCagesTable dialog = null;
 	private List<Cage> cellsArrayCopy = new ArrayList<Cage>();
 
 	JRadioButton useCapillaries = new JRadioButton("capillary");
@@ -82,8 +82,8 @@ public class Infos extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					exp.capillaries.transferDescriptionToCapillaries();
-					exp.cells.transferNFliesFromCapillariesToCageBox(exp.capillaries.capillariesList);
-					dialog = new InfosCellsTable();
+					exp.cages.transferNFliesFromCapillariesToCageBox(exp.capillaries.capillariesList);
+					dialog = new InfosCagesTable();
 					dialog.initialize(parent0, cellsArrayCopy);
 				}
 			}
@@ -137,7 +137,7 @@ public class Infos extends JPanel {
 		if (exp != null) {
 			exp.capillaries.updateCapillariesFromSequence(exp.seqCamData.seq);
 			if (exp.capillaries.capillariesList.size() > 0) {
-				int npixels = exp.cells.getHorizontalSpanOfCages();
+				int npixels = exp.cages.getHorizontalSpanOfCages();
 				if (npixels > 0)
 					pixelsSpinner.setValue(npixels);
 			}

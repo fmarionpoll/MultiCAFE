@@ -26,7 +26,7 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 	public int index0 = 0;
 	public int index1 = 0;
 	public int maxSizeOfCapillaryArrays = 0;
-	public int maxSizeOfCellArrays = 0;
+	public int maxSizeOfCageArrays = 0;
 	public String expListBinSubDirectory = null;
 
 	public ExperimentsJComboBox() {

@@ -87,7 +87,7 @@ public class XLSExport {
 		}
 	}
 
-	protected int desc_getIndex_CellFromCapillaryName(String name) {
+	protected int desc_getIndex_CageFromCapillaryName(String name) {
 		if (!name.contains("line"))
 			return -1;
 		String num = name.substring(4, 5);
@@ -113,7 +113,7 @@ public class XLSExport {
 		return numFromName;
 	}
 
-	protected int getRowIndexFromCellName(String name) {
+	protected int getRowIndexFromCageName(String name) {
 		if (!name.contains("cage") && !name.contains("cell"))
 			return -1;
 		String num = name.substring(4, name.length());
@@ -121,14 +121,14 @@ public class XLSExport {
 		return numFromName;
 	}
 
-	protected Point getCellXCoordinateFromDataName(XLSResults xlsResults, Point pt_main, int colseries) {
+	protected Point getCageXCoordinateFromDataName(XLSResults xlsResults, Point pt_main, int colseries) {
 		int col = getRowIndexFromKymoFileName(xlsResults.name);
 		if (col >= 0)
 			pt_main.x = colseries + col;
 		return pt_main;
 	}
 
-	protected int getCellIndexFromKymoFileName(String name) {
+	protected int getCageIndexFromKymoFileName(String name) {
 		if (!name.contains("line"))
 			return -1;
 		return Integer.valueOf(name.substring(4, 5));
@@ -226,16 +226,16 @@ public class XLSExport {
 				exp.getExperimentField(EnumXLSColumnHeader.EXP_COND2));
 	}
 
-	protected void XLSExportCellParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
+	protected void xlsExportCageParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
 			Experiment exp, Cage cell) {
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_INDEX.getValue(), transpose,
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_INDEX.getValue(), transpose,
 				cell.getCageIndex());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_ID.getValue(), transpose,
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_ID.getValue(), transpose,
 				charSeries + cell.getCageNumber());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_STRAIN.getValue(), transpose, cell.cageStrain);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_SEX.getValue(), transpose, cell.cageSex);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_AGE.getValue(), transpose, cell.cageAge);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CELL_COMMENT.getValue(), transpose, cell.cageComment);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cell.cageStrain);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cell.cageSex);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cell.cageAge);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cell.cageComment);
 	}
 
 	protected void XLSExportCapillaryParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,

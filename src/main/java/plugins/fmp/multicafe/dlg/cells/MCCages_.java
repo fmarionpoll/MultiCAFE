@@ -15,7 +15,7 @@ import javax.swing.event.ChangeListener;
 import icy.gui.component.PopupPanel;
 import plugins.fmp.multicafe.MultiCAFE;
 
-public class MCCells_ extends JPanel implements PropertyChangeListener {
+public class MCCages_ extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */

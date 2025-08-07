@@ -88,8 +88,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 			xlsExportCapillaryResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 		}
 
-		if (options.sumPerCell) {
-			combineDataForOneCell(rowListForOneExp, exp);
+		if (options.sumPerCage) {
+			combineDataForOneCage(rowListForOneExp, exp);
 			sheet = xlsGetSheet(xlsExport.toString() + "_cage", xlsExport);
 			xlsExportCapillaryResultsArrayToSheet(rowListForOneExp, sheet, xlsExport, col0, charSeries);
 		}
@@ -189,7 +189,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 			EnumXLSExport xlsOption, XLSExportOptions options) {
 
 		// loop to get all capillaries into expAll and init rows for this experiment
-		expAll.cells.copy(exp.cells);
+		expAll.cages.copy(exp.cages);
 		expAll.capillaries.copy(exp.capillaries);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
 		expAll.copyExperimentFields(exp);
@@ -209,7 +209,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 			XLSResults row = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID, xlsOption, nFrames);
 			row.stimulus = cap.capStimulus;
 			row.concentration = cap.capConcentration;
-			row.cellID = cap.capCageID;
+			row.cageID = cap.capCageID;
 			rowListForOneExp.addRow(row);
 		}
 		rowListForOneExp.sortRowsByName();
@@ -295,7 +295,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 	}
 
 	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
-		for (Cage cell : exp.cells.cageList) {
+		for (Cage cell : exp.cages.cageList) {
 			String roiname = cell.cageRoi2D.getName();
 			if (roiname.length() < 4)
 				continue;
@@ -308,10 +308,10 @@ public class XLSExportCapillariesResults extends XLSExport {
 			int ilastalive = 0;
 			if (cell.cageNFlies > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cells.isFlyAlive(cellNumber)) {
+				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
-				int lastIntervalFlyAlive = expi.cells.getLastIntervalFlyAlive(cellNumber);
+				int lastIntervalFlyAlive = expi.cages.getLastIntervalFlyAlive(cellNumber);
 				int lastMinuteAlive = (int) (lastIntervalFlyAlive * expi.camImageBin_ms
 						+ (expi.camImageFirst_ms - expAll.camImageFirst_ms));
 				ilastalive = (int) (lastMinuteAlive / expAll.kymoBin_ms);
@@ -321,13 +321,13 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 			for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
 				XLSResults row = rowListForOneExp.getRow(iRow);
-				if (desc_getIndex_CellFromCapillaryName(row.name) == cellNumber)
+				if (desc_getIndex_CageFromCapillaryName(row.name) == cellNumber)
 					row.clearValues(ilastalive);
 			}
 		}
 	}
 
-	private void combineDataForOneCell(XLSResultsArray rowListForOneExp, Experiment exp) {
+	private void combineDataForOneCage(XLSResultsArray rowListForOneExp, Experiment exp) {
 		for (int iRow0 = 0; iRow0 < rowListForOneExp.size(); iRow0++) {
 			XLSResults row_master = rowListForOneExp.getRow(iRow0);
 			if (row_master.nflies == 0 || row_master.valuesOut == null)
@@ -337,7 +337,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 				XLSResults row = rowListForOneExp.getRow(iRow);
 				if (row.nflies == 0 || row.valuesOut == null)
 					continue;
-				if (row.cellID != row_master.cellID)
+				if (row.cageID != row_master.cageID)
 					continue;
 				if (row.name.equals(row_master.name))
 					continue;
@@ -476,9 +476,9 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 			XLSExportExperimentParameters(sheet, transpose, x, y, exp);
 			XLSExportCapillaryParameters(sheet, transpose, x, y, charSeries, exp, cap, xlsExportOption, index);
-			if (exp.cells.cageList.size() > index / 2) {
-				Cage cell = exp.cells.cageList.get(index / 2);
-				XLSExportCellParameters(sheet, transpose, x, y, charSeries, exp, cell);
+			if (exp.cages.cageList.size() > index / 2) {
+				Cage cell = exp.cages.cageList.get(index / 2);
+				xlsExportCageParameters(sheet, transpose, x, y, charSeries, exp, cell);
 			}
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheet.getSheetName());
 		}

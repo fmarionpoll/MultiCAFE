@@ -51,7 +51,7 @@ public class LoadSaveCage extends JPanel {
 				if (exp != null) {
 					loadCage(exp);
 					firePropertyChange("LOAD_DATA", false, true);
-					parent0.paneCells.tabsPane.setSelectedIndex(3);
+					parent0.paneCages.tabsPane.setSelectedIndex(3);
 				}
 			}
 		});
@@ -62,7 +62,7 @@ public class LoadSaveCage extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					saveCageAndMeasures(exp);
-					parent0.paneCells.tabsPane.setSelectedIndex(3);
+					parent0.paneCages.tabsPane.setSelectedIndex(3);
 				}
 			}
 		});
@@ -83,7 +83,7 @@ public class LoadSaveCage extends JPanel {
 
 	public void saveCageAndMeasures(Experiment exp) {
 		if (exp != null) {
-			exp.cells.cagesFromROIs(exp.seqCamData);
+			exp.cages.cagesFromROIs(exp.seqCamData);
 			exp.saveCageMeasures();
 		}
 	}

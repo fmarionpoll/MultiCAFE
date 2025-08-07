@@ -21,20 +21,20 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		resultsList = new ArrayList<XLSResults>(size);
 	}
 
-	public XLSResults getNextRowIfSameCell(int irow) {
+	public XLSResults getNextRowIfSameCage(int irow) {
 		XLSResults rowL = resultsList.get(irow);
-		int cellL = getCellFromKymoFileName(rowL.name);
+		int cellL = getCageFromKymoFileName(rowL.name);
 		XLSResults rowR = null;
 		if (irow + 1 < resultsList.size()) {
 			rowR = resultsList.get(irow + 1);
-			int cellR = getCellFromKymoFileName(rowR.name);
+			int cellR = getCageFromKymoFileName(rowR.name);
 			if (cellR != cellL)
 				rowR = null;
 		}
 		return rowR;
 	}
 
-	protected int getCellFromKymoFileName(String name) {
+	protected int getCageFromKymoFileName(String name) {
 		if (!name.contains("line"))
 			return -1;
 		return Integer.valueOf(name.substring(4, 5));
@@ -233,7 +233,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 	private void buildLR(double threshold) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRowIfSameCell(irow);
+			XLSResults rowR = getNextRowIfSameCage(irow);
 			if (rowR != null && rowL != null) {
 				irow++;
 				getPI_SUM_from_LR(rowL, rowR, threshold);
@@ -251,7 +251,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 	private void buildCrosscorrel(XLSExportOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRowIfSameCell(irow);
+			XLSResults rowR = getNextRowIfSameCage(irow);
 			if (rowR != null) {
 				irow++;
 				XLSResults rowLtoR = new XLSResults("LtoR", 0, 0, null);
@@ -271,7 +271,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 	private void buildCrosscorrelLR(XLSExportOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRowIfSameCell(irow);
+			XLSResults rowR = getNextRowIfSameCage(irow);
 			if (rowR != null) {
 				irow++;
 
@@ -318,7 +318,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 	private void buildAutocorrelLR(XLSExportOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRowIfSameCell(irow);
+			XLSResults rowR = getNextRowIfSameCage(irow);
 			if (rowR != null) {
 				irow++;
 

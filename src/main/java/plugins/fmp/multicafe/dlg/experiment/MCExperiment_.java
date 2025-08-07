@@ -143,7 +143,7 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 					if (idViewer == idCurrentExp) {
 						int t = v.getPositionT();
 						v.setTitle(exp.seqCamData.getDecoratedImageName(t));
-						if (parent0.paneCells.bTrapROIsEdit)
+						if (parent0.paneCages.bTrapROIsEdit)
 							exp.saveDetRoisToPositions();
 						exp.updateROIsAt(t);
 					}

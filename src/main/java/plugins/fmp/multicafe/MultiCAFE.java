@@ -14,7 +14,7 @@ import icy.plugin.abstract_.PluginActionable;
 import icy.preferences.GeneralPreferences;
 import plugins.fmp.multicafe.dlg.browse.MCBrowse_;
 import plugins.fmp.multicafe.dlg.capillaries.MCCapillaries_;
-import plugins.fmp.multicafe.dlg.cells.MCCells_;
+import plugins.fmp.multicafe.dlg.cells.MCCages_;
 import plugins.fmp.multicafe.dlg.excel.MCExcel_;
 import plugins.fmp.multicafe.dlg.experiment.MCExperiment_;
 import plugins.fmp.multicafe.dlg.kymos.MCKymos_;
@@ -32,7 +32,7 @@ public class MultiCAFE extends PluginActionable {
 	public MCKymos_ paneKymos = new MCKymos_();
 	public MCLevels_ paneLevels = new MCLevels_();
 	public MCSpots_ paneSpots = new MCSpots_();
-	public MCCells_ paneCells = new MCCells_();
+	public MCCages_ paneCages = new MCCages_();
 	public MCExcel_ paneExcel = new MCExcel_();
 
 	public JTabbedPane tabsPane = new JTabbedPane();
@@ -47,7 +47,7 @@ public class MultiCAFE extends PluginActionable {
 		paneCapillaries.init(mainPanel, "Capillaries", this);
 		paneKymos.init(mainPanel, "Kymographs", this);
 		paneLevels.init(mainPanel, "Capillary levels", this);
-		paneCells.init(mainPanel, "Fly positions", this);
+		paneCages.init(mainPanel, "Fly positions", this);
 		paneExcel.init(mainPanel, "Export", this);
 
 		mainFrame.setLayout(new BorderLayout());

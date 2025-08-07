@@ -20,11 +20,11 @@ public class FlyDetect2 extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {
 		if (!loadDrosoTrack(exp))
 			return;
-		if (!checkBoundsForCells(exp))
+		if (!checkBoundsForCages(exp))
 			return;
 
 		runFlyDetect2(exp);
-		exp.cells.orderFlyPositions();
+		exp.cages.orderFlyPositions();
 		if (!stopFlag)
 			exp.saveCageMeasures();
 		exp.seqCamData.closeSequence();
@@ -34,7 +34,7 @@ public class FlyDetect2 extends BuildSeries {
 	private void runFlyDetect2(Experiment exp) {
 		exp.cleanPreviousDetectedFliesROIs();
 		find_flies.initParametersForDetection(exp, options);
-		exp.cells.initFlyPositions(options.detectCell);
+		exp.cages.initFlyPositions(options.detectCage);
 		options.threshold = options.thresholdDiff;
 		if (exp.loadReferenceImage()) {
 			openFlyDetectViewers(exp);

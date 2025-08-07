@@ -16,11 +16,11 @@ public enum EnumXLSColumnHeader {
 	CAP("Cap", 11, EnumXLSMeasure.CAP), CAP_VOLUME("Cap_ul", 12, EnumXLSMeasure.CAP),
 	CAP_PIXELS("Cap_npixels", 13, EnumXLSMeasure.CAP), CHOICE_NOCHOICE("Choice", 14, EnumXLSMeasure.CAP),
 	CAP_STIM("Cap_stimulus", 15, EnumXLSMeasure.CAP), CAP_CONC("Cap_concentration", 16, EnumXLSMeasure.CAP),
-	CAP_NFLIES("Nflies", 17, EnumXLSMeasure.CAP), // CAP_CAGEINDEX("Cell", 18, XLSMeasureType.CAP),
+	CAP_NFLIES("Nflies", 17, EnumXLSMeasure.CAP), // CAP_CAGEINDEX("Cage", 18, XLSMeasureType.CAP),
 	//
-	CELL_INDEX("Cell", 18, EnumXLSMeasure.COMMON), CELL_ID("Cell_ID", 19, EnumXLSMeasure.COMMON),
-	CELL_STRAIN("Cell_strain", 20, EnumXLSMeasure.COMMON), CELL_SEX("Cell_sex", 21, EnumXLSMeasure.COMMON),
-	CELL_AGE("Cell_age", 22, EnumXLSMeasure.COMMON), CELL_COMMENT("Cell_comment", 23, EnumXLSMeasure.COMMON),
+	CAGE_INDEX("Cage", 18, EnumXLSMeasure.COMMON), CAGE_ID("Cage_ID", 19, EnumXLSMeasure.COMMON),
+	CAGE_STRAIN("Cage_strain", 20, EnumXLSMeasure.COMMON), CAGE_SEX("Cage_sex", 21, EnumXLSMeasure.COMMON),
+	CAGE_AGE("Cage_age", 22, EnumXLSMeasure.COMMON), CAGE_COMMENT("Cage_comment", 23, EnumXLSMeasure.COMMON),
 	//
 	DUM4("Dum4", 24, EnumXLSMeasure.COMMON);
 

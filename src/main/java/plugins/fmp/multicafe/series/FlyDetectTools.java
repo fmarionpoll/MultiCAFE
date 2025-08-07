@@ -19,7 +19,7 @@ import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyDetectTools {
 	public List<BooleanMask2D> cellMaskList = new ArrayList<BooleanMask2D>();
-	public Rectangle rectangleAllCells = null;
+	public Rectangle rectangleAllCages = null;
 	public BuildSeriesOptions options = null;
 	public Cages box = null;
 
@@ -95,7 +95,7 @@ public class FlyDetectTools {
 		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(box.cageList.size());
 
 		for (Cage cell : box.cageList) {
-			if (options.detectCell != -1 && cell.getCageIndex() != options.detectCell)
+			if (options.detectCage != -1 && cell.getCageIndex() != options.detectCage)
 				continue;
 			if (cell.cageNFlies < 1)
 				continue;
@@ -160,20 +160,20 @@ public class FlyDetectTools {
 
 	public void initParametersForDetection(Experiment exp, BuildSeriesOptions options) {
 		this.options = options;
-		exp.cells.detect_nframes = (int) (((exp.cells.detectLast_Ms - exp.cells.detectFirst_Ms)
-				/ exp.cells.detectBin_Ms) + 1);
-		exp.cells.clearAllMeasures(options.detectCell);
-		box = exp.cells;
+		exp.cages.detect_nframes = (int) (((exp.cages.detectLast_Ms - exp.cages.detectFirst_Ms)
+				/ exp.cages.detectBin_Ms) + 1);
+		exp.cages.clearAllMeasures(options.detectCage);
+		box = exp.cages;
 		box.computeBooleanMasksForCages();
-		rectangleAllCells = null;
+		rectangleAllCages = null;
 		for (Cage cell : box.cageList) {
 			if (cell.cageNFlies < 1)
 				continue;
 			Rectangle rect = cell.cageRoi2D.getBounds();
-			if (rectangleAllCells == null)
-				rectangleAllCells = new Rectangle(rect);
+			if (rectangleAllCages == null)
+				rectangleAllCages = new Rectangle(rect);
 			else
-				rectangleAllCells.add(rect);
+				rectangleAllCages.add(rect);
 		}
 	}
 
