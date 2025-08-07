@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cells;
+package plugins.fmp.multicafe.dlg.cages;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -36,7 +36,7 @@ import plugins.fmp.multicafe.tools.Overlay.OverlayThreshold;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
-public class BuildCellsFromContours extends JPanel implements ChangeListener {
+public class BuildCagesFromContours extends JPanel implements ChangeListener {
 	/**
 	 * 
 	 */

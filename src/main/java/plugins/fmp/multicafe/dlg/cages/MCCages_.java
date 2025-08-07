@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cells;
+package plugins.fmp.multicafe.dlg.cages;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -21,7 +21,7 @@ public class MCCages_ extends JPanel implements PropertyChangeListener {
 	 */
 	private static final long serialVersionUID = 3457738144388946607L;
 
-	BuildCells tabBuildCells = new BuildCells();
+	BuildCages tabBuildCells = new BuildCages();
 //	BuildCellsAsArray tabBuildCellsAsArray = new BuildCellsAsArray();
 //	BuildCellsFromContours tabBuildCellsFromContours = new BuildCellsFromContours();
 	Infos tabInfos = new Infos();

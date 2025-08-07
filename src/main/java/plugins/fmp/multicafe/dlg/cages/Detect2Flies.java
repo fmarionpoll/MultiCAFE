@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cells;
+package plugins.fmp.multicafe.dlg.cages;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -39,7 +39,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 	private String detectString = "Detect...";
 	private JButton startComputationButton = new JButton(detectString);
-	private JComboBox<String> allCellsComboBox = new JComboBox<String>(new String[] { "all cells" });
+	private JComboBox<String> allCagesComboBox = new JComboBox<String>(new String[] { "all cells" });
 	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
 
 	private JCheckBox objectLowsizeCheckBox = new JCheckBox("size >");
@@ -70,11 +70,11 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(startComputationButton);
-		panel1.add(allCellsComboBox);
+		panel1.add(allCagesComboBox);
 		panel1.add(allCheckBox);
 		add(panel1);
 
-		allCellsComboBox.addPopupMenuListener(this);
+		allCagesComboBox.addPopupMenuListener(this);
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(new JLabel("threshold"));
@@ -278,11 +278,11 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
 			nitems = exp.cages.cageList.size() + 1;
-		if (allCellsComboBox.getItemCount() != nitems) {
-			allCellsComboBox.removeAllItems();
-			allCellsComboBox.addItem("all cells");
-			for (Cage cell : exp.cages.cageList) {
-				allCellsComboBox.addItem(cell.getCageNumber());
+		if (allCagesComboBox.getItemCount() != nitems) {
+			allCagesComboBox.removeAllItems();
+			allCagesComboBox.addItem("all cells");
+			for (Cage cage : exp.cages.cageList) {
+				allCagesComboBox.addItem(cage.getCageIDasString());
 			}
 		}
 	}

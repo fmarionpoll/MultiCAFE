@@ -359,7 +359,7 @@ public class Capillaries {
 		}
 	}
 
-	public void initCapillariesWith10Cells(int nflies, boolean optionZeroFlyFirstLastCapillary) {
+	public void initCapillariesWith10Cages(int nflies, boolean optionZeroFlyFirstLastCapillary) {
 		int capArraySize = capillariesList.size();
 		for (int i = 0; i < capArraySize; i++) {
 			Capillary cap = capillariesList.get(i);
@@ -370,7 +370,7 @@ public class Capillaries {
 		}
 	}
 
-	public void initCapillariesWith6Cells(int nflies) {
+	public void initCapillariesWith6Cages(int nflies) {
 		int capArraySize = capillariesList.size();
 		for (int i = 0; i < capArraySize; i++) {
 			Capillary cap = capillariesList.get(i);

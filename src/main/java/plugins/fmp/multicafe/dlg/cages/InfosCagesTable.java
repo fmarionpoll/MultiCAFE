@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cells;
+package plugins.fmp.multicafe.dlg.cages;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

@@ -94,17 +94,17 @@ public class FlyDetectTools {
 		final ROI2DArea binarizedImageRoi = binarizeImage(workimage, options.threshold);
 		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(box.cageList.size());
 
-		for (Cage cell : box.cageList) {
-			if (options.detectCage != -1 && cell.getCageIndex() != options.detectCage)
+		for (Cage cage : box.cageList) {
+			if (options.detectCage != -1 && cage.getCageID() != options.detectCage)
 				continue;
-			if (cell.cageNFlies < 1)
+			if (cage.cageNFlies < 1)
 				continue;
 
 			futures.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					BooleanMask2D bestMask = getBestMask(binarizedImageRoi, cell.cageMask2D);
-					Rectangle2D rect = saveBestMask(bestMask, cell, t);
+					BooleanMask2D bestMask = getBestMask(binarizedImageRoi, cage.cageMask2D);
+					Rectangle2D rect = saveBestMask(bestMask, cage, t);
 					if (rect != null)
 						listRectangles.add(rect);
 				}

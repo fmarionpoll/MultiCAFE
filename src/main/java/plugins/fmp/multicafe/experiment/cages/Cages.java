@@ -83,7 +83,7 @@ public class Cages {
 
 	public void clearAllMeasures(int option_detectCage) {
 		for (Cage cage : cageList) {
-			int cageIndex = cage.getCageIndex();
+			int cageIndex = cage.getCageID();
 			if (option_detectCage < 0 || option_detectCage == cageIndex)
 				cage.clearMeasures();
 		}
@@ -177,7 +177,7 @@ public class Cages {
 				} catch (NumberFormatException e) {
 					System.out.println("Invalid integer input: " + data[0]);
 				}
-				Cage cage = getCageFromNumber(cageID);
+				Cage cage = getCageFromID(cageID);
 				if (cage == null) {
 					cage = new Cage();
 					cageList.add(cage);
@@ -203,11 +203,11 @@ public class Cages {
 
 				int cageID = -1;
 				try {
-				cageID = Integer.valueOf(data[0]);
-					} catch (NumberFormatException e) {
-					    System.out.println("Invalid integer input: " + data[0]);
-					}
-				Cage cage = getCageFromNumber(cageID);
+					cageID = Integer.valueOf(data[0]);
+				} catch (NumberFormatException e) {
+					System.out.println("Invalid integer input: " + data[0]);
+				}
+				Cage cage = getCageFromID(cageID);
 				if (cage == null)
 					cage = new Cage();
 				if (v0)
@@ -530,7 +530,7 @@ public class Cages {
 
 	public void transferNFliesFromCapillariesToCageBox(List<Capillary> capList) {
 		for (Cage cage : cageList) {
-			int cagenb = cage.getCageIndex();
+			int cagenb = cage.getCageID();
 			for (Capillary cap : capList) {
 				if (cap.capCageID == cagenb) {
 					cage.cageNFlies = cap.capNFlies;
@@ -542,7 +542,7 @@ public class Cages {
 
 	public void transferNFliesFromCagesToCapillaries(List<Capillary> capList) {
 		for (Cage cage : cageList) {
-			int cageIndex = cage.getCageIndex();
+			int cageIndex = cage.getCageID();
 			for (Capillary cap : capList) {
 				if (cap.capCageID != cageIndex)
 					continue;
@@ -558,10 +558,10 @@ public class Cages {
 		}
 	}
 
-	public Cage getCageFromNumber(int number) {
+	public Cage getCageFromID(int number) {
 		Cage cageFound = null;
 		for (Cage cage : cageList) {
-			if (number == cage.getCageIndex()) {
+			if (number == cage.getCageID()) {
 				cageFound = cage;
 				break;
 			}
@@ -590,7 +590,7 @@ public class Cages {
 		int nCages = cageList.size();
 		for (int i = 0; i < nCages; i++) {
 			Cage cage = cageList.get(i);
-			if (option_cagenumber != -1 && cage.getCageIndex() != option_cagenumber)
+			if (option_cagenumber != -1 && cage.getCageID() != option_cagenumber)
 				continue;
 			if (cage.cageNFlies > 0) {
 				cage.flyPositions = new FlyPositions();

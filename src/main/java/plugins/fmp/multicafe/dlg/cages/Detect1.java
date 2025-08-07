@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.dlg.cells;
+package plugins.fmp.multicafe.dlg.cages;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -52,7 +52,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 	private JComboBox<ImageTransformEnums> backgroundComboBox = new JComboBox<>(new ImageTransformEnums[] {
 			ImageTransformEnums.NONE, ImageTransformEnums.SUBTRACT_TM1, ImageTransformEnums.SUBTRACT_T0 });
 
-	private JComboBox<String> cellsComboBox = new JComboBox<String>(new String[] { "all cells" });
+	private JComboBox<String> cagesComboBox = new JComboBox<String>(new String[] { "all cells" });
 	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(60, 0, 255, 1));
 	private JSpinner jitterTextField = new JSpinner(new SpinnerNumberModel(5, 0, 1000, 1));
 	private JSpinner objectLowsizeSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 9999, 1));
@@ -79,13 +79,13 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(startComputationButton);
-		panel1.add(cellsComboBox);
+		panel1.add(cagesComboBox);
 		panel1.add(allCheckBox);
 		panel1.add(new JLabel("n flies "));
 		panel1.add(nFliesPresentSpinner);
 		add(panel1);
 
-		cellsComboBox.addPopupMenuListener(this);
+		cagesComboBox.addPopupMenuListener(this);
 
 		JPanel panel2 = new JPanel(flowLayout);
 		transformComboBox.setSelectedIndex(1);
@@ -222,7 +222,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = exp.getBinSubDirectory();
 
-		options.detectCage = cellsComboBox.getSelectedIndex() - 1;
+		options.detectCage = cagesComboBox.getSelectedIndex() - 1;
 
 		return options;
 	}
@@ -264,11 +264,11 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
 			nitems = exp.cages.cageList.size() + 1;
-		if (cellsComboBox.getItemCount() != nitems) {
-			cellsComboBox.removeAllItems();
-			cellsComboBox.addItem("all cells");
-			for (Cage cell : exp.cages.cageList) {
-				cellsComboBox.addItem(cell.getCageNumber());
+		if (cagesComboBox.getItemCount() != nitems) {
+			cagesComboBox.removeAllItems();
+			cagesComboBox.addItem("all cells");
+			for (Cage cage : exp.cages.cageList) {
+				cagesComboBox.addItem(cage.getCageIDasString());
 			}
 		}
 	}

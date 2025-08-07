@@ -29,10 +29,11 @@ public class Cage {
 	public String cageComment = "..";
 	public String cageSex = "..";
 	public String cageStrain = "..";
-	private String cageNumber = null;
+	private String cageID = "-1";
 	public boolean valid = false;
 	public boolean bDetect = true;
 	public boolean initialflyRemoved = false;
+	private ArrayList<Capillary> capList = new ArrayList<Capillary>(2);
 
 	private final String ID_CAGELIMITS = "CageLimits";
 	private final String ID_FLYPOSITIONS = "FlyPositions";
@@ -47,6 +48,37 @@ public class Cage {
 			return cageRoi2D.getName();
 		return null;
 	}
+
+	public void addCapillaryIfUnique(Capillary cap) {
+		if (capList.size() == 0) {
+			capList.add(cap);
+			return;
+		}
+
+		for (Capillary capCage : capList) {
+			if (capCage.compareTo(cap) == 0) {
+				return;
+			}
+		}
+		capList.add(cap);
+	}
+
+	public void addCapillaryIfUniqueBulkFilteredOnCageID(List<Capillary> capillaryList) {
+		for (Capillary cap : capillaryList) {
+			if (cap.capCageID == getCageID())
+				addCapillaryIfUnique(cap);
+		}
+	}
+
+	public void clearCapillaryList() {
+		capList.clear();
+	}
+
+	public ArrayList<Capillary> getCapillaryList() {
+		return capList;
+	}
+
+	// ============= XML =============
 
 	public boolean xmlSaveCagel(Node node, int index) {
 		if (node == null)
@@ -139,7 +171,7 @@ public class Cage {
 	public String csvExport_CAGE_Data(String sep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = new ArrayList<String>();
-		row.add(cageNumber);
+		row.add(cageID);
 		row.add(Integer.toString(cageNFlies));
 		row.add(Integer.toString(cageAge));
 		row.add(cageComment);
@@ -182,11 +214,11 @@ public class Cage {
 		StringBuffer sbf = new StringBuffer();
 		switch (measureType) {
 		case POSITION:
-			flyPositions.cvsExport_Parameter_ToRow(sbf, "t(i)", cageNumber, sep);
-			flyPositions.cvsExport_Parameter_ToRow(sbf, "x(i)", cageNumber, sep);
-			flyPositions.cvsExport_Parameter_ToRow(sbf, "y(i)", cageNumber, sep);
-			flyPositions.cvsExport_Parameter_ToRow(sbf, "w(i)", cageNumber, sep);
-			flyPositions.cvsExport_Parameter_ToRow(sbf, "h(i)", cageNumber, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "t(i)", cageID, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "x(i)", cageID, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "y(i)", cageID, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "w(i)", cageID, sep);
+			flyPositions.cvsExport_Parameter_ToRow(sbf, "h(i)", cageID, sep);
 			break;
 		default:
 			break;
@@ -196,7 +228,7 @@ public class Cage {
 
 	public void csvImport_CAGE_Header(String[] data) {
 		int i = 0;
-		cageNumber = data[i];
+		cageID = data[i];
 		i++;
 		cageNFlies = Integer.valueOf(data[i]);
 		i++;
@@ -249,18 +281,22 @@ public class Cage {
 
 	// ------------------------------------
 
-	public String getCageNumber() {
-		if (cageNumber == null)
-			cageNumber = cageRoi2D.getName().substring(cageRoi2D.getName().length() - 3);
-		return cageNumber;
+	public String getCageIDasString() {
+		if (cageID == null)
+			cageID = cageRoi2D.getName().substring(cageRoi2D.getName().length() - 3);
+		return cageID;
 	}
 
-	public int getCageIndex() {
+	public void setCageID(int iID) {
+		cageID = Integer.toString(iID);
+	}
+
+	public int getCageID() {
 		int cageIndex = -1;
-		cageNumber = getCageNumber();
-		if (cageNumber != null) {
+		cageID = getCageIDasString();
+		if (cageID != null) {
 			try {
-				return Integer.parseInt(cageNumber);
+				return Integer.parseInt(cageID);
 			} catch (NumberFormatException e) {
 				return cageIndex;
 			}
@@ -300,7 +336,7 @@ public class Cage {
 		cageRoi2D = cageFrom.cageRoi2D;
 		cageNFlies = cageFrom.cageNFlies;
 		cageComment = cageFrom.cageComment;
-		cageNumber = cageFrom.cageNumber;
+		cageID = cageFrom.cageID;
 		cageStrain = cageFrom.cageStrain;
 		cageSex = cageFrom.cageSex;
 		valid = false;
@@ -314,14 +350,14 @@ public class Cage {
 		FlyPosition aValue = flyPositions.flyPositionList.get(t);
 
 		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.getRectangle2D());
-		flyRoiR.setName("detR" + getCageNumber() + "_" + t);
+		flyRoiR.setName("detR" + getCageIDasString() + "_" + t);
 		flyRoiR.setT(t);
 		flyRoiR.setColor(Color.YELLOW);
 		return flyRoiR;
 	}
 
 	public void transferRoisToPositions(List<ROI2D> detectedROIsList) {
-		String filter = "detR" + getCageNumber();
+		String filter = "detR" + getCageIDasString();
 		for (ROI2D roi : detectedROIsList) {
 			String name = roi.getName();
 			if (!name.contains(filter))

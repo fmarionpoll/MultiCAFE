@@ -238,7 +238,6 @@ public class Experiment {
 		if (seqReference != null) {
 			seqReference.close();
 		}
-
 	}
 
 	public boolean openMeasures(boolean loadCapillaries, boolean loadDrosoPositions) {
@@ -246,20 +245,16 @@ public class Experiment {
 			seqCamData = new SequenceCamData();
 		xmlLoad_MCExperiment();
 		getFileIntervalsFromSeqCamData();
-
 		if (seqKymos == null)
 			seqKymos = new SequenceKymos();
-
 		if (loadCapillaries) {
 			loadMCCapillaries_Only();
 			if (!capillaries.load_Capillaries(getKymosBinFullDirectory()))
 				return false;
 		}
-
 		if (loadDrosoPositions) {
 			loadCageMeasures();
 		}
-
 		return true;
 	}
 
@@ -805,6 +800,23 @@ public class Experiment {
 			flag = capillaries.save_Capillaries(directory);
 		}
 		return flag;
+	}
+
+	public void dispatchCapillariesToCages() {
+		for (Cage cage : cages.cageList) {
+			cage.clearCapillaryList();
+		}
+
+		for (Capillary cap : capillaries.capillariesList) {
+			int cageID = cap.getCageIndexFromRoiName();
+			Cage cage = cages.getCageFromID(cageID);
+			if (cage == null) {
+				cage = new Cage();
+				cage.setCageID(cageID);
+				cages.cageList.add(cage);
+			}
+			cage.addCapillaryIfUnique(cap);
+		}
 	}
 
 	public void kymosBuildFiltered01(int zChannelSource, int zChannelDestination, ImageTransformEnums transformop1,
