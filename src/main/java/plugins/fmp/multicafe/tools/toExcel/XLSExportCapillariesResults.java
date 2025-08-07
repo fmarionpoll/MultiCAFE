@@ -133,6 +133,9 @@ public class XLSExportCapillariesResults extends XLSExport {
 				case TOPLEVELDELTA:
 				case TOPLEVELDELTA_LR:
 					options.compensateEvaporation = options.subtractEvaporation;
+					resultsArrayList.getResults_T0(expi.capillaries, xlsExportType, nOutputFrames, exp.kymoBin_ms,
+							options);
+					break;
 
 				case TOPRAW:
 					resultsArrayList.getResults_T0(expi.capillaries, xlsExportType, nOutputFrames, exp.kymoBin_ms,

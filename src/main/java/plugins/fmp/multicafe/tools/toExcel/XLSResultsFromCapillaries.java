@@ -6,7 +6,7 @@ import java.util.Arrays;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 
-public class XLSResultsFromCapillaries extends XLSResultsArray{
+public class XLSResultsFromCapillaries extends XLSResultsArray {
 
 	XLSResults evapL = null;
 	XLSResults evapR = null;
@@ -20,7 +20,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray{
 		resultsList = new ArrayList<XLSResults>(size);
 	}
 
-	public XLSResults getNextRow(int irow) {
+	public XLSResults getNextRowIfSameCell(int irow) {
 		XLSResults rowL = resultsList.get(irow);
 		int cellL = getCellFromKymoFileName(rowL.name);
 		XLSResults rowR = null;
@@ -100,26 +100,21 @@ public class XLSResultsFromCapillaries extends XLSResultsArray{
 		return Math.min(lenL, lenR);
 	}
 
-	public void getPI_LR(XLSResults rowL, XLSResults rowR, double threshold) {
+	public void getPI_SUM_from_LR(XLSResults rowL, XLSResults rowR, double threshold) {
 		int len = getLen(rowL, rowR);
 		for (int index = 0; index < len; index++) {
 			double dataL = rowL.valuesOut[index];
 			double dataR = rowR.valuesOut[index];
-			double delta = 0.;
-			if (dataL < 0)
-				delta = dataL;
-			if (dataR < delta)
-				delta = dataR;
-			dataL -= delta;
-			dataR -= delta;
-			double sum = dataL + dataR;
+			double offset = Math.min(dataL, dataR);
+			if (offset < 0.) {
+				dataL -= offset;
+				dataR -= offset;
+			}
+
 			double pi = 0.;
+			double sum = dataL + dataR;
 			if (sum != 0. && !Double.isNaN(sum) && sum >= threshold)
 				pi = (dataL - dataR) / sum;
-			if (pi > highestPiAllowed)
-				pi = highestPiAllowed;
-			if (pi < lowestPiAllowed)
-				pi = lowestPiAllowed;
 
 			rowL.valuesOut[index] = sum;
 			rowR.valuesOut[index] = pi;
@@ -217,10 +212,10 @@ public class XLSResultsFromCapillaries extends XLSResultsArray{
 	private void buildLR(double threshold) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRow(irow);
-			if (rowR != null) {
+			XLSResults rowR = getNextRowIfSameCell(irow);
+			if (rowR != null && rowL != null) {
 				irow++;
-				getPI_LR(rowL, rowR, threshold);
+				getPI_SUM_from_LR(rowL, rowR, threshold);
 			}
 		}
 	}
@@ -235,7 +230,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray{
 	private void buildCrosscorrel(XLSExportOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRow(irow);
+			XLSResults rowR = getNextRowIfSameCell(irow);
 			if (rowR != null) {
 				irow++;
 				XLSResults rowLtoR = new XLSResults("LtoR", 0, 0, null);
@@ -255,7 +250,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray{
 	private void buildCrosscorrelLR(XLSExportOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRow(irow);
+			XLSResults rowR = getNextRowIfSameCell(irow);
 			if (rowR != null) {
 				irow++;
 
@@ -302,7 +297,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray{
 	private void buildAutocorrelLR(XLSExportOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRow(irow);
+			XLSResults rowR = getNextRowIfSameCell(irow);
 			if (rowR != null) {
 				irow++;
 
