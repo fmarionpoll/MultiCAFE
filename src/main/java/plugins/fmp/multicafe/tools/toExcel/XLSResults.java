@@ -93,10 +93,10 @@ public class XLSResults {
 	public List<Integer> subtractT0() {
 		if (dataInt == null || dataInt.size() < 1)
 			return null;
-		int item0 = dataInt.get(0);
+		int valueAtT0 = dataInt.get(0);
 		for (int index = 0; index < dataInt.size(); index++) {
 			int value = dataInt.get(index);
-			dataInt.set(index, value - item0);
+			dataInt.set(index, value - valueAtT0);
 		}
 		return dataInt;
 	}
