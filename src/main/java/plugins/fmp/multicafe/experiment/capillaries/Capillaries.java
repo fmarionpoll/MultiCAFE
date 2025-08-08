@@ -85,8 +85,6 @@ public class Capillaries {
 		return false;
 	}
 
-	// ---------------------------------
-
 	private boolean xmlSaveListOfCapillaries(Document doc) {
 		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_CAPILLARYTRACK);
 		if (node == null)
@@ -615,8 +613,6 @@ public class Capillaries {
 		}
 		return null;
 	}
-
-	// ---------------------------------
 
 	private boolean csvSave_Capillaries(String directory) {
 		Path path = Paths.get(directory);

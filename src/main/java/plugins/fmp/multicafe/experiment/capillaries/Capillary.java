@@ -567,8 +567,6 @@ public class Capillary implements Comparable<Capillary> {
 		return result;
 	}
 
-	// -----------------------------------------------------------------------------
-
 	public boolean xmlSave_CapillaryOnly(Node node) {
 		final Node nodeMeta = XMLUtil.setElement(node, ID_META);
 		if (nodeMeta == null)
@@ -821,8 +819,6 @@ public class Capillary implements Comparable<Capillary> {
 		sbf.append("\n");
 		return sbf.toString();
 	}
-
-	// --------------------------------------------
 
 	public void csvImport_CapillaryDescription(String[] data) {
 		int i = 0;

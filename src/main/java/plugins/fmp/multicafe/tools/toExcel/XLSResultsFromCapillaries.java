@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 
@@ -102,19 +101,14 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		return Math.min(lenL, lenR);
 	}
 
-	public void getPI_SUM_from_LR(XLSResults rowL, XLSResults rowR, double threshold) {
+	public void getPI_and_SUM_from_LR(XLSResults rowL, XLSResults rowR, double threshold) {
 		int len = getLen(rowL, rowR);
 		for (int index = 0; index < len; index++) {
 			double dataL = rowL.valuesOut[index];
 			double dataR = rowR.valuesOut[index];
-			double offset = Math.min(dataL, dataR);
-			if (offset < 0.) {
-				dataL -= offset;
-				dataR -= offset;
-			}
 
 			double pi = 0.;
-			double sum = dataL + dataR;
+			double sum = Math.abs(dataL) + Math.abs(dataR);
 			if (sum != 0. && !Double.isNaN(sum) && sum >= threshold)
 				pi = (dataL - dataR) / sum;
 
@@ -188,30 +182,30 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		}
 	}
 
-	private void buildDataForPass1_using_Cages(Experiment expi, int nOutputFrames, long kymoBinCol_Ms,
-			XLSExportOptions xlsExportOptions, boolean subtractT0) {
-		Capillaries caps = expi.capillaries;
-		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
-		expi.dispatchCapillariesToCages();
-		for (Cage cage : expi.cages.cageList) {
-			int cageID = cage.getCageID();
-			ArrayList<Capillary> capList = cage.getCapillaryList();
-			// search lowest and compensate if one is negative
-			// TODOTODOTODU
-			for (Capillary cap : caps.capillariesList) {
-				checkIfSameStimulusAndConcentration(cap);
-				XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID,
-						xlsExportOptions.exportType, nOutputFrames);
-				results.dataInt = cap.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
-						xlsExportOptions.buildExcelStepMs);
-				if (subtractT0)
-					results.subtractT0();
-				results.transferDataIntToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
-				addRow(results);
-			}
-		}
-
-	}
+//	private void buildDataForPass1_using_Cages(Experiment expi, int nOutputFrames, long kymoBinCol_Ms,
+//			XLSExportOptions xlsExportOptions, boolean subtractT0) {
+//		Capillaries caps = expi.capillaries;
+//		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
+//		expi.dispatchCapillariesToCages();
+//
+//		for (Cage cage : expi.cages.cageList) {
+//
+//			ArrayList<Capillary> capList = cage.getCapillaryList();
+//			// search lowest and compensate if one is negative
+//			// TODOTODOTODU
+//			for (Capillary cap : caps.capillariesList) {
+//				checkIfSameStimulusAndConcentration(cap);
+//				XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID,
+//						xlsExportOptions.exportType, nOutputFrames);
+//				results.dataInt = cap.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
+//						xlsExportOptions.buildExcelStepMs);
+//				if (subtractT0)
+//					results.subtractT0();
+//				results.transferDataIntToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
+//				addRow(results);
+//			}
+//		}
+//	}
 
 	public void buildDataForPass2(XLSExportOptions xlsExportOptions) {
 		switch (xlsExportOptions.exportType) {
@@ -243,7 +237,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 			XLSResults rowR = getNextRowIfSameCage(irow);
 			if (rowR != null && rowL != null) {
 				irow++;
-				getPI_SUM_from_LR(rowL, rowR, threshold);
+				getPI_and_SUM_from_LR(rowL, rowR, threshold);
 			}
 		}
 	}
