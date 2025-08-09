@@ -461,6 +461,9 @@ public class XLSExportCapillariesResults extends XLSExport {
 				rowmax = dumb.getValue();
 		}
 
+		if (exp.cages.cageList.size() < exp.capillaries.capillariesList.size() / 2)
+			exp.dispatchCapillariesToCages();
+
 		List<Capillary> capList = exp.capillaries.capillariesList;
 		for (int index = 0; index < capList.size(); index++) {
 			Capillary cap = capList.get(index);
@@ -472,11 +475,11 @@ public class XLSExportCapillariesResults extends XLSExport {
 			int y = row;
 
 			XLSExportExperimentParameters(sheet, transpose, x, y, charSeries, exp);
-			XLSExportCapillaryParameters(sheet, transpose, x, y, charSeries, exp, cap, xlsExportOption, index);
 			if (exp.cages.cageList.size() > index / 2) {
 				Cage cage = exp.cages.cageList.get(index / 2);
 				xlsExportCageParameters(sheet, transpose, x, y, charSeries, exp, cage);
 			}
+			XLSExportCapillaryParameters(sheet, transpose, x, y, charSeries, exp, cap, xlsExportOption, index);
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheet.getSheetName());
 		}
 		pt.x = col0;
