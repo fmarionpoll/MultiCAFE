@@ -6,23 +6,35 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum EnumXLSColumnHeader {
-	EXP_PATH("Path", 0, EnumXLSMeasure.COMMON), EXP_DATE("Date", 1, EnumXLSMeasure.COMMON),
-	EXP_BOXID("Box_ID", 2, EnumXLSMeasure.COMMON), EXP_CAM("Cam", 3, EnumXLSMeasure.COMMON),
-	EXP_EXPT("Expmt", 4, EnumXLSMeasure.COMMON), EXP_STIM("Stim", 5, EnumXLSMeasure.COMMON),
-	EXP_CONC("Conc", 6, EnumXLSMeasure.COMMON), EXP_COND1("Cond1", 9, EnumXLSMeasure.COMMON),
-	EXP_COND2("Cond2", 10, EnumXLSMeasure.COMMON), EXP_STRAIN("Strain", 7, EnumXLSMeasure.COMMON),
-	EXP_SEX("Sex", 8, EnumXLSMeasure.COMMON),
+	EXP_PATH("Path", 0, EnumXLSMeasure.COMMON), //
+	EXP_DATE("Date", 1, EnumXLSMeasure.COMMON), //
+	EXP_BOXID("Box_ID", 2, EnumXLSMeasure.COMMON), //
+	EXP_CAM("Cam", 3, EnumXLSMeasure.COMMON), //
+	EXP_EXPT("Expmt", 4, EnumXLSMeasure.COMMON), //
+	EXP_STRAIN("Strain", 5, EnumXLSMeasure.COMMON), //
+	EXP_SEX("Sex", 6, EnumXLSMeasure.COMMON), //
+	EXP_STIM("Stim1", 7, EnumXLSMeasure.COMMON), //
+	EXP_CONC("Conc1", 8, EnumXLSMeasure.COMMON), //
+	EXP_COND1("Stim2", 9, EnumXLSMeasure.COMMON), //
+	EXP_COND2("Conc2", 10, EnumXLSMeasure.COMMON), //
 	//
-	CAP("Cap", 11, EnumXLSMeasure.CAP), CAP_VOLUME("Cap_ul", 12, EnumXLSMeasure.CAP),
-	CAP_PIXELS("Cap_npixels", 13, EnumXLSMeasure.CAP), CHOICE_NOCHOICE("Choice", 14, EnumXLSMeasure.CAP),
-	CAP_STIM("Cap_stimulus", 15, EnumXLSMeasure.CAP), CAP_CONC("Cap_concentration", 16, EnumXLSMeasure.CAP),
-	CAP_NFLIES("Nflies", 17, EnumXLSMeasure.CAP), // CAP_CAGEINDEX("Cage", 18, XLSMeasureType.CAP),
+	CAGE_INDEX("Cage", 11, EnumXLSMeasure.COMMON), //
+	CAGE_ID("Cage_ID", 12, EnumXLSMeasure.COMMON), //
+	CAGE_STRAIN("Cage_strain", 13, EnumXLSMeasure.COMMON), //
+	CAGE_SEX("Cage_sex", 14, EnumXLSMeasure.COMMON), //
+	CAGE_AGE("Cage_age", 15, EnumXLSMeasure.COMMON), //
+	CAGE_COMMENT("Cage_comment", 16, EnumXLSMeasure.COMMON), //
 	//
-	CAGE_INDEX("Cage", 18, EnumXLSMeasure.COMMON), CAGE_ID("Cage_ID", 19, EnumXLSMeasure.COMMON),
-	CAGE_STRAIN("Cage_strain", 20, EnumXLSMeasure.COMMON), CAGE_SEX("Cage_sex", 21, EnumXLSMeasure.COMMON),
-	CAGE_AGE("Cage_age", 22, EnumXLSMeasure.COMMON), CAGE_COMMENT("Cage_comment", 23, EnumXLSMeasure.COMMON),
+	CAP("Cap", 17, EnumXLSMeasure.CAP), //
+	CAP_INDEX("Cap_ID", 18, EnumXLSMeasure.CAP), //
+	CAP_VOLUME("Cap_ul", 19, EnumXLSMeasure.CAP), //
+	CAP_PIXELS("Cap_npixels", 20, EnumXLSMeasure.CAP), //
+	CHOICE_NOCHOICE("Choice", 21, EnumXLSMeasure.CAP), //
+	CAP_STIM("Cap_stimulus", 22, EnumXLSMeasure.CAP), //
+	CAP_CONC("Cap_concentration", 23, EnumXLSMeasure.CAP), //
+	CAP_NFLIES("Nflies", 24, EnumXLSMeasure.CAP), //
 	//
-	DUM4("Dum4", 24, EnumXLSMeasure.COMMON);
+	DUM4("Dum4", 25, EnumXLSMeasure.COMMON);
 
 	private final String name;
 	private int value;

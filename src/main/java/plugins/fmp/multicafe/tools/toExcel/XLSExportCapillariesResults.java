@@ -124,8 +124,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 				case AUTOCORREL_LR:
 				case CROSSCORREL:
 				case CROSSCORREL_LR:
-					resultsArrayList.getResults1(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms,
-							options);
+					resultsArrayList.getResults1(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms, options);
 					break;
 
 				case TOPLEVEL:
@@ -133,13 +132,11 @@ public class XLSExportCapillariesResults extends XLSExport {
 				case TOPLEVELDELTA:
 				case TOPLEVELDELTA_LR:
 					options.compensateEvaporation = options.subtractEvaporation;
-					resultsArrayList.getResults_T0(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms,
-							options);
+					resultsArrayList.getResults_T0(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms, options);
 					break;
 
 				case TOPRAW:
-					resultsArrayList.getResults_T0(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms,
-							options);
+					resultsArrayList.getResults_T0(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms, options);
 					break;
 
 				default:
@@ -474,11 +471,11 @@ public class XLSExportCapillariesResults extends XLSExport {
 			int x = pt.x;
 			int y = row;
 
-			XLSExportExperimentParameters(sheet, transpose, x, y, exp);
+			XLSExportExperimentParameters(sheet, transpose, x, y, charSeries, exp);
 			XLSExportCapillaryParameters(sheet, transpose, x, y, charSeries, exp, cap, xlsExportOption, index);
 			if (exp.cages.cageList.size() > index / 2) {
-				Cage cell = exp.cages.cageList.get(index / 2);
-				xlsExportCageParameters(sheet, transpose, x, y, charSeries, exp, cell);
+				Cage cage = exp.cages.cageList.get(index / 2);
+				xlsExportCageParameters(sheet, transpose, x, y, charSeries, exp, cage);
 			}
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheet.getSheetName());
 		}

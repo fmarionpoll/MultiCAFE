@@ -95,7 +95,7 @@ public class XLSExportMoveResults extends XLSExport {
 			Cage cell = cellList.get(index);
 			for (int j = 0; j < measures.size(); j++) {
 				y = 0;
-				XLSExportExperimentParameters(sheet, options.transpose, x, y, combinedExp);
+				XLSExportExperimentParameters(sheet, options.transpose, x, y, charSeries, combinedExp);
 				xlsExportCageParameters(sheet, options.transpose, x, y, charSeries, combinedExp, cell);
 				y += EnumXLSColumnHeader.DUM4.getValue();
 				XLSUtils.setValue(sheet, x, y, options.transpose, measures.get(j).toString());

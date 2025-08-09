@@ -201,36 +201,31 @@ public class XLSExport {
 		pt.x++;
 	}
 
-	protected void XLSExportExperimentParameters(XSSFSheet sheet, boolean transpose, int x, int y, Experiment exp) {
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_PATH.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_PATH));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_DATE.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_DATE));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_CAM.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_CAM));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_BOXID.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_EXPT.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STIM.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_STIM));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_CONC.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_CONC));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STRAIN.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_SEX.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_COND1.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_COND1));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_COND2.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_COND2));
+	protected void exportExperimentField(XSSFSheet sheet, int x, int y, boolean transpose, Experiment exp,
+			EnumXLSColumnHeader colHeader) {
+		XLSUtils.setValue(sheet, x, y + colHeader.getValue(), transpose, exp.getExperimentField(colHeader));
+	}
+
+	protected void XLSExportExperimentParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
+			Experiment exp) {
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_PATH);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_DATE);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_CAM);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_BOXID.getValue(), transpose, charSeries);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_EXPT);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_STIM);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_CONC);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_STRAIN);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_SEX);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_COND1);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_COND2);
 	}
 
 	protected void xlsExportCageParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
 			Experiment exp, Cage cage) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_INDEX.getValue(), transpose, cage.getCageIDasString());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_ID.getValue(), transpose,
-				charSeries + cage.getCageIDasString());
+				charSeries + "_" + cage.getRoiName());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cage.cageStrain);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.cageSex);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.cageAge);
@@ -239,12 +234,15 @@ public class XLSExport {
 
 	protected void XLSExportCapillaryParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
 			Experiment exp, Capillary cap, EnumXLSExport xlsExportOption, int index) {
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP.getValue(), transpose,
+				cap.getSideDescriptor(xlsExportOption));
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_INDEX.getValue(), transpose,
+				charSeries + "_" + cap.getLast2ofCapillaryName());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose,
 				exp.capillaries.capillariesDescription.volume);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose,
 				exp.capillaries.capillariesDescription.pixels);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP.getValue(), transpose,
-				cap.getSideDescriptor(xlsExportOption));
+
 		outputStimAndConc_according_to_DataOption(sheet, xlsExportOption, cap, transpose, x, y);
 
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, cap.capNFlies);
