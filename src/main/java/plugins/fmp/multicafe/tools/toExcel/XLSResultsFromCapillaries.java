@@ -109,10 +109,8 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 
 			double pi = 0.;
 			double sum = Math.abs(dataL) + Math.abs(dataR);
-			if (sum != 0. && !Double.isNaN(sum) && sum >= threshold) {
+			if (sum != 0. && sum >= threshold) {
 				pi = (dataL - dataR) / sum;
-				if (Math.abs(pi) > 1.)
-					System.out.println("Pi out of range =" + pi);
 			}
 			rowL.valuesOut[index] = sum;
 			rowR.valuesOut[index] = pi;
