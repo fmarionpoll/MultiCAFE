@@ -204,7 +204,7 @@ public class CreateForCapillaries extends JPanel {
 		return (int) width_intervalJSpinner.getValue();
 	}
 
-	void setGroupedBy2(boolean flag) {
+	public void setGroupedBy2(boolean flag) {
 		int nCapillaries = flag ? 2 : 1;
 		nCapillariesPerCell.setValue(nCapillaries);
 	}

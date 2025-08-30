@@ -225,7 +225,14 @@ public class Infos extends JPanel {
 		Experiment exp0 = (Experiment) parent0.expListCombo.getItemAt(iprevious);
 		Experiment exp = (Experiment) parent0.expListCombo.getItemAt(iprevious + 1);
 		transferPreviousExperimentInfosToDialog(exp0, exp);
-		parent0.paneCapillaries.transferPreviousExperimentCapillariesInfos(exp0, exp);
+		transferPreviousExperimentCapillariesInfos(exp0, exp);
+	}
+
+	void transferPreviousExperimentCapillariesInfos(Experiment exp0, Experiment exp) {
+		exp.capillaries.capillariesDescription.grouping = exp0.capillaries.capillariesDescription.grouping;
+		parent0.paneCapillaries.tabCreate.setGroupedBy2(exp0.capillaries.capillariesDescription.grouping == 2);
+		exp.capillaries.capillariesDescription.volume = exp0.capillaries.capillariesDescription.volume;
+		parent0.paneCapillaries.tabInfos.setAllDescriptors(exp0.capillaries);
 	}
 
 	void zoomToUpperCorner(Experiment exp) {

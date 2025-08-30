@@ -34,7 +34,7 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 	private int ID_INFOS = 1;
 	private int ID_ADJUST = 3;
 	private int ID_EDIT = 2;
-	private int ID_FILTER = 4;
+	// private int ID_FILTER = 4;
 	private boolean editSelected = false;
 	private MultiCAFE parent0 = null;
 
@@ -74,7 +74,6 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 		tabFile.init(capLayout, parent0);
 		tabFile.addPropertyChangeListener(this);
 		tabsPane.addTab("Load/Save", null, tabFile, "Load/Save xml file with capillaries descriptors");
-		order++;
 
 		tabsPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		capPanel.add(tabsPane);
@@ -135,8 +134,8 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 		JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
 		int selectedIndex = tabbedPane.getSelectedIndex();
 		tabAdjust.roisDisplayrefBar(selectedIndex == ID_ADJUST);
-		boolean disableCapillaries = (selectedIndex != ID_FILTER);
-		parent0.paneExperiment.tabOptions.displayROIsCategory(disableCapillaries, "line");
+//		boolean disableCapillaries = (selectedIndex != ID_FILTER);
+//		parent0.paneExperiment.tabOptions.displayROIsCategory(disableCapillaries, "line");
 
 		parent0.paneExperiment.tabOptions.viewCapillariesCheckBox.setSelected(selectedIndex == ID_INFOS);
 		if (selectedIndex == ID_EDIT) {
@@ -155,13 +154,6 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 			editSelected = false;
 		}
 
-	}
-
-	public void transferPreviousExperimentCapillariesInfos(Experiment exp0, Experiment exp) {
-		exp.capillaries.capillariesDescription.grouping = exp0.capillaries.capillariesDescription.grouping;
-		tabCreate.setGroupedBy2(exp0.capillaries.capillariesDescription.grouping == 2);
-		exp.capillaries.capillariesDescription.volume = exp0.capillaries.capillariesDescription.volume;
-		tabInfos.setAllDescriptors(exp0.capillaries);
 	}
 
 }

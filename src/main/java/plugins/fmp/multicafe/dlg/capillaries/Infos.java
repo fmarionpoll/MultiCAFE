@@ -80,7 +80,7 @@ public class Infos extends JPanel {
 
 	// set/ get
 
-	void setAllDescriptors(Capillaries cap) {
+	public void setAllDescriptors(Capillaries cap) {
 		capillaryVolumeSpinner.setValue(cap.capillariesDescription.volume);
 		capillaryPixelsSpinner.setValue(cap.capillariesDescription.pixels);
 	}
