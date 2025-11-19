@@ -24,16 +24,16 @@ public class YDiffn extends ImageTransformFunctionAbstract implements ImageTrans
 		for (int c = chan0; c < chan1; c++) {
 			int[] tabValues = Array1DUtil.arrayToIntArray(sourceImage.getDataXY(c), sourceImage.isSignedDataType());
 			int[] outValues = Array1DUtil.arrayToIntArray(img2.getDataXY(c), img2.isSignedDataType());
-			for (int ix = spanDiff; ix < imageSizeX - spanDiff; ix++) {
+			for (int ix = 0; ix < imageSizeX; ix++) {
 				for (int iy = spanDiff; iy < imageSizeY - spanDiff; iy++) {
 					int kx = ix + iy * imageSizeX;
 					int deltax = 0;
 					double outVal = 0;
 					for (int ispan = 1; ispan < spanDiff; ispan++) {
 						deltax += imageSizeX;
-						outVal += tabValues[kx + deltax] - tabValues[kx - deltax];
+						outVal += -tabValues[kx + deltax] + tabValues[kx - deltax];
 					}
-					outValues[kx] = (int) Math.abs(outVal);
+					outValues[kx] = (int) outVal > 0 ? (int) outVal : 0; // (int) Math.abs(outVal);
 				}
 			}
 			Array1DUtil.intArrayToSafeArray(outValues, img2.getDataXY(c), true, img2.isSignedDataType());

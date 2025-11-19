@@ -44,15 +44,15 @@ public class XYDiffn extends ImageTransformFunctionAbstract implements ImageTran
 							outVal += tabValues[ky + deltax] - tabValues[ky - deltax];
 						}
 					}
-					outValues[ky] = (int) Math.abs(outVal);
+					outValues[ky] = (int) outVal > 0 ? (int) outVal : 0; // (int) Math.abs(outVal);
 				}
 
 				// erase out-of-bounds points
-				for (int iy = 0; iy < spanDiff; iy++)
-					outValues[ix + iy * imageSizeX] = 0;
+//				for (int iy = 0; iy < spanDiff; iy++)
+//					outValues[ix + iy * imageSizeX] = 0;
 
-				for (int iy = imageSizeY - spanDiff; iy < imageSizeY; iy++)
-					outValues[ix + iy * imageSizeX] = 0;
+//				for (int iy = imageSizeY - spanDiff; iy < imageSizeY; iy++)
+//					outValues[ix + iy * imageSizeX] = 0;
 			}
 			Array1DUtil.intArrayToSafeArray(outValues, img2.getDataXY(c), true, img2.isSignedDataType());
 			img2.setDataXY(c, img2.getDataXY(c));

@@ -55,7 +55,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 			new String[] { " threshold >", " threshold <" });
 	private JSpinner threshold2Spinner = new JSpinner(new SpinnerNumberModel(40, 1, 255, 1));
 	private ImageTransformEnums[] transformPass2 = new ImageTransformEnums[] { ImageTransformEnums.YDIFFN,
-			ImageTransformEnums.YDIFFN2, ImageTransformEnums.DERICHE, ImageTransformEnums.DERICHE_COLOR,
+			ImageTransformEnums.YDIFFN1D, ImageTransformEnums.DERICHE, ImageTransformEnums.DERICHE_COLOR,
 			ImageTransformEnums.MINUSHORIZAVG, ImageTransformEnums.COLORDISTANCE_L1_Y,
 			ImageTransformEnums.COLORDISTANCE_L2_Y, ImageTransformEnums.SUBTRACT_1RSTCOL,
 			ImageTransformEnums.L1DIST_TO_1RSTCOL };
