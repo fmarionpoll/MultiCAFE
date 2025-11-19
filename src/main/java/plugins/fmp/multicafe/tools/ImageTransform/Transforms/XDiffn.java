@@ -37,7 +37,7 @@ public class XDiffn extends ImageTransformFunctionAbstract implements ImageTrans
 						deltax += 1;
 						outVal += tabValues[kx + deltax] - tabValues[kx - deltax];
 					}
-					outValues[kx] = (int) Math.abs(outVal);
+					outValues[kx] = (int) outVal > 0? (int) outVal :0; //(int) Math.abs(outVal);
 				}
 				// erase border values
 				for (int ix = imageSizeX - spanDiff; ix < imageSizeX; ix++)
