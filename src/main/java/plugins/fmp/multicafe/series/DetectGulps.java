@@ -43,29 +43,28 @@ public class DetectGulps extends BuildSeries {
 	}
 
 	public void detectGulpsFromExperiment(Experiment exp) {
-		SequenceKymos seqCapillariesKymographs = exp.seqKymos;
 		int jitter = 5;
-		int firstCapillary = 0;
-		int lastCapillary = seqCapillariesKymographs.seq.getSizeT() - 1;
+		int firstKymo = 0;
+		int lastKymo = exp.seqKymos.seq.getSizeT() - 1;
 		if (!options.detectAllGulps) {
-			firstCapillary = options.kymoFirst;
-			lastCapillary = firstCapillary;
+			firstKymo = options.kymoFirst;
+			lastKymo = firstKymo;
 		}
-		seqCapillariesKymographs.seq.beginUpdate();
+		exp.seqKymos.seq.beginUpdate();
 		threadRunning = true;
 		stopFlag = false;
 		ProgressFrame progressBar = new ProgressFrame("Processing with subthreads started");
 
-		int nframes = lastCapillary - firstCapillary + 1;
+		int nframes = lastKymo - firstKymo + 1;
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("detect_levels");
 		processor.setPriority(Processor.NORM_PRIORITY);
 		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(nframes);
 		futures.clear();
 
-		final Sequence seqAnalyzed = seqCapillariesKymographs.seq;
+		final Sequence seqAnalyzed = exp.seqKymos.seq;
 
-		for (int indexCapillary = firstCapillary; indexCapillary <= lastCapillary; indexCapillary++) {
+		for (int indexCapillary = firstKymo; indexCapillary <= lastKymo; indexCapillary++) {
 			final Capillary capi = exp.capillaries.capillariesList.get(indexCapillary);
 			capi.setGulpsOptions(options);
 			futures.add(processor.submit(new Runnable() {
@@ -88,7 +87,7 @@ public class DetectGulps extends BuildSeries {
 
 		processor.shutdown();
 
-		seqCapillariesKymographs.seq.endUpdate();
+		exp.seqKymos.seq.endUpdate();
 		progressBar.close();
 	}
 

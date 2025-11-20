@@ -23,7 +23,7 @@ import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.chart.ChartLevels;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 
-public class ChartLevelsPanel extends JPanel implements SequenceListener {
+public class LevelsChart extends JPanel implements SequenceListener {
 	/**
 	 * 
 	 */
@@ -92,44 +92,48 @@ public class ChartLevelsPanel extends JPanel implements SequenceListener {
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		if (v != null) {
 			rectv = v.getBounds();
-			rectv.translate(0, rectv.height);
+			//rectv.translate(0, rectv.height);
 		} else {
 			rectv = parent0.mainFrame.getBounds();
-			rectv.translate(rectv.width, rectv.height + 100);
+//			rectv.translate(rectv.width, rectv.height + 100);
+			rectv.translate(0, 100);
 		}
 		return rectv;
 	}
 
 	public void displayGraphsPanels(Experiment exp) {
+		exp.seqKymos.seq.addListener(this);
 		Rectangle rectv = getInitialUpperLeftPosition(exp);
-
 		int dx = 5;
 		int dy = 10;
-		exp.seqKymos.seq.addListener(this);
 
 		if (limitsCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.TOPLEVEL)
 				&& isThereAnyDataToDisplay(exp, EnumXLSExport.BOTTOMLEVEL)) {
 			plotTopAndBottom = plotToChart(exp, "top + bottom levels", EnumXLSExport.TOPLEVEL, plotTopAndBottom,
 					rectv);
 			rectv.translate(dx, dy);
+			plotTopAndBottom.toFront();
 		} else if (plotTopAndBottom != null)
 			closeChart(plotTopAndBottom);
 
 		if (deltaCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.TOPLEVELDELTA)) {
 			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumXLSExport.TOPLEVELDELTA, plotDelta, rectv);
 			rectv.translate(dx, dy);
+			plotDelta.toFront();
 		} else if (plotDelta != null)
 			closeChart(plotDelta);
 
 		if (derivativeCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.DERIVEDVALUES)) {
 			plotDerivative = plotToChart(exp, "Derivative", EnumXLSExport.DERIVEDVALUES, plotDerivative, rectv);
 			rectv.translate(dx, dy);
+			plotDerivative.toFront();
 		} else if (plotDerivative != null)
 			closeChart(plotDerivative);
 
 		if (consumptionCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.SUMGULPS)) {
 			plotSumgulps = plotToChart(exp, "Cumulated gulps", EnumXLSExport.SUMGULPS, plotSumgulps, rectv);
 			rectv.translate(dx, dy);
+			plotSumgulps.toFront();
 		} else if (plotSumgulps != null)
 			closeChart(plotSumgulps);
 	}

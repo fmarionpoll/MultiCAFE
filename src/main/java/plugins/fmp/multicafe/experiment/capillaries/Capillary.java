@@ -327,10 +327,8 @@ public class Capillary implements Comparable<Capillary> {
 	}
 
 	public void initGulps() {
-		if (ptsGulps == null) {
+		if (ptsGulps == null) 
 			ptsGulps = new CapillaryGulps();
-			ptsGulps.gulps = new ArrayList<>();
-		}
 
 		if (limitsOptions.analyzePartOnly) {
 			int searchFromXFirst = (int) limitsOptions.searchArea.getX();
