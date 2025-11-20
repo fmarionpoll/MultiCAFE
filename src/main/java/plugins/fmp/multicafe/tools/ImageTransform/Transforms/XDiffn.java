@@ -19,7 +19,7 @@ public class XDiffn extends ImageTransformFunctionAbstract implements ImageTrans
 		int chan1 = sourceImage.getSizeC();
 		int imageSizeX = sourceImage.getSizeX();
 		int imageSizeY = sourceImage.getSizeY();
-		IcyBufferedImage img2 = new IcyBufferedImage(imageSizeX, imageSizeY, 3, sourceImage.getDataType_());
+		IcyBufferedImage img2 = new IcyBufferedImage(imageSizeX, imageSizeY, chan1-chan0, sourceImage.getDataType_());
 		for (int c = chan0; c < chan1; c++) {
 			int[] tabValues = Array1DUtil.arrayToIntArray(sourceImage.getDataXY(c), sourceImage.isSignedDataType());
 			int[] outValues = Array1DUtil.arrayToIntArray(img2.getDataXY(c), img2.isSignedDataType());
