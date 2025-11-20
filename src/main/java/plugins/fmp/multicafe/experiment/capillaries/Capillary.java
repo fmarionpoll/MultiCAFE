@@ -327,7 +327,7 @@ public class Capillary implements Comparable<Capillary> {
 	}
 
 	public void initGulps() {
-		if (ptsGulps == null) 
+		if (ptsGulps == null)
 			ptsGulps = new CapillaryGulps();
 
 		if (limitsOptions.analyzePartOnly) {
@@ -363,9 +363,9 @@ public class Capillary implements Comparable<Capillary> {
 	}
 
 	private int addPointMatchingThreshold(int indexPixel, ArrayList<Point2D> gulpPoints, int indexLastDetected) {
-		if (indexLastDetected > 0 && ((indexPixel - indexLastDetected) > 1)) {
+		if (indexLastDetected > 0 && indexPixel > indexLastDetected) {
 			if (gulpPoints.size() == 1)
-				gulpPoints.add(new Point2D.Double(indexPixel - 1, ptsTop.polylineLevel.ypoints[indexPixel - 1]));
+				gulpPoints.add(new Point2D.Double(indexLastDetected, ptsTop.polylineLevel.ypoints[indexLastDetected]));
 			addNewGulp(gulpPoints);
 			gulpPoints.clear();
 			gulpPoints.add(new Point2D.Double(indexPixel - 1, ptsTop.polylineLevel.ypoints[indexPixel - 1]));
