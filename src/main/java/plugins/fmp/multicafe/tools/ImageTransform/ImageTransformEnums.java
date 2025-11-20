@@ -32,7 +32,7 @@ public enum ImageTransformEnums {
 	RGB("(R+G+B)/3", new LinearCombination(1 / 3, 1 / 3, 1 / 3)), H_HSB("H(HSB)", new RGBtoHSB(0)),
 	S_HSB("S(HSB)", new RGBtoHSB(1)), B_HSB("B(HSB)", new RGBtoHSB(2)), H_HSV("H(HSV)", new RGBtoHSV(0)),
 	S_HSV("S(HSV)", new RGBtoHSV(1)), V_HSV("B(HSV)", new RGBtoHSV(2)), XDIFFN("XDiffn", new XDiffn(3)),
-	YDIFFN("YDiffn", new YDiffn(5)), YDIFFN2("YDiffn_1D", new YDiffn1D(4)), XYDIFFN("XYDiffn", new XYDiffn(3)),
+	YDIFFN("YDiffn", new YDiffn(5)), YDIFFN1D("YDiffn_1D", new YDiffn1D(4)), XYDIFFN("XYDiffn", new XYDiffn(3)),
 	SUBTRACT_T0("t-start", new SubtractReferenceImage()), SUBTRACT_TM1("t-(t-1)", new SubtractReferenceImage()),
 	SUBTRACT_REF("t-ref", new SubtractReferenceImage()), SUBTRACT("neg(t-ref)", new NegativeDifference()),
 	NORM_BRMINUSG("|aR+bG+cB|", new LinearCombinationNormed(-1, 2, -1)), RGB_TO_H1H2H3("H1H2H3", new H1H2H3()),

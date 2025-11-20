@@ -35,21 +35,21 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 
 	JCheckBox allKymosCheckBox = new JCheckBox("all kymographs", true);
 	ImageTransformEnums[] gulpTransforms = new ImageTransformEnums[] { ImageTransformEnums.XDIFFN,
-			ImageTransformEnums.YDIFFN, ImageTransformEnums.YDIFFN2, ImageTransformEnums.XYDIFFN };
+			ImageTransformEnums.YDIFFN, ImageTransformEnums.YDIFFN1D, ImageTransformEnums.XYDIFFN };
 
-	JComboBox<ImageTransformEnums> gulpTransformsComboBox = new JComboBox<ImageTransformEnums>(gulpTransforms);
-	JSpinner startSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 100000, 1));
-	JSpinner endSpinner = new JSpinner(new SpinnerNumberModel(3, 1, 100000, 1));
-	JCheckBox buildDerivativeCheckBox = new JCheckBox("derivative", true);
-	JCheckBox detectGulpsCheckBox = new JCheckBox("gulps", true);
+	JComboBox<ImageTransformEnums> gulpTransforms_comboBox = new JComboBox<ImageTransformEnums>(gulpTransforms);
+	JSpinner start_spinner = new JSpinner(new SpinnerNumberModel(0, 0, 100000, 1));
+	JSpinner end_spinner = new JSpinner(new SpinnerNumberModel(3, 1, 100000, 1));
+	JCheckBox derivative_checkbox = new JCheckBox("derivative", true);
+	JCheckBox gulps_checkbox = new JCheckBox("gulps", true);
 
-	private JCheckBox partCheckBox = new JCheckBox("from (pixel)", false);
-	private JToggleButton gulpTransformDisplayButton = new JToggleButton("Display");
+	private JCheckBox from_pixel_checkbox = new JCheckBox("from (pixel)", false);
+	private JToggleButton display_button = new JToggleButton("Display");
 	private JSpinner spanTransf2Spinner = new JSpinner(new SpinnerNumberModel(3, 0, 500, 1));
 	private JSpinner detectGulpsThresholdSpinner = new JSpinner(new SpinnerNumberModel(.5, 0., 500., .1));
 	private String detectString = "        Detect     ";
 	private JButton detectButton = new JButton(detectString);
-	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
+	private JCheckBox all_checkbox = new JCheckBox("ALL (current to last)", false);
 	private DetectGulps threadDetectGulps = null;
 	private MultiCAFE parent0 = null;
 
@@ -62,37 +62,37 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 
 		JPanel panel0 = new JPanel(layoutLeft);
 		panel0.add(detectButton);
-		panel0.add(allCheckBox);
+		panel0.add(all_checkbox);
 		panel0.add(allKymosCheckBox);
-		panel0.add(buildDerivativeCheckBox);
-		panel0.add(detectGulpsCheckBox);
+		panel0.add(derivative_checkbox);
+		panel0.add(gulps_checkbox);
 		add(panel0);
 
 		JPanel panel01 = new JPanel(layoutLeft);
 		panel01.add(new JLabel("threshold", SwingConstants.RIGHT));
 		panel01.add(detectGulpsThresholdSpinner);
-		panel01.add(gulpTransformsComboBox);
-		panel01.add(gulpTransformDisplayButton);
+		panel01.add(gulpTransforms_comboBox);
+		panel01.add(display_button);
 		add(panel01);
 
 		JPanel panel1 = new JPanel(layoutLeft);
-		panel1.add(partCheckBox);
-		panel1.add(startSpinner);
+		panel1.add(from_pixel_checkbox);
+		panel1.add(start_spinner);
 		panel1.add(new JLabel("to"));
-		panel1.add(endSpinner);
+		panel1.add(end_spinner);
 		add(panel1);
 
-		gulpTransformsComboBox.setSelectedItem(ImageTransformEnums.XDIFFN);
+		gulpTransforms_comboBox.setSelectedItem(ImageTransformEnums.XDIFFN);
 		defineActionListeners();
 	}
 
 	private void defineActionListeners() {
-		gulpTransformsComboBox.addActionListener(new ActionListener() {
+		gulpTransforms_comboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null && exp.seqCamData != null) {
-					int index = gulpTransformsComboBox.getSelectedIndex();
+					int index = gulpTransforms_comboBox.getSelectedIndex();
 					getKymosCanvas(exp).transformsCombo1.setSelectedIndex(index + 1);
 				}
 			}
@@ -108,15 +108,15 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 			}
 		});
 
-		gulpTransformDisplayButton.addActionListener(new ActionListener() {
+		display_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null && exp.seqCamData != null) {
-					if (gulpTransformDisplayButton.isSelected()) {
+					if (display_button.isSelected()) {
 						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
 						canvas.updateTransformsComboStep1(gulpTransforms);
-						int index = gulpTransformsComboBox.getSelectedIndex();
+						int index = gulpTransforms_comboBox.getSelectedIndex();
 						canvas.selectIndexStep1(index + 1, null);
 					} else
 						getKymosCanvas(exp).transformsCombo1.setSelectedIndex(0);
@@ -124,13 +124,13 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 			}
 		});
 
-		allCheckBox.addActionListener(new ActionListener() {
+		all_checkbox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Color color = Color.BLACK;
-				if (allCheckBox.isSelected())
+				if (all_checkbox.isSelected())
 					color = Color.RED;
-				allCheckBox.setForeground(color);
+				all_checkbox.setForeground(color);
 				detectButton.setForeground(color);
 			}
 		});
@@ -142,13 +142,13 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 		options.expList = parent0.expListCombo;
 		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
 
-		if (allCheckBox.isSelected())
+		if (all_checkbox.isSelected())
 			options.expList.index1 = options.expList.getItemCount() - 1;
 		else
 			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
 
 		options.detectAllKymos = allKymosCheckBox.isSelected();
-//		parent0.paneKymos.tabDisplay.indexImagesCombo = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
+
 		if (!allKymosCheckBox.isSelected()) {
 			int t = exp.seqKymos.seq.getFirstViewer().getPositionT();
 			options.kymoFirst = t;
@@ -158,14 +158,14 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 			options.kymoLast = exp.seqKymos.seq.getSizeT() - 1;
 		}
 		options.detectGulpsThreshold_uL = (double) detectGulpsThresholdSpinner.getValue();
-		options.transformForGulps = (ImageTransformEnums) gulpTransformsComboBox.getSelectedItem();
+		options.transformForGulps = (ImageTransformEnums) gulpTransforms_comboBox.getSelectedItem();
 		options.detectAllGulps = allKymosCheckBox.isSelected();
 		options.spanDiff = (int) spanTransf2Spinner.getValue();
-		options.buildGulps = detectGulpsCheckBox.isSelected();
-		options.buildDerivative = buildDerivativeCheckBox.isSelected();
-		options.analyzePartOnly = partCheckBox.isSelected();
-		options.searchArea.x = (int) startSpinner.getValue();
-		options.searchArea.width = (int) endSpinner.getValue() + (int) startSpinner.getValue();
+		options.buildGulps = gulps_checkbox.isSelected();
+		options.buildDerivative = derivative_checkbox.isSelected();
+		options.analyzePartOnly = from_pixel_checkbox.isSelected();
+		options.searchArea.x = (int) start_spinner.getValue();
+		options.searchArea.width = (int) end_spinner.getValue() + (int) start_spinner.getValue();
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = exp.getBinSubDirectory();
 		return options;
@@ -188,7 +188,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 	void setInfos(Capillary cap) {
 		BuildSeriesOptions options = cap.getGulpsOptions();
 		detectGulpsThresholdSpinner.setValue(options.detectGulpsThreshold_uL);
-		gulpTransformsComboBox.setSelectedItem(options.transformForGulps);
+		gulpTransforms_comboBox.setSelectedItem(options.transformForGulps);
 		allKymosCheckBox.setSelected(options.detectAllGulps);
 	}
 
@@ -205,8 +205,8 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 			parent0.paneKymos.tabDisplay.selectKymographImage(parent0.paneKymos.tabDisplay.indexImagesCombo);
 			parent0.paneKymos.tabDisplay.indexImagesCombo = -1;
 
-			startSpinner.setValue(threadDetectGulps.options.searchArea.x);
-			endSpinner.setValue(threadDetectGulps.options.searchArea.width + threadDetectGulps.options.searchArea.x);
+			start_spinner.setValue(threadDetectGulps.options.searchArea.x);
+			end_spinner.setValue(threadDetectGulps.options.searchArea.width + threadDetectGulps.options.searchArea.x);
 
 		}
 	}

@@ -34,9 +34,10 @@ public class YDiffn1D extends ImageTransformFunctionAbstract implements ImageTra
 				for (int ispan = 1; ispan < spanDiff; ispan++) {
 					deltax += imageSizeX;
 					outVal += (Rn[kx + deltax] - Rn[kx - deltax])
-							- (Gn[kx + deltax] - Gn[kx - deltax] + Bn[kx + deltax] - Bn[kx - deltax]) / 2.;
+							- (Gn[kx + deltax] - Gn[kx - deltax] + (Bn[kx + deltax] - Bn[kx - deltax])) / 2.;
+
 				}
-				outValues[kx] = (int) Math.abs(outVal);
+				outValues[kx] = (int) outVal > 0 ? (int) outVal : 0;
 			}
 		}
 		copyExGDoubleToIcyBufferedImage(outValues, img2);
