@@ -32,8 +32,14 @@ public class LevelsChart extends JPanel implements SequenceListener {
 	private ChartLevels plotDelta = null;
 	private ChartLevels plotDerivative = null;
 	private ChartLevels plotSumgulps = null;
-	
+
 	private MultiCAFE parent0 = null;
+
+	// Global window positions - shared across all experiments
+	private static Rectangle globalChartTopBottomBounds = null;
+	private static Rectangle globalChartDeltaBounds = null;
+	private static Rectangle globalChartDerivativeBounds = null;
+	private static Rectangle globalChartSumGulpsBounds = null;
 
 	private JCheckBox limitsCheckbox = new JCheckBox("top/bottom", true);
 	private JCheckBox derivativeCheckbox = new JCheckBox("derivative", false);
@@ -92,11 +98,11 @@ public class LevelsChart extends JPanel implements SequenceListener {
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		if (v != null) {
 			rectv = v.getBounds();
-			//rectv.translate(0, rectv.height);
+			// rectv.translate(0, rectv.height);
 		} else {
 			rectv = parent0.mainFrame.getBounds();
 //			rectv.translate(rectv.width, rectv.height + 100);
-			rectv.translate(0, 100);
+			rectv.translate(0, 150);
 		}
 		return rectv;
 	}
@@ -109,30 +115,49 @@ public class LevelsChart extends JPanel implements SequenceListener {
 
 		if (limitsCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.TOPLEVEL)
 				&& isThereAnyDataToDisplay(exp, EnumXLSExport.BOTTOMLEVEL)) {
-			plotTopAndBottom = plotToChart(exp, "top + bottom levels", EnumXLSExport.TOPLEVEL, plotTopAndBottom,
-					rectv);
-			rectv.translate(dx, dy);
+			// Use saved global position if available, otherwise use initial position
+			Rectangle savedPos = globalChartTopBottomBounds;
+			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+			plotTopAndBottom = plotToChart(exp, "top + bottom levels", EnumXLSExport.TOPLEVEL, plotTopAndBottom, pos);
+			if (savedPos == null) {
+				rectv.translate(dx, dy);
+			}
 			plotTopAndBottom.toFront();
 		} else if (plotTopAndBottom != null)
 			closeChart(plotTopAndBottom);
 
 		if (deltaCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.TOPLEVELDELTA)) {
-			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumXLSExport.TOPLEVELDELTA, plotDelta, rectv);
-			rectv.translate(dx, dy);
+			// Use saved global position if available, otherwise use initial position
+			Rectangle savedPos = globalChartDeltaBounds;
+			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumXLSExport.TOPLEVELDELTA, plotDelta, pos);
+			if (savedPos == null) {
+				rectv.translate(dx, dy);
+			}
 			plotDelta.toFront();
 		} else if (plotDelta != null)
 			closeChart(plotDelta);
 
 		if (derivativeCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.DERIVEDVALUES)) {
-			plotDerivative = plotToChart(exp, "Derivative", EnumXLSExport.DERIVEDVALUES, plotDerivative, rectv);
-			rectv.translate(dx, dy);
+			// Use saved global position if available, otherwise use initial position
+			Rectangle savedPos = globalChartDerivativeBounds;
+			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+			plotDerivative = plotToChart(exp, "Derivative", EnumXLSExport.DERIVEDVALUES, plotDerivative, pos);
+			if (savedPos == null) {
+				rectv.translate(dx, dy);
+			}
 			plotDerivative.toFront();
 		} else if (plotDerivative != null)
 			closeChart(plotDerivative);
 
 		if (consumptionCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.SUMGULPS)) {
-			plotSumgulps = plotToChart(exp, "Cumulated gulps", EnumXLSExport.SUMGULPS, plotSumgulps, rectv);
-			rectv.translate(dx, dy);
+			// Use saved global position if available, otherwise use initial position
+			Rectangle savedPos = globalChartSumGulpsBounds;
+			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+			plotSumgulps = plotToChart(exp, "Cumulated gulps", EnumXLSExport.SUMGULPS, plotSumgulps, pos);
+			if (savedPos == null) {
+				rectv.translate(dx, dy);
+			}
 			plotSumgulps.toFront();
 		} else if (plotSumgulps != null)
 			closeChart(plotSumgulps);
@@ -143,8 +168,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 		if (iChart != null)
 			iChart.mainChartFrame.dispose();
 		iChart = new ChartLevels();
-		iChart.createChartPanel(parent0, title);
-		iChart.setUpperLeftLocation(rectv);
+		iChart.createChartPanel(parent0, title, rectv);
 		iChart.displayData(exp, option, title, correctEvaporationCheckbox.isSelected());
 		iChart.mainChartFrame.toFront();
 		iChart.mainChartFrame.requestFocus();
@@ -183,6 +207,26 @@ public class LevelsChart extends JPanel implements SequenceListener {
 	@Override
 	public void sequenceClosed(Sequence sequence) {
 		sequence.removeListener(this);
+		
+		// Save window positions before closing (global positions, shared across all experiments)
+		saveChartPositions();
+		
 		closeAllCharts();
+	}
+
+	private void saveChartPositions() {
+		// Save positions globally - these will be reused for all experiments
+		if (plotTopAndBottom != null && plotTopAndBottom.mainChartFrame != null) {
+			globalChartTopBottomBounds = plotTopAndBottom.mainChartFrame.getBounds();
+		}
+		if (plotDelta != null && plotDelta.mainChartFrame != null) {
+			globalChartDeltaBounds = plotDelta.mainChartFrame.getBounds();
+		}
+		if (plotDerivative != null && plotDerivative.mainChartFrame != null) {
+			globalChartDerivativeBounds = plotDerivative.mainChartFrame.getBounds();
+		}
+		if (plotSumgulps != null && plotSumgulps.mainChartFrame != null) {
+			globalChartSumGulpsBounds = plotSumgulps.mainChartFrame.getBounds();
+		}
 	}
 }

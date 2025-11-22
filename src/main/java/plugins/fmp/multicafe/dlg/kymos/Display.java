@@ -56,6 +56,9 @@ public class Display extends JPanel implements ViewerListener {
 	private MultiCAFE parent0 = null;
 	private boolean isActionEnabled = true;
 
+	// Global window position - shared across all experiments
+	private static Rectangle globalKymographViewerBounds = null;
+
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		setLayout(capLayout);
 		this.parent0 = parent0;
@@ -198,9 +201,14 @@ public class Display extends JPanel implements ViewerListener {
 			if (seqKymographs == null || seqKymographs.seq == null)
 				return;
 
+			// Calculate position before any viewer operations to avoid flickering
+			Rectangle initialBounds = calculateKymographViewerBounds(exp);
+
 			ArrayList<Viewer> vList = seqKymographs.seq.getViewers();
 			if (vList.size() == 0) {
-				ViewerFMP viewerKymographs = new ViewerFMP(seqKymographs.seq, true, true);
+				// Create viewer with visible=false to prevent flickering
+				ViewerFMP viewerKymographs = new ViewerFMP(seqKymographs.seq, false, true);
+				
 				List<String> list = IcyCanvas.getCanvasPluginNames();
 				String pluginName = list.stream().filter(s -> s.contains("Canvas2DWithTransforms")).findFirst()
 						.orElse(null);
@@ -212,28 +220,59 @@ public class Display extends JPanel implements ViewerListener {
 				Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) viewerKymographs.getCanvas();
 				canvas.customizeToolbarStep2(toolBar);
 
-				placeKymoViewerNextToCamViewer(exp);
+				// Set position before making viewer visible
+				if (initialBounds != null) {
+					viewerKymographs.setBounds(initialBounds);
+					((Canvas2D) viewerKymographs.getCanvas()).setFitToCanvas(false);
+				}
+
+				// Now make the viewer visible with the correct position already set
+				viewerKymographs.setVisible(true);
 
 				int isel = seqKymographs.currentFrame;
 				isel = selectKymographImage(isel);
 				selectKymographComboItem(isel);
+			} else {
+				// Viewer already exists (might have been auto-created by ICY) - reposition it immediately
+				Viewer existingViewer = vList.get(0);
+				if (initialBounds != null) {
+					// Hide viewer, set bounds, then show to avoid flickering
+					boolean wasVisible = existingViewer.isVisible();
+					if (wasVisible) {
+						existingViewer.setVisible(false);
+					}
+					existingViewer.setBounds(initialBounds);
+					if (existingViewer.getCanvas() instanceof Canvas2D) {
+						((Canvas2D) existingViewer.getCanvas()).setFitToCanvas(false);
+					}
+					if (wasVisible) {
+						existingViewer.setVisible(true);
+					}
+				}
+				// Ensure listener is added (safe to call even if already added)
+				existingViewer.addListener(this);
 			}
 		}
 	}
 
-	void placeKymoViewerNextToCamViewer(Experiment exp) {
+	private Rectangle calculateKymographViewerBounds(Experiment exp) {
+		// Use saved global position if available
+		if (globalKymographViewerBounds != null) {
+			return globalKymographViewerBounds;
+		}
+
+		// Initial positioning logic (original behavior)
 		Sequence seqCamData = exp.seqCamData.seq;
 		Viewer viewerCamData = seqCamData.getFirstViewer();
 		if (viewerCamData == null)
-			return;
+			return null;
 
-		Rectangle rectViewerCamData = viewerCamData.getBounds();
 		Sequence seqKymograph = exp.seqKymos.seq;
-
-		Rectangle rectViewerKymograph = (Rectangle) rectViewerCamData.clone();
+		Rectangle rectViewerCamData = viewerCamData.getBounds();
 		Rectangle rectImageKymograph = seqKymograph.getBounds2D();
 		int desktopwidth = Icy.getMainInterface().getMainFrame().getDesktopWidth();
 
+		Rectangle rectViewerKymograph = (Rectangle) rectViewerCamData.clone();
 		rectViewerKymograph.width = (int) rectImageKymograph.getWidth();
 
 		if ((rectViewerKymograph.width + rectViewerKymograph.x) > desktopwidth) {
@@ -244,11 +283,21 @@ public class Display extends JPanel implements ViewerListener {
 		} else
 			rectViewerKymograph.translate(5 + rectViewerCamData.width, 0);
 
+		return rectViewerKymograph;
+	}
+
+	void placeKymoViewerNextToCamViewer(Experiment exp) {
+		Sequence seqKymograph = exp.seqKymos.seq;
 		Viewer viewerKymograph = seqKymograph.getFirstViewer();
 		if (viewerKymograph == null)
 			return;
-		viewerKymograph.setBounds(rectViewerKymograph);
-		((Canvas2D) viewerKymograph.getCanvas()).setFitToCanvas(false);
+
+		// Calculate and set position
+		Rectangle bounds = calculateKymographViewerBounds(exp);
+		if (bounds != null) {
+			viewerKymograph.setBounds(bounds);
+			((Canvas2D) viewerKymograph.getCanvas()).setFitToCanvas(false);
+		}
 	}
 
 	void displayOFF() {
@@ -257,9 +306,19 @@ public class Display extends JPanel implements ViewerListener {
 			return;
 		ArrayList<Viewer> vList = exp.seqKymos.seq.getViewers();
 		if (vList.size() > 0) {
-			for (Viewer v : vList)
+			// Save window position before closing
+			for (Viewer v : vList) {
+				saveKymographViewerPosition(v);
 				v.close();
+			}
 			vList.clear();
+		}
+	}
+
+	private void saveKymographViewerPosition(Viewer viewer) {
+		// Save position globally - this will be reused for all experiments
+		if (viewer != null) {
+			globalKymographViewerBounds = viewer.getBounds();
 		}
 	}
 
@@ -352,6 +411,8 @@ public class Display extends JPanel implements ViewerListener {
 
 	@Override
 	public void viewerClosed(Viewer viewer) {
+		// Save window position before closing (global position, shared across all experiments)
+		saveKymographViewerPosition(viewer);
 		viewer.removeListener(this);
 	}
 

@@ -43,6 +43,9 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 
 	private MultiCAFE parent0 = null;
 
+	// Global window position for camera data viewer - shared across all experiments
+	private static Rectangle globalCamDataViewerBounds = null;
+
 	public void init(JPanel mainPanel, String string, MultiCAFE parent0) {
 		this.parent0 = parent0;
 
@@ -101,17 +104,41 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 		final ViewerListener parent = this;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				// Calculate position before any viewer operations to avoid flickering
+				Rectangle initialBounds = calculateCamDataViewerBounds(parent0.mainFrame);
+
 				ViewerFMP v = (ViewerFMP) seq.getFirstViewer();
 				if (v == null) {
-					v = new ViewerFMP(exp.seqCamData.seq, true, true);
+					// Create viewer with visible=false to prevent flickering
+					v = new ViewerFMP(exp.seqCamData.seq, false, true);
 					List<String> list = IcyCanvas.getCanvasPluginNames();
 					String pluginName = list.stream().filter(s -> s.contains("Canvas2DWithTransforms")).findFirst()
 							.orElse(null);
 					v.setCanvas(pluginName);
+
+					// Set position before making viewer visible
+					if (initialBounds != null) {
+						v.setBounds(initialBounds);
+					}
+
+					// Now make the viewer visible with the correct position already set
+					v.setVisible(true);
+				} else {
+					// Viewer already exists - reposition it immediately
+					if (initialBounds != null) {
+						// Hide viewer, set bounds, then show to avoid flickering
+						boolean wasVisible = v.isVisible();
+						if (wasVisible) {
+							v.setVisible(false);
+						}
+						v.setBounds(initialBounds);
+						if (wasVisible) {
+							v.setVisible(true);
+						}
+					}
 				}
 
 				if (v != null) {
-					placeViewerNextToDialogBox(v, parent0.mainFrame);
 					v.toFront();
 					v.requestFocus();
 					v.addListener(parent);
@@ -122,13 +149,22 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 		});
 	}
 
-	private void placeViewerNextToDialogBox(Viewer v, IcyFrame mainFrame) {
-		Rectangle rectv = v.getBoundsInternal();
+	private Rectangle calculateCamDataViewerBounds(IcyFrame mainFrame) {
+		// Use saved global position if available
+		if (globalCamDataViewerBounds != null) {
+			return globalCamDataViewerBounds;
+		}
+
+		// Initial positioning logic (original behavior)
 		Rectangle rect0 = mainFrame.getBoundsInternal();
+		Rectangle rectv = new Rectangle();
+		rectv.setSize(800, 600); // Default size
 		if (rect0.x + rect0.width < Icy.getMainInterface().getMainFrame().getDesktopWidth()) {
 			rectv.setLocation(rect0.x + rect0.width, rect0.y);
-			v.setBounds(rectv);
+		} else {
+			rectv.setLocation(rect0.x, rect0.y);
 		}
+		return rectv;
 	}
 
 	@Override
@@ -154,6 +190,11 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 
 	@Override
 	public void viewerClosed(Viewer viewer) {
+		// Save window position before closing (global position, shared across all
+		// experiments)
+		if (viewer != null) {
+			globalCamDataViewerBounds = viewer.getBounds();
+		}
 		viewer.removeListener(this);
 	}
 

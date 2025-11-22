@@ -3,7 +3,6 @@ package plugins.fmp.multicafe.tools.chart;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Paint;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -42,9 +41,11 @@ import plugins.fmp.multicafe.tools.toExcel.XLSResultsArray;
 public class ChartLevels extends IcyFrame {
 	public JPanel mainChartPanel = null;
 	public IcyFrame mainChartFrame = null;
+
 	private MultiCAFE parent0 = null;
 
-	private Point pt = new Point(0, 0);
+	private Rectangle chartRectv = null;
+
 	private boolean flagMaxMinSet = false;
 	private double globalYMax = 0;
 	private double globalYMin = 0;
@@ -58,7 +59,7 @@ public class ChartLevels extends IcyFrame {
 
 	// ----------------------------------------
 
-	public void createChartPanel(MultiCAFE parent, String cstitle) {
+	public void createChartPanel(MultiCAFE parent, String cstitle, Rectangle rectv) {
 		title = cstitle;
 		parent0 = parent;
 
@@ -68,14 +69,10 @@ public class ChartLevels extends IcyFrame {
 		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(), new Dimension(300, 70), true, true, true,
 				true);
 		mainChartFrame.add(mainChartPanel);
-	}
 
-	public void setLocationRelativeToRectangle(Rectangle rectv, Point deltapt) {
-		pt = new Point(rectv.x + deltapt.x, rectv.y + deltapt.y);
-	}
-
-	public void setUpperLeftLocation(Rectangle rectv) {
-		pt = new Point(rectv.x, rectv.y);
+		if (chartRectv == null) {
+			chartRectv = rectv;
+		}
 	}
 
 	public void displayData(Experiment exp, EnumXLSExport option, String title, boolean subtractEvaporation) {
@@ -153,7 +150,7 @@ public class ChartLevels extends IcyFrame {
 
 		mainChartPanel.add(panel);
 		mainChartFrame.pack();
-		mainChartFrame.setLocation(pt);
+		mainChartFrame.setLocation(chartRectv.getLocation());
 		mainChartFrame.addToDesktopPane();
 		mainChartFrame.setVisible(true);
 	}
