@@ -1,31 +1,16 @@
 package plugins.fmp.multicafe.experiment.capillaries;
 
 import java.awt.geom.Point2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
-import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment.KymoIntervals;
 import plugins.fmp.multicafe.tools.Comparators;
-import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
@@ -65,7 +50,6 @@ public class Capillaries {
 	public boolean xmlLoadOldCapillaries_Only(String csFileName) {
 		return persistence.xmlLoadOldCapillaries_Only(this, csFileName);
 	}
-
 
 	// ---------------------------------
 

@@ -40,11 +40,13 @@ public class KymographBuilder {
 		seqKymos.seq = new Sequence();
 		initArraysToBuildKymographImages(exp, options);
 
-		int nKymographColumns = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
+//		int nKymographColumns = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
 		int iToColumn = 0;
-		
-		// TODO: remove dependency on exp.getSeqCamData() for time intervals if possible, or ensure it's loaded
-		// exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(firstImage_FileTime.toMillis()); // already done in getTimeLimitsOfSequence?
+
+		// TODO: remove dependency on exp.getSeqCamData() for time intervals if
+		// possible, or ensure it's loaded
+		// exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(firstImage_FileTime.toMillis());
+		// // already done in getTimeLimitsOfSequence?
 
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("buildKymograph");
@@ -54,13 +56,15 @@ public class KymographBuilder {
 
 		tasks.clear();
 		SequenceLoaderService loader = new SequenceLoaderService();
-		
-		for (long ii_ms = exp.getKymoFirst_ms(); ii_ms <= exp.getKymoLast_ms(); ii_ms += exp.getKymoBin_ms(), iToColumn++) {
+
+		for (long ii_ms = exp.getKymoFirst_ms(); ii_ms <= exp.getKymoLast_ms(); ii_ms += exp
+				.getKymoBin_ms(), iToColumn++) {
 			int sourceImageIndex = exp.findNearestIntervalWithBinarySearch(ii_ms, 0, exp.getSeqCamData().nTotalFrames);
 			final int fromSourceImageIndex = sourceImageIndex;
 			final int kymographColumn = iToColumn;
 
-			final IcyBufferedImage sourceImage = loader.imageIORead(exp.getSeqCamData().getFileNameFromImageList(fromSourceImageIndex));
+			final IcyBufferedImage sourceImage = loader
+					.imageIORead(exp.getSeqCamData().getFileNameFromImageList(fromSourceImageIndex));
 
 			tasks.add(processor.submit(new Runnable() {
 				@Override
@@ -288,4 +292,3 @@ public class KymographBuilder {
 		return x;
 	}
 }
-

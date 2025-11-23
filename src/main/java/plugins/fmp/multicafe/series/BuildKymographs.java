@@ -1,7 +1,6 @@
 package plugins.fmp.multicafe.series;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 
@@ -20,7 +19,7 @@ public class BuildKymographs extends BuildSeries {
 
 		openKymoViewers(exp);
 		getTimeLimitsOfSequence(exp);
-		
+
 		KymographBuilder builder = new KymographBuilder();
 		if (builder.buildKymograph(exp, options))
 			builder.saveComputation(exp, options);

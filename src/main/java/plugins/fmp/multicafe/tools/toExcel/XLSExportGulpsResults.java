@@ -1,11 +1,6 @@
 package plugins.fmp.multicafe.tools.toExcel;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import org.apache.poi.ss.util.CellReference;
-import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.Experiment;
-
 
 public class XLSExportGulpsResults extends XLSExportCapillariesResults {
 	// -----------------------

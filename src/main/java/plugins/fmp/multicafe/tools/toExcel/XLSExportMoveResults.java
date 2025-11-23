@@ -1,16 +1,12 @@
 package plugins.fmp.multicafe.tools.toExcel;
 
 import java.awt.Point;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;

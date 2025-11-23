@@ -1,32 +1,16 @@
 package plugins.fmp.multicafe.experiment.cages;
 
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import icy.roi.ROI;
 import icy.roi.ROI2D;
-import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Comparators;
-import plugins.fmp.multicafe.tools.JComponents.Dialog;
-import plugins.fmp.multicafe.tools.Logger;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;

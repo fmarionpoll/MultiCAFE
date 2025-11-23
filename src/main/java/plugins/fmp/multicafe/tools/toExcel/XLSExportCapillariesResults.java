@@ -1,14 +1,10 @@
 package plugins.fmp.multicafe.tools.toExcel;
 
 import java.awt.Point;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;
@@ -151,7 +147,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 	private void exportError(Experiment expi, int nOutputFrames) {
 		String error = "XLSExport:ExportError() ERROR in " + expi.getExperimentDirectory() + "\n nOutputFrames="
-				+ nOutputFrames + " kymoFirstCol_Ms=" + expi.getKymoFirst_ms() + " kymoLastCol_Ms=" + expi.getKymoLast_ms();
+				+ nOutputFrames + " kymoFirstCol_Ms=" + expi.getKymoFirst_ms() + " kymoLastCol_Ms="
+				+ expi.getKymoLast_ms();
 		System.out.println(error);
 	}
 
@@ -171,7 +168,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 			expi = expi.chainToNextExperiment;
 		}
 
-		int nFrames = (int) ((expAll.getCamImageLast_ms() - expAll.getCamImageFirst_ms()) / options.buildExcelStepMs + 1);
+		int nFrames = (int) ((expAll.getCamImageLast_ms() - expAll.getCamImageFirst_ms()) / options.buildExcelStepMs
+				+ 1);
 		int ncapillaries = expAll.getCapillaries().capillariesList.size();
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(ncapillaries);
 		for (int i = 0; i < ncapillaries; i++) {
