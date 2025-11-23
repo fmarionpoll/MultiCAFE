@@ -27,7 +27,6 @@ import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.ExperimentDirectories;
-import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.JComponents.SequenceNameListRenderer;
 
 public class LoadSaveExperiment extends JPanel implements PropertyChangeListener, ItemListener, SequenceListener {
@@ -179,7 +178,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		exp.loadCamDataImages();
 		parent0.paneExperiment.updateViewerForSequenceCam(exp);
 
-		exp.getSeqCamData().getSeq().addListener(this);
+		exp.getSeqCamData().seq.addListener(this);
 		if (exp.getSeqCamData() != null) {
 			exp.loadCamDataCapillaries();
 
@@ -200,7 +199,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			parent0.paneCapillaries.updateDialogs(exp);
 		} else {
 			flag = false;
-			Logger.error(
+			System.out.println(
 					"LoadSaveExperiments:openSelectedExperiment() Error: no jpg files found for this experiment\n");
 		}
 		parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);
@@ -297,8 +296,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (sequenceEvent.getSourceType() == SequenceEventSourceType.SEQUENCE_DATA) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				if (exp.getSeqCamData().getSeq() != null && sequenceEvent.getSequence() == exp.getSeqCamData().getSeq()) {
-					Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
+				if (exp.getSeqCamData().seq != null && sequenceEvent.getSequence() == exp.getSeqCamData().seq) {
+					Viewer v = exp.getSeqCamData().seq.getFirstViewer();
 					int t = v.getPositionT();
 					v.setTitle(exp.getSeqCamData().getDecoratedImageName(t));
 				}

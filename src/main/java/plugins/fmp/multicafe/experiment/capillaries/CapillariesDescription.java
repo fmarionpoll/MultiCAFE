@@ -10,25 +10,25 @@ import org.w3c.dom.Node;
 import icy.util.XMLUtil;
 
 public class CapillariesDescription {
-	private int version = 1;
-	private double volume = 5.;
-	private int pixels = 5;
-	private String sourceName = null;
+	public int version = 1;
+	public double volume = 5.;
+	public int pixels = 5;
+	public String sourceName = null;
 
-	private String old_boxID = new String("..");
-	private String old_experiment = new String("..");
-	private String old_comment1 = new String("..");
-	private String old_comment2 = new String("..");
-	private String old_strain = new String("..");
-	private String old_sex = new String("..");
-	private String old_cond1 = new String("..");
-	private String old_cond2 = new String("..");
+	public String old_boxID = new String("..");
+	public String old_experiment = new String("..");
+	public String old_comment1 = new String("..");
+	public String old_comment2 = new String("..");
+	public String old_strain = new String("..");
+	public String old_sex = new String("..");
+	public String old_cond1 = new String("..");
+	public String old_cond2 = new String("..");
 
-	private int grouping = 2;
-	private String stimulusR = new String("..");
-	private String concentrationR = new String("..");
-	private String stimulusL = new String("..");
-	private String concentrationL = new String("..");
+	public int grouping = 2;
+	public String stimulusR = new String("..");
+	public String concentrationR = new String("..");
+	public String stimulusL = new String("..");
+	public String concentrationL = new String("..");
 
 	private final static String ID_CAPILLARYTRACK = "capillaryTrack";
 	private final static String ID_PARAMETERS = "Parameters";
@@ -57,142 +57,6 @@ public class CapillariesDescription {
 	private final static String ID_COND2 = "cond2";
 
 	private final static String ID_NOPE = "..";
-
-	public int getVersion() {
-		return version;
-	}
-
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
-	public double getVolume() {
-		return volume;
-	}
-
-	public void setVolume(double volume) {
-		this.volume = volume;
-	}
-
-	public int getPixels() {
-		return pixels;
-	}
-
-	public void setPixels(int pixels) {
-		this.pixels = pixels;
-	}
-
-	public String getSourceName() {
-		return sourceName;
-	}
-
-	public void setSourceName(String sourceName) {
-		this.sourceName = sourceName;
-	}
-
-	public String getOld_boxID() {
-		return old_boxID;
-	}
-
-	public void setOld_boxID(String old_boxID) {
-		this.old_boxID = old_boxID;
-	}
-
-	public String getOld_experiment() {
-		return old_experiment;
-	}
-
-	public void setOld_experiment(String old_experiment) {
-		this.old_experiment = old_experiment;
-	}
-
-	public String getOld_comment1() {
-		return old_comment1;
-	}
-
-	public void setOld_comment1(String old_comment1) {
-		this.old_comment1 = old_comment1;
-	}
-
-	public String getOld_comment2() {
-		return old_comment2;
-	}
-
-	public void setOld_comment2(String old_comment2) {
-		this.old_comment2 = old_comment2;
-	}
-
-	public String getOld_strain() {
-		return old_strain;
-	}
-
-	public void setOld_strain(String old_strain) {
-		this.old_strain = old_strain;
-	}
-
-	public String getOld_sex() {
-		return old_sex;
-	}
-
-	public void setOld_sex(String old_sex) {
-		this.old_sex = old_sex;
-	}
-
-	public String getOld_cond1() {
-		return old_cond1;
-	}
-
-	public void setOld_cond1(String old_cond1) {
-		this.old_cond1 = old_cond1;
-	}
-
-	public String getOld_cond2() {
-		return old_cond2;
-	}
-
-	public void setOld_cond2(String old_cond2) {
-		this.old_cond2 = old_cond2;
-	}
-
-	public int getGrouping() {
-		return grouping;
-	}
-
-	public void setGrouping(int grouping) {
-		this.grouping = grouping;
-	}
-
-	public String getStimulusR() {
-		return stimulusR;
-	}
-
-	public void setStimulusR(String stimulusR) {
-		this.stimulusR = stimulusR;
-	}
-
-	public String getConcentrationR() {
-		return concentrationR;
-	}
-
-	public void setConcentrationR(String concentrationR) {
-		this.concentrationR = concentrationR;
-	}
-
-	public String getStimulusL() {
-		return stimulusL;
-	}
-
-	public void setStimulusL(String stimulusL) {
-		this.stimulusL = stimulusL;
-	}
-
-	public String getConcentrationL() {
-		return concentrationL;
-	}
-
-	public void setConcentrationL(String concentrationL) {
-		this.concentrationL = concentrationL;
-	}
 
 	public void copy(CapillariesDescription desc) {
 		volume = desc.volume;

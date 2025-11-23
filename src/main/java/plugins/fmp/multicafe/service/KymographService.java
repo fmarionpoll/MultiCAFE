@@ -38,40 +38,40 @@ public class KymographService {
 	public void buildFiltered(Experiment exp, int zChannelSource, int zChannelDestination, ImageTransformEnums transformop1,
 			int spanDiff) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
-		int nimages = seqKymos.getSeq().getSizeT();
-		seqKymos.getSeq().beginUpdate();
+		int nimages = seqKymos.seq.getSizeT();
+		seqKymos.seq.beginUpdate();
 
 		ImageTransformInterface transform = transformop1.getFunction();
 		if (transform == null)
 			return;
 
-		if (exp.getCapillaries().getCapillariesList().size() != nimages)
+		if (exp.getCapillaries().capillariesList.size() != nimages)
 			SequenceKymosUtils.transferCamDataROIStoKymo(exp);
 
 		for (int t = 0; t < nimages; t++) {
-			Capillary cap = exp.getCapillaries().getCapillariesList().get(t);
+			Capillary cap = exp.getCapillaries().capillariesList.get(t);
 			cap.kymographIndex = t;
 			IcyBufferedImage img = seqKymos.getSeqImage(t, zChannelSource);
 			IcyBufferedImage img2 = transform.getTransformedImage(img, null);
-			if (seqKymos.getSeq().getSizeZ(0) < (zChannelDestination + 1))
-				seqKymos.getSeq().addImage(t, img2);
+			if (seqKymos.seq.getSizeZ(0) < (zChannelDestination + 1))
+				seqKymos.seq.addImage(t, img2);
 			else
-				seqKymos.getSeq().setImage(t, zChannelDestination, img2);
+				seqKymos.seq.setImage(t, zChannelDestination, img2);
 		}
 
-		seqKymos.getSeq().dataChanged();
-		seqKymos.getSeq().endUpdate();
+		seqKymos.seq.dataChanged();
+		seqKymos.seq.endUpdate();
 	}
 
 	public List<ImageFileDescriptor> loadListOfPotentialKymographsFromCapillaries(String dir, Capillaries capillaries) {
 		renameCapillary_Files(dir);
 
 		String directoryFull = dir + File.separator;
-		int ncapillaries = capillaries.getCapillariesList().size();
+		int ncapillaries = capillaries.capillariesList.size();
 		List<ImageFileDescriptor> myListOfFiles = new ArrayList<ImageFileDescriptor>(ncapillaries);
 		for (int i = 0; i < ncapillaries; i++) {
 			ImageFileDescriptor temp = new ImageFileDescriptor();
-			temp.fileName = directoryFull + capillaries.getCapillariesList().get(i).getKymographName() + ".tiff";
+			temp.fileName = directoryFull + capillaries.capillariesList.get(i).getKymographName() + ".tiff";
 			myListOfFiles.add(temp);
 		}
 		return myListOfFiles;
@@ -93,7 +93,7 @@ public class KymographService {
 	}
 
 	public boolean loadImagesFromList(SequenceKymos seqKymos, List<ImageFileDescriptor> kymoImagesDesc, boolean adjustImagesSize) {
-		seqKymos.setRunning_loadImages(true);
+		seqKymos.isRunning_loadImages = true;
 		boolean flag = (kymoImagesDesc.size() > 0);
 		if (!flag)
 			return flag;
@@ -113,10 +113,10 @@ public class KymographService {
 
 			// threaded by default here
 			seqKymos.loadImages();
-			setParentDirectoryAsCSCamFileName(seqKymos, seqKymos.getImagesList().get(0));
-			seqKymos.setStatus(EnumStatus.KYMOGRAPH);
+			setParentDirectoryAsCSCamFileName(seqKymos, seqKymos.imagesList.get(0));
+			seqKymos.status = EnumStatus.KYMOGRAPH;
 		}
-		seqKymos.setRunning_loadImages(false);
+		seqKymos.isRunning_loadImages = false;
 		return flag;
 	}
 
@@ -124,24 +124,24 @@ public class KymographService {
 		if (filename != null) {
 			Path path = Paths.get(filename);
 			String csCamFileName = path.getName(path.getNameCount() - 2).toString();
-			seqKymos.getSeq().setName(csCamFileName);
+			seqKymos.seq.setName(csCamFileName);
 		}
 	}
 
 	private Rectangle getMaxSizeofTiffFiles(SequenceKymos seqKymos, List<ImageFileDescriptor> files) {
-		seqKymos.setImageWidthMax(0);
-		seqKymos.setImageHeightMax(0);
+		seqKymos.imageWidthMax = 0;
+		seqKymos.imageHeightMax = 0;
 		for (int i = 0; i < files.size(); i++) {
 			ImageFileDescriptor fileProp = files.get(i);
 			if (!fileProp.exists)
 				continue;
 			getImageDim(fileProp);
-			if (fileProp.imageWidth > seqKymos.getImageWidthMax())
-				seqKymos.setImageWidthMax(fileProp.imageWidth);
-			if (fileProp.imageHeight > seqKymos.getImageHeightMax())
-				seqKymos.setImageHeightMax(fileProp.imageHeight);
+			if (fileProp.imageWidth > seqKymos.imageWidthMax)
+				seqKymos.imageWidthMax = fileProp.imageWidth;
+			if (fileProp.imageHeight > seqKymos.imageHeightMax)
+				seqKymos.imageHeightMax = fileProp.imageHeight;
 		}
-		return new Rectangle(0, 0, seqKymos.getImageWidthMax(), seqKymos.getImageHeightMax());
+		return new Rectangle(0, 0, seqKymos.imageWidthMax, seqKymos.imageHeightMax);
 	}
 
 	private boolean getImageDim(final ImageFileDescriptor fileProp) {
@@ -176,7 +176,7 @@ public class KymographService {
 				Logger.error("KymographService:adjustImagesToMaxSize() Failed to load image: " + fileProp.fileName, e1);
 			}
 
-			IcyBufferedImage ibufImage2 = new IcyBufferedImage(seqKymos.getImageWidthMax(), seqKymos.getImageHeightMax(), ibufImage1.getSizeC(),
+			IcyBufferedImage ibufImage2 = new IcyBufferedImage(seqKymos.imageWidthMax, seqKymos.imageHeightMax, ibufImage1.getSizeC(),
 					ibufImage1.getDataType_());
 			transferImage1To2(ibufImage1, ibufImage2);
 

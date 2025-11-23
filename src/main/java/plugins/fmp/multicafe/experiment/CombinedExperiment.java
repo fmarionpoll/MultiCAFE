@@ -70,14 +70,14 @@ public class CombinedExperiment extends Experiment {
 		long time_start_ms = getFirstImage_FileTime().toMillis();
 		Experiment exp = experimentList.get(0);
 		exp.initTmsForFlyPositions(time_start_ms);
-		getCages().getCageList().addAll(exp.getCages().getCageList());
+		cages.cageList.addAll(exp.cages.cageList);
 
 		for (int i = 1; i < experimentList.size(); i++) {
 			Experiment expi = experimentList.get(i);
 			expi.initTmsForFlyPositions(time_start_ms);
-			for (Cage cell : getCages().getCageList()) {
+			for (Cage cell : cages.cageList) {
 				String cellName = cell.getRoiName();
-				for (Cage cellExpi : expi.getCages().getCageList()) {
+				for (Cage cellExpi : expi.cages.cageList) {
 					if (!cellName.equals(cellExpi.getRoiName()))
 						continue;
 					cell.addFlyPositionsFromOtherCage(cellExpi);

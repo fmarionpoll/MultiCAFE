@@ -17,8 +17,8 @@ public class ExperimentService {
 		if (exp.getSeqCamData() != null) {
 			exp.getSeqCamData().closeSequence();
 		}
-		if (exp.getSeqReference() != null) {
-			exp.getSeqReference().close();
+		if (exp.seqReference != null) {
+			exp.seqReference.close();
 		}
 	}
 
@@ -51,15 +51,15 @@ public class ExperimentService {
 		if (exp.getSeqCamData() != null)
 			exp.getSeqCamData().loadImages();
 
-		return (exp.getSeqCamData() != null && exp.getSeqCamData().getSeq() != null);
+		return (exp.getSeqCamData() != null && exp.getSeqCamData().seq != null);
 	}
 
 	public boolean loadCamDataCapillaries(Experiment exp) {
 		exp.loadMCCapillaries_Only();
-		if (exp.getSeqCamData() != null && exp.getSeqCamData().getSeq() != null)
-			exp.getCapillaries().transferCapillaryRoiToSequence(exp.getSeqCamData().getSeq());
+		if (exp.getSeqCamData() != null && exp.getSeqCamData().seq != null)
+			exp.getCapillaries().transferCapillaryRoiToSequence(exp.getSeqCamData().seq);
 
-		return (exp.getSeqCamData() != null && exp.getSeqCamData().getSeq() != null);
+		return (exp.getSeqCamData() != null && exp.getSeqCamData().seq != null);
 	}
 
 	public boolean loadKymographs(Experiment exp) {

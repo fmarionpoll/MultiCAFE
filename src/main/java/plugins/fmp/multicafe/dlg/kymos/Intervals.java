@@ -105,7 +105,7 @@ public class Intervals extends JPanel {
 	void displayDlgKymoIntervals(Experiment exp) {
 		double binsize_Ms = getBinSize_Ms();
 		firstColumnJSpinner.setValue(0.);
-		lastColumnJSpinner.setValue((double) exp.getSeqKymos().getImageWidthMax());
+		lastColumnJSpinner.setValue((double) exp.getSeqKymos().imageWidthMax);
 		if (exp.getKymoBin_ms() <= 0)
 			exp.setKymoBin_ms((long) binsize_Ms);
 		binColumnJSpinner.setValue((double) exp.getKymoBin_ms() / binsize_Ms);

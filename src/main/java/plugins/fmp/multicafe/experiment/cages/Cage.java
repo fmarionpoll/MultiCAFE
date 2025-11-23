@@ -21,18 +21,18 @@ import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public class Cage {
-	private ROI2D cageRoi2D = null;
-	private BooleanMask2D cageMask2D = null;
-	private FlyPositions flyPositions = new FlyPositions();
-	private int cageNFlies = 0;
-	private int cageAge = 5;
-	private String cageComment = "..";
-	private String cageSex = "..";
-	private String cageStrain = "..";
+	public ROI2D cageRoi2D = null;
+	public BooleanMask2D cageMask2D = null;
+	public FlyPositions flyPositions = new FlyPositions();
+	public int cageNFlies = 0;
+	public int cageAge = 5;
+	public String cageComment = "..";
+	public String cageSex = "..";
+	public String cageStrain = "..";
 	private String cageID = "-1";
-	private boolean valid = false;
-	private boolean bDetect = true;
-	private boolean initialflyRemoved = false;
+	public boolean valid = false;
+	public boolean bDetect = true;
+	public boolean initialflyRemoved = false;
 	private ArrayList<Capillary> capList = new ArrayList<Capillary>(2);
 
 	private final String ID_CAGELIMITS = "CageLimits";
@@ -42,94 +42,6 @@ public class Cage {
 	private final String ID_COMMENT = "comment";
 	private final String ID_SEX = "sex";
 	private final String ID_STRAIN = "strain";
-
-	public ROI2D getCageRoi2D() {
-		return cageRoi2D;
-	}
-
-	public void setCageRoi2D(ROI2D cageRoi2D) {
-		this.cageRoi2D = cageRoi2D;
-	}
-
-	public BooleanMask2D getCageMask2D() {
-		return cageMask2D;
-	}
-
-	public void setCageMask2D(BooleanMask2D cageMask2D) {
-		this.cageMask2D = cageMask2D;
-	}
-
-	public FlyPositions getFlyPositions() {
-		return flyPositions;
-	}
-
-	public void setFlyPositions(FlyPositions flyPositions) {
-		this.flyPositions = flyPositions;
-	}
-
-	public int getCageNFlies() {
-		return cageNFlies;
-	}
-
-	public void setCageNFlies(int cageNFlies) {
-		this.cageNFlies = cageNFlies;
-	}
-
-	public int getCageAge() {
-		return cageAge;
-	}
-
-	public void setCageAge(int cageAge) {
-		this.cageAge = cageAge;
-	}
-
-	public String getCageComment() {
-		return cageComment;
-	}
-
-	public void setCageComment(String cageComment) {
-		this.cageComment = cageComment;
-	}
-
-	public String getCageSex() {
-		return cageSex;
-	}
-
-	public void setCageSex(String cageSex) {
-		this.cageSex = cageSex;
-	}
-
-	public String getCageStrain() {
-		return cageStrain;
-	}
-
-	public void setCageStrain(String cageStrain) {
-		this.cageStrain = cageStrain;
-	}
-
-	public boolean isValid() {
-		return valid;
-	}
-
-	public void setValid(boolean valid) {
-		this.valid = valid;
-	}
-
-	public boolean isbDetect() {
-		return bDetect;
-	}
-
-	public void setbDetect(boolean bDetect) {
-		this.bDetect = bDetect;
-	}
-
-	public boolean isInitialflyRemoved() {
-		return initialflyRemoved;
-	}
-
-	public void setInitialflyRemoved(boolean initialflyRemoved) {
-		this.initialflyRemoved = initialflyRemoved;
-	}
 
 	public String getRoiName() {
 		if (cageRoi2D != null)
@@ -404,7 +316,7 @@ public class Cage {
 
 	public Point2D getCenterTipCapillaries(Capillaries capList) {
 		List<Point2D> listpts = new ArrayList<Point2D>();
-		for (Capillary cap : capList.getCapillariesList()) {
+		for (Capillary cap : capList.capillariesList) {
 			Point2D pt = cap.getCapillaryTipWithinROI2D(cageRoi2D);
 			if (pt != null)
 				listpts.add(pt);
@@ -432,10 +344,10 @@ public class Cage {
 	}
 
 	public ROI2DRectangle getRoiRectangleFromPositionAtT(int t) {
-		int nitems = flyPositions.getFlyPositionList().size();
+		int nitems = flyPositions.flyPositionList.size();
 		if (nitems == 0 || t >= nitems)
 			return null;
-		FlyPosition aValue = flyPositions.getFlyPositionList().get(t);
+		FlyPosition aValue = flyPositions.flyPositionList.get(t);
 
 		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.getRectangle2D());
 		flyRoiR.setName("detR" + getCageIDasString() + "_" + t);
@@ -452,7 +364,7 @@ public class Cage {
 				continue;
 			Rectangle2D rect = ((ROI2DRectangle) roi).getRectangle();
 			int t = roi.getT();
-			flyPositions.getFlyPositionList().get(t).setRectangle2D(rect);
+			flyPositions.flyPositionList.get(t).setRectangle2D(rect);
 		}
 	}
 
@@ -461,12 +373,12 @@ public class Cage {
 	}
 
 	public void initTmsForFlyPositions(long[] intervalsMs) {
-		for (FlyPosition flyPosition : flyPositions.getFlyPositionList()) {
-			flyPosition.settMs(intervalsMs[flyPosition.getFlyIndexT()]);
+		for (FlyPosition flyPosition : flyPositions.flyPositionList) {
+			flyPosition.tMs = intervalsMs[flyPosition.flyIndexT];
 		}
 	}
 
 	public void addFlyPositionsFromOtherCage(Cage cageExpi) {
-		flyPositions.getFlyPositionList().addAll(cageExpi.flyPositions.getFlyPositionList());
+		flyPositions.flyPositionList.addAll(cageExpi.flyPositions.flyPositionList);
 	}
 }

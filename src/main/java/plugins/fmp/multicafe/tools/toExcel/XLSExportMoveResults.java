@@ -58,7 +58,7 @@ public class XLSExportMoveResults extends XLSExport {
 		x = writeSeparator_Between_Experiments(sheet, new Point(x, y), options.transpose);
 
 		ArrayList<EnumMeasure> measures = xlsExportOption.toMeasures();
-		List<Cage> cellList = combinedExp.getCages().getCageList();
+		List<Cage> cellList = combinedExp.cages.cageList;
 
 		for (int index = 0; index < cellList.size(); index++) {
 			Cage cell = cellList.get(index);
@@ -95,39 +95,39 @@ public class XLSExportMoveResults extends XLSExport {
 
 		for (long coltime = 0; coltime <= last; coltime += options.buildExcelStepMs, pt.y++) {
 			int i_from = (int) (coltime / options.buildExcelStepMs);
-			if (i_from >= cage.getFlyPositions().getFlyPositionList().size())
+			if (i_from >= cage.getFlyPositions().flyPositionList.size())
 				break;
 
 			double value = Double.NaN;
-			FlyPosition pos = cage.getFlyPositions().getFlyPositionList().get(i_from);
+			FlyPosition pos = cage.getFlyPositions().flyPositionList.get(i_from);
 
 			switch (exportType) {
 			case TI:
-				value = pos.getFlyIndexT();
+				value = pos.flyIndexT;
 				break;
 			case TS:
-				value = pos.gettMs() / 60000.;
+				value = pos.tMs / 60000.;
 				break;
 			case X:
-				value = pos.getX();
+				value = pos.x;
 				break;
 			case Y:
-				value = pos.getY();
+				value = pos.y;
 				break;
 			case W:
-				value = pos.getW();
+				value = pos.w;
 				break;
 			case H:
-				value = pos.getH();
+				value = pos.h;
 				break;
 			case DISTANCE:
-				value = pos.getDistance();
+				value = pos.distance;
 				break;
 			case ALIVE:
-				value = pos.isbAlive() ? 1 : 0;
+				value = pos.bAlive ? 1 : 0;
 				break;
 			case SLEEP:
-				value = pos.isbSleep() ? 1 : 0;
+				value = pos.bSleep ? 1 : 0;
 				break;
 
 			default:
@@ -136,7 +136,7 @@ public class XLSExportMoveResults extends XLSExport {
 
 			if (!Double.isNaN(value)) {
 				XLSUtils.setValue(sheet, pt, transpose, value);
-				if (pos.isbPadded())
+				if (pos.bPadded)
 					XLSUtils.getCell(sheet, pt, transpose).setCellStyle(xssfCellStyle_red);
 			}
 

@@ -14,7 +14,6 @@ import icy.system.thread.Processor;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.Comparators;
-import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
 
@@ -83,9 +82,9 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 
 					long diff = lastOffset_Ms - firstOffset_Ms;
 					if (diff < 1) {
-						Logger.warn("ExperimentCombo:get_MsTime_of_StartAndEnd_AllExperiments() Expt # " + i
+						System.out.println("ExperimentCombo:get_MsTime_of_StartAndEnd_AllExperiments() Expt # " + i
 								+ ": FileTime difference between last and first image < 1; set dt between images = 1 ms");
-						diff = exp.getSeqCamData().getSeq().getSizeT();
+						diff = exp.getSeqCamData().seq.getSizeT();
 					}
 					if (expAll.getCamImageLast_ms() < diff)
 						expAll.setCamImageLast_ms(diff);
@@ -121,8 +120,8 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 					if (expListBinSubDirectory == null)
 						expi.checkKymosDirectory(expi.getBinSubDirectory());
 					expi.openMeasures(loadCapillaries, loadDrosoTrack);
-					if (maxSizeOfCapillaryArrays < expi.getCapillaries().getCapillariesList().size()) {
-						maxSizeOfCapillaryArrays = expi.getCapillaries().getCapillariesList().size();
+					if (maxSizeOfCapillaryArrays < expi.getCapillaries().capillariesList.size()) {
+						maxSizeOfCapillaryArrays = expi.getCapillaries().capillariesList.size();
 						if (maxSizeOfCapillaryArrays % 2 != 0)
 							maxSizeOfCapillaryArrays += 1;
 					}
@@ -148,7 +147,7 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 			try {
 				f.get();
 			} catch (ExecutionException e) {
-				Logger.warn("ExperimentCombo:waitFuturesCompletion() - Warning: " + e);
+				System.out.println("ExperimentCombo:waitFuturesCompletion() - Warning: " + e);
 			} catch (InterruptedException e) {
 				// ignore
 			}

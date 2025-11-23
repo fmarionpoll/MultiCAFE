@@ -33,33 +33,33 @@ public class SequenceLoaderService {
 			Logger.warn("SequenceLoaderService:loadReferenceImage() image not loaded / not found: " + path);
 			return false;
 		}
-		exp.getSeqCamData().setRefImage(IcyBufferedImage.createFrom(image));
-		exp.setSeqReference(new Sequence(exp.getSeqCamData().getRefImage()));
-		exp.getSeqReference().setName("referenceImage");
+		exp.getSeqCamData().refImage = IcyBufferedImage.createFrom(image);
+		exp.seqReference = new Sequence(exp.getSeqCamData().refImage);
+		exp.seqReference.setName("referenceImage");
 		return true;
 	}
 
 	public boolean saveReferenceImage(Experiment exp) {
 		String path = exp.getExperimentDirectory() + File.separator + "referenceImage.jpg";
 		File outputfile = new File(path);
-		RenderedImage image = ImageUtil.toRGBImage(exp.getSeqCamData().getRefImage());
+		RenderedImage image = ImageUtil.toRGBImage(exp.getSeqCamData().refImage);
 		return ImageUtil.save(image, "jpg", outputfile);
 	}
 
 	public boolean loadImages(SequenceCamData seqData) {
-		if (seqData.getImagesList().size() == 0)
+		if (seqData.imagesList.size() == 0)
 			return false;
-		seqData.attachSequence(loadSequenceFromImagesList(seqData.getImagesList()));
-		return (seqData.getSeq() != null);
+		seqData.attachSequence(loadSequenceFromImagesList(seqData.imagesList));
+		return (seqData.seq != null);
 	}
 
 	public boolean loadFirstImage(SequenceCamData seqData) {
-		if (seqData.getImagesList().size() == 0)
+		if (seqData.imagesList.size() == 0)
 			return false;
 		List<String> dummyList = new ArrayList<String>();
-		dummyList.add(seqData.getImagesList().get(0));
+		dummyList.add(seqData.imagesList.get(0));
 		seqData.attachSequence(loadSequenceFromImagesList(dummyList));
-		return (seqData.getSeq() != null);
+		return (seqData.seq != null);
 	}
 
 	public Sequence loadSequenceFromImagesList(List<String> imagesList) {
@@ -82,7 +82,7 @@ public class SequenceLoaderService {
 	}
 
 	public void loadImageList(SequenceCamData seqData) {
-		List<String> imagesList = ExperimentDirectories.getV2ImagesListFromPath(seqData.getImagesDirectory());
+		List<String> imagesList = ExperimentDirectories.getV2ImagesListFromPath(seqData.imagesDirectory);
 		imagesList = ExperimentDirectories.keepOnlyAcceptedNames_List(imagesList, "jpg");
 		if (imagesList.size() > 0) {
 			seqData.setImagesList(imagesList);
@@ -100,3 +100,4 @@ public class SequenceLoaderService {
 		return IcyBufferedImage.createFrom(image);
 	}
 }
+

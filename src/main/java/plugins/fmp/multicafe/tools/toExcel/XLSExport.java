@@ -19,7 +19,6 @@ import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 
 public abstract class XLSExport {
@@ -36,7 +35,7 @@ public abstract class XLSExport {
 	// ------------------------------------------------
 
 	public void exportToFile(String filename, XLSExportOptions opt) {
-		Logger.info("XLSExport:exportToFile() - start output");
+		System.out.println("XLSExport:exportToFile() - start output");
 		options = opt;
 		expList = options.expList;
 
@@ -70,9 +69,9 @@ public abstract class XLSExport {
 			workbook.close();
 			progress.close();
 		} catch (IOException e) {
-			Logger.error("XLSExport:exportToFile()", e);
+			e.printStackTrace();
 		}
-		Logger.info("XLSExport:exportToFile() XLS output finished");
+		System.out.println("XLSExport:exportToFile() XLS output finished");
 	}
 
 	protected abstract void loadMeasures();
@@ -236,8 +235,7 @@ public abstract class XLSExport {
 		if (row.valuesOut == null)
 			return;
 
-		for (long coltime = expAll.getCamImageFirst_ms(); coltime < expAll
-				.getCamImageLast_ms(); coltime += options.buildExcelStepMs, pt.y++) {
+		for (long coltime = expAll.getCamImageFirst_ms(); coltime < expAll.getCamImageLast_ms(); coltime += options.buildExcelStepMs, pt.y++) {
 			int i_from = (int) ((coltime - expAll.getCamImageFirst_ms()) / options.buildExcelStepMs);
 			if (i_from >= row.valuesOut.length)
 				break;
@@ -276,10 +274,10 @@ public abstract class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_INDEX.getValue(), transpose, cage.getCageIDasString());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_ID.getValue(), transpose,
 				charSeries + "_" + cage.getCageID());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cage.getCageStrain());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.getCageSex());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.getCageAge());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cage.getCageComment());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cage.cageStrain);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.cageSex);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.cageAge);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cage.cageComment);
 	}
 
 	protected void XLSExportCapillaryParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
@@ -289,15 +287,15 @@ public abstract class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_INDEX.getValue(), transpose,
 				charSeries + "_" + cap.getLast2ofCapillaryName());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose,
-				exp.getCapillaries().getCapillariesDescription().getVolume());
+				exp.getCapillaries().capillariesDescription.volume);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose,
-				exp.getCapillaries().getCapillariesDescription().getPixels());
+				exp.getCapillaries().capillariesDescription.pixels);
 
 		outputStimAndConc_according_to_DataOption(sheet, xlsExportOption, cap, transpose, x, y);
 
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, cap.capNFlies);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
-				desc_getChoiceTestType(exp.getCapillaries().getCapillariesList(), index));
+				desc_getChoiceTestType(exp.getCapillaries().capillariesList, index));
 	}
 
 	private void outputStimAndConc_according_to_DataOption(XSSFSheet sheet, EnumXLSExport xlsExportOption,

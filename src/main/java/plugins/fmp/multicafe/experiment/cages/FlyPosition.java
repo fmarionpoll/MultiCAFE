@@ -14,20 +14,20 @@ import plugins.kernel.roi.roi2d.ROI2DArea;
 public class FlyPosition {
 	// public Rectangle2D rectPosition = new Rectangle2D.Double(Double.NaN,
 	// Double.NaN, Double.NaN, Double.NaN);
-	private double x = Double.NaN;
-	private double y = Double.NaN;
-	private double w = Double.NaN;
-	private double h = Double.NaN;
-	private ROI2DArea flyRoi = null;
-	private int flyIndexT = 0;
-	private long tMs = 0;
-	private boolean bAlive = false;
-	private boolean bSleep = false;
-	private boolean bPadded = false;
-	private double distance = 0.;
-	private double sumDistance = 0;
-	private double axis1 = 0.;
-	private double axis2 = 0.;
+	public double x = Double.NaN;
+	public double y = Double.NaN;
+	public double w = Double.NaN;
+	public double h = Double.NaN;
+	public ROI2DArea flyRoi = null;
+	public int flyIndexT = 0;
+	public long tMs = 0;
+	public boolean bAlive = false;
+	public boolean bSleep = false;
+	public boolean bPadded = false;
+	public double distance = 0.;
+	public double sumDistance = 0;
+	public double axis1 = 0.;
+	public double axis2 = 0.;
 
 	public FlyPosition() {
 	}
@@ -95,119 +95,6 @@ public class FlyPosition {
 		w = rectangle.getWidth();
 		h = rectangle.getHeight();
 	}
-	
-	public double getX() {
-		return x;
-	}
-
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	public double getY() {
-		return y;
-	}
-
-	public void setY(double y) {
-		this.y = y;
-	}
-
-	public double getW() {
-		return w;
-	}
-
-	public void setW(double w) {
-		this.w = w;
-	}
-
-	public double getH() {
-		return h;
-	}
-
-	public void setH(double h) {
-		this.h = h;
-	}
-
-	public ROI2DArea getFlyRoi() {
-		return flyRoi;
-	}
-
-	public void setFlyRoi(ROI2DArea flyRoi) {
-		this.flyRoi = flyRoi;
-	}
-
-	public int getFlyIndexT() {
-		return flyIndexT;
-	}
-
-	public void setFlyIndexT(int flyIndexT) {
-		this.flyIndexT = flyIndexT;
-	}
-
-	public long gettMs() {
-		return tMs;
-	}
-
-	public void settMs(long tMs) {
-		this.tMs = tMs;
-	}
-
-	public boolean isbAlive() {
-		return bAlive;
-	}
-
-	public void setbAlive(boolean bAlive) {
-		this.bAlive = bAlive;
-	}
-
-	public boolean isbSleep() {
-		return bSleep;
-	}
-
-	public void setbSleep(boolean bSleep) {
-		this.bSleep = bSleep;
-	}
-
-	public boolean isbPadded() {
-		return bPadded;
-	}
-
-	public void setbPadded(boolean bPadded) {
-		this.bPadded = bPadded;
-	}
-
-	public double getDistance() {
-		return distance;
-	}
-
-	public void setDistance(double distance) {
-		this.distance = distance;
-	}
-
-	public double getSumDistance() {
-		return sumDistance;
-	}
-
-	public void setSumDistance(double sumDistance) {
-		this.sumDistance = sumDistance;
-	}
-
-	public double getAxis1() {
-		return axis1;
-	}
-
-	public void setAxis1(double axis1) {
-		this.axis1 = axis1;
-	}
-
-	public double getAxis2() {
-		return axis2;
-	}
-
-	public void setAxis2(double axis2) {
-		this.axis2 = axis2;
-	}
-
 
 	// --------------------------------------------
 

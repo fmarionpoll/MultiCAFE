@@ -50,21 +50,21 @@ public class Comparators {
 	public static class XYTaSeries_Name_Comparator implements Comparator<FlyPositions> {
 		@Override
 		public int compare(FlyPositions o1, FlyPositions o2) {
-			return o1.getName().compareTo(o2.getName());
+			return o1.name.compareTo(o2.name);
 		}
 	}
 
 	public static class Cage_Name_Comparator implements Comparator<Cage> {
 		@Override
 		public int compare(Cage o1, Cage o2) {
-			return o1.getCageRoi2D().getName().compareTo(o2.getCageRoi2D().getName());
+			return o1.cageRoi2D.getName().compareTo(o2.cageRoi2D.getName());
 		}
 	}
 
 	public static class XYTaValue_Tindex_Comparator implements Comparator<FlyPosition> {
 		@Override
 		public int compare(FlyPosition o1, FlyPosition o2) {
-			return o1.getFlyIndexT() - o2.getFlyIndexT();
+			return o1.flyIndexT - o2.flyIndexT;
 		}
 	}
 

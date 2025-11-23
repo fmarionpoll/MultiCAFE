@@ -98,10 +98,9 @@ public class BuildCagesAsArray extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
-					exp.getCages().cagesFromROIs(exp.getSeqCamData());
-					if (exp.getCapillaries().getCapillariesList().size() > 0)
-						exp.getCages()
-								.transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getCapillariesList());
+					exp.cages.cagesFromROIs(exp.getSeqCamData());
+					if (exp.getCapillaries().capillariesList.size() > 0)
+						exp.cages.transferNFliesFromCapillariesToCageBox(exp.getCapillaries().capillariesList);
 				}
 			}
 		});
@@ -110,7 +109,7 @@ public class BuildCagesAsArray extends JPanel {
 	void updateNColumnsFieldFromSequence() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			int nrois = exp.getCages().getCageList().size();
+			int nrois = exp.cages.cageList.size();
 			if (nrois > 0) {
 				nColumnsTextField.setValue(nrois);
 				ncolumns = nrois;
@@ -121,21 +120,21 @@ public class BuildCagesAsArray extends JPanel {
 	private void create2DPolygon(Experiment exp) {
 		final String dummyname = "perimeter_enclosing";
 		if (roiUserPolygon == null) {
-			ArrayList<ROI2D> listRois = exp.getSeqCamData().getSeq().getROI2Ds();
+			ArrayList<ROI2D> listRois = exp.getSeqCamData().seq.getROI2Ds();
 			for (ROI2D roi : listRois) {
 				if (roi.getName().equals(dummyname))
 					return;
 			}
 
-			Rectangle rect = exp.getSeqCamData().getSeq().getBounds2D();
+			Rectangle rect = exp.getSeqCamData().seq.getBounds2D();
 			List<Point2D> points = new ArrayList<Point2D>();
 			int rectleft = rect.x + rect.width / 6;
 			int rectright = rect.x + rect.width * 5 / 6;
 			int recttop = rect.y + rect.height * 2 / 3;
-			if (exp.getCapillaries().getCapillariesList().size() > 0) {
-				Rectangle bound0 = exp.getCapillaries().getCapillariesList().get(0).getRoi().getBounds();
-				int last = exp.getCapillaries().getCapillariesList().size() - 1;
-				Rectangle bound1 = exp.getCapillaries().getCapillariesList().get(last).getRoi().getBounds();
+			if (exp.getCapillaries().capillariesList.size() > 0) {
+				Rectangle bound0 = exp.getCapillaries().capillariesList.get(0).getRoi().getBounds();
+				int last = exp.getCapillaries().capillariesList.size() - 1;
+				Rectangle bound1 = exp.getCapillaries().capillariesList.get(last).getRoi().getBounds();
 				rectleft = bound0.x;
 				rectright = bound1.x + bound1.width;
 				int diff = (rectright - rectleft) * 2 / 60;
@@ -151,13 +150,13 @@ public class BuildCagesAsArray extends JPanel {
 			roiUserPolygon = new ROI2DPolygon(points);
 			roiUserPolygon.setName(dummyname);
 		}
-		exp.getSeqCamData().getSeq().addROI(roiUserPolygon);
-		exp.getSeqCamData().getSeq().setSelectedROI(roiUserPolygon);
+		exp.getSeqCamData().seq.addROI(roiUserPolygon);
+		exp.getSeqCamData().seq.setSelectedROI(roiUserPolygon);
 	}
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
-		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSeq());
-		exp.getCages().clearCageList();
+		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().seq);
+		exp.cages.clearCageList();
 
 		// read values from text boxes
 		try {
@@ -171,11 +170,11 @@ public class BuildCagesAsArray extends JPanel {
 
 		SequenceCamData seqCamData = exp.getSeqCamData();
 		Polygon2D roiPolygonMin = ROI2DUtilities.orderVerticesofPolygon(roiUserPolygon.getPolygon());
-		seqCamData.getSeq().removeROI(roiUserPolygon);
+		seqCamData.seq.removeROI(roiUserPolygon);
 
 		// generate cage frames
-		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSeq());
-		exp.getCages().clearCageList();
+		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().seq);
+		exp.cages.clearCageList();
 		String cageRoot = "cage";
 		int iRoot = 0;
 
@@ -242,7 +241,7 @@ public class BuildCagesAsArray extends JPanel {
 				roiP.setName(cageRoot + String.format("%03d", iRoot));
 				roiP.setColor(Color.MAGENTA);
 				iRoot++;
-				seqCamData.getSeq().addROI(roiP);
+				seqCamData.seq.addROI(roiP);
 			}
 		}
 	}

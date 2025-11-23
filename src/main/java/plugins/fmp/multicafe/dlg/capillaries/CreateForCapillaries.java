@@ -105,19 +105,19 @@ public class CreateForCapillaries extends JPanel {
 				if (exp == null)
 					return;
 
-				if (exp.getCapillaries() != null && exp.getCapillaries().getCapillariesList().size() > 0) {
+				if (exp.getCapillaries() != null && exp.getCapillaries().capillariesList.size() > 0) {
 					Polygon2D extPolygon = exp.getCapillaries().get2DPolygonEnclosingCapillaries();
 					if (extPolygon == null) {
-						extPolygon = getCapillariesPolygon(exp.getSeqCamData().getSeq());
+						extPolygon = getCapillariesPolygon(exp.getSeqCamData().seq);
 					}
 					capillariesRoiPolygon = new ROI2DPolygon(extPolygon);
 					exp.getCapillaries().deleteAllCapillaries();
-					exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSeq());
-					exp.getSeqCamData().getSeq().removeAllROI();
+					exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().seq);
+					exp.getSeqCamData().seq.removeAllROI();
 					final String dummyname = "perimeter_enclosing_capillaries";
 					capillariesRoiPolygon.setName(dummyname);
-					exp.getSeqCamData().getSeq().addROI(capillariesRoiPolygon);
-					exp.getSeqCamData().getSeq().setSelectedROI(capillariesRoiPolygon);
+					exp.getSeqCamData().seq.addROI(capillariesRoiPolygon);
+					exp.getSeqCamData().seq.setSelectedROI(capillariesRoiPolygon);
 					// TODO delete kymos
 				} else
 					create_capillariesRoiPolygon(exp);
@@ -210,7 +210,7 @@ public class CreateForCapillaries extends JPanel {
 	}
 
 	void setGroupingAndNumber(Capillaries cap) {
-		setGroupedBy2(cap.getCapillariesDescription().getGrouping() == 2);
+		setGroupedBy2(cap.capillariesDescription.grouping == 2);
 	}
 
 	int getCapillariesGrouping() {
@@ -223,14 +223,14 @@ public class CreateForCapillaries extends JPanel {
 	}
 
 	Capillaries setCapillariesGrouping(Capillaries cap) {
-		cap.getCapillariesDescription().setGrouping(getCapillariesGrouping());
+		cap.capillariesDescription.grouping = getCapillariesGrouping();
 		return cap;
 	}
 
 	// ---------------------------------
 
 	private void create_capillariesRoiPolygon(Experiment exp) {
-		Sequence seq = exp.getSeqCamData().getSeq();
+		Sequence seq = exp.getSeqCamData().seq;
 		final String dummyname = "perimeter_enclosing_capillaries";
 		capillariesRoiPolygon = (ROI2DPolygon) isRoiPresent(seq, dummyname);
 		if (capillariesRoiPolygon == null) {
@@ -282,7 +282,7 @@ public class CreateForCapillaries extends JPanel {
 			new AnnounceFrame("Can't interpret one of the ROI parameters value");
 		}
 
-//		ROI2D roi = seqCamData.getSeq().getSelectedROI2D();
+//		ROI2D roi = seqCamData.seq.getSelectedROI2D();
 //		if ( ! ( roi instanceof ROI2DPolygon ) ) 
 //		{
 //			new AnnounceFrame("The frame must be a ROI2D POLYGON");
@@ -291,7 +291,7 @@ public class CreateForCapillaries extends JPanel {
 
 		Polygon2D capillariesPolygon = ROI2DUtilities.orderVerticesofPolygon(capillariesRoiPolygon.getPolygon());
 
-		seqCamData.getSeq().removeROI(capillariesRoiPolygon);
+		seqCamData.seq.removeROI(capillariesRoiPolygon);
 
 		if (statusGroup2Mode) {
 			double span = (nbcapillaries / 2) * (width_between_capillaries + width_interval) - width_interval;
@@ -323,7 +323,7 @@ public class CreateForCapillaries extends JPanel {
 		ROI2DLine roiL1 = new ROI2DLine(x0, y0, x1, y1);
 		roiL1.setName(name);
 		roiL1.setReadOnly(false);
-		seqCamData.getSeq().addROI(roiL1, true);
+		seqCamData.seq.addROI(roiL1, true);
 	}
 
 }

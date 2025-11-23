@@ -115,7 +115,7 @@ public class Edit extends JPanel {
 				if (indexT < 0)
 					return;
 				selectImageT(exp, indexT);
-				List<ROI2D> roiList = exp.getSeqCamData().getSeq().getROI2Ds();
+				List<ROI2D> roiList = exp.getSeqCamData().seq.getROI2Ds();
 				for (ROI2D roi : roiList) {
 					String csName = roi.getName();
 					if (roi instanceof ROI2DPoint && csName.equals(filter)) {
@@ -131,7 +131,7 @@ public class Edit extends JPanel {
 	void findFirstMissed(Experiment exp) {
 		if (findFirst(exp)) {
 			selectImageT(exp, foundT);
-			Cage cage = exp.getCages().getCageFromID(foundCell);
+			Cage cage = exp.cages.getCageFromID(foundCell);
 			String name = "det" + cage.getCageIDasString() + "_" + foundT;
 			foundCombo.setSelectedItem(name);
 		} else
@@ -139,16 +139,16 @@ public class Edit extends JPanel {
 	}
 
 	boolean findFirst(Experiment exp) {
-		int dataSize = exp.getSeqCamData().getnTotalFrames();
+		int dataSize = exp.getSeqCamData().nTotalFrames;
 		foundT = -1;
 		foundCell = -1;
 		for (int frame = 0; frame < dataSize; frame++) {
-			for (Cage cage : exp.getCages().getCageList()) {
-				if (frame >= cage.getFlyPositions().getFlyPositionList().size())
+			for (Cage cage : exp.cages.cageList) {
+				if (frame >= cage.flyPositions.flyPositionList.size())
 					continue;
-				Rectangle2D rect = cage.getFlyPositions().getFlyPositionList().get(frame).getRectangle2D();
+				Rectangle2D rect = cage.flyPositions.flyPositionList.get(frame).getRectangle2D();
 				if (rect.getX() == -1 && rect.getY() == -1) {
-					foundT = cage.getFlyPositions().getFlyPositionList().get(frame).getFlyIndexT();
+					foundT = cage.flyPositions.flyPositionList.get(frame).flyIndexT;
 					foundCell = cage.getCageID();
 					return true;
 				}
@@ -158,21 +158,21 @@ public class Edit extends JPanel {
 	}
 
 	void selectImageT(Experiment exp, int t) {
-		Viewer viewer = exp.getSeqCamData().getSeq().getFirstViewer();
+		Viewer viewer = exp.getSeqCamData().seq.getFirstViewer();
 		viewer.setPositionT(t);
 	}
 
 	void findAllMissedPoints(Experiment exp) {
 		foundCombo.removeAllItems();
-		int dataSize = exp.getSeqCamData().getnTotalFrames();
+		int dataSize = exp.getSeqCamData().nTotalFrames;
 		for (int frame = 0; frame < dataSize; frame++) {
-			for (Cage cage : exp.getCages().getCageList()) {
-				if (frame >= cage.getFlyPositions().getFlyPositionList().size())
+			for (Cage cage : exp.cages.cageList) {
+				if (frame >= cage.flyPositions.flyPositionList.size())
 					continue;
-				Rectangle2D rect = cage.getFlyPositions().getFlyPositionList().get(frame).getRectangle2D();
+				Rectangle2D rect = cage.flyPositions.flyPositionList.get(frame).getRectangle2D();
 				if (rect.getX() == -1 && rect.getY() == -1) {
 					String name = "det" + cage.getCageIDasString() + "_"
-							+ cage.getFlyPositions().getFlyPositionList().get(frame).getFlyIndexT();
+							+ cage.flyPositions.flyPositionList.get(frame).flyIndexT;
 					foundCombo.addItem(name);
 				}
 			}
@@ -193,14 +193,14 @@ public class Edit extends JPanel {
 
 	void moveROItoCageCenter(Experiment exp, ROI2D roi, int frame) {
 		roi.setColor(Color.RED);
-		exp.getSeqCamData().getSeq().setSelectedROI(roi);
+		exp.getSeqCamData().seq.setSelectedROI(roi);
 		String csName = roi.getName();
 		int cageNumber = getCageNumberFromName(csName);
 		if (cageNumber >= 0) {
-			Cage cell = exp.getCages().getCageFromID(cageNumber);
-			Rectangle2D rect0 = cell.getFlyPositions().getFlyPositionList().get(frame).getRectangle2D();
+			Cage cell = exp.cages.getCageFromID(cageNumber);
+			Rectangle2D rect0 = cell.flyPositions.flyPositionList.get(frame).getRectangle2D();
 			if (rect0.getX() == -1 && rect0.getY() == -1) {
-				Rectangle rect = cell.getCageRoi2D().getBounds();
+				Rectangle rect = cell.cageRoi2D.getBounds();
 				Point2D point2 = new Point2D.Double(rect.x + rect.width / 2, rect.y + rect.height / 2);
 				roi.setPosition2D(point2);
 			}

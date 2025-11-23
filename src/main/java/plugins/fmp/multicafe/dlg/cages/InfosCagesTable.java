@@ -86,7 +86,7 @@ public class InfosCagesTable extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					cageArrayCopy.clear();
-					for (Cage cell : exp.getCages().getCageList()) {
+					for (Cage cell : exp.cages.cageList) {
 						cageArrayCopy.add(cell);
 					}
 					pasteButton.setEnabled(true);
@@ -100,16 +100,16 @@ public class InfosCagesTable extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					for (Cage cellFrom : cageArrayCopy) {
-						cellFrom.setValid(false);
-						for (Cage cellTo : exp.getCages().getCageList()) {
-							if (!cellFrom.getCageRoi2D().getName().equals(cellTo.getCageRoi2D().getName()))
+						cellFrom.valid = false;
+						for (Cage cellTo : exp.cages.cageList) {
+							if (!cellFrom.cageRoi2D.getName().equals(cellTo.cageRoi2D.getName()))
 								continue;
-							cellFrom.setValid(true);
-							cellTo.setCageNFlies(cellFrom.getCageNFlies());
-							cellTo.setCageAge(cellFrom.getCageAge());
-							cellTo.setCageComment(cellFrom.getCageComment());
-							cellTo.setCageSex(cellFrom.getCageSex());
-							cellTo.setCageStrain(cellFrom.getCageStrain());
+							cellFrom.valid = true;
+							cellTo.cageNFlies = cellFrom.cageNFlies;
+							cellTo.cageAge = cellFrom.cageAge;
+							cellTo.cageComment = cellFrom.cageComment;
+							cellTo.cageSex = cellFrom.cageSex;
+							cellTo.cageStrain = cellFrom.cageStrain;
 						}
 					}
 					cageTableModel.fireTableDataChanged();
@@ -125,25 +125,25 @@ public class InfosCagesTable extends JPanel {
 					int rowIndex = tableView.getSelectedRow();
 					int columnIndex = tableView.getSelectedColumn();
 					if (rowIndex >= 0) {
-						Cage cell0 = exp.getCages().getCageList().get(rowIndex);
-						for (Cage cell : exp.getCages().getCageList()) {
-							if (cell.getCageRoi2D().getName().equals(cell0.getCageRoi2D().getName()))
+						Cage cell0 = exp.cages.cageList.get(rowIndex);
+						for (Cage cell : exp.cages.cageList) {
+							if (cell.cageRoi2D.getName().equals(cell0.cageRoi2D.getName()))
 								continue;
 							switch (columnIndex) {
 							case 1:
-								cell.setCageNFlies(cell0.getCageNFlies());
+								cell.cageNFlies = cell0.cageNFlies;
 								break;
 							case 2:
-								cell.setCageStrain(cell0.getCageStrain());
+								cell.cageStrain = cell0.cageStrain;
 								break;
 							case 3:
-								cell.setCageSex(cell0.getCageSex());
+								cell.cageSex = cell0.cageSex;
 								break;
 							case 4:
-								cell.setCageAge(cell0.getCageAge());
+								cell.cageAge = cell0.cageAge;
 								break;
 							case 5:
-								cell.setCageComment(cell0.getCageComment());
+								cell.cageComment = cell0.cageComment;
 								break;
 							default:
 								break;
@@ -160,7 +160,7 @@ public class InfosCagesTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.getCages().setFirstAndLastCageToZeroFly();
+					exp.cages.setFirstAndLastCageToZeroFly();
 					cageTableModel.fireTableDataChanged();
 				}
 			}
@@ -172,7 +172,7 @@ public class InfosCagesTable extends JPanel {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			exp.getCages().transferNFliesFromCagesToCapillaries(exp.getCapillaries().getCapillariesList());
+			exp.cages.transferNFliesFromCagesToCapillaries(exp.getCapillaries().capillariesList);
 			parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);
 		}
 	}

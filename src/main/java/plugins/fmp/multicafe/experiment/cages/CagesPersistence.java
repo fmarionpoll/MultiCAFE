@@ -76,9 +76,9 @@ public class CagesPersistence {
 
 		int index = 0;
 		Element xmlVal = XMLUtil.addElement(node, ID_CAGES);
-		int nCages = cages.getCageList().size();
+		int nCages = cages.cageList.size();
 		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, nCages);
-		for (Cage cage : cages.getCageList()) {
+		for (Cage cage : cages.cageList) {
 			cage.xmlSaveCagel(xmlVal, index);
 			index++;
 		}
@@ -122,14 +122,14 @@ public class CagesPersistence {
 		if (node == null)
 			return false;
 
-		cages.getCageList().clear();
+		cages.cageList.clear();
 		Element xmlVal = XMLUtil.getElement(node, ID_CAGES);
 		if (xmlVal != null) {
 			int nCages = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
 			for (int index = 0; index < nCages; index++) {
 				Cage cage = new Cage();
 				cage.xmlLoadCage(xmlVal, index);
-				cages.getCageList().add(cage);
+				cages.cageList.add(cage);
 			}
 		} else {
 			List<ROI2D> cageLimitROIList = new ArrayList<ROI2D>();
@@ -145,14 +145,14 @@ public class CagesPersistence {
 
 	private void transferDataToCageBox_v0(Cages cages, List<ROI2D> cageLimitROIList,
 			List<FlyPositions> flyPositionsList) {
-		cages.getCageList().clear();
+		cages.cageList.clear();
 		Collections.sort(cageLimitROIList, new Comparators.ROI2D_Name_Comparator());
 		int nCages = cageLimitROIList.size();
 		for (int index = 0; index < nCages; index++) {
 			Cage cage = new Cage();
-			cage.setCageRoi2D(cageLimitROIList.get(index));
-			cage.setFlyPositions(flyPositionsList.get(index));
-			cages.getCageList().add(cage);
+			cage.cageRoi2D = cageLimitROIList.get(index);
+			cage.flyPositions = flyPositionsList.get(index);
+			cages.cageList.add(cage);
 		}
 	}
 
@@ -238,14 +238,14 @@ public class CagesPersistence {
 				String test = data[0].substring(0, Math.min(data[0].length(), 7));
 				if (test.equals("n cages") || test.equals("n cells")) {
 					int ncages = Integer.valueOf(data[1]);
-					if (ncages >= cages.getCageList().size())
-						cages.getCageList().ensureCapacity(ncages);
+					if (ncages >= cages.cageList.size())
+						cages.cageList.ensureCapacity(ncages);
 					else
-						cages.getCageList().subList(ncages, cages.getCageList().size()).clear();
+						cages.cageList.subList(ncages, cages.cageList.size()).clear();
 				}
 			}
 		} catch (IOException e) {
-			Logger.error("CagesPersistence:csvLoad_DESCRIPTION()", e);
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -268,12 +268,12 @@ public class CagesPersistence {
 				Cage cage = cages.getCageFromID(cageID);
 				if (cage == null) {
 					cage = new Cage();
-					cages.getCageList().add(cage);
+					cages.cageList.add(cage);
 				}
 				cage.csvImport_CAGE_Header(data);
 			}
 		} catch (IOException e) {
-			Logger.error("CagesPersistence:csvLoad_CageBox()", e);
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -304,7 +304,7 @@ public class CagesPersistence {
 					cage.csvImport_MEASURE_Data_Parameters(data);
 			}
 		} catch (IOException e) {
-			Logger.error("CagesPersistence:csvLoad_Measures()", e);
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -322,7 +322,7 @@ public class CagesPersistence {
 			csvWriter.close();
 
 		} catch (IOException e) {
-			Logger.error("CagesPersistence:csvSave_Cages()", e);
+			e.printStackTrace();
 		}
 
 		return true;
@@ -331,18 +331,18 @@ public class CagesPersistence {
 	private boolean csvSave_Description(Cages cages, FileWriter csvWriter) {
 		try {
 			csvWriter.append("#" + csvSep + "DESCRIPTION\n");
-			csvWriter.append("n cages=" + csvSep + Integer.toString(cages.getCageList().size()) + "\n");
+			csvWriter.append("n cages=" + csvSep + Integer.toString(cages.cageList.size()) + "\n");
 
 			csvWriter.append("#" + csvSep + "#\n");
 
-			if (cages.getCageList().size() > 0) {
-				csvWriter.append(cages.getCageList().get(0).csvExport_CAGE_Header(csvSep));
-				for (Cage cage : cages.getCageList())
+			if (cages.cageList.size() > 0) {
+				csvWriter.append(cages.cageList.get(0).csvExport_CAGE_Header(csvSep));
+				for (Cage cage : cages.cageList)
 					csvWriter.append(cage.csvExport_CAGE_Data(csvSep));
 				csvWriter.append("#" + csvSep + "#\n");
 			}
 		} catch (IOException e) {
-			Logger.error("CagesPersistence:csvSave_Description()", e);
+			e.printStackTrace();
 		}
 
 		return true;
@@ -350,16 +350,16 @@ public class CagesPersistence {
 
 	private boolean csvSave_Measures(Cages cages, FileWriter csvWriter, EnumCageMeasures measureType) {
 		try {
-			if (cages.getCageList().size() <= 1)
+			if (cages.cageList.size() <= 1)
 				return false;
 			boolean complete = true;
-			csvWriter.append(cages.getCageList().get(0).csvExport_MEASURE_Header(measureType, csvSep, complete));
-			for (Cage cage : cages.getCageList())
+			csvWriter.append(cages.cageList.get(0).csvExport_MEASURE_Header(measureType, csvSep, complete));
+			for (Cage cage : cages.cageList)
 				csvWriter.append(cage.csvExport_MEASURE_Data(measureType, csvSep, complete));
 
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {
-			Logger.error("CagesPersistence:csvSave_Measures()", e);
+			e.printStackTrace();
 		}
 		return true;
 	}
