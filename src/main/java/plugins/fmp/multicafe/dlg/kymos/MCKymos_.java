@@ -28,6 +28,7 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 	public Display tabDisplay = new Display();
 	public Intervals tabIntervals = new Intervals();
 	public LoadSave tabLoadSave = new LoadSave();
+	public Register tabRegister = new Register();
 	private MultiCAFE parent0 = null;
 
 	public void init(JPanel mainPanel, String string, MultiCAFE parent0) {
@@ -54,6 +55,9 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 		tabLoadSave.init(capLayout, parent0);
 		tabLoadSave.addPropertyChangeListener(this);
 		tabsPane.addTab("Load/Save", null, tabLoadSave, "Load/Save xml file with capillaries descriptors");
+
+		tabRegister.init(capLayout, parent0);
+		tabsPane.addTab("Register", null, tabRegister, "Register source images");
 
 		tabsPane.addChangeListener(this);
 		tabsPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
