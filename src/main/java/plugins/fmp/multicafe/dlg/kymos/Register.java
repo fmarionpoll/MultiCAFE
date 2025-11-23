@@ -15,6 +15,7 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.ImageRegistration;
 import plugins.fmp.multicafe.tools.ImageRegistrationFeatures;
+import plugins.fmp.multicafe.tools.ImageRegistrationFeaturesGPU;
 import plugins.fmp.multicafe.tools.ImageRegistrationGaspard;
 
 public class Register extends JPanel {
@@ -23,7 +24,7 @@ public class Register extends JPanel {
 
 	private MultiCAFE parent0 = null;
 
-	private JComboBox<String> typeCombo = new JComboBox<>(new String[] { "Gaspard Rigid", "Feature Tracking" });
+	private JComboBox<String> typeCombo = new JComboBox<>(new String[] { "Gaspard Rigid", "Feature Tracking (CPU)", "Feature Tracking (GPU)" });
 	private JComboBox<String> referenceCombo = new JComboBox<>(
 			new String[] { "End (Last Frame)", "Start (First Frame)" });
 	private JComboBox<String> directionCombo = new JComboBox<>(
@@ -88,8 +89,10 @@ public class Register extends JPanel {
 			ImageRegistration reg = null;
 			if (typeCombo.getSelectedIndex() == 0)
 				reg = new ImageRegistrationGaspard();
-			else
+			else if (typeCombo.getSelectedIndex() == 1)
 				reg = new ImageRegistrationFeatures();
+			else
+				reg = new ImageRegistrationFeaturesGPU();
 
 			boolean result = reg.runRegistration(exp, referenceFrame, startFrame, endFrame, reverse);
 
@@ -101,3 +104,4 @@ public class Register extends JPanel {
 	}
 
 }
+

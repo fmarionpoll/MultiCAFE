@@ -72,13 +72,14 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 							awtSrc.getHeight(), awtSrc.getType());
 					java.awt.Graphics2D g2 = awtDst.createGraphics();
 
+					// Apply inverse transform to align current image with reference
+					// This handles translation, rotation, and scaling (x and y independently)
 					g2.setTransform(inverse);
 					g2.drawImage(awtSrc, 0, 0, null);
 					g2.dispose();
 
-					// Wrap the AWT image into IcyBufferedImage to extract data
-					IcyBufferedImage tempWrapper = new IcyBufferedImage(awtSrc.getWidth(), awtSrc.getHeight(),
-							awtSrc.getType());
+					// Convert transformed BufferedImage back to IcyBufferedImage
+					IcyBufferedImage tempWrapper = IcyBufferedImage.createFrom(awtDst);
 					newImg.setDataXY(c, tempWrapper.getDataXY(0));
 				}
 
@@ -148,6 +149,22 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 		}
 	}
 
+	/**
+	 * Computes a full affine transform that handles:
+	 * - Translation (tx, ty)
+	 * - Rotation (θ)
+	 * - Scaling in X and Y (sx, sy) - independent scaling
+	 * - Shear (if present)
+	 * 
+	 * The transform maps source points to destination points using least squares:
+	 * u = a*x + b*y + c  (x-coordinate transformation)
+	 * v = d*x + e*y + f  (y-coordinate transformation)
+	 * 
+	 * Where the AffineTransform matrix is:
+	 * [a  b  c]   [m00  m01  m02]
+	 * [d  e  f] = [m10  m11  m12]
+	 * [0  0  1]   [  0    0    1]
+	 */
 	private AffineTransform computeAffineTransform(List<Point2D> srcPoints, List<Point2D> dstPoints) {
 		int n = srcPoints.size();
 		if (n < 3)
@@ -177,6 +194,9 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 			sumVY += v * y;
 		}
 
+		// Solve for transform parameters using least squares
+		// Matrix equation: A * [a, b, c]^T = [sumUX, sumUY, sumU]^T
+		//                  A * [d, e, f]^T = [sumVX, sumVY, sumV]^T
 		double[][] A = { { sumX2, sumXY, sumX }, { sumXY, sumY2, sumY }, { sumX, sumY, (double) n } };
 
 		double[] B_u = { sumUX, sumUY, sumU };
@@ -188,6 +208,10 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 		if (sol_u == null || sol_v == null)
 			return new AffineTransform();
 
+		// AffineTransform(m00, m10, m01, m11, m02, m12)
+		// m00 = a (x-scale and rotation), m01 = b (x-shear)
+		// m10 = d (y-shear), m11 = e (y-scale and rotation)
+		// m02 = c (x-translation), m12 = f (y-translation)
 		return new AffineTransform(sol_u[0], sol_v[0], sol_u[1], sol_v[1], sol_u[2], sol_v[2]);
 	}
 
