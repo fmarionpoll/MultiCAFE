@@ -27,6 +27,7 @@ import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.ExperimentDirectories;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.JComponents.SequenceNameListRenderer;
 
 public class LoadSaveExperiment extends JPanel implements PropertyChangeListener, ItemListener, SequenceListener {
@@ -199,7 +200,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			parent0.paneCapillaries.updateDialogs(exp);
 		} else {
 			flag = false;
-			System.out.println(
+			Logger.error(
 					"LoadSaveExperiments:openSelectedExperiment() Error: no jpg files found for this experiment\n");
 		}
 		parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);

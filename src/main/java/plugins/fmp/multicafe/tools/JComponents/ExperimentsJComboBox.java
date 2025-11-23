@@ -14,6 +14,7 @@ import icy.system.thread.Processor;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.Comparators;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
 
@@ -82,7 +83,7 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 
 					long diff = lastOffset_Ms - firstOffset_Ms;
 					if (diff < 1) {
-						System.out.println("ExperimentCombo:get_MsTime_of_StartAndEnd_AllExperiments() Expt # " + i
+						Logger.warn("ExperimentCombo:get_MsTime_of_StartAndEnd_AllExperiments() Expt # " + i
 								+ ": FileTime difference between last and first image < 1; set dt between images = 1 ms");
 						diff = exp.getSeqCamData().seq.getSizeT();
 					}
@@ -147,7 +148,7 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 			try {
 				f.get();
 			} catch (ExecutionException e) {
-				System.out.println("ExperimentCombo:waitFuturesCompletion() - Warning: " + e);
+				Logger.warn("ExperimentCombo:waitFuturesCompletion() - Warning: " + e);
 			} catch (InterruptedException e) {
 				// ignore
 			}

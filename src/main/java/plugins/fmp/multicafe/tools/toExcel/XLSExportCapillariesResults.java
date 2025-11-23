@@ -10,6 +10,8 @@ import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 
+import plugins.fmp.multicafe.tools.Logger;
+
 public class XLSExportCapillariesResults extends XLSExport {
 	//
 	@Override
@@ -149,7 +151,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 		String error = "XLSExport:ExportError() ERROR in " + expi.getExperimentDirectory() + "\n nOutputFrames="
 				+ nOutputFrames + " kymoFirstCol_Ms=" + expi.getKymoFirst_ms() + " kymoLastCol_Ms="
 				+ expi.getKymoLast_ms();
-		System.out.println(error);
+		Logger.error(error);
 	}
 
 	private XLSResultsArray getXLSResultsArray_Descriptors_From_CombinedExperiment(Experiment exp,

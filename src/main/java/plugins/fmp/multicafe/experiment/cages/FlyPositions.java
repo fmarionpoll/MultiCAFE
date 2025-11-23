@@ -12,6 +12,7 @@ import org.w3c.dom.Node;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.Comparators;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DMeasures;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
@@ -496,7 +497,7 @@ public class FlyPositions {
 				try {
 					ellipsoidValues = ROI2DMeasures.computeOrientation(pos.flyRoi, null);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Logger.error("FlyPositions:computeOrientation()", e);
 				}
 				pos.axis1 = ellipsoidValues[0];
 				pos.axis2 = ellipsoidValues[1];

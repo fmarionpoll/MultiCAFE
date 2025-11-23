@@ -292,7 +292,7 @@ public class CapillariesPersistence {
                 return data[1];
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error("CapillariesPersistence:csvLoad_Description()", e);
         }
         return null;
     }
@@ -336,7 +336,7 @@ public class CapillariesPersistence {
             csvWriter.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error("CapillariesPersistence:csvSave_Capillaries()", e);
         }
 
         return true;
@@ -356,7 +356,7 @@ public class CapillariesPersistence {
                 csvWriter.append("#" + csvSep + "#\n");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error("CapillariesPersistence:csvSave_DescriptionSection()", e);
         }
 
         return true;
@@ -373,7 +373,7 @@ public class CapillariesPersistence {
 
             csvWriter.append("#" + csvSep + "#\n");
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error("CapillariesPersistence:csvSave_MeasuresSection()", e);
         }
         return true;
     }

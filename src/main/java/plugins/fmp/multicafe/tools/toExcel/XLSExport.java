@@ -20,6 +20,7 @@ import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
+import plugins.fmp.multicafe.tools.Logger;
 
 public abstract class XLSExport {
 	protected XLSExportOptions options = null;
@@ -35,7 +36,7 @@ public abstract class XLSExport {
 	// ------------------------------------------------
 
 	public void exportToFile(String filename, XLSExportOptions opt) {
-		System.out.println("XLSExport:exportToFile() - start output");
+		Logger.info("XLSExport:exportToFile() - start output");
 		options = opt;
 		expList = options.expList;
 
@@ -69,9 +70,9 @@ public abstract class XLSExport {
 			workbook.close();
 			progress.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("XLSExport:exportToFile()", e);
 		}
-		System.out.println("XLSExport:exportToFile() XLS output finished");
+		Logger.info("XLSExport:exportToFile() XLS output finished");
 	}
 
 	protected abstract void loadMeasures();

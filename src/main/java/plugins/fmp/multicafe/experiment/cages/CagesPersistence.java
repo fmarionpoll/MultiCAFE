@@ -245,7 +245,7 @@ public class CagesPersistence {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("CagesPersistence:csvLoad_DESCRIPTION()", e);
 		}
 		return null;
 	}
@@ -273,7 +273,7 @@ public class CagesPersistence {
 				cage.csvImport_CAGE_Header(data);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("CagesPersistence:csvLoad_CageBox()", e);
 		}
 		return null;
 	}
@@ -304,7 +304,7 @@ public class CagesPersistence {
 					cage.csvImport_MEASURE_Data_Parameters(data);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("CagesPersistence:csvLoad_Measures()", e);
 		}
 		return null;
 	}
@@ -322,7 +322,7 @@ public class CagesPersistence {
 			csvWriter.close();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("CagesPersistence:csvSave_Cages()", e);
 		}
 
 		return true;
@@ -342,7 +342,7 @@ public class CagesPersistence {
 				csvWriter.append("#" + csvSep + "#\n");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("CagesPersistence:csvSave_Description()", e);
 		}
 
 		return true;
@@ -359,7 +359,7 @@ public class CagesPersistence {
 
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("CagesPersistence:csvSave_Measures()", e);
 		}
 		return true;
 	}

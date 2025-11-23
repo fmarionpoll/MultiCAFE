@@ -6,18 +6,19 @@ import java.util.List;
 import icy.roi.ROI2D;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class SequenceKymosUtils {
 	public static void transferCamDataROIStoKymo(Experiment exp) {
 		if (exp.getSeqKymos() == null) {
-			System.out.println("SequenceKymosUtils:transferCamDataROIstoKymo seqkymos null - return");
+			Logger.warn("SequenceKymosUtils:transferCamDataROIstoKymo seqkymos null - return");
 			return;
 		}
 		if (exp.getCapillaries() == null) {
 			exp.setCapillaries(new Capillaries());
-			System.out.println("SequenceKymosUtils:transferCamDataROIstoKymo error: seqkymos.capillaries was null");
+			Logger.error("SequenceKymosUtils:transferCamDataROIstoKymo error: seqkymos.capillaries was null");
 		}
 
 		// rois not in cap? add
