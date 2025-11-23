@@ -28,6 +28,7 @@ import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.FlyDetect2;
+import plugins.fmp.multicafe.service.SequenceLoaderService;
 import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformOptions;
@@ -314,7 +315,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		int index = 0;
 		if (display) {
 			if (exp.getSeqCamData().refImage == null) {
-				exp.loadReferenceImage();
+				new SequenceLoaderService().loadReferenceImage(exp);
 			}
 			optionsStep1.backgroundImage = exp.getSeqCamData().refImage;
 			index = 1;

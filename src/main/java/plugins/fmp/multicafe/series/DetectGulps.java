@@ -15,6 +15,7 @@ import icy.type.geom.Polyline2D;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.experiment.capillaries.CapillaryMeasure;
+import plugins.fmp.multicafe.service.KymographService;
 
 public class DetectGulps extends BuildSeries {
 
@@ -38,7 +39,7 @@ public class DetectGulps extends BuildSeries {
 		if (exp.getSeqKymos() == null)
 			return;
 		int zChannelDestination = 2;
-		exp.kymosBuildFiltered01(0, zChannelDestination, options.transformForGulps, options.spanDiff);
+		new KymographService().buildFiltered(exp, 0, zChannelDestination, options.transformForGulps, options.spanDiff);
 	}
 
 	public void detectGulpsFromExperiment(Experiment exp) {

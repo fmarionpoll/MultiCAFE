@@ -10,6 +10,7 @@ import icy.image.IcyBufferedImageCursor;
 import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.service.SequenceLoaderService;
 import plugins.fmp.multicafe.tools.ViewerFMP;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformOptions;
@@ -77,7 +78,7 @@ public class BuildBackground extends BuildSeries {
 			transformOptions.background_delta = options.background_delta;
 			transformOptions.background_jitter = options.background_jitter;
 			buildBackgroundImage(exp, transformOptions);
-			exp.saveReferenceImage(seqReference.getFirstImage());
+			new SequenceLoaderService().saveReferenceImage(exp);
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();

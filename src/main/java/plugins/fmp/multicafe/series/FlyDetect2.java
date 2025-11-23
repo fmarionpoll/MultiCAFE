@@ -2,6 +2,7 @@ package plugins.fmp.multicafe.series;
 
 import icy.image.IcyBufferedImageUtil;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.service.SequenceLoaderService;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformOptions;
 
@@ -16,7 +17,7 @@ public class FlyDetect2 extends FlyDetect {
 		find_flies.initParametersForDetection(exp, options);
 		exp.cages.initFlyPositions(options.detectCage);
 		options.threshold = options.thresholdDiff;
-		if (exp.loadReferenceImage()) {
+		if (new SequenceLoaderService().loadReferenceImage(exp)) {
 			openFlyDetectViewers(exp);
 			findFliesInAllFrames(exp);
 		}

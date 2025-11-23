@@ -29,6 +29,7 @@ import icy.type.collection.array.Array1DUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
+import plugins.fmp.multicafe.service.KymographService;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 
 public class MCSpots_1 extends JPanel {
@@ -90,7 +91,7 @@ public class MCSpots_1 extends JPanel {
 			return;
 		ImageTransformEnums transform = ImageTransformEnums.SUBTRACT_1RSTCOL;
 		int zChannelDestination = 1;
-		exp.kymosBuildFiltered01(0, zChannelDestination, transform, 0);
+		new KymographService().buildFiltered(exp, 0, zChannelDestination, transform, 0);
 		seqKymos.seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
 	}
 

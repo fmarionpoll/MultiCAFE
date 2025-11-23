@@ -25,8 +25,6 @@ import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Directories;
 import plugins.fmp.multicafe.tools.Logger;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
@@ -737,56 +735,6 @@ public class Experiment {
 		}
 	}
 
-	public void kymosBuildFiltered01(int zChannelSource, int zChannelDestination, ImageTransformEnums transformop1,
-			int spanDiff) {
-		int nimages = seqKymos.seq.getSizeT();
-		seqKymos.seq.beginUpdate();
-
-		ImageTransformInterface transform = transformop1.getFunction();
-		if (transform == null)
-			return;
-
-		if (capillaries.capillariesList.size() != nimages)
-			SequenceKymosUtils.transferCamDataROIStoKymo(this);
-
-		for (int t = 0; t < nimages; t++) {
-			Capillary cap = capillaries.capillariesList.get(t);
-			cap.kymographIndex = t;
-			IcyBufferedImage img = seqKymos.getSeqImage(t, zChannelSource);
-			IcyBufferedImage img2 = transform.getTransformedImage(img, null);
-			if (seqKymos.seq.getSizeZ(0) < (zChannelDestination + 1))
-				seqKymos.seq.addImage(t, img2);
-			else
-				seqKymos.seq.setImage(t, zChannelDestination, img2);
-		}
-
-		seqKymos.seq.dataChanged();
-		seqKymos.seq.endUpdate();
-	}
-
-	public boolean loadReferenceImage() {
-		BufferedImage image = null;
-		File inputfile = new File(getReferenceImageFullName());
-		boolean exists = inputfile.exists();
-		if (!exists)
-			return false;
-		image = ImageUtil.load(inputfile, true);
-		if (image == null) {
-			Logger.warn("Experiment:loadReferenceImage() image not loaded / not found: " + getReferenceImageFullName());
-			return false;
-		}
-		seqCamData.refImage = IcyBufferedImage.createFrom(image);
-		seqReference = new Sequence(seqCamData.refImage);
-		seqReference.setName("referenceImage");
-		return true;
-	}
-
-	public boolean saveReferenceImage(IcyBufferedImage referenceImage) {
-		File outputfile = new File(getReferenceImageFullName());
-		RenderedImage image = ImageUtil.toRGBImage(referenceImage);
-		return ImageUtil.save(image, "jpg", outputfile);
-	}
-
 	public void cleanPreviousDetectedFliesROIs() {
 		ArrayList<ROI2D> list = seqCamData.seq.getROI2Ds();
 		for (ROI2D roi : list) {
@@ -941,10 +889,6 @@ public class Experiment {
 		capillaries.capillariesDescription.old_sex = sex;
 		capillaries.capillariesDescription.old_cond1 = condition1;
 		capillaries.capillariesDescription.old_cond2 = condition2;
-	}
-
-	private String getReferenceImageFullName() {
-		return experimentDirectory + File.separator + "referenceImage.jpg";
 	}
 
 	public SequenceCamData getSeqCamData() {

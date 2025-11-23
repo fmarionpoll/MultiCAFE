@@ -29,6 +29,7 @@ import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.series.BuildBackground;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
+import plugins.fmp.multicafe.service.SequenceLoaderService;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.Overlay.OverlayThreshold;
 
@@ -109,7 +110,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
-					exp.saveReferenceImage(exp.getSeqCamData().refImage);
+					new SequenceLoaderService().saveReferenceImage(exp);
 			}
 		});
 
@@ -161,7 +162,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 	void loadBackground() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			boolean flag = exp.loadReferenceImage();
+			boolean flag = new SequenceLoaderService().loadReferenceImage(exp);
 			if (flag) {
 				Viewer v = new Viewer(exp.seqReference, true);
 				Rectangle rectv = exp.getSeqCamData().seq.getFirstViewer().getBoundsInternal();

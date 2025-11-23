@@ -22,14 +22,46 @@ import icy.sequence.MetaDataUtil;
 import icy.type.DataType;
 import icy.type.collection.array.Array1DUtil;
 import plugins.fmp.multicafe.experiment.EnumStatus;
+import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.ExperimentDirectories;
 import plugins.fmp.multicafe.experiment.ImageFileDescriptor;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
+import plugins.fmp.multicafe.experiment.SequenceKymosUtils;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Logger;
+import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
 
 public class KymographService {
+
+	public void buildFiltered(Experiment exp, int zChannelSource, int zChannelDestination, ImageTransformEnums transformop1,
+			int spanDiff) {
+		SequenceKymos seqKymos = exp.getSeqKymos();
+		int nimages = seqKymos.seq.getSizeT();
+		seqKymos.seq.beginUpdate();
+
+		ImageTransformInterface transform = transformop1.getFunction();
+		if (transform == null)
+			return;
+
+		if (exp.getCapillaries().capillariesList.size() != nimages)
+			SequenceKymosUtils.transferCamDataROIStoKymo(exp);
+
+		for (int t = 0; t < nimages; t++) {
+			Capillary cap = exp.getCapillaries().capillariesList.get(t);
+			cap.kymographIndex = t;
+			IcyBufferedImage img = seqKymos.getSeqImage(t, zChannelSource);
+			IcyBufferedImage img2 = transform.getTransformedImage(img, null);
+			if (seqKymos.seq.getSizeZ(0) < (zChannelDestination + 1))
+				seqKymos.seq.addImage(t, img2);
+			else
+				seqKymos.seq.setImage(t, zChannelDestination, img2);
+		}
+
+		seqKymos.seq.dataChanged();
+		seqKymos.seq.endUpdate();
+	}
 
 	public List<ImageFileDescriptor> loadListOfPotentialKymographsFromCapillaries(String dir, Capillaries capillaries) {
 		renameCapillary_Files(dir);
