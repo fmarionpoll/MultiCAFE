@@ -70,15 +70,15 @@ public class ExperimentPersistence {
 		if (exp.getKymoLast_ms() < 0)
 			exp.setKymoLast_ms(0);
 
-		if (exp.getField_boxID() != null && exp.getField_boxID().contentEquals("..")) {
-			exp.setField_boxID(XMLUtil.getElementValue(node, ID_BOXID, ".."));
-			exp.setField_experiment(XMLUtil.getElementValue(node, ID_EXPERIMENT, ".."));
-			exp.setField_comment1(XMLUtil.getElementValue(node, ID_COMMENT1, ".."));
-			exp.setField_comment2(XMLUtil.getElementValue(node, ID_COMMENT2, ".."));
-			exp.setField_strain(XMLUtil.getElementValue(node, ID_STRAIN, ".."));
-			exp.setField_sex(XMLUtil.getElementValue(node, ID_SEX, ".."));
-			exp.setField_cond1(XMLUtil.getElementValue(node, ID_COND1, ".."));
-			exp.setField_cond2(XMLUtil.getElementValue(node, ID_COND2, ".."));
+		if (exp.getBoxID() != null && exp.getBoxID().contentEquals("..")) {
+			exp.setBoxID(XMLUtil.getElementValue(node, ID_BOXID, ".."));
+			exp.setExperiment(XMLUtil.getElementValue(node, ID_EXPERIMENT, ".."));
+			exp.setComment1(XMLUtil.getElementValue(node, ID_COMMENT1, ".."));
+			exp.setComment2(XMLUtil.getElementValue(node, ID_COMMENT2, ".."));
+			exp.setStrain(XMLUtil.getElementValue(node, ID_STRAIN, ".."));
+			exp.setSex(XMLUtil.getElementValue(node, ID_SEX, ".."));
+			exp.setCondition1(XMLUtil.getElementValue(node, ID_COND1, ".."));
+			exp.setCondition2(XMLUtil.getElementValue(node, ID_COND2, ".."));
 		}
 		return true;
 	}
@@ -100,16 +100,16 @@ public class ExperimentPersistence {
 			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, exp.getKymoLast_ms());
 			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, exp.getKymoBin_ms());
 
-			XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, exp.getStrImagesDirectory());
+			XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, exp.getImagesDirectory());
 
-			XMLUtil.setElementValue(node, ID_BOXID, exp.getField_boxID());
-			XMLUtil.setElementValue(node, ID_EXPERIMENT, exp.getField_experiment());
-			XMLUtil.setElementValue(node, ID_COMMENT1, exp.getField_comment1());
-			XMLUtil.setElementValue(node, ID_COMMENT2, exp.getField_comment2());
-			XMLUtil.setElementValue(node, ID_STRAIN, exp.getField_strain());
-			XMLUtil.setElementValue(node, ID_SEX, exp.getField_sex());
-			XMLUtil.setElementValue(node, ID_COND1, exp.getField_cond1());
-			XMLUtil.setElementValue(node, ID_COND2, exp.getField_cond2());
+			XMLUtil.setElementValue(node, ID_BOXID, exp.getBoxID());
+			XMLUtil.setElementValue(node, ID_EXPERIMENT, exp.getExperiment());
+			XMLUtil.setElementValue(node, ID_COMMENT1, exp.getComment1());
+			XMLUtil.setElementValue(node, ID_COMMENT2, exp.getComment2());
+			XMLUtil.setElementValue(node, ID_STRAIN, exp.getStrain());
+			XMLUtil.setElementValue(node, ID_SEX, exp.getSex());
+			XMLUtil.setElementValue(node, ID_COND1, exp.getCondition1());
+			XMLUtil.setElementValue(node, ID_COND2, exp.getCondition2());
 
 			XMLUtil.saveDocument(doc, csFileName);
 			return true;

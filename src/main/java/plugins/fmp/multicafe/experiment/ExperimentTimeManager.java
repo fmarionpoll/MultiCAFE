@@ -18,15 +18,15 @@ public class ExperimentTimeManager {
 	public long kymoLast_ms = 0;
 	public long kymoBin_ms = 60000;
 
-	public void getFileIntervalsFromSeqCamData(SequenceCamData seqCamData, String strImagesDirectory) {
+	public void getFileIntervalsFromSeqCamData(SequenceCamData seqCamData, String imagesDirectory) {
 		if (seqCamData != null && (camImageFirst_ms < 0 || camImageLast_ms < 0 || camImageBin_ms < 0)) {
-			loadFileIntervalsFromSeqCamData(seqCamData, strImagesDirectory);
+			loadFileIntervalsFromSeqCamData(seqCamData, imagesDirectory);
 		}
 	}
 
-	public void loadFileIntervalsFromSeqCamData(SequenceCamData seqCamData, String strImagesDirectory) {
+	public void loadFileIntervalsFromSeqCamData(SequenceCamData seqCamData, String imagesDirectory) {
 		if (seqCamData != null) {
-			seqCamData.setImagesDirectory(strImagesDirectory);
+			seqCamData.setImagesDirectory(imagesDirectory);
 			firstImage_FileTime = seqCamData.getFileTimeFromStructuredName(0);
 			lastImage_FileTime = seqCamData.getFileTimeFromStructuredName(seqCamData.nTotalFrames - 1);
 			if (firstImage_FileTime != null && lastImage_FileTime != null) {

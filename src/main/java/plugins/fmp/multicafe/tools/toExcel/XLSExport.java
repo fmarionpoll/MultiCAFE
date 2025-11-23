@@ -1,23 +1,27 @@
 package plugins.fmp.multicafe.tools.toExcel;
 
 import java.awt.Point;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 
-public class XLSExport {
+public abstract class XLSExport {
 	protected XLSExportOptions options = null;
 	protected CombinedExperiment expAll = null;
 
@@ -29,6 +33,50 @@ public class XLSExport {
 	ExperimentsJComboBox expList = null;
 
 	// ------------------------------------------------
+
+	public void exportToFile(String filename, XLSExportOptions opt) {
+		System.out.println("XLSExport:exportToFile() - start output");
+		options = opt;
+		expList = options.expList;
+
+		loadMeasures();
+
+		ProgressFrame progress = new ProgressFrame("Export data to Excel");
+		int nbexpts = expList.getItemCount();
+		progress.setLength(nbexpts);
+
+		try {
+			int column = 1;
+			int iSeries = 0;
+			workbook = xlsInitWorkbook();
+			for (int index = options.firstExp; index <= options.lastExp; index++) {
+				Experiment exp = expList.getItemAt(index);
+				if (exp.chainToPreviousExperiment != null)
+					continue;
+
+				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
+				String charSeries = CellReference.convertNumToColString(iSeries);
+
+				column = processExperiment(exp, column, charSeries);
+
+				iSeries++;
+				progress.incPosition();
+			}
+			progress.setMessage("Save Excel file to disk... ");
+			FileOutputStream fileOut = new FileOutputStream(filename);
+			workbook.write(fileOut);
+			fileOut.close();
+			workbook.close();
+			progress.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("XLSExport:exportToFile() XLS output finished");
+	}
+
+	protected abstract void loadMeasures();
+
+	protected abstract int processExperiment(Experiment exp, int col0, String charSeries);
 
 	int writeTop_descriptors(XSSFSheet sheet, EnumXLSExport xlsExport) {
 		Point pt = new Point(0, 0);

@@ -34,9 +34,9 @@ public class Experiment {
 	public final static String RESULTS = "results";
 	public final static String BIN = "bin_";
 
-	private String strImagesDirectory = null;
-	private String strExperimentDirectory = null;
-	private String strBinSubDirectory = null;
+	private String imagesDirectory = null;
+	private String experimentDirectory = null;
+	private String binSubDirectory = null;
 
 	private SequenceCamData seqCamData = null;
 	private SequenceKymos seqKymos = null;
@@ -130,14 +130,14 @@ public class Experiment {
 
 	// _________________________________________________
 
-	private String field_boxID = new String("..");
-	private String field_experiment = new String("..");
-	private String field_comment1 = new String("..");
-	private String field_comment2 = new String("..");
-	private String field_strain = new String("..");
-	private String field_sex = new String("..");
-	private String field_cond1 = new String("..");
-	private String field_cond2 = new String("..");
+	private String boxID = new String("..");
+	private String experiment = new String("..");
+	private String comment1 = new String("..");
+	private String comment2 = new String("..");
+	private String strain = new String("..");
+	private String sex = new String("..");
+	private String condition1 = new String("..");
+	private String condition2 = new String("..");
 
 	public int col = -1;
 	public Experiment chainToPreviousExperiment = null;
@@ -162,13 +162,13 @@ public class Experiment {
 	public Experiment(String expDirectory) {
 		seqCamData = new SequenceCamData();
 		seqKymos = new SequenceKymos();
-		this.strExperimentDirectory = expDirectory;
+		this.experimentDirectory = expDirectory;
 	}
 
 	public Experiment(SequenceCamData seqCamData) {
 		this.seqCamData = seqCamData;
 		this.seqKymos = new SequenceKymos();
-		strExperimentDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
+		experimentDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
 		persistence.xmlLoadExperiment(this,
 				concatenateExptDirectoryWithSubpathAndName(null, ExperimentPersistence.ID_MCEXPERIMENT_XML));
@@ -178,12 +178,12 @@ public class Experiment {
 		String imgDir = null;
 		if (eADF.cameraImagesList.size() > 0)
 			imgDir = eADF.cameraImagesList.get(0);
-		strImagesDirectory = Directories.getDirectoryFromName(imgDir);
-		strExperimentDirectory = eADF.resultsDirectory;
-		String binDirectory = strExperimentDirectory + File.separator + eADF.binSubDirectory;
+		imagesDirectory = Directories.getDirectoryFromName(imgDir);
+		experimentDirectory = eADF.resultsDirectory;
+		String binDirectory = experimentDirectory + File.separator + eADF.binSubDirectory;
 		Path binDirectoryPath = Paths.get(binDirectory);
 		Path lastSubPath = binDirectoryPath.getName(binDirectoryPath.getNameCount() - 1);
-		strBinSubDirectory = lastSubPath.toString();
+		binSubDirectory = lastSubPath.toString();
 
 		seqCamData = new SequenceCamData(eADF.cameraImagesList);
 		getFileIntervalsFromSeqCamData();
@@ -196,30 +196,30 @@ public class Experiment {
 	// ----------------------------------
 
 	public String getExperimentDirectory() {
-		return strExperimentDirectory;
+		return experimentDirectory;
 	}
 
 	public void setExperimentDirectory(String fileName) {
-		strExperimentDirectory = ExperimentDirectories.getParentIf(fileName, BIN);
+		experimentDirectory = ExperimentDirectories.getParentIf(fileName, BIN);
 	}
 
 	public String toString() {
-		return strExperimentDirectory;
+		return experimentDirectory;
 	}
 
 	public String getKymosBinFullDirectory() {
-		String filename = strExperimentDirectory;
-		if (strBinSubDirectory != null)
-			filename += File.separator + strBinSubDirectory;
+		String filename = experimentDirectory;
+		if (binSubDirectory != null)
+			filename += File.separator + binSubDirectory;
 		return filename;
 	}
 
 	public void setBinSubDirectory(String bin) {
-		strBinSubDirectory = bin;
+		binSubDirectory = bin;
 	}
 
 	public String getBinSubDirectory() {
-		return strBinSubDirectory;
+		return binSubDirectory;
 	}
 
 	public boolean createDirectoryIfDoesNotExist(String directory) {
@@ -269,14 +269,6 @@ public class Experiment {
 		setBinSubDirectory(kymosSubDirectory);
 	}
 
-	public void setImagesDirectory(String name) {
-		strImagesDirectory = name;
-	}
-
-	public String getImagesDirectory() {
-		return strImagesDirectory;
-	}
-
 	public void closeSequences() {
 		new plugins.fmp.multicafe.service.ExperimentService().closeSequences(this);
 	}
@@ -288,7 +280,7 @@ public class Experiment {
 	private String getRootWithNoResultNorBinString(String directoryName) {
 		String name = directoryName.toLowerCase();
 		while (name.contains(RESULTS) || name.contains(BIN))
-			name = Paths.get(strExperimentDirectory).getParent().toString();
+			name = Paths.get(experimentDirectory).getParent().toString();
 		return name;
 	}
 
@@ -305,11 +297,11 @@ public class Experiment {
 	}
 
 	public void getFileIntervalsFromSeqCamData() {
-		timeManager.getFileIntervalsFromSeqCamData(seqCamData, strImagesDirectory);
+		timeManager.getFileIntervalsFromSeqCamData(seqCamData, imagesDirectory);
 	}
 
 	public void loadFileIntervalsFromSeqCamData() {
-		timeManager.loadFileIntervalsFromSeqCamData(seqCamData, strImagesDirectory);
+		timeManager.loadFileIntervalsFromSeqCamData(seqCamData, imagesDirectory);
 	}
 
 	public long[] build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(long firstImage_ms) {
@@ -330,9 +322,9 @@ public class Experiment {
 	}
 
 	public String getDirectoryToSaveResults() {
-		Path dir = Paths.get(strExperimentDirectory);
-		if (strBinSubDirectory != null)
-			dir = dir.resolve(strBinSubDirectory);
+		Path dir = Paths.get(experimentDirectory);
+		if (binSubDirectory != null)
+			dir = dir.resolve(binSubDirectory);
 		String directory = dir.toAbsolutePath().toString();
 		if (!createDirectoryIfDoesNotExist(directory))
 			directory = null;
@@ -366,17 +358,17 @@ public class Experiment {
 			flag = xmlLoadOldCapillaries();
 
 		// load MCcapillaries description of experiment
-		if (field_boxID.contentEquals("..") && field_experiment.contentEquals("..")
-				&& field_comment1.contentEquals("..") && field_comment2.contentEquals("..")
-				&& field_sex.contentEquals("..") && field_strain.contentEquals("..")) {
-			field_boxID = capillaries.capillariesDescription.old_boxID;
-			field_experiment = capillaries.capillariesDescription.old_experiment;
-			field_comment1 = capillaries.capillariesDescription.old_comment1;
-			field_comment2 = capillaries.capillariesDescription.old_comment2;
-			field_sex = capillaries.capillariesDescription.old_sex;
-			field_strain = capillaries.capillariesDescription.old_strain;
-			field_cond1 = capillaries.capillariesDescription.old_cond1;
-			field_cond2 = capillaries.capillariesDescription.old_cond2;
+		if (boxID.contentEquals("..") && experiment.contentEquals("..")
+				&& comment1.contentEquals("..") && comment2.contentEquals("..")
+				&& sex.contentEquals("..") && strain.contentEquals("..")) {
+			boxID = capillaries.capillariesDescription.old_boxID;
+			experiment = capillaries.capillariesDescription.old_experiment;
+			comment1 = capillaries.capillariesDescription.old_comment1;
+			comment2 = capillaries.capillariesDescription.old_comment2;
+			sex = capillaries.capillariesDescription.old_sex;
+			strain = capillaries.capillariesDescription.old_strain;
+			condition1 = capillaries.capillariesDescription.old_cond1;
+			condition2 = capillaries.capillariesDescription.old_cond2;
 		}
 		return flag;
 	}
@@ -446,7 +438,7 @@ public class Experiment {
 	// ---------------------------------------------
 
 	public boolean saveMCCapillaries_Only() {
-		String xmlCapillaryFileName = strExperimentDirectory + File.separator + capillaries.getXMLNameToAppend();
+		String xmlCapillaryFileName = experimentDirectory + File.separator + capillaries.getXMLNameToAppend();
 		transferExpDescriptorsToCapillariesDescriptors();
 		return capillaries.xmlSaveCapillaries_Descriptors(xmlCapillaryFileName);
 	}
@@ -533,28 +525,28 @@ public class Experiment {
 			strField = getCam();
 			break;
 		case EXP_STIM:
-			strField = field_comment1;
+			strField = comment1;
 			break;
 		case EXP_CONC:
-			strField = field_comment2;
+			strField = comment2;
 			break;
 		case EXP_EXPT:
-			strField = field_experiment;
+			strField = experiment;
 			break;
 		case EXP_BOXID:
-			strField = field_boxID;
+			strField = boxID;
 			break;
 		case EXP_STRAIN:
-			strField = field_strain;
+			strField = strain;
 			break;
 		case EXP_SEX:
-			strField = field_sex;
+			strField = sex;
 			break;
 		case EXP_COND1:
-			strField = field_cond1;
+			strField = condition1;
 			break;
 		case EXP_COND2:
-			strField = field_cond2;
+			strField = condition2;
 			break;
 		default:
 			break;
@@ -639,28 +631,28 @@ public class Experiment {
 	public void setExperimentFieldNoTest(EnumXLSColumnHeader fieldEnumCode, String newValue) {
 		switch (fieldEnumCode) {
 		case EXP_STIM:
-			field_comment1 = newValue;
+			comment1 = newValue;
 			break;
 		case EXP_CONC:
-			field_comment2 = newValue;
+			comment2 = newValue;
 			break;
 		case EXP_EXPT:
-			field_experiment = newValue;
+			experiment = newValue;
 			break;
 		case EXP_BOXID:
-			field_boxID = newValue;
+			boxID = newValue;
 			break;
 		case EXP_STRAIN:
-			field_strain = newValue;
+			strain = newValue;
 			break;
 		case EXP_SEX:
-			field_sex = newValue;
+			sex = newValue;
 			break;
 		case EXP_COND1:
-			field_cond1 = newValue;
+			condition1 = newValue;
 			break;
 		case EXP_COND2:
-			field_cond2 = newValue;
+			condition2 = newValue;
 			break;
 		default:
 			break;
@@ -849,14 +841,14 @@ public class Experiment {
 		String xmlFullFileName = File.separator + xmlFileName;
 		switch (item) {
 		case IMG_DIRECTORY:
-			strImagesDirectory = getRootWithNoResultNorBinString(strExperimentDirectory);
-			xmlFullFileName = strImagesDirectory + File.separator + xmlFileName;
+			imagesDirectory = getRootWithNoResultNorBinString(experimentDirectory);
+			xmlFullFileName = imagesDirectory + File.separator + xmlFileName;
 			break;
 
 		case BIN_DIRECTORY:
 			// any directory (below)
-			Path dirPath = Paths.get(strExperimentDirectory);
-			List<Path> subFolders = Directories.getAllSubPathsOfDirectory(strExperimentDirectory, 1);
+			Path dirPath = Paths.get(experimentDirectory);
+			List<Path> subFolders = Directories.getAllSubPathsOfDirectory(experimentDirectory, 1);
 			if (subFolders == null)
 				return null;
 			List<String> resultsDirList = Directories.getPathsContainingString(subFolders, RESULTS);
@@ -873,17 +865,17 @@ public class Experiment {
 
 		case EXPT_DIRECTORY:
 		default:
-			xmlFullFileName = strExperimentDirectory + xmlFullFileName;
+			xmlFullFileName = experimentDirectory + xmlFullFileName;
 			break;
 		}
 
 		// current directory
 		if (xmlFullFileName != null && fileExists(xmlFullFileName)) {
 			if (item == IMG_DIRECTORY) {
-				strImagesDirectory = getRootWithNoResultNorBinString(strExperimentDirectory);
-				ExperimentDirectories.moveAndRename(xmlFileName, strImagesDirectory, xmlFileName,
-						strExperimentDirectory);
-				xmlFullFileName = strExperimentDirectory + xmlFullFileName;
+				imagesDirectory = getRootWithNoResultNorBinString(experimentDirectory);
+				ExperimentDirectories.moveAndRename(xmlFileName, imagesDirectory, xmlFileName,
+						experimentDirectory);
+				xmlFullFileName = experimentDirectory + xmlFullFileName;
 			}
 			return xmlFullFileName;
 		}
@@ -911,9 +903,9 @@ public class Experiment {
 
 	private String concatenateExptDirectoryWithSubpathAndName(String subpath, String name) {
 		if (subpath != null)
-			return strExperimentDirectory + File.separator + subpath + File.separator + name;
+			return experimentDirectory + File.separator + subpath + File.separator + name;
 		else
-			return strExperimentDirectory + File.separator + name;
+			return experimentDirectory + File.separator + name;
 	}
 
 	private void addCapillariesValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
@@ -941,18 +933,18 @@ public class Experiment {
 	}
 
 	private void transferExpDescriptorsToCapillariesDescriptors() {
-		capillaries.capillariesDescription.old_boxID = field_boxID;
-		capillaries.capillariesDescription.old_experiment = field_experiment;
-		capillaries.capillariesDescription.old_comment1 = field_comment1;
-		capillaries.capillariesDescription.old_comment2 = field_comment2;
-		capillaries.capillariesDescription.old_strain = field_strain;
-		capillaries.capillariesDescription.old_sex = field_sex;
-		capillaries.capillariesDescription.old_cond1 = field_cond1;
-		capillaries.capillariesDescription.old_cond2 = field_cond2;
+		capillaries.capillariesDescription.old_boxID = boxID;
+		capillaries.capillariesDescription.old_experiment = experiment;
+		capillaries.capillariesDescription.old_comment1 = comment1;
+		capillaries.capillariesDescription.old_comment2 = comment2;
+		capillaries.capillariesDescription.old_strain = strain;
+		capillaries.capillariesDescription.old_sex = sex;
+		capillaries.capillariesDescription.old_cond1 = condition1;
+		capillaries.capillariesDescription.old_cond2 = condition2;
 	}
 
 	private String getReferenceImageFullName() {
-		return strExperimentDirectory + File.separator + "referenceImage.jpg";
+		return experimentDirectory + File.separator + "referenceImage.jpg";
 	}
 
 	public SequenceCamData getSeqCamData() {
@@ -981,76 +973,76 @@ public class Experiment {
 		this.capillaries = capillaries;
 	}
 
-	public String getStrImagesDirectory() {
-		return strImagesDirectory;
+	public String getImagesDirectory() {
+		return imagesDirectory;
 	}
 
-	public void setStrImagesDirectory(String strImagesDirectory) {
-		this.strImagesDirectory = strImagesDirectory;
+	public void setImagesDirectory(String imagesDirectory) {
+		this.imagesDirectory = imagesDirectory;
 	}
 
-	public String getField_boxID() {
-		return field_boxID;
+	public String getBoxID() {
+		return boxID;
 	}
 
-	public void setField_boxID(String field_boxID) {
-		this.field_boxID = field_boxID;
+	public void setBoxID(String boxID) {
+		this.boxID = boxID;
 	}
 
-	public String getField_experiment() {
-		return field_experiment;
+	public String getExperiment() {
+		return experiment;
 	}
 
-	public void setField_experiment(String field_experiment) {
-		this.field_experiment = field_experiment;
+	public void setExperiment(String experiment) {
+		this.experiment = experiment;
 	}
 
-	public String getField_comment1() {
-		return field_comment1;
+	public String getComment1() {
+		return comment1;
 	}
 
-	public void setField_comment1(String field_comment1) {
-		this.field_comment1 = field_comment1;
+	public void setComment1(String comment1) {
+		this.comment1 = comment1;
 	}
 
-	public String getField_comment2() {
-		return field_comment2;
+	public String getComment2() {
+		return comment2;
 	}
 
-	public void setField_comment2(String field_comment2) {
-		this.field_comment2 = field_comment2;
+	public void setComment2(String comment2) {
+		this.comment2 = comment2;
 	}
 
-	public String getField_strain() {
-		return field_strain;
+	public String getStrain() {
+		return strain;
 	}
 
-	public void setField_strain(String field_strain) {
-		this.field_strain = field_strain;
+	public void setStrain(String strain) {
+		this.strain = strain;
 	}
 
-	public String getField_sex() {
-		return field_sex;
+	public String getSex() {
+		return sex;
 	}
 
-	public void setField_sex(String field_sex) {
-		this.field_sex = field_sex;
+	public void setSex(String sex) {
+		this.sex = sex;
 	}
 
-	public String getField_cond1() {
-		return field_cond1;
+	public String getCondition1() {
+		return condition1;
 	}
 
-	public void setField_cond1(String field_cond1) {
-		this.field_cond1 = field_cond1;
+	public void setCondition1(String condition1) {
+		this.condition1 = condition1;
 	}
 
-	public String getField_cond2() {
-		return field_cond2;
+	public String getCondition2() {
+		return condition2;
 	}
 
-	public void setField_cond2(String field_cond2) {
-		this.field_cond2 = field_cond2;
+	public void setCondition2(String condition2) {
+		this.condition2 = condition2;
 	}
 
 }

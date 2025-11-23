@@ -16,64 +16,37 @@ import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 
 public class XLSExportCapillariesResults extends XLSExport {
 	//
-	public void exportToFile(String filename, XLSExportOptions opt) {
-		System.out.println("XLSExpoportCapillaries:exportToFile() - start output");
-		options = opt;
-		expList = options.expList;
-
+	@Override
+	protected void loadMeasures() {
 		boolean loadCapillaries = true;
 		boolean loadDrosoTrack = options.onlyalive;
 		expList.loadListOfMeasuresFromAllExperiments(loadCapillaries, loadDrosoTrack);
 		expList.chainExperimentsUsingKymoIndexes(options.collateSeries);
 		expList.setFirstImageForAllExperiments(options.collateSeries);
 		expAll = expList.get_MsTime_of_StartAndEnd_AllExperiments(options);
+	}
 
-		ProgressFrame progress = new ProgressFrame("Export data to Excel");
-		int nbexpts = expList.getItemCount();
-		progress.setLength(nbexpts);
-
-		try {
-			int column = 1;
-			int iSeries = 0;
-			workbook = xlsInitWorkbook();
-			for (int index = options.firstExp; index <= options.lastExp; index++) {
-				Experiment exp = expList.getItemAt(index);
-				if (exp.chainToPreviousExperiment != null)
-					continue;
-
-				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
-				String charSeries = CellReference.convertNumToColString(iSeries);
-
-				if (options.topLevel) {
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPRAW);
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVEL);
-				}
-				if (options.lrPI && options.topLevel)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVEL_LR);
-				if (options.topLevelDelta)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVELDELTA);
-				if (options.lrPI && options.topLevelDelta)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVELDELTA_LR);
-				if (options.bottomLevel)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.BOTTOMLEVEL);
-				if (options.derivative)
-					getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.DERIVEDVALUES);
-
-				if (!options.collateSeries || exp.chainToPreviousExperiment == null)
-					column += expList.maxSizeOfCapillaryArrays + 2;
-				iSeries++;
-				progress.incPosition();
-			}
-			progress.setMessage("Save Excel file to disk... ");
-			FileOutputStream fileOut = new FileOutputStream(filename);
-			workbook.write(fileOut);
-			fileOut.close();
-			workbook.close();
-			progress.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+	@Override
+	protected int processExperiment(Experiment exp, int col0, String charSeries) {
+		if (options.topLevel) {
+			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.TOPRAW);
+			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.TOPLEVEL);
 		}
-		System.out.println("XLSExpoportCapillaries:exportToFile() XLS output finished");
+		if (options.lrPI && options.topLevel)
+			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.TOPLEVEL_LR);
+		if (options.topLevelDelta)
+			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.TOPLEVELDELTA);
+		if (options.lrPI && options.topLevelDelta)
+			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.TOPLEVELDELTA_LR);
+		if (options.bottomLevel)
+			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.BOTTOMLEVEL);
+		if (options.derivative)
+			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.DERIVEDVALUES);
+
+		if (!options.collateSeries || exp.chainToPreviousExperiment == null)
+			return col0 + expList.maxSizeOfCapillaryArrays + 2;
+
+		return col0;
 	}
 
 	int getCapillaryDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExport xlsExport) {

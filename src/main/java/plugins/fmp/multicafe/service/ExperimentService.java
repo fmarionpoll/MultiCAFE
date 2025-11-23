@@ -23,7 +23,7 @@ public class ExperimentService {
 	}
 
 	public SequenceCamData openSequenceCamData(Experiment exp) {
-		loadImagesForSequenceCamData(exp, exp.getStrImagesDirectory());
+		loadImagesForSequenceCamData(exp, exp.getImagesDirectory());
 		if (exp.getSeqCamData() != null) {
 			exp.xmlLoad_MCExperiment();
 			exp.getFileIntervalsFromSeqCamData();
@@ -32,9 +32,9 @@ public class ExperimentService {
 	}
 
 	private SequenceCamData loadImagesForSequenceCamData(Experiment exp, String filename) {
-		String strImagesDirectory = ExperimentDirectories.getImagesDirectoryAsParentFromFileName(filename);
-		exp.setStrImagesDirectory(strImagesDirectory);
-		List<String> imagesList = ExperimentDirectories.getV2ImagesListFromPath(strImagesDirectory);
+		String imagesDirectory = ExperimentDirectories.getImagesDirectoryAsParentFromFileName(filename);
+		exp.setImagesDirectory(imagesDirectory);
+		List<String> imagesList = ExperimentDirectories.getV2ImagesListFromPath(imagesDirectory);
 		imagesList = ExperimentDirectories.keepOnlyAcceptedNames_List(imagesList, "jpg");
 		if (imagesList.size() < 1) {
 			exp.setSeqCamData(null);
