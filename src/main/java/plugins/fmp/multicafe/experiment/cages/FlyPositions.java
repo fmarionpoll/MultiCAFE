@@ -12,30 +12,129 @@ import org.w3c.dom.Node;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.Comparators;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DMeasures;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
 
 public class FlyPositions {
-	public Double moveThreshold = 50.;
-	public int sleepThreshold = 5;
-	public int lastTimeAlive = 0;
-	public int lastIntervalAlive = 0;
-	public ArrayList<FlyPosition> flyPositionList = new ArrayList<FlyPosition>();
+	private Double moveThreshold = 50.;
+	private int sleepThreshold = 5;
+	private int lastTimeAlive = 0;
+	private int lastIntervalAlive = 0;
+	private ArrayList<FlyPosition> flyPositionList = new ArrayList<FlyPosition>();
 
-	public String name = null;
-	public EnumXLSExport exportType = null;
-	public int binsize = 1;
-	public Point2D origin = new Point2D.Double(0, 0);
-	public double pixelsize = 1.;
-	public int nflies = 1;
-	public int csvReadVersion = 1;
+	private String name = null;
+	private EnumXLSExport exportType = null;
+	private int binsize = 1;
+	private Point2D origin = new Point2D.Double(0, 0);
+	private double pixelsize = 1.;
+	private int nflies = 1;
+	private int csvReadVersion = 1;
 
 	private String ID_NBITEMS = "nb_items";
 	private String ID_POSITIONSLIST = "PositionsList";
 	private String ID_LASTIMEITMOVED = "lastTimeItMoved";
 	private String ID_TLAST = "tlast";
 	private String ID_ILAST = "ilast";
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public EnumXLSExport getExportType() {
+		return exportType;
+	}
+
+	public void setExportType(EnumXLSExport exportType) {
+		this.exportType = exportType;
+	}
+
+	public int getBinsize() {
+		return binsize;
+	}
+
+	public void setBinsize(int binsize) {
+		this.binsize = binsize;
+	}
+
+	public Point2D getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Point2D origin) {
+		this.origin = origin;
+	}
+
+	public double getPixelsize() {
+		return pixelsize;
+	}
+
+	public void setPixelsize(double pixelsize) {
+		this.pixelsize = pixelsize;
+	}
+
+	public int getNflies() {
+		return nflies;
+	}
+
+	public void setNflies(int nflies) {
+		this.nflies = nflies;
+	}
+
+	public int getCsvReadVersion() {
+		return csvReadVersion;
+	}
+
+	public void setCsvReadVersion(int csvReadVersion) {
+		this.csvReadVersion = csvReadVersion;
+	}
+
+	public Double getMoveThreshold() {
+		return moveThreshold;
+	}
+
+	public void setMoveThreshold(Double moveThreshold) {
+		this.moveThreshold = moveThreshold;
+	}
+
+	public int getSleepThreshold() {
+		return sleepThreshold;
+	}
+
+	public void setSleepThreshold(int sleepThreshold) {
+		this.sleepThreshold = sleepThreshold;
+	}
+
+	public int getLastTimeAlive() {
+		return lastTimeAlive;
+	}
+
+	public void setLastTimeAlive(int lastTimeAlive) {
+		this.lastTimeAlive = lastTimeAlive;
+	}
+
+	public int getLastIntervalAlive() {
+		if (lastIntervalAlive >= 0)
+			return lastIntervalAlive;
+		return computeLastIntervalAlive();
+	}
+
+	public void setLastIntervalAlive(int lastIntervalAlive) {
+		this.lastIntervalAlive = lastIntervalAlive;
+	}
+
+	public ArrayList<FlyPosition> getFlyPositionList() {
+		return flyPositionList;
+	}
+
+	public void setFlyPositionList(ArrayList<FlyPosition> flyPositionList) {
+		this.flyPositionList = flyPositionList;
+	}
 
 	public FlyPositions() {
 	}
@@ -72,7 +171,7 @@ public class FlyPositions {
 		Rectangle2D rect = new Rectangle2D.Double(-1, -1, Double.NaN, Double.NaN);
 		for (int i = index; i >= 0; i--) {
 			FlyPosition xyVal = flyPositionList.get(i);
-			if (xyVal.x >= 0 && xyVal.y >= 0) {
+			if (xyVal.getX() >= 0 && xyVal.getY() >= 0) {
 				rect = xyVal.getRectangle2D();
 				break;
 			}
@@ -81,7 +180,7 @@ public class FlyPositions {
 	}
 
 	public int getTime(int i) {
-		return flyPositionList.get(i).flyIndexT;
+		return flyPositionList.get(i).getFlyIndexT();
 	}
 
 	public void addPositionWithoutRoiArea(int t, Rectangle2D rectangle) {
@@ -129,8 +228,8 @@ public class FlyPositions {
 			Element node_position_i = XMLUtil.getElement(node_position_list, elementi);
 			FlyPosition pos = new FlyPosition();
 			pos.xmlLoadPosition(node_position_i);
-			if (pos.flyIndexT < nb_items)
-				flyPositionList.set(pos.flyIndexT, pos);
+			if (pos.getFlyIndexT() < nb_items)
+				flyPositionList.set(pos.getFlyIndexT(), pos);
 			else {
 				flyPositionList.add(pos);
 				bAdded = true;
@@ -177,12 +276,12 @@ public class FlyPositions {
 		boolean isalive = false;
 		for (int i = flyPositionList.size() - 1; i >= 0; i--) {
 			FlyPosition pos = flyPositionList.get(i);
-			if (pos.distance > moveThreshold && !isalive) {
+			if (pos.getDistance() > moveThreshold && !isalive) {
 				lastIntervalAlive = i;
-				lastTimeAlive = pos.flyIndexT;
+				lastTimeAlive = pos.getFlyIndexT();
 				isalive = true;
 			}
-			pos.bAlive = isalive;
+			pos.setbAlive(isalive);
 		}
 	}
 
@@ -191,12 +290,12 @@ public class FlyPositions {
 		boolean isalive = false;
 		for (int i = flyPositionList.size() - 1; i >= 0; i--) {
 			FlyPosition pos = flyPositionList.get(i);
-			if (!isalive && pos.bAlive) {
+			if (!isalive && pos.isbAlive()) {
 				lastIntervalAlive = i;
-				lastTimeAlive = pos.flyIndexT;
+				lastTimeAlive = pos.getFlyIndexT();
 				isalive = true;
 			}
-			pos.bAlive = isalive;
+			pos.setbAlive(isalive);
 		}
 	}
 
@@ -208,9 +307,9 @@ public class FlyPositions {
 		Point2D previousPoint = flyPositionList.get(0).getCenterRectangle();
 		for (FlyPosition pos : flyPositionList) {
 			Point2D currentPoint = pos.getCenterRectangle();
-			pos.distance = currentPoint.distance(previousPoint);
+			pos.setDistance(currentPoint.distance(previousPoint));
 			if (previousPoint.getX() < 0 || currentPoint.getX() < 0)
-				pos.distance = Double.NaN;
+				pos.setDistance(Double.NaN);
 			previousPoint = currentPoint;
 		}
 	}
@@ -222,8 +321,8 @@ public class FlyPositions {
 		// assume ordered points
 		double sum = 0.;
 		for (FlyPosition pos : flyPositionList) {
-			sum += pos.distance;
-			pos.sumDistance = sum;
+			sum += pos.getDistance();
+			pos.setSumDistance(sum);
 		}
 	}
 
@@ -253,10 +352,11 @@ public class FlyPositions {
 
 			double delta = 0.;
 			if (data_bin_remainder != 0 && (data_bin + 1 < n_data_intervals)) {
-				delta = flyPositionsSource.flyPositionList.get(data_bin + 1).distance * data_bin_remainder / dataStepMs;
+				delta = flyPositionsSource.flyPositionList.get(data_bin + 1).getDistance() * data_bin_remainder
+						/ dataStepMs;
 			}
-			dataFlyPositionThis.distance = dataFlyPositionSource.sumDistance - sumDistance_previous + delta;
-			sumDistance_previous = dataFlyPositionSource.sumDistance;
+			dataFlyPositionThis.setDistance(dataFlyPositionSource.getSumDistance() - sumDistance_previous + delta);
+			sumDistance_previous = dataFlyPositionSource.getSumDistance();
 		}
 	}
 
@@ -268,7 +368,7 @@ public class FlyPositions {
 		for (int it = it_start; it < it_end && it_out < flyPositionList.size(); it += buildExcelStepMs, it_out++) {
 			int index = it / stepMs;
 			FlyPosition pos = flyPositionList.get(it_out);
-			pos.bAlive = flyPositions.flyPositionList.get(index).bAlive;
+			pos.setbAlive(flyPositions.flyPositionList.get(index).isbAlive());
 		}
 	}
 
@@ -280,7 +380,7 @@ public class FlyPositions {
 		for (int it = it_start; it < it_end && it_out < flyPositionList.size(); it += buildExcelStepMs, it_out++) {
 			int index = it / stepMs;
 			FlyPosition pos = flyPositionList.get(it_out);
-			pos.bSleep = flyPositions.flyPositionList.get(index).bSleep;
+			pos.setbSleep(flyPositions.flyPositionList.get(index).isbSleep());
 		}
 	}
 
@@ -299,8 +399,8 @@ public class FlyPositions {
 			FlyPosition pos_from = flyPositions.flyPositionList.get(index);
 			FlyPosition pos_to = flyPositionList.get(it_out);
 			pos_to.copy(pos_from);
-			pos_to.x -= deltaX;
-			pos_to.y -= deltaY;
+			pos_to.setX(pos_to.getX() - deltaX);
+			pos_to.setY(pos_to.getY() - deltaY);
 		}
 	}
 
@@ -320,43 +420,43 @@ public class FlyPositions {
 			int data_bin = excel_Ms / dataStepMs;
 			FlyPosition data_pos = flyPositions.flyPositionList.get(data_bin);
 
-			excel_pos.axis1 = data_pos.axis1;
-			excel_pos.axis2 = data_pos.axis2;
+			excel_pos.setAxis1(data_pos.getAxis1());
+			excel_pos.setAxis2(data_pos.getAxis2());
 		}
 	}
 
 	static public List<FlyPositions> computeMoveResults(Experiment expi, EnumXLSExport xlsOption,
 			XLSExportOptions options, int nFrames, double pixelsize) {
-		List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.cages.cageList.size());
-		for (Cage cell : expi.cages.cageList) {
-			FlyPositions flyPositions = new FlyPositions(cell.cageRoi2D.getName(), xlsOption, nFrames,
+		List<FlyPositions> positionsArrayList = new ArrayList<FlyPositions>(expi.getCages().getCageList().size());
+		for (Cage cage : expi.getCages().getCageList()) {
+			FlyPositions flyPositions = new FlyPositions(cage.getCageRoi2D().getName(), xlsOption, nFrames,
 					options.buildExcelStepMs);
-			flyPositions.nflies = cell.cageNFlies;
+			flyPositions.nflies = cage.getCageNFlies();
 			if (flyPositions.nflies < 0) {
 				flyPositions.setPixelSize(pixelsize);
 				switch (xlsOption) {
 				case DISTANCE:
-					flyPositions.excelComputeDistanceBetweenPoints(cell.flyPositions, (int) expi.getCamImageBin_ms(),
-							options.buildExcelStepMs);
+					flyPositions.excelComputeDistanceBetweenPoints(cage.getFlyPositions(),
+							(int) expi.getCamImageBin_ms(), options.buildExcelStepMs);
 					break;
 				case ISALIVE:
-					flyPositions.excelComputeIsAlive(cell.flyPositions, (int) expi.getCamImageBin_ms(),
+					flyPositions.excelComputeIsAlive(cage.getFlyPositions(), (int) expi.getCamImageBin_ms(),
 							options.buildExcelStepMs);
 					break;
 				case SLEEP:
-					flyPositions.excelComputeSleep(cell.flyPositions, (int) expi.getCamImageBin_ms(),
+					flyPositions.excelComputeSleep(cage.getFlyPositions(), (int) expi.getCamImageBin_ms(),
 							options.buildExcelStepMs);
 					break;
 				case XYTOPCELL:
-					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTopCage(), cell.flyPositions,
+					flyPositions.excelComputeNewPointsOrigin(cage.getCenterTopCage(), cage.getFlyPositions(),
 							(int) expi.getCamImageBin_ms(), options.buildExcelStepMs);
 					break;
 				case XYTIPCAPS:
-					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(expi.getCapillaries()),
-							cell.flyPositions, (int) expi.getCamImageBin_ms(), options.buildExcelStepMs);
+					flyPositions.excelComputeNewPointsOrigin(cage.getCenterTipCapillaries(expi.getCapillaries()),
+							cage.getFlyPositions(), (int) expi.getCamImageBin_ms(), options.buildExcelStepMs);
 					break;
 				case ELLIPSEAXES:
-					flyPositions.excelComputeEllipse(cell.flyPositions, (int) expi.getCamImageBin_ms(),
+					flyPositions.excelComputeEllipse(cage.getFlyPositions(), (int) expi.getCamImageBin_ms(),
 							options.buildExcelStepMs);
 					break;
 				case XYIMAGE:
@@ -376,7 +476,7 @@ public class FlyPositions {
 		ArrayList<Double> dataArray = new ArrayList<Double>();
 		dataArray.ensureCapacity(flyPositionList.size());
 		for (FlyPosition pos : flyPositionList)
-			dataArray.add(pos.bAlive ? 1.0 : 0.0);
+			dataArray.add(pos.isbAlive() ? 1.0 : 0.0);
 		return dataArray;
 	}
 
@@ -384,19 +484,13 @@ public class FlyPositions {
 		ArrayList<Integer> dataArray = new ArrayList<Integer>();
 		dataArray.ensureCapacity(flyPositionList.size());
 		for (FlyPosition pos : flyPositionList) {
-			dataArray.add(pos.bAlive ? 1 : 0);
+			dataArray.add(pos.isbAlive() ? 1 : 0);
 		}
 		return dataArray;
 	}
 
-	public int getLastIntervalAlive() {
-		if (lastIntervalAlive >= 0)
-			return lastIntervalAlive;
-		return computeLastIntervalAlive();
-	}
-
 	private int getDeltaT() {
-		return flyPositionList.get(1).flyIndexT - flyPositionList.get(0).flyIndexT;
+		return flyPositionList.get(1).getFlyIndexT() - flyPositionList.get(0).getFlyIndexT();
 	}
 
 	public Double getDistanceBetween2Points(int firstTimeIndex, int secondTimeIndex) {
@@ -409,7 +503,7 @@ public class FlyPositions {
 			return Double.NaN;
 		FlyPosition pos1 = flyPositionList.get(firstIndex);
 		FlyPosition pos2 = flyPositionList.get(secondIndex);
-		if (pos1.x < 0 || pos2.x < 0)
+		if (pos1.getX() < 0 || pos2.getX() < 0)
 			return Double.NaN;
 
 		Point2D point2 = pos2.getCenterRectangle();
@@ -423,7 +517,7 @@ public class FlyPositions {
 		getLastIntervalAlive();
 		int index = timeIndex / getDeltaT();
 		FlyPosition pos = flyPositionList.get(index);
-		return (pos.bAlive ? 1 : 0);
+		return (pos.isbAlive() ? 1 : 0);
 	}
 
 	private List<Integer> getDistanceAsMoveOrNot() {
@@ -431,7 +525,7 @@ public class FlyPositions {
 		ArrayList<Integer> dataArray = new ArrayList<Integer>();
 		dataArray.ensureCapacity(flyPositionList.size());
 		for (int i = 0; i < flyPositionList.size(); i++)
-			dataArray.add(flyPositionList.get(i).distance < moveThreshold ? 1 : 0);
+			dataArray.add(flyPositionList.get(i).getDistance() < moveThreshold ? 1 : 0);
 		return dataArray;
 	}
 
@@ -452,7 +546,7 @@ public class FlyPositions {
 					break;
 				k++;
 			}
-			pos.bSleep = (isleep == 1);
+			pos.setbSleep(isleep == 1);
 			j++;
 		}
 	}
@@ -461,7 +555,7 @@ public class FlyPositions {
 		ArrayList<Double> dataArray = new ArrayList<Double>();
 		dataArray.ensureCapacity(flyPositionList.size());
 		for (FlyPosition pos : flyPositionList)
-			dataArray.add(pos.bSleep ? 1.0 : 0.0);
+			dataArray.add(pos.isbSleep() ? 1.0 : 0.0);
 		return dataArray;
 	}
 
@@ -471,7 +565,7 @@ public class FlyPositions {
 		int index = timeIndex / getDeltaT();
 		if (index >= flyPositionList.size())
 			return -1;
-		return (flyPositionList.get(index).bSleep ? 1 : 0);
+		return (flyPositionList.get(index).isbSleep() ? 1 : 0);
 	}
 
 	public void computeNewPointsOrigin(Point2D newOrigin) {
@@ -481,8 +575,8 @@ public class FlyPositions {
 		if (deltaX == 0 && deltaY == 0)
 			return;
 		for (FlyPosition pos : flyPositionList) {
-			pos.x -= deltaX;
-			pos.y -= deltaY;
+			pos.setX(pos.getX() - deltaX);
+			pos.setY(pos.getY() - deltaY);
 		}
 	}
 
@@ -491,22 +585,22 @@ public class FlyPositions {
 			return;
 
 		for (FlyPosition pos : flyPositionList) {
-			if (pos.flyRoi != null) {
+			if (pos.getFlyRoi() != null) {
 				double[] ellipsoidValues = null;
 				try {
-					ellipsoidValues = ROI2DMeasures.computeOrientation(pos.flyRoi, null);
+					ellipsoidValues = ROI2DMeasures.computeOrientation(pos.getFlyRoi(), null);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Logger.error("FlyPositions:computeOrientation()", e);
 				}
-				pos.axis1 = ellipsoidValues[0];
-				pos.axis2 = ellipsoidValues[1];
-			} else if (pos.x != Double.NaN && pos.y != Double.NaN) {
-				pos.axis1 = pos.h;
-				pos.axis2 = pos.w;
-				if (pos.axis2 > pos.axis1) {
-					double x = pos.axis1;
-					pos.axis1 = pos.axis2;
-					pos.axis2 = x;
+				pos.setAxis1(ellipsoidValues[0]);
+				pos.setAxis2(ellipsoidValues[1]);
+			} else if (!Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY())) {
+				pos.setAxis1(pos.getH());
+				pos.setAxis2(pos.getW());
+				if (pos.getAxis2() > pos.getAxis1()) {
+					double x = pos.getAxis1();
+					pos.setAxis1(pos.getAxis2());
+					pos.setAxis2(x);
 				}
 			}
 		}
@@ -518,12 +612,12 @@ public class FlyPositions {
 
 	public void convertPixelsToPhysicalValues() {
 		for (FlyPosition pos : flyPositionList) {
-			pos.x *= pixelsize;
-			pos.y *= pixelsize;
-			pos.w *= pixelsize;
-			pos.h *= pixelsize;
-			pos.axis1 = pos.axis1 * pixelsize;
-			pos.axis2 = pos.axis2 * pixelsize;
+			pos.setX(pos.getX() * pixelsize);
+			pos.setY(pos.getY() * pixelsize);
+			pos.setW(pos.getW() * pixelsize);
+			pos.setH(pos.getH() * pixelsize);
+			pos.setAxis1(pos.getAxis1() * pixelsize);
+			pos.setAxis2(pos.getAxis2() * pixelsize);
 		}
 		origin.setLocation(origin.getX() * pixelsize, origin.getY() * pixelsize);
 	}

@@ -17,11 +17,35 @@ import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Capillaries {
-	public CapillariesDescription capillariesDescription = new CapillariesDescription();
-	public CapillariesDescription desc_old = new CapillariesDescription();
-	public ArrayList<Capillary> capillariesList = new ArrayList<Capillary>();
+	private CapillariesDescription capillariesDescription = new CapillariesDescription();
+	private CapillariesDescription desc_old = new CapillariesDescription();
+	private List<Capillary> capillariesList = new ArrayList<Capillary>();
 	private KymoIntervals capillariesListTimeIntervals = null;
 	private CapillariesPersistence persistence = new CapillariesPersistence();
+
+	public CapillariesDescription getCapillariesDescription() {
+		return capillariesDescription;
+	}
+
+	public void setCapillariesDescription(CapillariesDescription capillariesDescription) {
+		this.capillariesDescription = capillariesDescription;
+	}
+
+	public CapillariesDescription getDesc_old() {
+		return desc_old;
+	}
+
+	public void setDesc_old(CapillariesDescription desc_old) {
+		this.desc_old = desc_old;
+	}
+
+	public List<Capillary> getCapillariesList() {
+		return capillariesList;
+	}
+
+	public void setCapillariesList(List<Capillary> capillariesList) {
+		this.capillariesList = capillariesList;
+	}
 
 	// ---------------------------------
 
@@ -55,19 +79,19 @@ public class Capillaries {
 
 	public void copy(Capillaries cap) {
 		capillariesDescription.copy(cap.capillariesDescription);
-		capillariesList.clear();
-		for (Capillary ccap : cap.capillariesList) {
+		getCapillariesList().clear();
+		for (Capillary ccap : cap.getCapillariesList()) {
 			if (ccap == null || ccap.getRoi() == null)
 				continue;
 			Capillary capi = new Capillary();
 			capi.copy(ccap);
-			capillariesList.add(capi);
+			getCapillariesList().add(capi);
 		}
 	}
 
 	public boolean isPresent(Capillary capNew) {
 		boolean flag = false;
-		for (Capillary cap : capillariesList) {
+		for (Capillary cap : getCapillariesList()) {
 			if (cap.getKymographName().contentEquals(capNew.getKymographName())) {
 				flag = true;
 				break;
@@ -77,31 +101,31 @@ public class Capillaries {
 	}
 
 	public void mergeLists(Capillaries caplist) {
-		for (Capillary capm : caplist.capillariesList) {
+		for (Capillary capm : caplist.getCapillariesList()) {
 			if (!isPresent(capm))
-				capillariesList.add(capm);
+				getCapillariesList().add(capm);
 		}
 	}
 
 	public void adjustToImageWidth(int imageWidth) {
-		for (Capillary cap : capillariesList)
+		for (Capillary cap : getCapillariesList())
 			cap.adjustToImageWidth(imageWidth);
 	}
 
 	public void cropToImageWidth(int imageWidth) {
-		for (Capillary cap : capillariesList)
+		for (Capillary cap : getCapillariesList())
 			cap.cropToImageWidth(imageWidth);
 	}
 
 	public void transferDescriptionToCapillaries() {
-		for (Capillary cap : capillariesList) {
+		for (Capillary cap : getCapillariesList()) {
 			transferCapGroupCageIDToCapillary(cap);
-			cap.setVolumeAndPixels(capillariesDescription.volume, capillariesDescription.pixels);
+			cap.setVolumeAndPixels(capillariesDescription.getVolume(), capillariesDescription.getPixels());
 		}
 	}
 
 	private void transferCapGroupCageIDToCapillary(Capillary cap) {
-		if (capillariesDescription.grouping != 2)
+		if (capillariesDescription.getGrouping() != 2)
 			return;
 		String name = cap.getRoiName();
 		String letter = name.substring(name.length() - 1);
@@ -118,7 +142,7 @@ public class Capillaries {
 
 	public Capillary getCapillaryFromRoiName(String name) {
 		Capillary capFound = null;
-		for (Capillary cap : capillariesList) {
+		for (Capillary cap : getCapillariesList()) {
 			if (cap.getRoiName().equals(name)) {
 				capFound = cap;
 				break;
@@ -129,7 +153,7 @@ public class Capillaries {
 
 	public Capillary getCapillaryFromKymographName(String name) {
 		Capillary capFound = null;
-		for (Capillary cap : capillariesList) {
+		for (Capillary cap : getCapillariesList()) {
 			if (cap.getKymographName().equals(name)) {
 				capFound = cap;
 				break;
@@ -140,7 +164,7 @@ public class Capillaries {
 
 	public Capillary getCapillaryFromRoiNamePrefix(String name) {
 		Capillary capFound = null;
-		for (Capillary cap : capillariesList) {
+		for (Capillary cap : getCapillariesList()) {
 			if (cap.getRoiNamePrefix().equals(name)) {
 				capFound = cap;
 				break;
@@ -152,7 +176,7 @@ public class Capillaries {
 	public void updateCapillariesFromSequence(Sequence seq) {
 		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", seq);
 		Collections.sort(listROISCap, new Comparators.ROI2D_Name_Comparator());
-		for (Capillary cap : capillariesList) {
+		for (Capillary cap : getCapillariesList()) {
 			cap.valid = false;
 			String capName = Capillary.replace_LR_with_12(cap.getRoiName());
 			Iterator<ROI2D> iterator = listROISCap.iterator();
@@ -169,7 +193,7 @@ public class Capillaries {
 				}
 			}
 		}
-		Iterator<Capillary> iterator = capillariesList.iterator();
+		Iterator<Capillary> iterator = getCapillariesList().iterator();
 		while (iterator.hasNext()) {
 			Capillary cap = iterator.next();
 			if (!cap.valid)
@@ -179,24 +203,24 @@ public class Capillaries {
 			for (ROI2D roi : listROISCap) {
 				Capillary cap = new Capillary((ROI2DShape) roi);
 				if (!isPresent(cap))
-					capillariesList.add(cap);
+					getCapillariesList().add(cap);
 			}
 		}
-		Collections.sort(capillariesList);
+		Collections.sort(getCapillariesList());
 		return;
 	}
 
 	public void transferCapillaryRoiToSequence(Sequence seq) {
 		seq.removeAllROI();
-		for (Capillary cap : capillariesList) {
+		for (Capillary cap : getCapillariesList()) {
 			seq.addROI(cap.getRoi());
 		}
 	}
 
 	public void initCapillariesWith10Cages(int nflies, boolean optionZeroFlyFirstLastCapillary) {
-		int capArraySize = capillariesList.size();
+		int capArraySize = getCapillariesList().size();
 		for (int i = 0; i < capArraySize; i++) {
-			Capillary cap = capillariesList.get(i);
+			Capillary cap = getCapillariesList().get(i);
 			cap.capNFlies = nflies;
 			if (optionZeroFlyFirstLastCapillary && (i <= 1 || i >= capArraySize - 2))
 				cap.capNFlies = 0;
@@ -205,9 +229,9 @@ public class Capillaries {
 	}
 
 	public void initCapillariesWith6Cages(int nflies) {
-		int capArraySize = capillariesList.size();
+		int capArraySize = getCapillariesList().size();
 		for (int i = 0; i < capArraySize; i++) {
-			Capillary cap = capillariesList.get(i);
+			Capillary cap = getCapillariesList().get(i);
 			cap.capNFlies = 1;
 			if (i <= 1) {
 				cap.capNFlies = 0;
@@ -228,7 +252,7 @@ public class Capillaries {
 		if (capillariesListTimeIntervals == null) {
 			capillariesListTimeIntervals = new KymoIntervals();
 
-			for (Capillary cap : capillariesList) {
+			for (Capillary cap : getCapillariesList()) {
 				for (ROI2DAlongT roiFK : cap.getROIsForKymo()) {
 					Long[] interval = { roiFK.getStart(), (long) -1 };
 					capillariesListTimeIntervals.addIfNew(interval);
@@ -242,7 +266,7 @@ public class Capillaries {
 		Long[] interval = { start, (long) -1 };
 		int item = capillariesListTimeIntervals.addIfNew(interval);
 
-		for (Capillary cap : capillariesList) {
+		for (Capillary cap : getCapillariesList()) {
 			List<ROI2DAlongT> listROI2DForKymo = cap.getROIsForKymo();
 			ROI2D roi = cap.getRoi();
 			if (item > 0)
@@ -254,16 +278,16 @@ public class Capillaries {
 
 	public void deleteKymoROI2DInterval(long start) {
 		capillariesListTimeIntervals.deleteIntervalStartingAt(start);
-		for (Capillary cap : capillariesList)
+		for (Capillary cap : getCapillariesList())
 			cap.removeROI2DIntervalStartingAt(start);
 	}
 
 	public int findKymoROI2DIntervalStart(long intervalT) {
-		return capillariesListTimeIntervals.findStartItem(intervalT);
+		return getKymoIntervalsFromCapillaries().findStartItem(intervalT);
 	}
 
 	public long getKymoROI2DIntervalsStartAt(int selectedItem) {
-		return capillariesListTimeIntervals.get(selectedItem)[0];
+		return getKymoIntervalsFromCapillaries().get(selectedItem)[0];
 	}
 
 	public double getScalingFactorToPhysicalUnits(EnumXLSExport xlsoption) {
@@ -278,21 +302,21 @@ public class Capillaries {
 			scalingFactorToPhysicalUnits = 1.;
 			break;
 		default:
-			scalingFactorToPhysicalUnits = capillariesDescription.volume / capillariesDescription.pixels;
+			scalingFactorToPhysicalUnits = capillariesDescription.getVolume() / capillariesDescription.getPixels();
 			break;
 		}
 		return scalingFactorToPhysicalUnits;
 	}
 
 	public Polygon2D get2DPolygonEnclosingCapillaries() {
-		Capillary cap0 = capillariesList.get(0);
+		Capillary cap0 = getCapillariesList().get(0);
 
 		Point2D upperLeft = (Point2D) cap0.getCapillaryROIFirstPoint().clone();
 		Point2D lowerLeft = (Point2D) cap0.getCapillaryROILastPoint().clone();
 		Point2D upperRight = (Point2D) upperLeft.clone();
 		Point2D lowerRight = (Point2D) lowerLeft.clone();
 
-		for (Capillary cap : capillariesList) {
+		for (Capillary cap : getCapillariesList()) {
 			Point2D capFirst = (Point2D) cap.getCapillaryROIFirstPoint();
 			Point2D capLast = (Point2D) cap.getCapillaryROILastPoint();
 
@@ -326,7 +350,7 @@ public class Capillaries {
 	}
 
 	public void deleteAllCapillaries() {
-		capillariesList.clear();
+		getCapillariesList().clear();
 	}
 
 }

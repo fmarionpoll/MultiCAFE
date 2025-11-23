@@ -15,7 +15,7 @@ public class FlyDetect2 extends FlyDetect {
 	protected void runFlyDetect(Experiment exp) {
 		exp.cleanPreviousDetectedFliesROIs();
 		find_flies.initParametersForDetection(exp, options);
-		exp.cages.initFlyPositions(options.detectCage);
+		exp.getCages().initFlyPositions(options.detectCage);
 		options.threshold = options.thresholdDiff;
 		if (new SequenceLoaderService().loadReferenceImage(exp)) {
 			openFlyDetectViewers(exp);

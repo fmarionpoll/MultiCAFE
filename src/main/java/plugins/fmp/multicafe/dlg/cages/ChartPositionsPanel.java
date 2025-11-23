@@ -83,10 +83,10 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		final Rectangle rectv = exp.getSeqCamData().seq.getFirstViewer().getBounds();
+		final Rectangle rectv = exp.getSeqCamData().getSeq().getFirstViewer().getBounds();
 		Point ptRelative = new Point(0, 30);
 		final int deltay = 230;
-		exp.getSeqCamData().seq.addListener(this);
+		exp.getSeqCamData().getSeq().addListener(this);
 
 		if (moveCheckbox.isSelected()) {
 			ypositionsChart = plotYToChart("flies Y positions", ypositionsChart, rectv, ptRelative, exp,
@@ -104,9 +104,9 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 
 		if (aliveCheckbox.isSelected()) {
 			double threshold = (double) aliveThresholdSpinner.getValue();
-			for (Cage cell : exp.cages.cageList) {
-				FlyPositions posSeries = cell.flyPositions;
-				posSeries.moveThreshold = threshold;
+			for (Cage cell : exp.getCages().getCageList()) {
+				FlyPositions posSeries = cell.getFlyPositions();
+				posSeries.setMoveThreshold(threshold);
 				posSeries.computeIsAlive();
 			}
 			aliveChart = plotYToChart("flies alive", aliveChart, rectv, ptRelative, exp, EnumXLSExport.ISALIVE);
@@ -115,8 +115,8 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 			closeChart(aliveChart);
 
 		if (sleepCheckbox.isSelected()) {
-			for (Cage cell : exp.cages.cageList) {
-				FlyPositions posSeries = cell.flyPositions;
+			for (Cage cell : exp.getCages().getCageList()) {
+				FlyPositions posSeries = cell.getFlyPositions();
 				posSeries.computeSleep();
 			}
 			sleepChart = plotYToChart("flies asleep", sleepChart, rectv, ptRelative, exp, EnumXLSExport.SLEEP);
@@ -133,7 +133,7 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 		iChart = new ChartPositions();
 		iChart.createPanel(title);
 		iChart.setLocationRelativeToRectangle(rectv, ptRelative);
-		iChart.displayData(exp.cages.cageList, option);
+		iChart.displayData(exp.getCages().getCageList(), option);
 		iChart.mainChartFrame.toFront();
 		iChart.mainChartFrame.requestFocus();
 		return iChart;

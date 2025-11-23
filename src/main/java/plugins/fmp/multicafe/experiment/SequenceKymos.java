@@ -17,33 +17,57 @@ import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 public class SequenceKymos extends SequenceCamData {
-	public boolean isRunning_loadImages = false;
-	public int imageWidthMax = 0;
-	public int imageHeightMax = 0;
+	private boolean isRunning_loadImages = false;
+	private int imageWidthMax = 0;
+	private int imageHeightMax = 0;
 
 	// -----------------------------------------------------
 
 	public SequenceKymos() {
 		super();
-		status = EnumStatus.KYMOGRAPH;
+		setStatus(EnumStatus.KYMOGRAPH);
 	}
 
 	public SequenceKymos(String name, IcyBufferedImage image) {
 		super(name, image);
-		status = EnumStatus.KYMOGRAPH;
+		setStatus(EnumStatus.KYMOGRAPH);
 	}
 
 	public SequenceKymos(List<String> listNames) {
 		super();
 		setImagesList(new plugins.fmp.multicafe.service.KymographService().convertLinexLRFileNames(listNames));
-		status = EnumStatus.KYMOGRAPH;
+		setStatus(EnumStatus.KYMOGRAPH);
+	}
+
+	public boolean isRunning_loadImages() {
+		return isRunning_loadImages;
+	}
+
+	public void setRunning_loadImages(boolean isRunning_loadImages) {
+		this.isRunning_loadImages = isRunning_loadImages;
+	}
+
+	public int getImageWidthMax() {
+		return imageWidthMax;
+	}
+
+	public void setImageWidthMax(int imageWidthMax) {
+		this.imageWidthMax = imageWidthMax;
+	}
+
+	public int getImageHeightMax() {
+		return imageHeightMax;
+	}
+
+	public void setImageHeightMax(int imageHeightMax) {
+		this.imageHeightMax = imageHeightMax;
 	}
 
 	// ----------------------------
 
 	public void validateRoisAtT(int t) {
-		List<ROI2D> listRois = seq.getROI2Ds();
-		int width = seq.getWidth();
+		List<ROI2D> listRois = getSeq().getROI2Ds();
+		int width = getSeq().getWidth();
 		for (ROI2D roi : listRois) {
 			if (!(roi instanceof ROI2DPolyLine))
 				continue;
@@ -68,18 +92,18 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public void removeROIsPolylineAtT(int t) {
-		List<ROI2D> listRois = seq.getROI2Ds();
+		List<ROI2D> listRois = getSeq().getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!(roi instanceof ROI2DPolyLine))
 				continue;
 			if (roi.getT() == t)
-				seq.removeROI(roi);
+				getSeq().removeROI(roi);
 		}
 	}
 
 	public void updateROIFromCapillaryMeasure(Capillary cap, CapillaryMeasure caplimits) {
 		int t = cap.kymographIndex;
-		List<ROI2D> listRois = seq.getROI2Ds();
+		List<ROI2D> listRois = getSeq().getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!(roi instanceof ROI2DPolyLine))
 				continue;
@@ -90,14 +114,14 @@ public class SequenceKymos extends SequenceCamData {
 
 			((ROI2DPolyLine) roi).setPolyline2D(caplimits.polylineLevel);
 			roi.setName(caplimits.capName);
-			seq.roiChanged(roi);
+			getSeq().roiChanged(roi);
 			break;
 		}
 	}
 
 	public void validateRois() {
-		List<ROI2D> listRois = seq.getROI2Ds();
-		int width = seq.getWidth();
+		List<ROI2D> listRois = getSeq().getROI2Ds();
+		int width = getSeq().getWidth();
 		for (ROI2D roi : listRois) {
 			if (!(roi instanceof ROI2DPolyLine))
 				continue;
@@ -118,19 +142,19 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public boolean transferKymosRoisToCapillaries_Measures(Capillaries capillaries) {
-		List<ROI> allRois = seq.getROIs();
+		List<ROI> allRois = getSeq().getROIs();
 		if (allRois.size() < 1)
 			return false;
 
-		for (int kymo = 0; kymo < seq.getSizeT(); kymo++) {
+		for (int kymo = 0; kymo < getSeq().getSizeT(); kymo++) {
 			List<ROI> roisAtT = new ArrayList<ROI>();
 			for (ROI roi : allRois) {
 				if (roi instanceof ROI2D && ((ROI2D) roi).getT() == kymo)
 					roisAtT.add(roi);
 			}
-			if (capillaries.capillariesList.size() <= kymo)
-				capillaries.capillariesList.add(new Capillary());
-			Capillary cap = capillaries.capillariesList.get(kymo);
+			if (capillaries.getCapillariesList().size() <= kymo)
+				capillaries.getCapillariesList().add(new Capillary());
+			Capillary cap = capillaries.getCapillariesList().get(kymo);
 			cap.filenameTIFF = getFileNameFromImageList(kymo);
 			cap.kymographIndex = kymo;
 			cap.transferROIsToMeasures(roisAtT);
@@ -139,7 +163,7 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public boolean transferKymosRoi_atT_ToCapillaries_Measures(int t, Capillaries capillaries) {
-		List<ROI> allRois = seq.getROIs();
+		List<ROI> allRois = getSeq().getROIs();
 		if (allRois.size() < 1)
 			return false;
 
@@ -148,9 +172,9 @@ public class SequenceKymos extends SequenceCamData {
 			if (roi instanceof ROI2D && ((ROI2D) roi).getT() == t)
 				roisAtT.add(roi);
 		}
-		if (capillaries.capillariesList.size() <= t)
-			capillaries.capillariesList.add(new Capillary());
-		Capillary cap = capillaries.capillariesList.get(t);
+		if (capillaries.getCapillariesList().size() <= t)
+			capillaries.getCapillariesList().add(new Capillary());
+		Capillary cap = capillaries.getCapillariesList().get(t);
 		cap.filenameTIFF = getFileNameFromImageList(t);
 		cap.kymographIndex = t;
 		cap.transferROIsToMeasures(roisAtT);
@@ -159,18 +183,18 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public void transferCapillariesMeasuresToKymos(Capillaries capillaries) {
-		List<ROI2D> seqRoisList = seq.getROI2Ds(false);
+		List<ROI2D> seqRoisList = getSeq().getROI2Ds(false);
 		ROI2DUtilities.removeROIsMissingChar(seqRoisList, '_');
 
 		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
-		int ncapillaries = capillaries.capillariesList.size();
+		int ncapillaries = capillaries.getCapillariesList().size();
 		for (int i = 0; i < ncapillaries; i++) {
-			List<ROI2D> listOfRois = capillaries.capillariesList.get(i).transferMeasuresToROIs();
+			List<ROI2D> listOfRois = capillaries.getCapillariesList().get(i).transferMeasuresToROIs();
 			newRoisList.addAll(listOfRois);
 		}
-		ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, seq);
-		seq.removeAllROI();
-		seq.addROIs(seqRoisList, false);
+		ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, getSeq());
+		getSeq().removeAllROI();
+		getSeq().addROIs(seqRoisList, false);
 	}
 
 	public void saveKymosCurvesToCapillariesMeasures(Experiment exp) {
