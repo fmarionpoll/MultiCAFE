@@ -1,7 +1,6 @@
 package plugins.fmp.multicafe.experiment;
 
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +15,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -24,8 +22,6 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
-import icy.file.Loader;
-import icy.file.SequenceFileImporter;
 import icy.image.IcyBufferedImage;
 import icy.roi.ROI;
 import icy.sequence.Sequence;
@@ -122,12 +118,7 @@ public class SequenceCamData {
 	}
 
 	private void loadImageList() {
-		List<String> imagesList = ExperimentDirectories.getV2ImagesListFromPath(imagesDirectory);
-		imagesList = ExperimentDirectories.keepOnlyAcceptedNames_List(imagesList, "jpg");
-		if (imagesList.size() > 0) {
-			setImagesList(imagesList);
-			attachSequence(loadSequenceFromImagesList(imagesList));
-		}
+		new plugins.fmp.multicafe.service.SequenceLoaderService().loadImageList(this);
 	}
 
 	// --------------------------
@@ -263,48 +254,23 @@ public class SequenceCamData {
 	}
 
 	public IcyBufferedImage imageIORead(String name) {
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(new File(name));
-		} catch (IOException e) {
-			Logger.error("SeqCamData:imageIORead() Failed to read image: " + name, e);
-		}
-		return IcyBufferedImage.createFrom(image);
+		return new plugins.fmp.multicafe.service.SequenceLoaderService().imageIORead(name);
 	}
 
 	public boolean loadImages() {
-		if (imagesList.size() == 0)
-			return false;
-		attachSequence(loadSequenceFromImagesList(imagesList));
-		return (seq != null);
+		return new plugins.fmp.multicafe.service.SequenceLoaderService().loadImages(this);
 	}
 
 	public boolean loadFirstImage() {
-		if (imagesList.size() == 0)
-			return false;
-		List<String> dummyList = new ArrayList<String>();
-		dummyList.add(imagesList.get(0));
-		attachSequence(loadSequenceFromImagesList(dummyList));
-		return (seq != null);
+		return new plugins.fmp.multicafe.service.SequenceLoaderService().loadFirstImage(this);
 	}
 
 	public Sequence loadSequenceFromImagesList(List<String> imagesList) {
-		SequenceFileImporter seqFileImporter = Loader.getSequenceFileImporter(imagesList.get(0), true);
-		Sequence seq = Loader.loadSequences(seqFileImporter, imagesList, 0, // series index to load
-				true, // force volatile
-				false, // separate
-				false, // auto-order
-				false, // directory
-				false, // add to recent
-				false // show progress
-		).get(0);
-		return seq;
+		return new plugins.fmp.multicafe.service.SequenceLoaderService().loadSequenceFromImagesList(imagesList);
 	}
 
 	public Sequence initSequenceFromFirstImage(List<String> imagesList) {
-		SequenceFileImporter seqFileImporter = Loader.getSequenceFileImporter(imagesList.get(0), true);
-		Sequence seq = Loader.loadSequence(seqFileImporter, imagesList.get(0), 0, false);
-		return seq;
+		return new plugins.fmp.multicafe.service.SequenceLoaderService().initSequenceFromFirstImage(imagesList);
 	}
 
 }

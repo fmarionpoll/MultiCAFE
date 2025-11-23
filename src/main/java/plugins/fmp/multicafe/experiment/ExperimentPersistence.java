@@ -1,22 +1,14 @@
 package plugins.fmp.multicafe.experiment;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.tools.Directories;
-import plugins.fmp.multicafe.tools.Logger;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
 public class ExperimentPersistence {
-	
+
 	private final static String ID_VERSION = "version";
 	private final static String ID_VERSIONNUM = "1.0.0";
 	private final static String ID_TIMEFIRSTIMAGE = "fileTimeImageFirstMinute";
@@ -69,10 +61,14 @@ public class ExperimentPersistence {
 			exp.setKymoBin_ms(60000); // Default value
 
 		// check offsets
-		if (exp.getCamImageFirst_ms() < 0) exp.setCamImageFirst_ms(0);
-		if (exp.getCamImageLast_ms() < 0) exp.setCamImageLast_ms(0);
-		if (exp.getKymoFirst_ms() < 0) exp.setKymoFirst_ms(0);
-		if (exp.getKymoLast_ms() < 0) exp.setKymoLast_ms(0);
+		if (exp.getCamImageFirst_ms() < 0)
+			exp.setCamImageFirst_ms(0);
+		if (exp.getCamImageLast_ms() < 0)
+			exp.setCamImageLast_ms(0);
+		if (exp.getKymoFirst_ms() < 0)
+			exp.setKymoFirst_ms(0);
+		if (exp.getKymoLast_ms() < 0)
+			exp.setKymoLast_ms(0);
 
 		if (exp.getField_boxID() != null && exp.getField_boxID().contentEquals("..")) {
 			exp.setField_boxID(XMLUtil.getElementValue(node, ID_BOXID, ".."));
@@ -86,7 +82,7 @@ public class ExperimentPersistence {
 		}
 		return true;
 	}
-	
+
 	public boolean xmlSaveExperiment(Experiment exp, String csFileName) {
 		final Document doc = XMLUtil.createDocument(true);
 		if (doc != null) {
@@ -120,7 +116,7 @@ public class ExperimentPersistence {
 		}
 		return false;
 	}
-	
+
 	public boolean xmlLoad_MCExperiment(Experiment exp) {
 		String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
 		boolean found = xmlLoadExperiment(exp, filename);
@@ -139,18 +135,18 @@ public class ExperimentPersistence {
 		String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
 		return xmlSaveExperiment(exp, filename);
 	}
-	
+
 	// ------------------------------------------------------------------
-	
+
 	public boolean openMeasures(Experiment exp, boolean loadCapillaries, boolean loadDrosoPositions) {
 		if (exp.getSeqCamData() == null)
 			exp.setSeqCamData(new SequenceCamData());
 		xmlLoad_MCExperiment(exp);
 		exp.getFileIntervalsFromSeqCamData();
-		
+
 		if (exp.getSeqKymos() == null)
 			exp.setSeqKymos(new SequenceKymos());
-			
+
 		if (loadCapillaries) {
 			exp.loadMCCapillaries_Only();
 			if (!exp.getCapillaries().load_Capillaries(exp.getKymosBinFullDirectory()))
@@ -161,7 +157,7 @@ public class ExperimentPersistence {
 		}
 		return true;
 	}
-	
+
 	public boolean saveExperimentMeasures(Experiment exp, String directory) {
 		boolean flag = false;
 		if (exp.getSeqKymos() != null) {
@@ -170,7 +166,7 @@ public class ExperimentPersistence {
 		}
 		return flag;
 	}
-	
+
 	// -----------------------------------------------------------------
 
 	private String concatenateExptDirectoryWithSubpathAndName(Experiment exp, String subpath, String name) {
@@ -180,6 +176,5 @@ public class ExperimentPersistence {
 		else
 			return strExperimentDirectory + File.separator + name;
 	}
-	
-}
 
+}

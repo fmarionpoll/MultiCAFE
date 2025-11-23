@@ -278,15 +278,7 @@ public class Experiment {
 	}
 
 	public void closeSequences() {
-		if (seqKymos != null) {
-			seqKymos.closeSequence();
-		}
-		if (seqCamData != null) {
-			seqCamData.closeSequence();
-		}
-		if (seqReference != null) {
-			seqReference.close();
-		}
+		new plugins.fmp.multicafe.service.ExperimentService().closeSequences(this);
 	}
 
 	public boolean openMeasures(boolean loadCapillaries, boolean loadDrosoPositions) {
@@ -300,42 +292,16 @@ public class Experiment {
 		return name;
 	}
 
-	private SequenceCamData loadImagesForSequenceCamData(String filename) {
-		strImagesDirectory = ExperimentDirectories.getImagesDirectoryAsParentFromFileName(filename);
-		List<String> imagesList = ExperimentDirectories.getV2ImagesListFromPath(strImagesDirectory);
-		imagesList = ExperimentDirectories.keepOnlyAcceptedNames_List(imagesList, "jpg");
-		if (imagesList.size() < 1) {
-			seqCamData = null;
-		} else {
-			seqCamData = new SequenceCamData();
-			seqCamData.setImagesList(imagesList);
-			seqCamData.attachSequence(seqCamData.loadSequenceFromImagesList(imagesList));
-		}
-		return seqCamData;
+	public SequenceCamData openSequenceCamData() {
+		return new plugins.fmp.multicafe.service.ExperimentService().openSequenceCamData(this);
 	}
 
 	public boolean loadCamDataImages() {
-		if (seqCamData != null)
-			seqCamData.loadImages();
-
-		return (seqCamData != null && seqCamData.seq != null);
+		return new plugins.fmp.multicafe.service.ExperimentService().loadCamDataImages(this);
 	}
 
 	public boolean loadCamDataCapillaries() {
-		loadMCCapillaries_Only();
-		if (seqCamData != null && seqCamData.seq != null)
-			capillaries.transferCapillaryRoiToSequence(seqCamData.seq);
-
-		return (seqCamData != null && seqCamData.seq != null);
-	}
-
-	public SequenceCamData openSequenceCamData() {
-		loadImagesForSequenceCamData(strImagesDirectory);
-		if (seqCamData != null) {
-			xmlLoad_MCExperiment();
-			getFileIntervalsFromSeqCamData();
-		}
-		return seqCamData;
+		return new plugins.fmp.multicafe.service.ExperimentService().loadCamDataCapillaries(this);
 	}
 
 	public void getFileIntervalsFromSeqCamData() {
@@ -384,12 +350,7 @@ public class Experiment {
 	}
 
 	public boolean loadKymographs() {
-		if (seqKymos == null)
-			seqKymos = new SequenceKymos();
-		List<ImageFileDescriptor> myList = seqKymos
-				.loadListOfPotentialKymographsFromCapillaries(getKymosBinFullDirectory(), capillaries);
-		ImageFileDescriptor.getExistingFileNames(myList);
-		return seqKymos.loadImagesFromList(myList, true);
+		return new plugins.fmp.multicafe.service.ExperimentService().loadKymographs(this);
 	}
 
 	// ------------------------------------------------
