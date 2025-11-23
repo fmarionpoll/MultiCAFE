@@ -88,7 +88,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 
 	// -----------------------
 
-	void copyTo(BuildSeriesOptions destination) {
+	public void copyTo(BuildSeriesOptions destination) {
 		destination.detectTop = detectTop;
 		destination.detectBottom = detectBottom;
 		destination.transform01 = transform01;
@@ -101,7 +101,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 		destination.detectAllGulps = detectAllGulps;
 	}
 
-	void copyFrom(BuildSeriesOptions destination) {
+	public void copyFrom(BuildSeriesOptions destination) {
 		detectTop = destination.detectTop;
 		detectBottom = destination.detectBottom;
 		transform01 = destination.transform01;

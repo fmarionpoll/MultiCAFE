@@ -90,8 +90,10 @@ public class BuildBackground extends BuildSeries {
 			throws InterruptedException {
 		ProgressFrame progress = new ProgressFrame("Build background image...");
 		flyDetectTools.initParametersForDetection(exp, options);
+		
+		SequenceLoaderService loader = new SequenceLoaderService();
 
-		transformOptions.backgroundImage = imageIORead(
+		transformOptions.backgroundImage = loader.imageIORead(
 				exp.getSeqCamData().getFileNameFromImageList(options.backgroundFirst));
 
 		long first_ms = exp.cages.detectFirst_Ms + (options.backgroundFirst * exp.getCamImageBin_ms());
@@ -102,7 +104,7 @@ public class BuildBackground extends BuildSeries {
 			t_last = exp.getSeqCamData().nTotalFrames;
 
 		for (int t = t_first + 1; t <= t_last && !stopFlag; t++) {
-			IcyBufferedImage currentImage = imageIORead(exp.getSeqCamData().getFileNameFromImageList(t));
+			IcyBufferedImage currentImage = loader.imageIORead(exp.getSeqCamData().getFileNameFromImageList(t));
 			seqData.setImage(0, 0, currentImage);
 			progress.setMessage("Frame #" + t + "/" + t_last);
 

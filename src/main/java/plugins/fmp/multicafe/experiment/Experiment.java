@@ -1,7 +1,5 @@
 package plugins.fmp.multicafe.experiment;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,8 +12,6 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 
-import icy.image.IcyBufferedImage;
-import icy.image.ImageUtil;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.util.XMLUtil;
@@ -356,9 +352,8 @@ public class Experiment {
 			flag = xmlLoadOldCapillaries();
 
 		// load MCcapillaries description of experiment
-		if (boxID.contentEquals("..") && experiment.contentEquals("..")
-				&& comment1.contentEquals("..") && comment2.contentEquals("..")
-				&& sex.contentEquals("..") && strain.contentEquals("..")) {
+		if (boxID.contentEquals("..") && experiment.contentEquals("..") && comment1.contentEquals("..")
+				&& comment2.contentEquals("..") && sex.contentEquals("..") && strain.contentEquals("..")) {
 			boxID = capillaries.capillariesDescription.old_boxID;
 			experiment = capillaries.capillariesDescription.old_experiment;
 			comment1 = capillaries.capillariesDescription.old_comment1;
@@ -821,8 +816,7 @@ public class Experiment {
 		if (xmlFullFileName != null && fileExists(xmlFullFileName)) {
 			if (item == IMG_DIRECTORY) {
 				imagesDirectory = getRootWithNoResultNorBinString(experimentDirectory);
-				ExperimentDirectories.moveAndRename(xmlFileName, imagesDirectory, xmlFileName,
-						experimentDirectory);
+				ExperimentDirectories.moveAndRename(xmlFileName, imagesDirectory, xmlFileName, experimentDirectory);
 				xmlFullFileName = experimentDirectory + xmlFullFileName;
 			}
 			return xmlFullFileName;
