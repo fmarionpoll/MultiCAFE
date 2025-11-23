@@ -5,10 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,7 +170,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		;
 		if (exp == null)
 			return;
-		Sequence seq = exp.getSeqCamData().seq;
+		Sequence seq = exp.getSeqCamData().getSeq();
 		ArrayList<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!roi.getName().contains("line"))
@@ -186,29 +186,29 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 			return;
 
 		if (show) {
-			int t = exp.getSeqCamData().seq.getFirstViewer().getPositionT();
+			int t = exp.getSeqCamData().getSeq().getFirstViewer().getPositionT();
 			// TODO select current interval and return only rois2D from that interval
 			addFrameAroundCapillaries(t, exp);
 		} else
-			removeFrameAroundCapillaries(exp.getSeqCamData().seq);
+			removeFrameAroundCapillaries(exp.getSeqCamData().getSeq());
 	}
 
 	private void addFrameAroundCapillaries(int t, Experiment exp) {
 		ArrayList<ROI2D> listRoisAtT = new ArrayList<ROI2D>();
-		for (Capillary cap : exp.getCapillaries().capillariesList) {
+		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
 			ROI2DAlongT kymoROI2D = cap.getROI2DKymoAtIntervalT(t);
 			listRoisAtT.add(kymoROI2D.getRoi());
 		}
 		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingCapillaries(listRoisAtT);
 
-		removeFrameAroundCapillaries(exp.getSeqCamData().seq);
+		removeFrameAroundCapillaries(exp.getSeqCamData().getSeq());
 		envelopeRoi_initial = new ROI2DPolygon(polygon);
 		envelopeRoi = new ROI2DPolygon(polygon);
 		envelopeRoi.setName(dummyname);
 		envelopeRoi.setColor(Color.YELLOW);
 
-		exp.getSeqCamData().seq.addROI(envelopeRoi);
-		exp.getSeqCamData().seq.setSelectedROI(envelopeRoi);
+		exp.getSeqCamData().getSeq().addROI(envelopeRoi);
+		exp.getSeqCamData().getSeq().setSelectedROI(envelopeRoi);
 	}
 
 	private void removeFrameAroundCapillaries(Sequence seq) {
@@ -221,7 +221,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		if (exp == null)
 			return;
 
-		Viewer v = exp.getSeqCamData().seq.getFirstViewer();
+		Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
 		long intervalT = v.getPositionT();
 
 		if (exp.getCapillaries().findKymoROI2DIntervalStart(intervalT) < 0) {
@@ -234,7 +234,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		if (exp == null)
 			return;
 
-		Viewer v = exp.getSeqCamData().seq.getFirstViewer();
+		Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
 		long intervalT = v.getPositionT();
 
 		if (exp.getCapillaries().findKymoROI2DIntervalStart(intervalT) >= 0) {
@@ -246,12 +246,12 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Sequence seq = exp.getSeqCamData().seq;
+		Sequence seq = exp.getSeqCamData().getSeq();
 
 		int intervalT = (int) exp.getCapillaries().getKymoROI2DIntervalsStartAt(selectedRow);
 		seq.removeAllROI();
 		List<ROI2D> listRois = new ArrayList<ROI2D>();
-		for (Capillary cap : exp.getCapillaries().capillariesList) {
+		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
 			listRois.add(cap.getROI2DKymoAtIntervalT((int) intervalT).getRoi());
 		}
 		seq.addROIs(listRois, false);
@@ -264,7 +264,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Sequence seq = exp.getSeqCamData().seq;
+		Sequence seq = exp.getSeqCamData().getSeq();
 
 		int intervalT = (int) exp.getCapillaries().getKymoROI2DIntervalsStartAt(selectedRow);
 		List<ROI2D> listRois = seq.getROI2Ds();

@@ -31,7 +31,7 @@ public abstract class FlyDetect extends BuildSeries {
 			return;
 
 		runFlyDetect(exp);
-		exp.cages.orderFlyPositions();
+		exp.getCages().orderFlyPositions();
 		if (!stopFlag)
 			exp.saveCageMeasures();
 		exp.getSeqCamData().closeSequence();
@@ -47,7 +47,7 @@ public abstract class FlyDetect extends BuildSeries {
 		ImageTransformInterface transformFunction = transformOptions.transformOption.getFunction();
 
 		int t_previous = 0;
-		int totalFrames = exp.getSeqCamData().nTotalFrames;
+		int totalFrames = exp.getSeqCamData().getnTotalFrames();
 		SequenceLoaderService loader = new SequenceLoaderService();
 
 		for (int index = 0; index < totalFrames; index++) {
@@ -97,7 +97,7 @@ public abstract class FlyDetect extends BuildSeries {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					seqNegative = newSequence("detectionImage", exp.getSeqCamData().refImage);
+					seqNegative = newSequence("detectionImage", exp.getSeqCamData().getRefImage());
 					vNegative = new ViewerFMP(seqNegative, false, true);
 					vNegative.setVisible(true);
 				}

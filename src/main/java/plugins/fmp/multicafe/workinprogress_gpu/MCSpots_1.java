@@ -92,7 +92,7 @@ public class MCSpots_1 extends JPanel {
 		ImageTransformEnums transform = ImageTransformEnums.SUBTRACT_1RSTCOL;
 		int zChannelDestination = 1;
 		new KymographService().buildFiltered(exp, 0, zChannelDestination, transform, 0);
-		seqKymos.seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
+		seqKymos.getSeq().getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
 	}
 
 	void buildHistogram(Experiment exp) {
@@ -100,14 +100,14 @@ public class MCSpots_1 extends JPanel {
 		if (seqKymos == null)
 			return;
 
-		int imageIndex = exp.getSeqKymos().seq.getFirstViewer().getPositionT();
+		int imageIndex = exp.getSeqKymos().getSeq().getFirstViewer().getPositionT();
 		getAverageXandYProfile(seqKymos, imageIndex);
 		graphDisplay2Panels(exp, avgX, avgY);
 	}
 
 	private void getAverageXandYProfile(SequenceKymos seqKymos, int imageIndex) {
-		int height = seqKymos.seq.getSizeY();
-		int width = seqKymos.seq.getSizeX();
+		int height = seqKymos.getSeq().getSizeY();
+		int width = seqKymos.getSeq().getSizeX();
 		Rectangle rect = new Rectangle(0, 0, width, height);
 
 		Point2D.Double[] refpoint = new Point2D.Double[4];
@@ -131,7 +131,7 @@ public class MCSpots_1 extends JPanel {
 		for (int chan = 0; chan < 3; chan++) {
 			if (virtualImage == null) {
 				System.out.println("MCSpots_1:getAverageXandYProfile() An error occurred while reading image: "
-						+ seqKymos.currentFrame);
+						+ seqKymos.getCurrentFrame());
 				return;
 			}
 			int widthImage = virtualImage.getSizeX();
@@ -181,7 +181,7 @@ public class MCSpots_1 extends JPanel {
 //	private void removeBackGround(Experiment exp) 
 //	{
 //		double [] avgColor = new double [3];
-//		int width = exp.getSeqKymos().seq.getSizeX();
+//		int width = exp.getSeqKymos().getSeq().getSizeX();
 //		for (int chan = 0; chan <3; chan++) 
 //		{
 //			double sum = 0;
@@ -194,7 +194,7 @@ public class MCSpots_1 extends JPanel {
 //		int zChannelDestination = 1;
 //		exp.setReferenceImageWithConstant(avgColor);
 //		exp.kymosBuildFiltered01(0, zChannelDestination, transform, 0);
-//		exp.getSeqKymos().seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
+//		exp.getSeqKymos().getSeq().getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
 //	}
 //	
 //	public void setReferenceImageWithConstant (double [] pixel) 
@@ -202,7 +202,7 @@ public class MCSpots_1 extends JPanel {
 //		if (tImg == null) 
 //			tImg = new ImageTransform();
 //		tImg.setSpanDiff(0);
-//		Sequence seq = seqKymos.seq;
+//		Sequence seq = seqKymos.getSeq();
 //		tImg.referenceImage = new IcyBufferedImage(seq.getSizeX(), seq.getSizeY(), seq.getSizeC(), seq.getDataType_());
 //		IcyBufferedImage result = tImg.referenceImage;
 //		for (int c=0; c < seq.getSizeC(); c++) 
@@ -255,7 +255,7 @@ public class MCSpots_1 extends JPanel {
 		mainChartFrame.pack();
 		if (pt == null) {
 			SequenceKymos seqKymos = exp.getSeqKymos();
-			Viewer v = seqKymos.seq.getFirstViewer();
+			Viewer v = seqKymos.getSeq().getFirstViewer();
 			Rectangle rectv = v.getBounds();
 			pt = new Point((int) rectv.getX(), (int) rectv.getY() + 30);
 		}

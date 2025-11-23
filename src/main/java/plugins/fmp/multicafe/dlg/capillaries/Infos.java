@@ -81,22 +81,22 @@ public class Infos extends JPanel {
 	// set/ get
 
 	public void setAllDescriptors(Capillaries cap) {
-		capillaryVolumeSpinner.setValue(cap.capillariesDescription.volume);
-		capillaryPixelsSpinner.setValue(cap.capillariesDescription.pixels);
+		capillaryVolumeSpinner.setValue(cap.getCapillariesDescription().getVolume());
+		capillaryPixelsSpinner.setValue(cap.getCapillariesDescription().getPixels());
 	}
 
 	void getDescriptors(Capillaries capList) {
-		capList.capillariesDescription.volume = (double) capillaryVolumeSpinner.getValue();
-		capList.capillariesDescription.pixels = (int) capillaryPixelsSpinner.getValue();
+		capList.getCapillariesDescription().setVolume((double) capillaryVolumeSpinner.getValue());
+		capList.getCapillariesDescription().setPixels((int) capillaryPixelsSpinner.getValue());
 	}
 
 	public int getLengthFirstCapillaryROI() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		int npixels = 0;
 		if (exp != null) {
-			exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().seq);
-			if (exp.getCapillaries().capillariesList.size() > 0) {
-				Capillary cap = exp.getCapillaries().capillariesList.get(0);
+			exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSeq());
+			if (exp.getCapillaries().getCapillariesList().size() > 0) {
+				Capillary cap = exp.getCapillaries().getCapillariesList().get(0);
 				npixels = cap.getCapillaryROILength();
 			}
 		}

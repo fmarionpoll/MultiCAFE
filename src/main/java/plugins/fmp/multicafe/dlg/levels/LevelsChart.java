@@ -95,7 +95,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 
 	private Rectangle getInitialUpperLeftPosition(Experiment exp) {
 		Rectangle rectv = new Rectangle(50, 500, 10, 10);
-		Viewer v = exp.getSeqCamData().seq.getFirstViewer();
+		Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
 		if (v != null) {
 			rectv = v.getBounds();
 			// rectv.translate(0, rectv.height);
@@ -108,7 +108,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 	}
 
 	public void displayGraphsPanels(Experiment exp) {
-		exp.getSeqKymos().seq.addListener(this);
+		exp.getSeqKymos().getSeq().addListener(this);
 		Rectangle rectv = getInitialUpperLeftPosition(exp);
 		int dx = 5;
 		int dy = 10;
@@ -192,7 +192,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExport option) {
 		boolean flag = false;
 		Capillaries capillaries = exp.getCapillaries();
-		for (Capillary cap : capillaries.capillariesList) {
+		for (Capillary cap : capillaries.getCapillariesList()) {
 			flag = cap.isThereAnyMeasuresDone(option);
 			if (flag)
 				break;
@@ -207,10 +207,11 @@ public class LevelsChart extends JPanel implements SequenceListener {
 	@Override
 	public void sequenceClosed(Sequence sequence) {
 		sequence.removeListener(this);
-		
-		// Save window positions before closing (global positions, shared across all experiments)
+
+		// Save window positions before closing (global positions, shared across all
+		// experiments)
 		saveChartPositions();
-		
+
 		closeAllCharts();
 	}
 

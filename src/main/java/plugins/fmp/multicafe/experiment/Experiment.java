@@ -34,92 +34,116 @@ public class Experiment {
 
 	private SequenceCamData seqCamData = null;
 	private SequenceKymos seqKymos = null;
-	public Sequence seqReference = null;
+	private Sequence seqReference = null;
 	private Capillaries capillaries = new Capillaries();
-	public Cages cages = new Cages();
+	private Cages cages = new Cages();
 
-	public ExperimentTimeManager timeManager = new ExperimentTimeManager();
+	private ExperimentTimeManager timeManager = new ExperimentTimeManager();
+
+	public Sequence getSeqReference() {
+		return seqReference;
+	}
+
+	public void setSeqReference(Sequence seqReference) {
+		this.seqReference = seqReference;
+	}
+
+	public Cages getCages() {
+		return cages;
+	}
+
+	public void setCages(Cages cages) {
+		this.cages = cages;
+	}
+
+	public ExperimentTimeManager getTimeManager() {
+		return timeManager;
+	}
+
+	public void setTimeManager(ExperimentTimeManager timeManager) {
+		this.timeManager = timeManager;
+	}
 
 	public FileTime getFirstImage_FileTime() {
-		return timeManager.firstImage_FileTime;
+		return timeManager.getFirstImage_FileTime();
 	}
 
 	public void setFirstImage_FileTime(FileTime fileTime) {
-		timeManager.firstImage_FileTime = fileTime;
+		timeManager.setFirstImage_FileTime(fileTime);
 	}
 
 	public FileTime getLastImage_FileTime() {
-		return timeManager.lastImage_FileTime;
+		return timeManager.getLastImage_FileTime();
 	}
 
 	public void setLastImage_FileTime(FileTime fileTime) {
-		timeManager.lastImage_FileTime = fileTime;
+		timeManager.setLastImage_FileTime(fileTime);
 	}
 
 	// __________________________________________________
 
 	public long getCamImageFirst_ms() {
-		return timeManager.camImageFirst_ms;
+		return timeManager.getCamImageFirst_ms();
 	}
 
 	public void setCamImageFirst_ms(long ms) {
-		timeManager.camImageFirst_ms = ms;
+		timeManager.setCamImageFirst_ms(ms);
 	}
 
 	public long getCamImageLast_ms() {
-		return timeManager.camImageLast_ms;
+		return timeManager.getCamImageLast_ms();
 	}
 
 	public void setCamImageLast_ms(long ms) {
-		timeManager.camImageLast_ms = ms;
+		timeManager.setCamImageLast_ms(ms);
 	}
 
 	public long getCamImageBin_ms() {
-		return timeManager.camImageBin_ms;
+		return timeManager.getCamImageBin_ms();
 	}
 
 	public void setCamImageBin_ms(long ms) {
-		timeManager.camImageBin_ms = ms;
+		timeManager.setCamImageBin_ms(ms);
 	}
 
 	public long[] getCamImages_ms() {
-		return timeManager.camImages_ms;
+		return timeManager.getCamImages_ms();
 	}
 
 	public void setCamImages_ms(long[] ms) {
-		timeManager.camImages_ms = ms;
+		timeManager.setCamImages_ms(ms);
 	}
 
 	public long getBinT0() {
-		return timeManager.binT0;
+		return timeManager.getBinT0();
 	}
 
 	public void setBinT0(long val) {
-		timeManager.binT0 = val;
+		timeManager.setBinT0(val);
 	}
 
 	public long getKymoFirst_ms() {
-		return timeManager.kymoFirst_ms;
+		return timeManager.getKymoFirst_ms();
 	}
 
 	public void setKymoFirst_ms(long ms) {
-		timeManager.kymoFirst_ms = ms;
+		timeManager.setKymoFirst_ms(ms);
 	}
 
 	public long getKymoLast_ms() {
-		return timeManager.kymoLast_ms;
+		return timeManager.getKymoLast_ms();
 	}
 
 	public void setKymoLast_ms(long ms) {
-		timeManager.kymoLast_ms = ms;
+		timeManager.setKymoLast_ms(ms);
 	}
 
 	public long getKymoBin_ms() {
-		return timeManager.kymoBin_ms;
+		return timeManager.getKymoBin_ms();
 	}
 
 	public void setKymoBin_ms(long ms) {
-		timeManager.kymoBin_ms = ms;
+		timeManager.setKymoBin_ms(ms);
 	}
 
 	// _________________________________________________
@@ -304,7 +328,7 @@ public class Experiment {
 
 	public void initTmsForFlyPositions(long time_start_ms) {
 		timeManager.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(seqCamData, time_start_ms);
-		cages.initCagesTmsForFlyPositions(timeManager.camImages_ms);
+		cages.initCagesTmsForFlyPositions(timeManager.getCamImages_ms());
 	}
 
 	public int findNearestIntervalWithBinarySearch(long value, int low, int high) {
@@ -348,20 +372,20 @@ public class Experiment {
 			return xmlLoadOldCapillaries();
 
 		boolean flag = capillaries.loadMCCapillaries_Descriptors(mcCapillaryFileName);
-		if (capillaries.capillariesList.size() < 1)
+		if (capillaries.getCapillariesList().size() < 1)
 			flag = xmlLoadOldCapillaries();
 
 		// load MCcapillaries description of experiment
 		if (boxID.contentEquals("..") && experiment.contentEquals("..") && comment1.contentEquals("..")
 				&& comment2.contentEquals("..") && sex.contentEquals("..") && strain.contentEquals("..")) {
-			boxID = capillaries.capillariesDescription.old_boxID;
-			experiment = capillaries.capillariesDescription.old_experiment;
-			comment1 = capillaries.capillariesDescription.old_comment1;
-			comment2 = capillaries.capillariesDescription.old_comment2;
-			sex = capillaries.capillariesDescription.old_sex;
-			strain = capillaries.capillariesDescription.old_strain;
-			condition1 = capillaries.capillariesDescription.old_cond1;
-			condition2 = capillaries.capillariesDescription.old_cond2;
+			boxID = capillaries.getCapillariesDescription().getOld_boxID();
+			experiment = capillaries.getCapillariesDescription().getOld_experiment();
+			comment1 = capillaries.getCapillariesDescription().getOld_comment1();
+			comment2 = capillaries.getCapillariesDescription().getOld_comment2();
+			sex = capillaries.getCapillariesDescription().getOld_sex();
+			strain = capillaries.getCapillariesDescription().getOld_strain();
+			condition1 = capillaries.getCapillariesDescription().getOld_cond1();
+			condition2 = capillaries.getCapillariesDescription().getOld_cond2();
 		}
 		return flag;
 	}
@@ -404,7 +428,7 @@ public class Experiment {
 	}
 
 	private boolean xmlReadCamDataROIs(String fileName) {
-		Sequence seq = seqCamData.seq;
+		Sequence seq = seqCamData.getSeq();
 		if (fileName != null) {
 			final Document doc = XMLUtil.loadDocument(fileName);
 			if (doc != null) {
@@ -423,7 +447,7 @@ public class Experiment {
 		if (filename != null) {
 			final Document doc = XMLUtil.loadDocument(filename);
 			if (doc != null)
-				return capillaries.capillariesDescription.xmlLoadCapillaryDescription(doc);
+				return capillaries.getCapillariesDescription().xmlLoadCapillaryDescription(doc);
 		}
 		return false;
 	}
@@ -451,7 +475,7 @@ public class Experiment {
 			moveCageMeasuresToExperimentDirectory(pathToMeasures);
 
 		boolean flag = cages.load_Cages(getExperimentDirectory());
-		if (flag & seqCamData.seq != null)
+		if (flag & seqCamData.getSeq() != null)
 			cages.cagesToROIs(seqCamData);
 		return flag;
 	}
@@ -491,17 +515,17 @@ public class Experiment {
 	}
 
 	public void setFileTimeImageFirst(FileTime fileTimeImageFirst) {
-		timeManager.firstImage_FileTime = fileTimeImageFirst;
+		timeManager.setFirstImage_FileTime(fileTimeImageFirst);
 	}
 
 	public void setFileTimeImageLast(FileTime fileTimeImageLast) {
-		timeManager.lastImage_FileTime = fileTimeImageLast;
+		timeManager.setLastImage_FileTime(fileTimeImageLast);
 	}
 
 	public int getSeqCamSizeT() {
 		int lastFrame = 0;
 		if (seqCamData != null)
-			lastFrame = seqCamData.nTotalFrames - 1;
+			lastFrame = seqCamData.getnTotalFrames() - 1;
 		return lastFrame;
 	}
 
@@ -678,34 +702,34 @@ public class Experiment {
 	// --------------------------------------------
 
 	public boolean adjustCapillaryMeasuresDimensions() {
-		if (seqKymos.imageWidthMax < 1) {
-			seqKymos.imageWidthMax = seqKymos.seq.getSizeX();
-			if (seqKymos.imageWidthMax < 1)
+		if (seqKymos.getImageWidthMax() < 1) {
+			seqKymos.setImageWidthMax(seqKymos.getSeq().getSizeX());
+			if (seqKymos.getImageWidthMax() < 1)
 				return false;
 		}
-		int imageWidth = seqKymos.imageWidthMax;
+		int imageWidth = seqKymos.getImageWidthMax();
 		capillaries.adjustToImageWidth(imageWidth);
-		seqKymos.seq.removeAllROI();
+		seqKymos.getSeq().removeAllROI();
 		seqKymos.transferCapillariesMeasuresToKymos(capillaries);
 		return true;
 	}
 
 	public boolean cropCapillaryMeasuresDimensions() {
-		if (seqKymos.imageWidthMax < 1) {
-			seqKymos.imageWidthMax = seqKymos.seq.getSizeX();
-			if (seqKymos.imageWidthMax < 1)
+		if (seqKymos.getImageWidthMax() < 1) {
+			seqKymos.setImageWidthMax(seqKymos.getSeq().getSizeX());
+			if (seqKymos.getImageWidthMax() < 1)
 				return false;
 		}
-		int imageWidth = seqKymos.imageWidthMax;
+		int imageWidth = seqKymos.getImageWidthMax();
 		capillaries.cropToImageWidth(imageWidth);
-		seqKymos.seq.removeAllROI();
+		seqKymos.getSeq().removeAllROI();
 		seqKymos.transferCapillariesMeasuresToKymos(capillaries);
 		return true;
 	}
 
 	public boolean saveCapillariesMeasures(String directory) {
 		boolean flag = false;
-		if (seqKymos != null && seqKymos.seq != null) {
+		if (seqKymos != null && seqKymos.getSeq() != null) {
 			seqKymos.validateRois();
 			seqKymos.transferKymosRoisToCapillaries_Measures(capillaries);
 			flag = capillaries.save_Capillaries(directory);
@@ -714,44 +738,44 @@ public class Experiment {
 	}
 
 	public void dispatchCapillariesToCages() {
-		for (Cage cage : cages.cageList) {
+		for (Cage cage : cages.getCageList()) {
 			cage.clearCapillaryList();
 		}
 
-		for (Capillary cap : capillaries.capillariesList) {
+		for (Capillary cap : capillaries.getCapillariesList()) {
 			int cageID = cap.getCageIndexFromRoiName();
 			Cage cage = cages.getCageFromID(cageID);
 			if (cage == null) {
 				cage = new Cage();
 				cage.setCageID(cageID);
-				cages.cageList.add(cage);
+				cages.getCageList().add(cage);
 			}
 			cage.addCapillaryIfUnique(cap);
 		}
 	}
 
 	public void cleanPreviousDetectedFliesROIs() {
-		ArrayList<ROI2D> list = seqCamData.seq.getROI2Ds();
+		ArrayList<ROI2D> list = seqCamData.getSeq().getROI2Ds();
 		for (ROI2D roi : list) {
 			if (roi.getName().contains("det"))
-				seqCamData.seq.removeROI(roi);
+				seqCamData.getSeq().removeROI(roi);
 		}
 	}
 
 	public void updateROIsAt(int t) {
-		seqCamData.seq.beginUpdate();
-		List<ROI2D> rois = seqCamData.seq.getROI2Ds();
+		seqCamData.getSeq().beginUpdate();
+		List<ROI2D> rois = seqCamData.getSeq().getROI2Ds();
 		for (ROI2D roi : rois) {
 			if (roi.getName().contains("det"))
-				seqCamData.seq.removeROI(roi);
+				seqCamData.getSeq().removeROI(roi);
 		}
-		seqCamData.seq.addROIs(cages.getPositionsAsListOfROI2DRectanglesAtT(t), false);
-		seqCamData.seq.endUpdate();
+		seqCamData.getSeq().addROIs(cages.getPositionsAsListOfROI2DRectanglesAtT(t), false);
+		seqCamData.getSeq().endUpdate();
 	}
 
 	public void saveDetRoisToPositions() {
-		List<ROI2D> detectedROIsList = seqCamData.seq.getROI2Ds();
-		for (Cage cell : cages.cageList) {
+		List<ROI2D> detectedROIsList = seqCamData.getSeq().getROI2Ds();
+		for (Cage cell : cages.getCageList()) {
 			cell.transferRoisToPositions(detectedROIsList);
 		}
 	}
@@ -762,7 +786,7 @@ public class Experiment {
 		int step = -1;
 		if (resultsPath.contains(BIN)) {
 			if (resultsPath.length() < (BIN.length() + 1)) {
-				step = (int) timeManager.kymoBin_ms;
+				step = (int) timeManager.getKymoBin_ms();
 			} else {
 				step = Integer.valueOf(resultsPath.substring(BIN.length())) * 1000;
 			}
@@ -831,10 +855,10 @@ public class Experiment {
 
 	private boolean replaceCapillariesValuesIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
-		if (capillaries.capillariesList.size() == 0)
+		if (capillaries.getCapillariesList().size() == 0)
 			loadMCCapillaries_Only();
 		boolean flag = false;
-		for (Capillary cap : capillaries.capillariesList) {
+		for (Capillary cap : capillaries.getCapillariesList()) {
 			if (cap.getCapillaryField(fieldEnumCode).equals(oldValue)) {
 				cap.setCapillaryField(fieldEnumCode, newValue);
 				flag = true;
@@ -851,9 +875,9 @@ public class Experiment {
 	}
 
 	private void addCapillariesValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
-		if (capillaries.capillariesList.size() == 0)
+		if (capillaries.getCapillariesList().size() == 0)
 			loadMCCapillaries_Only();
-		for (Capillary cap : capillaries.capillariesList)
+		for (Capillary cap : capillaries.getCapillariesList())
 			addValue(cap.getCapillaryField(fieldEnumCode), textList);
 	}
 
@@ -875,14 +899,14 @@ public class Experiment {
 	}
 
 	private void transferExpDescriptorsToCapillariesDescriptors() {
-		capillaries.capillariesDescription.old_boxID = boxID;
-		capillaries.capillariesDescription.old_experiment = experiment;
-		capillaries.capillariesDescription.old_comment1 = comment1;
-		capillaries.capillariesDescription.old_comment2 = comment2;
-		capillaries.capillariesDescription.old_strain = strain;
-		capillaries.capillariesDescription.old_sex = sex;
-		capillaries.capillariesDescription.old_cond1 = condition1;
-		capillaries.capillariesDescription.old_cond2 = condition2;
+		capillaries.getCapillariesDescription().setOld_boxID(boxID);
+		capillaries.getCapillariesDescription().setOld_experiment(experiment);
+		capillaries.getCapillariesDescription().setOld_comment1(comment1);
+		capillaries.getCapillariesDescription().setOld_comment2(comment2);
+		capillaries.getCapillariesDescription().setOld_strain(strain);
+		capillaries.getCapillariesDescription().setOld_sex(sex);
+		capillaries.getCapillariesDescription().setOld_cond1(condition1);
+		capillaries.getCapillariesDescription().setOld_cond2(condition2);
 	}
 
 	public SequenceCamData getSeqCamData() {

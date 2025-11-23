@@ -1,12 +1,10 @@
 package plugins.fmp.multicafe.dlg.levels;
 
 import java.awt.BorderLayout;
-
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,12 +92,12 @@ public class EditLevels extends JPanel {
 
 	void cropPointsToLeftLimit(Experiment exp) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
-		int t = seqKymos.currentFrame;
-		ROI2D roiRef = seqKymos.seq.getSelectedROI2D();
+		int t = seqKymos.getCurrentFrame();
+		ROI2D roiRef = seqKymos.getSeq().getSelectedROI2D();
 		if (roiRef == null)
 			return;
 
-		Capillary cap = exp.getCapillaries().capillariesList.get(t);
+		Capillary cap = exp.getCapillaries().getCapillariesList().get(t);
 		seqKymos.transferKymosRoisToCapillaries_Measures(exp.getCapillaries());
 
 		int lastX = findLastXLeftOfRoi(cap, roiRef);
@@ -127,8 +125,8 @@ public class EditLevels extends JPanel {
 
 	void restoreCroppedPoints(Experiment exp) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
-		int t = seqKymos.currentFrame;
-		Capillary cap = exp.getCapillaries().capillariesList.get(t);
+		int t = seqKymos.getCurrentFrame();
+		Capillary cap = exp.getCapillaries().getCapillariesList().get(t);
 		cap.restoreClippedMeasures();
 
 		seqKymos.updateROIFromCapillaryMeasure(cap, cap.ptsTop);
@@ -154,7 +152,7 @@ public class EditLevels extends JPanel {
 	}
 
 	void deleteGulps(SequenceKymos seqKymos, List<ROI> listGulpsSelected) {
-		Sequence seq = seqKymos.seq;
+		Sequence seq = seqKymos.getSeq();
 		if (seq == null || listGulpsSelected == null)
 			return;
 		for (ROI roi : listGulpsSelected)
@@ -163,22 +161,22 @@ public class EditLevels extends JPanel {
 
 	void cutAndInterpolate(Experiment exp) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
-		int t = seqKymos.seq.getFirstViewer().getPositionT();
-		ROI2D roi = seqKymos.seq.getSelectedROI2D();
+		int t = seqKymos.getSeq().getFirstViewer().getPositionT();
+		ROI2D roi = seqKymos.getSeq().getSelectedROI2D();
 		if (roi == null)
 			return;
 
 		seqKymos.transferKymosRoi_atT_ToCapillaries_Measures(t, exp.getCapillaries());
-		Capillary cap = exp.getCapillaries().capillariesList.get(t);
+		Capillary cap = exp.getCapillaries().getCapillariesList().get(t);
 		String optionSelected = (String) roiTypeCombo.getSelectedItem();
 		if (optionSelected.contains("gulp")) {
-			List<ROI> listGulpsSelected = selectGulpsWithinRoi(roi, seqKymos.seq, seqKymos.currentFrame);
+			List<ROI> listGulpsSelected = selectGulpsWithinRoi(roi, seqKymos.getSeq(), seqKymos.getCurrentFrame());
 			deleteGulps(seqKymos, listGulpsSelected);
 			seqKymos.removeROIsPolylineAtT(t);
 			List<ROI2D> listOfRois = cap.transferMeasuresToROIs();
-			seqKymos.seq.addROIs(listOfRois, false);
+			seqKymos.getSeq().addROIs(listOfRois, false);
 			for (ROI lroi : listOfRois)
-				seqKymos.seq.roiChanged(lroi);
+				seqKymos.getSeq().roiChanged(lroi);
 		} else {
 			if (optionSelected.contains("top"))
 				removeAndUpdate(seqKymos, cap, cap.ptsTop, roi);

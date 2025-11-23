@@ -16,11 +16,11 @@ import icy.sequence.Sequence;
 import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceEvent.SequenceEventSourceType;
 import icy.sequence.SequenceEvent.SequenceEventType;
+import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformOptions;
-import icy.sequence.SequenceListener;
 
 public class OverlayThreshold extends Overlay implements SequenceListener {
 	private float opacity = 0.3f;
@@ -42,7 +42,7 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
 	}
 
 	public void setSequence(SequenceCamData seqCamData) {
-		localSeq = seqCamData.seq;
+		localSeq = seqCamData.getSeq();
 		localSeq.addListener(this);
 		imageTransformOptions.seqCamData = seqCamData;
 	}

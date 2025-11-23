@@ -64,32 +64,32 @@ public class CageTableModel extends AbstractTableModel {
 	public int getRowCount() {
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			return exp.cages.cageList.size();
+			return exp.getCages().getCageList().size();
 		}
 		return 0;
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Cage cell = null;
+		Cage cage = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			cell = exp.cages.cageList.get(rowIndex);
+			cage = exp.getCages().getCageList().get(rowIndex);
 		}
-		if (cell != null) {
+		if (cage != null) {
 			switch (columnIndex) {
 			case 0:
-				return cell.cageRoi2D.getName();
+				return cage.getCageRoi2D().getName();
 			case 1:
-				return cell.cageNFlies;
+				return cage.getCageNFlies();
 			case 2:
-				return cell.cageStrain;
+				return cage.getCageStrain();
 			case 3:
-				return cell.cageSex;
+				return cage.getCageSex();
 			case 4:
-				return cell.cageAge;
+				return cage.getCageAge();
 			case 5:
-				return cell.cageComment;
+				return cage.getCageComment();
 			}
 		}
 		return null;
@@ -110,27 +110,27 @@ public class CageTableModel extends AbstractTableModel {
 		Cage cell = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			cell = exp.cages.cageList.get(rowIndex);
+			cell = exp.getCages().getCageList().get(rowIndex);
 		}
 		if (cell != null) {
 			switch (columnIndex) {
 			case 0:
-				cell.cageRoi2D.setName(aValue.toString());
+				cell.getCageRoi2D().setName(aValue.toString());
 				break;
 			case 1:
-				cell.cageNFlies = (int) aValue;
+				cell.setCageNFlies((int) aValue);
 				break;
 			case 2:
-				cell.cageStrain = aValue.toString();
+				cell.setCageStrain(aValue.toString());
 				break;
 			case 3:
-				cell.cageSex = aValue.toString();
+				cell.setCageSex(aValue.toString());
 				break;
 			case 4:
-				cell.cageAge = (int) aValue;
+				cell.setCageAge((int) aValue);
 				break;
 			case 5:
-				cell.cageComment = aValue.toString();
+				cell.setCageComment(aValue.toString());
 				break;
 			}
 		}

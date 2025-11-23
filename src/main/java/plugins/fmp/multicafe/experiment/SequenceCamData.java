@@ -29,19 +29,19 @@ import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ViewerFMP;
 
 public class SequenceCamData {
-	public Sequence seq = null;
-	public IcyBufferedImage refImage = null;
+	private Sequence seq = null;
+	private IcyBufferedImage refImage = null;
 
-	public long seqAnalysisStart = 0;
-	public int seqAnalysisStep = 1;
+	private long seqAnalysisStart = 0;
+	private int seqAnalysisStep = 1;
 
-	public int currentFrame = 0;
-	public int nTotalFrames = 0;
+	private int currentFrame = 0;
+	private int nTotalFrames = 0;
 
-	public EnumStatus status = EnumStatus.REGULAR;
+	private EnumStatus status = EnumStatus.REGULAR;
 	protected String csCamFileName = null;
-	public String imagesDirectory = null;
-	public List<String> imagesList = new ArrayList<String>();
+	private String imagesDirectory = null;
+	private List<String> imagesList = new ArrayList<String>();
 
 	long timeFirstImageInMs = 0;
 	int indexTimePattern = -1;
@@ -69,6 +69,66 @@ public class SequenceCamData {
 	}
 
 	// -----------------------
+	
+	public Sequence getSeq() {
+		return seq;
+	}
+
+	public void setSeq(Sequence seq) {
+		this.seq = seq;
+	}
+
+	public IcyBufferedImage getRefImage() {
+		return refImage;
+	}
+
+	public void setRefImage(IcyBufferedImage refImage) {
+		this.refImage = refImage;
+	}
+
+	public long getSeqAnalysisStart() {
+		return seqAnalysisStart;
+	}
+
+	public void setSeqAnalysisStart(long seqAnalysisStart) {
+		this.seqAnalysisStart = seqAnalysisStart;
+	}
+
+	public int getSeqAnalysisStep() {
+		return seqAnalysisStep;
+	}
+
+	public void setSeqAnalysisStep(int seqAnalysisStep) {
+		this.seqAnalysisStep = seqAnalysisStep;
+	}
+
+	public int getCurrentFrame() {
+		return currentFrame;
+	}
+
+	public void setCurrentFrame(int currentFrame) {
+		this.currentFrame = currentFrame;
+	}
+
+	public int getnTotalFrames() {
+		return nTotalFrames;
+	}
+
+	public void setnTotalFrames(int nTotalFrames) {
+		this.nTotalFrames = nTotalFrames;
+	}
+
+	public EnumStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(EnumStatus status) {
+		this.status = status;
+	}
+
+	public List<String> getImagesList() {
+		return imagesList;
+	}
 
 	public String getImagesDirectory() {
 		Path strPath = Paths.get(imagesList.get(0));

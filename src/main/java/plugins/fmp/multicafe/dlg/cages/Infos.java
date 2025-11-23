@@ -82,7 +82,7 @@ public class Infos extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					exp.getCapillaries().transferDescriptionToCapillaries();
-					exp.cages.transferNFliesFromCapillariesToCageBox(exp.getCapillaries().capillariesList);
+					exp.getCages().transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getCapillariesList());
 					dialog = new InfosCagesTable();
 					dialog.initialize(parent0, cellsArrayCopy);
 				}
@@ -135,9 +135,9 @@ public class Infos extends JPanel {
 	void measureCellsSpan() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().seq);
-			if (exp.getCapillaries().capillariesList.size() > 0) {
-				int npixels = exp.cages.getHorizontalSpanOfCages();
+			exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSeq());
+			if (exp.getCapillaries().getCapillariesList().size() > 0) {
+				int npixels = exp.getCages().getHorizontalSpanOfCages();
 				if (npixels > 0)
 					pixelsSpinner.setValue(npixels);
 			}

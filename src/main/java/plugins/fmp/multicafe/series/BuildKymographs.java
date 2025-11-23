@@ -30,8 +30,8 @@ public class BuildKymographs extends BuildSeries {
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
 		boolean flag = exp.loadMCCapillaries_Only();
-		exp.getSeqCamData().seq = exp.getSeqCamData()
-				.initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true));
+		exp.getSeqCamData()
+				.setSeq(exp.getSeqCamData().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 		return flag;
 	}
 
@@ -58,7 +58,7 @@ public class BuildKymographs extends BuildSeries {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					seqData = newSequence("analyze stack starting with file " + exp.getSeqCamData().seq.getName(),
+					seqData = newSequence("analyze stack starting with file " + exp.getSeqCamData().getSeq().getName(),
 							exp.getSeqCamData().getSeqImage(0, 0));
 					vData = new Viewer(seqData, true);
 				}

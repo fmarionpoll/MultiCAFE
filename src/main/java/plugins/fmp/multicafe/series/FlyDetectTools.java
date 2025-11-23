@@ -88,22 +88,22 @@ public class FlyDetectTools {
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("detectFlies");
 		processor.setPriority(Processor.NORM_PRIORITY);
-		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(box.cageList.size());
+		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(box.getCageList().size());
 		futures.clear();
 
 		final ROI2DArea binarizedImageRoi = binarizeImage(workimage, options.threshold);
-		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(box.cageList.size());
+		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(box.getCageList().size());
 
-		for (Cage cage : box.cageList) {
+		for (Cage cage : box.getCageList()) {
 			if (options.detectCage != -1 && cage.getCageID() != options.detectCage)
 				continue;
-			if (cage.cageNFlies < 1)
+			if (cage.getCageNFlies() < 1)
 				continue;
 
 			futures.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					BooleanMask2D bestMask = getBestMask(binarizedImageRoi, cage.cageMask2D);
+					BooleanMask2D bestMask = getBestMask(binarizedImageRoi, cage.getCageMask2D());
 					Rectangle2D rect = saveBestMask(bestMask, cage, t);
 					if (rect != null)
 						listRectangles.add(rect);
@@ -130,7 +130,7 @@ public class FlyDetectTools {
 		Rectangle2D rect = null;
 		if (bestMask != null)
 			rect = bestMask.getOptimizedBounds();
-		cell.flyPositions.addPositionWithoutRoiArea(t, rect);
+		cell.getFlyPositions().addPositionWithoutRoiArea(t, rect);
 		return rect;
 	}
 
@@ -160,16 +160,16 @@ public class FlyDetectTools {
 
 	public void initParametersForDetection(Experiment exp, BuildSeriesOptions options) {
 		this.options = options;
-		exp.cages.detect_nframes = (int) (((exp.cages.detectLast_Ms - exp.cages.detectFirst_Ms)
-				/ exp.cages.detectBin_Ms) + 1);
-		exp.cages.clearAllMeasures(options.detectCage);
-		box = exp.cages;
+		exp.getCages().setDetect_nframes((int) (((exp.getCages().getDetectLast_Ms() - exp.getCages().getDetectFirst_Ms())
+				/ exp.getCages().getDetectBin_Ms()) + 1));
+		exp.getCages().clearAllMeasures(options.detectCage);
+		box = exp.getCages();
 		box.computeBooleanMasksForCages();
 		rectangleAllCages = null;
-		for (Cage cell : box.cageList) {
-			if (cell.cageNFlies < 1)
+		for (Cage cell : box.getCageList()) {
+			if (cell.getCageNFlies() < 1)
 				continue;
-			Rectangle rect = cell.cageRoi2D.getBounds();
+			Rectangle rect = cell.getCageRoi2D().getBounds();
 			if (rectangleAllCages == null)
 				rectangleAllCages = new Rectangle(rect);
 			else

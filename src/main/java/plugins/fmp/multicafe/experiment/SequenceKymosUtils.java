@@ -22,21 +22,21 @@ public class SequenceKymosUtils {
 		}
 
 		// rois not in cap? add
-		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", exp.getSeqCamData().seq);
+		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", exp.getSeqCamData().getSeq());
 		for (ROI2D roi : listROISCap) {
 			boolean found = false;
-			for (Capillary cap : exp.getCapillaries().capillariesList) {
+			for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
 				if (cap.getRoi() != null && roi.getName().equals(cap.getRoiName())) {
 					found = true;
 					break;
 				}
 			}
 			if (!found)
-				exp.getCapillaries().capillariesList.add(new Capillary((ROI2DShape) roi));
+				exp.getCapillaries().getCapillariesList().add(new Capillary((ROI2DShape) roi));
 		}
 
 		// cap with no corresponding roi? remove
-		Iterator<Capillary> iterator = exp.getCapillaries().capillariesList.iterator();
+		Iterator<Capillary> iterator = exp.getCapillaries().getCapillariesList().iterator();
 		while (iterator.hasNext()) {
 			Capillary cap = iterator.next();
 			boolean found = false;
@@ -54,9 +54,9 @@ public class SequenceKymosUtils {
 	public static void transferKymoCapillariesToCamData(Experiment exp) {
 		if (exp.getCapillaries() == null)
 			return;
-		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", exp.getSeqCamData().seq);
+		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", exp.getSeqCamData().getSeq());
 		// roi with no corresponding cap? add ROI
-		for (Capillary cap : exp.getCapillaries().capillariesList) {
+		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
 			boolean found = false;
 			for (ROI2D roi : listROISCap) {
 				if (roi.getName().equals(cap.getRoiName())) {
@@ -65,7 +65,7 @@ public class SequenceKymosUtils {
 				}
 			}
 			if (!found)
-				exp.getSeqCamData().seq.addROI(cap.getRoi());
+				exp.getSeqCamData().getSeq().addROI(cap.getRoi());
 		}
 	}
 

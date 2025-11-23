@@ -141,22 +141,22 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		seq.setImage(0, 0, image);
 		return seq;
 	}
-	
+
 	protected boolean checkBoundsForCages(Experiment exp) {
-		exp.cages.detectBin_Ms = options.t_Ms_BinDuration;
+		exp.getCages().setDetectBin_Ms(options.t_Ms_BinDuration);
 		if (options.isFrameFixed) {
-			exp.cages.detectFirst_Ms = options.t_Ms_First;
-			exp.cages.detectLast_Ms = options.t_Ms_Last;
-			if (exp.cages.detectLast_Ms > exp.getCamImageLast_ms())
-				exp.cages.detectLast_Ms = exp.getCamImageLast_ms();
+			exp.getCages().setDetectFirst_Ms(options.t_Ms_First);
+			exp.getCages().setDetectLast_Ms(options.t_Ms_Last);
+			if (exp.getCages().getDetectLast_Ms() > exp.getCamImageLast_ms())
+				exp.getCages().setDetectLast_Ms(exp.getCamImageLast_ms());
 		} else {
-			exp.cages.detectFirst_Ms = exp.getCamImageFirst_ms();
-			exp.cages.detectLast_Ms = exp.getCamImageLast_ms();
+			exp.getCages().setDetectFirst_Ms(exp.getCamImageFirst_ms());
+			exp.getCages().setDetectLast_Ms(exp.getCamImageLast_ms());
 		}
-		exp.cages.detect_threshold = options.threshold;
+		exp.getCages().setDetect_threshold(options.threshold);
 
 		boolean flag = true;
-		if (exp.cages.cageList.size() < 1) {
+		if (exp.getCages().getCageList().size() < 1) {
 			Logger.warn("BuildSeries:checkBoundsForCells ! skipped experiment with no cell: "
 					+ exp.getExperimentDirectory());
 			flag = false;
@@ -165,7 +165,8 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 	}
 
 	protected boolean loadDrosoTrack(Experiment exp) {
-		exp.getSeqCamData().seq = exp.getSeqCamData().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true));
+		exp.getSeqCamData()
+				.setSeq(exp.getSeqCamData().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 		boolean flag = exp.loadCageMeasures();
 		return flag;
 	}

@@ -128,7 +128,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 					if (overlayCheckBox.isSelected()) {
 						if (overlayThreshold1 == null)
 							overlayThreshold1 = new OverlayThreshold(exp.getSeqCamData());
-						exp.getSeqCamData().seq.addOverlay(overlayThreshold1);
+						exp.getSeqCamData().getSeq().addOverlay(overlayThreshold1);
 						updateOverlay(exp);
 					} else
 						removeOverlay(exp);
@@ -165,19 +165,19 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		if (overlayThreshold1 == null)
 			overlayThreshold1 = new OverlayThreshold(seqCamData);
 		else {
-			seqCamData.seq.removeOverlay(overlayThreshold1);
+			seqCamData.getSeq().removeOverlay(overlayThreshold1);
 			overlayThreshold1.setSequence(seqCamData);
 		}
-		seqCamData.seq.addOverlay(overlayThreshold1);
+		seqCamData.getSeq().addOverlay(overlayThreshold1);
 		boolean ifGreater = true;
 		ImageTransformEnums transformOp = (ImageTransformEnums) transformComboBox.getSelectedItem();
-		overlayThreshold1.setThresholdSingle(exp.cages.detect_threshold, transformOp, ifGreater);
+		overlayThreshold1.setThresholdSingle(exp.getCages().getDetect_threshold(), transformOp, ifGreater);
 		overlayThreshold1.painterChanged();
 	}
 
 	public void removeOverlay(Experiment exp) {
-		if (exp.getSeqCamData() != null && exp.getSeqCamData().seq != null)
-			exp.getSeqCamData().seq.removeOverlay(overlayThreshold1);
+		if (exp.getSeqCamData() != null && exp.getSeqCamData().getSeq() != null)
+			exp.getSeqCamData().getSeq().removeOverlay(overlayThreshold1);
 	}
 
 	@Override
@@ -185,7 +185,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		if (e.getSource() == thresholdSpinner) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				exp.cages.detect_threshold = (int) thresholdSpinner.getValue();
+				exp.getCages().setDetect_threshold((int) thresholdSpinner.getValue());
 				updateOverlay(exp);
 			}
 		}
@@ -263,11 +263,11 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		int nitems = 1;
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
-			nitems = exp.cages.cageList.size() + 1;
+			nitems = exp.getCages().getCageList().size() + 1;
 		if (cagesComboBox.getItemCount() != nitems) {
 			cagesComboBox.removeAllItems();
 			cagesComboBox.addItem("all cells");
-			for (Cage cage : exp.cages.cageList) {
+			for (Cage cage : exp.getCages().getCageList()) {
 				cagesComboBox.addItem(cage.getCageIDasString());
 			}
 		}

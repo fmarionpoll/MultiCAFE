@@ -169,7 +169,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 			XLSExportOptions xlsExportOptions, boolean subtractT0) {
 		Capillaries caps = expi.getCapillaries();
 		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
-		for (Capillary cap : caps.capillariesList) {
+		for (Capillary cap : caps.getCapillariesList()) {
 			checkIfSameStimulusAndConcentration(cap);
 			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID,
 					xlsExportOptions.exportType, nOutputFrames);

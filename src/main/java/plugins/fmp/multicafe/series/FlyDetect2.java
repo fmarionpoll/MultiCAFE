@@ -15,7 +15,7 @@ public class FlyDetect2 extends FlyDetect {
 	protected void runFlyDetect(Experiment exp) {
 		exp.cleanPreviousDetectedFliesROIs();
 		find_flies.initParametersForDetection(exp, options);
-		exp.cages.initFlyPositions(options.detectCage);
+		exp.getCages().initFlyPositions(options.detectCage);
 		options.threshold = options.thresholdDiff;
 		if (new SequenceLoaderService().loadReferenceImage(exp)) {
 			openFlyDetectViewers(exp);
@@ -27,7 +27,7 @@ public class FlyDetect2 extends FlyDetect {
 	protected ImageTransformOptions setupTransformOptions(Experiment exp) {
 		ImageTransformOptions transformOptions = new ImageTransformOptions();
 		transformOptions.transformOption = ImageTransformEnums.SUBTRACT_REF;
-		transformOptions.backgroundImage = IcyBufferedImageUtil.getCopy(exp.getSeqCamData().refImage);
+		transformOptions.backgroundImage = IcyBufferedImageUtil.getCopy(exp.getSeqCamData().getRefImage());
 		return transformOptions;
 	}
 }

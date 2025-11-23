@@ -9,7 +9,6 @@ import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-
 import plugins.fmp.multicafe.tools.Logger;
 
 public class XLSExportCapillariesResults extends XLSExport {
@@ -78,7 +77,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 			int nOutputFrames = getNOutputFrames(expi, options);
 			if (nOutputFrames > 1) {
 				XLSResultsFromCapillaries resultsArrayList = new XLSResultsFromCapillaries(
-						expi.getCapillaries().capillariesList.size());
+						expi.getCapillaries().getCapillariesList().size());
 				options.compensateEvaporation = false;
 				switch (xlsExportType) {
 				case BOTTOMLEVEL:
@@ -132,15 +131,15 @@ public class XLSExportCapillariesResults extends XLSExport {
 	private int getNOutputFrames(Experiment expi, XLSExportOptions options) {
 		int nOutputFrames = (int) ((expi.getKymoLast_ms() - expi.getKymoFirst_ms()) / options.buildExcelStepMs + 1);
 		if (nOutputFrames <= 1) {
-			if (expi.getSeqKymos().imageWidthMax == 0)
+			if (expi.getSeqKymos().getImageWidthMax() == 0)
 				expi.loadKymographs();
-			expi.setKymoLast_ms(expi.getKymoFirst_ms() + expi.getSeqKymos().imageWidthMax * expi.getKymoBin_ms());
+			expi.setKymoLast_ms(expi.getKymoFirst_ms() + expi.getSeqKymos().getImageWidthMax() * expi.getKymoBin_ms());
 			if (expi.getKymoLast_ms() <= 0)
 				exportError(expi, -1);
 			nOutputFrames = (int) ((expi.getKymoLast_ms() - expi.getKymoFirst_ms()) / options.buildExcelStepMs + 1);
 
 			if (nOutputFrames <= 1) {
-				nOutputFrames = expi.getSeqCamData().nTotalFrames;
+				nOutputFrames = expi.getSeqCamData().getnTotalFrames();
 				exportError(expi, nOutputFrames);
 			}
 		}
@@ -158,7 +157,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 			EnumXLSExport xlsOption, XLSExportOptions options) {
 
 		// loop to get all capillaries into expAll and init rows for this experiment
-		expAll.cages.copy(exp.cages);
+		expAll.getCages().copy(exp.getCages());
 		expAll.getCapillaries().copy(exp.getCapillaries());
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
 		expAll.copyExperimentFields(exp);
@@ -172,10 +171,10 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 		int nFrames = (int) ((expAll.getCamImageLast_ms() - expAll.getCamImageFirst_ms()) / options.buildExcelStepMs
 				+ 1);
-		int ncapillaries = expAll.getCapillaries().capillariesList.size();
+		int ncapillaries = expAll.getCapillaries().getCapillariesList().size();
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(ncapillaries);
 		for (int i = 0; i < ncapillaries; i++) {
-			Capillary cap = expAll.getCapillaries().capillariesList.get(i);
+			Capillary cap = expAll.getCapillaries().getCapillariesList().get(i);
 			XLSResults row = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID, xlsOption, nFrames);
 			row.stimulus = cap.capStimulus;
 			row.concentration = cap.capConcentration;
@@ -265,8 +264,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 	}
 
 	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
-		for (Cage cell : exp.cages.cageList) {
-			String roiname = cell.cageRoi2D.getName();
+		for (Cage cell : exp.getCages().getCageList()) {
+			String roiname = cell.getCageRoi2D().getName();
 			if (roiname.length() < 4)
 				continue;
 			String test = roiname.substring(0, 4);
@@ -276,12 +275,12 @@ public class XLSExportCapillariesResults extends XLSExport {
 			String cellNumberString = roiname.substring(4);
 			int cellNumber = Integer.valueOf(cellNumberString);
 			int ilastalive = 0;
-			if (cell.cageNFlies > 0) {
+			if (cell.getCageNFlies() > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.cages.isFlyAlive(cellNumber)) {
+				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.getCages().isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
-				int lastIntervalFlyAlive = expi.cages.getLastIntervalFlyAlive(cellNumber);
+				int lastIntervalFlyAlive = expi.getCages().getLastIntervalFlyAlive(cellNumber);
 				int lastMinuteAlive = (int) (lastIntervalFlyAlive * expi.getCamImageBin_ms()
 						+ (expi.getCamImageFirst_ms() - expAll.getCamImageFirst_ms()));
 				ilastalive = (int) (lastMinuteAlive / expAll.getKymoBin_ms());
@@ -434,10 +433,10 @@ public class XLSExportCapillariesResults extends XLSExport {
 				rowmax = dumb.getValue();
 		}
 
-		if (exp.cages.cageList.size() < exp.getCapillaries().capillariesList.size() / 2)
+		if (exp.getCages().getCageList().size() < exp.getCapillaries().getCapillariesList().size() / 2)
 			exp.dispatchCapillariesToCages();
 
-		List<Capillary> capList = exp.getCapillaries().capillariesList;
+		List<Capillary> capList = exp.getCapillaries().getCapillariesList();
 		for (int index = 0; index < capList.size(); index++) {
 			Capillary cap = capList.get(index);
 			String name = cap.getRoiName();
@@ -448,8 +447,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 			int y = row;
 
 			XLSExportExperimentParameters(sheet, transpose, x, y, charSeries, exp);
-			if (exp.cages.cageList.size() > index / 2) {
-				Cage cage = exp.cages.cageList.get(index / 2);
+			if (exp.getCages().getCageList().size() > index / 2) {
+				Cage cage = exp.getCages().getCageList().get(index / 2);
 				xlsExportCageParameters(sheet, transpose, x, y, charSeries, exp, cage);
 			}
 			XLSExportCapillaryParameters(sheet, transpose, x, y, charSeries, exp, cap, xlsExportOption, index);

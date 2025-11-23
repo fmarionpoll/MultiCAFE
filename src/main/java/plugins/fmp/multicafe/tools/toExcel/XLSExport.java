@@ -19,8 +19,8 @@ import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 import plugins.fmp.multicafe.tools.Logger;
+import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 
 public abstract class XLSExport {
 	protected XLSExportOptions options = null;
@@ -236,7 +236,8 @@ public abstract class XLSExport {
 		if (row.valuesOut == null)
 			return;
 
-		for (long coltime = expAll.getCamImageFirst_ms(); coltime < expAll.getCamImageLast_ms(); coltime += options.buildExcelStepMs, pt.y++) {
+		for (long coltime = expAll.getCamImageFirst_ms(); coltime < expAll
+				.getCamImageLast_ms(); coltime += options.buildExcelStepMs, pt.y++) {
 			int i_from = (int) ((coltime - expAll.getCamImageFirst_ms()) / options.buildExcelStepMs);
 			if (i_from >= row.valuesOut.length)
 				break;
@@ -275,10 +276,10 @@ public abstract class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_INDEX.getValue(), transpose, cage.getCageIDasString());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_ID.getValue(), transpose,
 				charSeries + "_" + cage.getCageID());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cage.cageStrain);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.cageSex);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.cageAge);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cage.cageComment);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cage.getCageStrain());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.getCageSex());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.getCageAge());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cage.getCageComment());
 	}
 
 	protected void XLSExportCapillaryParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
@@ -288,15 +289,15 @@ public abstract class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_INDEX.getValue(), transpose,
 				charSeries + "_" + cap.getLast2ofCapillaryName());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose,
-				exp.getCapillaries().capillariesDescription.volume);
+				exp.getCapillaries().getCapillariesDescription().getVolume());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose,
-				exp.getCapillaries().capillariesDescription.pixels);
+				exp.getCapillaries().getCapillariesDescription().getPixels());
 
 		outputStimAndConc_according_to_DataOption(sheet, xlsExportOption, cap, transpose, x, y);
 
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, cap.capNFlies);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
-				desc_getChoiceTestType(exp.getCapillaries().capillariesList, index));
+				desc_getChoiceTestType(exp.getCapillaries().getCapillariesList(), index));
 	}
 
 	private void outputStimAndConc_according_to_DataOption(XSSFSheet sheet, EnumXLSExport xlsExportOption,

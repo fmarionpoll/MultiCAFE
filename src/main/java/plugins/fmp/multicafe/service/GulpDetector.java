@@ -23,12 +23,12 @@ public class GulpDetector {
 	public void detectGulps(Experiment exp, BuildSeriesOptions options) {
 		int jitter = 5;
 		int firstKymo = 0;
-		int lastKymo = exp.getSeqKymos().seq.getSizeT() - 1;
+		int lastKymo = exp.getSeqKymos().getSeq().getSizeT() - 1;
 		if (!options.detectAllGulps) {
 			firstKymo = options.kymoFirst;
 			lastKymo = firstKymo;
 		}
-		exp.getSeqKymos().seq.beginUpdate();
+		exp.getSeqKymos().getSeq().beginUpdate();
 
 		int nframes = lastKymo - firstKymo + 1;
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
@@ -37,10 +37,10 @@ public class GulpDetector {
 		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(nframes);
 		futures.clear();
 
-		final Sequence seqAnalyzed = exp.getSeqKymos().seq;
+		final Sequence seqAnalyzed = exp.getSeqKymos().getSeq();
 
 		for (int indexCapillary = firstKymo; indexCapillary <= lastKymo; indexCapillary++) {
-			final Capillary capi = exp.getCapillaries().capillariesList.get(indexCapillary);
+			final Capillary capi = exp.getCapillaries().getCapillariesList().get(indexCapillary);
 			capi.setGulpsOptions(options);
 			futures.add(processor.submit(new Runnable() {
 				@Override
@@ -61,7 +61,7 @@ public class GulpDetector {
 		exp.saveCapillaries();
 
 		processor.shutdown();
-		exp.getSeqKymos().seq.endUpdate();
+		exp.getSeqKymos().getSeq().endUpdate();
 	}
 
 	private void waitFuturesCompletion(Processor processor, ArrayList<Future<?>> futuresArray) {
@@ -111,4 +111,3 @@ public class GulpDetector {
 		return listOfMaxPoints;
 	}
 }
-

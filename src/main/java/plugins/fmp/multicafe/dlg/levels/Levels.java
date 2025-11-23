@@ -270,7 +270,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 				if (fromCheckBox.isSelected())
 					displaySearchArea(exp);
 				else if (searchRectangleROI2D != null)
-					exp.getSeqKymos().seq.removeROI(searchRectangleROI2D);
+					exp.getSeqKymos().getSeq().removeROI(searchRectangleROI2D);
 			}
 		});
 
@@ -347,13 +347,13 @@ public class Levels extends JPanel implements PropertyChangeListener {
 		options.detectAllKymos = allKymosCheckBox.isSelected();
 		currentKymographImage = 0;
 		if (!allKymosCheckBox.isSelected()) {
-			int t = exp.getSeqKymos().seq.getFirstViewer().getPositionT();
+			int t = exp.getSeqKymos().getSeq().getFirstViewer().getPositionT();
 			options.kymoFirst = t;
 			options.kymoLast = t;
-			currentKymographImage = exp.getSeqKymos().seq.getFirstViewer().getPositionT();
+			currentKymographImage = exp.getSeqKymos().getSeq().getFirstViewer().getPositionT();
 		} else {
 			options.kymoFirst = 0;
-			options.kymoLast = exp.getSeqKymos().seq.getSizeT() - 1;
+			options.kymoLast = exp.getSeqKymos().getSeq().getSizeT() - 1;
 		}
 		// other parameters
 		options.pass1 = pass1CheckBox.isSelected();
@@ -409,19 +409,19 @@ public class Levels extends JPanel implements PropertyChangeListener {
 
 	private void displaySearchArea(Experiment exp) {
 		if (searchRectangleROI2D == null) {
-			Rectangle searchRectangle = exp.getSeqKymos().seq.getBounds2D();
+			Rectangle searchRectangle = exp.getSeqKymos().getSeq().getBounds2D();
 			searchRectangle.width -= 1;
 			searchRectangle.height -= 1;
 			searchRectangleROI2D = new ROI2DRectangle(searchRectangle);
 			searchRectangleROI2D.setName(SEARCHRECT);
 			searchRectangleROI2D.setColor(Color.ORANGE);
 		}
-		exp.getSeqKymos().seq.addROI(searchRectangleROI2D);
-		exp.getSeqKymos().seq.setSelectedROI(searchRectangleROI2D);
+		exp.getSeqKymos().getSeq().addROI(searchRectangleROI2D);
+		exp.getSeqKymos().getSeq().setSelectedROI(searchRectangleROI2D);
 	}
 
 	private Rectangle getSearchAreaFromSearchRectangle(Experiment exp, boolean fitSmallerRectangle) {
-		Rectangle seqRectangle = exp.getSeqKymos().seq.getBounds2D();
+		Rectangle seqRectangle = exp.getSeqKymos().getSeq().getBounds2D();
 		seqRectangle.height -= 1;
 		seqRectangle.width -= 1;
 		if (fitSmallerRectangle) {
@@ -446,7 +446,8 @@ public class Levels extends JPanel implements PropertyChangeListener {
 	}
 
 	protected Canvas2DWithTransforms getKymosCanvas(Experiment exp) {
-		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.getSeqKymos().seq.getFirstViewer().getCanvas();
+		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.getSeqKymos().getSeq().getFirstViewer()
+				.getCanvas();
 		return canvas;
 	}
 
@@ -456,12 +457,12 @@ public class Levels extends JPanel implements PropertyChangeListener {
 		if (overlayThreshold == null)
 			overlayThreshold = new OverlayThreshold(exp.getSeqKymos());
 		else {
-			exp.getSeqKymos().seq.removeOverlay(overlayThreshold);
+			exp.getSeqKymos().getSeq().removeOverlay(overlayThreshold);
 			overlayThreshold.setSequence(exp.getSeqKymos());
 		}
 
 		if (transformPass1DisplayButton.isSelected() || transformPass2DisplayButton.isSelected()) {
-			exp.getSeqKymos().seq.addOverlay(overlayThreshold);
+			exp.getSeqKymos().getSeq().addOverlay(overlayThreshold);
 			updateOverlayThreshold();
 		}
 	}
@@ -488,8 +489,8 @@ public class Levels extends JPanel implements PropertyChangeListener {
 	}
 
 	void removeOverlay(Experiment exp) {
-		if (exp.getSeqKymos() != null && exp.getSeqKymos().seq != null)
-			exp.getSeqKymos().seq.removeOverlay(overlayThreshold);
+		if (exp.getSeqKymos() != null && exp.getSeqKymos().getSeq() != null)
+			exp.getSeqKymos().getSeq().removeOverlay(overlayThreshold);
 	}
 
 }

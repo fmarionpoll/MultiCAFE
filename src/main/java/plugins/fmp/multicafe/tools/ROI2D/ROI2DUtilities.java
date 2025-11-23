@@ -109,8 +109,8 @@ public class ROI2DUtilities {
 	}
 
 	public static List<Integer> copyFirstROIMatchingFilterToDataArray(SequenceKymos seqKymos, String filter) {
-		List<ROI2D> listRois = seqKymos.seq.getROI2Ds();
-		int width = seqKymos.seq.getWidth();
+		List<ROI2D> listRois = seqKymos.getSeq().getROI2Ds();
+		int width = seqKymos.getSeq().getWidth();
 		for (ROI2D roi : listRois) {
 			if (roi.getName().contains(filter)) {
 				interpolateMissingPointsAlongXAxis((ROI2DPolyLine) roi, width);

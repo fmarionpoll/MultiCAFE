@@ -179,7 +179,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		exp.loadCamDataImages();
 		parent0.paneExperiment.updateViewerForSequenceCam(exp);
 
-		exp.getSeqCamData().seq.addListener(this);
+		exp.getSeqCamData().getSeq().addListener(this);
 		if (exp.getSeqCamData() != null) {
 			exp.loadCamDataCapillaries();
 
@@ -297,8 +297,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (sequenceEvent.getSourceType() == SequenceEventSourceType.SEQUENCE_DATA) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				if (exp.getSeqCamData().seq != null && sequenceEvent.getSequence() == exp.getSeqCamData().seq) {
-					Viewer v = exp.getSeqCamData().seq.getFirstViewer();
+				if (exp.getSeqCamData().getSeq() != null && sequenceEvent.getSequence() == exp.getSeqCamData().getSeq()) {
+					Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
 					int t = v.getPositionT();
 					v.setTitle(exp.getSeqCamData().getDecoratedImageName(t));
 				}

@@ -13,22 +13,22 @@ import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.tools.Logger;
+import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
 
 public class LevelDetector {
 
 	public void detectLevels(Experiment exp, BuildSeriesOptions options) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
-		seqKymos.seq.removeAllROI();
+		seqKymos.getSeq().removeAllROI();
 
 		int tFirsKymo = options.kymoFirst;
-		if (tFirsKymo > seqKymos.seq.getSizeT() || tFirsKymo < 0)
+		if (tFirsKymo > seqKymos.getSeq().getSizeT() || tFirsKymo < 0)
 			tFirsKymo = 0;
 		int tLastKymo = options.kymoLast;
-		if (tLastKymo >= seqKymos.seq.getSizeT())
-			tLastKymo = seqKymos.seq.getSizeT() - 1;
-		seqKymos.seq.beginUpdate();
+		if (tLastKymo >= seqKymos.getSeq().getSizeT())
+			tLastKymo = seqKymos.getSeq().getSizeT() - 1;
+		seqKymos.getSeq().beginUpdate();
 
 		int nframes = tLastKymo - tFirsKymo + 1;
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
@@ -44,7 +44,7 @@ public class LevelDetector {
 		SequenceLoaderService loader = new SequenceLoaderService();
 
 		for (int tKymo = tFirsKymo; tKymo <= tLastKymo; tKymo++) {
-			final Capillary capi = exp.getCapillaries().capillariesList.get(tKymo);
+			final Capillary capi = exp.getCapillaries().getCapillariesList().get(tKymo);
 			if (!options.detectR && capi.getKymographName().endsWith("2"))
 				continue;
 			if (!options.detectL && capi.getKymographName().endsWith("1"))
@@ -54,7 +54,8 @@ public class LevelDetector {
 			capi.ptsDerivative.clear();
 			capi.ptsGulps.gulps.clear();
 			capi.limitsOptions.copyFrom(options);
-			final IcyBufferedImage rawImage = loader.imageIORead(seqKymos.getFileNameFromImageList(capi.kymographIndex));
+			final IcyBufferedImage rawImage = loader
+					.imageIORead(seqKymos.getFileNameFromImageList(capi.kymographIndex));
 
 			futures.add(processor.submit(new Runnable() {
 				@Override
@@ -63,10 +64,12 @@ public class LevelDetector {
 					int imageHeight = rawImage.getSizeY();
 
 					if (options.pass1)
-						detectPass1(rawImage, transformPass1, capi, imageWidth, imageHeight, searchRect, jitter, options);
+						detectPass1(rawImage, transformPass1, capi, imageWidth, imageHeight, searchRect, jitter,
+								options);
 
 					if (options.pass2)
-						detectPass2(rawImage, transformPass2, capi, imageWidth, imageHeight, searchRect, jitter, options);
+						detectPass2(rawImage, transformPass2, capi, imageWidth, imageHeight, searchRect, jitter,
+								options);
 
 					int columnFirst = (int) searchRect.getX();
 					int columnLast = (int) (searchRect.getWidth() + columnFirst);
@@ -89,7 +92,7 @@ public class LevelDetector {
 		waitFuturesCompletion(processor, futures);
 
 		exp.saveCapillaries();
-		seqKymos.seq.endUpdate();
+		seqKymos.getSeq().endUpdate();
 	}
 
 	private void waitFuturesCompletion(Processor processor, ArrayList<Future<?>> futuresArray) {
@@ -132,7 +135,8 @@ public class LevelDetector {
 	}
 
 	private int detectLimitOnOneColumn(int ix, int istart, int topSearchFrom, int jitter, int imageWidth,
-			int imageHeight, Capillary capi, int[] transformed1DArray1, Rectangle searchRect, BuildSeriesOptions options) {
+			int imageHeight, Capillary capi, int[] transformed1DArray1, Rectangle searchRect,
+			BuildSeriesOptions options) {
 		int iyTop = detectThresholdFromTop(ix, topSearchFrom, jitter, transformed1DArray1, imageWidth, imageHeight,
 				options, searchRect);
 		int iyBottom = detectThresholdFromBottom(ix, jitter, transformed1DArray1, imageWidth, imageHeight, options,
@@ -268,4 +272,3 @@ public class LevelDetector {
 	}
 
 }
-

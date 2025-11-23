@@ -12,16 +12,16 @@ public class ClipCageMeasuresToSmallest extends BuildSeries {
 		exp.loadMCCapillaries();
 		if (exp.loadKymographs()) {
 			SequenceKymos seqKymos = exp.getSeqKymos();
-			ArrayList<Integer> listCageID = new ArrayList<Integer>(seqKymos.nTotalFrames);
-			for (int t = 0; t < seqKymos.nTotalFrames; t++) {
-				Capillary tcap = exp.getCapillaries().capillariesList.get(t);
+			ArrayList<Integer> listCageID = new ArrayList<Integer>(seqKymos.getnTotalFrames());
+			for (int t = 0; t < seqKymos.getnTotalFrames(); t++) {
+				Capillary tcap = exp.getCapillaries().getCapillariesList().get(t);
 				int tcage = tcap.capCageID;
 				if (findCageID(tcage, listCageID))
 					continue;
 				listCageID.add(tcage);
 				int minLength = findMinLength(exp, t, tcage);
-				for (int tt = t; tt < seqKymos.nTotalFrames; tt++) {
-					Capillary ttcap = exp.getCapillaries().capillariesList.get(tt);
+				for (int tt = t; tt < seqKymos.getnTotalFrames(); tt++) {
+					Capillary ttcap = exp.getCapillaries().getCapillariesList().get(tt);
 					int ttcage = ttcap.capCageID;
 					if (ttcage == tcage && ttcap.ptsTop.polylineLevel.npoints > minLength)
 						ttcap.cropMeasuresToNPoints(minLength);
@@ -45,10 +45,10 @@ public class ClipCageMeasuresToSmallest extends BuildSeries {
 	}
 
 	private int findMinLength(Experiment exp, int t, int tCell) {
-		Capillary tcap = exp.getCapillaries().capillariesList.get(t);
+		Capillary tcap = exp.getCapillaries().getCapillariesList().get(t);
 		int minLength = tcap.ptsTop.polylineLevel.npoints;
-		for (int tt = t; tt < exp.getCapillaries().capillariesList.size(); tt++) {
-			Capillary ttcap = exp.getCapillaries().capillariesList.get(tt);
+		for (int tt = t; tt < exp.getCapillaries().getCapillariesList().size(); tt++) {
+			Capillary ttcap = exp.getCapillaries().getCapillariesList().get(tt);
 			int ttCell = ttcap.capCageID;
 			if (ttCell == tCell) {
 				int dataLength = ttcap.ptsTop.polylineLevel.npoints;
