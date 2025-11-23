@@ -114,7 +114,7 @@ public class XLSExportMoveResults extends XLSExport {
 		if (cell.cageNFlies < 1)
 			return;
 
-		long last = expAll.camImageLast_ms - expAll.camImageFirst_ms;
+		long last = expAll.getCamImageLast_ms() - expAll.getCamImageFirst_ms();
 		if (options.fixedIntervals)
 			last = options.endAll_Ms - options.startAll_Ms;
 		if (exportType == EnumMeasure.TI)

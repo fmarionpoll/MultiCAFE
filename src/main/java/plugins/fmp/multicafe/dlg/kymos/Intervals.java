@@ -97,18 +97,18 @@ public class Intervals extends JPanel {
 
 	void setKymoIntervalsFromDialog(Experiment exp) {
 		double binsize_Ms = getBinSize_Ms();
-		exp.kymoFirst_ms = (long) ((double) firstColumnJSpinner.getValue() * binsize_Ms);
-		exp.kymoLast_ms = (long) (((double) lastColumnJSpinner.getValue()) * binsize_Ms);
-		exp.kymoBin_ms = (long) (((double) binColumnJSpinner.getValue()) * binsize_Ms);
+		exp.setKymoFirst_ms((long) ((double) firstColumnJSpinner.getValue() * binsize_Ms));
+		exp.setKymoLast_ms((long) (((double) lastColumnJSpinner.getValue()) * binsize_Ms));
+		exp.setKymoBin_ms((long) (((double) binColumnJSpinner.getValue()) * binsize_Ms));
 	}
 
 	void displayDlgKymoIntervals(Experiment exp) {
 		double binsize_Ms = getBinSize_Ms();
 		firstColumnJSpinner.setValue(0.);
 		lastColumnJSpinner.setValue((double) exp.getSeqKymos().imageWidthMax);
-		if (exp.kymoBin_ms <= 0)
-			exp.kymoBin_ms = (long) binsize_Ms;
-		binColumnJSpinner.setValue((double) exp.kymoBin_ms / binsize_Ms);
+		if (exp.getKymoBin_ms() <= 0)
+			exp.setKymoBin_ms((long) binsize_Ms);
+		binColumnJSpinner.setValue((double) exp.getKymoBin_ms() / binsize_Ms);
 	}
 
 }

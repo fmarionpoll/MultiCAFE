@@ -25,9 +25,9 @@ public class CombinedExperiment extends Experiment {
 		Experiment expi = experimentList.get(0);
 		copyExperimentFields(expi);
 		copyOtherExperimentFields(expi);
-		firstImage_FileTime = expi.firstImage_FileTime;
+		setFirstImage_FileTime(expi.getFirstImage_FileTime());
 		expi = experimentList.get(experimentList.size() - 1);
-		lastImage_FileTime = expi.lastImage_FileTime;
+		setLastImage_FileTime(expi.getLastImage_FileTime());
 		// TODO: load capillaries descriptors and load cells descriptors
 		// loadMCCapillaries_Descriptors(filename)
 	}
@@ -67,7 +67,7 @@ public class CombinedExperiment extends Experiment {
 	}
 
 	public void loadFlyPositions() {
-		long time_start_ms = firstImage_FileTime.toMillis();
+		long time_start_ms = getFirstImage_FileTime().toMillis();
 		Experiment exp = experimentList.get(0);
 		exp.initTmsForFlyPositions(time_start_ms);
 		cages.cageList.addAll(exp.cages.cageList);

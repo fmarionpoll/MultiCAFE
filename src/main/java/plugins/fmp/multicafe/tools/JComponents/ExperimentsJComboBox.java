@@ -43,42 +43,42 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 		CombinedExperiment expAll = new CombinedExperiment(exp0, false);
 
 		if (options.fixedIntervals) {
-			expAll.camImageFirst_ms = options.startAll_Ms;
-			expAll.camImageLast_ms = options.endAll_Ms;
+			expAll.setCamImageFirst_ms(options.startAll_Ms);
+			expAll.setCamImageLast_ms(options.endAll_Ms);
 		} else {
 			if (options.absoluteTime) {
 				Experiment expFirst = exp0.getFirstChainedExperiment(options.collateSeries);
-				expAll.setFileTimeImageFirst(expFirst.firstImage_FileTime);
+				expAll.setFirstImage_FileTime(expFirst.getFirstImage_FileTime());
 				Experiment expLast = exp0.getLastChainedExperiment(options.collateSeries);
-				expAll.setFileTimeImageLast(expLast.lastImage_FileTime);
+				expAll.setLastImage_FileTime(expLast.getLastImage_FileTime());
 				for (int i = 0; i < getItemCount(); i++) {
 					Experiment exp = getItemAt(i);
 					expFirst = exp.getFirstChainedExperiment(options.collateSeries);
-					if (expAll.firstImage_FileTime.compareTo(expFirst.firstImage_FileTime) > 0)
-						expAll.setFileTimeImageFirst(expFirst.firstImage_FileTime);
+					if (expAll.getFirstImage_FileTime().compareTo(expFirst.getFirstImage_FileTime()) > 0)
+						expAll.setFirstImage_FileTime(expFirst.getFirstImage_FileTime());
 					expLast = exp.getLastChainedExperiment(options.collateSeries);
-					if (expAll.lastImage_FileTime.compareTo(expLast.lastImage_FileTime) < 0)
-						expAll.setFileTimeImageLast(expLast.lastImage_FileTime);
+					if (expAll.getLastImage_FileTime().compareTo(expLast.getLastImage_FileTime()) < 0)
+						expAll.setLastImage_FileTime(expLast.getLastImage_FileTime());
 				}
-				expAll.camImageFirst_ms = expAll.firstImage_FileTime.toMillis();
-				expAll.camImageLast_ms = expAll.lastImage_FileTime.toMillis();
+				expAll.setCamImageFirst_ms(expAll.getFirstImage_FileTime().toMillis());
+				expAll.setCamImageLast_ms(expAll.getLastImage_FileTime().toMillis());
 			} else {
-				expAll.camImageFirst_ms = 0;
-				expAll.camImageLast_ms = exp0.kymoLast_ms - exp0.kymoFirst_ms;
+				expAll.setCamImageFirst_ms(0);
+				expAll.setCamImageLast_ms(exp0.getKymoLast_ms() - exp0.getKymoFirst_ms());
 				long firstOffset_Ms = 0;
 				long lastOffset_Ms = 0;
 
 				for (int i = 0; i < getItemCount(); i++) {
 					Experiment exp = getItemAt(i);
 					Experiment expFirst = exp.getFirstChainedExperiment(options.collateSeries);
-					firstOffset_Ms = expFirst.kymoFirst_ms + expFirst.camImageFirst_ms;
-					exp.chainImageFirst_ms = expFirst.camImageFirst_ms + expFirst.kymoFirst_ms;
+					firstOffset_Ms = expFirst.getKymoFirst_ms() + expFirst.getCamImageFirst_ms();
+					exp.chainImageFirst_ms = expFirst.getCamImageFirst_ms() + expFirst.getKymoFirst_ms();
 
 					Experiment expLast = exp.getLastChainedExperiment(options.collateSeries);
-					if (expLast.kymoLast_ms <= 0) {
-						expLast.kymoLast_ms = expLast.camImageLast_ms - expLast.camImageFirst_ms;
+					if (expLast.getKymoLast_ms() <= 0) {
+						expLast.setKymoLast_ms(expLast.getCamImageLast_ms() - expLast.getCamImageFirst_ms());
 					}
-					lastOffset_Ms = expLast.kymoLast_ms + expLast.camImageFirst_ms;
+					lastOffset_Ms = expLast.getKymoLast_ms() + expLast.getCamImageFirst_ms();
 
 					long diff = lastOffset_Ms - firstOffset_Ms;
 					if (diff < 1) {
@@ -86,8 +86,8 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 								+ ": FileTime difference between last and first image < 1; set dt between images = 1 ms");
 						diff = exp.getSeqCamData().seq.getSizeT();
 					}
-					if (expAll.camImageLast_ms < diff)
-						expAll.camImageLast_ms = diff;
+					if (expAll.getCamImageLast_ms() < diff)
+						expAll.setCamImageLast_ms(diff);
 				}
 			}
 		}
@@ -160,7 +160,7 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 		for (int i = 0; i < getItemCount(); i++) {
 			Experiment expi = getItemAt(i);
 			Experiment expFirst = expi.getFirstChainedExperiment(collate);
-			expi.chainImageFirst_ms = expFirst.camImageFirst_ms + expFirst.kymoFirst_ms;
+			expi.chainImageFirst_ms = expFirst.getCamImageFirst_ms() + expFirst.getKymoFirst_ms();
 		}
 	}
 

@@ -71,7 +71,8 @@ public class Comparators {
 	public static class Experiment_Start_Comparator implements Comparator<Experiment> {
 		@Override
 		public int compare(Experiment exp1, Experiment exp2) {
-			return Long.compare(exp1.camImageFirst_ms + exp1.kymoFirst_ms, exp2.camImageFirst_ms + exp2.kymoFirst_ms);
+			return Long.compare(exp1.getCamImageFirst_ms() + exp1.getKymoFirst_ms(),
+					exp2.getCamImageFirst_ms() + exp2.getKymoFirst_ms());
 		}
 	}
 }

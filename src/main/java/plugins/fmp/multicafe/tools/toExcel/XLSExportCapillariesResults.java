@@ -124,7 +124,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 				case AUTOCORREL_LR:
 				case CROSSCORREL:
 				case CROSSCORREL_LR:
-					resultsArrayList.getResults1(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms, options);
+					resultsArrayList.getResults1(expi, xlsExportType, nOutputFrames, exp.getKymoBin_ms(), options);
 					break;
 
 				case TOPLEVEL:
@@ -132,11 +132,11 @@ public class XLSExportCapillariesResults extends XLSExport {
 				case TOPLEVELDELTA:
 				case TOPLEVELDELTA_LR:
 					options.compensateEvaporation = options.subtractEvaporation;
-					resultsArrayList.getResults_T0(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms, options);
+					resultsArrayList.getResults_T0(expi, xlsExportType, nOutputFrames, exp.getKymoBin_ms(), options);
 					break;
 
 				case TOPRAW:
-					resultsArrayList.getResults_T0(expi, xlsExportType, nOutputFrames, exp.kymoBin_ms, options);
+					resultsArrayList.getResults_T0(expi, xlsExportType, nOutputFrames, exp.getKymoBin_ms(), options);
 					break;
 
 				default:
@@ -159,14 +159,14 @@ public class XLSExportCapillariesResults extends XLSExport {
 	}
 
 	private int getNOutputFrames(Experiment expi, XLSExportOptions options) {
-		int nOutputFrames = (int) ((expi.kymoLast_ms - expi.kymoFirst_ms) / options.buildExcelStepMs + 1);
+		int nOutputFrames = (int) ((expi.getKymoLast_ms() - expi.getKymoFirst_ms()) / options.buildExcelStepMs + 1);
 		if (nOutputFrames <= 1) {
 			if (expi.getSeqKymos().imageWidthMax == 0)
 				expi.loadKymographs();
-			expi.kymoLast_ms = expi.kymoFirst_ms + expi.getSeqKymos().imageWidthMax * expi.kymoBin_ms;
-			if (expi.kymoLast_ms <= 0)
+			expi.setKymoLast_ms(expi.getKymoFirst_ms() + expi.getSeqKymos().imageWidthMax * expi.getKymoBin_ms());
+			if (expi.getKymoLast_ms() <= 0)
 				exportError(expi, -1);
-			nOutputFrames = (int) ((expi.kymoLast_ms - expi.kymoFirst_ms) / options.buildExcelStepMs + 1);
+			nOutputFrames = (int) ((expi.getKymoLast_ms() - expi.getKymoFirst_ms()) / options.buildExcelStepMs + 1);
 
 			if (nOutputFrames <= 1) {
 				nOutputFrames = expi.getSeqCamData().nTotalFrames;
@@ -178,7 +178,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 	private void exportError(Experiment expi, int nOutputFrames) {
 		String error = "XLSExport:ExportError() ERROR in " + expi.getExperimentDirectory() + "\n nOutputFrames="
-				+ nOutputFrames + " kymoFirstCol_Ms=" + expi.kymoFirst_ms + " kymoLastCol_Ms=" + expi.kymoLast_ms;
+				+ nOutputFrames + " kymoFirstCol_Ms=" + expi.getKymoFirst_ms() + " kymoLastCol_Ms=" + expi.getKymoLast_ms();
 		System.out.println(error);
 	}
 
@@ -198,7 +198,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 			expi = expi.chainToNextExperiment;
 		}
 
-		int nFrames = (int) ((expAll.camImageLast_ms - expAll.camImageFirst_ms) / options.buildExcelStepMs + 1);
+		int nFrames = (int) ((expAll.getCamImageLast_ms() - expAll.getCamImageFirst_ms()) / options.buildExcelStepMs + 1);
 		int ncapillaries = expAll.getCapillaries().capillariesList.size();
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(ncapillaries);
 		for (int i = 0; i < ncapillaries; i++) {
@@ -220,18 +220,18 @@ public class XLSExportCapillariesResults extends XLSExport {
 
 		EnumXLSExport xlsoption = resultsArrayList.getRow(0).exportType;
 
-		long offsetChain = expi.camImageFirst_ms - expi.chainImageFirst_ms;
-		long start_Ms = expi.kymoFirst_ms + offsetChain; // TODO check when collate?
-		long end_Ms = expi.kymoLast_ms + offsetChain;
+		long offsetChain = expi.getCamImageFirst_ms() - expi.chainImageFirst_ms;
+		long start_Ms = expi.getKymoFirst_ms() + offsetChain; // TODO check when collate?
+		long end_Ms = expi.getKymoLast_ms() + offsetChain;
 		if (options.fixedIntervals) {
 			if (start_Ms < options.startAll_Ms)
 				start_Ms = options.startAll_Ms;
-			if (start_Ms > expi.camImageLast_ms)
+			if (start_Ms > expi.getCamImageLast_ms())
 				return;
 
 			if (end_Ms > options.endAll_Ms)
 				end_Ms = options.endAll_Ms;
-			if (end_Ms > expi.camImageFirst_ms)
+			if (end_Ms > expi.getCamImageFirst_ms())
 				return;
 		}
 
@@ -309,9 +309,9 @@ public class XLSExportCapillariesResults extends XLSExport {
 					expi = expi.chainToNextExperiment;
 				}
 				int lastIntervalFlyAlive = expi.cages.getLastIntervalFlyAlive(cellNumber);
-				int lastMinuteAlive = (int) (lastIntervalFlyAlive * expi.camImageBin_ms
-						+ (expi.camImageFirst_ms - expAll.camImageFirst_ms));
-				ilastalive = (int) (lastMinuteAlive / expAll.kymoBin_ms);
+				int lastMinuteAlive = (int) (lastIntervalFlyAlive * expi.getCamImageBin_ms()
+						+ (expi.getCamImageFirst_ms() - expAll.getCamImageFirst_ms()));
+				ilastalive = (int) (lastMinuteAlive / expAll.getKymoBin_ms());
 			}
 			if (ilastalive > 0)
 				ilastalive += 1;
@@ -358,8 +358,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 			XLSExportOptions options) {
 		this.options = options;
 		expAll = new CombinedExperiment(exp, false);
-		expAll.camImageLast_ms = exp.camImageLast_ms;
-		expAll.camImageFirst_ms = exp.camImageFirst_ms;
+		expAll.setCamImageLast_ms(exp.getCamImageLast_ms());
+		expAll.setCamImageFirst_ms(exp.getCamImageFirst_ms());
 		return getXLSResultArray_CapillaryData_From_CombinedExperiment(exp, exportType, options);
 	}
 

@@ -137,11 +137,11 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		if (options.isFrameFixed) {
 			exp.cages.detectFirst_Ms = options.t_Ms_First;
 			exp.cages.detectLast_Ms = options.t_Ms_Last;
-			if (exp.cages.detectLast_Ms > exp.camImageLast_ms)
-				exp.cages.detectLast_Ms = exp.camImageLast_ms;
+			if (exp.cages.detectLast_Ms > exp.getCamImageLast_ms())
+				exp.cages.detectLast_Ms = exp.getCamImageLast_ms();
 		} else {
-			exp.cages.detectFirst_Ms = exp.camImageFirst_ms;
-			exp.cages.detectLast_Ms = exp.camImageLast_ms;
+			exp.cages.detectFirst_Ms = exp.getCamImageFirst_ms();
+			exp.cages.detectLast_Ms = exp.getCamImageLast_ms();
 		}
 		exp.cages.detect_threshold = options.threshold;
 

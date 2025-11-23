@@ -93,8 +93,8 @@ public class BuildBackground extends BuildSeries {
 		transformOptions.backgroundImage = imageIORead(
 				exp.getSeqCamData().getFileNameFromImageList(options.backgroundFirst));
 
-		long first_ms = exp.cages.detectFirst_Ms + (options.backgroundFirst * exp.camImageBin_ms);
-		final int t_first = (int) ((first_ms - exp.cages.detectFirst_Ms) / exp.camImageBin_ms);
+		long first_ms = exp.cages.detectFirst_Ms + (options.backgroundFirst * exp.getCamImageBin_ms());
+		final int t_first = (int) ((first_ms - exp.cages.detectFirst_Ms) / exp.getCamImageBin_ms());
 
 		int t_last = options.backgroundFirst + options.backgroundNFrames;
 		if (t_last > exp.getSeqCamData().nTotalFrames)

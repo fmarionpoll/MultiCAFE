@@ -50,21 +50,22 @@ public class BuildKymographs extends BuildSeries {
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
 		boolean flag = exp.loadMCCapillaries_Only();
-		exp.getSeqCamData().seq = exp.getSeqCamData().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true));
+		exp.getSeqCamData().seq = exp.getSeqCamData()
+				.initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true));
 		return flag;
 	}
 
 	private void getTimeLimitsOfSequence(Experiment exp) {
 		exp.getFileIntervalsFromSeqCamData();
-		exp.kymoBin_ms = options.t_Ms_BinDuration;
+		exp.setKymoBin_ms(options.t_Ms_BinDuration);
 		if (options.isFrameFixed) {
-			exp.kymoFirst_ms = options.t_Ms_First;
-			exp.kymoLast_ms = options.t_Ms_Last;
-			if (exp.kymoLast_ms + exp.camImageFirst_ms > exp.camImageLast_ms)
-				exp.kymoLast_ms = exp.camImageLast_ms - exp.camImageFirst_ms;
+			exp.setKymoFirst_ms(options.t_Ms_First);
+			exp.setKymoLast_ms(options.t_Ms_Last);
+			if (exp.getKymoLast_ms() + exp.getCamImageFirst_ms() > exp.getCamImageLast_ms())
+				exp.setKymoLast_ms(exp.getCamImageLast_ms() - exp.getCamImageFirst_ms());
 		} else {
-			exp.kymoFirst_ms = 0;
-			exp.kymoLast_ms = exp.camImageLast_ms - exp.camImageFirst_ms;
+			exp.setKymoFirst_ms(0);
+			exp.setKymoLast_ms(exp.getCamImageLast_ms() - exp.getCamImageFirst_ms());
 		}
 	}
 
@@ -83,7 +84,7 @@ public class BuildKymographs extends BuildSeries {
 		processor.setPriority(Processor.NORM_PRIORITY);
 		ArrayList<Future<?>> futuresArray = new ArrayList<Future<?>>(nframes);
 		futuresArray.clear();
-		int t0 = (int) exp.binT0;
+		int t0 = (int) exp.getBinT0();
 		for (int t = t0; t < exp.getSeqKymos().seq.getSizeT(); t++) {
 			final int t_index = t;
 
@@ -121,11 +122,11 @@ public class BuildKymographs extends BuildSeries {
 		threadRunning = true;
 		stopFlag = false;
 
-		final int nKymographColumns = (int) ((exp.kymoLast_ms - exp.kymoFirst_ms) / exp.kymoBin_ms + 1);
+		final int nKymographColumns = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
 		int iToColumn = 0;
 		FileTime firstImage_FileTime = exp.getSeqCamData().getFileTimeFromStructuredName(0);
 		exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(firstImage_FileTime.toMillis());
-		int sourceImageIndex = exp.findNearestIntervalWithBinarySearch(exp.kymoFirst_ms, 0,
+		int sourceImageIndex = exp.findNearestIntervalWithBinarySearch(exp.getKymoFirst_ms(), 0,
 				exp.getSeqCamData().nTotalFrames);
 		String vDataTitle = new String(" / " + nKymographColumns);
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack frame ");
@@ -137,7 +138,8 @@ public class BuildKymographs extends BuildSeries {
 		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(ntasks);
 
 		tasks.clear();
-		for (long ii_ms = exp.kymoFirst_ms; ii_ms <= exp.kymoLast_ms; ii_ms += exp.kymoBin_ms, iToColumn++) {
+		for (long ii_ms = exp.getKymoFirst_ms(); ii_ms <= exp.getKymoLast_ms(); ii_ms += exp
+				.getKymoBin_ms(), iToColumn++) {
 			if (stopFlag)
 				break;
 			sourceImageIndex = exp.findNearestIntervalWithBinarySearch(ii_ms, 0, exp.getSeqCamData().nTotalFrames);
@@ -256,7 +258,7 @@ public class BuildKymographs extends BuildSeries {
 		int sizex = seqCamData.seq.getSizeX();
 		int sizey = seqCamData.seq.getSizeY();
 
-		kymoImageWidth = (int) ((exp.kymoLast_ms - exp.kymoFirst_ms) / exp.kymoBin_ms + 1);
+		kymoImageWidth = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
 
 		int imageHeight = 0;
 		for (Capillary cap : exp.getCapillaries().capillariesList) {

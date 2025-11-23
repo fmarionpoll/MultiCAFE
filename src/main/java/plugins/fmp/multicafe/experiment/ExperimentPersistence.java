@@ -42,10 +42,6 @@ public class ExperimentPersistence {
 	private final static String ID_COND1 = "cond1";
 	private final static String ID_COND2 = "cond2";
 
-	private final static int EXPT_DIRECTORY = 1;
-	private final static int IMG_DIRECTORY = 2;
-	private final static int BIN_DIRECTORY = 3;
-	
 	public boolean xmlLoadExperiment(Experiment exp, String csFileName) {
 		final Document doc = XMLUtil.loadDocument(csFileName);
 		if (doc == null)
@@ -57,26 +53,26 @@ public class ExperimentPersistence {
 		String version = XMLUtil.getElementValue(node, ID_VERSION, ID_VERSIONNUM);
 		if (!version.equals(ID_VERSIONNUM))
 			return false;
-		exp.camImageFirst_ms = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0);
-		exp.camImageLast_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0);
-		if (exp.camImageLast_ms <= 0) {
-			exp.camImageFirst_ms = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGE, 0) * 60000;
-			exp.camImageLast_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0) * 60000;
+		exp.setCamImageFirst_ms(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0));
+		exp.setCamImageLast_ms(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0));
+		if (exp.getCamImageLast_ms() <= 0) {
+			exp.setCamImageFirst_ms(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGE, 0) * 60000);
+			exp.setCamImageLast_ms(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0) * 60000);
 		}
 
-		exp.binT0 = XMLUtil.getElementLongValue(node, ID_BINT0, 0);
-		exp.kymoFirst_ms = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
-		exp.kymoLast_ms = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
-		exp.kymoBin_ms = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
+		exp.setBinT0(XMLUtil.getElementLongValue(node, ID_BINT0, 0));
+		exp.setKymoFirst_ms(XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1));
+		exp.setKymoLast_ms(XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1));
+		exp.setKymoBin_ms(XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1));
 
-		if (exp.kymoBin_ms < 0)
-			exp.kymoBin_ms = 60000; // Default value
+		if (exp.getKymoBin_ms() < 0)
+			exp.setKymoBin_ms(60000); // Default value
 
 		// check offsets
-		if (exp.camImageFirst_ms < 0) exp.camImageFirst_ms = 0;
-		if (exp.camImageLast_ms < 0) exp.camImageLast_ms = 0;
-		if (exp.kymoFirst_ms < 0) exp.kymoFirst_ms = 0;
-		if (exp.kymoLast_ms < 0) exp.kymoLast_ms = 0;
+		if (exp.getCamImageFirst_ms() < 0) exp.setCamImageFirst_ms(0);
+		if (exp.getCamImageLast_ms() < 0) exp.setCamImageLast_ms(0);
+		if (exp.getKymoFirst_ms() < 0) exp.setKymoFirst_ms(0);
+		if (exp.getKymoLast_ms() < 0) exp.setKymoLast_ms(0);
 
 		if (exp.getField_boxID() != null && exp.getField_boxID().contentEquals("..")) {
 			exp.setField_boxID(XMLUtil.getElementValue(node, ID_BOXID, ".."));
@@ -100,13 +96,13 @@ public class ExperimentPersistence {
 				return false;
 
 			XMLUtil.setElementValue(node, ID_VERSION, ID_VERSIONNUM);
-			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, exp.camImageFirst_ms);
-			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, exp.camImageLast_ms);
+			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, exp.getCamImageFirst_ms());
+			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, exp.getCamImageLast_ms());
 
-			XMLUtil.setElementLongValue(node, ID_BINT0, exp.binT0);
-			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, exp.kymoFirst_ms);
-			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, exp.kymoLast_ms);
-			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, exp.kymoBin_ms);
+			XMLUtil.setElementLongValue(node, ID_BINT0, exp.getBinT0());
+			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, exp.getKymoFirst_ms());
+			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, exp.getKymoLast_ms());
+			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, exp.getKymoBin_ms());
 
 			XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, exp.getStrImagesDirectory());
 

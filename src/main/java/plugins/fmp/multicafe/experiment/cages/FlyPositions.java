@@ -336,27 +336,27 @@ public class FlyPositions {
 				flyPositions.setPixelSize(pixelsize);
 				switch (xlsOption) {
 				case DISTANCE:
-					flyPositions.excelComputeDistanceBetweenPoints(cell.flyPositions, (int) expi.camImageBin_ms,
+					flyPositions.excelComputeDistanceBetweenPoints(cell.flyPositions, (int) expi.getCamImageBin_ms(),
 							options.buildExcelStepMs);
 					break;
 				case ISALIVE:
-					flyPositions.excelComputeIsAlive(cell.flyPositions, (int) expi.camImageBin_ms,
+					flyPositions.excelComputeIsAlive(cell.flyPositions, (int) expi.getCamImageBin_ms(),
 							options.buildExcelStepMs);
 					break;
 				case SLEEP:
-					flyPositions.excelComputeSleep(cell.flyPositions, (int) expi.camImageBin_ms,
+					flyPositions.excelComputeSleep(cell.flyPositions, (int) expi.getCamImageBin_ms(),
 							options.buildExcelStepMs);
 					break;
 				case XYTOPCELL:
 					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTopCage(), cell.flyPositions,
-							(int) expi.camImageBin_ms, options.buildExcelStepMs);
+							(int) expi.getCamImageBin_ms(), options.buildExcelStepMs);
 					break;
 				case XYTIPCAPS:
 					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(expi.getCapillaries()),
-							cell.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
+							cell.flyPositions, (int) expi.getCamImageBin_ms(), options.buildExcelStepMs);
 					break;
 				case ELLIPSEAXES:
-					flyPositions.excelComputeEllipse(cell.flyPositions, (int) expi.camImageBin_ms,
+					flyPositions.excelComputeEllipse(cell.flyPositions, (int) expi.getCamImageBin_ms(),
 							options.buildExcelStepMs);
 					break;
 				case XYIMAGE:

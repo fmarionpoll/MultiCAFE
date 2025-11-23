@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 import icy.image.IcyBufferedImage;
 import icy.image.ImageUtil;
@@ -25,9 +24,9 @@ import plugins.fmp.multicafe.experiment.cages.Cages;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Directories;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
-import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
@@ -45,20 +44,89 @@ public class Experiment {
 	private Capillaries capillaries = new Capillaries();
 	public Cages cages = new Cages();
 
-	public FileTime firstImage_FileTime;
-	public FileTime lastImage_FileTime;
+	public ExperimentTimeManager timeManager = new ExperimentTimeManager();
+
+	public FileTime getFirstImage_FileTime() {
+		return timeManager.firstImage_FileTime;
+	}
+
+	public void setFirstImage_FileTime(FileTime fileTime) {
+		timeManager.firstImage_FileTime = fileTime;
+	}
+
+	public FileTime getLastImage_FileTime() {
+		return timeManager.lastImage_FileTime;
+	}
+
+	public void setLastImage_FileTime(FileTime fileTime) {
+		timeManager.lastImage_FileTime = fileTime;
+	}
 
 	// __________________________________________________
 
-	public long camImageFirst_ms = -1;
-	public long camImageLast_ms = -1;
-	public long camImageBin_ms = -1;
-	public long[] camImages_ms = null;
+	public long getCamImageFirst_ms() {
+		return timeManager.camImageFirst_ms;
+	}
 
-	public long binT0 = 0;
-	public long kymoFirst_ms = 0;
-	public long kymoLast_ms = 0;
-	public long kymoBin_ms = 60000;
+	public void setCamImageFirst_ms(long ms) {
+		timeManager.camImageFirst_ms = ms;
+	}
+
+	public long getCamImageLast_ms() {
+		return timeManager.camImageLast_ms;
+	}
+
+	public void setCamImageLast_ms(long ms) {
+		timeManager.camImageLast_ms = ms;
+	}
+
+	public long getCamImageBin_ms() {
+		return timeManager.camImageBin_ms;
+	}
+
+	public void setCamImageBin_ms(long ms) {
+		timeManager.camImageBin_ms = ms;
+	}
+
+	public long[] getCamImages_ms() {
+		return timeManager.camImages_ms;
+	}
+
+	public void setCamImages_ms(long[] ms) {
+		timeManager.camImages_ms = ms;
+	}
+
+	public long getBinT0() {
+		return timeManager.binT0;
+	}
+
+	public void setBinT0(long val) {
+		timeManager.binT0 = val;
+	}
+
+	public long getKymoFirst_ms() {
+		return timeManager.kymoFirst_ms;
+	}
+
+	public void setKymoFirst_ms(long ms) {
+		timeManager.kymoFirst_ms = ms;
+	}
+
+	public long getKymoLast_ms() {
+		return timeManager.kymoLast_ms;
+	}
+
+	public void setKymoLast_ms(long ms) {
+		timeManager.kymoLast_ms = ms;
+	}
+
+	public long getKymoBin_ms() {
+		return timeManager.kymoBin_ms;
+	}
+
+	public void setKymoBin_ms(long ms) {
+		timeManager.kymoBin_ms = ms;
+	}
 
 	// _________________________________________________
 
@@ -76,7 +144,7 @@ public class Experiment {
 	public Experiment chainToNextExperiment = null;
 	public long chainImageFirst_ms = 0;
 	public int experimentID = 0;
-	
+
 	private ExperimentPersistence persistence = new ExperimentPersistence();
 
 	private final static int EXPT_DIRECTORY = 1;
@@ -102,7 +170,8 @@ public class Experiment {
 		this.seqKymos = new SequenceKymos();
 		strExperimentDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
-		persistence.xmlLoadExperiment(this, concatenateExptDirectoryWithSubpathAndName(null, ExperimentPersistence.ID_MCEXPERIMENT_XML));
+		persistence.xmlLoadExperiment(this,
+				concatenateExptDirectoryWithSubpathAndName(null, ExperimentPersistence.ID_MCEXPERIMENT_XML));
 	}
 
 	public Experiment(ExperimentDirectories eADF) {
@@ -120,7 +189,8 @@ public class Experiment {
 		getFileIntervalsFromSeqCamData();
 		seqKymos = new SequenceKymos(eADF.kymosImagesList);
 
-		persistence.xmlLoadExperiment(this, concatenateExptDirectoryWithSubpathAndName(null, ExperimentPersistence.ID_MCEXPERIMENT_XML));
+		persistence.xmlLoadExperiment(this,
+				concatenateExptDirectoryWithSubpathAndName(null, ExperimentPersistence.ID_MCEXPERIMENT_XML));
 	}
 
 	// ----------------------------------
@@ -158,7 +228,8 @@ public class Experiment {
 			try {
 				Files.createDirectory(pathDir);
 			} catch (IOException e) {
-				Logger.error("Experiment:createDirectoryIfDoesNotExist() Creating directory failed: " + directory, e, true);
+				Logger.error("Experiment:createDirectoryIfDoesNotExist() Creating directory failed: " + directory, e,
+						true);
 				return false;
 			}
 		}
@@ -268,61 +339,28 @@ public class Experiment {
 	}
 
 	public void getFileIntervalsFromSeqCamData() {
-		if (seqCamData != null && (camImageFirst_ms < 0 || camImageLast_ms < 0 || camImageBin_ms < 0)) {
-			loadFileIntervalsFromSeqCamData();
-		}
+		timeManager.getFileIntervalsFromSeqCamData(seqCamData, strImagesDirectory);
 	}
 
 	public void loadFileIntervalsFromSeqCamData() {
-		if (seqCamData != null) {
-			seqCamData.setImagesDirectory(strImagesDirectory);
-			firstImage_FileTime = seqCamData.getFileTimeFromStructuredName(0);
-			lastImage_FileTime = seqCamData.getFileTimeFromStructuredName(seqCamData.nTotalFrames - 1);
-			if (firstImage_FileTime != null && lastImage_FileTime != null) {
-				camImageFirst_ms = firstImage_FileTime.toMillis();
-				camImageLast_ms = lastImage_FileTime.toMillis();
-				camImageBin_ms = (camImageLast_ms - camImageFirst_ms) / (seqCamData.nTotalFrames - 1);
-				if (camImageBin_ms == 0)
-					Logger.warn("Experiment:loadFileIntervalsFromSeqCamData() error / file interval size");
-			} else {
-				Logger.warn("Experiment:loadFileIntervalsFromSeqCamData() error / file intervals of "
-						+ seqCamData.getImagesDirectory());
-			}
-		}
+		timeManager.loadFileIntervalsFromSeqCamData(seqCamData, strImagesDirectory);
 	}
 
 	public long[] build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(long firstImage_ms) {
-		camImages_ms = new long[seqCamData.nTotalFrames];
-		for (int i = 0; i < seqCamData.nTotalFrames; i++) {
-			FileTime image_FileTime = seqCamData.getFileTimeFromStructuredName(i);
-			long image_ms = image_FileTime.toMillis() - firstImage_ms;
-			camImages_ms[i] = image_ms;
-		}
-		return camImages_ms;
+		return timeManager.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(seqCamData, firstImage_ms);
 	}
 
 	public void initTmsForFlyPositions(long time_start_ms) {
-		build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(time_start_ms);
-		cages.initCagesTmsForFlyPositions(camImages_ms);
+		timeManager.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(seqCamData, time_start_ms);
+		cages.initCagesTmsForFlyPositions(timeManager.camImages_ms);
 	}
 
 	public int findNearestIntervalWithBinarySearch(long value, int low, int high) {
-		int result = -1;
-		if (high - low > 1) {
-			int mid = (low + high) / 2;
-			if (camImages_ms[mid] > value)
-				result = findNearestIntervalWithBinarySearch(value, low, mid);
-			else if (camImages_ms[mid] < value)
-				result = findNearestIntervalWithBinarySearch(value, mid, high);
-			else
-				result = mid;
-		} else
-			result = Math.abs(value - camImages_ms[low]) < Math.abs(value - camImages_ms[high]) ? low : high;
-		return result;
+		return timeManager.findNearestIntervalWithBinarySearch(value, low, high);
 	}
 
 	public String getBinNameFromKymoFrameStep() {
-		return BIN + kymoBin_ms / 1000;
+		return timeManager.getBinNameFromKymoFrameStep();
 	}
 
 	public String getDirectoryToSaveResults() {
@@ -507,11 +545,11 @@ public class Experiment {
 	}
 
 	public void setFileTimeImageFirst(FileTime fileTimeImageFirst) {
-		this.firstImage_FileTime = fileTimeImageFirst;
+		timeManager.firstImage_FileTime = fileTimeImageFirst;
 	}
 
 	public void setFileTimeImageLast(FileTime fileTimeImageLast) {
-		this.lastImage_FileTime = fileTimeImageLast;
+		timeManager.lastImage_FileTime = fileTimeImageLast;
 	}
 
 	public int getSeqCamSizeT() {
@@ -828,7 +866,7 @@ public class Experiment {
 		int step = -1;
 		if (resultsPath.contains(BIN)) {
 			if (resultsPath.length() < (BIN.length() + 1)) {
-				step = (int) kymoBin_ms;
+				step = (int) timeManager.kymoBin_ms;
 			} else {
 				step = Integer.valueOf(resultsPath.substring(BIN.length())) * 1000;
 			}
@@ -915,20 +953,6 @@ public class Experiment {
 			return strExperimentDirectory + File.separator + subpath + File.separator + name;
 		else
 			return strExperimentDirectory + File.separator + name;
-	}
-
-	private void ugly_checkOffsetValues() {
-		if (camImageFirst_ms < 0)
-			camImageFirst_ms = 0;
-		if (camImageLast_ms < 0)
-			camImageLast_ms = 0;
-		if (kymoFirst_ms < 0)
-			kymoFirst_ms = 0;
-		if (kymoLast_ms < 0)
-			kymoLast_ms = 0;
-
-		if (kymoBin_ms < 0)
-			kymoBin_ms = 60000;
 	}
 
 	private void addCapillariesValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {

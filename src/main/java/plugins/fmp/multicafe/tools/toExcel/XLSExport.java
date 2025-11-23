@@ -77,7 +77,7 @@ public class XLSExport {
 	void writeTop_timeIntervals_Default(XSSFSheet sheet, int row) {
 		boolean transpose = options.transpose;
 		Point pt = new Point(0, row);
-		long duration = expAll.camImageLast_ms - expAll.camImageFirst_ms;
+		long duration = expAll.getCamImageLast_ms() - expAll.getCamImageFirst_ms();
 		long interval = 0;
 		while (interval < duration) {
 			int i = (int) (interval / options.buildExcelUnitMs);
@@ -187,8 +187,8 @@ public class XLSExport {
 		if (row.valuesOut == null)
 			return;
 
-		for (long coltime = expAll.camImageFirst_ms; coltime < expAll.camImageLast_ms; coltime += options.buildExcelStepMs, pt.y++) {
-			int i_from = (int) ((coltime - expAll.camImageFirst_ms) / options.buildExcelStepMs);
+		for (long coltime = expAll.getCamImageFirst_ms(); coltime < expAll.getCamImageLast_ms(); coltime += options.buildExcelStepMs, pt.y++) {
+			int i_from = (int) ((coltime - expAll.getCamImageFirst_ms()) / options.buildExcelStepMs);
 			if (i_from >= row.valuesOut.length)
 				break;
 			double value = row.valuesOut[i_from];
