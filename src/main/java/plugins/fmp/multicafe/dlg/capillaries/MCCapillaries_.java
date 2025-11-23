@@ -118,15 +118,15 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 	public void updateDialogs(Experiment exp) {
 		if (exp != null) {
 			SequenceKymosUtils.transferCamDataROIStoKymo(exp);
-			exp.capillaries.desc_old.copy(exp.capillaries.capillariesDescription);
-			tabInfos.setAllDescriptors(exp.capillaries);
-			tabCreate.setGroupingAndNumber(exp.capillaries);
+			exp.getCapillaries().desc_old.copy(exp.getCapillaries().capillariesDescription);
+			tabInfos.setAllDescriptors(exp.getCapillaries());
+			tabCreate.setGroupingAndNumber(exp.getCapillaries());
 		}
 	}
 
 	public void getDialogCapillariesInfos(Experiment exp) {
-		tabInfos.getDescriptors(exp.capillaries);
-		tabCreate.setCapillariesGrouping(exp.capillaries);
+		tabInfos.getDescriptors(exp.getCapillaries());
+		tabCreate.setCapillariesGrouping(exp.getCapillaries());
 	}
 
 	@Override
@@ -141,7 +141,7 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 		if (selectedIndex == ID_EDIT) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				Viewer v = exp.seqCamData.seq.getFirstViewer();
+				Viewer v = exp.getSeqCamData().seq.getFirstViewer();
 				if (v != null) {
 					v.toFront();
 					v.requestFocus();

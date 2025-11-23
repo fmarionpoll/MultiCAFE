@@ -85,7 +85,7 @@ public class MCSpots_1 extends JPanel {
 	// -------------------------------------------------
 
 	void subtractFirstColumn(Experiment exp) {
-		SequenceKymos seqKymos = exp.seqKymos;
+		SequenceKymos seqKymos = exp.getSeqKymos();
 		if (seqKymos == null)
 			return;
 		ImageTransformEnums transform = ImageTransformEnums.SUBTRACT_1RSTCOL;
@@ -95,11 +95,11 @@ public class MCSpots_1 extends JPanel {
 	}
 
 	void buildHistogram(Experiment exp) {
-		SequenceKymos seqKymos = exp.seqKymos;
+		SequenceKymos seqKymos = exp.getSeqKymos();
 		if (seqKymos == null)
 			return;
 
-		int imageIndex = exp.seqKymos.seq.getFirstViewer().getPositionT();
+		int imageIndex = exp.getSeqKymos().seq.getFirstViewer().getPositionT();
 		getAverageXandYProfile(seqKymos, imageIndex);
 		graphDisplay2Panels(exp, avgX, avgY);
 	}
@@ -180,7 +180,7 @@ public class MCSpots_1 extends JPanel {
 //	private void removeBackGround(Experiment exp) 
 //	{
 //		double [] avgColor = new double [3];
-//		int width = exp.seqKymos.seq.getSizeX();
+//		int width = exp.getSeqKymos().seq.getSizeX();
 //		for (int chan = 0; chan <3; chan++) 
 //		{
 //			double sum = 0;
@@ -193,7 +193,7 @@ public class MCSpots_1 extends JPanel {
 //		int zChannelDestination = 1;
 //		exp.setReferenceImageWithConstant(avgColor);
 //		exp.kymosBuildFiltered01(0, zChannelDestination, transform, 0);
-//		exp.seqKymos.seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
+//		exp.getSeqKymos().seq.getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
 //	}
 //	
 //	public void setReferenceImageWithConstant (double [] pixel) 
@@ -253,7 +253,7 @@ public class MCSpots_1 extends JPanel {
 		mainChartFrame.add(mainPanel);
 		mainChartFrame.pack();
 		if (pt == null) {
-			SequenceKymos seqKymos = exp.seqKymos;
+			SequenceKymos seqKymos = exp.getSeqKymos();
 			Viewer v = seqKymos.seq.getFirstViewer();
 			Rectangle rectv = v.getBounds();
 			pt = new Point((int) rectv.getX(), (int) rectv.getY() + 30);

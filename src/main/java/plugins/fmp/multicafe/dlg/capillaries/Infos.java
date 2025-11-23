@@ -66,7 +66,7 @@ public class Infos extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.capillaries.transferDescriptionToCapillaries();
+					exp.getCapillaries().transferDescriptionToCapillaries();
 					if (infosCapillaryTable != null) {
 						infosCapillaryTable.close();
 					}
@@ -94,9 +94,9 @@ public class Infos extends JPanel {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		int npixels = 0;
 		if (exp != null) {
-			exp.capillaries.updateCapillariesFromSequence(exp.seqCamData.seq);
-			if (exp.capillaries.capillariesList.size() > 0) {
-				Capillary cap = exp.capillaries.capillariesList.get(0);
+			exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().seq);
+			if (exp.getCapillaries().capillariesList.size() > 0) {
+				Capillary cap = exp.getCapillaries().capillariesList.get(0);
 				npixels = cap.getCapillaryROILength();
 			}
 		}

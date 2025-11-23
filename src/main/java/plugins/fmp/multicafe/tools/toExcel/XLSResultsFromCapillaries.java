@@ -167,7 +167,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 
 	private void buildDataForPass1(Experiment expi, int nOutputFrames, long kymoBinCol_Ms,
 			XLSExportOptions xlsExportOptions, boolean subtractT0) {
-		Capillaries caps = expi.capillaries;
+		Capillaries caps = expi.getCapillaries();
 		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
 		for (Capillary cap : caps.capillariesList) {
 			checkIfSameStimulusAndConcentration(cap);

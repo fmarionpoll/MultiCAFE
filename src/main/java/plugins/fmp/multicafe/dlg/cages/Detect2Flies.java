@@ -190,16 +190,16 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 	}
 
 	public void updateOverlay(Experiment exp) {
-		if (exp.seqCamData == null)
+		if (exp.getSeqCamData() == null)
 			return;
 		if (overlayThreshold == null) {
-			overlayThreshold = new OverlayThreshold(exp.seqCamData);
+			overlayThreshold = new OverlayThreshold(exp.getSeqCamData());
 		} else {
-			exp.seqCamData.seq.removeOverlay(overlayThreshold);
-			overlayThreshold.setSequence(exp.seqCamData);
+			exp.getSeqCamData().seq.removeOverlay(overlayThreshold);
+			overlayThreshold.setSequence(exp.getSeqCamData());
 		}
-		overlayThreshold.setReferenceImage(exp.seqCamData.refImage);
-		exp.seqCamData.seq.addOverlay(overlayThreshold);
+		overlayThreshold.setReferenceImage(exp.getSeqCamData().refImage);
+		exp.getSeqCamData().seq.addOverlay(overlayThreshold);
 	}
 
 	void updateOverlayThreshold() {
@@ -300,12 +300,12 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 	}
 
 	void removeOverlay(Experiment exp) {
-		if (exp.seqCamData != null && exp.seqCamData.seq != null)
-			exp.seqCamData.seq.removeOverlay(overlayThreshold);
+		if (exp.getSeqCamData() != null && exp.getSeqCamData().seq != null)
+			exp.getSeqCamData().seq.removeOverlay(overlayThreshold);
 	}
 
 	void viewDifference(Experiment exp, boolean display) {
-		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.getSeqCamData().seq.getFirstViewer().getCanvas();
 		ImageTransformEnums[] imageTransformStep1 = new ImageTransformEnums[] { ImageTransformEnums.NONE,
 				ImageTransformEnums.SUBTRACT_REF };
 		ImageTransformOptions optionsStep1 = canvas.getOptionsStep1();
@@ -313,10 +313,10 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		optionsStep1.backgroundImage = null;
 		int index = 0;
 		if (display) {
-			if (exp.seqCamData.refImage == null) {
+			if (exp.getSeqCamData().refImage == null) {
 				exp.loadReferenceImage();
 			}
-			optionsStep1.backgroundImage = exp.seqCamData.refImage;
+			optionsStep1.backgroundImage = exp.getSeqCamData().refImage;
 			index = 1;
 		}
 		canvas.selectItemStep1(imageTransformStep1[index], optionsStep1);

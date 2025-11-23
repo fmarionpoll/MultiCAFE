@@ -91,7 +91,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null && exp.seqCamData != null) {
+				if (exp != null && exp.getSeqCamData() != null) {
 					int index = gulpTransforms_comboBox.getSelectedIndex();
 					getKymosCanvas(exp).transformsCombo1.setSelectedIndex(index + 1);
 				}
@@ -112,7 +112,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null && exp.seqCamData != null) {
+				if (exp != null && exp.getSeqCamData() != null) {
 					if (display_button.isSelected()) {
 						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
 						canvas.updateTransformsComboStep1(gulpTransforms);
@@ -150,12 +150,12 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 		options.detectAllKymos = allKymosCheckBox.isSelected();
 
 		if (!allKymosCheckBox.isSelected()) {
-			int t = exp.seqKymos.seq.getFirstViewer().getPositionT();
+			int t = exp.getSeqKymos().seq.getFirstViewer().getPositionT();
 			options.kymoFirst = t;
 			options.kymoLast = t;
 		} else {
 			options.kymoFirst = 0;
-			options.kymoLast = exp.seqKymos.seq.getSizeT() - 1;
+			options.kymoLast = exp.getSeqKymos().seq.getSizeT() - 1;
 		}
 		options.detectGulpsThreshold_uL = (double) detectGulpsThresholdSpinner.getValue();
 		options.transformForGulps = (ImageTransformEnums) gulpTransforms_comboBox.getSelectedItem();
@@ -212,7 +212,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 	}
 
 	protected Canvas2DWithTransforms getKymosCanvas(Experiment exp) {
-		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.seqKymos.seq.getFirstViewer().getCanvas();
+		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.getSeqKymos().seq.getFirstViewer().getCanvas();
 		return canvas;
 	}
 

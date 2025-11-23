@@ -34,7 +34,7 @@ public class CapillariesWithTimeTableModel extends AbstractTableModel {
 
 	private Capillaries getCapillariesOfSelectedExperiment() {
 		Experiment exp = (Experiment) expList.getSelectedItem();
-		return exp.capillaries;
+		return exp.getCapillaries();
 	}
 
 	@Override

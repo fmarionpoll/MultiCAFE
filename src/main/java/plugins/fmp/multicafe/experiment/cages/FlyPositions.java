@@ -352,7 +352,7 @@ public class FlyPositions {
 							(int) expi.camImageBin_ms, options.buildExcelStepMs);
 					break;
 				case XYTIPCAPS:
-					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(expi.capillaries),
+					flyPositions.excelComputeNewPointsOrigin(cell.getCenterTipCapillaries(expi.getCapillaries()),
 							cell.flyPositions, (int) expi.camImageBin_ms, options.buildExcelStepMs);
 					break;
 				case ELLIPSEAXES:

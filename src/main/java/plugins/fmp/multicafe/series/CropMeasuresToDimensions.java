@@ -10,7 +10,7 @@ public class CropMeasuresToDimensions extends BuildSeries {
 			exp.cropCapillaryMeasuresDimensions();
 			exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
 		}
-		exp.seqCamData.closeSequence();
-		exp.seqKymos.closeSequence();
+		exp.getSeqCamData().closeSequence();
+		exp.getSeqKymos().closeSequence();
 	}
 }

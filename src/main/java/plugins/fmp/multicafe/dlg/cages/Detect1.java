@@ -127,8 +127,8 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 				if (exp != null) {
 					if (overlayCheckBox.isSelected()) {
 						if (overlayThreshold1 == null)
-							overlayThreshold1 = new OverlayThreshold(exp.seqCamData);
-						exp.seqCamData.seq.addOverlay(overlayThreshold1);
+							overlayThreshold1 = new OverlayThreshold(exp.getSeqCamData());
+						exp.getSeqCamData().seq.addOverlay(overlayThreshold1);
 						updateOverlay(exp);
 					} else
 						removeOverlay(exp);
@@ -159,7 +159,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 	}
 
 	public void updateOverlay(Experiment exp) {
-		SequenceCamData seqCamData = exp.seqCamData;
+		SequenceCamData seqCamData = exp.getSeqCamData();
 		if (seqCamData == null)
 			return;
 		if (overlayThreshold1 == null)
@@ -176,8 +176,8 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 	}
 
 	public void removeOverlay(Experiment exp) {
-		if (exp.seqCamData != null && exp.seqCamData.seq != null)
-			exp.seqCamData.seq.removeOverlay(overlayThreshold1);
+		if (exp.getSeqCamData() != null && exp.getSeqCamData().seq != null)
+			exp.getSeqCamData().seq.removeOverlay(overlayThreshold1);
 	}
 
 	@Override

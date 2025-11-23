@@ -27,7 +27,7 @@ public class FlyDetect2 extends BuildSeries {
 		exp.cages.orderFlyPositions();
 		if (!stopFlag)
 			exp.saveCageMeasures();
-		exp.seqCamData.closeSequence();
+		exp.getSeqCamData().closeSequence();
 		closeSequence(seqNegative);
 	}
 
@@ -46,16 +46,16 @@ public class FlyDetect2 extends BuildSeries {
 		ProgressFrame progressBar = new ProgressFrame("Detecting flies...");
 		ImageTransformOptions transformOptions = new ImageTransformOptions();
 		transformOptions.transformOption = ImageTransformEnums.SUBTRACT_REF;
-		transformOptions.backgroundImage = IcyBufferedImageUtil.getCopy(exp.seqCamData.refImage);
+		transformOptions.backgroundImage = IcyBufferedImageUtil.getCopy(exp.getSeqCamData().refImage);
 		ImageTransformInterface transformFunction = transformOptions.transformOption.getFunction();
 
-		int totalFrames = exp.seqCamData.nTotalFrames;
+		int totalFrames = exp.getSeqCamData().nTotalFrames;
 		for (int index = 0; index < totalFrames; index++) {
 			int t_from = index;
-			String title = "Frame #" + t_from + "/" + exp.seqCamData.nTotalFrames;
+			String title = "Frame #" + t_from + "/" + exp.getSeqCamData().nTotalFrames;
 			progressBar.setMessage(title);
 
-			IcyBufferedImage workImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));
+			IcyBufferedImage workImage = imageIORead(exp.getSeqCamData().getFileNameFromImageList(t_from));
 			IcyBufferedImage negativeImage = transformFunction.getTransformedImage(workImage, transformOptions);
 			try {
 				seqNegative.beginUpdate();

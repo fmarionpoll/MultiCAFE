@@ -17,7 +17,7 @@ import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
 public class DetectLevels extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {
 		if (loadExperimentDataToDetectLevels(exp)) {
-			exp.seqKymos.displayViewerAtRectangle(options.parent0Rect);
+			exp.getSeqKymos().displayViewerAtRectangle(options.parent0Rect);
 			detectCapillaryLevels(exp);
 		}
 		exp.closeSequences();
@@ -30,7 +30,7 @@ public class DetectLevels extends BuildSeries {
 	}
 
 	private boolean detectCapillaryLevels(Experiment exp) {
-		SequenceKymos seqKymos = exp.seqKymos;
+		SequenceKymos seqKymos = exp.getSeqKymos();
 		seqKymos.seq.removeAllROI();
 
 		threadRunning = true;
@@ -57,7 +57,7 @@ public class DetectLevels extends BuildSeries {
 		final Rectangle searchRect = options.searchArea;
 
 		for (int tKymo = tFirsKymo; tKymo <= tLastKymo; tKymo++) {
-			final Capillary capi = exp.capillaries.capillariesList.get(tKymo);
+			final Capillary capi = exp.getCapillaries().capillariesList.get(tKymo);
 			if (!options.detectR && capi.getKymographName().endsWith("2"))
 				continue;
 			if (!options.detectL && capi.getKymographName().endsWith("1"))

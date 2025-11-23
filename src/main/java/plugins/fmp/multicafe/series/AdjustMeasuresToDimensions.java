@@ -10,8 +10,8 @@ public class AdjustMeasuresToDimensions extends BuildSeries {
 			exp.adjustCapillaryMeasuresDimensions();
 			exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
 		}
-		exp.seqCamData.closeSequence();
-		exp.seqKymos.closeSequence();
+		exp.getSeqCamData().closeSequence();
+		exp.getSeqKymos().closeSequence();
 	}
 
 }

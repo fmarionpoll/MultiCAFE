@@ -327,7 +327,7 @@ public class Cages {
 			return false;
 		boolean flag = xmlLoadCages(doc);
 		if (flag) {
-			cagesToROIs(exp.seqCamData);
+			cagesToROIs(exp.getSeqCamData());
 		} else {
 			Logger.warn("Cages:xmlReadCageFromFileNoQuestion() failed to load cages from file");
 			return false;

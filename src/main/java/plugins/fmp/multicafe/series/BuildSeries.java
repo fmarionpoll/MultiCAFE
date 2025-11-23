@@ -165,7 +165,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 	}
 
 	protected boolean loadDrosoTrack(Experiment exp) {
-		exp.seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
+		exp.getSeqCamData().seq = exp.getSeqCamData().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true));
 		boolean flag = exp.loadCageMeasures();
 		return flag;
 	}
@@ -206,7 +206,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					seqNegative = newSequence("detectionImage", exp.seqCamData.refImage);
+					seqNegative = newSequence("detectionImage", exp.getSeqCamData().refImage);
 					vNegative = new ViewerFMP(seqNegative, false, true);
 					vNegative.setVisible(true);
 				}

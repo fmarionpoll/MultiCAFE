@@ -239,15 +239,15 @@ public class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_INDEX.getValue(), transpose,
 				charSeries + "_" + cap.getLast2ofCapillaryName());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose,
-				exp.capillaries.capillariesDescription.volume);
+				exp.getCapillaries().capillariesDescription.volume);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose,
-				exp.capillaries.capillariesDescription.pixels);
+				exp.getCapillaries().capillariesDescription.pixels);
 
 		outputStimAndConc_according_to_DataOption(sheet, xlsExportOption, cap, transpose, x, y);
 
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, cap.capNFlies);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
-				desc_getChoiceTestType(exp.capillaries.capillariesList, index));
+				desc_getChoiceTestType(exp.getCapillaries().capillariesList, index));
 	}
 
 	private void outputStimAndConc_according_to_DataOption(XSSFSheet sheet, EnumXLSExport xlsExportOption,

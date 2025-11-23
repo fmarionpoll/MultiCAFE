@@ -26,7 +26,7 @@ public class FlyDetect1 extends BuildSeries {
 		exp.cages.orderFlyPositions();
 		if (!stopFlag)
 			exp.saveCageMeasures();
-		exp.seqCamData.closeSequence();
+		exp.getSeqCamData().closeSequence();
 		closeSequence(seqNegative);
 	}
 
@@ -42,13 +42,13 @@ public class FlyDetect1 extends BuildSeries {
 	private void getReferenceImage(Experiment exp, int t, ImageTransformOptions options) {
 		switch (options.transformOption) {
 		case SUBTRACT_TM1:
-			options.backgroundImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t));
+			options.backgroundImage = imageIORead(exp.getSeqCamData().getFileNameFromImageList(t));
 			break;
 
 		case SUBTRACT_T0:
 		case SUBTRACT_REF:
 			if (options.backgroundImage == null)
-				options.backgroundImage = imageIORead(exp.seqCamData.getFileNameFromImageList(0));
+				options.backgroundImage = imageIORead(exp.getSeqCamData().getFileNameFromImageList(0));
 			break;
 
 		case NONE:
@@ -64,14 +64,14 @@ public class FlyDetect1 extends BuildSeries {
 		ImageTransformInterface transformFunction = options.transformop.getFunction();
 
 		int t_previous = 0;
-		int totalFrames = exp.seqCamData.nTotalFrames;
+		int totalFrames = exp.getSeqCamData().nTotalFrames;
 
 		for (int index = 0; index < totalFrames; index++) {
 			int t_from = index;
-			String title = "Frame #" + t_from + "/" + exp.seqCamData.nTotalFrames;
+			String title = "Frame #" + t_from + "/" + exp.getSeqCamData().nTotalFrames;
 			progressBar.setMessage(title);
 
-			IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));
+			IcyBufferedImage sourceImage = imageIORead(exp.getSeqCamData().getFileNameFromImageList(t_from));
 			getReferenceImage(exp, t_previous, transformOptions);
 			IcyBufferedImage workImage = transformFunction.getTransformedImage(sourceImage, transformOptions);
 			try {

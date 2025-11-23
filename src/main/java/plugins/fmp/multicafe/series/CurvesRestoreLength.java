@@ -9,14 +9,14 @@ public class CurvesRestoreLength extends BuildSeries {
 		exp.xmlLoad_MCExperiment();
 		exp.loadMCCapillaries();
 		if (exp.loadKymographs()) {
-			SequenceKymos seqKymos = exp.seqKymos;
+			SequenceKymos seqKymos = exp.getSeqKymos();
 			for (int t = 0; t < seqKymos.nTotalFrames; t++) {
-				Capillary cap = exp.capillaries.capillariesList.get(t);
+				Capillary cap = exp.getCapillaries().capillariesList.get(t);
 				cap.restoreClippedMeasures();
 			}
 			exp.saveCapillaries();
 		}
-		exp.seqCamData.closeSequence();
-		exp.seqKymos.closeSequence();
+		exp.getSeqCamData().closeSequence();
+		exp.getSeqKymos().closeSequence();
 	}
 }

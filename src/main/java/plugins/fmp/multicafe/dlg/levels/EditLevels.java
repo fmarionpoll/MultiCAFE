@@ -93,14 +93,14 @@ public class EditLevels extends JPanel {
 	}
 
 	void cropPointsToLeftLimit(Experiment exp) {
-		SequenceKymos seqKymos = exp.seqKymos;
+		SequenceKymos seqKymos = exp.getSeqKymos();
 		int t = seqKymos.currentFrame;
 		ROI2D roiRef = seqKymos.seq.getSelectedROI2D();
 		if (roiRef == null)
 			return;
 
-		Capillary cap = exp.capillaries.capillariesList.get(t);
-		seqKymos.transferKymosRoisToCapillaries_Measures(exp.capillaries);
+		Capillary cap = exp.getCapillaries().capillariesList.get(t);
+		seqKymos.transferKymosRoisToCapillaries_Measures(exp.getCapillaries());
 
 		int lastX = findLastXLeftOfRoi(cap, roiRef);
 		cap.cropMeasuresToNPoints(lastX + 1);
@@ -126,9 +126,9 @@ public class EditLevels extends JPanel {
 	}
 
 	void restoreCroppedPoints(Experiment exp) {
-		SequenceKymos seqKymos = exp.seqKymos;
+		SequenceKymos seqKymos = exp.getSeqKymos();
 		int t = seqKymos.currentFrame;
-		Capillary cap = exp.capillaries.capillariesList.get(t);
+		Capillary cap = exp.getCapillaries().capillariesList.get(t);
 		cap.restoreClippedMeasures();
 
 		seqKymos.updateROIFromCapillaryMeasure(cap, cap.ptsTop);
@@ -162,14 +162,14 @@ public class EditLevels extends JPanel {
 	}
 
 	void cutAndInterpolate(Experiment exp) {
-		SequenceKymos seqKymos = exp.seqKymos;
+		SequenceKymos seqKymos = exp.getSeqKymos();
 		int t = seqKymos.seq.getFirstViewer().getPositionT();
 		ROI2D roi = seqKymos.seq.getSelectedROI2D();
 		if (roi == null)
 			return;
 
-		seqKymos.transferKymosRoi_atT_ToCapillaries_Measures(t, exp.capillaries);
-		Capillary cap = exp.capillaries.capillariesList.get(t);
+		seqKymos.transferKymosRoi_atT_ToCapillaries_Measures(t, exp.getCapillaries());
+		Capillary cap = exp.getCapillaries().capillariesList.get(t);
 		String optionSelected = (String) roiTypeCombo.getSelectedItem();
 		if (optionSelected.contains("gulp")) {
 			List<ROI> listGulpsSelected = selectGulpsWithinRoi(roi, seqKymos.seq, seqKymos.currentFrame);

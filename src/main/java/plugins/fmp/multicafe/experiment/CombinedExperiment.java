@@ -35,7 +35,7 @@ public class CombinedExperiment extends Experiment {
 	public void loadExperimentCamFileNames() {
 		Experiment expi = experimentList.get(0);
 		while (expi != null) {
-			seqCamData.imagesList.addAll(expi.seqCamData.imagesList);
+			getSeqCamData().imagesList.addAll(expi.getSeqCamData().imagesList);
 			expi = expi.chainToNextExperiment;
 		}
 	}

@@ -94,7 +94,7 @@ public class Options extends JPanel {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Viewer v = exp.getSeqCamData().seq.getFirstViewer();
 		IcyCanvas canvas = v.getCanvas();
 		List<Layer> layers = canvas.getLayers(false);
 		if (layers == null)

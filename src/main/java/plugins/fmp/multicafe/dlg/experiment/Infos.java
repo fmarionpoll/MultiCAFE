@@ -229,14 +229,14 @@ public class Infos extends JPanel {
 	}
 
 	void transferPreviousExperimentCapillariesInfos(Experiment exp0, Experiment exp) {
-		exp.capillaries.capillariesDescription.grouping = exp0.capillaries.capillariesDescription.grouping;
-		parent0.paneCapillaries.tabCreate.setGroupedBy2(exp0.capillaries.capillariesDescription.grouping == 2);
-		exp.capillaries.capillariesDescription.volume = exp0.capillaries.capillariesDescription.volume;
-		parent0.paneCapillaries.tabInfos.setAllDescriptors(exp0.capillaries);
+		exp.getCapillaries().capillariesDescription.grouping = exp0.getCapillaries().capillariesDescription.grouping;
+		parent0.paneCapillaries.tabCreate.setGroupedBy2(exp0.getCapillaries().capillariesDescription.grouping == 2);
+		exp.getCapillaries().capillariesDescription.volume = exp0.getCapillaries().capillariesDescription.volume;
+		parent0.paneCapillaries.tabInfos.setAllDescriptors(exp0.getCapillaries());
 	}
 
 	void zoomToUpperCorner(Experiment exp) {
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.getSeqCamData().seq;
 		Viewer v = seq.getFirstViewer();
 		if (v != null) {
 			Canvas2D canvas = (Canvas2D) v.getCanvas();

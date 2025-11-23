@@ -75,8 +75,8 @@ public class LevelsChart extends JPanel implements SequenceListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.seqKymos.validateRois();
-					exp.seqKymos.transferKymosRoisToCapillaries_Measures(exp.capillaries);
+					exp.getSeqKymos().validateRois();
+					exp.getSeqKymos().transferKymosRoisToCapillaries_Measures(exp.getCapillaries());
 					displayGraphsPanels(exp);
 				}
 			}
@@ -95,7 +95,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 
 	private Rectangle getInitialUpperLeftPosition(Experiment exp) {
 		Rectangle rectv = new Rectangle(50, 500, 10, 10);
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Viewer v = exp.getSeqCamData().seq.getFirstViewer();
 		if (v != null) {
 			rectv = v.getBounds();
 			// rectv.translate(0, rectv.height);
@@ -108,7 +108,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 	}
 
 	public void displayGraphsPanels(Experiment exp) {
-		exp.seqKymos.seq.addListener(this);
+		exp.getSeqKymos().seq.addListener(this);
 		Rectangle rectv = getInitialUpperLeftPosition(exp);
 		int dx = 5;
 		int dy = 10;
@@ -191,7 +191,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 
 	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExport option) {
 		boolean flag = false;
-		Capillaries capillaries = exp.capillaries;
+		Capillaries capillaries = exp.getCapillaries();
 		for (Capillary cap : capillaries.capillariesList) {
 			flag = cap.isThereAnyMeasuresDone(option);
 			if (flag)

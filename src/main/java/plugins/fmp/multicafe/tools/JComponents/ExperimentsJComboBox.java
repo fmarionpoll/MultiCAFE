@@ -84,7 +84,7 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 					if (diff < 1) {
 						System.out.println("ExperimentCombo:get_MsTime_of_StartAndEnd_AllExperiments() Expt # " + i
 								+ ": FileTime difference between last and first image < 1; set dt between images = 1 ms");
-						diff = exp.seqCamData.seq.getSizeT();
+						diff = exp.getSeqCamData().seq.getSizeT();
 					}
 					if (expAll.camImageLast_ms < diff)
 						expAll.camImageLast_ms = diff;
@@ -120,8 +120,8 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 					if (expListBinSubDirectory == null)
 						expi.checkKymosDirectory(expi.getBinSubDirectory());
 					expi.openMeasures(loadCapillaries, loadDrosoTrack);
-					if (maxSizeOfCapillaryArrays < expi.capillaries.capillariesList.size()) {
-						maxSizeOfCapillaryArrays = expi.capillaries.capillariesList.size();
+					if (maxSizeOfCapillaryArrays < expi.getCapillaries().capillariesList.size()) {
+						maxSizeOfCapillaryArrays = expi.getCapillaries().capillariesList.size();
 						if (maxSizeOfCapillaryArrays % 2 != 0)
 							maxSizeOfCapillaryArrays += 1;
 					}

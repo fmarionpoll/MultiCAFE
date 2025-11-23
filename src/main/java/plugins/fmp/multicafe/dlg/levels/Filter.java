@@ -40,7 +40,7 @@ public class Filter extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					SequenceKymos seqKymos = exp.seqKymos;
+					SequenceKymos seqKymos = exp.getSeqKymos();
 					int span = getSpan();
 					int c = 1;
 					for (int t = 0; t < seqKymos.seq.getSizeT(); t++)

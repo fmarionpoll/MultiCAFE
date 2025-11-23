@@ -34,7 +34,7 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 	private ChartPositions distanceChart = null;
 	private ChartPositions aliveChart = null;
 	private ChartPositions sleepChart = null;
-	
+
 	private MultiCAFE parent0 = null;
 
 	public JCheckBox moveCheckbox = new JCheckBox("y position", true);
@@ -83,20 +83,21 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		final Rectangle rectv = exp.seqCamData.seq.getFirstViewer().getBounds();
+		final Rectangle rectv = exp.getSeqCamData().seq.getFirstViewer().getBounds();
 		Point ptRelative = new Point(0, 30);
 		final int deltay = 230;
-		exp.seqCamData.seq.addListener(this);
+		exp.getSeqCamData().seq.addListener(this);
 
 		if (moveCheckbox.isSelected()) {
-			ypositionsChart = plotYToChart("flies Y positions", ypositionsChart, rectv, ptRelative, exp, EnumXLSExport.XYTOPCELL);
+			ypositionsChart = plotYToChart("flies Y positions", ypositionsChart, rectv, ptRelative, exp,
+					EnumXLSExport.XYTOPCELL);
 			ptRelative.y += deltay;
 		} else if (ypositionsChart != null)
 			closeChart(ypositionsChart);
 
 		if (distanceCheckbox.isSelected()) {
-			distanceChart = plotYToChart("distance between positions at t+1 and t", distanceChart, rectv, ptRelative, exp,
-					EnumXLSExport.DISTANCE);
+			distanceChart = plotYToChart("distance between positions at t+1 and t", distanceChart, rectv, ptRelative,
+					exp, EnumXLSExport.DISTANCE);
 			ptRelative.y += deltay;
 		} else if (distanceChart != null)
 			closeChart(distanceChart);
@@ -124,11 +125,11 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 			closeChart(sleepChart);
 	}
 
-	private ChartPositions plotYToChart(String title, ChartPositions iChart, Rectangle rectv, Point ptRelative, Experiment exp,
-			EnumXLSExport option) {
-		if (iChart!= null)
+	private ChartPositions plotYToChart(String title, ChartPositions iChart, Rectangle rectv, Point ptRelative,
+			Experiment exp, EnumXLSExport option) {
+		if (iChart != null)
 			iChart.mainChartFrame.dispose();
-		
+
 		iChart = new ChartPositions();
 		iChart.createPanel(title);
 		iChart.setLocationRelativeToRectangle(rectv, ptRelative);
@@ -137,7 +138,7 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 		iChart.mainChartFrame.requestFocus();
 		return iChart;
 	}
-	
+
 	private ChartPositions closeChart(ChartPositions chart) {
 		if (chart != null)
 			chart.mainChartFrame.dispose();

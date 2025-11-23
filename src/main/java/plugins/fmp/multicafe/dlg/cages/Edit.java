@@ -115,7 +115,7 @@ public class Edit extends JPanel {
 				if (indexT < 0)
 					return;
 				selectImageT(exp, indexT);
-				List<ROI2D> roiList = exp.seqCamData.seq.getROI2Ds();
+				List<ROI2D> roiList = exp.getSeqCamData().seq.getROI2Ds();
 				for (ROI2D roi : roiList) {
 					String csName = roi.getName();
 					if (roi instanceof ROI2DPoint && csName.equals(filter)) {
@@ -139,7 +139,7 @@ public class Edit extends JPanel {
 	}
 
 	boolean findFirst(Experiment exp) {
-		int dataSize = exp.seqCamData.nTotalFrames;
+		int dataSize = exp.getSeqCamData().nTotalFrames;
 		foundT = -1;
 		foundCell = -1;
 		for (int frame = 0; frame < dataSize; frame++) {
@@ -158,13 +158,13 @@ public class Edit extends JPanel {
 	}
 
 	void selectImageT(Experiment exp, int t) {
-		Viewer viewer = exp.seqCamData.seq.getFirstViewer();
+		Viewer viewer = exp.getSeqCamData().seq.getFirstViewer();
 		viewer.setPositionT(t);
 	}
 
 	void findAllMissedPoints(Experiment exp) {
 		foundCombo.removeAllItems();
-		int dataSize = exp.seqCamData.nTotalFrames;
+		int dataSize = exp.getSeqCamData().nTotalFrames;
 		for (int frame = 0; frame < dataSize; frame++) {
 			for (Cage cage : exp.cages.cageList) {
 				if (frame >= cage.flyPositions.flyPositionList.size())
@@ -193,7 +193,7 @@ public class Edit extends JPanel {
 
 	void moveROItoCageCenter(Experiment exp, ROI2D roi, int frame) {
 		roi.setColor(Color.RED);
-		exp.seqCamData.seq.setSelectedROI(roi);
+		exp.getSeqCamData().seq.setSelectedROI(roi);
 		String csName = roi.getName();
 		int cageNumber = getCageNumberFromName(csName);
 		if (cageNumber >= 0) {

@@ -157,10 +157,10 @@ public class Display extends JPanel implements ViewerListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				kymographsCombo.removeAllItems();
-				Collections.sort(exp.capillaries.capillariesList);
-				int ncapillaries = exp.capillaries.capillariesList.size();
+				Collections.sort(exp.getCapillaries().capillariesList);
+				int ncapillaries = exp.getCapillaries().capillariesList.size();
 				for (int i = 0; i < ncapillaries; i++) {
-					Capillary cap = exp.capillaries.capillariesList.get(i);
+					Capillary cap = exp.getCapillaries().capillariesList.get(i);
 					kymographsCombo.addItem(cap.getRoiName());
 				}
 			}
@@ -177,7 +177,7 @@ public class Display extends JPanel implements ViewerListener {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Viewer v = exp.seqKymos.seq.getFirstViewer();
+		Viewer v = exp.getSeqKymos().seq.getFirstViewer();
 		if (v == null)
 			return;
 		IcyCanvas canvas = v.getCanvas();
@@ -197,7 +197,7 @@ public class Display extends JPanel implements ViewerListener {
 	void displayON() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			SequenceKymos seqKymographs = exp.seqKymos;
+			SequenceKymos seqKymographs = exp.getSeqKymos();
 			if (seqKymographs == null || seqKymographs.seq == null)
 				return;
 
@@ -262,12 +262,12 @@ public class Display extends JPanel implements ViewerListener {
 		}
 
 		// Initial positioning logic (original behavior)
-		Sequence seqCamData = exp.seqCamData.seq;
+		Sequence seqCamData = exp.getSeqCamData().seq;
 		Viewer viewerCamData = seqCamData.getFirstViewer();
 		if (viewerCamData == null)
 			return null;
 
-		Sequence seqKymograph = exp.seqKymos.seq;
+		Sequence seqKymograph = exp.getSeqKymos().seq;
 		Rectangle rectViewerCamData = viewerCamData.getBounds();
 		Rectangle rectImageKymograph = seqKymograph.getBounds2D();
 		int desktopwidth = Icy.getMainInterface().getMainFrame().getDesktopWidth();
@@ -287,7 +287,7 @@ public class Display extends JPanel implements ViewerListener {
 	}
 
 	void placeKymoViewerNextToCamViewer(Experiment exp) {
-		Sequence seqKymograph = exp.seqKymos.seq;
+		Sequence seqKymograph = exp.getSeqKymos().seq;
 		Viewer viewerKymograph = seqKymograph.getFirstViewer();
 		if (viewerKymograph == null)
 			return;
@@ -302,9 +302,9 @@ public class Display extends JPanel implements ViewerListener {
 
 	void displayOFF() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-		if (exp == null || exp.seqKymos == null)
+		if (exp == null || exp.getSeqKymos() == null)
 			return;
-		ArrayList<Viewer> vList = exp.seqKymos.seq.getViewers();
+		ArrayList<Viewer> vList = exp.getSeqKymos().seq.getViewers();
 		if (vList.size() > 0) {
 			// Save window position before closing
 			for (Viewer v : vList) {
@@ -357,7 +357,7 @@ public class Display extends JPanel implements ViewerListener {
 		if (exp == null)
 			return selectedImageIndex;
 
-		SequenceKymos seqKymos = exp.seqKymos;
+		SequenceKymos seqKymos = exp.getSeqKymos();
 		if (seqKymos == null || seqKymos.seq == null)
 			return selectedImageIndex;
 		if (seqKymos.seq.isUpdating())
@@ -386,7 +386,7 @@ public class Display extends JPanel implements ViewerListener {
 	}
 
 	private void selectCapillary(Experiment exp, int isel) {
-		Capillaries capillaries = exp.capillaries;
+		Capillaries capillaries = exp.getCapillaries();
 		for (Capillary cap : capillaries.capillariesList) {
 			if (cap.getRoi() != null) {
 				cap.getRoi().setSelected(false);
@@ -441,7 +441,7 @@ public class Display extends JPanel implements ViewerListener {
 
 		parent0.expListCombo.expListBinSubDirectory = localString;
 		exp.setBinSubDirectory(localString);
-		exp.seqKymos.seq.close();
+		exp.getSeqKymos().seq.close();
 		exp.loadKymographs();
 		parent0.paneKymos.updateDialogs(exp);
 	}

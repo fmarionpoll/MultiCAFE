@@ -85,7 +85,7 @@ public class LoadSave extends JPanel {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		SequenceKymos seqKymos = exp.seqKymos;
+		SequenceKymos seqKymos = exp.getSeqKymos();
 		if (directory == null) {
 			directory = exp.getDirectoryToSaveResults();
 			try {
@@ -101,7 +101,7 @@ public class LoadSave extends JPanel {
 		if (returnedval == JFileChooser.APPROVE_OPTION) {
 			outputpath = f.getSelectedFile().getAbsolutePath();
 			for (int t = 0; t < seqKymos.seq.getSizeT(); t++) {
-				Capillary cap = exp.capillaries.capillariesList.get(t);
+				Capillary cap = exp.getCapillaries().capillariesList.get(t);
 				progress.setMessage("Save kymograph file : " + cap.getKymographName());
 				cap.filenameTIFF = outputpath + File.separator + cap.getKymographName() + ".tiff";
 				final File file = new File(cap.filenameTIFF);
@@ -125,8 +125,8 @@ public class LoadSave extends JPanel {
 
 	public boolean loadDefaultKymos(Experiment exp) {
 		boolean flag = false;
-		SequenceKymos seqKymos = exp.seqKymos;
-		if (seqKymos == null || exp.capillaries == null) {
+		SequenceKymos seqKymos = exp.getSeqKymos();
+		if (seqKymos == null || exp.getCapillaries() == null) {
 			System.out.println("LoadSaveKymos:loadDefaultKymos() no parent sequence or no capillaries found");
 			return flag;
 		}
@@ -138,8 +138,8 @@ public class LoadSave extends JPanel {
 		} else
 			exp.setBinSubDirectory(localString);
 
-		List<ImageFileDescriptor> myList = exp.seqKymos
-				.loadListOfPotentialKymographsFromCapillaries(exp.getKymosBinFullDirectory(), exp.capillaries);
+		List<ImageFileDescriptor> myList = exp.getSeqKymos()
+				.loadListOfPotentialKymographsFromCapillaries(exp.getKymosBinFullDirectory(), exp.getCapillaries());
 		int nItems = ImageFileDescriptor.getExistingFileNames(myList);
 
 		if (nItems > 0) {

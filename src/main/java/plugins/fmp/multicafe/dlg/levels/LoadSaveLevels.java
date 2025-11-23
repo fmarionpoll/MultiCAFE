@@ -69,11 +69,11 @@ public class LoadSaveLevels extends JPanel {
 
 	public boolean dlg_levels_loadCapillaries_Measures(Experiment exp) {
 		boolean flag = false;
-		if (exp.seqKymos != null) {
+		if (exp.getSeqKymos() != null) {
 			ProgressFrame progress = new ProgressFrame("load capillary measures");
 			flag = exp.loadCapillaries();
 			if (flag)
-				exp.seqKymos.transferCapillariesMeasuresToKymos(exp.capillaries);
+				exp.getSeqKymos().transferCapillariesMeasuresToKymos(exp.getCapillaries());
 			progress.close();
 		}
 		return flag;
@@ -81,7 +81,7 @@ public class LoadSaveLevels extends JPanel {
 
 	public boolean dlg_levels_saveCapillaries_Measures(Experiment exp) {
 		boolean flag = true;
-		if (exp.seqKymos != null) {
+		if (exp.getSeqKymos() != null) {
 			ProgressFrame progress = new ProgressFrame("save capillary measures");
 			flag = exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
 			progress.close();

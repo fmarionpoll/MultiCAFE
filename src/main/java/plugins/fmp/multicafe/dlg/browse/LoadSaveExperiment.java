@@ -143,7 +143,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 	public void closeViewsForCurrentExperiment(Experiment exp) {
 		if (exp != null) {
-			if (exp.seqCamData != null) {
+			if (exp.getSeqCamData() != null) {
 				exp.xmlSave_MCExperiment();
 				exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
 				exp.saveCageAndMeasures();
@@ -178,13 +178,13 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		exp.loadCamDataImages();
 		parent0.paneExperiment.updateViewerForSequenceCam(exp);
 
-		exp.seqCamData.seq.addListener(this);
-		if (exp.seqCamData != null) {
+		exp.getSeqCamData().seq.addListener(this);
+		if (exp.getSeqCamData() != null) {
 			exp.loadCamDataCapillaries();
 
 			parent0.paneKymos.tabLoadSave.loadDefaultKymos(exp);
 
-			if (exp.seqKymos != null) {
+			if (exp.getSeqKymos() != null) {
 				parent0.paneLevels.tabFileLevels.dlg_levels_loadCapillaries_Measures(exp);
 				if (parent0.paneExperiment.tabOptions.graphsCheckBox.isSelected())
 					parent0.paneLevels.tabGraphs.displayGraphsPanels(exp);
@@ -296,10 +296,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (sequenceEvent.getSourceType() == SequenceEventSourceType.SEQUENCE_DATA) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				if (exp.seqCamData.seq != null && sequenceEvent.getSequence() == exp.seqCamData.seq) {
-					Viewer v = exp.seqCamData.seq.getFirstViewer();
+				if (exp.getSeqCamData().seq != null && sequenceEvent.getSequence() == exp.getSeqCamData().seq) {
+					Viewer v = exp.getSeqCamData().seq.getFirstViewer();
 					int t = v.getPositionT();
-					v.setTitle(exp.seqCamData.getDecoratedImageName(t));
+					v.setTitle(exp.getSeqCamData().getDecoratedImageName(t));
 				}
 			}
 		}

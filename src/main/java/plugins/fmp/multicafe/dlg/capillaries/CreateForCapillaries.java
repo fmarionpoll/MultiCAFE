@@ -105,19 +105,19 @@ public class CreateForCapillaries extends JPanel {
 				if (exp == null)
 					return;
 
-				if (exp.capillaries != null && exp.capillaries.capillariesList.size() > 0) {
-					Polygon2D extPolygon = exp.capillaries.get2DPolygonEnclosingCapillaries();
+				if (exp.getCapillaries() != null && exp.getCapillaries().capillariesList.size() > 0) {
+					Polygon2D extPolygon = exp.getCapillaries().get2DPolygonEnclosingCapillaries();
 					if (extPolygon == null) {
-						extPolygon = getCapillariesPolygon(exp.seqCamData.seq);
+						extPolygon = getCapillariesPolygon(exp.getSeqCamData().seq);
 					}
 					capillariesRoiPolygon = new ROI2DPolygon(extPolygon);
-					exp.capillaries.deleteAllCapillaries();
-					exp.capillaries.updateCapillariesFromSequence(exp.seqCamData.seq);
-					exp.seqCamData.seq.removeAllROI();
+					exp.getCapillaries().deleteAllCapillaries();
+					exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().seq);
+					exp.getSeqCamData().seq.removeAllROI();
 					final String dummyname = "perimeter_enclosing_capillaries";
 					capillariesRoiPolygon.setName(dummyname);
-					exp.seqCamData.seq.addROI(capillariesRoiPolygon);
-					exp.seqCamData.seq.setSelectedROI(capillariesRoiPolygon);
+					exp.getSeqCamData().seq.addROI(capillariesRoiPolygon);
+					exp.getSeqCamData().seq.setSelectedROI(capillariesRoiPolygon);
 					// TODO delete kymos
 				} else
 					create_capillariesRoiPolygon(exp);
@@ -134,10 +134,10 @@ public class CreateForCapillaries extends JPanel {
 					int nbFliesPerCage = (int) nbFliesPerCellJSpinner.getValue();
 					switch (cellsJCombo.getSelectedIndex()) {
 					case 0:
-						exp.capillaries.initCapillariesWith10Cages(nbFliesPerCage, true);
+						exp.getCapillaries().initCapillariesWith10Cages(nbFliesPerCage, true);
 						break;
 					case 1:
-						exp.capillaries.initCapillariesWith6Cages(nbFliesPerCage);
+						exp.getCapillaries().initCapillariesWith6Cages(nbFliesPerCage);
 						break;
 					default:
 						break;
@@ -230,7 +230,7 @@ public class CreateForCapillaries extends JPanel {
 	// ---------------------------------
 
 	private void create_capillariesRoiPolygon(Experiment exp) {
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.getSeqCamData().seq;
 		final String dummyname = "perimeter_enclosing_capillaries";
 		capillariesRoiPolygon = (ROI2DPolygon) isRoiPresent(seq, dummyname);
 		if (capillariesRoiPolygon == null) {
@@ -265,7 +265,7 @@ public class CreateForCapillaries extends JPanel {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		SequenceCamData seqCamData = exp.seqCamData;
+		SequenceCamData seqCamData = exp.getSeqCamData();
 		boolean statusGroup2Mode = (getCapillariesGrouping() == 2);
 
 		int nbcapillaries = 20;

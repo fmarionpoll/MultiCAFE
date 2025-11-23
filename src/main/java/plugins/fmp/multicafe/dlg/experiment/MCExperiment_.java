@@ -97,7 +97,7 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 	}
 
 	public void updateViewerForSequenceCam(Experiment exp) {
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.getSeqCamData().seq;
 		if (seq == null)
 			return;
 
@@ -110,7 +110,7 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 				ViewerFMP v = (ViewerFMP) seq.getFirstViewer();
 				if (v == null) {
 					// Create viewer with visible=false to prevent flickering
-					v = new ViewerFMP(exp.seqCamData.seq, false, true);
+					v = new ViewerFMP(exp.getSeqCamData().seq, false, true);
 					List<String> list = IcyCanvas.getCanvasPluginNames();
 					String pluginName = list.stream().filter(s -> s.contains("Canvas2DWithTransforms")).findFirst()
 							.orElse(null);
@@ -142,7 +142,7 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 					v.toFront();
 					v.requestFocus();
 					v.addListener(parent);
-					v.setTitle(exp.seqCamData.getDecoratedImageName(0));
+					v.setTitle(exp.getSeqCamData().getDecoratedImageName(0));
 					v.setRepeat(false);
 				}
 			}
@@ -175,10 +175,10 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 				int idViewer = v.getSequence().getId();
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					int idCurrentExp = exp.seqCamData.seq.getId();
+					int idCurrentExp = exp.getSeqCamData().seq.getId();
 					if (idViewer == idCurrentExp) {
 						int t = v.getPositionT();
-						v.setTitle(exp.seqCamData.getDecoratedImageName(t));
+						v.setTitle(exp.getSeqCamData().getDecoratedImageName(t));
 						if (parent0.paneCages.bTrapROIsEdit)
 							exp.saveDetRoisToPositions();
 						exp.updateROIsAt(t);

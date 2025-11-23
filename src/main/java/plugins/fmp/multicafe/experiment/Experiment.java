@@ -39,10 +39,10 @@ public class Experiment {
 	private String strExperimentDirectory = null;
 	private String strBinSubDirectory = null;
 
-	public SequenceCamData seqCamData = null;
-	public SequenceKymos seqKymos = null;
+	private SequenceCamData seqCamData = null;
+	private SequenceKymos seqKymos = null;
 	public Sequence seqReference = null;
-	public Capillaries capillaries = new Capillaries();
+	private Capillaries capillaries = new Capillaries();
 	public Cages cages = new Cages();
 
 	public FileTime firstImage_FileTime;
@@ -1078,6 +1078,32 @@ public class Experiment {
 
 	private String getReferenceImageFullName() {
 		return strExperimentDirectory + File.separator + "referenceImage.jpg";
+	}
+
+	public SequenceCamData getSeqCamData() {
+		return seqCamData;
+	}
+
+	public void setSeqCamData(SequenceCamData seqCamData) {
+		this.seqCamData = seqCamData;
+	}
+
+	public SequenceKymos getSeqKymos() {
+		if (seqKymos == null)
+			seqKymos = new SequenceKymos();
+		return seqKymos;
+	}
+
+	public void setSeqKymos(SequenceKymos seqKymos) {
+		this.seqKymos = seqKymos;
+	}
+
+	public Capillaries getCapillaries() {
+		return capillaries;
+	}
+
+	public void setCapillaries(Capillaries capillaries) {
+		this.capillaries = capillaries;
 	}
 
 }

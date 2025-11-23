@@ -170,7 +170,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		;
 		if (exp == null)
 			return;
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.getSeqCamData().seq;
 		ArrayList<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!roi.getName().contains("line"))
@@ -186,29 +186,29 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 			return;
 
 		if (show) {
-			int t = exp.seqCamData.seq.getFirstViewer().getPositionT();
+			int t = exp.getSeqCamData().seq.getFirstViewer().getPositionT();
 			// TODO select current interval and return only rois2D from that interval
 			addFrameAroundCapillaries(t, exp);
 		} else
-			removeFrameAroundCapillaries(exp.seqCamData.seq);
+			removeFrameAroundCapillaries(exp.getSeqCamData().seq);
 	}
 
 	private void addFrameAroundCapillaries(int t, Experiment exp) {
 		ArrayList<ROI2D> listRoisAtT = new ArrayList<ROI2D>();
-		for (Capillary cap : exp.capillaries.capillariesList) {
+		for (Capillary cap : exp.getCapillaries().capillariesList) {
 			ROI2DAlongT kymoROI2D = cap.getROI2DKymoAtIntervalT(t);
 			listRoisAtT.add(kymoROI2D.getRoi());
 		}
 		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingCapillaries(listRoisAtT);
 
-		removeFrameAroundCapillaries(exp.seqCamData.seq);
+		removeFrameAroundCapillaries(exp.getSeqCamData().seq);
 		envelopeRoi_initial = new ROI2DPolygon(polygon);
 		envelopeRoi = new ROI2DPolygon(polygon);
 		envelopeRoi.setName(dummyname);
 		envelopeRoi.setColor(Color.YELLOW);
 
-		exp.seqCamData.seq.addROI(envelopeRoi);
-		exp.seqCamData.seq.setSelectedROI(envelopeRoi);
+		exp.getSeqCamData().seq.addROI(envelopeRoi);
+		exp.getSeqCamData().seq.setSelectedROI(envelopeRoi);
 	}
 
 	private void removeFrameAroundCapillaries(Sequence seq) {
@@ -221,11 +221,11 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		if (exp == null)
 			return;
 
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Viewer v = exp.getSeqCamData().seq.getFirstViewer();
 		long intervalT = v.getPositionT();
 
-		if (exp.capillaries.findKymoROI2DIntervalStart(intervalT) < 0) {
-			exp.capillaries.addKymoROI2DInterval(intervalT);
+		if (exp.getCapillaries().findKymoROI2DIntervalStart(intervalT) < 0) {
+			exp.getCapillaries().addKymoROI2DInterval(intervalT);
 		}
 	}
 
@@ -234,11 +234,11 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		if (exp == null)
 			return;
 
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Viewer v = exp.getSeqCamData().seq.getFirstViewer();
 		long intervalT = v.getPositionT();
 
-		if (exp.capillaries.findKymoROI2DIntervalStart(intervalT) >= 0) {
-			exp.capillaries.deleteKymoROI2DInterval(intervalT);
+		if (exp.getCapillaries().findKymoROI2DIntervalStart(intervalT) >= 0) {
+			exp.getCapillaries().deleteKymoROI2DInterval(intervalT);
 		}
 	}
 
@@ -246,12 +246,12 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.getSeqCamData().seq;
 
-		int intervalT = (int) exp.capillaries.getKymoROI2DIntervalsStartAt(selectedRow);
+		int intervalT = (int) exp.getCapillaries().getKymoROI2DIntervalsStartAt(selectedRow);
 		seq.removeAllROI();
 		List<ROI2D> listRois = new ArrayList<ROI2D>();
-		for (Capillary cap : exp.capillaries.capillariesList) {
+		for (Capillary cap : exp.getCapillaries().capillariesList) {
 			listRois.add(cap.getROI2DKymoAtIntervalT((int) intervalT).getRoi());
 		}
 		seq.addROIs(listRois, false);
@@ -264,14 +264,14 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.getSeqCamData().seq;
 
-		int intervalT = (int) exp.capillaries.getKymoROI2DIntervalsStartAt(selectedRow);
+		int intervalT = (int) exp.getCapillaries().getKymoROI2DIntervalsStartAt(selectedRow);
 		List<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!roi.getName().contains("line"))
 				continue;
-			Capillary cap = exp.capillaries.getCapillaryFromRoiName(roi.getName());
+			Capillary cap = exp.getCapillaries().getCapillaryFromRoiName(roi.getName());
 			if (cap != null) {
 				ROI2D roilocal = (ROI2D) roi.getCopy();
 				cap.getROI2DKymoAtIntervalT(intervalT).setRoi(roilocal);
