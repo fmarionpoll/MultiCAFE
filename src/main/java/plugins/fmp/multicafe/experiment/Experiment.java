@@ -76,35 +76,14 @@ public class Experiment {
 	public Experiment chainToNextExperiment = null;
 	public long chainImageFirst_ms = 0;
 	public int experimentID = 0;
-
-	private final static String ID_VERSION = "version";
-	private final static String ID_VERSIONNUM = "1.0.0";
-	private final static String ID_TIMEFIRSTIMAGE = "fileTimeImageFirstMinute";
-	private final static String ID_TIMELASTIMAGE = "fileTimeImageLastMinute";
-
-	private final static String ID_BINT0 = "indexBinT0";
-	private final static String ID_TIMEFIRSTIMAGEMS = "fileTimeImageFirstMs";
-	private final static String ID_TIMELASTIMAGEMS = "fileTimeImageLastMs";
-	private final static String ID_FIRSTKYMOCOLMS = "firstKymoColMs";
-	private final static String ID_LASTKYMOCOLMS = "lastKymoColMs";
-	private final static String ID_BINKYMOCOLMS = "binKymoColMs";
-
-	private final static String ID_IMAGESDIRECTORY = "imagesDirectory";
-	private final static String ID_MCEXPERIMENT = "MCexperiment";
-	private final static String ID_MCEXPERIMENT_XML = "MCexperiment.xml";
-
-	private final static String ID_BOXID = "boxID";
-	private final static String ID_EXPERIMENT = "experiment";
-	private final static String ID_COMMENT1 = "comment";
-	private final static String ID_COMMENT2 = "comment2";
-	private final static String ID_STRAIN = "strain";
-	private final static String ID_SEX = "sex";
-	private final static String ID_COND1 = "cond1";
-	private final static String ID_COND2 = "cond2";
+	
+	private ExperimentPersistence persistence = new ExperimentPersistence();
 
 	private final static int EXPT_DIRECTORY = 1;
 	private final static int IMG_DIRECTORY = 2;
 	private final static int BIN_DIRECTORY = 3;
+
+	// ----------------------------------
 	// ----------------------------------
 
 	public Experiment() {
@@ -123,7 +102,7 @@ public class Experiment {
 		this.seqKymos = new SequenceKymos();
 		strExperimentDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
-		xmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML));
+		persistence.xmlLoadExperiment(this, concatenateExptDirectoryWithSubpathAndName(null, ExperimentPersistence.ID_MCEXPERIMENT_XML));
 	}
 
 	public Experiment(ExperimentDirectories eADF) {
@@ -141,7 +120,7 @@ public class Experiment {
 		getFileIntervalsFromSeqCamData();
 		seqKymos = new SequenceKymos(eADF.kymosImagesList);
 
-		xmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML));
+		persistence.xmlLoadExperiment(this, concatenateExptDirectoryWithSubpathAndName(null, ExperimentPersistence.ID_MCEXPERIMENT_XML));
 	}
 
 	// ----------------------------------
@@ -240,21 +219,7 @@ public class Experiment {
 	}
 
 	public boolean openMeasures(boolean loadCapillaries, boolean loadDrosoPositions) {
-		if (seqCamData == null)
-			seqCamData = new SequenceCamData();
-		xmlLoad_MCExperiment();
-		getFileIntervalsFromSeqCamData();
-		if (seqKymos == null)
-			seqKymos = new SequenceKymos();
-		if (loadCapillaries) {
-			loadMCCapillaries_Only();
-			if (!capillaries.load_Capillaries(getKymosBinFullDirectory()))
-				return false;
-		}
-		if (loadDrosoPositions) {
-			loadCageMeasures();
-		}
-		return true;
+		return persistence.openMeasures(this, loadCapillaries, loadDrosoPositions);
 	}
 
 	private String getRootWithNoResultNorBinString(String directoryName) {
@@ -373,48 +338,11 @@ public class Experiment {
 	// -------------------------------
 
 	public boolean xmlLoad_MCExperiment() {
-		if (strExperimentDirectory == null && seqCamData != null) {
-			strImagesDirectory = seqCamData.getImagesDirectory();
-			strExperimentDirectory = strImagesDirectory + File.separator + RESULTS;
-		}
-		boolean found = xmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML));
-		return found;
+		return persistence.xmlLoad_MCExperiment(this);
 	}
 
 	public boolean xmlSave_MCExperiment() {
-		final Document doc = XMLUtil.createDocument(true);
-		if (doc != null) {
-			Node xmlRoot = XMLUtil.getRootElement(doc, true);
-			Node node = XMLUtil.setElement(xmlRoot, ID_MCEXPERIMENT);
-			if (node == null)
-				return false;
-
-			XMLUtil.setElementValue(node, ID_VERSION, ID_VERSIONNUM);
-			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, camImageFirst_ms);
-			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, camImageLast_ms);
-
-			XMLUtil.setElementLongValue(node, ID_BINT0, binT0);
-			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, kymoFirst_ms);
-			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, kymoLast_ms);
-			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, kymoBin_ms);
-
-			XMLUtil.setElementValue(node, ID_BOXID, field_boxID);
-			XMLUtil.setElementValue(node, ID_EXPERIMENT, field_experiment);
-			XMLUtil.setElementValue(node, ID_COMMENT1, field_comment1);
-			XMLUtil.setElementValue(node, ID_COMMENT2, field_comment2);
-			XMLUtil.setElementValue(node, ID_STRAIN, field_strain);
-			XMLUtil.setElementValue(node, ID_SEX, field_sex);
-			XMLUtil.setElementValue(node, ID_COND1, field_cond1);
-			XMLUtil.setElementValue(node, ID_COND2, field_cond2);
-
-			if (strImagesDirectory == null)
-				strImagesDirectory = seqCamData.getImagesDirectory();
-			XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, strImagesDirectory);
-
-			String tempname = concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML);
-			return XMLUtil.saveDocument(doc, tempname);
-		}
-		return false;
+		return persistence.xmlSave_MCExperiment(this);
 	}
 
 	public boolean loadKymographs() {
@@ -989,44 +917,6 @@ public class Experiment {
 			return strExperimentDirectory + File.separator + name;
 	}
 
-	private boolean xmlLoadExperiment(String csFileName) {
-		final Document doc = XMLUtil.loadDocument(csFileName);
-		if (doc == null)
-			return false;
-		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
-		if (node == null)
-			return false;
-
-		String version = XMLUtil.getElementValue(node, ID_VERSION, ID_VERSIONNUM);
-		if (!version.equals(ID_VERSIONNUM))
-			return false;
-		camImageFirst_ms = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0);
-		camImageLast_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0);
-		if (camImageLast_ms <= 0) {
-			camImageFirst_ms = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGE, 0) * 60000;
-			camImageLast_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0) * 60000;
-		}
-
-		binT0 = XMLUtil.getElementLongValue(node, ID_BINT0, 0);
-		kymoFirst_ms = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
-		kymoLast_ms = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
-		kymoBin_ms = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
-
-		ugly_checkOffsetValues();
-
-		if (field_boxID != null && field_boxID.contentEquals("..")) {
-			field_boxID = XMLUtil.getElementValue(node, ID_BOXID, "..");
-			field_experiment = XMLUtil.getElementValue(node, ID_EXPERIMENT, "..");
-			field_comment1 = XMLUtil.getElementValue(node, ID_COMMENT1, "..");
-			field_comment2 = XMLUtil.getElementValue(node, ID_COMMENT2, "..");
-			field_strain = XMLUtil.getElementValue(node, ID_STRAIN, "..");
-			field_sex = XMLUtil.getElementValue(node, ID_SEX, "..");
-			field_cond1 = XMLUtil.getElementValue(node, ID_COND1, "..");
-			field_cond2 = XMLUtil.getElementValue(node, ID_COND2, "..");
-		}
-		return true;
-	}
-
 	private void ugly_checkOffsetValues() {
 		if (camImageFirst_ms < 0)
 			camImageFirst_ms = 0;
@@ -1104,6 +994,78 @@ public class Experiment {
 
 	public void setCapillaries(Capillaries capillaries) {
 		this.capillaries = capillaries;
+	}
+
+	public String getStrImagesDirectory() {
+		return strImagesDirectory;
+	}
+
+	public void setStrImagesDirectory(String strImagesDirectory) {
+		this.strImagesDirectory = strImagesDirectory;
+	}
+
+	public String getField_boxID() {
+		return field_boxID;
+	}
+
+	public void setField_boxID(String field_boxID) {
+		this.field_boxID = field_boxID;
+	}
+
+	public String getField_experiment() {
+		return field_experiment;
+	}
+
+	public void setField_experiment(String field_experiment) {
+		this.field_experiment = field_experiment;
+	}
+
+	public String getField_comment1() {
+		return field_comment1;
+	}
+
+	public void setField_comment1(String field_comment1) {
+		this.field_comment1 = field_comment1;
+	}
+
+	public String getField_comment2() {
+		return field_comment2;
+	}
+
+	public void setField_comment2(String field_comment2) {
+		this.field_comment2 = field_comment2;
+	}
+
+	public String getField_strain() {
+		return field_strain;
+	}
+
+	public void setField_strain(String field_strain) {
+		this.field_strain = field_strain;
+	}
+
+	public String getField_sex() {
+		return field_sex;
+	}
+
+	public void setField_sex(String field_sex) {
+		this.field_sex = field_sex;
+	}
+
+	public String getField_cond1() {
+		return field_cond1;
+	}
+
+	public void setField_cond1(String field_cond1) {
+		this.field_cond1 = field_cond1;
+	}
+
+	public String getField_cond2() {
+		return field_cond2;
+	}
+
+	public void setField_cond2(String field_cond2) {
+		this.field_cond2 = field_cond2;
 	}
 
 }

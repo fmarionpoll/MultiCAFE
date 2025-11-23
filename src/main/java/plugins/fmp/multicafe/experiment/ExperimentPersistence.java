@@ -1,0 +1,189 @@
+package plugins.fmp.multicafe.experiment;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import icy.util.XMLUtil;
+import plugins.fmp.multicafe.tools.Directories;
+import plugins.fmp.multicafe.tools.Logger;
+import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
+
+public class ExperimentPersistence {
+	
+	private final static String ID_VERSION = "version";
+	private final static String ID_VERSIONNUM = "1.0.0";
+	private final static String ID_TIMEFIRSTIMAGE = "fileTimeImageFirstMinute";
+	private final static String ID_TIMELASTIMAGE = "fileTimeImageLastMinute";
+
+	private final static String ID_BINT0 = "indexBinT0";
+	private final static String ID_TIMEFIRSTIMAGEMS = "fileTimeImageFirstMs";
+	private final static String ID_TIMELASTIMAGEMS = "fileTimeImageLastMs";
+	private final static String ID_FIRSTKYMOCOLMS = "firstKymoColMs";
+	private final static String ID_LASTKYMOCOLMS = "lastKymoColMs";
+	private final static String ID_BINKYMOCOLMS = "binKymoColMs";
+
+	private final static String ID_IMAGESDIRECTORY = "imagesDirectory";
+	private final static String ID_MCEXPERIMENT = "MCexperiment";
+	public final static String ID_MCEXPERIMENT_XML = "MCexperiment.xml";
+
+	private final static String ID_BOXID = "boxID";
+	private final static String ID_EXPERIMENT = "experiment";
+	private final static String ID_COMMENT1 = "comment";
+	private final static String ID_COMMENT2 = "comment2";
+	private final static String ID_STRAIN = "strain";
+	private final static String ID_SEX = "sex";
+	private final static String ID_COND1 = "cond1";
+	private final static String ID_COND2 = "cond2";
+
+	private final static int EXPT_DIRECTORY = 1;
+	private final static int IMG_DIRECTORY = 2;
+	private final static int BIN_DIRECTORY = 3;
+	
+	public boolean xmlLoadExperiment(Experiment exp, String csFileName) {
+		final Document doc = XMLUtil.loadDocument(csFileName);
+		if (doc == null)
+			return false;
+		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
+		if (node == null)
+			return false;
+
+		String version = XMLUtil.getElementValue(node, ID_VERSION, ID_VERSIONNUM);
+		if (!version.equals(ID_VERSIONNUM))
+			return false;
+		exp.camImageFirst_ms = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0);
+		exp.camImageLast_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0);
+		if (exp.camImageLast_ms <= 0) {
+			exp.camImageFirst_ms = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGE, 0) * 60000;
+			exp.camImageLast_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0) * 60000;
+		}
+
+		exp.binT0 = XMLUtil.getElementLongValue(node, ID_BINT0, 0);
+		exp.kymoFirst_ms = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
+		exp.kymoLast_ms = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
+		exp.kymoBin_ms = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
+
+		if (exp.kymoBin_ms < 0)
+			exp.kymoBin_ms = 60000; // Default value
+
+		// check offsets
+		if (exp.camImageFirst_ms < 0) exp.camImageFirst_ms = 0;
+		if (exp.camImageLast_ms < 0) exp.camImageLast_ms = 0;
+		if (exp.kymoFirst_ms < 0) exp.kymoFirst_ms = 0;
+		if (exp.kymoLast_ms < 0) exp.kymoLast_ms = 0;
+
+		if (exp.getField_boxID() != null && exp.getField_boxID().contentEquals("..")) {
+			exp.setField_boxID(XMLUtil.getElementValue(node, ID_BOXID, ".."));
+			exp.setField_experiment(XMLUtil.getElementValue(node, ID_EXPERIMENT, ".."));
+			exp.setField_comment1(XMLUtil.getElementValue(node, ID_COMMENT1, ".."));
+			exp.setField_comment2(XMLUtil.getElementValue(node, ID_COMMENT2, ".."));
+			exp.setField_strain(XMLUtil.getElementValue(node, ID_STRAIN, ".."));
+			exp.setField_sex(XMLUtil.getElementValue(node, ID_SEX, ".."));
+			exp.setField_cond1(XMLUtil.getElementValue(node, ID_COND1, ".."));
+			exp.setField_cond2(XMLUtil.getElementValue(node, ID_COND2, ".."));
+		}
+		return true;
+	}
+	
+	public boolean xmlSaveExperiment(Experiment exp, String csFileName) {
+		final Document doc = XMLUtil.createDocument(true);
+		if (doc != null) {
+			Node xmlRoot = XMLUtil.getRootElement(doc, true);
+			Node node = XMLUtil.setElement(xmlRoot, ID_MCEXPERIMENT);
+			if (node == null)
+				return false;
+
+			XMLUtil.setElementValue(node, ID_VERSION, ID_VERSIONNUM);
+			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, exp.camImageFirst_ms);
+			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, exp.camImageLast_ms);
+
+			XMLUtil.setElementLongValue(node, ID_BINT0, exp.binT0);
+			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, exp.kymoFirst_ms);
+			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, exp.kymoLast_ms);
+			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, exp.kymoBin_ms);
+
+			XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, exp.getStrImagesDirectory());
+
+			XMLUtil.setElementValue(node, ID_BOXID, exp.getField_boxID());
+			XMLUtil.setElementValue(node, ID_EXPERIMENT, exp.getField_experiment());
+			XMLUtil.setElementValue(node, ID_COMMENT1, exp.getField_comment1());
+			XMLUtil.setElementValue(node, ID_COMMENT2, exp.getField_comment2());
+			XMLUtil.setElementValue(node, ID_STRAIN, exp.getField_strain());
+			XMLUtil.setElementValue(node, ID_SEX, exp.getField_sex());
+			XMLUtil.setElementValue(node, ID_COND1, exp.getField_cond1());
+			XMLUtil.setElementValue(node, ID_COND2, exp.getField_cond2());
+
+			XMLUtil.saveDocument(doc, csFileName);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean xmlLoad_MCExperiment(Experiment exp) {
+		String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
+		boolean found = xmlLoadExperiment(exp, filename);
+		if (!found && exp.getSeqCamData() != null) {
+			// try to load from the images directory
+			String imagesDirectory = exp.getSeqCamData().getImagesDirectory();
+			if (imagesDirectory != null) {
+				filename = imagesDirectory + File.separator + ID_MCEXPERIMENT_XML;
+				found = xmlLoadExperiment(exp, filename);
+			}
+		}
+		return found;
+	}
+
+	public boolean xmlSave_MCExperiment(Experiment exp) {
+		String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
+		return xmlSaveExperiment(exp, filename);
+	}
+	
+	// ------------------------------------------------------------------
+	
+	public boolean openMeasures(Experiment exp, boolean loadCapillaries, boolean loadDrosoPositions) {
+		if (exp.getSeqCamData() == null)
+			exp.setSeqCamData(new SequenceCamData());
+		xmlLoad_MCExperiment(exp);
+		exp.getFileIntervalsFromSeqCamData();
+		
+		if (exp.getSeqKymos() == null)
+			exp.setSeqKymos(new SequenceKymos());
+			
+		if (loadCapillaries) {
+			exp.loadMCCapillaries_Only();
+			if (!exp.getCapillaries().load_Capillaries(exp.getKymosBinFullDirectory()))
+				return false;
+		}
+		if (loadDrosoPositions) {
+			exp.loadCageMeasures();
+		}
+		return true;
+	}
+	
+	public boolean saveExperimentMeasures(Experiment exp, String directory) {
+		boolean flag = false;
+		if (exp.getSeqKymos() != null) {
+			flag = exp.xmlSave_MCExperiment();
+			exp.saveCapillariesMeasures(directory);
+		}
+		return flag;
+	}
+	
+	// -----------------------------------------------------------------
+
+	private String concatenateExptDirectoryWithSubpathAndName(Experiment exp, String subpath, String name) {
+		String strExperimentDirectory = exp.getExperimentDirectory();
+		if (subpath != null)
+			return strExperimentDirectory + File.separator + subpath + File.separator + name;
+		else
+			return strExperimentDirectory + File.separator + name;
+	}
+	
+}
+
