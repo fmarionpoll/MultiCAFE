@@ -21,6 +21,7 @@ import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ViewerFMP;
 import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
@@ -41,7 +42,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 
 	@Override
 	protected Integer doInBackground() throws Exception {
-		System.out.println("BuildSeries:doInBackground loop over experiments");
+		Logger.info("BuildSeries:doInBackground loop over experiments");
 		threadRunning = true;
 		int nbiterations = 0;
 		ExperimentsJComboBox expList = options.expList;
@@ -58,16 +59,16 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 			Experiment exp = expList.getItemAt(index);
 
 			progress.setMessage("Processing file: " + (index + 1) + "//" + (expList.index1 + 1));
-			System.out.println("BuildSeries:doInBackground " + (index + 1) + ": " + exp.getExperimentDirectory());
+			Logger.info("BuildSeries:doInBackground " + (index + 1) + ": " + exp.getExperimentDirectory());
 			exp.setBinSubDirectory(options.binSubDirectory);
 			boolean flag = exp.createDirectoryIfDoesNotExist(exp.getKymosBinFullDirectory());
 			if (flag) {
 				analyzeExperiment(exp);
 				long endTime2InNs = System.nanoTime();
-				System.out.println("BuildSeries:doInBackground process ended - duration: "
+				Logger.debug("BuildSeries:doInBackground process ended - duration: "
 						+ ((endTime2InNs - startTimeInNs) / 1000000000f) + " s");
 			} else {
-				System.out.println("BuildSeries:doInBackground process aborted - subdirectory not created: "
+				Logger.warn("BuildSeries:doInBackground process aborted - subdirectory not created: "
 						+ exp.getKymosBinFullDirectory());
 			}
 		}
@@ -86,7 +87,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
-			e.printStackTrace();
+			Logger.error("BuildSeries:selectList() Failed to select experiment in list", e);
 		}
 	}
 
@@ -96,7 +97,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		try {
 			statusMsg = super.get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			Logger.error("BuildSeries:done() Failed to get result from background task", e);
 		}
 
 		if (!threadRunning || stopFlag)
@@ -122,9 +123,9 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 			try {
 				f.get();
 			} catch (ExecutionException e) {
-				System.out.println("BuildSeries:waitFuturesCompletion - frame:" + frame + " Execution exception: " + e);
+				Logger.error("BuildSeries:waitFuturesCompletion - frame:" + frame + " Execution exception", e);
 			} catch (InterruptedException e) {
-				System.out.println("BuildSeries:waitFuturesCompletion - Interrupted exception: " + e);
+				Logger.warn("BuildSeries:waitFuturesCompletion - Interrupted exception: " + e.getMessage());
 			}
 			futuresArray.remove(f);
 
@@ -146,7 +147,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 
 		boolean flag = true;
 		if (exp.cages.cageList.size() < 1) {
-			System.out.println("BuildSeries:checkBoundsForCells ! skipped experiment with no cell: "
+			Logger.warn("BuildSeries:checkBoundsForCells ! skipped experiment with no cell: "
 					+ exp.getExperimentDirectory());
 			flag = false;
 		}
@@ -158,7 +159,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		try {
 			image = ImageIO.read(new File(name));
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("BuildSeries:imageIORead() Failed to read image: " + name, e);
 		}
 		return IcyBufferedImage.createFrom(image);
 	}
@@ -211,7 +212,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
-			e.printStackTrace();
+			Logger.error("BuildSeries:openFlyDetectViewers() Failed to open fly detection viewers", e);
 		}
 	}
 

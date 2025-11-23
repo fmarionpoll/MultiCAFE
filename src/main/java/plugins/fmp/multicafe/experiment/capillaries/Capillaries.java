@@ -25,6 +25,7 @@ import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment.KymoIntervals;
 import plugins.fmp.multicafe.tools.Comparators;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
@@ -49,8 +50,7 @@ public class Capillaries {
 		try {
 			flag = csvLoad_Capillaries(directory);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.error("Capillaries:load_Capillaries() Failed to load capillaries from CSV: " + directory, e, true);
 		}
 
 		if (!flag) {
@@ -557,8 +557,7 @@ public class Capillaries {
 				cap.csvImport_CapillaryDescription(data);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.error("Capillaries:csvLoad_Capillaries() Failed to read CSV file", e);
 		}
 		return null;
 	}
@@ -608,8 +607,7 @@ public class Capillaries {
 				cap.csvImport_CapillaryData(measureType, data, x, y);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.error("Capillaries:csvLoad_Capillaries() Failed to read CSV file", e);
 		}
 		return null;
 	}

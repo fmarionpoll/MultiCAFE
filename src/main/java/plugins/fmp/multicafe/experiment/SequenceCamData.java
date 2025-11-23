@@ -29,6 +29,7 @@ import icy.file.SequenceFileImporter;
 import icy.image.IcyBufferedImage;
 import icy.roi.ROI;
 import icy.sequence.Sequence;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ViewerFMP;
 
 public class SequenceCamData {
@@ -182,7 +183,7 @@ public class SequenceCamData {
 		try {
 			attributes = Files.readAttributes(filePath, BasicFileAttributes.class);
 		} catch (IOException exception) {
-			System.out.println("SeqCamData:getFileTimeFromFileAttributes() Exception handled when trying to get file "
+			Logger.warn("SeqCamData:getFileTimeFromFileAttributes() Exception handled when trying to get file "
 					+ "attributes: " + exception.getMessage());
 		}
 
@@ -204,9 +205,9 @@ public class SequenceCamData {
 			Date date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
 			filetime = FileTime.fromMillis(date.getTime());
 		} catch (ImageProcessingException e) {
-			e.printStackTrace();
+			Logger.warn("SeqCamData:getFileTimeFromJPEGMetaData() Failed to read JPEG metadata: " + file.getName(), e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("SeqCamData:getFileTimeFromJPEGMetaData() IO error reading file: " + file.getName(), e);
 		}
 		return filetime;
 	}
@@ -224,7 +225,7 @@ public class SequenceCamData {
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
-			e.printStackTrace();
+			Logger.error("SeqCamData:displayViewerAtRectangle() Failed to display viewer", e);
 		}
 	}
 
@@ -266,7 +267,7 @@ public class SequenceCamData {
 		try {
 			image = ImageIO.read(new File(name));
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("SeqCamData:imageIORead() Failed to read image: " + name, e);
 		}
 		return IcyBufferedImage.createFrom(image);
 	}

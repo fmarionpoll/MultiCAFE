@@ -26,6 +26,7 @@ import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.experiment.SequenceKymos;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Bresenham;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 
@@ -96,9 +97,9 @@ public class BuildKymographs extends BuildSeries {
 					try {
 						Saver.saveImage(image, file, true);
 					} catch (FormatException e) {
-						e.printStackTrace();
+						Logger.error("BuildKymographs: Failed to save kymograph (format error): " + filename, e);
 					} catch (IOException e) {
-						e.printStackTrace();
+						Logger.error("BuildKymographs: Failed to save kymograph (IO error): " + filename, e);
 					}
 				}
 			}));
@@ -110,7 +111,7 @@ public class BuildKymographs extends BuildSeries {
 
 	private boolean buildKymo(Experiment exp) {
 		if (exp.capillaries.capillariesList.size() < 1) {
-			System.out.println("BuildKymographs:buildKymo Abort (1): nbcapillaries = 0");
+			Logger.warn("BuildKymographs:buildKymo Abort (1): nbcapillaries = 0");
 			return false;
 		}
 		SequenceKymos seqKymos = exp.seqKymos;
@@ -367,7 +368,7 @@ public class BuildKymographs extends BuildSeries {
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
-			e.printStackTrace();
+			Logger.error("BuildKymographs:openKymoViewers() Failed to open kymograph viewers", e);
 		}
 	}
 

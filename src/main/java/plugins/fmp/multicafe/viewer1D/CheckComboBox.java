@@ -129,7 +129,7 @@ class CheckComboBox extends JComboBox<Object> {
 
 	public boolean isItemSelected(String text) {
 
-		Set<?> ret = new TreeSet(); // alphabetically
+		// Set<?> ret = new TreeSet(); // alphabetically
 		for (Map.Entry<Object, Boolean> entry : mapObjSelected.entrySet()) {
 			Object obj = entry.getKey();
 			Boolean selected = entry.getValue();

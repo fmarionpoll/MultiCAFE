@@ -26,6 +26,7 @@ import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.JComponents.Dialog;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
@@ -58,7 +59,7 @@ public class Cages {
 		try {
 			flag = csvLoad_CageBox(directory);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.error("Cages:load_Cages() Failed to load cages from CSV: " + directory, e, true);
 		}
 
 		if (!flag) {
@@ -175,7 +176,7 @@ public class Cages {
 				try {
 					cageID = Integer.valueOf(data[0]);
 				} catch (NumberFormatException e) {
-					System.out.println("Invalid integer input: " + data[0]);
+					Logger.warn("Cages: Invalid integer input: " + data[0]);
 				}
 				Cage cage = getCageFromID(cageID);
 				if (cage == null) {
@@ -205,7 +206,7 @@ public class Cages {
 				try {
 					cageID = Integer.valueOf(data[0]);
 				} catch (NumberFormatException e) {
-					System.out.println("Invalid integer input: " + data[0]);
+					Logger.warn("Cages: Invalid integer input: " + data[0]);
 				}
 				Cage cage = getCageFromID(cageID);
 				if (cage == null)
@@ -328,7 +329,7 @@ public class Cages {
 		if (flag) {
 			cagesToROIs(exp.seqCamData);
 		} else {
-			System.out.println("Cages:xmlReadCageFromFileNoQuestion() failed to load cages from file");
+			Logger.warn("Cages:xmlReadCageFromFileNoQuestion() failed to load cages from file");
 			return false;
 		}
 		return true;

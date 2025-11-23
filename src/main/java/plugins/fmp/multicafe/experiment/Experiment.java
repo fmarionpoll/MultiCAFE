@@ -27,6 +27,7 @@ import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Directories;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
@@ -178,9 +179,7 @@ public class Experiment {
 			try {
 				Files.createDirectory(pathDir);
 			} catch (IOException e) {
-				e.printStackTrace();
-				System.out
-						.println("Experiment:createDirectoryIfDoesNotExist() Creating directory failed: " + directory);
+				Logger.error("Experiment:createDirectoryIfDoesNotExist() Creating directory failed: " + directory, e, true);
 				return false;
 			}
 		}
@@ -319,9 +318,9 @@ public class Experiment {
 				camImageLast_ms = lastImage_FileTime.toMillis();
 				camImageBin_ms = (camImageLast_ms - camImageFirst_ms) / (seqCamData.nTotalFrames - 1);
 				if (camImageBin_ms == 0)
-					System.out.println("Experiment:loadFileIntervalsFromSeqCamData() error / file interval size");
+					Logger.warn("Experiment:loadFileIntervalsFromSeqCamData() error / file interval size");
 			} else {
-				System.out.println("Experiment:loadFileIntervalsFromSeqCamData() error / file intervals of "
+				Logger.warn("Experiment:loadFileIntervalsFromSeqCamData() error / file intervals of "
 						+ seqCamData.getImagesDirectory());
 			}
 		}
@@ -474,7 +473,7 @@ public class Experiment {
 			try {
 				Files.delete(Paths.get(filename));
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.warn("Experiment:xmlLoadOldCapillaries() Failed to delete old file: " + filename, e);
 			}
 			return true;
 		}
@@ -485,7 +484,7 @@ public class Experiment {
 			try {
 				Files.delete(Paths.get(filename));
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.warn("Experiment:xmlLoadOldCapillaries() Failed to delete old file: " + filename, e);
 			}
 			return true;
 		}
@@ -854,7 +853,7 @@ public class Experiment {
 			return false;
 		image = ImageUtil.load(inputfile, true);
 		if (image == null) {
-			System.out.println("Experiment:loadReferenceImage() image not loaded / not found");
+			Logger.warn("Experiment:loadReferenceImage() image not loaded / not found: " + getReferenceImageFullName());
 			return false;
 		}
 		seqCamData.refImage = IcyBufferedImage.createFrom(image);

@@ -30,6 +30,7 @@ import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.tools.Comparators;
+import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
@@ -290,8 +291,7 @@ public class SequenceKymos extends SequenceCamData {
 			fileProp.imageHeight = MetaDataUtil.getSizeY(metaData, 0);
 			flag = true;
 		} catch (UnsupportedFormatException | IOException | InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.error("SequenceKymos:readImageProperties() Failed to read image properties: " + fileProp.fileName, e);
 		}
 		return flag;
 	}
@@ -311,7 +311,7 @@ public class SequenceKymos extends SequenceCamData {
 			try {
 				ibufImage1 = Loader.loadImage(fileProp.fileName);
 			} catch (UnsupportedFormatException | IOException | InterruptedException e1) {
-				e1.printStackTrace();
+				Logger.error("SequenceKymos:adjustImagesToMaxSize() Failed to load image: " + fileProp.fileName, e1);
 			}
 
 			IcyBufferedImage ibufImage2 = new IcyBufferedImage(imageWidthMax, imageHeightMax, ibufImage1.getSizeC(),
@@ -321,7 +321,7 @@ public class SequenceKymos extends SequenceCamData {
 			try {
 				Saver.saveImage(ibufImage2, new File(fileProp.fileName), true);
 			} catch (FormatException | IOException e) {
-				e.printStackTrace();
+				Logger.error("SequenceKymos:adjustImagesToMaxSize() Failed to save adjusted image: " + fileProp.fileName, e);
 			}
 
 			progress.incPosition();
@@ -385,7 +385,7 @@ public class SequenceKymos extends SequenceCamData {
 			try {
 				FileUtils.moveFile(FileUtils.getFile(oldName), FileUtils.getFile(newName));
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.error("SequenceKymos:renameOldFile() Failed to rename file: " + oldName + " to " + newName, e);
 			}
 		}
 	}
