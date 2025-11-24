@@ -438,7 +438,6 @@ public class Levels extends JPanel implements PropertyChangeListener {
 				rectangle.width = seqRectangle.width - rectangle.x;
 			if ((rectangle.height + rectangle.y) > (seqRectangle.height))
 				rectangle.height = seqRectangle.height - rectangle.y;
-			System.out.println(rectangle);
 			return rectangle;
 		}
 
