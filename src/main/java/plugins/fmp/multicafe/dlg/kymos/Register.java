@@ -48,26 +48,25 @@ public class Register extends JPanel {
 		this.parent0 = parent0;
 
 		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEFT);
+		layoutLeft.setVgap(0);
 
 		JPanel panel0 = new JPanel(layoutLeft);
 		panel0.add(displayReferenceFrameButton);
-		add(panel0);
-
-		JPanel panel1 = new JPanel(layoutLeft);
-		panel1.add(new JLabel("Algorithm: "));
-		panel1.add(typeCombo);
-		add(panel1);
+		panel0.add(new JLabel("Algorithm: "));
+		panel0.add(typeCombo);
 
 		JPanel panel2 = new JPanel(layoutLeft);
 		panel2.add(new JLabel("Reference: "));
 		panel2.add(referenceCombo);
 		panel2.add(new JLabel("Direction: "));
 		panel2.add(directionCombo);
-		add(panel2);
 
 		JPanel panel3 = new JPanel(layoutLeft);
 		panel3.add(registerButton);
 		panel3.add(statusLabel);
+
+		add(panel0);
+		add(panel2);
 		add(panel3);
 
 		typeCombo.setSelectedIndex(1);

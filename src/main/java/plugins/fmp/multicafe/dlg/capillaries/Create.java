@@ -61,14 +61,14 @@ public class Create extends JPanel {
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		setLayout(capLayout);
-		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
-		flowLayout.setVgap(0);
+		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEFT);
+		layoutLeft.setVgap(0);
 
-		JPanel panel0 = new JPanel(flowLayout);
+		JPanel panel0 = new JPanel(layoutLeft);
 		panel0.add(displayFrameButton);
 		panel0.add(generateCapillariesButton);
 
-		JPanel panel1 = new JPanel(flowLayout);
+		JPanel panel1 = new JPanel(layoutLeft);
 		panel1.add(new JLabel("Grouped as"));
 		panel1.add(cellsJCombo);
 		cellsJCombo.setPreferredSize(new Dimension(60, 20));
@@ -80,7 +80,7 @@ public class Create extends JPanel {
 		nbFliesPerCellJSpinner.setPreferredSize(new Dimension(40, 20));
 		panel1.add(flyLabel);
 
-		JPanel panel2 = new JPanel(flowLayout);
+		JPanel panel2 = new JPanel(layoutLeft);
 		panel2.add(widthLabel);
 		panel2.add(width_between_capillariesJSpinner);
 		width_between_capillariesJSpinner.setPreferredSize(new Dimension(40, 20));

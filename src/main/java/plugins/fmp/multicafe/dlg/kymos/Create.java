@@ -3,7 +3,6 @@ package plugins.fmp.multicafe.dlg.kymos;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -61,6 +60,7 @@ public class Create extends JPanel implements PropertyChangeListener {
 		this.parent0 = parent0;
 
 		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEFT);
+		layoutLeft.setVgap(0);
 
 		JPanel panel0 = new JPanel(layoutLeft);
 		((FlowLayout) panel0.getLayout()).setVgap(1);
@@ -70,28 +70,28 @@ public class Create extends JPanel implements PropertyChangeListener {
 		panel0.add(concurrentDisplayCheckBox);
 //		panel0.add(startFrameLabel);
 //		panel0.add(startFrameSpinner);
-		add(panel0);
-
-		JPanel panel2 = new JPanel(layoutLeft);
-		panel2.add(new JLabel("area around ROIs", SwingConstants.RIGHT));
-		panel2.add(diskRadiusSpinner);
-		panel2.add(new JLabel("bin size "));
-		panel2.add(binSize);
-		panel2.add(binUnit);
-		add(panel2);
-
-		binUnit.setSelectedIndex(2);
 
 		JPanel panel1 = new JPanel(layoutLeft);
-		panel1.add(new JLabel("Analyze "));
-		panel1.add(isFloatingFrameButton);
-		panel1.add(isFixedFrameButton);
-		panel1.add(startJSpinner);
-		panel1.add(new JLabel(" to "));
-		panel1.add(endJSpinner);
-		panel1.add(intervalsUnit);
+		panel1.add(new JLabel("area around ROIs", SwingConstants.RIGHT));
+		panel1.add(diskRadiusSpinner);
+		panel1.add(new JLabel("bin size "));
+		panel1.add(binSize);
+		panel1.add(binUnit);
+		binUnit.setSelectedIndex(2);
+
+		JPanel panel2 = new JPanel(layoutLeft);
+		panel2.add(new JLabel("Analyze "));
+		panel2.add(isFloatingFrameButton);
+		panel2.add(isFixedFrameButton);
+		panel2.add(startJSpinner);
+		panel2.add(new JLabel(" to "));
+		panel2.add(endJSpinner);
+		panel2.add(intervalsUnit);
 		intervalsUnit.setSelectedIndex(2);
+
+		add(panel0);
 		add(panel1);
+		add(panel2);
 
 //		startFrameLabel.setVisible(false);
 //		startFrameSpinner.setVisible(false);
