@@ -2,8 +2,12 @@ package plugins.fmp.multicafe.dlg.kymos;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -11,20 +15,26 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import icy.sequence.Sequence;
+import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.ImageRegistration;
 import plugins.fmp.multicafe.tools.ImageRegistrationFeatures;
 import plugins.fmp.multicafe.tools.ImageRegistrationFeaturesGPU;
 import plugins.fmp.multicafe.tools.ImageRegistrationGaspard;
+import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class Register extends JPanel {
 
 	private static final long serialVersionUID = -1234567890L;
 
 	private MultiCAFE parent0 = null;
+	private ROI2DPolygon referenceFrame = null;
+	private JButton displayReferenceFrameButton = new JButton("Set reference points at frame corners");
 
-	private JComboBox<String> typeCombo = new JComboBox<>(new String[] { "Gaspard Rigid", "Feature Tracking (CPU)", "Feature Tracking (GPU)" });
+	private JComboBox<String> typeCombo = new JComboBox<>(
+			new String[] { "Gaspard Rigid", "Feature Tracking (CPU)", "Feature Tracking (GPU)" });
 	private JComboBox<String> referenceCombo = new JComboBox<>(
 			new String[] { "End (Last Frame)", "Start (First Frame)" });
 	private JComboBox<String> directionCombo = new JComboBox<>(
@@ -40,16 +50,17 @@ public class Register extends JPanel {
 		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEFT);
 
 		JPanel panel0 = new JPanel(layoutLeft);
-		panel0.add(new JLabel("Algorithm: "));
-		panel0.add(typeCombo);
+		panel0.add(displayReferenceFrameButton);
 		add(panel0);
 
 		JPanel panel1 = new JPanel(layoutLeft);
-		panel1.add(new JLabel("Reference: "));
-		panel1.add(referenceCombo);
+		panel1.add(new JLabel("Algorithm: "));
+		panel1.add(typeCombo);
 		add(panel1);
 
 		JPanel panel2 = new JPanel(layoutLeft);
+		panel2.add(new JLabel("Reference: "));
+		panel2.add(referenceCombo);
 		panel2.add(new JLabel("Direction: "));
 		panel2.add(directionCombo);
 		add(panel2);
@@ -58,13 +69,23 @@ public class Register extends JPanel {
 		panel3.add(registerButton);
 		panel3.add(statusLabel);
 		add(panel3);
-		
+
 		typeCombo.setSelectedIndex(1);
 
 		defineActionListeners();
 	}
 
 	private void defineActionListeners() {
+		displayReferenceFrameButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp == null)
+					return;
+				create_capillariesRoiPolygon(exp);
+			}
+		});
+
 		registerButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -105,5 +126,25 @@ public class Register extends JPanel {
 		}).start();
 	}
 
-}
+	private void create_capillariesRoiPolygon(Experiment exp) {
+		Sequence seq = exp.getSeqCamData().getSeq();
+		final String dummyname = "perimeter_enclosing_capillaries";
 
+		referenceFrame = new ROI2DPolygon(getCapillariesPolygon(seq));
+		referenceFrame.setName(dummyname);
+		seq.addROI(referenceFrame);
+
+		seq.setSelectedROI(referenceFrame);
+	}
+
+	private Polygon2D getCapillariesPolygon(Sequence seq) {
+		Rectangle rect = seq.getBounds2D();
+		List<Point2D> points = new ArrayList<Point2D>();
+		points.add(new Point2D.Double(rect.x + rect.width / 5, rect.y + rect.height / 5));
+		points.add(new Point2D.Double(rect.x + rect.width * 4 / 5, rect.y + rect.height / 5));
+		points.add(new Point2D.Double(rect.x + rect.width * 4 / 5, rect.y + rect.height * 2 / 3));
+		points.add(new Point2D.Double(rect.x + rect.width / 5, rect.y + rect.height * 2 / 3));
+		return new Polygon2D(points);
+	}
+
+}

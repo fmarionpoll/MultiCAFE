@@ -32,7 +32,7 @@ import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
-public class CreateForCapillaries extends JPanel {
+public class Create extends JPanel {
 	/**
 	 * 
 	 */
