@@ -81,10 +81,15 @@ public class Register extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp == null)
 					return;
-				if (exp.getSeqCamData().getReferenceROI2DPolygon() == null)
-					create_ROIPolygon(exp);
-				else
-					referencePolygon = exp.getSeqCamData().getReferenceROI2DPolygon();
+				if (referencePolygon == null) {
+					if (exp.getSeqCamData().getReferenceROI2DPolygon() == null)
+						create_ROIPolygon(exp);
+					else
+						referencePolygon = exp.getSeqCamData().getReferenceROI2DPolygon();
+				} else {
+					exp.getSeqCamData().getSeq().removeROI(referencePolygon);
+					referencePolygon = null;
+				}
 			}
 		});
 

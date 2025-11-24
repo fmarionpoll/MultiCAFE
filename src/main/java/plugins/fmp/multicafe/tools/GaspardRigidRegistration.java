@@ -1,7 +1,11 @@
 package plugins.fmp.multicafe.tools;
 
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 import javax.swing.SwingConstants;
@@ -31,19 +35,42 @@ public class GaspardRigidRegistration {
 		float[] correlationMap = spectralCorrelation(_source, _target, width, height);
 
 		// Find maximum correlation
-
 		int argMax = argMax(correlationMap, correlationMap.length);
 
-		int transX = argMax % width;
-		int transY = argMax / width;
+		int maxX = argMax % width;
+		int maxY = argMax / width;
 
-		if (transX > width / 2)
-			transX -= width;
-		if (transY > height / 2)
-			transY -= height;
+		// Sub-pixel refinement using parabolic fit
+		double dx = 0;
+		double dy = 0;
+
+		// Fit along X
+		float valX0 = correlationMap[maxY * width + maxX];
+		float valX_minus = correlationMap[maxY * width + (maxX - 1 + width) % width];
+		float valX_plus = correlationMap[maxY * width + (maxX + 1) % width];
+
+		if (Math.abs(valX_minus - 2 * valX0 + valX_plus) > 1e-9) {
+			dx = 0.5 * (valX_minus - valX_plus) / (valX_minus - 2 * valX0 + valX_plus);
+		}
+
+		// Fit along Y
+		float valY_minus = correlationMap[((maxY - 1 + height) % height) * width + maxX];
+		float valY_plus = correlationMap[((maxY + 1) % height) * width + maxX];
+
+		if (Math.abs(valY_minus - 2 * valX0 + valY_plus) > 1e-9) {
+			dy = 0.5 * (valY_minus - valY_plus) / (valY_minus - 2 * valX0 + valY_plus);
+		}
+
+		double finalX = maxX + dx;
+		double finalY = maxY + dy;
+
+		if (finalX > width / 2)
+			finalX -= width;
+		if (finalY > height / 2)
+			finalY -= height;
 
 		// recover (x,y)
-		return new Vector2d(-transX, -transY);
+		return new Vector2d(-finalX, -finalY);
 	}
 
 	private static float[] spectralCorrelation(float[] a1, float[] a2, int width, int height) {
@@ -140,34 +167,75 @@ public class GaspardRigidRegistration {
 
 	public static IcyBufferedImage applyTranslation2D(IcyBufferedImage image, int channel, Vector2d vector,
 			boolean preserveImageSize) {
-		int dx = (int) Math.round(vector.x);
-		int dy = (int) Math.round(vector.y);
-		System.out.println("GasparRigidRegistration:applyTranslation2D() dx=" + dx + " dy=" + dy);
-		if (dx == 0 && dy == 0)
-			return image;
+		
+		// Check for integer shift (with small tolerance)
+		if (Math.abs(vector.x - Math.round(vector.x)) < 0.01 && Math.abs(vector.y - Math.round(vector.y)) < 0.01) {
+			int dx = (int) Math.round(vector.x);
+			int dy = (int) Math.round(vector.y);
+			// System.out.println("GasparRigidRegistration:applyTranslation2D() dx=" + dx + " dy=" + dy);
+			if (dx == 0 && dy == 0)
+				return image;
 
-		Rectangle newSize = image.getBounds();
-		newSize.width += Math.abs(dx);
-		newSize.height += Math.abs(dy);
+			Rectangle newSize = image.getBounds();
+			newSize.width += Math.abs(dx);
+			newSize.height += Math.abs(dy);
 
-		Point dstPoint_shiftedChannel = new Point(Math.max(0, dx), Math.max(0, dy));
-		Point dstPoint_otherChannels = new Point(Math.max(0, -dx), Math.max(0, -dy));
+			Point dstPoint_shiftedChannel = new Point(Math.max(0, dx), Math.max(0, dy));
+			Point dstPoint_otherChannels = new Point(Math.max(0, -dx), Math.max(0, -dy));
 
-		IcyBufferedImage newImage = new IcyBufferedImage(newSize.width, newSize.height, image.getSizeC(),
-				image.getDataType_());
+			IcyBufferedImage newImage = new IcyBufferedImage(newSize.width, newSize.height, image.getSizeC(),
+					image.getDataType_());
+			for (int c = 0; c < image.getSizeC(); c++) {
+				Point dstPoint = (channel == -1 || c == channel) ? dstPoint_shiftedChannel : dstPoint_otherChannels;
+				newImage.copyData(image, null, dstPoint, c, c);
+			}
+
+			if (preserveImageSize) {
+				newSize = image.getBounds();
+				newSize.x = Math.max(0, -dx);
+				newSize.y = Math.max(0, -dy);
+
+				return IcyBufferedImageUtil.getSubImage(newImage, newSize);
+			}
+			return newImage;
+		}
+		
+		// Sub-pixel shift using AffineTransform
+		AffineTransform transform = AffineTransform.getTranslateInstance(vector.x, vector.y);
+		IcyBufferedImage newImg = new IcyBufferedImage(image.getWidth(), image.getHeight(),
+				image.getSizeC(), image.getDataType_());
+
 		for (int c = 0; c < image.getSizeC(); c++) {
-			Point dstPoint = (channel == -1 || c == channel) ? dstPoint_shiftedChannel : dstPoint_otherChannels;
-			newImage.copyData(image, null, dstPoint, c, c);
-		}
+			// Only transform the requested channel, or all if channel == -1
+			if (channel != -1 && c != channel) {
+				// Copy untransformed
+				newImg.copyData(image, null, new Point(0, 0), c, c);
+				continue;
+			}
 
-		if (preserveImageSize) {
-			newSize = image.getBounds();
-			newSize.x = Math.max(0, -dx);
-			newSize.y = Math.max(0, -dy);
+			BufferedImage awtSrc = image.getImage(c);
+			int w = awtSrc.getWidth();
+			int h = awtSrc.getHeight();
+			int type = awtSrc.getType();
+			if (type == 0 || type == BufferedImage.TYPE_CUSTOM) {
+				type = BufferedImage.TYPE_INT_RGB;
+			}
+			BufferedImage awtDst = new BufferedImage(w, h, type);
+			Graphics2D g2 = awtDst.createGraphics();
+			
+			// Enable bilinear interpolation
+			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-			return IcyBufferedImageUtil.getSubImage(newImage, newSize);
+			g2.setTransform(transform);
+			g2.drawImage(awtSrc, 0, 0, null);
+			g2.dispose();
+
+			IcyBufferedImage tempWrapper = IcyBufferedImage.createFrom(awtDst);
+			newImg.setDataXY(c, tempWrapper.getDataXY(0));
 		}
-		return newImage;
+		
+		return newImg;
 	}
 
 	public static boolean correctRotation2D(IcyBufferedImage img, IcyBufferedImage ref, int referenceChannel) {

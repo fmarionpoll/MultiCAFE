@@ -2,7 +2,8 @@ package plugins.fmp.multicafe.workinprogress_gpu;
 
 public enum EnumCLFunction {
 	MULTIPLY2ARRAYS("Multiply2Arrays"),
-	AFFINETRANSFORM2D("affineTransform2D");
+	AFFINETRANSFORM2D("affineTransform2D"),
+	PERSPECTIVETRANSFORM2D("perspectiveTransform2D");
 
 	private String label;
 

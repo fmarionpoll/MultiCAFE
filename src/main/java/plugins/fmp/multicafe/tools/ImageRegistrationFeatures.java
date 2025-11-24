@@ -1,6 +1,7 @@
 package plugins.fmp.multicafe.tools;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -14,10 +15,49 @@ import icy.file.Saver;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
+import icy.type.collection.array.Array1DUtil;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
 
 public class ImageRegistrationFeatures extends ImageRegistration {
+
+	private static class Homography {
+		// 3x3 matrix flattened, row-major
+		double[] h = new double[9];
+
+		public Homography(double[] mat) {
+			this.h = mat;
+		}
+
+		public Homography invert() {
+			double det = h[0] * (h[4] * h[8] - h[5] * h[7]) -
+						 h[1] * (h[3] * h[8] - h[5] * h[6]) +
+						 h[2] * (h[3] * h[7] - h[4] * h[6]);
+			
+			if (Math.abs(det) < 1e-9) return null;
+
+			double invDet = 1.0 / det;
+			double[] res = new double[9];
+			
+			res[0] = (h[4] * h[8] - h[5] * h[7]) * invDet;
+			res[1] = (h[2] * h[7] - h[1] * h[8]) * invDet;
+			res[2] = (h[1] * h[5] - h[2] * h[4]) * invDet;
+			res[3] = (h[5] * h[6] - h[3] * h[8]) * invDet;
+			res[4] = (h[0] * h[8] - h[2] * h[6]) * invDet;
+			res[5] = (h[2] * h[3] - h[0] * h[5]) * invDet;
+			res[6] = (h[3] * h[7] - h[4] * h[6]) * invDet;
+			res[7] = (h[1] * h[6] - h[0] * h[7]) * invDet;
+			res[8] = (h[0] * h[4] - h[1] * h[3]) * invDet;
+			
+			return new Homography(res);
+		}
+		
+		public void transform(double x, double y, Point2D.Double out) {
+			double z = h[6] * x + h[7] * y + h[8];
+			out.x = (h[0] * x + h[1] * y + h[2]) / z;
+			out.y = (h[3] * x + h[4] * y + h[5]) / z;
+		}
+	}
 
 	@Override
 	public boolean runRegistration(Experiment exp, int referenceFrame, int startFrame, int endFrame, boolean reverse) {
@@ -35,6 +75,10 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 		int step = reverse ? -1 : 1;
 		int start = reverse ? endFrame : startFrame;
 		int end = reverse ? startFrame : endFrame;
+
+		// Check if we have enough points for Homography (need exactly 4 for unique solution with this simple solver)
+		// or use Affine for < 4 (though GUI usually enforces 4)
+		boolean usePerspective = referencePoints.size() == 4;
 
 		int t = start;
 		while ((reverse && t >= end) || (!reverse && t <= end)) {
@@ -54,37 +98,65 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 
 			trackPoints(imgPrev, imgCurr, currentPoints);
 
-			AffineTransform transform = computeAffineTransform(referencePoints, currentPoints);
-
 			try {
-				AffineTransform inverse = transform.createInverse();
-
-				// IcyBufferedImageUtil does not have a direct getAffineTransformedImage method.
-				// Use Java2D to apply the affine transform.
-				IcyBufferedImage newImg = new IcyBufferedImage(imgCurr.getWidth(), imgCurr.getHeight(),
-						imgCurr.getSizeC(), imgCurr.getDataType_());
-
-				for (int c = 0; c < imgCurr.getSizeC(); c++) {
-					BufferedImage awtSrc = imgCurr.getImage(c);
-					int w = awtSrc.getWidth();
-					int h = awtSrc.getHeight();
-					int type = awtSrc.getType();
-					// Handle TYPE_CUSTOM (0) - use a standard RGB type
-					if (type == 0 || type == BufferedImage.TYPE_CUSTOM) {
-						type = BufferedImage.TYPE_INT_RGB;
+				IcyBufferedImage newImg;
+				
+				if (usePerspective) {
+					// Compute Homography: Src (Current) -> Dst (Reference)
+					// We want to warp Current to Reference
+					Homography H = computeHomography(currentPoints, referencePoints);
+					
+					// To warp, we iterate over Destination (Reference) pixels and sample from Source (Current)
+					// So we need Inverse Homography: Dst -> Src
+					// Wait, computeHomography(current, reference) gives transformation T such that T(current) = reference.
+					// So if we iterate over reference pixel (x,y), we want to find (u,v) in current image.
+					// The relation is (x,y) = H * (u,v)  => (u,v) = H^-1 * (x,y)
+					// Actually, standard warp implementation iterates over destination pixels (x,y)
+					// and maps them BACK to source pixels (u,v) to sample.
+					// If H maps Source -> Dest, then we need H^-1.
+					
+					// Let's define computeHomography(src, dst) as mapping src points to dst points.
+					// Then H maps Current -> Reference.
+					// For warping, for each pixel in Reference (Output), we need coordinate in Current (Input).
+					// So we need Inverse(H).
+					
+					if (H == null) {
+						// Fallback
+						newImg = imgCurr; 
+					} else {
+						Homography invH = H.invert();
+						newImg = warpPerspective(imgCurr, invH);
 					}
-					BufferedImage awtDst = new BufferedImage(w, h, type);
-					Graphics2D g2 = awtDst.createGraphics();
+				} else {
+					// Fallback to Affine for != 4 points
+					AffineTransform transform = computeAffineTransform(referencePoints, currentPoints);
+					AffineTransform inverse = transform.createInverse();
 
-					// Apply inverse transform to align current image with reference
-					// This handles translation, rotation, and scaling (x and y independently)
-					g2.setTransform(inverse);
-					g2.drawImage(awtSrc, 0, 0, null);
-					g2.dispose();
+					newImg = new IcyBufferedImage(imgCurr.getWidth(), imgCurr.getHeight(),
+							imgCurr.getSizeC(), imgCurr.getDataType_());
 
-					// Convert transformed BufferedImage back to IcyBufferedImage
-					IcyBufferedImage tempWrapper = IcyBufferedImage.createFrom(awtDst);
-					newImg.setDataXY(c, tempWrapper.getDataXY(0));
+					for (int c = 0; c < imgCurr.getSizeC(); c++) {
+						BufferedImage awtSrc = imgCurr.getImage(c);
+						int w = awtSrc.getWidth();
+						int h = awtSrc.getHeight();
+						int type = awtSrc.getType();
+						if (type == 0 || type == BufferedImage.TYPE_CUSTOM) {
+							type = BufferedImage.TYPE_INT_RGB;
+						}
+						BufferedImage awtDst = new BufferedImage(w, h, type);
+						Graphics2D g2 = awtDst.createGraphics();
+
+						g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+						g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+						g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+						g2.setTransform(inverse);
+						g2.drawImage(awtSrc, 0, 0, null);
+						g2.dispose();
+
+						IcyBufferedImage tempWrapper = IcyBufferedImage.createFrom(awtDst);
+						newImg.setDataXY(c, tempWrapper.getDataXY(0));
+					}
 				}
 
 				String filename = seqCamData.getFileNameFromImageList(t);
@@ -137,18 +209,153 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 		}
 	}
 
-	/**
-	 * Computes a full affine transform that handles: - Translation (tx, ty) -
-	 * Rotation (θ) - Scaling in X and Y (sx, sy) - independent scaling - Shear (if
-	 * present)
-	 * 
-	 * The transform maps source points to destination points using least squares: u
-	 * = a*x + b*y + c (x-coordinate transformation) v = d*x + e*y + f (y-coordinate
-	 * transformation)
-	 * 
-	 * Where the AffineTransform matrix is: [a b c] [m00 m01 m02] [d e f] = [m10 m11
-	 * m12] [0 0 1] [ 0 0 1]
-	 */
+	// --- Homography Logic ---
+
+	private Homography computeHomography(List<Point2D> src, List<Point2D> dst) {
+		// Solves H * src = dst
+		// For 4 points, we have 8 equations.
+		// Matrix equation Ah = b is not quite right because of the homogeneous division.
+		// h0*x + h1*y + h2 - h6*x*u - h7*y*u = u
+		// h3*x + h4*y + h5 - h6*x*v - h7*y*v = v
+		// where (x,y) is src, (u,v) is dst. h8 = 1.
+		
+		int n = src.size();
+		if (n != 4) return null; // Only implemented for 4 points
+
+		double[][] A = new double[8][8];
+		double[] B = new double[8];
+
+		for (int i = 0; i < n; i++) {
+			double x = src.get(i).getX();
+			double y = src.get(i).getY();
+			double u = dst.get(i).getX();
+			double v = dst.get(i).getY();
+
+			// Eq 1 for point i
+			A[2*i][0] = x;
+			A[2*i][1] = y;
+			A[2*i][2] = 1;
+			A[2*i][3] = 0;
+			A[2*i][4] = 0;
+			A[2*i][5] = 0;
+			A[2*i][6] = -x * u;
+			A[2*i][7] = -y * u;
+			B[2*i] = u;
+
+			// Eq 2 for point i
+			A[2*i+1][0] = 0;
+			A[2*i+1][1] = 0;
+			A[2*i+1][2] = 0;
+			A[2*i+1][3] = x;
+			A[2*i+1][4] = y;
+			A[2*i+1][5] = 1;
+			A[2*i+1][6] = -x * v;
+			A[2*i+1][7] = -y * v;
+			B[2*i+1] = v;
+		}
+
+		double[] h = solveGaussian(A, B);
+		if (h == null) return null;
+
+		return new Homography(new double[] { h[0], h[1], h[2], h[3], h[4], h[5], h[6], h[7], 1.0 });
+	}
+
+	private double[] solveGaussian(double[][] A, double[] B) {
+		int n = B.length;
+		for (int k = 0; k < n; k++) {
+			// Find pivot
+			int max = k;
+			for (int i = k + 1; i < n; i++)
+				if (Math.abs(A[i][k]) > Math.abs(A[max][k]))
+					max = i;
+
+			double[] temp = A[k]; A[k] = A[max]; A[max] = temp;
+			double t = B[k]; B[k] = B[max]; B[max] = t;
+
+			if (Math.abs(A[k][k]) < 1e-10) return null; // Singular
+
+			for (int i = k + 1; i < n; i++) {
+				double factor = A[i][k] / A[k][k];
+				B[i] -= factor * B[k];
+				for (int j = k; j < n; j++)
+					A[i][j] -= factor * A[k][j];
+			}
+		}
+
+		double[] solution = new double[n];
+		for (int i = n - 1; i >= 0; i--) {
+			double sum = 0.0;
+			for (int j = i + 1; j < n; j++)
+				sum += A[i][j] * solution[j];
+			solution[i] = (B[i] - sum) / A[i][i];
+		}
+		return solution;
+	}
+
+	private IcyBufferedImage warpPerspective(IcyBufferedImage src, Homography invH) {
+		int width = src.getWidth();
+		int height = src.getHeight();
+		int numC = src.getSizeC();
+		
+		IcyBufferedImage dst = new IcyBufferedImage(width, height, numC, src.getDataType_());
+		
+		Point2D.Double srcPt = new Point2D.Double();
+		
+		// Pre-fetch data arrays for speed? Or use getPixel/setPixel (slow)
+		// Direct array access is much faster.
+		
+		for (int c = 0; c < numC; c++) {
+			Object srcData = src.getDataXY(c);
+			Object dstData = dst.getDataXY(c);
+			boolean isSigned = src.isSignedDataType();
+			
+			// Convert to float for processing
+			float[] srcArr = Array1DUtil.arrayToFloatArray(srcData, isSigned);
+			float[] dstArr = new float[width * height];
+			
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					// Map dst pixel (x,y) to src pixel (u,v)
+					invH.transform(x, y, srcPt);
+					double u = srcPt.x;
+					double v = srcPt.y;
+					
+					// Bilinear Interpolation
+					if (u >= 0 && v >= 0 && u < width - 1 && v < height - 1) {
+						int x0 = (int) u;
+						int y0 = (int) v;
+						double dx = u - x0;
+						double dy = v - y0;
+						
+						int idx00 = x0 + y0 * width;
+						int idx10 = (x0 + 1) + y0 * width;
+						int idx01 = x0 + (y0 + 1) * width;
+						int idx11 = (x0 + 1) + (y0 + 1) * width;
+						
+						float val00 = srcArr[idx00];
+						float val10 = srcArr[idx10];
+						float val01 = srcArr[idx01];
+						float val11 = srcArr[idx11];
+						
+						float val0 = (float) (val00 * (1 - dx) + val10 * dx);
+						float val1 = (float) (val01 * (1 - dx) + val11 * dx);
+						float val = (float) (val0 * (1 - dy) + val1 * dy);
+						
+						dstArr[x + y * width] = val;
+					} else {
+						dstArr[x + y * width] = 0; // Black outside
+					}
+				}
+			}
+			
+			Array1DUtil.floatArrayToArray(dstArr, dstData);
+		}
+		
+		return dst;
+	}
+
+	// --- End Homography Logic ---
+
 	private AffineTransform computeAffineTransform(List<Point2D> srcPoints, List<Point2D> dstPoints) {
 		int n = srcPoints.size();
 		if (n < 3)
@@ -178,9 +385,6 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 			sumVY += v * y;
 		}
 
-		// Solve for transform parameters using least squares
-		// Matrix equation: A * [a, b, c]^T = [sumUX, sumUY, sumU]^T
-		// A * [d, e, f]^T = [sumVX, sumVY, sumV]^T
 		double[][] A = { { sumX2, sumXY, sumX }, { sumXY, sumY2, sumY }, { sumX, sumY, (double) n } };
 
 		double[] B_u = { sumUX, sumUY, sumU };
@@ -192,10 +396,6 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 		if (sol_u == null || sol_v == null)
 			return new AffineTransform();
 
-		// AffineTransform(m00, m10, m01, m11, m02, m12)
-		// m00 = a (x-scale and rotation), m01 = b (x-shear)
-		// m10 = d (y-shear), m11 = e (y-scale and rotation)
-		// m02 = c (x-translation), m12 = f (y-translation)
 		return new AffineTransform(sol_u[0], sol_v[0], sol_u[1], sol_v[1], sol_u[2], sol_v[2]);
 	}
 
