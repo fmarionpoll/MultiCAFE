@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
+import icy.image.IcyBufferedImage;
 import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.type.geom.Polyline2D;
@@ -23,13 +24,7 @@ import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 public class Capillary implements Comparable<Capillary> {
-
-	private ROI2D roiCap = null;
-	private ArrayList<ROI2DAlongT> roisForKymo = new ArrayList<ROI2DAlongT>();
-	private String kymographName = null;
 	public int kymographIndex = -1;
-	private String kymographPrefix = null;
-
 	public String version = null;
 	public String filenameTIFF = null;
 
@@ -57,6 +52,12 @@ public class Capillary implements Comparable<Capillary> {
 	public CapillaryGulps ptsGulps = new CapillaryGulps();
 
 	public boolean valid = true;
+
+	private ROI2D roiCap = null;
+	private ArrayList<ROI2DAlongT> roisForKymo = new ArrayList<ROI2DAlongT>();
+	private String kymographName = null;
+	private String kymographPrefix = null;
+	public IcyBufferedImage cap_Image = null;
 
 	private final String ID_META = "metaMC";
 	private final String ID_NFLIES = "nflies";

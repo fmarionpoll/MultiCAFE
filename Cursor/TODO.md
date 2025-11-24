@@ -14,13 +14,15 @@
 - [x] Create ImageRegistrationFeaturesGPU class with JavaCL integration
 - [x] Add 'Feature Tracking (GPU)' option to Register UI combo box
 - [x] Verify compilation again after fixing GPU implementation errors
+- [x] Check generate kymograph functionality
+- [x] Check detect levels functionality
+- [x] Check detect gulps functionality
 
 ## Pending Tasks
 - [ ] Test GPU performance vs CPU on typical stack
 - [ ] Verify system gracefully falls back to CPU if GPU unavailable
 - [ ] Verify GPU version produces identical results to CPU version
-- [ ] Check generate kymograph functionality
-- [ ] Check detect levels functionality
-- [ ] Check detect gulps functionality
 - [ ] Check detect flies functionality
+
+
 

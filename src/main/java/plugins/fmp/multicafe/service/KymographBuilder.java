@@ -28,9 +28,6 @@ import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 
 public class KymographBuilder {
 
-	private ArrayList<IcyBufferedImage> cap_bufKymoImage = null;
-	private int kymoImageWidth = 0;
-
 	public boolean buildKymograph(Experiment exp, BuildSeriesOptions options) {
 		if (exp.getCapillaries().getCapillariesList().size() < 1) {
 			Logger.warn("KymographBuilder:buildKymo Abort (1): nbcapillaries = 0");
@@ -40,13 +37,7 @@ public class KymographBuilder {
 		seqKymos.setSeq(new Sequence());
 		initArraysToBuildKymographImages(exp, options);
 
-//		int nKymographColumns = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
 		int iToColumn = 0;
-
-		// TODO: remove dependency on exp.getSeqCamData() for time intervals if
-		// possible, or ensure it's loaded
-		// exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(firstImage_FileTime.toMillis());
-		// // already done in getTimeLimitsOfSequence?
 
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("buildKymograph");
@@ -56,9 +47,11 @@ public class KymographBuilder {
 
 		tasks.clear();
 		SequenceLoaderService loader = new SequenceLoaderService();
+		long first = exp.getKymoFirst_ms();
+		long last = exp.getKymoLast_ms();
+		long step = exp.getKymoBin_ms();
 
-		for (long ii_ms = exp.getKymoFirst_ms(); ii_ms <= exp.getKymoLast_ms(); ii_ms += exp
-				.getKymoBin_ms(), iToColumn++) {
+		for (long ii_ms = first; ii_ms <= last; ii_ms += step, iToColumn++) {
 			int sourceImageIndex = exp.findNearestIntervalWithBinarySearch(ii_ms, 0,
 					exp.getSeqCamData().getnTotalFrames());
 			final int fromSourceImageIndex = sourceImageIndex;
@@ -138,6 +131,7 @@ public class KymographBuilder {
 	private void analyzeImageWithCapillary(IcyBufferedImage sourceImage, Capillary cap, int t, int kymographColumn) {
 		ROI2DAlongT kymoROI2DatT = cap.getROI2DKymoAtIntervalT(t);
 		int sizeC = sourceImage.getSizeC();
+		int kymoImageWidth = cap.cap_Image.getWidth();
 
 		for (int chan = 0; chan < sizeC; chan++) {
 			int[] sourceImageChannel = Array1DUtil.arrayToIntArray(sourceImage.getDataXY(chan),
@@ -169,13 +163,12 @@ public class KymographBuilder {
 
 		for (int icap = 0; icap < nbcapillaries; icap++) {
 			final Capillary cap = exp.getCapillaries().getCapillariesList().get(icap);
-			final IcyBufferedImage cap_Image = cap_bufKymoImage.get(icap);
 			final int indexCap = icap;
 
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					export_One_CapillaryIntegerArray_to_Kymograph(seqKymo, indexCap, cap, cap_Image, sizeC);
+					export_One_CapillaryIntegerArray_to_Kymograph(seqKymo, indexCap, cap, sizeC);
 				}
 			}));
 		}
@@ -184,8 +177,8 @@ public class KymographBuilder {
 		seqKymo.endUpdate();
 	}
 
-	private void export_One_CapillaryIntegerArray_to_Kymograph(Sequence seqKymo, int icap, Capillary cap,
-			IcyBufferedImage cap_Image, int sizeC) {
+	private void export_One_CapillaryIntegerArray_to_Kymograph(Sequence seqKymo, int icap, Capillary cap, int sizeC) {
+		IcyBufferedImage cap_Image = cap.cap_Image;
 		ArrayList<int[]> cap_Integer = cap.cap_Integer;
 		boolean isSignedDataType = cap_Image.isSignedDataType();
 		for (int chan = 0; chan < sizeC; chan++) {
@@ -196,6 +189,7 @@ public class KymographBuilder {
 		}
 		seqKymo.setImage(icap, 0, cap_Image);
 		cap.cap_Integer = null;
+		cap.cap_Image = null;
 	}
 
 	private void initArraysToBuildKymographImages(Experiment exp, BuildSeriesOptions options) {
@@ -205,8 +199,7 @@ public class KymographBuilder {
 		int sizex = seqCamData.getSeq().getSizeX();
 		int sizey = seqCamData.getSeq().getSizeY();
 
-		kymoImageWidth = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
-
+		int kymoImageWidth = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
 		int imageHeight = 0;
 		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
 			for (ROI2DAlongT capT : cap.getROIsForKymo()) {
@@ -215,7 +208,7 @@ public class KymographBuilder {
 					imageHeight = imageHeight_i;
 			}
 		}
-		buildCapInteger(exp, imageHeight);
+		buildCapInteger(exp, kymoImageWidth, imageHeight);
 	}
 
 	private int buildMasks(ROI2DAlongT capT, int sizex, int sizey, BuildSeriesOptions options) {
@@ -226,7 +219,7 @@ public class KymographBuilder {
 		return masks.size();
 	}
 
-	private void buildCapInteger(Experiment exp, int imageHeight) {
+	private void buildCapInteger(Experiment exp, int imageWidth, int imageHeight) {
 		SequenceCamData seqCamData = exp.getSeqCamData();
 		int numC = seqCamData.getSeq().getSizeC();
 		if (numC <= 0)
@@ -236,15 +229,13 @@ public class KymographBuilder {
 		if (dataType.toString().equals("undefined"))
 			dataType = DataType.UBYTE;
 
-		int len = kymoImageWidth * imageHeight;
+		int len = imageWidth * imageHeight;
 		int nbcapillaries = exp.getCapillaries().getCapillariesList().size();
-		cap_bufKymoImage = new ArrayList<IcyBufferedImage>(nbcapillaries);
+		// cap_bufKymoImage = new ArrayList<IcyBufferedImage>(nbcapillaries);
 
 		for (int i = 0; i < nbcapillaries; i++) {
-			IcyBufferedImage cap_Image = new IcyBufferedImage(kymoImageWidth, imageHeight, numC, dataType);
-			cap_bufKymoImage.add(cap_Image);
-
 			Capillary cap = exp.getCapillaries().getCapillariesList().get(i);
+			cap.cap_Image = new IcyBufferedImage(imageWidth, imageHeight, numC, dataType);
 			cap.cap_Integer = new ArrayList<int[]>(numC);
 
 			for (int chan = 0; chan < numC; chan++) {

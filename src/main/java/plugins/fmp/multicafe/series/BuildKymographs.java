@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.service.KymographBuilder;
 import plugins.fmp.multicafe.tools.Logger;
 
@@ -30,8 +31,10 @@ public class BuildKymographs extends BuildSeries {
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
 		boolean flag = exp.loadMCCapillaries_Only();
-		exp.getSeqCamData()
-				.setSeq(exp.getSeqCamData().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
+		SequenceCamData seqData = exp.getSeqCamData();
+
+		seqData.setSeq(seqData.initSequenceFromFirstImage(seqData.getImagesList(true)));
+		exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(exp.getCamImageFirst_ms());
 		return flag;
 	}
 
