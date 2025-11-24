@@ -2,9 +2,12 @@ package plugins.fmp.multicafe.tools;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 
 import javax.vecmath.Vector2d;
 
@@ -13,6 +16,7 @@ import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
+
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.experiment.cages.Cage;
@@ -67,10 +71,16 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 						imgCurr.getSizeC(), imgCurr.getDataType_());
 
 				for (int c = 0; c < imgCurr.getSizeC(); c++) {
-					java.awt.image.BufferedImage awtSrc = imgCurr.getImage(c);
-					java.awt.image.BufferedImage awtDst = new java.awt.image.BufferedImage(awtSrc.getWidth(),
-							awtSrc.getHeight(), awtSrc.getType());
-					java.awt.Graphics2D g2 = awtDst.createGraphics();
+					BufferedImage awtSrc = imgCurr.getImage(c);
+					int w = awtSrc.getWidth();
+					int h = awtSrc.getHeight();
+					int type = awtSrc.getType();
+					// Handle TYPE_CUSTOM (0) - use a standard RGB type
+					if (type == 0 || type == BufferedImage.TYPE_CUSTOM) {
+						type = BufferedImage.TYPE_INT_RGB;
+					}
+					BufferedImage awtDst = new BufferedImage(w, h, type);
+					Graphics2D g2 = awtDst.createGraphics();
 
 					// Apply inverse transform to align current image with reference
 					// This handles translation, rotation, and scaling (x and y independently)

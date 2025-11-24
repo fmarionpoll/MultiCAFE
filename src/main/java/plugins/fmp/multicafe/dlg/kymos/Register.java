@@ -58,6 +58,8 @@ public class Register extends JPanel {
 		panel3.add(registerButton);
 		panel3.add(statusLabel);
 		add(panel3);
+		
+		typeCombo.setSelectedIndex(1);
 
 		defineActionListeners();
 	}
