@@ -30,7 +30,7 @@ public class Register extends JPanel {
 	private static final long serialVersionUID = -1234567890L;
 
 	private MultiCAFE parent0 = null;
-	private ROI2DPolygon referenceFrame = null;
+	private ROI2DPolygon referencePolygon = null;
 	private JButton displayReferenceFrameButton = new JButton("Set reference points at frame corners");
 
 	private JComboBox<String> typeCombo = new JComboBox<>(
@@ -82,7 +82,10 @@ public class Register extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp == null)
 					return;
-				create_capillariesRoiPolygon(exp);
+				if (exp.getSeqCamData().getReferenceROI2DPolygon() == null)
+					create_ROIPolygon(exp);
+				else
+					referencePolygon = exp.getSeqCamData().getReferenceROI2DPolygon();
 			}
 		});
 
@@ -103,6 +106,8 @@ public class Register extends JPanel {
 		statusLabel.setText("Processing...");
 
 		new Thread(() -> {
+			exp.getSeqCamData().setReferenceROI2DPolygon(referencePolygon);
+
 			int startFrame = 0;
 			int endFrame = exp.getSeqCamData().getnTotalFrames() - 1;
 
@@ -126,18 +131,18 @@ public class Register extends JPanel {
 		}).start();
 	}
 
-	private void create_capillariesRoiPolygon(Experiment exp) {
+	private void create_ROIPolygon(Experiment exp) {
 		Sequence seq = exp.getSeqCamData().getSeq();
-		final String dummyname = "perimeter_enclosing_capillaries";
+		final String dummyname = "reference_polygon";
 
-		referenceFrame = new ROI2DPolygon(getCapillariesPolygon(seq));
-		referenceFrame.setName(dummyname);
-		seq.addROI(referenceFrame);
+		referencePolygon = new ROI2DPolygon(getPolygon(seq));
+		referencePolygon.setName(dummyname);
+		seq.addROI(referencePolygon);
 
-		seq.setSelectedROI(referenceFrame);
+		seq.setSelectedROI(referencePolygon);
 	}
 
-	private Polygon2D getCapillariesPolygon(Sequence seq) {
+	private Polygon2D getPolygon(Sequence seq) {
 		Rectangle rect = seq.getBounds2D();
 		List<Point2D> points = new ArrayList<Point2D>();
 		points.add(new Point2D.Double(rect.x + rect.width / 5, rect.y + rect.height / 5));

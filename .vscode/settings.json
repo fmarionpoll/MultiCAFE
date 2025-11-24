@@ -1,0 +1,33 @@
+{
+  // Prevent automatic file modifications on open/save
+  "files.trimTrailingWhitespace": false,
+  "files.insertFinalNewline": false,
+  "files.trimFinalNewlines": false,
+  
+  // Disable format on save to prevent unwanted changes
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  
+  // Java-specific settings (if you use Java formatter extensions)
+  "[java]": {
+    "files.trimTrailingWhitespace": false,
+    "files.insertFinalNewline": false,
+    "files.trimFinalNewlines": false,
+    "editor.formatOnSave": false
+  },
+  
+  // Markdown settings (preserve existing behavior if needed)
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false,
+    "files.insertFinalNewline": false,
+    "files.trimFinalNewlines": false
+  },
+  
+  // General editor settings
+  "files.eol": "\r\n",
+  
+  // Disable auto-save if it's causing issues
+  "files.autoSave": "off"
+}
+

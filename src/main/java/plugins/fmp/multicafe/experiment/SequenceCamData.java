@@ -27,6 +27,7 @@ import icy.roi.ROI;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ViewerFMP;
+import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class SequenceCamData {
 	private Sequence seq = null;
@@ -42,6 +43,7 @@ public class SequenceCamData {
 	protected String csCamFileName = null;
 	private String imagesDirectory = null;
 	private List<String> imagesList = new ArrayList<String>();
+	private ROI2DPolygon referenceROI2DPolygon = null;
 
 	long timeFirstImageInMs = 0;
 	int indexTimePattern = -1;
@@ -69,7 +71,7 @@ public class SequenceCamData {
 	}
 
 	// -----------------------
-	
+
 	public Sequence getSeq() {
 		return seq;
 	}
@@ -124,6 +126,14 @@ public class SequenceCamData {
 
 	public void setStatus(EnumStatus status) {
 		this.status = status;
+	}
+
+	public ROI2DPolygon getReferenceROI2DPolygon() {
+		return referenceROI2DPolygon;
+	}
+
+	public void setReferenceROI2DPolygon(ROI2DPolygon roi) {
+		referenceROI2DPolygon = roi;
 	}
 
 	public List<String> getImagesList() {

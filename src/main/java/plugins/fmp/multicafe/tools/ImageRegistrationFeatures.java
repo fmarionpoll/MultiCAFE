@@ -1,13 +1,12 @@
 package plugins.fmp.multicafe.tools;
 
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import javax.vecmath.Vector2d;
 
@@ -15,13 +14,8 @@ import icy.file.Saver;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
-import icy.type.geom.Polygon2D;
-
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.SequenceCamData;
-import plugins.fmp.multicafe.experiment.cages.Cage;
-import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class ImageRegistrationFeatures extends ImageRegistration {
 
@@ -107,23 +101,7 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 	}
 
 	private List<Point2D> extractPoints(Experiment exp) {
-		List<Point2D> points = new ArrayList<>();
-		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
-			Point2D p1 = cap.getCapillaryROIFirstPoint();
-			if (p1 != null)
-				points.add(p1);
-			Point2D p2 = cap.getCapillaryROILastPoint();
-			if (p2 != null)
-				points.add(p2);
-		}
-		for (Cage cage : exp.getCages().getCageList()) {
-			if (cage.getCageRoi2D() instanceof ROI2DPolygon) {
-				Polygon2D poly = ((ROI2DPolygon) cage.getCageRoi2D()).getPolygon2D();
-				for (Point2D p : poly.getPoints()) {
-					points.add(p);
-				}
-			}
-		}
+		ArrayList<Point2D> points = exp.getSeqCamData().getReferenceROI2DPolygon().getPoints();
 		return points;
 	}
 
@@ -160,20 +138,16 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 	}
 
 	/**
-	 * Computes a full affine transform that handles:
-	 * - Translation (tx, ty)
-	 * - Rotation (θ)
-	 * - Scaling in X and Y (sx, sy) - independent scaling
-	 * - Shear (if present)
+	 * Computes a full affine transform that handles: - Translation (tx, ty) -
+	 * Rotation (θ) - Scaling in X and Y (sx, sy) - independent scaling - Shear (if
+	 * present)
 	 * 
-	 * The transform maps source points to destination points using least squares:
-	 * u = a*x + b*y + c  (x-coordinate transformation)
-	 * v = d*x + e*y + f  (y-coordinate transformation)
+	 * The transform maps source points to destination points using least squares: u
+	 * = a*x + b*y + c (x-coordinate transformation) v = d*x + e*y + f (y-coordinate
+	 * transformation)
 	 * 
-	 * Where the AffineTransform matrix is:
-	 * [a  b  c]   [m00  m01  m02]
-	 * [d  e  f] = [m10  m11  m12]
-	 * [0  0  1]   [  0    0    1]
+	 * Where the AffineTransform matrix is: [a b c] [m00 m01 m02] [d e f] = [m10 m11
+	 * m12] [0 0 1] [ 0 0 1]
 	 */
 	private AffineTransform computeAffineTransform(List<Point2D> srcPoints, List<Point2D> dstPoints) {
 		int n = srcPoints.size();
@@ -206,7 +180,7 @@ public class ImageRegistrationFeatures extends ImageRegistration {
 
 		// Solve for transform parameters using least squares
 		// Matrix equation: A * [a, b, c]^T = [sumUX, sumUY, sumU]^T
-		//                  A * [d, e, f]^T = [sumVX, sumVY, sumV]^T
+		// A * [d, e, f]^T = [sumVX, sumVY, sumV]^T
 		double[][] A = { { sumX2, sumXY, sumX }, { sumXY, sumY2, sumY }, { sumX, sumY, (double) n } };
 
 		double[] B_u = { sumUX, sumUY, sumU };
