@@ -173,3 +173,4 @@ The plugin uses a tabbed interface with 7 main tabs:
 7. **UI/UX**: Review dialog implementations and user workflows
 
 
+
