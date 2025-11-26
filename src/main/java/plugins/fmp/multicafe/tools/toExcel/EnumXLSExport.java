@@ -21,7 +21,7 @@ public enum EnumXLSExport {
 	TTOGULP("tToGulp", "minutes", Arrays.asList(EnumMeasure.OTHER), EnumXLSMeasure.CAP),
 	TTOGULP_LR("tToGulp_LR", "minutes", Arrays.asList(EnumMeasure.OTHER), EnumXLSMeasure.CAP),
 
-	TRANSITIONS("transitions", "n observ", Arrays.asList(EnumMeasure.OTHER), EnumXLSMeasure.CAP),
+	MARKOV_CHAIN("markov_chain", "n observ", Arrays.asList(EnumMeasure.OTHER), EnumXLSMeasure.CAP),
 	AUTOCORREL("autocorrel", "n observ", Arrays.asList(EnumMeasure.OTHER), EnumXLSMeasure.CAP),
 	AUTOCORREL_LR("autocorrel_LR", "n observ", Arrays.asList(EnumMeasure.OTHER), EnumXLSMeasure.CAP),
 	CROSSCORREL("crosscorrel", "n observ", Arrays.asList(EnumMeasure.OTHER), EnumXLSMeasure.CAP),

@@ -226,6 +226,9 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		case CROSSCORREL_LR:
 			buildCrosscorrelLR(xlsExportOptions);
 			break;
+		case MARKOV_CHAIN:
+			buildMarkovChain(xlsExportOptions);
+			break;
 		default:
 			break;
 		}
@@ -331,5 +334,121 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 				correl(rowLR, rowLR, rowR, xlsExportOptions.nbinscorrelation);
 			}
 		}
+	}
+
+	private void buildMarkovChain(XLSExportOptions xlsExportOptions) {
+		// State constants
+		final int STATE_Ls = 0; // L=1, R=0
+		final int STATE_Rs = 1; // L=0, R=1
+		final int STATE_LR = 2; // L=1, R=1
+		final int STATE_N = 3;  // L=0, R=0
+
+		// Clear existing results and rebuild per cage
+		ArrayList<XLSResults> newResultsList = new ArrayList<XLSResults>();
+
+		// Group capillaries by cage ID
+		java.util.Map<Integer, java.util.List<XLSResults>> cagesMap = new java.util.HashMap<Integer, java.util.List<XLSResults>>();
+		for (XLSResults result : resultsList) {
+			if (result.valuesOut == null)
+				continue;
+			int cageID = result.cageID;
+			if (!cagesMap.containsKey(cageID)) {
+				cagesMap.put(cageID, new ArrayList<XLSResults>());
+			}
+			cagesMap.get(cageID).add(result);
+		}
+
+		// Process each cage
+		for (java.util.Map.Entry<Integer, java.util.List<XLSResults>> entry : cagesMap.entrySet()) {
+			int cageID = entry.getKey();
+			java.util.List<XLSResults> cageResults = entry.getValue();
+
+			// Find L and R capillaries
+			XLSResults rowL = null;
+			XLSResults rowR = null;
+			for (XLSResults result : cageResults) {
+				String name = result.name;
+				if (name != null && name.length() > 0) {
+					String side = name.substring(name.length() - 1);
+					if (side.equals("L")) {
+						rowL = result;
+					} else if (side.equals("R")) {
+						rowR = result;
+					}
+				}
+			}
+
+			if (rowL == null || rowR == null || rowL.valuesOut == null || rowR.valuesOut == null)
+				continue;
+
+			int dimension = Math.min(rowL.valuesOut.length, rowR.valuesOut.length);
+			if (dimension == 0)
+				continue;
+
+			// Compute states array
+			int[] states = new int[dimension];
+			for (int t = 0; t < dimension; t++) {
+				int gulpL = (rowL.valuesOut[t] > 0) ? 1 : 0;
+				int gulpR = (rowR.valuesOut[t] > 0) ? 1 : 0;
+				if (gulpL == 1 && gulpR == 0)
+					states[t] = STATE_Ls;
+				else if (gulpL == 0 && gulpR == 1)
+					states[t] = STATE_Rs;
+				else if (gulpL == 1 && gulpR == 1)
+					states[t] = STATE_LR;
+				else
+					states[t] = STATE_N;
+			}
+
+			// Compute transition counts (16 transitions)
+			int[][] transitions = new int[4][4]; // [fromState][toState]
+			for (int t = 1; t < dimension; t++) {
+				int prevState = states[t - 1];
+				int currState = states[t];
+				transitions[prevState][currState]++;
+			}
+
+			// Create 20 rows: 4 states + 16 transitions
+			String[] stateNames = { "Ls", "Rs", "LR", "N" };
+			String[] transitionNames = { "Ls-Ls", "Rs-Ls", "LR-Ls", "N-Ls", "Ls-Rs", "Rs-Rs", "LR-Rs", "N-Rs",
+					"Ls-LR", "Rs-LR", "LR-LR", "N-LR", "Ls-N", "Rs-N", "LR-N", "N-N" };
+
+			// Create state rows (4 rows)
+			for (int s = 0; s < 4; s++) {
+				XLSResults stateRow = new XLSResults(stateNames[s], rowL.nflies, cageID, xlsExportOptions.exportType,
+						dimension);
+				stateRow.stimulus = rowL.stimulus;
+				stateRow.concentration = rowL.concentration;
+				stateRow.initValuesOutArray(dimension, 0.);
+				for (int t = 0; t < dimension; t++) {
+					stateRow.valuesOut[t] = (states[t] == s) ? 1. : 0.;
+				}
+				newResultsList.add(stateRow);
+			}
+
+			// Create transition rows (16 rows)
+			int transitionIndex = 0;
+			for (int fromState = 0; fromState < 4; fromState++) {
+				for (int toState = 0; toState < 4; toState++) {
+					XLSResults transRow = new XLSResults(transitionNames[transitionIndex], rowL.nflies, cageID,
+							xlsExportOptions.exportType, dimension);
+					transRow.stimulus = rowL.stimulus;
+					transRow.concentration = rowL.concentration;
+					transRow.initValuesOutArray(dimension, 0.);
+					// Count transitions at each time point
+					for (int t = 1; t < dimension; t++) {
+						if (states[t - 1] == fromState && states[t] == toState) {
+							transRow.valuesOut[t] = 1.;
+						}
+					}
+					newResultsList.add(transRow);
+					transitionIndex++;
+				}
+			}
+		}
+
+		// Replace resultsList with new results
+		resultsList.clear();
+		resultsList.addAll(newResultsList);
 	}
 }

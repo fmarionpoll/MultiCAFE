@@ -90,7 +90,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 				case SUMGULPS:
 				case SUMGULPS_LR:
 
-				case TRANSITIONS:
+				case MARKOV_CHAIN:
 				case AUTOCORREL:
 				case AUTOCORREL_LR:
 				case CROSSCORREL:
@@ -213,6 +213,45 @@ public class XLSExportCapillariesResults extends XLSExport {
 		final long from_lastMs = end_Ms - offsetChain;
 		final int to_first_index = (int) (start_Ms / options.buildExcelStepMs);
 		final int to_nvalues = (int) ((end_Ms - start_Ms) / options.buildExcelStepMs) + 1;
+
+		// For MARKOV_CHAIN, replace descriptor rows with the computed rows
+		if (xlsoption == EnumXLSExport.MARKOV_CHAIN) {
+			// On first call, replace descriptor rows with markov chain rows
+			if (rowListForOneExp.size() > 0 && rowListForOneExp.getRow(0).exportType != EnumXLSExport.MARKOV_CHAIN) {
+				int dimension = rowListForOneExp.getRow(0).dimension;
+				rowListForOneExp.resultsList.clear();
+				for (XLSResults result : resultsArrayList.resultsList) {
+					XLSResults newRow = new XLSResults(result.name, result.nflies, result.cageID, xlsoption,
+							dimension);
+					newRow.stimulus = result.stimulus;
+					newRow.concentration = result.concentration;
+					newRow.initValuesOutArray(dimension, Double.NaN);
+					rowListForOneExp.addRow(newRow);
+				}
+			}
+			// Copy data with time offset handling
+			for (XLSResults result : resultsArrayList.resultsList) {
+				XLSResults row = XLSResults.getResultsArrayWithThatName(result.name, rowListForOneExp);
+				if (row != null && result.valuesOut != null) {
+					int icolTo = 0;
+					if (options.collateSeries || options.absoluteTime)
+						icolTo = to_first_index;
+					for (long fromTime = from_first_Ms; fromTime <= from_lastMs; fromTime += options.buildExcelStepMs, icolTo++) {
+						int from_i = (int) Math
+								.round(((double) (fromTime - from_first_Ms)) / ((double) options.buildExcelStepMs));
+						if (from_i >= result.valuesOut.length)
+							break;
+						if (from_i < 0)
+							continue;
+						double value = result.valuesOut[from_i];
+						if (icolTo >= row.valuesOut.length)
+							break;
+						row.valuesOut[icolTo] = value;
+					}
+				}
+			}
+			return;
+		}
 
 		for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
 			XLSResults row = rowListForOneExp.getRow(iRow);

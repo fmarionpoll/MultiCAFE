@@ -22,8 +22,8 @@ public class XLSExportGulpsResults extends XLSExportCapillariesResults {
 		if (options.tToNextGulp_LR)
 			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.TTOGULP_LR);
 		
-		if (options.transitions)
-			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.TRANSITIONS);
+		if (options.markovChain)
+			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.MARKOV_CHAIN);
 		
 		if (options.autocorrelation) {
 			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.AUTOCORREL);
