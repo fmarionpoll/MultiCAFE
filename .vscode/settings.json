@@ -28,7 +28,8 @@
   "files.eol": "\r\n",
   
   // Disable auto-save if it's causing issues
-  "files.autoSave": "off"
+  "files.autoSave": "off",
+  "java.compile.nullAnalysis.mode": "automatic"
 }
 
 

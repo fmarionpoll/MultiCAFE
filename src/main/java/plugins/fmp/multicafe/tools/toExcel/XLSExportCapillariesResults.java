@@ -221,8 +221,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 				int dimension = rowListForOneExp.getRow(0).dimension;
 				rowListForOneExp.resultsList.clear();
 				for (XLSResults result : resultsArrayList.resultsList) {
-					XLSResults newRow = new XLSResults(result.name, result.nflies, result.cageID, xlsoption,
-							dimension);
+					XLSResults newRow = new XLSResults(result.name, result.nflies, result.cageID, xlsoption, dimension);
 					newRow.stimulus = result.stimulus;
 					newRow.concentration = result.concentration;
 					newRow.initValuesOutArray(dimension, Double.NaN);
@@ -317,7 +316,8 @@ public class XLSExportCapillariesResults extends XLSExport {
 			int ilastalive = 0;
 			if (cell.getCageNFlies() > 0) {
 				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null && expi.chainToNextExperiment.getCages().isFlyAlive(cellNumber)) {
+				while (expi.chainToNextExperiment != null
+						&& expi.chainToNextExperiment.getCages().isFlyAlive(cellNumber)) {
 					expi = expi.chainToNextExperiment;
 				}
 				int lastIntervalFlyAlive = expi.getCages().getLastIntervalFlyAlive(cellNumber);
@@ -374,84 +374,6 @@ public class XLSExportCapillariesResults extends XLSExport {
 		expAll.setCamImageFirst_ms(exp.getCamImageFirst_ms());
 		return getXLSResultArray_CapillaryData_From_CombinedExperiment(exp, exportType, options);
 	}
-
-//	private void addResultsTo_rowsForOneExp(XLSResultsArray rowListForOneExp, Experiment expi,
-//			XLSResultsArray resultsArrayList) {
-//		if (resultsArrayList.resultsList.size() < 1)
-//			return;
-//
-//		EnumXLSExportType xlsoption = resultsArrayList.getRow(0).exportType;
-//
-//		long offsetChain = expi.camImageFirst_ms - expi.chainImageFirst_ms;
-//		long start_Ms = expi.kymoFirst_ms + offsetChain; // TODO check when collate?
-//		long end_Ms = expi.kymoLast_ms + offsetChain;
-//		if (options.fixedIntervals) {
-//			if (start_Ms < options.startAll_Ms)
-//				start_Ms = options.startAll_Ms;
-//			if (start_Ms > expi.camImageLast_ms)
-//				return;
-//
-//			if (end_Ms > options.endAll_Ms)
-//				end_Ms = options.endAll_Ms;
-//			if (end_Ms > expi.camImageFirst_ms)
-//				return;
-//		}
-//
-//		// TODO check this
-//		final long from_first_Ms = start_Ms - offsetChain;
-//		final long from_lastMs = end_Ms - offsetChain;
-//		final int to_first_index = (int) (start_Ms / options.buildExcelStepMs);
-//		final int to_nvalues = (int) ((end_Ms - start_Ms) / options.buildExcelStepMs) + 1;
-//
-//		for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
-//			XLSResults row = rowListForOneExp.getRow(iRow);
-//			XLSResults results = getResultsArrayWithThatName(row.name, resultsArrayList);
-//			if (results != null && results.valuesOut != null) {
-//				double dvalue = 0.;
-//				switch (xlsoption) {
-//				case TOPLEVEL:
-//				case TOPLEVEL_LR:
-//				case SUMGULPS:
-//				case SUMGULPS_LR:
-//				case TOPLEVELDELTA:
-//				case TOPLEVELDELTA_LR:
-//					if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null)
-//						dvalue = padWithLastPreviousValue(row, to_first_index);
-//					break;
-//				default:
-//					break;
-//				}
-//
-//				int icolTo = 0;
-//				if (options.collateSeries || options.absoluteTime)
-//					icolTo = to_first_index;
-//				for (long fromTime = from_first_Ms; fromTime <= from_lastMs; fromTime += options.buildExcelStepMs, icolTo++) {
-//					int from_i = (int) Math
-//							.round(((double) (fromTime - from_first_Ms)) / ((double) options.buildExcelStepMs));
-//					if (from_i >= results.valuesOut.length)
-//						break;
-//					// TODO check how this can happen
-//					if (from_i < 0)
-//						continue;
-//					double value = results.valuesOut[from_i] + dvalue;
-//					if (icolTo >= row.valuesOut.length)
-//						break;
-//					row.valuesOut[icolTo] = value;
-//				}
-//
-//			} else {
-//				if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null) {
-//					double dvalue = padWithLastPreviousValue(row, to_first_index);
-//					int tofirst = (int) to_first_index;
-//					int tolast = (int) (tofirst + to_nvalues);
-//					if (tolast > row.valuesOut.length)
-//						tolast = row.valuesOut.length;
-//					for (int toi = tofirst; toi < tolast; toi++)
-//						row.valuesOut[toi] = dvalue;
-//				}
-//			}
-//		}
-//	}
 
 	protected Point writeExperiment_Capillary_descriptors(Experiment exp, String charSeries, XSSFSheet sheet, Point pt,
 			EnumXLSExport xlsExportOption) {
