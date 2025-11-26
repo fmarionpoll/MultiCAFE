@@ -26,9 +26,9 @@ public class Gulps extends JPanel {
 	JCheckBox amplitudeGulpsCheckBox = new JCheckBox("amplitude/bin", true);
 //	JCheckBox 	tToGulpCheckBox 	= new JCheckBox("t to gulp", true);
 //	JCheckBox 	tToGulpLRCheckBox 	= new JCheckBox("t to gulp L/R", true);
-	JCheckBox sumCheckBox = new JCheckBox("L+R & ratio", true);
+	JCheckBox sumCheckBox = new JCheckBox("L+R & ratio", false); //true);
 	JCheckBox derivativeCheckBox = new JCheckBox("derivative", false);
-	JCheckBox markovChainCheckBox = new JCheckBox("markov chain", false);
+	JCheckBox markovChainCheckBox = new JCheckBox("Markov chain", true); //false);
 
 	JCheckBox autocorrelationCheckBox = new JCheckBox("autocorrelation", false);
 	JCheckBox crosscorrelationCheckBox = new JCheckBox("crosscorrelation", false);

@@ -217,7 +217,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 		// For MARKOV_CHAIN, replace descriptor rows with the computed rows
 		if (xlsoption == EnumXLSExport.MARKOV_CHAIN) {
 			// On first call, replace descriptor rows with markov chain rows
-			if (rowListForOneExp.size() > 0 && rowListForOneExp.getRow(0).exportType != EnumXLSExport.MARKOV_CHAIN) {
+			if (rowListForOneExp.size() > 0 && rowListForOneExp.getRow(0).name.contains("line")) {
 				int dimension = rowListForOneExp.getRow(0).dimension;
 				rowListForOneExp.resultsList.clear();
 				for (XLSResults result : resultsArrayList.resultsList) {

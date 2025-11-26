@@ -415,8 +415,8 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 
 			// Create state rows (4 rows)
 			for (int s = 0; s < 4; s++) {
-				XLSResults stateRow = new XLSResults(stateNames[s], rowL.nflies, cageID, xlsExportOptions.exportType,
-						dimension);
+				XLSResults stateRow = new XLSResults("cage" + cageID + "_" + stateNames[s], rowL.nflies, cageID,
+						xlsExportOptions.exportType, dimension);
 				stateRow.stimulus = rowL.stimulus;
 				stateRow.concentration = rowL.concentration;
 				stateRow.initValuesOutArray(dimension, 0.);
@@ -430,8 +430,8 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 			int transitionIndex = 0;
 			for (int fromState = 0; fromState < 4; fromState++) {
 				for (int toState = 0; toState < 4; toState++) {
-					XLSResults transRow = new XLSResults(transitionNames[transitionIndex], rowL.nflies, cageID,
-							xlsExportOptions.exportType, dimension);
+					XLSResults transRow = new XLSResults("cage" + cageID + "_" + transitionNames[transitionIndex],
+							rowL.nflies, cageID, xlsExportOptions.exportType, dimension);
 					transRow.stimulus = rowL.stimulus;
 					transRow.concentration = rowL.concentration;
 					transRow.initValuesOutArray(dimension, 0.);
