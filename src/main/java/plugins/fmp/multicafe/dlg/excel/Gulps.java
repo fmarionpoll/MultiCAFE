@@ -27,10 +27,11 @@ public class Gulps extends JPanel {
 //	JCheckBox 	tToGulpCheckBox 	= new JCheckBox("t to gulp", true);
 //	JCheckBox 	tToGulpLRCheckBox 	= new JCheckBox("t to gulp L/R", true);
 	JCheckBox sumCheckBox = new JCheckBox("L+R & ratio", true);
-	JCheckBox derivativeCheckBox = new JCheckBox("derivative", true);
+	JCheckBox derivativeCheckBox = new JCheckBox("derivative", false);
+	JCheckBox transitionsCheckBox = new JCheckBox("transitions L-R-LR-N", false);
 
-	JCheckBox autocorrelationCheckBox = new JCheckBox("autocorrelation", true);
-	JCheckBox crosscorrelationCheckBox = new JCheckBox("crosscorrelation", true);
+	JCheckBox autocorrelationCheckBox = new JCheckBox("autocorrelation", false);
+	JCheckBox crosscorrelationCheckBox = new JCheckBox("crosscorrelation", false);
 	JLabel nbinsLabel = new JLabel("n bins:");
 	JSpinner nbinsJSpinner = new JSpinner(new SpinnerNumberModel(40, 1, 99999999, 1));
 
@@ -50,6 +51,7 @@ public class Gulps extends JPanel {
 		add(panel0);
 
 		JPanel panel1 = new JPanel(flowLayout0);
+		panel1.add(transitionsCheckBox);
 		panel1.add(autocorrelationCheckBox);
 		panel1.add(crosscorrelationCheckBox);
 		panel1.add(nbinsLabel);
@@ -62,6 +64,7 @@ public class Gulps extends JPanel {
 		FlowLayout flowLayout2 = new FlowLayout(FlowLayout.RIGHT);
 		flowLayout2.setVgap(0);
 		JPanel panel2 = new JPanel(flowLayout2);
+		
 		panel2.add(exportToXLSButton2);
 		add(panel2);
 

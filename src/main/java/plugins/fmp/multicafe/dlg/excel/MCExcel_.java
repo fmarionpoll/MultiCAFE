@@ -177,6 +177,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		options.nbGulps = tabGulps.nbGulpsCheckBox.isSelected();
 		options.amplitudeGulps = tabGulps.amplitudeGulpsCheckBox.isSelected();
 
+		options.transitions = tabGulps.transitionsCheckBox.isSelected();
 		options.autocorrelation = tabGulps.autocorrelationCheckBox.isSelected();
 		options.crosscorrelation = tabGulps.crosscorrelationCheckBox.isSelected();
 		options.nbinscorrelation = (int) tabGulps.nbinsJSpinner.getValue();

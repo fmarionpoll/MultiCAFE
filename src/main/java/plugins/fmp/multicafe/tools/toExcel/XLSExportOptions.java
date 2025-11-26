@@ -20,6 +20,7 @@ public class XLSExportOptions {
 	public boolean lrPI = true;
 	public double lrPIThreshold = 0.;
 
+	public boolean transitions = false;
 	public boolean autocorrelation = false;
 	public boolean crosscorrelation = false;
 	public boolean crosscorrelationLR = false;

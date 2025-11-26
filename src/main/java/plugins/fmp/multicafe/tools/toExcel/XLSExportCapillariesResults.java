@@ -90,6 +90,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 				case SUMGULPS:
 				case SUMGULPS_LR:
 
+				case TRANSITIONS:
 				case AUTOCORREL:
 				case AUTOCORREL_LR:
 				case CROSSCORREL:
