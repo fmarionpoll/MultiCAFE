@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.series.options;
+package plugins.fmp.multicafe.series1.options;
 
 /**
  * Configuration for time-related parameters. Replaces time-related fields from

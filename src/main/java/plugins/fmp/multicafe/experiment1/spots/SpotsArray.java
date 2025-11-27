@@ -17,7 +17,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
+import plugins.fmp.multicafe.series1.BuildSeriesOptions;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
 
 /**
@@ -185,10 +185,10 @@ public class SpotsArray {
 
 	private void writeCsvHeader(FileWriter writer) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
-		writer.write("#" + CSV_SEPARATOR + "SPOTS_ARRAY" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("#" + CSV_SEPARATOR + "SPOTS_ARRAY" + CSV_SEPARATOR + "multiSPOTS data\n");
 		writer.write("n spots=" + CSV_SEPARATOR + spotsList.size() + "\n");
 		writer.write("#" + CSV_SEPARATOR + "#\n");
-		writer.write("#" + CSV_SEPARATOR + "SPOTS" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("#" + CSV_SEPARATOR + "SPOTS" + CSV_SEPARATOR + "multiSPOTS data\n");
 		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "cageID" + CSV_SEPARATOR + "cagePos"
 				+ CSV_SEPARATOR + "cageColumn" + CSV_SEPARATOR + "cageRow" + CSV_SEPARATOR + "volume" + CSV_SEPARATOR
 				+ "npixels" + CSV_SEPARATOR + "radius" + CSV_SEPARATOR + "stim" + CSV_SEPARATOR + "conc\n");
@@ -671,10 +671,10 @@ public class SpotsArray {
 
 	private boolean csvSaveSpotsArraySection(FileWriter writer) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
-		writer.write("#" + CSV_SEPARATOR + "SPOTS_ARRAY" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("#" + CSV_SEPARATOR + "SPOTS_ARRAY" + CSV_SEPARATOR + "multiSPOTS data\n");
 		writer.write("n spots=" + CSV_SEPARATOR + spotsList.size() + "\n");
 		writer.write("#" + CSV_SEPARATOR + "#\n");
-		writer.write("#" + CSV_SEPARATOR + "SPOTS" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("#" + CSV_SEPARATOR + "SPOTS" + CSV_SEPARATOR + "multiSPOTS data\n");
 		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "cageID" + CSV_SEPARATOR + "cagePos"
 				+ CSV_SEPARATOR + "cageColumn" + CSV_SEPARATOR + "cageRow" + CSV_SEPARATOR + "volume" + CSV_SEPARATOR
 				+ "npixels" + CSV_SEPARATOR + "radius" + CSV_SEPARATOR + "stim" + CSV_SEPARATOR + "conc\n");

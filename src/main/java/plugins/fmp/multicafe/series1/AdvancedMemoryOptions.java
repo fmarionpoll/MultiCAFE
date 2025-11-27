@@ -3,11 +3,12 @@ package plugins.fmp.multicafe.series1;
 import java.util.zip.Deflater;
 
 /**
- * Advanced memory optimization configuration options for BuildSpotsMeasuresAdvanced.
- * This class provides comprehensive settings for all advanced memory optimizations.
+ * Advanced memory optimization configuration options for
+ * BuildSpotsMeasuresAdvanced. This class provides comprehensive settings for
+ * all advanced memory optimizations.
  */
 public class AdvancedMemoryOptions {
-	
+
 	// === STREAMING PROCESSING ===
 	/** Enable streaming image processing to avoid loading entire stack */
 	public boolean enableStreaming = true;
@@ -17,7 +18,7 @@ public class AdvancedMemoryOptions {
 	public boolean enablePrefetching = true;
 	/** Prefetch thread priority (1-10) */
 	public int prefetchThreadPriority = Thread.NORM_PRIORITY;
-	
+
 	// === MEMORY POOL ===
 	/** Enable memory pool for reusing image objects */
 	public boolean enableMemoryPool = true;
@@ -27,7 +28,7 @@ public class AdvancedMemoryOptions {
 	public int maxCursorPoolSize = 20;
 	/** Enable pool statistics tracking */
 	public boolean enablePoolStatistics = true;
-	
+
 	// === COMPRESSED MASK STORAGE ===
 	/** Enable compressed mask storage using run-length encoding */
 	public boolean enableCompression = true;
@@ -37,7 +38,7 @@ public class AdvancedMemoryOptions {
 	public boolean enableMaskCaching = true;
 	/** Maximum number of cached masks */
 	public int maxCachedMasks = 100;
-	
+
 	// === ADAPTIVE MEMORY MANAGEMENT ===
 	/** Enable adaptive batch sizing based on available memory */
 	public boolean enableAdaptiveBatchSizing = true;
@@ -51,7 +52,7 @@ public class AdvancedMemoryOptions {
 	public int maxBatchSize = 50;
 	/** Batch size adjustment step */
 	public int batchSizeAdjustmentStep = 2;
-	
+
 	// === CONCURRENT PROCESSING ===
 	/** Maximum number of concurrent processing tasks */
 	public int maxConcurrentTasks = 4;
@@ -59,7 +60,7 @@ public class AdvancedMemoryOptions {
 	public long threadPoolKeepAliveMs = 60000;
 	/** Enable thread pool statistics */
 	public boolean enableThreadPoolStatistics = true;
-	
+
 	// === MEMORY MONITORING ===
 	/** Enable detailed memory monitoring */
 	public boolean enableMemoryMonitoring = true;
@@ -69,7 +70,7 @@ public class AdvancedMemoryOptions {
 	public boolean enableMemoryLogging = false;
 	/** Memory usage logging threshold (%) */
 	public int memoryLoggingThresholdPercent = 90;
-	
+
 	// === GARBAGE COLLECTION ===
 	/** Enable forced garbage collection on high memory pressure */
 	public boolean enableForcedGC = true;
@@ -77,7 +78,7 @@ public class AdvancedMemoryOptions {
 	public int forcedGCThresholdPercent = 85;
 	/** GC frequency in batches */
 	public int gcFrequencyBatches = 5;
-	
+
 	// === PERFORMANCE TUNING ===
 	/** Enable performance profiling */
 	public boolean enableProfiling = false;
@@ -85,7 +86,7 @@ public class AdvancedMemoryOptions {
 	public int profilingIntervalBatches = 10;
 	/** Enable adaptive optimization based on performance metrics */
 	public boolean enableAdaptiveOptimization = true;
-	
+
 	// === DEBUGGING ===
 	/** Enable debug logging */
 	public boolean enableDebugLogging = false;
@@ -93,16 +94,17 @@ public class AdvancedMemoryOptions {
 	public boolean enableDetailedErrorReporting = true;
 	/** Enable performance metrics collection */
 	public boolean enablePerformanceMetrics = false;
-	
+
 	/**
 	 * Creates a new AdvancedMemoryOptions with default settings.
 	 */
 	public AdvancedMemoryOptions() {
 		// Default constructor with all defaults set above
 	}
-	
+
 	/**
-	 * Creates a new AdvancedMemoryOptions with conservative settings for memory-constrained systems.
+	 * Creates a new AdvancedMemoryOptions with conservative settings for
+	 * memory-constrained systems.
 	 */
 	public static AdvancedMemoryOptions createConservative() {
 		AdvancedMemoryOptions options = new AdvancedMemoryOptions();
@@ -120,8 +122,9 @@ public class AdvancedMemoryOptions {
 	}
 
 	/**
-	 * Creates a new AdvancedMemoryOptions with ultra-conservative settings for severe memory constraints.
-	 * This configuration is designed to minimize memory usage at the cost of some performance.
+	 * Creates a new AdvancedMemoryOptions with ultra-conservative settings for
+	 * severe memory constraints. This configuration is designed to minimize memory
+	 * usage at the cost of some performance.
 	 */
 	public static AdvancedMemoryOptions createUltraConservative() {
 		AdvancedMemoryOptions options = new AdvancedMemoryOptions();
@@ -145,9 +148,10 @@ public class AdvancedMemoryOptions {
 		options.memoryLoggingThresholdPercent = 70;
 		return options;
 	}
-	
+
 	/**
-	 * Creates a new AdvancedMemoryOptions with aggressive settings for high-performance systems.
+	 * Creates a new AdvancedMemoryOptions with aggressive settings for
+	 * high-performance systems.
 	 */
 	public static AdvancedMemoryOptions createAggressive() {
 		AdvancedMemoryOptions options = new AdvancedMemoryOptions();
@@ -163,16 +167,17 @@ public class AdvancedMemoryOptions {
 		options.enableProfiling = true;
 		return options;
 	}
-	
+
 	/**
-	 * Creates a new AdvancedMemoryOptions with balanced settings for typical systems.
+	 * Creates a new AdvancedMemoryOptions with balanced settings for typical
+	 * systems.
 	 */
 	public static AdvancedMemoryOptions createBalanced() {
 		AdvancedMemoryOptions options = new AdvancedMemoryOptions();
 		// Use default settings which are already balanced
 		return options;
 	}
-	
+
 	/**
 	 * Validates the configuration options and returns any issues.
 	 * 
@@ -180,12 +185,12 @@ public class AdvancedMemoryOptions {
 	 */
 	public ValidationResult validate() {
 		ValidationResult result = new ValidationResult();
-		
+
 		// Validate streaming settings
 		if (streamBufferSize < 1 || streamBufferSize > 50) {
 			result.addIssue("streamBufferSize should be between 1 and 50, got: " + streamBufferSize);
 		}
-		
+
 		// Validate pool settings
 		if (maxImagePoolSize < 1 || maxImagePoolSize > 100) {
 			result.addIssue("maxImagePoolSize should be between 1 and 100, got: " + maxImagePoolSize);
@@ -193,7 +198,7 @@ public class AdvancedMemoryOptions {
 		if (maxCursorPoolSize < 1 || maxCursorPoolSize > 100) {
 			result.addIssue("maxCursorPoolSize should be between 1 and 100, got: " + maxCursorPoolSize);
 		}
-		
+
 		// Validate compression settings
 		if (compressionLevel < 0 || compressionLevel > 9) {
 			result.addIssue("compressionLevel should be between 0 and 9, got: " + compressionLevel);
@@ -201,7 +206,7 @@ public class AdvancedMemoryOptions {
 		if (maxCachedMasks < 1 || maxCachedMasks > 1000) {
 			result.addIssue("maxCachedMasks should be between 1 and 1000, got: " + maxCachedMasks);
 		}
-		
+
 		// Validate batch sizing settings
 		if (minBatchSize < 1 || minBatchSize > maxBatchSize) {
 			result.addIssue("minBatchSize should be >= 1 and <= maxBatchSize, got: " + minBatchSize);
@@ -212,7 +217,7 @@ public class AdvancedMemoryOptions {
 		if (memoryThresholdPercent < 50 || memoryThresholdPercent > 95) {
 			result.addIssue("memoryThresholdPercent should be between 50 and 95, got: " + memoryThresholdPercent);
 		}
-		
+
 		// Validate concurrent processing settings
 		if (maxConcurrentTasks < 1 || maxConcurrentTasks > 16) {
 			result.addIssue("maxConcurrentTasks should be between 1 and 16, got: " + maxConcurrentTasks);
@@ -220,15 +225,17 @@ public class AdvancedMemoryOptions {
 		if (threadPoolKeepAliveMs < 1000 || threadPoolKeepAliveMs > 300000) {
 			result.addIssue("threadPoolKeepAliveMs should be between 1000 and 300000, got: " + threadPoolKeepAliveMs);
 		}
-		
+
 		// Validate monitoring settings
 		if (memoryMonitoringIntervalMs < 100 || memoryMonitoringIntervalMs > 10000) {
-			result.addIssue("memoryMonitoringIntervalMs should be between 100 and 10000, got: " + memoryMonitoringIntervalMs);
+			result.addIssue(
+					"memoryMonitoringIntervalMs should be between 100 and 10000, got: " + memoryMonitoringIntervalMs);
 		}
 		if (memoryLoggingThresholdPercent < 50 || memoryLoggingThresholdPercent > 100) {
-			result.addIssue("memoryLoggingThresholdPercent should be between 50 and 100, got: " + memoryLoggingThresholdPercent);
+			result.addIssue("memoryLoggingThresholdPercent should be between 50 and 100, got: "
+					+ memoryLoggingThresholdPercent);
 		}
-		
+
 		// Validate GC settings
 		if (forcedGCThresholdPercent < 50 || forcedGCThresholdPercent > 95) {
 			result.addIssue("forcedGCThresholdPercent should be between 50 and 95, got: " + forcedGCThresholdPercent);
@@ -236,10 +243,10 @@ public class AdvancedMemoryOptions {
 		if (gcFrequencyBatches < 1 || gcFrequencyBatches > 50) {
 			result.addIssue("gcFrequencyBatches should be between 1 and 50, got: " + gcFrequencyBatches);
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Gets a summary of the current configuration.
 	 * 
@@ -250,34 +257,35 @@ public class AdvancedMemoryOptions {
 		sb.append("Advanced Memory Options Configuration:\n");
 		sb.append("  Streaming: ").append(enableStreaming).append(" (buffer: ").append(streamBufferSize).append(")\n");
 		sb.append("  Memory Pool: ").append(enableMemoryPool).append(" (images: ").append(maxImagePoolSize)
-		  .append(", cursors: ").append(maxCursorPoolSize).append(")\n");
-		sb.append("  Compression: ").append(enableCompression).append(" (level: ").append(compressionLevel).append(")\n");
+				.append(", cursors: ").append(maxCursorPoolSize).append(")\n");
+		sb.append("  Compression: ").append(enableCompression).append(" (level: ").append(compressionLevel)
+				.append(")\n");
 		sb.append("  Adaptive Batching: ").append(enableAdaptiveBatchSizing).append(" (").append(minBatchSize)
-		  .append("-").append(maxBatchSize).append(")\n");
+				.append("-").append(maxBatchSize).append(")\n");
 		sb.append("  Concurrent Tasks: ").append(maxConcurrentTasks).append("\n");
 		sb.append("  Memory Threshold: ").append(memoryThresholdPercent).append("%\n");
 		sb.append("  Forced GC: ").append(enableForcedGC).append(" (").append(forcedGCThresholdPercent).append("%)\n");
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Validation result containing any configuration issues.
 	 */
 	public static class ValidationResult {
 		private final java.util.List<String> issues = new java.util.ArrayList<>();
-		
+
 		public void addIssue(String issue) {
 			issues.add(issue);
 		}
-		
+
 		public boolean isValid() {
 			return issues.isEmpty();
 		}
-		
+
 		public java.util.List<String> getIssues() {
 			return new java.util.ArrayList<>(issues);
 		}
-		
+
 		@Override
 		public String toString() {
 			if (isValid()) {
@@ -291,4 +299,4 @@ public class AdvancedMemoryOptions {
 			}
 		}
 	}
-} 
+}

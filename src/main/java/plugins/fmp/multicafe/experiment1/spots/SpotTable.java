@@ -9,7 +9,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
-import plugins.fmp.multiSPOTS96.MultiSPOTS96;
+import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.tools1.JComponents.TableCellColorEditor;
 import plugins.fmp.multicafe.tools1.JComponents.TableCellColorRenderer;
 
@@ -19,12 +19,12 @@ public class SpotTable extends JTable {
 	 */
 	private static final long serialVersionUID = 1L;
 	public SpotTableModel spotTableModel = null;
-	int lastSelectedRow = 0; 
+	int lastSelectedRow = 0;
 
 	Color cellsOrigBackColor;
 	Color cellsOrigForeColor;
 
-	public SpotTable(MultiSPOTS96 parent0) {
+	public SpotTable(MultiCAFE parent0) {
 		cellsOrigBackColor = this.getBackground();
 		cellsOrigForeColor = this.getForeground();
 		spotTableModel = new SpotTableModel(parent0.expListCombo);
@@ -53,28 +53,27 @@ public class SpotTable extends JTable {
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		ListSelectionModel selectionModel = getSelectionModel();
 		selectionModel.addListSelectionListener(new ListSelectionListener() {
-		    public void valueChanged(ListSelectionEvent e) {
-		        handleSelectionEvent(e);
-		    }
+			public void valueChanged(ListSelectionEvent e) {
+				handleSelectionEvent(e);
+			}
 		});
 	}
-	
+
 	protected void handleSelectionEvent(ListSelectionEvent e) {
-	    if (e.getValueIsAdjusting())
-	        return;
+		if (e.getValueIsAdjusting())
+			return;
 
-	    // e.getSource() returns an object like this
-	    // javax.swing.DefaultListSelectionModel 1052752867 ={11}
-	    // where 11 is the index of selected element when mouse button is released
+		// e.getSource() returns an object like this
+		// javax.swing.DefaultListSelectionModel 1052752867 ={11}
+		// where 11 is the index of selected element when mouse button is released
 
-	    String strSource= e.getSource().toString();
-	    int start = strSource.indexOf("{")+1,
-	        stop  = strSource.length()-1;
-	    int iSelectedIndex = Integer.parseInt(strSource.substring(start, stop));
+		String strSource = e.getSource().toString();
+		int start = strSource.indexOf("{") + 1, stop = strSource.length() - 1;
+		int iSelectedIndex = Integer.parseInt(strSource.substring(start, stop));
 
-	    spotTableModel.getSpotAt(lastSelectedRow).getRoi().setSelected(false);
-	    spotTableModel.getSpotAt(iSelectedIndex).getRoi().setSelected(true); 
-	    lastSelectedRow = iSelectedIndex;
+		spotTableModel.getSpotAt(lastSelectedRow).getRoi().setSelected(false);
+		spotTableModel.getSpotAt(iSelectedIndex).getRoi().setSelected(true);
+		lastSelectedRow = iSelectedIndex;
 	}
 
 }

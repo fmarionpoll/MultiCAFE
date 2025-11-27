@@ -24,7 +24,7 @@ import icy.type.collection.array.ArrayUtil;
 import icy.type.point.Point5D;
 import icy.type.rectangle.Rectangle5D;
 import plugins.fmp.multicafe.experiment1.spots.Spot;
-import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
+import plugins.fmp.multicafe.series1.BuildSeriesOptions;
 import plugins.kernel.roi.roi2d.ROI2DPoint;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi3d.ROI3DPoint;

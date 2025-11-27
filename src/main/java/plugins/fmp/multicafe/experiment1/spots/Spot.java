@@ -21,8 +21,7 @@ import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 /**
- * Represents a spot in the multiSPOTS96 experiment with comprehensive
- * measurement capabilities.
+ * Represents a spot with comprehensive measurement capabilities.
  * 
  * <p>
  * This class encapsulates spot data, measurements, and operations in a clean,
@@ -695,7 +694,8 @@ public class Spot implements Comparable<Spot> {
 
 		// Memory monitoring before loading
 		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		// System.out.println("      Loading Spot - Memory: " + (startMemory / 1024 / 1024) + " MB");
+		// System.out.println(" Loading Spot - Memory: " + (startMemory / 1024 / 1024) +
+		// " MB");
 
 		try {
 			// Load properties with error handling
@@ -712,7 +712,7 @@ public class Spot implements Comparable<Spot> {
 					if (spotROI2D != null) {
 						spotROI2D.setColor(getProperties().getColor());
 						getProperties().setName(spotROI2D.getName());
-						// System.out.println("        Loaded ROI: " + spotROI2D.getName());
+						// System.out.println(" Loaded ROI: " + spotROI2D.getName());
 					} else {
 						System.err.println("WARNING: Failed to create ROI from XML");
 					}
@@ -720,7 +720,7 @@ public class Spot implements Comparable<Spot> {
 					System.err.println("ERROR loading ROI: " + e.getMessage());
 				}
 			} else {
-				// System.out.println("        No ROI metadata found");
+				// System.out.println(" No ROI metadata found");
 			}
 
 			// Load measurements with error handling
@@ -732,8 +732,9 @@ public class Spot implements Comparable<Spot> {
 			// Memory monitoring after loading
 			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			long memoryIncrease = endMemory - startMemory;
-					// System.out.println("      Spot loaded - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-		// System.out.println("      Spot name: " + getProperties().getName());
+			// System.out.println(" Spot loaded - Memory increase: " + (memoryIncrease /
+			// 1024 / 1024) + " MB");
+			// System.out.println(" Spot name: " + getProperties().getName());
 
 			return true;
 
@@ -758,7 +759,8 @@ public class Spot implements Comparable<Spot> {
 
 		// Memory monitoring before saving
 		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		// System.out.println("      Saving Spot - Memory: " + (startMemory / 1024 / 1024) + " MB");
+		// System.out.println(" Saving Spot - Memory: " + (startMemory / 1024 / 1024) +
+		// " MB");
 
 		try {
 			// Save properties with error handling
@@ -778,19 +780,20 @@ public class Spot implements Comparable<Spot> {
 			if (nodeMeta != null && spotROI2D != null) {
 				try {
 					ROI2DUtilities.saveToXML_ROI(nodeMeta, spotROI2D);
-					// System.out.println("        Saved ROI: " + spotROI2D.getName());
+					// System.out.println(" Saved ROI: " + spotROI2D.getName());
 				} catch (Exception e) {
 					System.err.println("ERROR saving ROI: " + e.getMessage());
 				}
 			} else {
-				// System.out.println("        No ROI to save");
+				// System.out.println(" No ROI to save");
 			}
 
 			// Memory monitoring after saving
 			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			long memoryIncrease = endMemory - startMemory;
-					// System.out.println("      Spot saved - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-		// System.out.println("      Spot name: " + getProperties().getName());
+			// System.out.println(" Spot saved - Memory increase: " + (memoryIncrease / 1024
+			// / 1024) + " MB");
+			// System.out.println(" Spot name: " + getProperties().getName());
 
 			return true;
 

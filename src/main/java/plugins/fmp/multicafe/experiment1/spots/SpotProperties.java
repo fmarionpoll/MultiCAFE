@@ -164,9 +164,8 @@ public class SpotProperties {
 				|| !Objects.equals(this.stimulusI, other.stimulusI)
 				|| Double.compare(this.spotVolume, other.spotVolume) != 0 || this.spotNPixels != other.spotNPixels
 				|| this.spotRadius != other.spotRadius || this.spotXCoord != other.spotXCoord
-				|| this.countAggregatedSpots != other.countAggregatedSpots
-				|| this.spotYCoord != other.spotYCoord || this.descriptionOK != other.descriptionOK
-				|| this.versionInfos != other.versionInfos;
+				|| this.countAggregatedSpots != other.countAggregatedSpots || this.spotYCoord != other.spotYCoord
+				|| this.descriptionOK != other.descriptionOK || this.versionInfos != other.versionInfos;
 	}
 
 	// === IDENTIFICATION ===
@@ -450,11 +449,11 @@ public class SpotProperties {
 	public int getCountAggregatedSpots() {
 		return this.countAggregatedSpots;
 	}
-	
+
 	public void setCountAggregatedSpots(int spotsCombined) {
 		this.countAggregatedSpots = spotsCombined;
 	}
-	
+
 	// === STATUS ===
 
 	/**
@@ -763,7 +762,7 @@ public class SpotProperties {
 
 		StringBuilder sbf = new StringBuilder();
 		sbf.append("#").append(csvSeparator).append("#\n");
-		sbf.append("#").append(csvSeparator).append("SPOTS").append(csvSeparator).append("multiSPOTS96 data\n");
+		sbf.append("#").append(csvSeparator).append("SPOTS").append(csvSeparator).append("multiSPOTS data\n");
 
 		List<String> row2 = Arrays.asList("name", "index", "cageID", "cagePos", "cageColumn", "cageRow", "volume",
 				"npixels", "radius", "stim", "conc");
@@ -801,14 +800,13 @@ public class SpotProperties {
 		if (obj == null || getClass() != obj.getClass())
 			return false;
 		SpotProperties other = (SpotProperties) obj;
-		return Objects.equals(name, other.name) && cageID == other.cageID
-				&& cagePosition == other.cagePosition && cageRow == other.cageRow && cageColumn == other.cageColumn
-				&& spotArrayIndex == other.spotArrayIndex && Objects.equals(color, other.color)
-				&& Objects.equals(stimulus, other.stimulus) && Objects.equals(concentration, other.concentration)
-				&& Objects.equals(stimulusI, other.stimulusI) && Double.compare(spotVolume, other.spotVolume) == 0
-				&& spotNPixels == other.spotNPixels && spotRadius == other.spotRadius && spotXCoord == other.spotXCoord
-				&& spotYCoord == other.spotYCoord && descriptionOK == other.descriptionOK
-				&& versionInfos == other.versionInfos;
+		return Objects.equals(name, other.name) && cageID == other.cageID && cagePosition == other.cagePosition
+				&& cageRow == other.cageRow && cageColumn == other.cageColumn && spotArrayIndex == other.spotArrayIndex
+				&& Objects.equals(color, other.color) && Objects.equals(stimulus, other.stimulus)
+				&& Objects.equals(concentration, other.concentration) && Objects.equals(stimulusI, other.stimulusI)
+				&& Double.compare(spotVolume, other.spotVolume) == 0 && spotNPixels == other.spotNPixels
+				&& spotRadius == other.spotRadius && spotXCoord == other.spotXCoord && spotYCoord == other.spotYCoord
+				&& descriptionOK == other.descriptionOK && versionInfos == other.versionInfos;
 	}
 
 	@Override

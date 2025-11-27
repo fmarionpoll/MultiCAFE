@@ -28,7 +28,7 @@ import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
-import plugins.fmp.multiSPOTS96.MultiSPOTS96;
+import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment1.Experiment;
 import plugins.fmp.multicafe.experiment1.cages.Cage;
 import plugins.fmp.multicafe.experiment1.spots.Spot;
@@ -134,7 +134,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	private Experiment experiment = null;
 
 	/** Parent MultiSPOTS96 instance */
-	private MultiSPOTS96 parent = null;
+	private MultiCAFE parent = null;
 
 	/**
 	 * Creates the main chart panel and frame.
@@ -146,7 +146,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @throws IllegalArgumentException if any required parameter is null
 	 */
 	public void createMainChartPanel(String title, Experiment exp, XLSExportOptions xlsExportOptions,
-			MultiSPOTS96 parent0) {
+			MultiCAFE parent0) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
@@ -698,15 +698,17 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		@Override
 		public void chartMouseClicked(ChartMouseEvent e) {
-			Spot clickedSpot = getSpotFromClickedChart(e);
-			if (clickedSpot != null) {
-				chartSelectClickedSpot(experiment, xlsOptions, clickedSpot);
-				Cage cage = experiment.cagesArray.getCageFromID(clickedSpot.getProperties().getCageID());
-				if (cage != null && parent != null && parent.dlgSpots != null) {
-					parent.dlgSpots.tabInfos.selectCage(cage);
-					parent.dlgSpots.tabInfos.selectSpot(clickedSpot);
-				}
-			}
+			// TODO
+			System.out.println("click on cage detected");
+//			Spot clickedSpot = getSpotFromClickedChart(e);
+//			if (clickedSpot != null) {
+//				chartSelectClickedSpot(experiment, xlsOptions, clickedSpot);
+//				Cage cage = experiment.cagesArray.getCageFromID(clickedSpot.getProperties().getCageID());
+//				if (cage != null && parent != null && parent.dlgSpots != null) {
+//					parent.dlgSpots.tabInfos.selectCage(cage);
+//					parent.dlgSpots.tabInfos.selectSpot(clickedSpot);
+//				}
+//			}
 		}
 
 		@Override
