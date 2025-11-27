@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe.tools1.toExcel;
 
-import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment1.Experiment;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportCapillariesResults;
 
 public class XLSExportGulpsResults extends XLSExportCapillariesResults {
@@ -22,10 +22,10 @@ public class XLSExportGulpsResults extends XLSExportCapillariesResults {
 			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.TTOGULP);
 		if (options.tToNextGulp_LR)
 			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.TTOGULP_LR);
-		
+
 		if (options.markovChain)
 			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.MARKOV_CHAIN);
-		
+
 		if (options.autocorrelation) {
 			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.AUTOCORREL);
 			getCapillaryDataAndExport(exp, col0, charSeries, EnumXLSExport.AUTOCORREL_LR);
