@@ -20,7 +20,7 @@ import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment1.spots.Spot;
 import plugins.fmp.multicafe.experiment1.spots.SpotString;
 import plugins.fmp.multicafe.experiment1.spots.SpotsArray;
-import plugins.fmp.multicafe.tools.toExcel1.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;

@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.series;
+package plugins.fmp.multicafe.series1;
 
 import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;

@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.series;
+package plugins.fmp.multicafe.series1;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;

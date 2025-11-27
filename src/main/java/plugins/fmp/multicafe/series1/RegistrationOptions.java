@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.series;
+package plugins.fmp.multicafe.series1;
 
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
 
