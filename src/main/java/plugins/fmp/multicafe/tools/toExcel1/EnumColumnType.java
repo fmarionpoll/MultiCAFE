@@ -1,7 +1,8 @@
-package plugins.fmp.multiSPOTS96.tools.toExcel;
+package plugins.fmp.multicafe.tools.toExcel1;
 
 public enum EnumColumnType {
-	SPOT("spot"), MOVE("move"), COMMON("common"), DESCRIPTOR_STR("descriptor_str"), DESCRIPTOR_INT("descriptor_int"), MEASURE("measure");
+	SPOT("spot"), MOVE("move"), COMMON("common"), DESCRIPTOR_STR("descriptor_str"), DESCRIPTOR_INT("descriptor_int"),
+	MEASURE("measure");
 
 	private String label;
 

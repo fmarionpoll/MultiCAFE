@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.tools.toExcel;
+package plugins.fmp.multicafe.tools.toExcel1;
 
 /**
  * Constants used throughout the Excel export subsystem.

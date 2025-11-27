@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.tools.toExcel.exceptions;
+package plugins.fmp.multicafe.tools.toExcel1.exceptions;
 
 /**
  * Exception thrown when Excel export encounters resource management issues.

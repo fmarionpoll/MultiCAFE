@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.tools.toExcel.exceptions;
+package plugins.fmp.multicafe.tools.toExcel1.exceptions;
 
 /**
  * Base exception class for all Excel export related errors.

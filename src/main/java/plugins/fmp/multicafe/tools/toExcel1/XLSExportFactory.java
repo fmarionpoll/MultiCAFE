@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.tools.toExcel;
+package plugins.fmp.multicafe.tools.toExcel1;
 
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelExportException;
 
