@@ -18,7 +18,7 @@ import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.cages.Cage;
-import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
 

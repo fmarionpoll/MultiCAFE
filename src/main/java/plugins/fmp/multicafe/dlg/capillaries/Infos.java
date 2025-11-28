@@ -16,8 +16,8 @@ import javax.swing.SwingConstants;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
-import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
 
 public class Infos extends JPanel {
 	/**

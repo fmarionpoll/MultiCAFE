@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillaries;
 
 public class CapillariesWithTimeTableModel extends AbstractTableModel {
 

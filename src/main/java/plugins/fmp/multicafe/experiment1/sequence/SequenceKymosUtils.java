@@ -1,12 +1,12 @@
-package plugins.fmp.multicafe.experiment.sequence;
+package plugins.fmp.multicafe.experiment1.sequence;
 
 import java.util.Iterator;
 import java.util.List;
 
 import icy.roi.ROI2D;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
-import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
 import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DShape;

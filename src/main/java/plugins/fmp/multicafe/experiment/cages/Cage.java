@@ -15,8 +15,8 @@ import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
-import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
