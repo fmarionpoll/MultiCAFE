@@ -83,10 +83,10 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		final Rectangle rectv = exp.getSeqCamData().getSeq().getFirstViewer().getBounds();
+		final Rectangle rectv = exp.getSeqCamData().getSequence().getFirstViewer().getBounds();
 		Point ptRelative = new Point(0, 30);
 		final int deltay = 230;
-		exp.getSeqCamData().getSeq().addListener(this);
+		exp.getSeqCamData().getSequence().addListener(this);
 
 		if (moveCheckbox.isSelected()) {
 			ypositionsChart = plotYToChart("flies Y positions", ypositionsChart, rectv, ptRelative, exp,

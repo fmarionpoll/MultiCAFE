@@ -66,8 +66,8 @@ public class SequenceKymos extends SequenceCamData {
 	// ----------------------------
 
 	public void validateRoisAtT(int t) {
-		List<ROI2D> listRois = getSeq().getROI2Ds();
-		int width = getSeq().getWidth();
+		List<ROI2D> listRois = getSequence().getROI2Ds();
+		int width = getSequence().getWidth();
 		for (ROI2D roi : listRois) {
 			if (!(roi instanceof ROI2DPolyLine))
 				continue;
@@ -92,18 +92,18 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public void removeROIsPolylineAtT(int t) {
-		List<ROI2D> listRois = getSeq().getROI2Ds();
+		List<ROI2D> listRois = getSequence().getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!(roi instanceof ROI2DPolyLine))
 				continue;
 			if (roi.getT() == t)
-				getSeq().removeROI(roi);
+				getSequence().removeROI(roi);
 		}
 	}
 
 	public void updateROIFromCapillaryMeasure(Capillary cap, CapillaryMeasure caplimits) {
 		int t = cap.kymographIndex;
-		List<ROI2D> listRois = getSeq().getROI2Ds();
+		List<ROI2D> listRois = getSequence().getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!(roi instanceof ROI2DPolyLine))
 				continue;
@@ -114,14 +114,14 @@ public class SequenceKymos extends SequenceCamData {
 
 			((ROI2DPolyLine) roi).setPolyline2D(caplimits.polylineLevel);
 			roi.setName(caplimits.capName);
-			getSeq().roiChanged(roi);
+			getSequence().roiChanged(roi);
 			break;
 		}
 	}
 
 	public void validateRois() {
-		List<ROI2D> listRois = getSeq().getROI2Ds();
-		int width = getSeq().getWidth();
+		List<ROI2D> listRois = getSequence().getROI2Ds();
+		int width = getSequence().getWidth();
 		for (ROI2D roi : listRois) {
 			if (!(roi instanceof ROI2DPolyLine))
 				continue;
@@ -142,11 +142,11 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public boolean transferKymosRoisToCapillaries_Measures(Capillaries capillaries) {
-		List<ROI> allRois = getSeq().getROIs();
+		List<ROI> allRois = getSequence().getROIs();
 		if (allRois.size() < 1)
 			return false;
 
-		for (int kymo = 0; kymo < getSeq().getSizeT(); kymo++) {
+		for (int kymo = 0; kymo < getSequence().getSizeT(); kymo++) {
 			List<ROI> roisAtT = new ArrayList<ROI>();
 			for (ROI roi : allRois) {
 				if (roi instanceof ROI2D && ((ROI2D) roi).getT() == kymo)
@@ -163,7 +163,7 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public boolean transferKymosRoi_atT_ToCapillaries_Measures(int t, Capillaries capillaries) {
-		List<ROI> allRois = getSeq().getROIs();
+		List<ROI> allRois = getSequence().getROIs();
 		if (allRois.size() < 1)
 			return false;
 
@@ -183,7 +183,7 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public void transferCapillariesMeasuresToKymos(Capillaries capillaries) {
-		List<ROI2D> seqRoisList = getSeq().getROI2Ds(false);
+		List<ROI2D> seqRoisList = getSequence().getROI2Ds(false);
 		ROI2DUtilities.removeROIsMissingChar(seqRoisList, '_');
 
 		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
@@ -192,9 +192,9 @@ public class SequenceKymos extends SequenceCamData {
 			List<ROI2D> listOfRois = capillaries.getCapillariesList().get(i).transferMeasuresToROIs();
 			newRoisList.addAll(listOfRois);
 		}
-		ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, getSeq());
-		getSeq().removeAllROI();
-		getSeq().addROIs(seqRoisList, false);
+		ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, getSequence());
+		getSequence().removeAllROI();
+		getSequence().addROIs(seqRoisList, false);
 	}
 
 	public void saveKymosCurvesToCapillariesMeasures(Experiment exp) {

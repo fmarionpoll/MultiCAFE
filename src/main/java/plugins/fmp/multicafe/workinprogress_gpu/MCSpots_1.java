@@ -92,7 +92,7 @@ public class MCSpots_1 extends JPanel {
 		ImageTransformEnums transform = ImageTransformEnums.SUBTRACT_1RSTCOL;
 		int zChannelDestination = 1;
 		new KymographService().buildFiltered(exp, 0, zChannelDestination, transform, 0);
-		seqKymos.getSeq().getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
+		seqKymos.getSequence().getFirstViewer().getCanvas().setPositionZ(zChannelDestination);
 	}
 
 	void buildHistogram(Experiment exp) {
@@ -100,14 +100,14 @@ public class MCSpots_1 extends JPanel {
 		if (seqKymos == null)
 			return;
 
-		int imageIndex = exp.getSeqKymos().getSeq().getFirstViewer().getPositionT();
+		int imageIndex = exp.getSeqKymos().getSequence().getFirstViewer().getPositionT();
 		getAverageXandYProfile(seqKymos, imageIndex);
 		graphDisplay2Panels(exp, avgX, avgY);
 	}
 
 	private void getAverageXandYProfile(SequenceKymos seqKymos, int imageIndex) {
-		int height = seqKymos.getSeq().getSizeY();
-		int width = seqKymos.getSeq().getSizeX();
+		int height = seqKymos.getSequence().getSizeY();
+		int width = seqKymos.getSequence().getSizeX();
 		Rectangle rect = new Rectangle(0, 0, width, height);
 
 		Point2D.Double[] refpoint = new Point2D.Double[4];
@@ -255,7 +255,7 @@ public class MCSpots_1 extends JPanel {
 		mainChartFrame.pack();
 		if (pt == null) {
 			SequenceKymos seqKymos = exp.getSeqKymos();
-			Viewer v = seqKymos.getSeq().getFirstViewer();
+			Viewer v = seqKymos.getSequence().getFirstViewer();
 			Rectangle rectv = v.getBounds();
 			pt = new Point((int) rectv.getX(), (int) rectv.getY() + 30);
 		}

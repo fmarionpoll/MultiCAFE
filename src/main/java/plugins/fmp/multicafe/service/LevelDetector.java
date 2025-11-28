@@ -20,15 +20,15 @@ public class LevelDetector {
 
 	public void detectLevels(Experiment exp, BuildSeriesOptions options) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
-		seqKymos.getSeq().removeAllROI();
+		seqKymos.getSequence().removeAllROI();
 
 		int tFirsKymo = options.kymoFirst;
-		if (tFirsKymo > seqKymos.getSeq().getSizeT() || tFirsKymo < 0)
+		if (tFirsKymo > seqKymos.getSequence().getSizeT() || tFirsKymo < 0)
 			tFirsKymo = 0;
 		int tLastKymo = options.kymoLast;
-		if (tLastKymo >= seqKymos.getSeq().getSizeT())
-			tLastKymo = seqKymos.getSeq().getSizeT() - 1;
-		seqKymos.getSeq().beginUpdate();
+		if (tLastKymo >= seqKymos.getSequence().getSizeT())
+			tLastKymo = seqKymos.getSequence().getSizeT() - 1;
+		seqKymos.getSequence().beginUpdate();
 
 		int nframes = tLastKymo - tFirsKymo + 1;
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
@@ -92,7 +92,7 @@ public class LevelDetector {
 		waitFuturesCompletion(processor, futures);
 
 		exp.saveCapillaries();
-		seqKymos.getSeq().endUpdate();
+		seqKymos.getSequence().endUpdate();
 	}
 
 	private void waitFuturesCompletion(Processor processor, ArrayList<Future<?>> futuresArray) {

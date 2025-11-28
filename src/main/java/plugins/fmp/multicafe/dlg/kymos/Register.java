@@ -87,7 +87,7 @@ public class Register extends JPanel {
 					else
 						referencePolygon = exp.getSeqCamData().getReferenceROI2DPolygon();
 				} else {
-					exp.getSeqCamData().getSeq().removeROI(referencePolygon);
+					exp.getSeqCamData().getSequence().removeROI(referencePolygon);
 					referencePolygon = null;
 				}
 			}
@@ -136,7 +136,7 @@ public class Register extends JPanel {
 	}
 
 	private void create_ROIPolygon(Experiment exp) {
-		Sequence seq = exp.getSeqCamData().getSeq();
+		Sequence seq = exp.getSeqCamData().getSequence();
 		final String dummyname = "reference_polygon";
 
 		referencePolygon = new ROI2DPolygon(getPolygon(seq));

@@ -85,7 +85,7 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 					if (diff < 1) {
 						Logger.warn("ExperimentCombo:get_MsTime_of_StartAndEnd_AllExperiments() Expt # " + i
 								+ ": FileTime difference between last and first image < 1; set dt between images = 1 ms");
-						diff = exp.getSeqCamData().getSeq().getSizeT();
+						diff = exp.getSeqCamData().getSequence().getSizeT();
 					}
 					if (expAll.getCamImageLast_ms() < diff)
 						expAll.setCamImageLast_ms(diff);

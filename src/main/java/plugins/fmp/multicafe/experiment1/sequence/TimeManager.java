@@ -167,6 +167,8 @@ public class TimeManager {
 		return fname;
 	}
 
+	// -----------------------------------------
+
 	// Getters and setters
 	public long getBinImage_ms() {
 		return binImage_ms;

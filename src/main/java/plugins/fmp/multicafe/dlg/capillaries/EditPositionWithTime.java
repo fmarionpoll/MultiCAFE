@@ -170,7 +170,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		;
 		if (exp == null)
 			return;
-		Sequence seq = exp.getSeqCamData().getSeq();
+		Sequence seq = exp.getSeqCamData().getSequence();
 		ArrayList<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!roi.getName().contains("line"))
@@ -186,11 +186,11 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 			return;
 
 		if (show) {
-			int t = exp.getSeqCamData().getSeq().getFirstViewer().getPositionT();
+			int t = exp.getSeqCamData().getSequence().getFirstViewer().getPositionT();
 			// TODO select current interval and return only rois2D from that interval
 			addFrameAroundCapillaries(t, exp);
 		} else
-			removeFrameAroundCapillaries(exp.getSeqCamData().getSeq());
+			removeFrameAroundCapillaries(exp.getSeqCamData().getSequence());
 	}
 
 	private void addFrameAroundCapillaries(int t, Experiment exp) {
@@ -201,14 +201,14 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		}
 		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingCapillaries(listRoisAtT);
 
-		removeFrameAroundCapillaries(exp.getSeqCamData().getSeq());
+		removeFrameAroundCapillaries(exp.getSeqCamData().getSequence());
 		envelopeRoi_initial = new ROI2DPolygon(polygon);
 		envelopeRoi = new ROI2DPolygon(polygon);
 		envelopeRoi.setName(dummyname);
 		envelopeRoi.setColor(Color.YELLOW);
 
-		exp.getSeqCamData().getSeq().addROI(envelopeRoi);
-		exp.getSeqCamData().getSeq().setSelectedROI(envelopeRoi);
+		exp.getSeqCamData().getSequence().addROI(envelopeRoi);
+		exp.getSeqCamData().getSequence().setSelectedROI(envelopeRoi);
 	}
 
 	private void removeFrameAroundCapillaries(Sequence seq) {
@@ -221,7 +221,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		if (exp == null)
 			return;
 
-		Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
+		Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
 		long intervalT = v.getPositionT();
 
 		if (exp.getCapillaries().findKymoROI2DIntervalStart(intervalT) < 0) {
@@ -234,7 +234,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		if (exp == null)
 			return;
 
-		Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
+		Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
 		long intervalT = v.getPositionT();
 
 		if (exp.getCapillaries().findKymoROI2DIntervalStart(intervalT) >= 0) {
@@ -246,7 +246,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Sequence seq = exp.getSeqCamData().getSeq();
+		Sequence seq = exp.getSeqCamData().getSequence();
 
 		int intervalT = (int) exp.getCapillaries().getKymoROI2DIntervalsStartAt(selectedRow);
 		seq.removeAllROI();
@@ -264,7 +264,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Sequence seq = exp.getSeqCamData().getSeq();
+		Sequence seq = exp.getSeqCamData().getSequence();
 
 		int intervalT = (int) exp.getCapillaries().getKymoROI2DIntervalsStartAt(selectedRow);
 		List<ROI2D> listRois = seq.getROI2Ds();

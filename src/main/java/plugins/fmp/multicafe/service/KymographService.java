@@ -38,8 +38,8 @@ public class KymographService {
 	public void buildFiltered(Experiment exp, int zChannelSource, int zChannelDestination, ImageTransformEnums transformop1,
 			int spanDiff) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
-		int nimages = seqKymos.getSeq().getSizeT();
-		seqKymos.getSeq().beginUpdate();
+		int nimages = seqKymos.getSequence().getSizeT();
+		seqKymos.getSequence().beginUpdate();
 
 		ImageTransformInterface transform = transformop1.getFunction();
 		if (transform == null)
@@ -53,14 +53,14 @@ public class KymographService {
 			cap.kymographIndex = t;
 			IcyBufferedImage img = seqKymos.getSeqImage(t, zChannelSource);
 			IcyBufferedImage img2 = transform.getTransformedImage(img, null);
-			if (seqKymos.getSeq().getSizeZ(0) < (zChannelDestination + 1))
-				seqKymos.getSeq().addImage(t, img2);
+			if (seqKymos.getSequence().getSizeZ(0) < (zChannelDestination + 1))
+				seqKymos.getSequence().addImage(t, img2);
 			else
-				seqKymos.getSeq().setImage(t, zChannelDestination, img2);
+				seqKymos.getSequence().setImage(t, zChannelDestination, img2);
 		}
 
-		seqKymos.getSeq().dataChanged();
-		seqKymos.getSeq().endUpdate();
+		seqKymos.getSequence().dataChanged();
+		seqKymos.getSequence().endUpdate();
 	}
 
 	public List<ImageFileDescriptor> loadListOfPotentialKymographsFromCapillaries(String dir, Capillaries capillaries) {
@@ -124,7 +124,7 @@ public class KymographService {
 		if (filename != null) {
 			Path path = Paths.get(filename);
 			String csCamFileName = path.getName(path.getNameCount() - 2).toString();
-			seqKymos.getSeq().setName(csCamFileName);
+			seqKymos.getSequence().setName(csCamFileName);
 		}
 	}
 

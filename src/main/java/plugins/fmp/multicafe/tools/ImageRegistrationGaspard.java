@@ -18,7 +18,7 @@ public class ImageRegistrationGaspard extends ImageRegistration {
 			return false;
 
 		SequenceCamData seqCamData = exp.getSeqCamData();
-		Sequence seq = seqCamData.getSeq();
+		Sequence seq = seqCamData.getSequence();
 		IcyBufferedImage refImage = seq.getImage(referenceFrame, 0);
 
 		int step = reverse ? -1 : 1;

@@ -108,16 +108,16 @@ public class Create extends JPanel {
 				if (exp.getCapillaries() != null && exp.getCapillaries().getCapillariesList().size() > 0) {
 					Polygon2D extPolygon = exp.getCapillaries().get2DPolygonEnclosingCapillaries();
 					if (extPolygon == null) {
-						extPolygon = getCapillariesPolygon(exp.getSeqCamData().getSeq());
+						extPolygon = getCapillariesPolygon(exp.getSeqCamData().getSequence());
 					}
 					capillariesRoiPolygon = new ROI2DPolygon(extPolygon);
 					exp.getCapillaries().deleteAllCapillaries();
-					exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSeq());
-					exp.getSeqCamData().getSeq().removeAllROI();
+					exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSequence());
+					exp.getSeqCamData().getSequence().removeAllROI();
 					final String dummyname = "perimeter_enclosing_capillaries";
 					capillariesRoiPolygon.setName(dummyname);
-					exp.getSeqCamData().getSeq().addROI(capillariesRoiPolygon);
-					exp.getSeqCamData().getSeq().setSelectedROI(capillariesRoiPolygon);
+					exp.getSeqCamData().getSequence().addROI(capillariesRoiPolygon);
+					exp.getSeqCamData().getSequence().setSelectedROI(capillariesRoiPolygon);
 					// TODO delete kymos
 				} else
 					create_capillariesRoiPolygon(exp);
@@ -230,7 +230,7 @@ public class Create extends JPanel {
 	// ---------------------------------
 
 	private void create_capillariesRoiPolygon(Experiment exp) {
-		Sequence seq = exp.getSeqCamData().getSeq();
+		Sequence seq = exp.getSeqCamData().getSequence();
 		final String dummyname = "perimeter_enclosing_capillaries";
 		capillariesRoiPolygon = (ROI2DPolygon) isRoiPresent(seq, dummyname);
 		if (capillariesRoiPolygon == null) {
@@ -291,7 +291,7 @@ public class Create extends JPanel {
 
 		Polygon2D capillariesPolygon = ROI2DUtilities.orderVerticesofPolygon(capillariesRoiPolygon.getPolygon());
 
-		seqCamData.getSeq().removeROI(capillariesRoiPolygon);
+		seqCamData.getSequence().removeROI(capillariesRoiPolygon);
 
 		if (statusGroup2Mode) {
 			double span = (nbcapillaries / 2) * (width_between_capillaries + width_interval) - width_interval;
@@ -323,7 +323,7 @@ public class Create extends JPanel {
 		ROI2DLine roiL1 = new ROI2DLine(x0, y0, x1, y1);
 		roiL1.setName(name);
 		roiL1.setReadOnly(false);
-		seqCamData.getSeq().addROI(roiL1, true);
+		seqCamData.getSequence().addROI(roiL1, true);
 	}
 
 }

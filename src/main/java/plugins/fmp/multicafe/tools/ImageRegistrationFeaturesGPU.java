@@ -177,7 +177,7 @@ public class ImageRegistrationFeaturesGPU extends ImageRegistration {
 		}
 
 		SequenceCamData seqCamData = exp.getSeqCamData();
-		Sequence seq = seqCamData.getSeq();
+		Sequence seq = seqCamData.getSequence();
 
 		List<Point2D> referencePoints = extractPoints(exp);
 		List<Point2D> currentPoints = new ArrayList<Point2D>();

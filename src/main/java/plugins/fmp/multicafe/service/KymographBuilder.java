@@ -34,7 +34,7 @@ public class KymographBuilder {
 			return false;
 		}
 		SequenceKymos seqKymos = exp.getSeqKymos();
-		seqKymos.setSeq(new Sequence());
+		seqKymos.setSequence(new Sequence());
 		initArraysToBuildKymographImages(exp, options);
 
 		int iToColumn = 0;
@@ -70,8 +70,8 @@ public class KymographBuilder {
 		}
 		waitFuturesCompletion(processor, tasks);
 
-		int sizeC = exp.getSeqCamData().getSeq().getSizeC();
-		exportCapillaryIntegerArrays_to_Kymograph(exp, seqKymos.getSeq(), sizeC);
+		int sizeC = exp.getSeqCamData().getSequence().getSizeC();
+		exportCapillaryIntegerArrays_to_Kymograph(exp, seqKymos.getSequence(), sizeC);
 		return true;
 	}
 
@@ -82,7 +82,7 @@ public class KymographBuilder {
 		if (directory == null)
 			return;
 
-		int nframes = exp.getSeqKymos().getSeq().getSizeT();
+		int nframes = exp.getSeqKymos().getSequence().getSizeT();
 		int nCPUs = SystemUtil.getNumberOfCPUs();
 		final Processor processor = new Processor(nCPUs);
 		processor.setThreadName("buildkymo2");
@@ -90,7 +90,7 @@ public class KymographBuilder {
 		ArrayList<Future<?>> futuresArray = new ArrayList<Future<?>>(nframes);
 		futuresArray.clear();
 		int t0 = (int) exp.getBinT0();
-		for (int t = t0; t < exp.getSeqKymos().getSeq().getSizeT(); t++) {
+		for (int t = t0; t < exp.getSeqKymos().getSequence().getSizeT(); t++) {
 			final int t_index = t;
 
 			futuresArray.add(processor.submit(new Runnable() {
@@ -194,10 +194,10 @@ public class KymographBuilder {
 
 	private void initArraysToBuildKymographImages(Experiment exp, BuildSeriesOptions options) {
 		SequenceCamData seqCamData = exp.getSeqCamData();
-		if (seqCamData.getSeq() == null)
-			seqCamData.setSeq(exp.getSeqCamData().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
-		int sizex = seqCamData.getSeq().getSizeX();
-		int sizey = seqCamData.getSeq().getSizeY();
+		if (seqCamData.getSequence() == null)
+			seqCamData.setSequence(exp.getSeqCamData().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
+		int sizex = seqCamData.getSequence().getSizeX();
+		int sizey = seqCamData.getSequence().getSizeY();
 
 		int kymoImageWidth = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
 		int imageHeight = 0;
@@ -221,11 +221,11 @@ public class KymographBuilder {
 
 	private void buildCapInteger(Experiment exp, int imageWidth, int imageHeight) {
 		SequenceCamData seqCamData = exp.getSeqCamData();
-		int numC = seqCamData.getSeq().getSizeC();
+		int numC = seqCamData.getSequence().getSizeC();
 		if (numC <= 0)
 			numC = 3;
 
-		DataType dataType = seqCamData.getSeq().getDataType_();
+		DataType dataType = seqCamData.getSequence().getDataType_();
 		if (dataType.toString().equals("undefined"))
 			dataType = DataType.UBYTE;
 

@@ -93,7 +93,7 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 			return;
 		int iselected = tabsPane.getSelectedIndex();
 		if (iselected == 0) {
-			Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
+			Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
 			if (v != null)
 				v.toFront();
 //			parent0.paneExperiment.capPopupPanel.expand();

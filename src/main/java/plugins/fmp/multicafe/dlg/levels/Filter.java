@@ -43,7 +43,7 @@ public class Filter extends JPanel {
 					SequenceKymos seqKymos = exp.getSeqKymos();
 					int span = getSpan();
 					int c = 1;
-					for (int t = 0; t < seqKymos.getSeq().getSizeT(); t++)
+					for (int t = 0; t < seqKymos.getSequence().getSizeT(); t++)
 						crossCorrelatePixels(seqKymos, t, span, c);
 				}
 			}
@@ -56,7 +56,7 @@ public class Filter extends JPanel {
 
 	private void crossCorrelatePixels(SequenceKymos kymo, int span, int t, int c) {
 		IcyBufferedImage image = null;
-		image = kymo.getSeq().getImage(t, 0, c);
+		image = kymo.getSequence().getImage(t, 0, c);
 		double[] tabValues = Array1DUtil.arrayToDoubleArray(image.getDataXY(0), image.isSignedDataType());
 		int xwidth = image.getSizeX();
 		int yheight = image.getSizeY();
@@ -93,12 +93,12 @@ public class Filter extends JPanel {
 	}
 
 	private void shiftColumnsOfPixels(int[] shift, SequenceKymos kymographSeq) {
-		IcyBufferedImage image0 = kymographSeq.getSeq().getFirstImage();
+		IcyBufferedImage image0 = kymographSeq.getSequence().getFirstImage();
 		IcyBufferedImage image1 = IcyBufferedImageUtil.getCopy(image0);
 		int xwidth = image0.getSizeX();
 		int yheight = image0.getSizeY();
 
-		for (int chan = 0; chan < kymographSeq.getSeq().getSizeC(); chan++) {
+		for (int chan = 0; chan < kymographSeq.getSequence().getSizeC(); chan++) {
 			Object dataObject0 = image0.getDataXY(chan);
 			double[] dataArray0 = Array1DUtil.arrayToDoubleArray(dataObject0, image0.isSignedDataType());
 			Object dataObject1 = image1.getDataXY(chan);

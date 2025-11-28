@@ -72,12 +72,28 @@ public class SequenceCamData {
 
 	// -----------------------
 
-	public Sequence getSeq() {
+	public Sequence getSequence() {
 		return seq;
 	}
 
-	public void setSeq(Sequence seq) {
+	public void setSequence(Sequence seq) {
 		this.seq = seq;
+	}
+
+	public EnumStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(EnumStatus status) {
+		this.status = status;
+	}
+
+	public int getCurrentFrame() {
+		return currentFrame;
+	}
+
+	public void setCurrentFrame(int currentFrame) {
+		this.currentFrame = currentFrame;
 	}
 
 	public IcyBufferedImage getRefImage() {
@@ -104,28 +120,12 @@ public class SequenceCamData {
 		this.seqAnalysisStep = seqAnalysisStep;
 	}
 
-	public int getCurrentFrame() {
-		return currentFrame;
-	}
-
-	public void setCurrentFrame(int currentFrame) {
-		this.currentFrame = currentFrame;
-	}
-
 	public int getnTotalFrames() {
 		return nTotalFrames;
 	}
 
 	public void setnTotalFrames(int nTotalFrames) {
 		this.nTotalFrames = nTotalFrames;
-	}
-
-	public EnumStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(EnumStatus status) {
-		this.status = status;
 	}
 
 	public ROI2DPolygon getReferenceROI2DPolygon() {

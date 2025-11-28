@@ -141,22 +141,22 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 			return;
 		if (overlayThreshold == null) {
 			overlayThreshold = new OverlayThreshold(seqCamData);
-			seqCamData.getSeq().addOverlay(overlayThreshold);
+			seqCamData.getSequence().addOverlay(overlayThreshold);
 		} else {
-			seqCamData.getSeq().removeOverlay(overlayThreshold);
+			seqCamData.getSequence().removeOverlay(overlayThreshold);
 			overlayThreshold.setSequence(seqCamData);
-			seqCamData.getSeq().addOverlay(overlayThreshold);
+			seqCamData.getSequence().addOverlay(overlayThreshold);
 		}
 		exp.getCages().setDetect_threshold((int) thresholdSpinner.getValue());
 		overlayThreshold.setThresholdTransform(exp.getCages().getDetect_threshold(),
 				(ImageTransformEnums) transformForLevelsComboBox.getSelectedItem(), false);
-		seqCamData.getSeq().overlayChanged(overlayThreshold);
-		seqCamData.getSeq().dataChanged();
+		seqCamData.getSequence().overlayChanged(overlayThreshold);
+		seqCamData.getSequence().dataChanged();
 	}
 
 	public void removeOverlay(Experiment exp) {
-		if (exp.getSeqCamData() != null && exp.getSeqCamData().getSeq() != null)
-			exp.getSeqCamData().getSeq().removeOverlay(overlayThreshold);
+		if (exp.getSeqCamData() != null && exp.getSeqCamData().getSequence() != null)
+			exp.getSeqCamData().getSequence().removeOverlay(overlayThreshold);
 	}
 
 	@Override
@@ -171,7 +171,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 				if (overlayCheckBox.isSelected()) {
 					if (overlayThreshold == null)
 						overlayThreshold = new OverlayThreshold(exp.getSeqCamData());
-					exp.getSeqCamData().getSeq().addOverlay(overlayThreshold);
+					exp.getSeqCamData().getSequence().addOverlay(overlayThreshold);
 					updateOverlay(exp);
 				} else
 					removeOverlay(exp);
@@ -180,7 +180,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 	}
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
-		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSeq());
+		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSequence());
 		exp.getCages().clearCageList();
 
 		int t = exp.getSeqCamData().getCurrentFrame();
@@ -190,7 +190,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		Rectangle rectGrid = new Rectangle(0, 0, img0.getSizeX(), img0.getSizeY());
 		if (userPolygon != null) {
 			rectGrid = userPolygon.getBounds();
-			exp.getSeqCamData().getSeq().removeROI(userPolygon);
+			exp.getSeqCamData().getSequence().removeROI(userPolygon);
 		}
 		IcyBufferedImage subImg0 = IcyBufferedImageUtil.getSubImage(img0, rectGrid);
 
@@ -221,7 +221,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 					roiP.setName("cage" + String.format("%03d", cagenb));
 					roiP.setColor(Color.MAGENTA);
 					cap.capCageID = cagenb;
-					exp.getSeqCamData().getSeq().addROI(roiP);
+					exp.getSeqCamData().getSequence().addROI(roiP);
 				}
 			}
 		}
@@ -229,11 +229,11 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 
 	void deletePointsIncluded(Experiment exp) throws InterruptedException {
 		SequenceCamData seqCamData = exp.getSeqCamData();
-		ROI2D roiSnip = seqCamData.getSeq().getSelectedROI2D();
+		ROI2D roiSnip = seqCamData.getSequence().getSelectedROI2D();
 		if (roiSnip == null)
 			return;
 
-		List<ROI2D> roiList = ROI2DUtilities.getROIs2DContainingString("cage", seqCamData.getSeq());
+		List<ROI2D> roiList = ROI2DUtilities.getROIs2DContainingString("cage", seqCamData.getSequence());
 		for (ROI2D cageRoi : roiList) {
 			if (roiSnip.intersects(cageRoi) && cageRoi instanceof ROI2DPolygon) {
 				Polygon2D oldPolygon = ((ROI2DPolygon) cageRoi).getPolygon2D();
@@ -253,13 +253,13 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 	private void create2DPolygon(Experiment exp) {
 		final String dummyname = "perimeter_enclosing";
 		if (userPolygon == null) {
-			ArrayList<ROI2D> listRois = exp.getSeqCamData().getSeq().getROI2Ds();
+			ArrayList<ROI2D> listRois = exp.getSeqCamData().getSequence().getROI2Ds();
 			for (ROI2D roi : listRois) {
 				if (roi.getName().equals(dummyname))
 					return;
 			}
 
-			Rectangle rect = exp.getSeqCamData().getSeq().getBounds2D();
+			Rectangle rect = exp.getSeqCamData().getSequence().getBounds2D();
 			List<Point2D> points = new ArrayList<Point2D>();
 			int rectleft = rect.x + rect.width / 6;
 			int rectright = rect.x + rect.width * 5 / 6;
@@ -283,8 +283,8 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 			userPolygon = new ROI2DPolygon(points);
 			userPolygon.setName(dummyname);
 		}
-		exp.getSeqCamData().getSeq().addROI(userPolygon);
-		exp.getSeqCamData().getSeq().setSelectedROI(userPolygon);
+		exp.getSeqCamData().getSequence().addROI(userPolygon);
+		exp.getSeqCamData().getSequence().setSelectedROI(userPolygon);
 	}
 
 }

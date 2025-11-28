@@ -21,11 +21,11 @@ import plugins.fmp.multicafe.tools1.Directories;
 
 public class ExperimentDirectories {
 	private String cameraImagesDirectory = null;
+	public List<String> cameraImagesList = null;
+
 	private String resultsDirectory = null;
 //	private String binSubDirectory = null;
-	public List<String> cameraImagesList = null;
 //	public List<String> kymosImagesList = null;
-
 //	public String getBinSubDirectory() {
 //		return binSubDirectory;
 //	}

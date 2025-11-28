@@ -95,7 +95,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 
 	private Rectangle getInitialUpperLeftPosition(Experiment exp) {
 		Rectangle rectv = new Rectangle(50, 500, 10, 10);
-		Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
+		Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
 		if (v != null) {
 			rectv = v.getBounds();
 			// rectv.translate(0, rectv.height);
@@ -108,7 +108,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 	}
 
 	public void displayGraphsPanels(Experiment exp) {
-		exp.getSeqKymos().getSeq().addListener(this);
+		exp.getSeqKymos().getSequence().addListener(this);
 		Rectangle rectv = getInitialUpperLeftPosition(exp);
 		int dx = 5;
 		int dy = 10;

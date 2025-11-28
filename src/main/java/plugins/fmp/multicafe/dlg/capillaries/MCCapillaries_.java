@@ -141,7 +141,7 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 		if (selectedIndex == ID_EDIT) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
+				Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
 				if (v != null) {
 					v.toFront();
 					v.requestFocus();

@@ -139,7 +139,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 					if (overlayCheckBox.isSelected()) {
 						if (ov == null)
 							ov = new OverlayThreshold(exp.getSeqCamData());
-						exp.getSeqCamData().getSeq().addOverlay(ov);
+						exp.getSeqCamData().getSequence().addOverlay(ov);
 						updateOverlay(exp);
 					} else
 						removeOverlay(exp);
@@ -165,7 +165,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 			boolean flag = new SequenceLoaderService().loadReferenceImage(exp);
 			if (flag) {
 				Viewer v = new Viewer(exp.getSeqReference(), true);
-				Rectangle rectv = exp.getSeqCamData().getSeq().getFirstViewer().getBoundsInternal();
+				Rectangle rectv = exp.getSeqCamData().getSequence().getFirstViewer().getBoundsInternal();
 				v.setBounds(rectv);
 			} else {
 				MessageDialog.showDialog("Reference file not found on disk", MessageDialog.ERROR_MESSAGE);
@@ -182,11 +182,11 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 			int t = exp.getSeqCamData().getCurrentFrame();
 			exp.getSeqCamData().setRefImage(IcyBufferedImageUtil.getCopy(exp.getSeqCamData().getSeqImage(t, 0)));
 		} else {
-			seqCamData.getSeq().removeOverlay(ov);
+			seqCamData.getSequence().removeOverlay(ov);
 			ov.setSequence(seqCamData);
 		}
 		ov.setReferenceImage(exp.getSeqCamData().getRefImage());
-		seqCamData.getSeq().addOverlay(ov);
+		seqCamData.getSequence().addOverlay(ov);
 
 		boolean ifGreater = true;
 		ImageTransformEnums transformOp = ImageTransformEnums.NONE;
@@ -196,8 +196,8 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 	}
 
 	private void removeOverlay(Experiment exp) {
-		if (exp.getSeqCamData() != null && exp.getSeqCamData().getSeq() != null)
-			exp.getSeqCamData().getSeq().removeOverlay(ov);
+		if (exp.getSeqCamData() != null && exp.getSeqCamData().getSequence() != null)
+			exp.getSeqCamData().getSequence().removeOverlay(ov);
 	}
 
 	private BuildSeriesOptions initTrackParameters(Experiment exp) {

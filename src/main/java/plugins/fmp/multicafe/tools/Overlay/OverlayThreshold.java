@@ -42,7 +42,7 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
 	}
 
 	public void setSequence(SequenceCamData seqCamData) {
-		localSeq = seqCamData.getSeq();
+		localSeq = seqCamData.getSequence();
 		localSeq.addListener(this);
 		imageTransformOptions.seqCamData = seqCamData;
 	}

@@ -21,6 +21,7 @@ import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.experiment.sequence.SequenceKymos;
+import plugins.fmp.multicafe.experiment.sequence.ExperimentTimeManager;
 import plugins.fmp.multicafe.tools.Directories;
 import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
@@ -430,7 +431,7 @@ public class Experiment {
 	}
 
 	private boolean xmlReadCamDataROIs(String fileName) {
-		Sequence seq = seqCamData.getSeq();
+		Sequence seq = seqCamData.getSequence();
 		if (fileName != null) {
 			final Document doc = XMLUtil.loadDocument(fileName);
 			if (doc != null) {
@@ -477,7 +478,7 @@ public class Experiment {
 			moveCageMeasuresToExperimentDirectory(pathToMeasures);
 
 		boolean flag = cages.load_Cages(getExperimentDirectory());
-		if (flag & seqCamData.getSeq() != null)
+		if (flag & seqCamData.getSequence() != null)
 			cages.cagesToROIs(seqCamData);
 		return flag;
 	}
@@ -705,33 +706,33 @@ public class Experiment {
 
 	public boolean adjustCapillaryMeasuresDimensions() {
 		if (seqKymos.getImageWidthMax() < 1) {
-			seqKymos.setImageWidthMax(seqKymos.getSeq().getSizeX());
+			seqKymos.setImageWidthMax(seqKymos.getSequence().getSizeX());
 			if (seqKymos.getImageWidthMax() < 1)
 				return false;
 		}
 		int imageWidth = seqKymos.getImageWidthMax();
 		capillaries.adjustToImageWidth(imageWidth);
-		seqKymos.getSeq().removeAllROI();
+		seqKymos.getSequence().removeAllROI();
 		seqKymos.transferCapillariesMeasuresToKymos(capillaries);
 		return true;
 	}
 
 	public boolean cropCapillaryMeasuresDimensions() {
 		if (seqKymos.getImageWidthMax() < 1) {
-			seqKymos.setImageWidthMax(seqKymos.getSeq().getSizeX());
+			seqKymos.setImageWidthMax(seqKymos.getSequence().getSizeX());
 			if (seqKymos.getImageWidthMax() < 1)
 				return false;
 		}
 		int imageWidth = seqKymos.getImageWidthMax();
 		capillaries.cropToImageWidth(imageWidth);
-		seqKymos.getSeq().removeAllROI();
+		seqKymos.getSequence().removeAllROI();
 		seqKymos.transferCapillariesMeasuresToKymos(capillaries);
 		return true;
 	}
 
 	public boolean saveCapillariesMeasures(String directory) {
 		boolean flag = false;
-		if (seqKymos != null && seqKymos.getSeq() != null) {
+		if (seqKymos != null && seqKymos.getSequence() != null) {
 			seqKymos.validateRois();
 			seqKymos.transferKymosRoisToCapillaries_Measures(capillaries);
 			flag = capillaries.save_Capillaries(directory);
@@ -757,26 +758,26 @@ public class Experiment {
 	}
 
 	public void cleanPreviousDetectedFliesROIs() {
-		ArrayList<ROI2D> list = seqCamData.getSeq().getROI2Ds();
+		ArrayList<ROI2D> list = seqCamData.getSequence().getROI2Ds();
 		for (ROI2D roi : list) {
 			if (roi.getName().contains("det"))
-				seqCamData.getSeq().removeROI(roi);
+				seqCamData.getSequence().removeROI(roi);
 		}
 	}
 
 	public void updateROIsAt(int t) {
-		seqCamData.getSeq().beginUpdate();
-		List<ROI2D> rois = seqCamData.getSeq().getROI2Ds();
+		seqCamData.getSequence().beginUpdate();
+		List<ROI2D> rois = seqCamData.getSequence().getROI2Ds();
 		for (ROI2D roi : rois) {
 			if (roi.getName().contains("det"))
-				seqCamData.getSeq().removeROI(roi);
+				seqCamData.getSequence().removeROI(roi);
 		}
-		seqCamData.getSeq().addROIs(cages.getPositionsAsListOfROI2DRectanglesAtT(t), false);
-		seqCamData.getSeq().endUpdate();
+		seqCamData.getSequence().addROIs(cages.getPositionsAsListOfROI2DRectanglesAtT(t), false);
+		seqCamData.getSequence().endUpdate();
 	}
 
 	public void saveDetRoisToPositions() {
-		List<ROI2D> detectedROIsList = seqCamData.getSeq().getROI2Ds();
+		List<ROI2D> detectedROIsList = seqCamData.getSequence().getROI2Ds();
 		for (Cage cell : cages.getCageList()) {
 			cell.transferRoisToPositions(detectedROIsList);
 		}

@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
+
 /**
  * Utility class for directory and file operations. This class provides various
  * methods for working with directories, filtering files by type, and managing
@@ -371,5 +373,84 @@ public class Directories {
 		}
 
 //        LOGGER.info("Deleted " + deletedCount + " files with extension '" + filter + "' in " + directory);
+	}
+
+	/**
+	 * Moves TIFF files starting with "line" to a subdirectory, renaming them using
+	 * Capillary.replace_LR_with_12 logic.
+	 * 
+	 * @param directoryStr the source directory path
+	 * @param subname      the name of the subdirectory to create/use
+	 */
+	public static void move_TIFFfiles_To_Subdirectory(String directoryStr, String subname) {
+		Path directoryPath = Paths.get(directoryStr);
+		Path subDirectoryPath = directoryPath.resolve(subname);
+
+		try {
+			if (Files.notExists(subDirectoryPath)) {
+				Files.createDirectories(subDirectoryPath);
+			}
+
+			try (java.util.stream.Stream<Path> stream = Files.list(directoryPath)) {
+				stream.filter(Files::isRegularFile).forEach(path -> {
+					String name = path.getFileName().toString();
+					if (name.toLowerCase().endsWith(".tiff") && name.toLowerCase().startsWith("line")) {
+						String destinationName = Capillary.replace_LR_with_12(name);
+						Path destinationPath = subDirectoryPath.resolve(destinationName);
+						try {
+							Files.move(path, destinationPath);
+						} catch (IOException e) {
+							LOGGER.warning("Failed to move file: " + path + " to " + destinationPath);
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		} catch (IOException e) {
+			LOGGER.severe("Error accessing directory: " + directoryStr);
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Moves XML files (ending in .xml or starting with "line") to a subdirectory.
+	 * Renames them using Capillary.replace_LR_with_12 logic and optionally clips
+	 * the name.
+	 * 
+	 * @param directoryStr the source directory path
+	 * @param subname      the name of the subdirectory to create/use
+	 * @param clipName     whether to clip the filename to 6 characters + .xml
+	 */
+	public static void move_xmlLINEfiles_To_Subdirectory(String directoryStr, String subname, boolean clipName) {
+		Path directoryPath = Paths.get(directoryStr);
+		Path subDirectoryPath = directoryPath.resolve(subname);
+
+		try {
+			if (Files.notExists(subDirectoryPath)) {
+				Files.createDirectories(subDirectoryPath);
+			}
+
+			try (java.util.stream.Stream<Path> stream = Files.list(directoryPath)) {
+				stream.filter(Files::isRegularFile).forEach(path -> {
+					String name = path.getFileName().toString();
+					if (name.toLowerCase().endsWith(".xml") || name.toLowerCase().startsWith("line")) {
+						String destinationName = Capillary.replace_LR_with_12(name);
+						if (clipName && destinationName.length() >= 6) {
+							destinationName = destinationName.substring(0, 6) + ".xml";
+						}
+						Path destinationPath = subDirectoryPath.resolve(destinationName);
+						try {
+							Files.move(path, destinationPath);
+						} catch (IOException e) {
+							LOGGER.warning("Failed to move file: " + path + " to " + destinationPath);
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		} catch (IOException e) {
+			LOGGER.severe("Error accessing directory: " + directoryStr);
+			e.printStackTrace();
+		}
 	}
 }

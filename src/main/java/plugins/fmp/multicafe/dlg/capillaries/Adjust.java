@@ -73,8 +73,8 @@ public class Adjust extends JPanel {
 		int chan = 0;
 		int jitter = (int) jitterJSpinner.getValue();
 		int t = seqCamData.getCurrentFrame();
-		seqCamData.getSeq().setPositionT(t);
-		IcyBufferedImage vinputImage = seqCamData.getSeq().getImage(t, 0, chan);
+		seqCamData.getSequence().setPositionT(t);
+		IcyBufferedImage vinputImage = seqCamData.getSequence().getImage(t, 0, chan);
 		if (vinputImage == null) {
 			System.out.println("Adjust:roisCenterLinestoAllCapillaries() An error occurred while reading image: " + t);
 			return;
@@ -84,7 +84,7 @@ public class Adjust extends JPanel {
 				vinputImage.isSignedDataType());
 
 		// loop through all lines
-		List<ROI2D> capillaryRois = ROI2DUtilities.getROIs2DContainingString("line", seqCamData.getSeq());
+		List<ROI2D> capillaryRois = ROI2DUtilities.getROIs2DContainingString("line", seqCamData.getSequence());
 		for (ROI2D roi : capillaryRois) {
 			if (roi instanceof ROI2DLine) {
 				Line2D line = roisCenterLinetoCapillary(sourceValues, xwidth, (ROI2DLine) roi, jitter);
@@ -212,12 +212,12 @@ public class Adjust extends JPanel {
 		if (display) {
 			// take as ref the whole image otherwise, we won't see the lines if the use has
 			// not defined any capillaries
-			int seqheight = seqCamData.getSeq().getHeight();
-			int seqwidth = seqCamData.getSeq().getWidth();
+			int seqheight = seqCamData.getSequence().getHeight();
+			int seqwidth = seqCamData.getSequence().getWidth();
 			refLineUpper = new Line2D.Double(0, seqheight / 3, seqwidth, seqheight / 3);
 			refLineLower = new Line2D.Double(0, 2 * seqheight / 3, seqwidth, 2 * seqheight / 3);
 
-			List<ROI2D> capillaryRois = ROI2DUtilities.getROIs2DContainingString("line", seqCamData.getSeq());
+			List<ROI2D> capillaryRois = ROI2DUtilities.getROIs2DContainingString("line", seqCamData.getSequence());
 			Rectangle extRect = new Rectangle(capillaryRois.get(0).getBounds());
 			for (ROI2D roi : capillaryRois) {
 				Rectangle rect = roi.getBounds();
@@ -236,11 +236,11 @@ public class Adjust extends JPanel {
 			roiRefLineLower.setName("refBarLower");
 			roiRefLineLower.setColor(Color.YELLOW);
 
-			seqCamData.getSeq().addROI(roiRefLineUpper);
-			seqCamData.getSeq().addROI(roiRefLineLower);
+			seqCamData.getSequence().addROI(roiRefLineUpper);
+			seqCamData.getSequence().addROI(roiRefLineLower);
 		} else {
-			seqCamData.getSeq().removeROI(roiRefLineUpper);
-			seqCamData.getSeq().removeROI(roiRefLineLower);
+			seqCamData.getSequence().removeROI(roiRefLineUpper);
+			seqCamData.getSequence().removeROI(roiRefLineLower);
 		}
 	}
 }

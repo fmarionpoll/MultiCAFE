@@ -150,12 +150,12 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 		options.detectAllKymos = allKymosCheckBox.isSelected();
 
 		if (!allKymosCheckBox.isSelected()) {
-			int t = exp.getSeqKymos().getSeq().getFirstViewer().getPositionT();
+			int t = exp.getSeqKymos().getSequence().getFirstViewer().getPositionT();
 			options.kymoFirst = t;
 			options.kymoLast = t;
 		} else {
 			options.kymoFirst = 0;
-			options.kymoLast = exp.getSeqKymos().getSeq().getSizeT() - 1;
+			options.kymoLast = exp.getSeqKymos().getSequence().getSizeT() - 1;
 		}
 		options.detectGulpsThreshold_uL = (double) detectGulpsThresholdSpinner.getValue();
 		options.transformForGulps = (ImageTransformEnums) gulpTransforms_comboBox.getSelectedItem();
@@ -212,7 +212,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 	}
 
 	protected Canvas2DWithTransforms getKymosCanvas(Experiment exp) {
-		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.getSeqKymos().getSeq().getFirstViewer()
+		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.getSeqKymos().getSequence().getFirstViewer()
 				.getCanvas();
 		return canvas;
 	}

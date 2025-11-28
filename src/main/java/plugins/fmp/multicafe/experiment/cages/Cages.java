@@ -191,7 +191,7 @@ public class Cages {
 	}
 
 	private List<ROI2D> getRoisWithCageName(SequenceCamData seqCamData) {
-		List<ROI2D> roiList = seqCamData.getSeq().getROI2Ds();
+		List<ROI2D> roiList = seqCamData.getSequence().getROI2Ds();
 		List<ROI2D> cageList = new ArrayList<ROI2D>();
 		for (ROI2D roi : roiList) {
 			String csName = roi.getName();
@@ -210,10 +210,10 @@ public class Cages {
 
 	public void cagesToROIs(SequenceCamData seqCamData) {
 		List<ROI2D> cageLimitROIList = getRoisWithCageName(seqCamData);
-		seqCamData.getSeq().removeROIs(cageLimitROIList, false);
+		seqCamData.getSequence().removeROIs(cageLimitROIList, false);
 		for (Cage cage : cageList)
 			cageLimitROIList.add(cage.getCageRoi2D());
-		seqCamData.getSeq().addROIs(cageLimitROIList, true);
+		seqCamData.getSequence().addROIs(cageLimitROIList, true);
 	}
 
 	public void cagesFromROIs(SequenceCamData seqCamData) {
@@ -234,13 +234,13 @@ public class Cages {
 	}
 
 	public void removeAllRoiDetFromSequence(SequenceCamData seqCamData) {
-		ArrayList<ROI2D> seqlist = seqCamData.getSeq().getROI2Ds();
+		ArrayList<ROI2D> seqlist = seqCamData.getSequence().getROI2Ds();
 		for (ROI2D roi : seqlist) {
 			if (!(roi instanceof ROI2DShape))
 				continue;
 			if (!roi.getName().contains("det"))
 				continue;
-			seqCamData.getSeq().removeROI(roi);
+			seqCamData.getSequence().removeROI(roi);
 		}
 	}
 

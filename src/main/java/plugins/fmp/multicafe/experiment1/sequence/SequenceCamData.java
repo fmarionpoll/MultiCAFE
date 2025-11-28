@@ -567,6 +567,10 @@ public class SequenceCamData implements AutoCloseable {
 		return seq;
 	}
 
+	public void setSequence(Sequence seq) {
+		this.seq = seq;
+	}
+
 	public EnumStatus getStatus() {
 		return status;
 	}

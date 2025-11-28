@@ -50,7 +50,7 @@ public class SequenceLoaderService {
 		if (seqData.getImagesList().size() == 0)
 			return false;
 		seqData.attachSequence(loadSequenceFromImagesList(seqData.getImagesList()));
-		return (seqData.getSeq() != null);
+		return (seqData.getSequence() != null);
 	}
 
 	public boolean loadFirstImage(SequenceCamData seqData) {
@@ -59,7 +59,7 @@ public class SequenceLoaderService {
 		List<String> dummyList = new ArrayList<String>();
 		dummyList.add(seqData.getImagesList().get(0));
 		seqData.attachSequence(loadSequenceFromImagesList(dummyList));
-		return (seqData.getSeq() != null);
+		return (seqData.getSequence() != null);
 	}
 
 	public Sequence loadSequenceFromImagesList(List<String> imagesList) {

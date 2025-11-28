@@ -69,7 +69,7 @@ public class LoadSaveCapillaries extends JPanel {
 
 	public boolean loadCapillaries_File(Experiment exp) {
 		boolean flag = exp.loadMCCapillaries_Only();
-		exp.getCapillaries().transferCapillaryRoiToSequence(exp.getSeqCamData().getSeq());
+		exp.getCapillaries().transferCapillaryRoiToSequence(exp.getSeqCamData().getSequence());
 		return flag;
 	}
 
@@ -79,7 +79,7 @@ public class LoadSaveCapillaries extends JPanel {
 		exp.getCapillaries().transferDescriptionToCapillaries();
 
 		exp.xmlSave_MCExperiment();
-		exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSeq());
+		exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSequence());
 		return exp.saveMCCapillaries_Only();
 	}
 

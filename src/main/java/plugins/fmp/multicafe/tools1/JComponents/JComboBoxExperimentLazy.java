@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
 
@@ -44,7 +43,7 @@ import plugins.fmp.multicafe.tools1.toExcel.XLSExportOptions;
 public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 
 	private static final long serialVersionUID = 2L;
-	private static final Logger LOGGER = Logger.getLogger(JComboBoxExperimentLazy.class.getName());
+//	private static final Logger LOGGER = Logger.getLogger(JComboBoxExperimentLazy.class.getName());
 
 	public int index0 = 0;
 	public int index1 = 0;

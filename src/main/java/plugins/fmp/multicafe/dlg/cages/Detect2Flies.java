@@ -196,11 +196,11 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		if (overlayThreshold == null) {
 			overlayThreshold = new OverlayThreshold(exp.getSeqCamData());
 		} else {
-			exp.getSeqCamData().getSeq().removeOverlay(overlayThreshold);
+			exp.getSeqCamData().getSequence().removeOverlay(overlayThreshold);
 			overlayThreshold.setSequence(exp.getSeqCamData());
 		}
 		overlayThreshold.setReferenceImage(exp.getSeqCamData().getRefImage());
-		exp.getSeqCamData().getSeq().addOverlay(overlayThreshold);
+		exp.getSeqCamData().getSequence().addOverlay(overlayThreshold);
 	}
 
 	void updateOverlayThreshold() {
@@ -301,12 +301,12 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 	}
 
 	void removeOverlay(Experiment exp) {
-		if (exp.getSeqCamData() != null && exp.getSeqCamData().getSeq() != null)
-			exp.getSeqCamData().getSeq().removeOverlay(overlayThreshold);
+		if (exp.getSeqCamData() != null && exp.getSeqCamData().getSequence() != null)
+			exp.getSeqCamData().getSequence().removeOverlay(overlayThreshold);
 	}
 
 	void viewDifference(Experiment exp, boolean display) {
-		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.getSeqCamData().getSeq().getFirstViewer()
+		Canvas2DWithTransforms canvas = (Canvas2DWithTransforms) exp.getSeqCamData().getSequence().getFirstViewer()
 				.getCanvas();
 		ImageTransformEnums[] imageTransformStep1 = new ImageTransformEnums[] { ImageTransformEnums.NONE,
 				ImageTransformEnums.SUBTRACT_REF };

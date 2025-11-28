@@ -93,7 +93,7 @@ public class EditLevels extends JPanel {
 	void cropPointsToLeftLimit(Experiment exp) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
 		int t = seqKymos.getCurrentFrame();
-		ROI2D roiRef = seqKymos.getSeq().getSelectedROI2D();
+		ROI2D roiRef = seqKymos.getSequence().getSelectedROI2D();
 		if (roiRef == null)
 			return;
 
@@ -152,7 +152,7 @@ public class EditLevels extends JPanel {
 	}
 
 	void deleteGulps(SequenceKymos seqKymos, List<ROI> listGulpsSelected) {
-		Sequence seq = seqKymos.getSeq();
+		Sequence seq = seqKymos.getSequence();
 		if (seq == null || listGulpsSelected == null)
 			return;
 		for (ROI roi : listGulpsSelected)
@@ -161,8 +161,8 @@ public class EditLevels extends JPanel {
 
 	void cutAndInterpolate(Experiment exp) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
-		int t = seqKymos.getSeq().getFirstViewer().getPositionT();
-		ROI2D roi = seqKymos.getSeq().getSelectedROI2D();
+		int t = seqKymos.getSequence().getFirstViewer().getPositionT();
+		ROI2D roi = seqKymos.getSequence().getSelectedROI2D();
 		if (roi == null)
 			return;
 
@@ -170,13 +170,13 @@ public class EditLevels extends JPanel {
 		Capillary cap = exp.getCapillaries().getCapillariesList().get(t);
 		String optionSelected = (String) roiTypeCombo.getSelectedItem();
 		if (optionSelected.contains("gulp")) {
-			List<ROI> listGulpsSelected = selectGulpsWithinRoi(roi, seqKymos.getSeq(), seqKymos.getCurrentFrame());
+			List<ROI> listGulpsSelected = selectGulpsWithinRoi(roi, seqKymos.getSequence(), seqKymos.getCurrentFrame());
 			deleteGulps(seqKymos, listGulpsSelected);
 			seqKymos.removeROIsPolylineAtT(t);
 			List<ROI2D> listOfRois = cap.transferMeasuresToROIs();
-			seqKymos.getSeq().addROIs(listOfRois, false);
+			seqKymos.getSequence().addROIs(listOfRois, false);
 			for (ROI lroi : listOfRois)
-				seqKymos.getSeq().roiChanged(lroi);
+				seqKymos.getSequence().roiChanged(lroi);
 		} else {
 			if (optionSelected.contains("top"))
 				removeAndUpdate(seqKymos, cap, cap.ptsTop, roi);

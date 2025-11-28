@@ -139,7 +139,7 @@ public class LevelsKMeans extends JPanel {
 			@Override
 			public void run() {
 				try {
-					final Sequence seq = exp.getSeqKymos().getSeq();
+					final Sequence seq = exp.getSeqKymos().getSequence();
 					final Segmentation segmentation = ImageKMeans.doClustering(seq, nbc2, nbi2, stab2, cs);
 					if (cbSendMaskDirectly.isSelected())
 						callMaskEditor(seq, segmentation);

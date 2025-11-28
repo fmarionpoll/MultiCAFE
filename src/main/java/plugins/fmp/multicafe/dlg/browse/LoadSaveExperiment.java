@@ -25,10 +25,10 @@ import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceEvent.SequenceEventSourceType;
 import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.ExperimentDirectories;
-import plugins.fmp.multicafe.tools.Logger;
-import plugins.fmp.multicafe.tools.JComponents.SequenceNameListRenderer;
+import plugins.fmp.multicafe.experiment1.Experiment;
+import plugins.fmp.multicafe.experiment1.ExperimentDirectories;
+import plugins.fmp.multicafe.tools1.Logger;
+import plugins.fmp.multicafe.tools1.JComponents.SequenceNameListRenderer;
 
 public class LoadSaveExperiment extends JPanel implements PropertyChangeListener, ItemListener, SequenceListener {
 	/**
@@ -179,7 +179,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		exp.loadCamDataImages();
 		parent0.paneExperiment.updateViewerForSequenceCam(exp);
 
-		exp.getSeqCamData().getSeq().addListener(this);
+		exp.getSeqCamData().getSequence().addListener(this);
 		if (exp.getSeqCamData() != null) {
 			exp.loadCamDataCapillaries();
 
@@ -297,8 +297,9 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (sequenceEvent.getSourceType() == SequenceEventSourceType.SEQUENCE_DATA) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				if (exp.getSeqCamData().getSeq() != null && sequenceEvent.getSequence() == exp.getSeqCamData().getSeq()) {
-					Viewer v = exp.getSeqCamData().getSeq().getFirstViewer();
+				if (exp.getSeqCamData().getSequence() != null
+						&& sequenceEvent.getSequence() == exp.getSeqCamData().getSequence()) {
+					Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
 					int t = v.getPositionT();
 					v.setTitle(exp.getSeqCamData().getDecoratedImageName(t));
 				}
