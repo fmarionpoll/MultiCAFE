@@ -10,7 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment1.cages.Cage;
-import plugins.fmp.multicafe.experiment.cages.FlyPosition;
+import plugins.fmp.multicafe.experiment1.cages.FlyPosition;
 
 public class XLSExportMoveResults extends XLSExport {
 	//

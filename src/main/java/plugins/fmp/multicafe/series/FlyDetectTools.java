@@ -14,14 +14,14 @@ import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment1.cages.Cage;
-import plugins.fmp.multicafe.experiment.cages.Cages;
+import plugins.fmp.multicafe.experiment.cages.CagesArray;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyDetectTools {
 	public List<BooleanMask2D> cellMaskList = new ArrayList<BooleanMask2D>();
 	public Rectangle rectangleAllCages = null;
 	public BuildSeriesOptions options = null;
-	public Cages box = null;
+	public CagesArray box = null;
 
 	// -----------------------------------------------------
 

@@ -37,7 +37,7 @@ public class CagesPersistence {
 	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	private final String csvSep = ";";
 
-	public boolean load_Cages(Cages cages, String directory) {
+	public boolean load_Cages(CagesArray cages, String directory) {
 		boolean flag = false;
 		try {
 			flag = csvLoad_CageBox(cages, directory);
@@ -55,7 +55,7 @@ public class CagesPersistence {
 		return flag;
 	}
 
-	public boolean save_Cages(Cages cages, String directory) {
+	public boolean save_Cages(CagesArray cages, String directory) {
 		if (directory == null)
 			return false;
 
@@ -63,7 +63,7 @@ public class CagesPersistence {
 		return true;
 	}
 
-	public boolean xmlWriteCagesToFileNoQuestion(Cages cages, String tempname) {
+	public boolean xmlWriteCagesToFileNoQuestion(CagesArray cages, String tempname) {
 		if (tempname == null)
 			return false;
 		final Document doc = XMLUtil.createDocument(true);
@@ -85,7 +85,7 @@ public class CagesPersistence {
 		return XMLUtil.saveDocument(doc, tempname);
 	}
 
-	public boolean xmlReadCagesFromFile(Cages cages, Experiment exp) {
+	public boolean xmlReadCagesFromFile(CagesArray cages, Experiment exp) {
 		String[] filedummy = null;
 		String filename = exp.getExperimentDirectory();
 		File file = new File(filename);
@@ -101,7 +101,7 @@ public class CagesPersistence {
 		return wasOk;
 	}
 
-	public boolean xmlReadCagesFromFileNoQuestion(Cages cages, String tempname, Experiment exp) {
+	public boolean xmlReadCagesFromFileNoQuestion(CagesArray cages, String tempname, Experiment exp) {
 		if (tempname == null)
 			return false;
 		final Document doc = XMLUtil.loadDocument(tempname);
@@ -117,7 +117,7 @@ public class CagesPersistence {
 		return true;
 	}
 
-	private boolean xmlLoadCages(Cages cages, Document doc) {
+	private boolean xmlLoadCages(CagesArray cages, Document doc) {
 		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_DROSOTRACK);
 		if (node == null)
 			return false;
@@ -143,7 +143,7 @@ public class CagesPersistence {
 		return true;
 	}
 
-	private void transferDataToCageBox_v0(Cages cages, List<ROI2D> cageLimitROIList,
+	private void transferDataToCageBox_v0(CagesArray cages, List<ROI2D> cageLimitROIList,
 			List<FlyPositions> flyPositionsList) {
 		cages.getCageList().clear();
 		Collections.sort(cageLimitROIList, new Comparators.ROI2D_Name_Comparator());
@@ -192,7 +192,7 @@ public class CagesPersistence {
 		return true;
 	}
 
-	private boolean csvLoad_CageBox(Cages cages, String directory) throws Exception {
+	private boolean csvLoad_CageBox(CagesArray cages, String directory) throws Exception {
 		String pathToCsv = directory + File.separator + "CagesMeasures.csv";
 		File csvFile = new File(pathToCsv);
 		if (!csvFile.isFile())
@@ -227,7 +227,7 @@ public class CagesPersistence {
 		return true;
 	}
 
-	private String csvLoad_DESCRIPTION(Cages cages, BufferedReader csvReader, String sep) {
+	private String csvLoad_DESCRIPTION(CagesArray cages, BufferedReader csvReader, String sep) {
 		String row;
 		try {
 			while ((row = csvReader.readLine()) != null) {
@@ -250,7 +250,7 @@ public class CagesPersistence {
 		return null;
 	}
 
-	private String csvLoad_CageBox(Cages cages, BufferedReader csvReader, String sep) {
+	private String csvLoad_CageBox(CagesArray cages, BufferedReader csvReader, String sep) {
 		String row;
 		try {
 			row = csvReader.readLine();
@@ -278,7 +278,7 @@ public class CagesPersistence {
 		return null;
 	}
 
-	private String csvLoad_Measures(Cages cages, BufferedReader csvReader, EnumCageMeasures measureType, String sep) {
+	private String csvLoad_Measures(CagesArray cages, BufferedReader csvReader, EnumCageMeasures measureType, String sep) {
 		String row;
 		try {
 			row = csvReader.readLine();
@@ -309,7 +309,7 @@ public class CagesPersistence {
 		return null;
 	}
 
-	private boolean csvSave_Cages(Cages cages, String directory) {
+	private boolean csvSave_Cages(CagesArray cages, String directory) {
 		Path path = Paths.get(directory);
 		if (!Files.exists(path))
 			return false;
@@ -328,7 +328,7 @@ public class CagesPersistence {
 		return true;
 	}
 
-	private boolean csvSave_Description(Cages cages, FileWriter csvWriter) {
+	private boolean csvSave_Description(CagesArray cages, FileWriter csvWriter) {
 		try {
 			csvWriter.append("#" + csvSep + "DESCRIPTION\n");
 			csvWriter.append("n cages=" + csvSep + Integer.toString(cages.getCageList().size()) + "\n");
@@ -348,7 +348,7 @@ public class CagesPersistence {
 		return true;
 	}
 
-	private boolean csvSave_Measures(Cages cages, FileWriter csvWriter, EnumCageMeasures measureType) {
+	private boolean csvSave_Measures(CagesArray cages, FileWriter csvWriter, EnumCageMeasures measureType) {
 		try {
 			if (cages.getCageList().size() <= 1)
 				return false;

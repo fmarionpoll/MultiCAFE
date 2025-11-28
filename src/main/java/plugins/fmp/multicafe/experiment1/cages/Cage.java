@@ -76,9 +76,29 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public ROI2D getRoi() {
 		return cageROI2D;
 	}
+	
+	public ROI2D getCageRoi2D() {
+		return cageROI2D;
+	}
+	
+	public int getCageID() {
+		return prop.getCageID();
+	}
 
 	public void setRoi(ROI2DShape roi) {
 		cageROI2D = roi;
+	}
+	
+	public int getCageNFlies() {
+		return prop.getCageNFlies();
+	}
+	
+	public void setCageNFlies(int nFlies) {
+		prop.setCageNFlies(nFlies);
+	}
+
+	public FlyPositions getFlyPositions() {
+		return flyPositions;
 	}
 
 	public String getCageNumberFromRoiName() {

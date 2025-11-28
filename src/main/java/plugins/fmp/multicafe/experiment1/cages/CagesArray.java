@@ -19,12 +19,14 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment1.Experiment;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
 import plugins.fmp.multicafe.experiment1.sequence.ROIOperation;
 import plugins.fmp.multicafe.experiment1.sequence.SequenceCamData;
 import plugins.fmp.multicafe.experiment1.sequence.TIntervalsArray;
 import plugins.fmp.multicafe.experiment1.spots.Spot;
 import plugins.fmp.multicafe.experiment1.spots.SpotString;
 import plugins.fmp.multicafe.experiment1.spots.SpotsArray;
+import plugins.fmp.multicafe.series1.BuildSeriesOptions;
 import plugins.fmp.multicafe.tools1.Comparators;
 import plugins.fmp.multicafe.tools1.JComponents.Dialog;
 import plugins.fmp.multicafe.tools1.JComponents.exceptions.FileDialogException;
@@ -65,6 +67,54 @@ public class CagesArray {
 	public final String ID_MS96_fliesPositions_XML = "MS96_fliesPositions.xml";
 
 	public CagesArray() {
+	}
+
+	public ArrayList<Cage> getCageList() {
+		return cagesList;
+	}
+
+	public void setCageList(ArrayList<Cage> cagesList) {
+		this.cagesList = cagesList;
+	}
+
+	public long getDetectFirst_Ms() {
+		return detectFirst_Ms;
+	}
+
+	public void setDetectFirst_Ms(long detectFirst_Ms) {
+		this.detectFirst_Ms = detectFirst_Ms;
+	}
+
+	public long getDetectLast_Ms() {
+		return detectLast_Ms;
+	}
+
+	public void setDetectLast_Ms(long detectLast_Ms) {
+		this.detectLast_Ms = detectLast_Ms;
+	}
+
+	public long getDetectBin_Ms() {
+		return detectBin_Ms;
+	}
+
+	public void setDetectBin_Ms(long detectBin_Ms) {
+		this.detectBin_Ms = detectBin_Ms;
+	}
+
+	public int getDetect_threshold() {
+		return detect_threshold;
+	}
+
+	public void setDetect_threshold(int detect_threshold) {
+		this.detect_threshold = detect_threshold;
+	}
+
+	public int getDetect_nframes() {
+		return detect_nframes;
+	}
+
+	public void setDetect_nframes(int detect_nframes) {
+		this.detect_nframes = detect_nframes;
 	}
 
 	public CagesArray(ArrayList<Cage> cagesListFrom) {
@@ -560,6 +610,59 @@ public class CagesArray {
 				continue;
 			seqCamData.getSequence().removeROI(roi);
 		}
+	}
+
+	public void transferNFliesFromCapillariesToCageBox(List<Capillary> capList) {
+		for (Cage cage : cagesList) {
+			int cagenb = cage.getCageID();
+			for (Capillary cap : capList) {
+				if (cap.capCageID == cagenb) {
+					cage.setCageNFlies(cap.capNFlies);
+					break;
+				}
+			}
+		}
+	}
+
+	public void transferNFliesFromCagesToCapillaries(List<Capillary> capList) {
+		for (Cage cage : cagesList) {
+			int cageIndex = cage.getCageID();
+			for (Capillary cap : capList) {
+				if (cap.capCageID != cageIndex)
+					continue;
+				cap.capNFlies = cage.getCageNFlies();
+			}
+		}
+	}
+
+	public void setCageNbFromName(List<Capillary> capList) {
+		for (Capillary cap : capList) {
+			int cageIndex = cap.getCageIndexFromRoiName();
+			cap.capCageID = cageIndex;
+		}
+	}
+
+	public void setFirstAndLastCageToZeroFly() {
+		for (Cage cage : cagesList) {
+			if (cage.getCageRoi2D().getName().contains("000") || cage.getCageRoi2D().getName().contains("009"))
+				cage.setCageNFlies(0);
+		}
+	}
+
+	public void cagesToROIs(SequenceCamData seqCamData) {
+		transferCagesToSequenceAsROIs(seqCamData);
+	}
+
+	public void cagesFromROIs(SequenceCamData seqCamData) {
+		transferROIsFromSequenceToCages(seqCamData);
+	}
+
+	public boolean load_Cages(String directory) {
+		return loadCagesMeasures(directory);
+	}
+
+	public boolean save_Cages(String directory) {
+		return saveCagesMeasures(directory);
 	}
 
 	public List<ROI2D> getPositionsAsListOfROI2DRectanglesAtT(int t) {

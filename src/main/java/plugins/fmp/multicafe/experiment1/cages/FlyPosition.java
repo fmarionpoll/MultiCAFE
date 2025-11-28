@@ -14,6 +14,7 @@ public class FlyPosition {
 	public Rectangle2D rectPosition = new Rectangle2D.Double(Double.NaN, Double.NaN, Double.NaN, Double.NaN);
 	public ROI2DArea flyRoi = null;
 	public int flyIndexT = 0;
+	public long tMs = 0;
 	public boolean bAlive = false;
 	public boolean bSleep = false;
 	public boolean bPadded = false;
@@ -49,8 +50,13 @@ public class FlyPosition {
 		this.bAlive = alive;
 	}
 
+	public FlyPosition(FlyPosition flyPosSource) {
+		this.copy(flyPosSource);
+	}
+
 	public void copy(FlyPosition source) {
 		flyIndexT = source.flyIndexT;
+		tMs = source.tMs;
 		bAlive = source.bAlive;
 		bSleep = source.bSleep;
 		bPadded = source.bPadded;
@@ -62,12 +68,144 @@ public class FlyPosition {
 		axis2 = source.axis2;
 	}
 
-	Point2D getCenterRectangle() {
+	public Rectangle2D getRectangle2D() {
+		return rectPosition;
+	}
+
+	public Rectangle2D getRectangle() {
+		return rectPosition;
+	}
+
+	public void setRectangle2D(Rectangle2D rectangle) {
+		rectPosition.setRect(rectangle);
+	}
+
+	public double getX() {
+		return rectPosition.getX();
+	}
+
+	public void setX(double x) {
+		rectPosition.setRect(x, rectPosition.getY(), rectPosition.getWidth(), rectPosition.getHeight());
+	}
+
+	public double getY() {
+		return rectPosition.getY();
+	}
+
+	public void setY(double y) {
+		rectPosition.setRect(rectPosition.getX(), y, rectPosition.getWidth(), rectPosition.getHeight());
+	}
+
+	public double getW() {
+		return rectPosition.getWidth();
+	}
+
+	public void setW(double w) {
+		rectPosition.setRect(rectPosition.getX(), rectPosition.getY(), w, rectPosition.getHeight());
+	}
+
+	public double getH() {
+		return rectPosition.getHeight();
+	}
+
+	public void setH(double h) {
+		rectPosition.setRect(rectPosition.getX(), rectPosition.getY(), rectPosition.getWidth(), h);
+	}
+
+	public Point2D getCenterRectangle() {
 		return new Point2D.Double(rectPosition.getX() + rectPosition.getWidth() / 2,
 				rectPosition.getY() + rectPosition.getHeight() / 2);
 	}
 
+	public ROI2DArea getFlyRoi() {
+		return flyRoi;
+	}
+
+	public void setFlyRoi(ROI2DArea flyRoi) {
+		this.flyRoi = flyRoi;
+	}
+
+	public int getFlyIndexT() {
+		return flyIndexT;
+	}
+
+	public void setFlyIndexT(int flyIndexT) {
+		this.flyIndexT = flyIndexT;
+	}
+
+	public long gettMs() {
+		return tMs;
+	}
+
+	public void settMs(long tMs) {
+		this.tMs = tMs;
+	}
+
+	public boolean isbAlive() {
+		return bAlive;
+	}
+
+	public void setbAlive(boolean bAlive) {
+		this.bAlive = bAlive;
+	}
+
+	public boolean isbSleep() {
+		return bSleep;
+	}
+
+	public void setbSleep(boolean bSleep) {
+		this.bSleep = bSleep;
+	}
+
+	public boolean isbPadded() {
+		return bPadded;
+	}
+
+	public void setbPadded(boolean bPadded) {
+		this.bPadded = bPadded;
+	}
+
+	public double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+
+	public double getSumDistance() {
+		return sumDistance;
+	}
+
+	public void setSumDistance(double sumDistance) {
+		this.sumDistance = sumDistance;
+	}
+
+	public double getAxis1() {
+		return axis1;
+	}
+
+	public void setAxis1(double axis1) {
+		this.axis1 = axis1;
+	}
+
+	public double getAxis2() {
+		return axis2;
+	}
+
+	public void setAxis2(double axis2) {
+		this.axis2 = axis2;
+	}
+
 	// --------------------------------------------
+
+	public boolean xmlLoadPosition(Node node) {
+		return loadXYTvaluesFromXML(node);
+	}
+
+	public boolean xmlSavePosition(Node node) {
+		return saveXYTvaluesToXML(node);
+	}
 
 	public boolean loadXYTvaluesFromXML(Node node) {
 		if (node == null)
@@ -133,6 +271,36 @@ public class FlyPosition {
 
 	// --------------------------------------------
 
+	public boolean cvsExportT(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString(flyIndexT));
+		sbf.append(sep);
+		return true;
+	}
+
+	public boolean cvsExportX(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString(rectPosition.getX()));
+		sbf.append(sep);
+		return true;
+	}
+
+	public boolean cvsExportY(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString(rectPosition.getY()));
+		sbf.append(sep);
+		return true;
+	}
+
+	public boolean cvsExportWidth(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString(rectPosition.getWidth()));
+		sbf.append(sep);
+		return true;
+	}
+
+	public boolean cvsExportHeight(StringBuffer sbf, String sep) {
+		sbf.append(StringUtil.toString(rectPosition.getHeight()));
+		sbf.append(sep);
+		return true;
+	}
+
 	public boolean cvsExportXYWHData(StringBuffer sbf, String sep) {
 		cvsExportXYData(sbf, sep);
 		sbf.append(StringUtil.toString((double) rectPosition.getWidth()));
@@ -149,6 +317,27 @@ public class FlyPosition {
 		sbf.append(sep);
 		sbf.append(StringUtil.toString((double) rectPosition.getY()));
 		sbf.append(sep);
+		return true;
+	}
+
+	public boolean csvImportRectangle(String[] data, int startAt) {
+		int npoints = 5;
+		if (data.length < npoints + startAt - 1)
+			return false;
+
+		int offset = startAt;
+		flyIndexT = Integer.valueOf(data[offset]);
+		offset++;
+		double x = Double.valueOf(data[offset]);
+		offset++;
+		double y = Double.valueOf(data[offset]);
+		offset++;
+		double w = Double.valueOf(data[offset]);
+		offset++;
+		double h = Double.valueOf(data[offset]);
+		offset++;
+		rectPosition.setRect(x, y, w, h);
+
 		return true;
 	}
 
@@ -169,6 +358,30 @@ public class FlyPosition {
 		double hR = Double.valueOf(data[offset]);
 		offset++;
 		rectPosition.setRect(xR, yR, wR, hR);
+
+		return true;
+	}
+
+	public boolean csvImportXY(String[] data, int startAt) {
+		int npoints = 3;
+		if (data.length < npoints + startAt - 1)
+			return false;
+
+		int offset = startAt;
+		flyIndexT = Integer.valueOf(data[offset]);
+		offset++;
+		double x = Double.valueOf(data[offset]);
+		offset++;
+		double y = Double.valueOf(data[offset]);
+		offset++;
+
+		if (!Double.isNaN(x) && !Double.isNaN(y)) {
+			x -= 2.;
+			y -= 2.;
+			double w = 4.;
+			double h = 4.;
+			rectPosition.setRect(x, y, w, h);
+		}
 
 		return true;
 	}
@@ -194,6 +407,35 @@ public class FlyPosition {
 			rectPosition.setRect(xR, yR, wR, hR);
 		}
 
+		return true;
+	}
+
+	public boolean cvsImportT(String strData) {
+		flyIndexT = Integer.valueOf(strData);
+		return true;
+	}
+
+	public boolean cvsImportX(String strData) {
+		double x = Double.valueOf(strData);
+		rectPosition.setRect(x, rectPosition.getY(), rectPosition.getWidth(), rectPosition.getHeight());
+		return true;
+	}
+
+	public boolean cvsImportY(String strData) {
+		double y = Double.valueOf(strData);
+		rectPosition.setRect(rectPosition.getX(), y, rectPosition.getWidth(), rectPosition.getHeight());
+		return true;
+	}
+
+	public boolean cvsImportWidth(String strData) {
+		double w = Double.valueOf(strData);
+		rectPosition.setRect(rectPosition.getX(), rectPosition.getY(), w, rectPosition.getHeight());
+		return true;
+	}
+
+	public boolean cvsImportHeight(String strData) {
+		double h = Double.valueOf(strData);
+		rectPosition.setRect(rectPosition.getX(), rectPosition.getY(), rectPosition.getWidth(), h);
 		return true;
 	}
 

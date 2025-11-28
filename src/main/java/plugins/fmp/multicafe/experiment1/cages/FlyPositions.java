@@ -28,6 +28,7 @@ public class FlyPositions {
 	public Point2D origin = new Point2D.Double(0, 0);
 	public double pixelsize = 1.;
 	public int nflies = 1;
+	private int csvReadVersion = 1;
 
 	private String ID_NBITEMS = "nb_items";
 	private String ID_POSITIONSLIST = "PositionsList";
@@ -502,6 +503,100 @@ public class FlyPositions {
 	}
 
 	// --------------------------------------------------------
+	// Accessors for compatibility
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public EnumXLSExport getExportType() {
+		return exportType;
+	}
+
+	public void setExportType(EnumXLSExport exportType) {
+		this.exportType = exportType;
+	}
+
+	public int getBinsize() {
+		return binsize;
+	}
+
+	public void setBinsize(int binsize) {
+		this.binsize = binsize;
+	}
+
+	public Point2D getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Point2D origin) {
+		this.origin = origin;
+	}
+
+	public double getPixelsize() {
+		return pixelsize;
+	}
+
+	public void setPixelsize(double pixelsize) {
+		this.pixelsize = pixelsize;
+	}
+
+	public int getNflies() {
+		return nflies;
+	}
+
+	public void setNflies(int nflies) {
+		this.nflies = nflies;
+	}
+
+	public int getCsvReadVersion() {
+		return csvReadVersion;
+	}
+
+	public void setCsvReadVersion(int csvReadVersion) {
+		this.csvReadVersion = csvReadVersion;
+	}
+
+	public Double getMoveThreshold() {
+		return moveThreshold;
+	}
+
+	public void setMoveThreshold(Double moveThreshold) {
+		this.moveThreshold = moveThreshold;
+	}
+
+	public int getSleepThreshold() {
+		return sleepThreshold;
+	}
+
+	public void setSleepThreshold(int sleepThreshold) {
+		this.sleepThreshold = sleepThreshold;
+	}
+
+	public int getLastTimeAlive() {
+		return lastTimeAlive;
+	}
+
+	public void setLastTimeAlive(int lastTimeAlive) {
+		this.lastTimeAlive = lastTimeAlive;
+	}
+
+	public void setLastIntervalAlive(int lastIntervalAlive) {
+		this.lastIntervalAlive = lastIntervalAlive;
+	}
+
+	public ArrayList<FlyPosition> getFlyPositionList() {
+		return flyPositionList;
+	}
+
+	public void setFlyPositionList(ArrayList<FlyPosition> flyPositionList) {
+		this.flyPositionList = flyPositionList;
+	}
+	
+	// --------------------------------------------------------
 
 	public boolean cvsExport_XYwh_ToRow(StringBuffer sbf, String sep) {
 		int npoints = 0;
@@ -529,6 +624,78 @@ public class FlyPositions {
 			}
 		}
 		return true;
+	}
+
+	public boolean cvsExport_Parameter_ToRow(StringBuffer sbf, String measure, String strCellNumber, String sep) {
+		int npoints = 0;
+		if (flyPositionList != null && flyPositionList.size() > 0)
+			npoints = flyPositionList.size();
+
+		sbf.append(strCellNumber + sep);
+		sbf.append(measure + sep);
+		sbf.append(Integer.toString(npoints) + sep);
+		if (npoints > 0) {
+			char measureType = measure.charAt(0);
+			if (measureType == 't')
+				for (int i = 0; i < npoints; i++)
+					flyPositionList.get(i).cvsExportT(sbf, sep);
+			else if (measureType == 'x')
+				for (int i = 0; i < npoints; i++)
+					flyPositionList.get(i).cvsExportX(sbf, sep);
+			else if (measureType == 'y')
+				for (int i = 0; i < npoints; i++)
+					flyPositionList.get(i).cvsExportY(sbf, sep);
+			else if (measureType == 'w')
+				for (int i = 0; i < npoints; i++)
+					flyPositionList.get(i).cvsExportWidth(sbf, sep);
+			else if (measureType == 'h')
+				for (int i = 0; i < npoints; i++)
+					flyPositionList.get(i).cvsExportHeight(sbf, sep);
+		}
+		sbf.append("\n");
+		return true;
+	}
+
+	public boolean cvsImport_Parameter_FromRow(String[] data) {
+		if (data.length < 1)
+			return false;
+
+		char measureType = data[1].charAt(0);
+		int npoints = Integer.valueOf(data[2]);
+		if (flyPositionList.size() != npoints) {
+			flyPositionList = new ArrayList<FlyPosition>(npoints);
+			for (int i = 0; i < npoints; i++) {
+				FlyPosition flyPosition = new FlyPosition();
+				flyPositionList.add(flyPosition);
+			}
+		}
+		int offset = 3;
+
+		if (measureType == 't')
+			for (int i = 0; i < npoints; i++)
+				flyPositionList.get(i).cvsImportT(data[i + offset]);
+		else if (measureType == 'x')
+			for (int i = 0; i < npoints; i++)
+				flyPositionList.get(i).cvsImportX(data[i + offset]);
+		else if (measureType == 'y')
+			for (int i = 0; i < npoints; i++)
+				flyPositionList.get(i).cvsImportY(data[i + offset]);
+		else if (measureType == 'w')
+			for (int i = 0; i < npoints; i++)
+				flyPositionList.get(i).cvsImportWidth(data[i + offset]);
+		else if (measureType == 'h')
+			for (int i = 0; i < npoints; i++)
+				flyPositionList.get(i).cvsImportHeight(data[i + offset]);
+
+		return true;
+	}
+	
+	public boolean csvImport_Rectangle_FromRow(String[] data, int startAt) {
+		return csvImportXYWHDataFromRow(data, startAt);
+	}
+	
+	public boolean csvImport_XY_FromRow(String[] data, int startAt) {
+		return csvImportXYDataFromRow(data, startAt);
 	}
 
 	public boolean csvImportXYWHDataFromRow(String[] data, int startAt) {
