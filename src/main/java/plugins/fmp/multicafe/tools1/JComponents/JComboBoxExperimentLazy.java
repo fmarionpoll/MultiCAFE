@@ -11,7 +11,7 @@ import javax.swing.JComboBox;
 import icy.gui.frame.progress.ProgressFrame;
 import icy.system.SystemUtil;
 import icy.system.thread.Processor;
-import plugins.fmp.multicafe.experiment1.Experiment;
+import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools1.Comparators;
 import plugins.fmp.multicafe.tools1.LazyExperiment;
 import plugins.fmp.multicafe.tools1.LazyExperiment.ExperimentMetadata;

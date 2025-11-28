@@ -11,10 +11,10 @@ import java.util.TreeSet;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import plugins.fmp.multicafe.experiment1.Experiment;
-import plugins.fmp.multicafe.experiment1.ExperimentProperties;
-import plugins.fmp.multicafe.experiment1.cages.Cage;
-import plugins.fmp.multicafe.experiment1.spots.Spot;
+import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment.ExperimentProperties;
+import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment.spots.Spot;
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
 

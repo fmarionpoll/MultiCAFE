@@ -4,11 +4,11 @@ import java.awt.Point;
 
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 
-import plugins.fmp.multicafe.experiment1.Experiment;
-import plugins.fmp.multicafe.experiment1.cages.Cage;
-import plugins.fmp.multicafe.experiment1.sequence.ImageLoader;
-import plugins.fmp.multicafe.experiment1.sequence.TimeManager;
-import plugins.fmp.multicafe.experiment1.spots.Spot;
+import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment.sequence.ImageLoader;
+import plugins.fmp.multicafe.experiment.sequence.TimeManager;
+import plugins.fmp.multicafe.experiment.spots.Spot;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelResourceException;
 

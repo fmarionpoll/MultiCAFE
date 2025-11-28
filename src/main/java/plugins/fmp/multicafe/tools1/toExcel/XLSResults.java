@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import plugins.fmp.multicafe.experiment1.cages.CageProperties;
-import plugins.fmp.multicafe.experiment1.spots.Spot;
-import plugins.fmp.multicafe.experiment1.spots.SpotProperties;
+import plugins.fmp.multicafe.experiment.cages.CageProperties;
+import plugins.fmp.multicafe.experiment.spots.Spot;
+import plugins.fmp.multicafe.experiment.spots.SpotProperties;
 
 public class XLSResults {
 	private String name = null;

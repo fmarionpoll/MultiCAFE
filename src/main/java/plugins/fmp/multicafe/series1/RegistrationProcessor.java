@@ -1,7 +1,7 @@
 package plugins.fmp.multicafe.series1;
 
 import icy.image.IcyBufferedImage;
-import plugins.fmp.multicafe.experiment1.Experiment;
+import plugins.fmp.multicafe.experiment.Experiment;
 
 /**
  * Service interface for image registration operations. Provides abstraction for

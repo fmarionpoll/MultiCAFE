@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 
 public class Directories {
 	static public List<String> reduceFullNameToLastDirectory(List<String> dirList) {

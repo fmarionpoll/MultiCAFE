@@ -13,7 +13,7 @@ import icy.image.IcyBufferedImageUtil;
 import icy.image.ImageUtil;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.dlg.a_experiment.CorrectDrift;
-import plugins.fmp.multicafe.experiment1.Experiment;
+import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools1.GaspardRigidRegistration;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;

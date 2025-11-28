@@ -31,7 +31,7 @@ import icy.sequence.Sequence;
 import icy.type.collection.array.Array1DUtil;
 import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment1.Experiment;
+import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.series1.ProcessingResult;
 import plugins.fmp.multicafe.series1.ProgressReporter;
 import plugins.fmp.multicafe.series1.RegistrationOptions;

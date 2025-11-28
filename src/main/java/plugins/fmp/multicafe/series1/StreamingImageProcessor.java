@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.series1;
 import java.util.ArrayList;
 
 import icy.image.IcyBufferedImage;
-import plugins.fmp.multicafe.experiment1.sequence.SequenceCamData;
+import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
 
 /**
  * Streaming image processor to avoid loading entire stack.

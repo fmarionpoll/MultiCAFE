@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment1.capillaries.Capillaries;
-import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 
 public class XLSResultsFromCapillaries extends XLSResultsArray {
 

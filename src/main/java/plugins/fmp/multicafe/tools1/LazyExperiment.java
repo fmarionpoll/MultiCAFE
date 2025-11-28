@@ -7,9 +7,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.experiment1.Experiment;
-import plugins.fmp.multicafe.experiment1.ExperimentDirectories;
-import plugins.fmp.multicafe.experiment1.ExperimentProperties;
+import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment.ExperimentDirectories;
+import plugins.fmp.multicafe.experiment.ExperimentProperties;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
 
 /**

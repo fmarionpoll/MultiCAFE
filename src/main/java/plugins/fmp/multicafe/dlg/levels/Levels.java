@@ -25,7 +25,7 @@ import javax.swing.event.ChangeListener;
 import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.DetectLevels;
 import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;

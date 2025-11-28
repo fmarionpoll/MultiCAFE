@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
-import plugins.fmp.multicafe.experiment1.Experiment;
+import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools1.ViewerFMP;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;

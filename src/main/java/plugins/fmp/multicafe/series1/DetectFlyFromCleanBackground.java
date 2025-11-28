@@ -6,7 +6,7 @@ import java.util.List;
 import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
-import plugins.fmp.multicafe.experiment1.Experiment;
+import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;

@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.tools.JComponents;
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 
 public class CapillaryTableModel extends AbstractTableModel {
 	/**
