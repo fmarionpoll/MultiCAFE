@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.series;
 
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.experiment.sequence.SequenceKymos;
+import plugins.fmp.multicafe.experiment1.sequence.SequenceKymos;
 
 public class CurvesRestoreLength extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {

@@ -27,7 +27,7 @@ import plugins.fmp.multicafe.experiment.ImageFileDescriptor;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.experiment.sequence.EnumStatus;
-import plugins.fmp.multicafe.experiment.sequence.SequenceKymos;
+import plugins.fmp.multicafe.experiment1.sequence.SequenceKymos;
 import plugins.fmp.multicafe.experiment.sequence.SequenceKymosUtils;
 import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;

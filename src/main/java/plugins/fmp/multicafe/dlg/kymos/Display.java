@@ -33,7 +33,7 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.experiment.sequence.SequenceKymos;
+import plugins.fmp.multicafe.experiment1.sequence.SequenceKymos;
 import plugins.fmp.multicafe.tools.Directories;
 import plugins.fmp.multicafe.tools.ViewerFMP;
 import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;

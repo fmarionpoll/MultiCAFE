@@ -7,7 +7,7 @@ import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment1.sequence.SequenceCamData;
-import plugins.fmp.multicafe.experiment.sequence.SequenceKymos;
+import plugins.fmp.multicafe.experiment1.sequence.SequenceKymos;
 
 public class ExperimentPersistence {
 

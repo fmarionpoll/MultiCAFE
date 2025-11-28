@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.experiment1.sequence;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
@@ -17,13 +18,19 @@ import icy.file.Loader;
 import icy.file.Saver;
 import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
+import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.MetaDataUtil;
 import icy.type.DataType;
 import icy.type.collection.array.Array1DUtil;
+import icy.type.geom.Polyline2D;
 import loci.formats.FormatException;
 import ome.xml.meta.OMEXMLMetadata;
+import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.experiment1.EnumStatus;
+import plugins.fmp.multicafe.experiment1.Experiment;
 import plugins.fmp.multicafe.experiment1.ExperimentDirectories;
 import plugins.fmp.multicafe.experiment1.cages.Cage;
 import plugins.fmp.multicafe.experiment1.cages.CagesArray;
@@ -112,7 +119,8 @@ public class SequenceKymos extends SequenceCamData {
 			throw new IllegalArgumentException("Image names list cannot be null or empty");
 		}
 		this.configuration = KymographConfiguration.defaultConfiguration();
-		setImagesList(imageNames);
+		List<String> convertedNames = new plugins.fmp.multicafe.service.KymographService().convertLinexLRFileNames(imageNames);
+		setImagesList(convertedNames);
 		setStatus(EnumStatus.KYMOGRAPH);
 	}
 
@@ -174,13 +182,19 @@ public class SequenceKymos extends SequenceCamData {
 				}
 
 				try {
-					if (roi.getName() != null && roi.getName().contains("level")) {
+					if (roi.getName() != null && roi.getName().contains("level") || roi.getName().contains("gulp")) {
 						ROI2DUtilities.interpolateMissingPointsAlongXAxis((ROI2DPolyLine) roi, sequenceWidth);
 						processed++;
 					} else if (roi.getName() != null && roi.getName().contains("derivative")) {
 						// Skip derivative ROIs
 						continue;
-					}
+					} 
+					// if gulp not found - add an index to it
+					ROI2DPolyLine roiLine = (ROI2DPolyLine) roi;
+					Polyline2D line = roiLine.getPolyline2D();
+					roi.setName("gulp" + String.format("%07d", (int) line.xpoints[0]));
+					roi.setColor(Color.red);
+					
 				} catch (Exception e) {
 					LOGGER.log(Level.WARNING, "Failed to process ROI: " + roi.getName(), e);
 					failed++;
@@ -199,6 +213,122 @@ public class SequenceKymos extends SequenceCamData {
 		} finally {
 			processingLock.unlock();
 		}
+	}
+
+	public void validateRoisAtT(int t) {
+		List<ROI2D> listRois = getSequence().getROI2Ds();
+		int width = getSequence().getWidth();
+		for (ROI2D roi : listRois) {
+			if (!(roi instanceof ROI2DPolyLine))
+				continue;
+			if (roi.getT() == -1)
+				roi.setT(t);
+			if (roi.getT() != t)
+				continue;
+			// interpolate missing points if necessary
+			if (roi.getName().contains("level") || roi.getName().contains("gulp")) {
+				ROI2DUtilities.interpolateMissingPointsAlongXAxis((ROI2DPolyLine) roi, width);
+				continue;
+			}
+			if (roi.getName().contains("deriv"))
+				continue;
+			// if gulp not found - add an index to it
+			ROI2DPolyLine roiLine = (ROI2DPolyLine) roi;
+			Polyline2D line = roiLine.getPolyline2D();
+			roi.setName("gulp" + String.format("%07d", (int) line.xpoints[0]));
+			roi.setColor(Color.red);
+		}
+		Collections.sort(listRois, new Comparators.ROI2D_Name());
+	}
+
+	public void removeROIsPolylineAtT(int t) {
+		List<ROI2D> listRois = getSequence().getROI2Ds();
+		for (ROI2D roi : listRois) {
+			if (!(roi instanceof ROI2DPolyLine))
+				continue;
+			if (roi.getT() == t)
+				getSequence().removeROI(roi);
+		}
+	}
+
+	public void updateROIFromCapillaryMeasure(Capillary cap, CapillaryMeasure caplimits) {
+		int t = cap.kymographIndex;
+		List<ROI2D> listRois = getSequence().getROI2Ds();
+		for (ROI2D roi : listRois) {
+			if (!(roi instanceof ROI2DPolyLine))
+				continue;
+			if (roi.getT() != t)
+				continue;
+			if (!roi.getName().contains(caplimits.capName))
+				continue;
+
+			((ROI2DPolyLine) roi).setPolyline2D(caplimits.polylineLevel);
+			roi.setName(caplimits.capName);
+			getSequence().roiChanged(roi);
+			break;
+		}
+	}
+
+	public boolean transferKymosRoisToCapillaries_Measures(Capillaries capillaries) {
+		List<ROI> allRois = getSequence().getROIs();
+		if (allRois.size() < 1)
+			return false;
+
+		for (int kymo = 0; kymo < getSequence().getSizeT(); kymo++) {
+			List<ROI> roisAtT = new ArrayList<ROI>();
+			for (ROI roi : allRois) {
+				if (roi instanceof ROI2D && ((ROI2D) roi).getT() == kymo)
+					roisAtT.add(roi);
+			}
+			if (capillaries.getCapillariesList().size() <= kymo)
+				capillaries.getCapillariesList().add(new Capillary());
+			Capillary cap = capillaries.getCapillariesList().get(kymo);
+			cap.filenameTIFF = getFileNameFromImageList(kymo);
+			cap.kymographIndex = kymo;
+			cap.transferROIsToMeasures(roisAtT);
+		}
+		return true;
+	}
+
+	public boolean transferKymosRoi_atT_ToCapillaries_Measures(int t, Capillaries capillaries) {
+		List<ROI> allRois = getSequence().getROIs();
+		if (allRois.size() < 1)
+			return false;
+
+		List<ROI> roisAtT = new ArrayList<ROI>();
+		for (ROI roi : allRois) {
+			if (roi instanceof ROI2D && ((ROI2D) roi).getT() == t)
+				roisAtT.add(roi);
+		}
+		if (capillaries.getCapillariesList().size() <= t)
+			capillaries.getCapillariesList().add(new Capillary());
+		Capillary cap = capillaries.getCapillariesList().get(t);
+		cap.filenameTIFF = getFileNameFromImageList(t);
+		cap.kymographIndex = t;
+		cap.transferROIsToMeasures(roisAtT);
+
+		return true;
+	}
+
+	public void transferCapillariesMeasuresToKymos(Capillaries capillaries) {
+		List<ROI2D> seqRoisList = getSequence().getROI2Ds(false);
+		ROI2DUtilities.removeROIsMissingChar(seqRoisList, '_');
+
+		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
+		int ncapillaries = capillaries.getCapillariesList().size();
+		for (int i = 0; i < ncapillaries; i++) {
+			List<ROI2D> listOfRois = capillaries.getCapillariesList().get(i).transferMeasuresToROIs();
+			newRoisList.addAll(listOfRois);
+		}
+		ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, getSequence());
+		getSequence().removeAllROI();
+		getSequence().addROIs(seqRoisList, false);
+	}
+
+	public void saveKymosCurvesToCapillariesMeasures(Experiment exp) {
+		exp.getSeqKymos().validateRois();
+		exp.getSeqKymos().transferKymosRoisToCapillaries_Measures(exp.getCapillaries());
+		exp.saveCapillaries();
 	}
 
 	/**

@@ -16,7 +16,7 @@ import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.experiment.sequence.SequenceKymos;
+import plugins.fmp.multicafe.experiment1.sequence.SequenceKymos;
 import plugins.fmp.multicafe.series.AdjustMeasuresToDimensions;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.ClipCageMeasuresToSmallest;
