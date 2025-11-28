@@ -47,7 +47,7 @@ public class LoadSaveCage extends JPanel {
 		openCageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					loadCage(exp);
 					firePropertyChange("LOAD_DATA", false, true);
@@ -59,7 +59,7 @@ public class LoadSaveCage extends JPanel {
 		saveCageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					saveCageAndMeasures(exp);
 					parent0.paneCages.tabsPane.setSelectedIndex(3);

@@ -65,7 +65,7 @@ public class EditLevels extends JPanel {
 		cutAndInterpolateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					cutAndInterpolate(exp);
 			}
@@ -74,7 +74,7 @@ public class EditLevels extends JPanel {
 		cropButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					cropPointsToLeftLimit(exp);
 			}
@@ -83,7 +83,7 @@ public class EditLevels extends JPanel {
 		restoreButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					restoreCroppedPoints(exp);
 			}

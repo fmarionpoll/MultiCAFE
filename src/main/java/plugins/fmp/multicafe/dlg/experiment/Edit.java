@@ -70,7 +70,7 @@ public class Edit extends JPanel {
 	}
 
 	public void initEditCombos() {
-		editExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsList());
+		editExpList.setExperimentsFromList(parent0.expListComboLazy.getExperimentsAsList());
 		editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo, (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 	}
 

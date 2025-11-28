@@ -108,7 +108,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					new SequenceLoaderService().saveReferenceImage(exp);
 			}
@@ -134,7 +134,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 
 		overlayCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					if (overlayCheckBox.isSelected()) {
 						if (ov == null)
@@ -151,7 +151,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() == backgroundThresholdSpinner) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (!overlayCheckBox.isSelected())
 				overlayCheckBox.setSelected(true);
 			if (exp != null)
@@ -160,7 +160,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 	}
 
 	void loadBackground() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			boolean flag = new SequenceLoaderService().loadReferenceImage(exp);
 			if (flag) {
@@ -202,12 +202,12 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 
 	private BuildSeriesOptions initTrackParameters(Experiment exp) {
 		BuildSeriesOptions options = buildBackground.options;
-		options.expList = parent0.expListCombo;
-		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
+		options.expList = parent0.expListComboLazy;
+		options.expList.index0 = parent0.expListComboLazy.getSelectedIndex();
 		if (allCheckBox.isSelected())
 			options.expList.index1 = options.expList.getItemCount() - 1;
 		else
-			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
+			options.expList.index1 = parent0.expListComboLazy.getSelectedIndex();
 
 		options.btrackWhite = true;
 		options.backgroundThreshold = (int) backgroundThresholdSpinner.getValue();
@@ -232,7 +232,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 	}
 
 	void startComputation() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		parent0.paneBrowse.panelLoadSave.closeViewsForCurrentExperiment(exp);

@@ -105,7 +105,7 @@ public class Filter extends JPanel {
 
 	public void initFilterCombos() {
 		if (!parent0.paneBrowse.panelLoadSave.filteredCheck.isSelected())
-			filterExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsList());
+			filterExpList.setExperimentsFromList(parent0.expListComboLazy.getExperimentsAsList());
 		filterExpList.getFieldValuesToComboLightweight(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
 		filterExpList.getFieldValuesToComboLightweight(stim1Combo, EnumXLSColumnHeader.EXP_STIM);
 		filterExpList.getFieldValuesToComboLightweight(stim2Combo, EnumXLSColumnHeader.EXP_CONC);
@@ -135,14 +135,14 @@ public class Filter extends JPanel {
 
 	public void filterExperimentList(boolean setFilter) {
 		if (setFilter) {
-			parent0.expListCombo.setExperimentsFromList(filterAllItems());
+			parent0.expListComboLazy.setExperimentsFromList(filterAllItems());
 		} else {
 			clearAllCheckBoxes();
-			parent0.expListCombo.setExperimentsFromList(filterExpList.getExperimentsAsList());
+			parent0.expListComboLazy.setExperimentsFromList(filterExpList.getExperimentsAsList());
 		}
 
-		if (parent0.expListCombo.getItemCount() > 0)
-			parent0.expListCombo.setSelectedIndex(0);
+		if (parent0.expListComboLazy.getItemCount() > 0)
+			parent0.expListComboLazy.setSelectedIndex(0);
 		if (setFilter != parent0.paneBrowse.panelLoadSave.filteredCheck.isSelected())
 			parent0.paneBrowse.panelLoadSave.filteredCheck.setSelected(setFilter);
 	}

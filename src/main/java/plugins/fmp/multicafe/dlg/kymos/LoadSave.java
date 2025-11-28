@@ -61,7 +61,7 @@ public class LoadSave extends JPanel {
 		openButtonKymos.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null && loadDefaultKymos(exp))
 					firePropertyChange("KYMOS_OPEN", false, true);
 			}
@@ -70,7 +70,7 @@ public class LoadSave extends JPanel {
 		saveButtonKymos.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					String path = exp.getExperimentDirectory();
 					saveKymographFiles(path);
@@ -82,7 +82,7 @@ public class LoadSave extends JPanel {
 
 	void saveKymographFiles(String directory) {
 		ProgressFrame progress = new ProgressFrame("Save kymographs");
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		SequenceKymos seqKymos = exp.getSeqKymos();
@@ -131,10 +131,10 @@ public class LoadSave extends JPanel {
 			return flag;
 		}
 
-		String localString = parent0.expListCombo.expListBinSubDirectory;
+		String localString = parent0.expListComboLazy.expListBinSubDirectory;
 		if (localString == null) {
 			exp.checkKymosDirectory(exp.getBinSubDirectory());
-			parent0.expListCombo.expListBinSubDirectory = exp.getBinSubDirectory();
+			parent0.expListComboLazy.expListBinSubDirectory = exp.getBinSubDirectory();
 		} else
 			exp.setBinSubDirectory(localString);
 

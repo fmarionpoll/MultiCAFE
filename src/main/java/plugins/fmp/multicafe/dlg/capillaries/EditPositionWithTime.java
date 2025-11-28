@@ -60,7 +60,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 
 	public void initialize(MultiCAFE parent0, Point pt) {
 		this.parent0 = parent0;
-		capillariesWithTimeTablemodel = new CapillariesWithTimeTableModel(parent0.expListCombo);
+		capillariesWithTimeTablemodel = new CapillariesWithTimeTableModel(parent0.expListComboLazy);
 
 		JPanel topPanel = new JPanel(new GridLayout(3, 1));
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
@@ -166,7 +166,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 	}
 
 	private void shiftPositionOfCapillaries(double deltaX, double deltaY) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		;
 		if (exp == null)
 			return;
@@ -181,7 +181,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 	}
 
 	private void showFrame(boolean show) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 
@@ -217,7 +217,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 	}
 
 	private void addTableItem() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 
@@ -230,7 +230,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 	}
 
 	private void deleteTableItem(int selectedRow) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 
@@ -243,7 +243,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 	}
 
 	private void displayCapillariesForSelectedInterval(int selectedRow) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		Sequence seq = exp.getSeqCamData().getSequence();
@@ -261,7 +261,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 	}
 
 	private void saveCapillaries(int selectedRow) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		Sequence seq = exp.getSeqCamData().getSequence();

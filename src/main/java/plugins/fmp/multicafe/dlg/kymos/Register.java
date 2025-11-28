@@ -78,7 +78,7 @@ public class Register extends JPanel {
 		displayReferenceFrameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp == null)
 					return;
 				if (referencePolygon == null) {
@@ -102,7 +102,7 @@ public class Register extends JPanel {
 	}
 
 	private void startRegistration() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 

@@ -177,16 +177,16 @@ public class Adjust extends JPanel implements PropertyChangeListener {
 	}
 
 	private boolean initBuildParameters(BuildSeriesOptions options) {
-		int index = parent0.expListCombo.getSelectedIndex();
-		Experiment exp = parent0.expListCombo.getItemAt(index);
+		int index = parent0.expListComboLazy.getSelectedIndex();
+		Experiment exp = parent0.expListComboLazy.getItemAt(index);
 		if (exp == null)
 			return false;
 
 		parent0.paneBrowse.panelLoadSave.closeViewsForCurrentExperiment(exp);
-		options.expList = parent0.expListCombo;
-		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
+		options.expList = parent0.expListComboLazy;
+		options.expList.index0 = parent0.expListComboLazy.getSelectedIndex();
 		if (allSeriesCheckBox.isSelected())
-			options.expList.index1 = parent0.expListCombo.getItemCount() - 1;
+			options.expList.index1 = parent0.expListComboLazy.getItemCount() - 1;
 		else
 			options.expList.index1 = options.expList.index0;
 

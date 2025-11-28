@@ -42,7 +42,7 @@ public class InfosCagesTable extends JPanel {
 		this.parent0 = parent0;
 		cageArrayCopy = cageCopy;
 
-		cageTableModel = new CageTableModel(parent0.expListCombo);
+		cageTableModel = new CageTableModel(parent0.expListComboLazy);
 		tableView.setModel(cageTableModel);
 		tableView.setPreferredScrollableViewportSize(new Dimension(500, 400));
 		tableView.setFillsViewportHeight(true);
@@ -83,7 +83,7 @@ public class InfosCagesTable extends JPanel {
 		copyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					cageArrayCopy.clear();
 					for (Cage cell : exp.getCages().getCageList()) {
@@ -97,7 +97,7 @@ public class InfosCagesTable extends JPanel {
 		pasteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					for (Cage cellFrom : cageArrayCopy) {
 						cellFrom.setValid(false);
@@ -120,7 +120,7 @@ public class InfosCagesTable extends JPanel {
 		duplicateAllButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					int rowIndex = tableView.getSelectedRow();
 					int columnIndex = tableView.getSelectedColumn();
@@ -158,7 +158,7 @@ public class InfosCagesTable extends JPanel {
 		noFliesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.getCages().setFirstAndLastCageToZeroFly();
 					cageTableModel.fireTableDataChanged();
@@ -170,7 +170,7 @@ public class InfosCagesTable extends JPanel {
 
 	void close() {
 		dialogFrame.close();
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			exp.getCages().transferNFliesFromCagesToCapillaries(exp.getCapillaries().getCapillariesList());
 			parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);

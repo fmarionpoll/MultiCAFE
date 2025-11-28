@@ -92,7 +92,7 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getPropertyName().equals("CAP_ROIS_OPEN")) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null) {
 				displayCapillariesInformation(exp);
 				tabsPane.setSelectedIndex(ID_INFOS);
@@ -139,7 +139,7 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 
 		parent0.paneExperiment.tabOptions.viewCapillariesCheckBox.setSelected(selectedIndex == ID_INFOS);
 		if (selectedIndex == ID_EDIT) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null) {
 				Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
 				if (v != null) {

@@ -103,7 +103,7 @@ public class LevelsKMeans extends JPanel {
 		displayButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null && (currentlyRunning == null)) {
 					runKMeans(exp);
 				}

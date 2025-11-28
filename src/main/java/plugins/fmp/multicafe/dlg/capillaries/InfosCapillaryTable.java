@@ -50,7 +50,7 @@ public class InfosCapillaryTable extends JPanel {
 		this.parent0 = parent0;
 		capillariesArrayCopy = capCopy;
 
-		capillaryTableModel = new CapillaryTableModel(parent0.expListCombo);
+		capillaryTableModel = new CapillaryTableModel(parent0.expListComboLazy);
 		tableView.setModel(capillaryTableModel);
 		tableView.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tableView.setPreferredScrollableViewportSize(new Dimension(500, 400));
@@ -103,7 +103,7 @@ public class InfosCapillaryTable extends JPanel {
 		copyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					copyInfos(exp);
 			}
@@ -112,7 +112,7 @@ public class InfosCapillaryTable extends JPanel {
 		pasteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					pasteInfos(exp);
 				capillaryTableModel.fireTableDataChanged();
@@ -122,7 +122,7 @@ public class InfosCapillaryTable extends JPanel {
 		noFliesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					setFliesNumbers(exp);
 					capillaryTableModel.fireTableDataChanged();
@@ -133,7 +133,7 @@ public class InfosCapillaryTable extends JPanel {
 		duplicateLRButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					duplicateLR(exp);
 			}
@@ -142,7 +142,7 @@ public class InfosCapillaryTable extends JPanel {
 		duplicateCageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					duplicateCage(exp);
 			}
@@ -151,7 +151,7 @@ public class InfosCapillaryTable extends JPanel {
 		exchangeLRButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp == null || exp.getCapillaries().getCapillariesDescription().getGrouping() != 2)
 					return;
 				exchangeLR(exp);
@@ -161,7 +161,7 @@ public class InfosCapillaryTable extends JPanel {
 		duplicateAllButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					duplicateAll(exp);
 				}
@@ -171,7 +171,7 @@ public class InfosCapillaryTable extends JPanel {
 		getNfliesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null && exp.getCages().getCageList().size() > 0) {
 					exp.getCages().transferNFliesFromCagesToCapillaries(exp.getCapillaries().getCapillariesList());
 					capillaryTableModel.fireTableDataChanged();
@@ -182,7 +182,7 @@ public class InfosCapillaryTable extends JPanel {
 		getCageNoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.getCages().setCageNbFromName(exp.getCapillaries().getCapillariesList());
 					capillaryTableModel.fireTableDataChanged();

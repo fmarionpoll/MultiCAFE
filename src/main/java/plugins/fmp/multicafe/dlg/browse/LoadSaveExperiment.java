@@ -54,7 +54,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		this.parent0 = parent0;
 
 		SequenceNameListRenderer renderer = new SequenceNameListRenderer();
-		parent0.expListCombo.setRenderer(renderer);
+		parent0.expListComboLazy.setRenderer(renderer);
 		int bWidth = 30;
 		int height = 20;
 		previousButton.setPreferredSize(new Dimension(bWidth, height));
@@ -62,7 +62,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 		JPanel sequencePanel0 = new JPanel(new BorderLayout());
 		sequencePanel0.add(previousButton, BorderLayout.LINE_START);
-		sequencePanel0.add(parent0.expListCombo, BorderLayout.CENTER);
+		sequencePanel0.add(parent0.expListComboLazy, BorderLayout.CENTER);
 		sequencePanel0.add(nextButton, BorderLayout.LINE_END);
 
 		JPanel sequencePanel = new JPanel(new BorderLayout());
@@ -77,7 +77,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		sequencePanel.add(subPanel, BorderLayout.LINE_START);
 
 		defineActionListeners();
-		parent0.expListCombo.addItemListener(this);
+		parent0.expListComboLazy.addItemListener(this);
 
 		JPanel twoLinesPanel = new JPanel(new GridLayout(2, 1));
 		twoLinesPanel.add(sequencePanel0);
@@ -94,16 +94,16 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				return;
 
 			ExperimentDirectories experimentDirectories = new ExperimentDirectories();
-			if (experimentDirectories.getDirectoriesFromExptPath(parent0.expListCombo, selectedNames.get(0), null)) {
+			if (experimentDirectories.getDirectoriesFromExptPath(parent0.expListComboLazy, selectedNames.get(0), null)) {
 				final int item = addExperimentFrom3NamesAnd2Lists(experimentDirectories);
-				final String binSubDirectory = parent0.expListCombo.expListBinSubDirectory;
+				final String binSubDirectory = parent0.expListComboLazy.expListBinSubDirectory;
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						parent0.paneExperiment.tabInfos.disableChangeFile = false;
 						for (int i = 1; i < selectedNames.size(); i++) {
 							ExperimentDirectories expDirectories = new ExperimentDirectories();
-							if (expDirectories.getDirectoriesFromExptPath(parent0.expListCombo, selectedNames.get(i),
+							if (expDirectories.getDirectoriesFromExptPath(parent0.expListComboLazy, selectedNames.get(i),
 									binSubDirectory))
 								addExperimentFrom3NamesAnd2Lists(expDirectories);
 						}
@@ -111,8 +111,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 						updateBrowseInterface();
 						parent0.paneExperiment.tabInfos.disableChangeFile = true;
 						parent0.paneExperiment.tabInfos.initInfosCombos();
-						parent0.expListCombo.setSelectedIndex(item);
-						Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+						parent0.expListComboLazy.setSelectedIndex(item);
+						Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 						if (exp != null)
 							parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);
 					}
@@ -124,7 +124,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
-			final Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			final Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null)
 				openSelecteExperiment(exp);
 		} else if (e.getStateChange() == ItemEvent.DESELECTED) {
@@ -135,7 +135,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 	void closeAllExperiments() {
 		closeCurrentExperiment();
-		parent0.expListCombo.removeAllItems();
+		parent0.expListComboLazy.removeAllItems();
 		parent0.paneExperiment.tabFilter.clearAllCheckBoxes();
 		parent0.paneExperiment.tabFilter.filterExpList.removeAllItems();
 		parent0.paneExperiment.tabInfos.clearCombos();
@@ -154,17 +154,17 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	}
 
 	public void closeCurrentExperiment() {
-		if (parent0.expListCombo.getSelectedIndex() < 0)
+		if (parent0.expListComboLazy.getSelectedIndex() < 0)
 			return;
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null)
 			closeViewsForCurrentExperiment(exp);
 	}
 
 	void updateBrowseInterface() {
-		int isel = parent0.expListCombo.getSelectedIndex();
+		int isel = parent0.expListComboLazy.getSelectedIndex();
 		boolean flag1 = (isel == 0 ? false : true);
-		boolean flag2 = (isel == (parent0.expListCombo.getItemCount() - 1) ? false : true);
+		boolean flag2 = (isel == (parent0.expListComboLazy.getItemCount() - 1) ? false : true);
 		previousButton.setEnabled(flag1);
 		nextButton.setEnabled(flag2);
 	}
@@ -212,7 +212,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	// ------------------------
 
 	private void defineActionListeners() {
-		parent0.expListCombo.addActionListener(new ActionListener() {
+		parent0.expListComboLazy.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				updateBrowseInterface();
@@ -222,7 +222,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		nextButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getSelectedIndex() + 1);
+				parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() + 1);
 				updateBrowseInterface();
 			}
 		});
@@ -230,7 +230,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		previousButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getSelectedIndex() - 1);
+				parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() - 1);
 				updateBrowseInterface();
 			}
 		});
@@ -248,10 +248,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				ExperimentDirectories eDAF = new ExperimentDirectories();
-				if (eDAF.getDirectoriesFromDialog(parent0.expListCombo, null, true)) {
+				if (eDAF.getDirectoriesFromDialog(parent0.expListComboLazy, null, true)) {
 					int item = addExperimentFrom3NamesAnd2Lists(eDAF);
 					parent0.paneExperiment.tabInfos.initInfosCombos();
-					parent0.expListCombo.setSelectedIndex(item);
+					parent0.expListComboLazy.setSelectedIndex(item);
 				}
 			}
 		});
@@ -260,10 +260,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				ExperimentDirectories eDAF = new ExperimentDirectories();
-				if (eDAF.getDirectoriesFromDialog(parent0.expListCombo, null, false)) {
+				if (eDAF.getDirectoriesFromDialog(parent0.expListComboLazy, null, false)) {
 					int item = addExperimentFrom3NamesAnd2Lists(eDAF);
 					parent0.paneExperiment.tabInfos.initInfosCombos();
-					parent0.expListCombo.setSelectedIndex(item);
+					parent0.expListComboLazy.setSelectedIndex(item);
 				}
 			}
 		});
@@ -273,8 +273,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			public void actionPerformed(final ActionEvent e) {
 				closeAllExperiments();
 				parent0.paneExperiment.tabsPane.setSelectedIndex(0);
-				parent0.expListCombo.removeAllItems();
-				parent0.expListCombo.updateUI();
+				parent0.expListComboLazy.removeAllItems();
+				parent0.expListComboLazy.updateUI();
 			}
 		});
 
@@ -288,14 +288,14 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 	private int addExperimentFrom3NamesAnd2Lists(ExperimentDirectories eDAF) {
 		Experiment exp = new Experiment(eDAF);
-		int item = parent0.expListCombo.addExperiment(exp, false);
+		int item = parent0.expListComboLazy.addExperiment(exp, false);
 		return item;
 	}
 
 	@Override
 	public void sequenceChanged(SequenceEvent sequenceEvent) {
 		if (sequenceEvent.getSourceType() == SequenceEventSourceType.SEQUENCE_DATA) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null) {
 				if (exp.getSeqCamData().getSequence() != null
 						&& sequenceEvent.getSequence() == exp.getSeqCamData().getSequence()) {

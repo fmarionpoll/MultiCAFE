@@ -76,7 +76,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 
@@ -201,14 +201,14 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		options.onlyalive = tabCommonOptions.onlyAliveCheckBox.isSelected();
 		options.exportAllFiles = tabCommonOptions.exportAllFilesCheckBox.isSelected();
 
-		options.expList = parent0.expListCombo;
+		options.expList = parent0.expListComboLazy;
 		options.expList.expListBinSubDirectory = exp.getBinSubDirectory();
 		if (tabCommonOptions.exportAllFilesCheckBox.isSelected()) {
 			options.firstExp = 0;
 			options.lastExp = options.expList.getItemCount() - 1;
 		} else {
-			options.firstExp = parent0.expListCombo.getSelectedIndex();
-			options.lastExp = parent0.expListCombo.getSelectedIndex();
+			options.firstExp = parent0.expListComboLazy.getSelectedIndex();
+			options.lastExp = parent0.expListComboLazy.getSelectedIndex();
 		}
 	}
 }

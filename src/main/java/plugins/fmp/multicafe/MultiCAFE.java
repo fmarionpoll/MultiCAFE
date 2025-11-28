@@ -25,7 +25,7 @@ import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
 public class MultiCAFE extends PluginActionable {
 	public IcyFrame mainFrame = new IcyFrame("MultiCAFE November 26, 2025", true, true, true, true);
 	// public ExperimentsJComboBox expListCombo = new ExperimentsJComboBox();
-	public JComboBoxExperimentLazy expListCombo = new JComboBoxExperimentLazy();
+	public JComboBoxExperimentLazy expListComboLazy = new JComboBoxExperimentLazy();
 
 	public MCBrowse_ paneBrowse = new MCBrowse_();
 	public MCExperiment_ paneExperiment = new MCExperiment_();

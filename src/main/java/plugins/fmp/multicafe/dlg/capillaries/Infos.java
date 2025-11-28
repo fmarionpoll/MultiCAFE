@@ -64,7 +64,7 @@ public class Infos extends JPanel {
 		editCapillariesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.getCapillaries().transferDescriptionToCapillaries();
 					if (infosCapillaryTable != null) {
@@ -91,7 +91,7 @@ public class Infos extends JPanel {
 	}
 
 	public int getLengthFirstCapillaryROI() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		int npixels = 0;
 		if (exp != null) {
 			exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSequence());

@@ -91,7 +91,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		drawPolygon2DButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					create2DPolygon(exp);
 			}
@@ -100,7 +100,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		createCellsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
 					exp.getCages().cagesFromROIs(exp.getSeqCamData());
@@ -114,7 +114,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		transformForLevelsComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					updateOverlay(exp);
 			}
@@ -123,7 +123,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		deleteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					try {
 						deletePointsIncluded(exp);
@@ -162,11 +162,11 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() == thresholdSpinner) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null)
 				updateOverlay(exp);
 		} else if (e.getSource() == overlayCheckBox) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null) {
 				if (overlayCheckBox.isSelected()) {
 					if (overlayThreshold == null)

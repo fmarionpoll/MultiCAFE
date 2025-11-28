@@ -173,7 +173,7 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 			if (event.getDim() == DimensionId.T) {
 				Viewer v = event.getSource();
 				int idViewer = v.getSequence().getId();
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					int idCurrentExp = exp.getSeqCamData().getSequence().getId();
 					if (idViewer == idCurrentExp) {

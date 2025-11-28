@@ -73,7 +73,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 		displayResultsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.getSeqKymos().validateRois();
 					exp.getSeqKymos().transferKymosRoisToCapillaries_Measures(exp.getCapillaries());
@@ -85,7 +85,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 		correctEvaporationCheckbox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					displayGraphsPanels(exp);
 				}

@@ -86,7 +86,7 @@ public class BuildCagesAsArray extends JPanel {
 		drawPolygon2DButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					create2DPolygon(exp);
 			}
@@ -95,7 +95,7 @@ public class BuildCagesAsArray extends JPanel {
 		createCellsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
 					exp.getCages().cagesFromROIs(exp.getSeqCamData());
@@ -108,7 +108,7 @@ public class BuildCagesAsArray extends JPanel {
 	}
 
 	void updateNColumnsFieldFromSequence() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			int nrois = exp.getCages().getCageList().size();
 			if (nrois > 0) {

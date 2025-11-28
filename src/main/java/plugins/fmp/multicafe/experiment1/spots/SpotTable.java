@@ -27,7 +27,7 @@ public class SpotTable extends JTable {
 	public SpotTable(MultiCAFE parent0) {
 		cellsOrigBackColor = this.getBackground();
 		cellsOrigForeColor = this.getForeground();
-		spotTableModel = new SpotTableModel(parent0.expListCombo);
+		spotTableModel = new SpotTableModel(parent0.expListComboLazy);
 		setModel(spotTableModel);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 

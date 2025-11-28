@@ -174,7 +174,7 @@ public class Display extends JPanel implements ViewerListener {
 	}
 
 	private void displayROIs(String filter, boolean visible) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		Viewer v = exp.getSeqKymos().getSequence().getFirstViewer();
@@ -195,7 +195,7 @@ public class Display extends JPanel implements ViewerListener {
 	}
 
 	void displayON() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			SequenceKymos seqKymographs = exp.getSeqKymos();
 			if (seqKymographs == null || seqKymographs.getSequence() == null)
@@ -302,7 +302,7 @@ public class Display extends JPanel implements ViewerListener {
 	}
 
 	void displayOFF() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null || exp.getSeqKymos() == null)
 			return;
 		ArrayList<Viewer> vList = exp.getSeqKymos().getSequence().getViewers();
@@ -354,7 +354,7 @@ public class Display extends JPanel implements ViewerListener {
 
 	public int selectKymographImage(int isel) {
 		int selectedImageIndex = -1;
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return selectedImageIndex;
 
@@ -437,11 +437,11 @@ public class Display extends JPanel implements ViewerListener {
 	}
 
 	private void changeBinSubdirectory(String localString) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null || localString == null || exp.getBinSubDirectory().contains(localString))
 			return;
 
-		parent0.expListCombo.expListBinSubDirectory = localString;
+		parent0.expListComboLazy.expListBinSubDirectory = localString;
 		exp.setBinSubDirectory(localString);
 		exp.getSeqKymos().getSequence().close();
 		exp.loadKymographs();

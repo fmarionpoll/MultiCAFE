@@ -132,7 +132,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 	private void defineItemListeners() {
 		overlayPass1CheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					if (overlayPass1CheckBox.isSelected())
 						updateOverlay(exp);
@@ -144,7 +144,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 
 		overlayPass2CheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					if (overlayPass2CheckBox.isSelected())
 						updateOverlay(exp);
@@ -171,7 +171,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 		transformPass1ComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null && exp.getSeqKymos() != null) {
 					int index = transformPass1ComboBox.getSelectedIndex();
 					getKymosCanvas(exp).transformsCombo1.setSelectedIndex(index + 1);
@@ -184,7 +184,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				allowItemsAccordingToSelection();
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null && exp.getSeqCamData() != null) {
 					int index = transformPass2ComboBox.getSelectedIndex();
 					getKymosCanvas(exp).transformsCombo1.setSelectedIndex(index + 1);
@@ -206,7 +206,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 		transformPass1DisplayButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					boolean displayCheckOverlay = false;
 					if (transformPass1DisplayButton.isSelected()) {
@@ -230,7 +230,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 		transformPass2DisplayButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					boolean displayCheckOverlay = false;
 					if (transformPass2DisplayButton.isSelected()) {
@@ -264,7 +264,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 		fromCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp == null)
 					return;
 				if (fromCheckBox.isSelected())
@@ -337,12 +337,12 @@ public class Levels extends JPanel implements PropertyChangeListener {
 	private BuildSeriesOptions initBuildParameters(Experiment exp) {
 		BuildSeriesOptions options = new BuildSeriesOptions();
 		// list of stack experiments
-		options.expList = parent0.expListCombo;
-		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
+		options.expList = parent0.expListComboLazy;
+		options.expList.index0 = parent0.expListComboLazy.getSelectedIndex();
 		if (allSeriesCheckBox.isSelected())
 			options.expList.index1 = options.expList.getItemCount() - 1;
 		else
-			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
+			options.expList.index1 = parent0.expListComboLazy.getSelectedIndex();
 		// list of kymographs
 		options.detectAllKymos = allKymosCheckBox.isSelected();
 		currentKymographImage = 0;
@@ -374,13 +374,13 @@ public class Levels extends JPanel implements PropertyChangeListener {
 		options.detectL = leftCheckBox.isSelected();
 		options.detectR = rightCheckBox.isSelected();
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
-		options.binSubDirectory = parent0.expListCombo.expListBinSubDirectory;
+		options.binSubDirectory = parent0.expListComboLazy.expListBinSubDirectory;
 		options.runBackwards = runBackwardsCheckBox.isSelected();
 		return options;
 	}
 
 	void startLevelsDetection() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			threadDetectLevels = new DetectLevels();
 			threadDetectLevels.options = initBuildParameters(exp);

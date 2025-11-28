@@ -101,7 +101,7 @@ public class Create extends JPanel {
 		displayFrameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp == null)
 					return;
 
@@ -128,7 +128,7 @@ public class Create extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				roisGenerateFromPolygon();
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					SequenceKymosUtils.transferCamDataROIStoKymo(exp);
 					int nbFliesPerCage = (int) nbFliesPerCellJSpinner.getValue();
@@ -262,7 +262,7 @@ public class Create extends JPanel {
 	}
 
 	private void roisGenerateFromPolygon() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		SequenceCamData seqCamData = exp.getSeqCamData();

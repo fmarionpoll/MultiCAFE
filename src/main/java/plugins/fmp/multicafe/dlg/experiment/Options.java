@@ -91,7 +91,7 @@ public class Options extends JPanel {
 	}
 
 	public void displayROIsCategory(boolean isVisible, String pattern) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();

@@ -113,7 +113,7 @@ public class Infos extends JPanel {
 		openButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.xmlLoad_MCExperiment();
 					transferPreviousExperimentInfosToDialog(exp, exp);
@@ -124,7 +124,7 @@ public class Infos extends JPanel {
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					getExperimentInfosFromDialog(exp);
 					exp.xmlSave_MCExperiment();
@@ -142,7 +142,7 @@ public class Infos extends JPanel {
 		zoomButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					zoomToUpperCorner(exp);
 			}
@@ -193,15 +193,15 @@ public class Infos extends JPanel {
 	}
 
 	public void initInfosCombos() {
-		parent0.expListCombo.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
-		parent0.expListCombo.getFieldValuesToCombo(stim1Combo, EnumXLSColumnHeader.EXP_STIM);
-		parent0.expListCombo.getFieldValuesToCombo(stim2Combo, EnumXLSColumnHeader.EXP_CONC);
-		parent0.expListCombo.getFieldValuesToCombo(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
-		parent0.expListCombo.getFieldValuesToCombo(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
-		parent0.expListCombo.getFieldValuesToCombo(sexCombo, EnumXLSColumnHeader.EXP_SEX);
-		parent0.expListCombo.getFieldValuesToCombo(conc1Combo, EnumXLSColumnHeader.EXP_COND1);
-		parent0.expListCombo.getFieldValuesToCombo(conc2Combo, EnumXLSColumnHeader.EXP_COND2);
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		parent0.expListComboLazy.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
+		parent0.expListComboLazy.getFieldValuesToCombo(stim1Combo, EnumXLSColumnHeader.EXP_STIM);
+		parent0.expListComboLazy.getFieldValuesToCombo(stim2Combo, EnumXLSColumnHeader.EXP_CONC);
+		parent0.expListComboLazy.getFieldValuesToCombo(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
+		parent0.expListComboLazy.getFieldValuesToCombo(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
+		parent0.expListComboLazy.getFieldValuesToCombo(sexCombo, EnumXLSColumnHeader.EXP_SEX);
+		parent0.expListComboLazy.getFieldValuesToCombo(conc1Combo, EnumXLSColumnHeader.EXP_COND1);
+		parent0.expListComboLazy.getFieldValuesToCombo(conc2Combo, EnumXLSColumnHeader.EXP_COND2);
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null)
 			transferPreviousExperimentInfosToDialog(exp, exp);
 	}
@@ -218,12 +218,12 @@ public class Infos extends JPanel {
 	}
 
 	void duplicatePreviousDescriptors() {
-		int iprevious = parent0.expListCombo.getSelectedIndex() - 1;
+		int iprevious = parent0.expListComboLazy.getSelectedIndex() - 1;
 		if (iprevious < 0)
 			return;
 
-		Experiment exp0 = (Experiment) parent0.expListCombo.getItemAt(iprevious);
-		Experiment exp = (Experiment) parent0.expListCombo.getItemAt(iprevious + 1);
+		Experiment exp0 = (Experiment) parent0.expListComboLazy.getItemAt(iprevious);
+		Experiment exp = (Experiment) parent0.expListComboLazy.getItemAt(iprevious + 1);
 		transferPreviousExperimentInfosToDialog(exp0, exp);
 		transferPreviousExperimentCapillariesInfos(exp0, exp);
 	}

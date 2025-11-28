@@ -64,7 +64,7 @@ public class Edit extends JPanel {
 	}
 
 	public void openDialog() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			exp.getCapillaries().transferDescriptionToCapillaries();
 			if (editCapillariesTable == null)

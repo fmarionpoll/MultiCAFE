@@ -84,7 +84,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		// this.parent0 = parent0;
-		this.experimentList = parent0.expListCombo;
+		this.experimentList = parent0.expListComboLazy;
 
 		initializeUI(capLayout);
 		defineActionListeners();

@@ -57,7 +57,7 @@ public class MCSpots_1 extends JPanel {
 		subtractButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					subtractFirstColumn(exp);
 			}
@@ -66,7 +66,7 @@ public class MCSpots_1 extends JPanel {
 		buildHistogramButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					buildHistogram(exp);
 			}
@@ -75,7 +75,7 @@ public class MCSpots_1 extends JPanel {
 		removeBackGroundButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					System.out.println("MCSpots_1:removeBackgroundButton should call removeBackGround()");
 //					removeBackGround(exp);

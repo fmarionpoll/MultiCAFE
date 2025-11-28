@@ -47,7 +47,7 @@ public class LoadSaveCapillaries extends JPanel {
 		openButtonCapillaries.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					loadCapillaries_File(exp);
 					firePropertyChange("CAP_ROIS_OPEN", false, true);
@@ -58,7 +58,7 @@ public class LoadSaveCapillaries extends JPanel {
 		saveButtonCapillaries.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					saveCapillaries_file(exp);
 					firePropertyChange("CAP_ROIS_SAVE", false, true);

@@ -80,7 +80,7 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 	}
 
 	private void displayGraphsPanels() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		final Rectangle rectv = exp.getSeqCamData().getSequence().getFirstViewer().getBounds();

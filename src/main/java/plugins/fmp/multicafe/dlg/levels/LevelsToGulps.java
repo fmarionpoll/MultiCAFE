@@ -90,7 +90,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 		gulpTransforms_comboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null && exp.getSeqCamData() != null) {
 					int index = gulpTransforms_comboBox.getSelectedIndex();
 					getKymosCanvas(exp).transformsCombo1.setSelectedIndex(index + 1);
@@ -111,7 +111,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 		display_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null && exp.getSeqCamData() != null) {
 					if (display_button.isSelected()) {
 						Canvas2DWithTransforms canvas = getKymosCanvas(exp);
@@ -139,13 +139,13 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 
 	private BuildSeriesOptions initBuildParameters(Experiment exp) {
 		BuildSeriesOptions options = threadDetectGulps.options;
-		options.expList = parent0.expListCombo;
-		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
+		options.expList = parent0.expListComboLazy;
+		options.expList.index0 = parent0.expListComboLazy.getSelectedIndex();
 
 		if (all_checkbox.isSelected())
 			options.expList.index1 = options.expList.getItemCount() - 1;
 		else
-			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
+			options.expList.index1 = parent0.expListComboLazy.getSelectedIndex();
 
 		options.detectAllKymos = allKymosCheckBox.isSelected();
 
@@ -172,7 +172,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 	}
 
 	void startComputation(boolean bDetectGulps) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
 			threadDetectGulps = new DetectGulps();

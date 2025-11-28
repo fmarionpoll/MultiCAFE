@@ -49,7 +49,7 @@ public class LoadSaveLevels extends JPanel {
 		loadMeasuresButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					dlg_levels_loadCapillaries_Measures(exp);
 			}
@@ -58,7 +58,7 @@ public class LoadSaveLevels extends JPanel {
 		saveMeasuresButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					dlg_levels_saveCapillaries_Measures(exp);
 					firePropertyChange("MEASURES_SAVE", false, true);
