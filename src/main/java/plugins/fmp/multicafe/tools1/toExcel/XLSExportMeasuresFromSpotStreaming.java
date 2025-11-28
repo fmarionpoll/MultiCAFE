@@ -136,7 +136,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
         pt = writeExperimentSeparator(sheet, pt);
 
         // Process cages in chunks
-        for (Cage cage : exp.cagesArray.cagesList) {
+        for (Cage cage : exp.cages.cagesList) {
             double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
             cage.updateSpotsStimulus_i();
 
@@ -320,7 +320,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
      */
     private int calculateTotalSpots(Experiment exp) {
         int total = 0;
-        for (Cage cage : exp.cagesArray.cagesList) {
+        for (Cage cage : exp.cages.cagesList) {
             total += cage.spotsArray.getSpotsList().size();
         }
         return total;

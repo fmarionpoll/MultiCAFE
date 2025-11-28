@@ -1,7 +1,8 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment1;
 
 import java.util.ArrayList;
 
+import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment1.cages.Cage;
 
 public class CombinedExperiment extends Experiment {

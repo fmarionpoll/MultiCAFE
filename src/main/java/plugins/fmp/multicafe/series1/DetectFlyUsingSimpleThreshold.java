@@ -23,7 +23,7 @@ public class DetectFlyUsingSimpleThreshold extends BuildSeries {
 			return;
 
 		runFlyDetect1(exp);
-		exp.cagesArray.orderFlyPositions();
+		exp.cages.orderFlyPositions();
 		if (!stopFlag)
 			exp.save_MS96_fliesPositions();
 		exp.seqCamData.closeSequence();
@@ -33,7 +33,7 @@ public class DetectFlyUsingSimpleThreshold extends BuildSeries {
 	private void runFlyDetect1(Experiment exp) {
 		exp.cleanPreviousDetectedFliesROIs();
 		find_flies.initParametersForDetection(exp, options);
-		exp.cagesArray.initFlyPositions(options.detectCage);
+		exp.cages.initFlyPositions(options.detectCage);
 
 		openFlyDetectViewers(exp);
 		findFliesInAllFrames(exp);

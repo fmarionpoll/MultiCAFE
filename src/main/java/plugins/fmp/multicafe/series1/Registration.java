@@ -139,7 +139,7 @@ public class Registration extends BuildSeries {
 		transformOptions.transformOption = options.transformop;
 		ImageTransformInterface transformFunction = transformOptions.transformOption.getFunction();
 
-		Polygon2D polygon2D = exp.cagesArray.getPolygon2DEnclosingAllCages();
+		Polygon2D polygon2D = exp.cages.getPolygon2DEnclosingAllCages();
 		Rectangle rect = polygon2D.getBounds();
 
 		String fileNameReference = exp.seqCamData.getFileNameFromImageList(referenceFrame);

@@ -21,10 +21,14 @@ import icy.sequence.Sequence;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.experiment1.cages.Cage;
 import plugins.fmp.multicafe.experiment1.cages.CagesArray;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment1.sequence.ImageLoader;
 import plugins.fmp.multicafe.experiment1.sequence.SequenceCamData;
+import plugins.fmp.multicafe.experiment1.sequence.SequenceKymos;
 import plugins.fmp.multicafe.experiment1.sequence.TimeManager;
 import plugins.fmp.multicafe.experiment1.spots.Spot;
+import plugins.fmp.multicafe.tools.Logger;
+import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools1.Directories;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
 
@@ -36,10 +40,12 @@ public class Experiment {
 	private String resultsDirectory = null;
 	private String binDirectory = null;
 
-	public SequenceCamData seqCamData = null;
-//	public SequenceKymos seqKymos = null;
-	public Sequence seqReference = null;
-	public CagesArray cagesArray = new CagesArray();
+	private SequenceCamData seqCamData = null;
+	private SequenceKymos seqKymos = null;
+	private Sequence seqReference = null;
+	private CagesArray cages = new CagesArray();
+	private Capillaries capillaries = new Capillaries();
+	private ExperimentTimeManager timeManager = new ExperimentTimeManager();
 
 	public FileTime firstImage_FileTime;
 	public FileTime lastImage_FileTime;
@@ -50,6 +56,116 @@ public class Experiment {
 	public Experiment chainToNextExperiment = null;
 	public long chainImageFirst_ms = 0;
 	public int experimentID = 0;
+
+	// -----------------------------------------
+
+	public Sequence getSeqReference() {
+		return seqReference;
+	}
+
+	public void setSeqReference(Sequence seqReference) {
+		this.seqReference = seqReference;
+	}
+
+	public CagesArray getCages() {
+		return cages;
+	}
+
+	public void setCages(CagesArray cages) {
+		this.cages = cages;
+	}
+
+	public ExperimentTimeManager getTimeManager() {
+		return timeManager;
+	}
+
+	public void setTimeManager(ExperimentTimeManager timeManager) {
+		this.timeManager = timeManager;
+	}
+
+	public FileTime getFirstImage_FileTime() {
+		return timeManager.getFirstImage_FileTime();
+	}
+
+	public void setFirstImage_FileTime(FileTime fileTime) {
+		timeManager.setFirstImage_FileTime(fileTime);
+	}
+
+	public FileTime getLastImage_FileTime() {
+		return timeManager.getLastImage_FileTime();
+	}
+
+	public void setLastImage_FileTime(FileTime fileTime) {
+		timeManager.setLastImage_FileTime(fileTime);
+	}
+
+	// __________________________________________________
+
+	public long getCamImageFirst_ms() {
+		return timeManager.getCamImageFirst_ms();
+	}
+
+	public void setCamImageFirst_ms(long ms) {
+		timeManager.setCamImageFirst_ms(ms);
+	}
+
+	public long getCamImageLast_ms() {
+		return timeManager.getCamImageLast_ms();
+	}
+
+	public void setCamImageLast_ms(long ms) {
+		timeManager.setCamImageLast_ms(ms);
+	}
+
+	public long getCamImageBin_ms() {
+		return timeManager.getCamImageBin_ms();
+	}
+
+	public void setCamImageBin_ms(long ms) {
+		timeManager.setCamImageBin_ms(ms);
+	}
+
+	public long[] getCamImages_ms() {
+		return timeManager.getCamImages_ms();
+	}
+
+	public void setCamImages_ms(long[] ms) {
+		timeManager.setCamImages_ms(ms);
+	}
+
+	public long getBinT0() {
+		return timeManager.getBinT0();
+	}
+
+	public void setBinT0(long val) {
+		timeManager.setBinT0(val);
+	}
+
+	public long getKymoFirst_ms() {
+		return timeManager.getKymoFirst_ms();
+	}
+
+	public void setKymoFirst_ms(long ms) {
+		timeManager.setKymoFirst_ms(ms);
+	}
+
+	public long getKymoLast_ms() {
+		return timeManager.getKymoLast_ms();
+	}
+
+	public void setKymoLast_ms(long ms) {
+		timeManager.setKymoLast_ms(ms);
+	}
+
+	public long getKymoBin_ms() {
+		return timeManager.getKymoBin_ms();
+	}
+
+	public void setKymoBin_ms(long ms) {
+		timeManager.setKymoBin_ms(ms);
+	}
+
+	// _________________________________________________
 
 	private final static String ID_VERSION = "version";
 	private final static String ID_VERSIONNUM = "1.0.0";
@@ -124,6 +240,80 @@ public class Experiment {
 
 	public String getBinDirectory() {
 		return binDirectory;
+	}
+
+	public String getImagesDirectory() {
+		return camDataImagesDirectory;
+	}
+
+	public void setImagesDirectory(String imagesDirectory) {
+		this.camDataImagesDirectory = imagesDirectory;
+	}
+
+	// ------------------------------ Legacy Metadata Accessors
+
+	public String getBoxID() {
+		return prop.ffield_boxID;
+	}
+
+	public void setBoxID(String boxID) {
+		prop.ffield_boxID = boxID;
+	}
+
+	public String getExperiment() {
+		return prop.ffield_experiment;
+	}
+
+	public void setExperiment(String experiment) {
+		prop.ffield_experiment = experiment;
+	}
+
+	public String getComment1() {
+		return prop.field_comment1;
+	}
+
+	public void setComment1(String comment1) {
+		prop.field_comment1 = comment1;
+	}
+
+	public String getComment2() {
+		return prop.field_comment2;
+	}
+
+	public void setComment2(String comment2) {
+		prop.field_comment2 = comment2;
+	}
+
+	public String getStrain() {
+		return prop.field_strain;
+	}
+
+	public void setStrain(String strain) {
+		prop.field_strain = strain;
+	}
+
+	public String getSex() {
+		return prop.field_sex;
+	}
+
+	public void setSex(String sex) {
+		prop.field_sex = sex;
+	}
+
+	public String getCondition1() {
+		return prop.field_stim2;
+	}
+
+	public void setCondition1(String condition1) {
+		prop.field_stim2 = condition1;
+	}
+
+	public String getCondition2() {
+		return prop.field_conc2;
+	}
+
+	public void setCondition2(String condition2) {
+		prop.field_conc2 = condition2;
 	}
 
 	public boolean createDirectoryIfDoesNotExist(String directory) {
@@ -224,7 +414,7 @@ public class Experiment {
 		load_MS96_cages();
 		if (seqCamData != null && seqCamData.getSequence() != null) {
 			seqCamData.removeROIsContainingString("spot");
-			cagesArray.transferCageSpotsToSequenceAsROIs(seqCamData);
+			cages.transferCageSpotsToSequenceAsROIs(seqCamData);
 		}
 		return (seqCamData != null && seqCamData.getSequence() != null);
 	}
@@ -239,39 +429,35 @@ public class Experiment {
 	}
 
 	public void getFileIntervalsFromSeqCamData() {
-		if (seqCamData != null && (seqCamData.getFirstImageMs() < 0 || seqCamData.getLastImageMs() < 0
-				|| seqCamData.getTimeManager().getBinImage_ms() < 0)) {
-			loadFileIntervalsFromSeqCamData();
-		}
+		timeManager.getFileIntervalsFromSeqCamData(seqCamData, camDataImagesDirectory);
 	}
 
 	public void loadFileIntervalsFromSeqCamData() {
-		if (seqCamData != null) {
-			seqCamData.setImagesDirectory(camDataImagesDirectory);
-			int t0 = (int) seqCamData.getImageLoader().getAbsoluteIndexFirstImage();
-			firstImage_FileTime = seqCamData.getFileTimeFromStructuredName(t0);
-			int t1 = seqCamData.getImageLoader().getNTotalFrames() - 1;
-			lastImage_FileTime = seqCamData.getFileTimeFromStructuredName(t1);
-
-			if (firstImage_FileTime != null && lastImage_FileTime != null) {
-				seqCamData.setFirstImageMs(firstImage_FileTime.toMillis());
-				seqCamData.setLastImageMs(lastImage_FileTime.toMillis());
-
-				if (seqCamData.getImageLoader().getNTotalFrames() > 1) {
-					long binMs = (seqCamData.getLastImageMs() - seqCamData.getFirstImageMs()) / t1;
-					seqCamData.getTimeManager().setBinImage_ms(binMs);
-				}
-				if (seqCamData.getTimeManager().getBinImage_ms() == 0)
-					System.out.println("Experiment:loadFileIntervalsFromSeqCamData() error / file interval size");
-			} else {
-				System.out.println("Experiment:loadFileIntervalsFromSeqCamData() error / file intervals of "
-						+ seqCamData.getImagesDirectory());
-			}
-		}
+		timeManager.loadFileIntervalsFromSeqCamData(seqCamData, camDataImagesDirectory);
 	}
 
 	public String getBinNameFromKymoFrameStep() {
-		return BIN + seqCamData.getTimeManager().getBinDurationMs() / 1000;
+		return timeManager.getBinNameFromKymoFrameStep();
+	}
+
+	public long[] build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(long firstImage_ms) {
+		return timeManager.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(seqCamData, firstImage_ms);
+	}
+
+	public void initTmsForFlyPositions(long time_start_ms) {
+		timeManager.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(seqCamData, time_start_ms);
+		cages.initCagesTmsForFlyPositions(timeManager.getCamImages_ms());
+	}
+
+	public int findNearestIntervalWithBinarySearch(long value, int low, int high) {
+		return timeManager.findNearestIntervalWithBinarySearch(value, low, high);
+	}
+
+	public int getSeqCamSizeT() {
+		int lastFrame = 0;
+		if (seqCamData != null)
+			lastFrame = seqCamData.getImageLoader().getNTotalFrames() - 1;
+		return lastFrame;
 	}
 
 	public String getDirectoryToSaveResults() {
@@ -285,6 +471,14 @@ public class Experiment {
 	}
 
 	// -------------------------------
+
+	public boolean xmlLoad_MCExperiment() {
+		return load_MS96_experiment();
+	}
+
+	public boolean xmlSave_MCExperiment() {
+		return save_MS96_experiment();
+	}
 
 	public boolean load_MS96_experiment() {
 		if (resultsDirectory == null && seqCamData != null) {
@@ -456,23 +650,23 @@ public class Experiment {
 	}
 
 	public boolean load_MS96_cages() {
-		String fileName = getXML_MS96_cages_Location(cagesArray.ID_MS96_cages_XML);
-		return cagesArray.xmlReadCagesFromFileNoQuestion(fileName);
+		String fileName = getXML_MS96_cages_Location(cages.ID_MS96_cages_XML);
+		return cages.xmlReadCagesFromFileNoQuestion(fileName);
 	}
 
 	public boolean save_MS96_cages() {
-		String fileName = getXML_MS96_cages_Location(cagesArray.ID_MS96_cages_XML);
-		return cagesArray.xmlWriteCagesToFileNoQuestion(fileName);
+		String fileName = getXML_MS96_cages_Location(cages.ID_MS96_cages_XML);
+		return cages.xmlWriteCagesToFileNoQuestion(fileName);
 	}
 
 	// -------------------------------
 
 	public boolean load_MS96_spotsMeasures() {
-		return cagesArray.load_SpotsMeasures(getResultsDirectory());
+		return cages.load_SpotsMeasures(getResultsDirectory());
 	}
 
 	public boolean save_MS96_spotsMeasures() {
-		return cagesArray.save_SpotsMeasures(getResultsDirectory());
+		return cages.save_SpotsMeasures(getResultsDirectory());
 	}
 
 	public boolean load_MS96_fliesPositions() {
@@ -549,6 +743,188 @@ public class Experiment {
 		return flag;
 	}
 
+	public String getExperimentField(EnumXLSColumnHeader fieldEnumCode) {
+		String strField = null;
+		switch (fieldEnumCode) {
+		case PATH:
+			strField = getPath();
+			break;
+		case DATE:
+			strField = getDate();
+			break;
+		case CAM:
+			strField = getCam();
+			break;
+		case EXP_STIM1:
+			strField = getComment1();
+			break;
+		case EXP_CONC1:
+			strField = getComment2();
+			break;
+		case EXP_EXPT:
+			strField = getExperiment();
+			break;
+		case EXP_BOXID:
+			strField = getBoxID();
+			break;
+		case EXP_STRAIN:
+			strField = getStrain();
+			break;
+		case EXP_SEX:
+			strField = getSex();
+			break;
+		case EXP_STIM2:
+			strField = getCondition1();
+			break;
+		case EXP_CONC2:
+			strField = getCondition2();
+			break;
+		default:
+			strField = prop.getExperimentField(fieldEnumCode);
+			break;
+		}
+		return strField;
+	}
+
+	private String getPath() {
+		String filename = getResultsDirectory();
+		if (filename == null)
+			filename = seqCamData != null ? seqCamData.getImagesDirectory() : null;
+		if (filename == null)
+			return "";
+		Path path = Paths.get(filename);
+		return path.toString();
+	}
+
+	private String getDate() {
+		if (chainImageFirst_ms <= 0)
+			return "";
+		java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("MM/dd/yyyy");
+		return df.format(chainImageFirst_ms);
+	}
+
+	private String getCam() {
+		String strField = getPath();
+		int pos = strField.indexOf("cam");
+		if (pos > 0) {
+			int pos5 = pos + 5;
+			if (pos5 >= strField.length())
+				pos5 = strField.length() - 1;
+			strField = strField.substring(pos, pos5);
+		}
+		return strField;
+	}
+
+	public void setExperimentFieldNoTest(EnumXLSColumnHeader fieldEnumCode, String newValue) {
+		switch (fieldEnumCode) {
+		case EXP_STIM1:
+			setComment1(newValue);
+			break;
+		case EXP_CONC1:
+			setComment2(newValue);
+			break;
+		case EXP_EXPT:
+			setExperiment(newValue);
+			break;
+		case EXP_BOXID:
+			setBoxID(newValue);
+			break;
+		case EXP_STRAIN:
+			setStrain(newValue);
+			break;
+		case EXP_SEX:
+			setSex(newValue);
+			break;
+		case EXP_STIM2:
+			setCondition1(newValue);
+			break;
+		case EXP_CONC2:
+			setCondition2(newValue);
+			break;
+		default:
+			prop.setExperimentFieldNoTest(fieldEnumCode, newValue);
+			break;
+		}
+	}
+
+	public boolean replaceExperimentFieldIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
+			String newValue) {
+		boolean flag = getExperimentField(fieldEnumCode).equals(oldValue);
+		if (flag) {
+			setExperimentFieldNoTest(fieldEnumCode, newValue);
+		}
+		return flag;
+	}
+
+	public void copyExperimentFields(plugins.fmp.multicafe.experiment.Experiment expSource) {
+		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID,
+				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_BOXID));
+		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT,
+				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_EXPT));
+		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM1,
+				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_STIM));
+		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC1,
+				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_CONC));
+		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STRAIN,
+				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_STRAIN));
+		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_SEX,
+				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_SEX));
+		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM2,
+				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_COND1));
+		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC2,
+				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_COND2));
+	}
+
+	public void getFieldValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
+		switch (fieldEnumCode) {
+		case EXP_STIM1:
+		case EXP_CONC1:
+		case EXP_EXPT:
+		case EXP_BOXID:
+		case EXP_STRAIN:
+		case EXP_SEX:
+		case EXP_STIM2:
+		case EXP_CONC2:
+			addValue(getExperimentField(fieldEnumCode), textList);
+			break;
+		case SPOT_STIM:
+		case SPOT_CONC:
+			addCapillariesValues(fieldEnumCode, textList);
+			break;
+		default:
+			textList.add(prop.getExperimentField(fieldEnumCode));
+			break;
+		}
+	}
+
+	public void replaceFieldValue(EnumXLSColumnHeader fieldEnumCode, String oldValue, String newValue) {
+		switch (fieldEnumCode) {
+		case EXP_STIM1:
+		case EXP_CONC1:
+		case EXP_EXPT:
+		case EXP_BOXID:
+		case EXP_STRAIN:
+		case EXP_SEX:
+		case EXP_STIM2:
+		case EXP_CONC2:
+			replaceExperimentFieldIfEqualOld(fieldEnumCode, oldValue, newValue);
+			break;
+		case SPOT_STIM:
+		case SPOT_CONC:
+			if (replaceCapillariesValuesIfEqualOld(fieldEnumCode, oldValue, newValue))
+				;
+			saveMCCapillaries_Only();
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void addValue(String text, List<String> textList) {
+		if (!isFound(text, textList))
+			textList.add(text);
+	}
+
 	// --------------------------------------------
 
 	public boolean loadReferenceImage() {
@@ -594,13 +970,13 @@ public class Experiment {
 			if (roi.getName().contains("det"))
 				seqCamData.getSequence().removeROI(roi);
 		}
-		seqCamData.getSequence().addROIs(cagesArray.getPositionsAsListOfROI2DRectanglesAtT(t), false);
+		seqCamData.getSequence().addROIs(cages.getPositionsAsListOfROI2DRectanglesAtT(t), false);
 		seqCamData.getSequence().endUpdate();
 	}
 
 	public void saveDetRoisToPositions() {
 		List<ROI2D> detectedROIsList = seqCamData.getSequence().getROI2Ds();
-		for (Cage cage : cagesArray.cagesList) {
+		for (Cage cage : cages.cagesList) {
 			cage.transferRoisToPositions(detectedROIsList);
 		}
 	}
@@ -620,11 +996,11 @@ public class Experiment {
 
 	private boolean zxmlReadDrosoTrack(String filename) {
 		if (filename == null) {
-			filename = getXML_MS96_cages_Location(cagesArray.ID_MS96_cages_XML);
+			filename = getXML_MS96_cages_Location(cages.ID_MS96_cages_XML);
 			if (filename == null)
 				return false;
 		}
-		return cagesArray.xmlReadCagesFromFileNoQuestion(filename);
+		return cages.xmlReadCagesFromFileNoQuestion(filename);
 	}
 
 	private String findFile_3Locations(String xmlFileName, int first, int second, int third) {
@@ -690,7 +1066,7 @@ public class Experiment {
 			String newValue) {
 		load_MS96_cages();
 		boolean flag = false;
-		for (Cage cage : cagesArray.cagesList) {
+		for (Cage cage : cages.cagesList) {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				String current = spot.getField(fieldEnumCode);
 				if (current != null && oldValue != null && current.trim().equals(oldValue.trim())) {
@@ -706,7 +1082,7 @@ public class Experiment {
 			String newValue) {
 		load_MS96_cages();
 		boolean flag = false;
-		for (Cage cage : cagesArray.cagesList) {
+		for (Cage cage : cages.cagesList) {
 			String current = cage.getField(fieldEnumCode);
 			if (current != null && oldValue != null && current.trim().equals(oldValue.trim())) {
 				cage.setField(fieldEnumCode, newValue);
@@ -726,7 +1102,7 @@ public class Experiment {
 	private List<String> getSpotsFieldValues(EnumXLSColumnHeader fieldEnumCode) {
 		load_MS96_cages();
 		List<String> textList = new ArrayList<String>();
-		for (Cage cage : cagesArray.cagesList)
+		for (Cage cage : cages.cagesList)
 			for (Spot spot : cage.spotsArray.getSpotsList())
 				addValueIfUnique(spot.getField(fieldEnumCode), textList);
 		return textList;
@@ -735,7 +1111,7 @@ public class Experiment {
 	private List<String> getCagesFieldValues(EnumXLSColumnHeader fieldEnumCode) {
 		load_MS96_cages();
 		List<String> textList = new ArrayList<String>();
-		for (Cage cage : cagesArray.cagesList)
+		for (Cage cage : cages.cagesList)
 			addValueIfUnique(cage.getField(fieldEnumCode), textList);
 		return textList;
 	}
@@ -763,22 +1139,22 @@ public class Experiment {
 
 	public void transferCagesROI_toSequence() {
 		seqCamData.removeROIsContainingString("cage");
-		cagesArray.transferCagesToSequenceAsROIs(seqCamData);
+		cages.transferCagesToSequenceAsROIs(seqCamData);
 	}
 
 	public void transferSpotsROI_toSequence() {
 		seqCamData.removeROIsContainingString("spot");
-		cagesArray.transferCageSpotsToSequenceAsROIs(seqCamData);
+		cages.transferCageSpotsToSequenceAsROIs(seqCamData);
 	}
 
 	public boolean saveCagesArray_File() {
-		cagesArray.transferROIsFromSequenceToCages(seqCamData);
+		cages.transferROIsFromSequenceToCages(seqCamData);
 		save_MS96_cages();
 		return save_MS96_spotsMeasures();
 	}
 
 	public boolean saveSpotsArray_file() {
-		cagesArray.transferROIsFromSequenceToCageSpots(seqCamData);
+		cages.transferROIsFromSequenceToCageSpots(seqCamData);
 		boolean flag = save_MS96_cages();
 		flag &= save_MS96_spotsMeasures();
 		return flag;
@@ -786,6 +1162,345 @@ public class Experiment {
 
 	public ExperimentProperties getProperties() {
 		return prop;
+	}
+
+	// ------------------------------ Capillaries Support
+
+	public Capillaries getCapillaries() {
+		return capillaries;
+	}
+
+	public void setCapillaries(Capillaries capillaries) {
+		this.capillaries = capillaries;
+	}
+
+	public SequenceKymos getSeqKymos() {
+		if (seqKymos == null)
+			seqKymos = new SequenceKymos();
+		return seqKymos;
+	}
+
+	public void setSeqKymos(SequenceKymos seqKymos) {
+		this.seqKymos = seqKymos;
+	}
+
+	public String getKymosBinFullDirectory() {
+		String filename = resultsDirectory;
+		if (binDirectory != null)
+			filename += File.separator + binDirectory;
+		return filename;
+	}
+
+	public String getExperimentDirectory() {
+		return resultsDirectory;
+	}
+
+	public void setExperimentDirectory(String fileName) {
+		resultsDirectory = ExperimentDirectories.getParentIf(fileName, BIN);
+	}
+
+	public String getBinSubDirectory() {
+		return binDirectory;
+	}
+
+	public void setBinSubDirectory(String bin) {
+		binDirectory = bin;
+	}
+
+	// ------------------------------
+
+	public boolean loadMCCapillaries_Only() {
+		String mcCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY,
+				BIN_DIRECTORY, IMG_DIRECTORY);
+		if (mcCapillaryFileName == null && seqCamData != null)
+			return xmlLoadOldCapillaries();
+
+		boolean flag = capillaries.loadMCCapillaries_Descriptors(mcCapillaryFileName);
+		if (capillaries.getCapillariesList().size() < 1)
+			flag = xmlLoadOldCapillaries();
+
+		// load MCcapillaries description of experiment
+		if (prop.ffield_boxID.contentEquals("..") && prop.ffield_experiment.contentEquals("..")
+				&& prop.field_comment1.contentEquals("..") && prop.field_comment2.contentEquals("..")
+				&& prop.field_sex.contentEquals("..") && prop.field_strain.contentEquals("..")) {
+			prop.ffield_boxID = capillaries.getCapillariesDescription().getOld_boxID();
+			prop.ffield_experiment = capillaries.getCapillariesDescription().getOld_experiment();
+			prop.field_comment1 = capillaries.getCapillariesDescription().getOld_comment1();
+			prop.field_comment2 = capillaries.getCapillariesDescription().getOld_comment2();
+			prop.field_sex = capillaries.getCapillariesDescription().getOld_sex();
+			prop.field_strain = capillaries.getCapillariesDescription().getOld_strain();
+			prop.field_stim2 = capillaries.getCapillariesDescription().getOld_cond1();
+			prop.field_conc2 = capillaries.getCapillariesDescription().getOld_cond2();
+		}
+		return flag;
+	}
+
+	public boolean loadMCCapillaries() {
+		String xmlCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY,
+				BIN_DIRECTORY, IMG_DIRECTORY);
+		boolean flag1 = capillaries.loadMCCapillaries_Descriptors(xmlCapillaryFileName);
+		String kymosImagesDirectory = getKymosBinFullDirectory();
+		boolean flag2 = capillaries.load_Capillaries(kymosImagesDirectory);
+		if (flag1 & flag2) {
+			// TODO: Add loadListOfPotentialKymographsFromCapillaries method to SequenceKymos
+			// For now, this functionality may need to be implemented
+		}
+		return flag1 & flag2;
+	}
+
+	private boolean xmlLoadOldCapillaries() {
+		String filename = findFile_3Locations("capillarytrack.xml", IMG_DIRECTORY, EXPT_DIRECTORY, BIN_DIRECTORY);
+		if (capillaries.xmlLoadOldCapillaries_Only(filename)) {
+			saveMCCapillaries_Only();
+			saveCapillaries();
+			try {
+				Files.delete(Paths.get(filename));
+			} catch (IOException e) {
+				Logger.warn("Experiment:xmlLoadOldCapillaries() Failed to delete old file: " + filename, e);
+			}
+			return true;
+		}
+
+		filename = findFile_3Locations("roislines.xml", IMG_DIRECTORY, EXPT_DIRECTORY, BIN_DIRECTORY);
+		if (xmlReadCamDataROIs(filename)) {
+			xmlReadRoiLineParameters(filename);
+			try {
+				Files.delete(Paths.get(filename));
+			} catch (IOException e) {
+				Logger.warn("Experiment:xmlLoadOldCapillaries() Failed to delete old file: " + filename, e);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean xmlReadCamDataROIs(String fileName) {
+		Sequence seq = seqCamData.getSequence();
+		if (fileName != null) {
+			final Document doc = XMLUtil.loadDocument(fileName);
+			if (doc != null) {
+				List<ROI2D> seqRoisList = seq.getROI2Ds(false);
+				List<ROI2D> newRoisList = ROI2DUtilities.loadROIsFromXML(doc);
+				ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, seq);
+				seq.removeAllROI();
+				seq.addROIs(seqRoisList, false);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean xmlReadRoiLineParameters(String filename) {
+		if (filename != null) {
+			final Document doc = XMLUtil.loadDocument(filename);
+			if (doc != null)
+				return capillaries.getCapillariesDescription().xmlLoadCapillaryDescription(doc);
+		}
+		return false;
+	}
+
+	// ---------------------------------------------
+
+	public boolean saveMCCapillaries_Only() {
+		String xmlCapillaryFileName = resultsDirectory + File.separator + capillaries.getXMLNameToAppend();
+		transferExpDescriptorsToCapillariesDescriptors();
+		return capillaries.xmlSaveCapillaries_Descriptors(xmlCapillaryFileName);
+	}
+
+	private void transferExpDescriptorsToCapillariesDescriptors() {
+		capillaries.getCapillariesDescription().setOld_boxID(prop.ffield_boxID);
+		capillaries.getCapillariesDescription().setOld_experiment(prop.ffield_experiment);
+		capillaries.getCapillariesDescription().setOld_comment1(prop.field_comment1);
+		capillaries.getCapillariesDescription().setOld_comment2(prop.field_comment2);
+		capillaries.getCapillariesDescription().setOld_strain(prop.field_strain);
+		capillaries.getCapillariesDescription().setOld_sex(prop.field_sex);
+		capillaries.getCapillariesDescription().setOld_cond1(prop.field_stim2);
+		capillaries.getCapillariesDescription().setOld_cond2(prop.field_conc2);
+	}
+
+	public boolean loadCapillaries() {
+		return capillaries.load_Capillaries(getKymosBinFullDirectory());
+	}
+
+	public boolean saveCapillaries() {
+		return capillaries.save_Capillaries(getKymosBinFullDirectory());
+	}
+
+	public boolean loadCageMeasures() {
+		String pathToMeasures = getResultsDirectory() + File.separator + "CagesMeasures.csv";
+		File f = new File(pathToMeasures);
+		if (!f.exists())
+			moveCageMeasuresToExperimentDirectory(pathToMeasures);
+
+		boolean flag = cages.load_Cages(getResultsDirectory());
+		if (flag & seqCamData.getSequence() != null)
+			cages.cagesToROIs(seqCamData);
+		return flag;
+	}
+
+	private boolean moveCageMeasuresToExperimentDirectory(String pathToMeasures) {
+		boolean flag = false;
+		String pathToOldCsv = getKymosBinFullDirectory() + File.separator + "CagesMeasures.csv";
+		File fileToMove = new File(pathToOldCsv);
+		if (fileToMove.exists())
+			flag = fileToMove.renameTo(new File(pathToMeasures));
+		return flag;
+	}
+
+	public boolean saveCageMeasures() {
+		return cages.save_Cages(getResultsDirectory());
+	}
+
+	public void saveCageAndMeasures() {
+		cages.cagesFromROIs(seqCamData);
+		saveCageMeasures();
+	}
+
+	public boolean adjustCapillaryMeasuresDimensions() {
+		if (seqKymos.getImageWidthMax() < 1) {
+			seqKymos.setImageWidthMax(seqKymos.getSequence().getSizeX());
+			if (seqKymos.getImageWidthMax() < 1)
+				return false;
+		}
+		int imageWidth = seqKymos.getImageWidthMax();
+		capillaries.adjustToImageWidth(imageWidth);
+		seqKymos.getSequence().removeAllROI();
+		seqKymos.transferCapillariesMeasuresToKymos(capillaries);
+		return true;
+	}
+
+	public boolean cropCapillaryMeasuresDimensions() {
+		if (seqKymos.getImageWidthMax() < 1) {
+			seqKymos.setImageWidthMax(seqKymos.getSequence().getSizeX());
+			if (seqKymos.getImageWidthMax() < 1)
+				return false;
+		}
+		int imageWidth = seqKymos.getImageWidthMax();
+		capillaries.cropToImageWidth(imageWidth);
+		seqKymos.getSequence().removeAllROI();
+		seqKymos.transferCapillariesMeasuresToKymos(capillaries);
+		return true;
+	}
+
+	public boolean saveCapillariesMeasures(String directory) {
+		boolean flag = false;
+		if (seqKymos != null && seqKymos.getSequence() != null) {
+			seqKymos.validateRois();
+			seqKymos.transferKymosRoisToCapillaries_Measures(capillaries);
+			flag = capillaries.save_Capillaries(directory);
+		}
+		return flag;
+	}
+
+	public void dispatchCapillariesToCages() {
+		for (Cage cage : cages.getCageList()) {
+			cage.clearCapillaryList();
+		}
+
+		for (plugins.fmp.multicafe.experiment1.capillaries.Capillary cap : capillaries.getCapillariesList()) {
+			int cageID = cap.getCageIndexFromRoiName();
+			Cage cage = cages.getCageFromID(cageID);
+			if (cage == null) {
+				cage = new Cage();
+				cage.getProperties().setCageID(cageID);
+				cages.getCageList().add(cage);
+			}
+			cage.addCapillaryIfUnique(cap);
+		}
+	}
+
+	public boolean loadKymographs() {
+		if (getSeqKymos() == null)
+			setSeqKymos(new SequenceKymos());
+		
+		// Use KymographService to get list of potential kymographs from capillaries
+		plugins.fmp.multicafe.service.KymographService kymoService = new plugins.fmp.multicafe.service.KymographService();
+		List<plugins.fmp.multicafe.experiment1.ImageFileDescriptor> myList = 
+			kymoService.loadListOfPotentialKymographsFromCapillaries(getKymosBinFullDirectory(), capillaries);
+		
+		// Filter to get existing file names
+		plugins.fmp.multicafe.experiment1.ImageFileDescriptor.getExistingFileNames(myList);
+		
+		// Convert to experiment1 ImageFileDescriptor format
+		List<plugins.fmp.multicafe.experiment1.sequence.ImageFileDescriptor> newList = 
+			new ArrayList<plugins.fmp.multicafe.experiment1.sequence.ImageFileDescriptor>();
+		for (plugins.fmp.multicafe.experiment1.ImageFileDescriptor oldDesc : myList) {
+			if (oldDesc.fileName != null && oldDesc.exists) {
+				plugins.fmp.multicafe.experiment1.sequence.ImageFileDescriptor newDesc = 
+					new plugins.fmp.multicafe.experiment1.sequence.ImageFileDescriptor();
+				newDesc.fileName = oldDesc.fileName;
+				newDesc.exists = oldDesc.exists;
+				newDesc.imageHeight = oldDesc.imageHeight;
+				newDesc.imageWidth = oldDesc.imageWidth;
+				newList.add(newDesc);
+			}
+		}
+		
+		if (newList.isEmpty())
+			return false;
+		
+		// Load images using the new API
+		return getSeqKymos().loadKymographImagesFromList(newList, true);
+	}
+
+	public boolean loadCamDataCapillaries() {
+		// TODO: Adapt ExperimentService.loadCamDataCapillaries to work with experiment1.Experiment
+		// For now, return false - this needs to be implemented
+		return false;
+	}
+
+	public boolean openMeasures(boolean loadCapillaries, boolean loadDrosoPositions) {
+		// TODO: Implement full logic similar to old ExperimentPersistence.openMeasures
+		// For now, delegate to appropriate load methods
+		boolean flag = true;
+		if (loadCapillaries) {
+			flag = loadMCCapillaries_Only();
+		}
+		if (loadDrosoPositions) {
+			flag &= load_MS96_cages();
+		}
+		return flag;
+	}
+
+	private boolean replaceCapillariesValuesIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
+			String newValue) {
+		if (capillaries.getCapillariesList().size() == 0)
+			loadMCCapillaries_Only();
+		// Convert new enum to old enum for Capillary compatibility
+		plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader oldEnum = convertToOldEnum(fieldEnumCode);
+		if (oldEnum == null)
+			return false;
+		boolean flag = false;
+		for (plugins.fmp.multicafe.experiment1.capillaries.Capillary cap : capillaries.getCapillariesList()) {
+			if (cap.getCapillaryField(oldEnum).equals(oldValue)) {
+				cap.setCapillaryField(oldEnum, newValue);
+				flag = true;
+			}
+		}
+		return flag;
+	}
+
+	private void addCapillariesValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
+		if (capillaries.getCapillariesList().size() == 0)
+			loadMCCapillaries_Only();
+		// Convert new enum to old enum for Capillary compatibility
+		plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader oldEnum = convertToOldEnum(fieldEnumCode);
+		if (oldEnum == null)
+			return;
+		for (plugins.fmp.multicafe.experiment1.capillaries.Capillary cap : capillaries.getCapillariesList())
+			addValueIfUnique(cap.getCapillaryField(oldEnum), textList);
+	}
+
+	private plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader convertToOldEnum(EnumXLSColumnHeader newEnum) {
+		// Convert new enum values to old enum values for Capillary compatibility
+		switch (newEnum) {
+		case SPOT_STIM:
+			return plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.CAP_STIM;
+		case SPOT_CONC:
+			return plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.CAP_CONC;
+		default:
+			return null;
+		}
 	}
 
 }

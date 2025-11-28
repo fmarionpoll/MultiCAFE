@@ -182,7 +182,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		String stim2 = exp.getProperties().getField_stim2();
 		String conc2 = exp.getProperties().getField_conc2();
 
-		for (Cage cage : exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cages.cagesList) {
 
 			if (cage.spotsArray.getSpotsList().size() == 0)
 				continue;

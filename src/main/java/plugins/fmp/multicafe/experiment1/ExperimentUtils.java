@@ -14,13 +14,13 @@ import plugins.kernel.roi.roi2d.ROI2DPolygon;
 public class ExperimentUtils {
 
 	public static void transferCamDataROI2DsToSpots(Experiment exp) {
-		if (exp.cagesArray == null)
-			exp.cagesArray = new CagesArray();
+		if (exp.cages == null)
+			exp.cages = new CagesArray();
 
 		List<ROI2D> listROIsSpots = exp.seqCamData.getROIsContainingString("spot");
 		for (ROI2D roi : listROIsSpots) {
 			boolean found = false;
-			for (Cage cage : exp.cagesArray.cagesList) {
+			for (Cage cage : exp.cages.cagesList) {
 				for (Spot spot : cage.spotsArray.getSpotsList()) {
 					if (spot.getRoi() != null && roi.getName().equals(spot.getRoi().getName())) {
 						found = true;
@@ -34,7 +34,7 @@ public class ExperimentUtils {
 				int cageID = SpotString.getCageIDFromSpotName(name);
 				int cagePosition = SpotString.getSpotCagePositionFromSpotName(name);
 				if (cageID >= 0 && cagePosition >= 0) {
-					Cage cage = exp.cagesArray.getCageFromID(cageID);
+					Cage cage = exp.cages.getCageFromID(cageID);
 					cage.spotsArray.getSpotsList().add(new Spot(roi_new));
 				}
 			}
@@ -42,13 +42,13 @@ public class ExperimentUtils {
 	}
 
 	public void removeSpotsWithNoCamDataROI(Experiment exp) {
-		if (exp.cagesArray == null)
-			exp.cagesArray = new CagesArray();
+		if (exp.cages == null)
+			exp.cages = new CagesArray();
 
 		List<ROI2D> listROIsSpots = exp.seqCamData.getROIsContainingString("spot");
 
 		// spot with no corresponding roi? remove
-		for (Cage cage : exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cages.cagesList) {
 			Iterator<Spot> iterator = cage.spotsArray.getSpotsList().iterator();
 			while (iterator.hasNext()) {
 				Spot spot = iterator.next();
@@ -66,12 +66,12 @@ public class ExperimentUtils {
 	}
 
 	public static void transferSpotsToCamDataSequence(Experiment exp) {
-		if (exp.cagesArray == null)
+		if (exp.cages == null)
 			return;
 
 		List<ROI2D> listROISSpots = exp.seqCamData.getROIsContainingString("spot");
 		// roi with no corresponding cap? add ROI
-		for (Cage cage : exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cages.cagesList) {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				boolean found = false;
 				for (ROI roi : listROISSpots) {
@@ -87,12 +87,12 @@ public class ExperimentUtils {
 	}
 
 	public static void transferCagesToCamDataSequence(Experiment exp) {
-		if (exp.cagesArray == null)
+		if (exp.cages == null)
 			return;
 
 		List<ROI2D> roisAlreadyTransferred = exp.seqCamData.getROIsContainingString("cage");
 		// roi with no corresponding cap? add ROI
-		for (Cage cage : exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cages.cagesList) {
 			boolean found = false;
 			for (ROI roi : roisAlreadyTransferred) {
 				if (roi.getName().equals(cage.getRoi().getName())) {
@@ -106,7 +106,7 @@ public class ExperimentUtils {
 	}
 
 	public static void removeCageAndSpotROISFromCamDataSequence(Experiment exp) {
-		if (exp.cagesArray == null)
+		if (exp.cages == null)
 			return;
 
 		List<ROI2D> roisCages = exp.seqCamData.getROIsContainingString("cage");

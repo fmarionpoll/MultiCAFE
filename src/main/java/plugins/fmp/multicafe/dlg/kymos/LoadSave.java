@@ -25,7 +25,7 @@ import icy.system.thread.ThreadUtil;
 import loci.formats.FormatException;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.ImageFileDescriptor;
+import plugins.fmp.multicafe.experiment1.ImageFileDescriptor;
 import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
 import plugins.fmp.multicafe.experiment1.sequence.SequenceKymos;
 

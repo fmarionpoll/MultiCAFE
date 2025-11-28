@@ -693,6 +693,20 @@ public class CagesArray {
 		}
 	}
 
+	public void initCagesTmsForFlyPositions(long[] camImages_ms) {
+		if (camImages_ms == null)
+			return;
+		for (Cage cage : cagesList) {
+			if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null) {
+				for (FlyPosition flyPos : cage.flyPositions.flyPositionList) {
+					if (flyPos.flyIndexT >= 0 && flyPos.flyIndexT < camImages_ms.length) {
+						flyPos.tMs = camImages_ms[flyPos.flyIndexT];
+					}
+				}
+			}
+		}
+	}
+
 	// ----------------
 
 	public void computeBooleanMasksForCages() {

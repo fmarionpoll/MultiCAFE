@@ -24,7 +24,7 @@ public class DetectFlyFromCleanBackground extends BuildSeries {
 			return;
 
 		runFlyDetect2(exp);
-		exp.cagesArray.orderFlyPositions();
+		exp.cages.orderFlyPositions();
 		if (!stopFlag)
 			exp.save_MS96_fliesPositions();
 		exp.seqCamData.closeSequence();
@@ -34,7 +34,7 @@ public class DetectFlyFromCleanBackground extends BuildSeries {
 	private void runFlyDetect2(Experiment exp) {
 		exp.cleanPreviousDetectedFliesROIs();
 		find_flies.initParametersForDetection(exp, options);
-		exp.cagesArray.initFlyPositions(options.detectCage);
+		exp.cages.initFlyPositions(options.detectCage);
 		options.threshold = options.thresholdDiff;
 
 		if (exp.loadReferenceImage()) {

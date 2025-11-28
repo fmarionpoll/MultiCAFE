@@ -24,7 +24,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	// -----------------------------------
 
 	void analyzeExperiment(Experiment exp) {
-		if (!loadExperimentDataToBuildKymos(exp) || exp.cagesArray.getTotalNumberOfSpots() < 1)
+		if (!loadExperimentDataToBuildKymos(exp) || exp.cages.getTotalNumberOfSpots() < 1)
 			return;
 		openKymoViewers(exp);
 		getTimeLimitsOfSequence(exp);
@@ -86,7 +86,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private boolean buildKymo(Experiment exp) {
-		if (exp.cagesArray.getTotalNumberOfSpots() < 1) {
+		if (exp.cages.getTotalNumberOfSpots() < 1) {
 			System.out.println("BuildKymoSpots:buildKymo Abort (1): nb spots = 0");
 			return false;
 		}
@@ -224,7 +224,7 @@ public class BuildSpotsKymos extends BuildSeries {
 
 	private int getMaxImageHeight(Experiment exp) {
 		int maxImageHeight = 0;
-		for (Cage cage : exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cages.cagesList) {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				int height = spot.getSpotImage().getHeight();
 				if (height > maxImageHeight)

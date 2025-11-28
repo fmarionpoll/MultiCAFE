@@ -148,8 +148,8 @@ public class DescriptorsIO {
 		// cages/spots
 		try {
 			exp.load_MS96_cages();
-			if (exp.cagesArray != null && exp.cagesArray.cagesList != null) {
-				for (Cage cage : exp.cagesArray.cagesList) {
+			if (exp.cages != null && exp.cages.cagesList != null) {
+				for (Cage cage : exp.cages.cagesList) {
 					addIfNotEmpty(dicts.get(EnumXLSColumnHeader.CAGE_SEX), cage.getField(EnumXLSColumnHeader.CAGE_SEX));
 					addIfNotEmpty(dicts.get(EnumXLSColumnHeader.CAGE_STRAIN),
 							cage.getField(EnumXLSColumnHeader.CAGE_STRAIN));

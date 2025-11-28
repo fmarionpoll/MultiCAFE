@@ -257,8 +257,8 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 					if (loadDrosoTrack)
 						exp.zopenPositionsMeasures();
 
-					int nCages = exp.cagesArray.cagesList.size();
-					int nSpotsPerCage = exp.cagesArray.nColumnsPerCage * exp.cagesArray.nRowsPerCage;
+					int nCages = exp.cages.cagesList.size();
+					int nSpotsPerCage = exp.cages.nColumnsPerCage * exp.cages.nRowsPerCage;
 					int nMaxSpots = nCages * nSpotsPerCage;
 					if (maxSizeOfSpotsArrays < nMaxSpots) {
 						maxSizeOfSpotsArrays = nMaxSpots;

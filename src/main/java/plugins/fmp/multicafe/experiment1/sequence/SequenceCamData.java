@@ -60,7 +60,7 @@ public class SequenceCamData implements AutoCloseable {
 	private EnumStatus status = EnumStatus.REGULAR;
 	private int currentFrame = 0;
 	private IcyBufferedImage referenceImage = null;
-	
+
 	// Fields ported from experiment.SequenceCamData
 	private long seqAnalysisStart = 0;
 	private int seqAnalysisStep = 1;
@@ -107,6 +107,18 @@ public class SequenceCamData implements AutoCloseable {
 		this.viewerManager = new ViewerManager();
 		this.seq = new Sequence(name, image);
 		this.status = EnumStatus.FILESTACK;
+	}
+
+	public SequenceCamData(List<String> listNames) {
+		this.imageLoader = new ImageLoader();
+		this.timeManager = new TimeManager();
+		this.roiManager = new ROIManager();
+		this.viewerManager = new ViewerManager();
+		this.seq = new Sequence();
+		this.status = EnumStatus.FILESTACK;
+
+		setImagesList(listNames);
+		status = EnumStatus.FILESTACK;
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment1;
 
 import java.io.File;
 
@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment1.sequence.SequenceCamData;
 import plugins.fmp.multicafe.experiment1.sequence.SequenceKymos;
 

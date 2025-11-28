@@ -85,7 +85,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
-		for (Cage cage : exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cages.cagesList) {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 			cage.updateSpotsStimulus_i();
 

@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import plugins.fmp.multicafe.experiment.CombinedExperiment;
 import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.experiment1.CombinedExperiment;
 import plugins.fmp.multicafe.experiment1.cages.Cage;
 import plugins.fmp.multicafe.experiment1.cages.FlyPosition;
 
