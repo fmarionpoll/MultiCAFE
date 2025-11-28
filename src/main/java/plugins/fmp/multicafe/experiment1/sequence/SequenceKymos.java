@@ -537,6 +537,14 @@ public class SequenceKymos extends SequenceCamData {
 	public boolean isRunning_loadImages() {
 		return isLoadingImages;
 	}
+	
+	/**
+	 * @deprecated Use {@link #getKymographInfo()} instead
+	 */
+	@Deprecated
+	public void setRunning_loadImages(boolean isRunning) {
+		isLoadingImages = isRunning;
+	}
 
 	/**
 	 * @deprecated Use {@link #getKymographInfo()} instead
@@ -545,6 +553,14 @@ public class SequenceKymos extends SequenceCamData {
 	public int getImageWidthMax() {
 		return maxImageWidth;
 	}
+	
+	/**
+	 * @deprecated Use {@link #getKymographInfo()} instead
+	 */
+	@Deprecated
+	public void setImageWidthMax(int maxImageWidth) {
+		this.maxImageWidth = maxImageWidth;
+	}
 
 	/**
 	 * @deprecated Use {@link #getKymographInfo()} instead
@@ -552,6 +568,14 @@ public class SequenceKymos extends SequenceCamData {
 	@Deprecated
 	public int getImageHeightMax() {
 		return maxImageHeight;
+	}
+	
+	/**
+	 * @deprecated Use {@link #getKymographInfo()} instead
+	 */
+	@Deprecated
+	public void setImageHeightMax(int maxImageHeight) {
+		this.maxImageHeight = maxImageHeight;
 	}
 
 	// === PRIVATE HELPER METHODS ===

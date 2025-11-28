@@ -10,9 +10,6 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
-import loci.formats.FormatException;
-import ome.xml.meta.OMEXMLMetadata;
-
 import icy.common.exception.UnsupportedFormatException;
 import icy.file.Loader;
 import icy.file.Saver;
@@ -21,10 +18,12 @@ import icy.image.IcyBufferedImage;
 import icy.sequence.MetaDataUtil;
 import icy.type.DataType;
 import icy.type.collection.array.Array1DUtil;
+import loci.formats.FormatException;
+import ome.xml.meta.OMEXMLMetadata;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.ExperimentDirectories;
 import plugins.fmp.multicafe.experiment.ImageFileDescriptor;
-import plugins.fmp.multicafe.experiment.sequence.EnumStatus;
+import plugins.fmp.multicafe.experiment1.EnumStatus;
 import plugins.fmp.multicafe.experiment1.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
 import plugins.fmp.multicafe.experiment1.sequence.SequenceKymos;
@@ -35,8 +34,8 @@ import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
 
 public class KymographService {
 
-	public void buildFiltered(Experiment exp, int zChannelSource, int zChannelDestination, ImageTransformEnums transformop1,
-			int spanDiff) {
+	public void buildFiltered(Experiment exp, int zChannelSource, int zChannelDestination,
+			ImageTransformEnums transformop1, int spanDiff) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
 		int nimages = seqKymos.getSequence().getSizeT();
 		seqKymos.getSequence().beginUpdate();
@@ -92,7 +91,8 @@ public class KymographService {
 		}
 	}
 
-	public boolean loadImagesFromList(SequenceKymos seqKymos, List<ImageFileDescriptor> kymoImagesDesc, boolean adjustImagesSize) {
+	public boolean loadImagesFromList(SequenceKymos seqKymos, List<ImageFileDescriptor> kymoImagesDesc,
+			boolean adjustImagesSize) {
 		seqKymos.setRunning_loadImages(true);
 		boolean flag = (kymoImagesDesc.size() > 0);
 		if (!flag)
@@ -153,7 +153,8 @@ public class KymographService {
 			fileProp.imageHeight = MetaDataUtil.getSizeY(metaData, 0);
 			flag = true;
 		} catch (UnsupportedFormatException | IOException | InterruptedException e) {
-			Logger.error("KymographService:readImageProperties() Failed to read image properties: " + fileProp.fileName, e);
+			Logger.error("KymographService:readImageProperties() Failed to read image properties: " + fileProp.fileName,
+					e);
 		}
 		return flag;
 	}
@@ -176,14 +177,16 @@ public class KymographService {
 				Logger.error("KymographService:adjustImagesToMaxSize() Failed to load image: " + fileProp.fileName, e1);
 			}
 
-			IcyBufferedImage ibufImage2 = new IcyBufferedImage(seqKymos.getImageWidthMax(), seqKymos.getImageHeightMax(), ibufImage1.getSizeC(),
-					ibufImage1.getDataType_());
+			IcyBufferedImage ibufImage2 = new IcyBufferedImage(seqKymos.getImageWidthMax(),
+					seqKymos.getImageHeightMax(), ibufImage1.getSizeC(), ibufImage1.getDataType_());
 			transferImage1To2(ibufImage1, ibufImage2);
 
 			try {
 				Saver.saveImage(ibufImage2, new File(fileProp.fileName), true);
 			} catch (FormatException | IOException e) {
-				Logger.error("KymographService:adjustImagesToMaxSize() Failed to save adjusted image: " + fileProp.fileName, e);
+				Logger.error(
+						"KymographService:adjustImagesToMaxSize() Failed to save adjusted image: " + fileProp.fileName,
+						e);
 			}
 
 			progress.incPosition();
@@ -245,9 +248,9 @@ public class KymographService {
 			try {
 				FileUtils.moveFile(FileUtils.getFile(oldName), FileUtils.getFile(newName));
 			} catch (IOException e) {
-				Logger.error("KymographService:renameOldFile() Failed to rename file: " + oldName + " to " + newName, e);
+				Logger.error("KymographService:renameOldFile() Failed to rename file: " + oldName + " to " + newName,
+						e);
 			}
 		}
 	}
 }
-
