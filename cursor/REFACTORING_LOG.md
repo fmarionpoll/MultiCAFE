@@ -15,3 +15,4 @@ Identified as a source project for the extraction of common routines to the new 
 *   Refactor `Experiment` and `SequenceCamData` to use the new shared managers (`ImageLoader`, `TimeManager`) from `fmpTools`.
 
 
+

@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
+import plugins.fmp.multicafe.experiment1.Experiment;
+import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
 public class Edit extends JPanel {
@@ -34,7 +34,7 @@ public class Edit extends JPanel {
 	private JButton applyButton = new JButton("Apply");
 	private MultiCAFE parent0 = null;
 	boolean disableChangeFile = false;
-	ExperimentsJComboBox editExpList = new ExperimentsJComboBox();
+	JComboBoxExperimentLazy editExpList = new JComboBoxExperimentLazy();
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		this.parent0 = parent0;
@@ -71,7 +71,7 @@ public class Edit extends JPanel {
 
 	public void initEditCombos() {
 		editExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsList());
-		editExpList.getFieldValuesToCombo(fieldOldValuesCombo, (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
+		editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo, (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 	}
 
 	private void defineActionListeners() {
@@ -87,7 +87,7 @@ public class Edit extends JPanel {
 		fieldNamesCombo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				editExpList.getFieldValuesToCombo(fieldOldValuesCombo,
+				editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo,
 						(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 			}
 		});
@@ -101,14 +101,14 @@ public class Edit extends JPanel {
 
 		for (int i = 0; i < nExperiments; i++) {
 			Experiment exp = editExpList.getItemAt(i);
-			exp.xmlLoad_MCExperiment();
-			exp.loadMCCapillaries();
-			exp.loadCapillaries();
+			exp.load_MS96_experiment();
+			exp.load_MS96_cages();
+			// exp.loadCapillaries(); // Not sure if this has an equivalent or is needed if cages are loaded
 
-			exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
+			exp.replaceExperimentFieldIfEqualOldValue(fieldEnumCode, oldValue, newValue);
 
-			exp.xmlSave_MCExperiment();
-			exp.saveCapillaries();
+			exp.save_MS96_experiment();
+			exp.save_MS96_cages();
 		}
 	}
 

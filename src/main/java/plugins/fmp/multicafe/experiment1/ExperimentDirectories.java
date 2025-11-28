@@ -24,11 +24,12 @@ public class ExperimentDirectories {
 	public List<String> cameraImagesList = null;
 
 	private String resultsDirectory = null;
-//	private String binSubDirectory = null;
-//	public List<String> kymosImagesList = null;
-//	public String getBinSubDirectory() {
-//		return binSubDirectory;
-//	}
+	private String binSubDirectory = null;
+	public List<String> kymosImagesList = null;
+
+	public String getBinSubDirectory() {
+		return binSubDirectory;
+	}
 
 	public String getResultsDirectory() {
 		return resultsDirectory;
@@ -138,9 +139,9 @@ public class ExperimentDirectories {
 		cameraImagesDirectory = Directories.getDirectoryFromName(cameraImagesList.get(0));
 		resultsDirectory = getResultsDirectoryDialog(cameraImagesDirectory, Experiment.RESULTS, createResults);
 
-//		binSubDirectory = getBinSubDirectoryFromTIFFLocation(expListBinSubDirectory, resultsDirectory);
-//		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
-//		kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
+		binSubDirectory = getBinSubDirectoryFromTIFFLocation(expListBinSubDirectory, resultsDirectory);
+		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
+		kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
 		return true;
 	}
 
@@ -149,9 +150,9 @@ public class ExperimentDirectories {
 		cameraImagesList = ExperimentDirectories.getImagesListFromPathV2(cameraImagesDirectory, "jpg");
 		resultsDirectory = getResultsDirectory(cameraImagesDirectory, exptDirectory);
 
-//		binSubDirectory = getBinSubDirectoryFromTIFFLocation(expListBinSubDirectory, resultsDirectory);
-//		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
-//		kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
+		binSubDirectory = getBinSubDirectoryFromTIFFLocation(expListBinSubDirectory, resultsDirectory);
+		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
+		kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
 		return true;
 	}
 
@@ -160,31 +161,44 @@ public class ExperimentDirectories {
 		this.cameraImagesDirectory = grabsDirectory;
 
 		this.resultsDirectory = getResultsDirectory(cameraImagesDirectory, Experiment.RESULTS);
-//		this.binSubDirectory = getBinSubDirectoryFromTIFFLocation(null, resultsDirectory);
+		this.binSubDirectory = getBinSubDirectoryFromTIFFLocation(null, resultsDirectory);
 
-//		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
-//		this.kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
+		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
+		this.kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
 		// TODO wrong if any bin
 		return true;
 	}
 
-//	private String getBinSubDirectoryFromTIFFLocation(String expListBinSubDirectory, String resultsDirectory) {
-//		List<String> expList = Directories.getSortedListOfSubDirectoriesWithTIFF(resultsDirectory);
-//		String binDirectory = expListBinSubDirectory;
-//		if (binDirectory == null) {
-//			if (expList.size() > 1) {
-//				if (expListBinSubDirectory == null)
-//					binDirectory = selectSubDirDialog(expList, "Select item", Experiment.BIN, false);
-//			} else if (expList.size() == 1) {
-//				binDirectory = expList.get(0).toLowerCase();
-//				if (!binDirectory.contains(Experiment.BIN))
-//					binDirectory = Experiment.BIN + "60";
-//			} else
-//				binDirectory = Experiment.BIN + "60";
-//		}
-//		move_XML_From_Bin_to_Results(binDirectory, resultsDirectory);
-//		return binDirectory;
-//	}
+	private String getBinSubDirectoryFromTIFFLocation(String expListBinSubDirectory, String resultsDirectory) {
+		List<String> expList = Directories.getSortedListOfSubDirectoriesWithTIFF(resultsDirectory);
+		move_TIFFandLINEfiles_From_Results_to_BinDirectory(resultsDirectory, expList);
+		String binDirectory = expListBinSubDirectory;
+		if (binDirectory == null) {
+			if (expList.size() > 1) {
+				if (expListBinSubDirectory == null)
+					binDirectory = selectSubDirDialog(expList, "Select item", Experiment.BIN, false);
+			} else if (expList.size() == 1) {
+				binDirectory = expList.get(0).toLowerCase();
+				if (!binDirectory.contains(Experiment.BIN))
+					binDirectory = Experiment.BIN + "60";
+			} else
+				binDirectory = Experiment.BIN + "60";
+		}
+		move_XML_From_Bin_to_Results(binDirectory, resultsDirectory);
+		return binDirectory;
+	}
+
+	private void move_TIFFandLINEfiles_From_Results_to_BinDirectory(String parentDirectory, List<String> expList) {
+		if (expList == null)
+			return;
+		for (String subDirectory : expList) {
+			if (subDirectory.contains(Experiment.RESULTS)) {
+				subDirectory = Experiment.BIN + "60";
+				Directories.move_TIFFfiles_To_Subdirectory(parentDirectory, subDirectory);
+				Directories.move_xmlLINEfiles_To_Subdirectory(parentDirectory, subDirectory, true);
+			}
+		}
+	}
 
 	static public String getParentIf(String filename, String filter) {
 		if (filename != null && filename.contains(filter))
@@ -220,12 +234,12 @@ public class ExperimentDirectories {
 		return parentDirectory + File.separator + name;
 	}
 
-//	private void move_XML_From_Bin_to_Results(String binSubDirectory, String resultsDirectory) {
-//		String binDirectory = resultsDirectory + File.separator + binSubDirectory;
-//		moveAndRename("MCcapi.xml", binDirectory, "MCcapillaries.xml", resultsDirectory);
-//		moveAndRename("MCexpe.xml", binDirectory, "MCexperiment.xml", resultsDirectory);
-//		moveAndRename("MCdros.xml", binDirectory, "MCdrosotrack.xml", resultsDirectory);
-//	}
+	private void move_XML_From_Bin_to_Results(String binSubDirectory, String resultsDirectory) {
+		String binDirectory = resultsDirectory + File.separator + binSubDirectory;
+		moveAndRename("MCcapi.xml", binDirectory, "MCcapillaries.xml", resultsDirectory);
+		moveAndRename("MCexpe.xml", binDirectory, "MCexperiment.xml", resultsDirectory);
+		moveAndRename("MCdros.xml", binDirectory, "MCdrosotrack.xml", resultsDirectory);
+	}
 
 	static void moveAndRename(String oldFileName, String oldDirectory, String newFileName, String newDirectory) {
 		String oldFilePathString = oldDirectory + File.separator + oldFileName;
