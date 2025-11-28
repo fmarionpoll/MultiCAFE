@@ -26,7 +26,7 @@ import icy.image.IcyBufferedImageUtil;
 import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.experiment1.sequence.SequenceCamData;
 import plugins.fmp.multicafe.series.BuildBackground;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.service.SequenceLoaderService;

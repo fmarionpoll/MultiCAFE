@@ -9,7 +9,7 @@ import java.util.List;
 import icy.roi.ROI2D;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.experiment1.sequence.SequenceCamData;
 import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.Logger;
 import plugins.kernel.roi.roi2d.ROI2DArea;

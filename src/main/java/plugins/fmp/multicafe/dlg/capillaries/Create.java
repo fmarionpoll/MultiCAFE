@@ -26,7 +26,7 @@ import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
-import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.experiment1.sequence.SequenceCamData;
 import plugins.fmp.multicafe.experiment.sequence.SequenceKymosUtils;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DLine;

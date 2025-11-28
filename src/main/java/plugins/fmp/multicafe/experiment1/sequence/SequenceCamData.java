@@ -60,6 +60,11 @@ public class SequenceCamData implements AutoCloseable {
 	private EnumStatus status = EnumStatus.REGULAR;
 	private int currentFrame = 0;
 	private IcyBufferedImage referenceImage = null;
+	
+	// Fields ported from experiment.SequenceCamData
+	private long seqAnalysisStart = 0;
+	private int seqAnalysisStep = 1;
+	private plugins.kernel.roi.roi2d.ROI2DPolygon referenceROI2DPolygon = null;
 
 	// Specialized managers
 	private final ImageLoader imageLoader;
@@ -609,6 +614,32 @@ public class SequenceCamData implements AutoCloseable {
 
 	public void setReferenceImage(IcyBufferedImage image) {
 		this.referenceImage = image;
+	}
+
+	// === ANALYSIS PARAMETERS (Ported from experiment.SequenceCamData) ===
+
+	public long getSeqAnalysisStart() {
+		return seqAnalysisStart;
+	}
+
+	public void setSeqAnalysisStart(long seqAnalysisStart) {
+		this.seqAnalysisStart = seqAnalysisStart;
+	}
+
+	public int getSeqAnalysisStep() {
+		return seqAnalysisStep;
+	}
+
+	public void setSeqAnalysisStep(int seqAnalysisStep) {
+		this.seqAnalysisStep = seqAnalysisStep;
+	}
+
+	public plugins.kernel.roi.roi2d.ROI2DPolygon getReferenceROI2DPolygon() {
+		return referenceROI2DPolygon;
+	}
+
+	public void setReferenceROI2DPolygon(plugins.kernel.roi.roi2d.ROI2DPolygon roi) {
+		referenceROI2DPolygon = roi;
 	}
 
 	// === PRIVATE HELPER METHODS ===

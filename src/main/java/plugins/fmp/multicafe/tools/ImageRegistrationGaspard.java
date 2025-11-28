@@ -8,7 +8,7 @@ import icy.file.Saver;
 import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.experiment1.sequence.SequenceCamData;
 
 public class ImageRegistrationGaspard extends ImageRegistration {
 
