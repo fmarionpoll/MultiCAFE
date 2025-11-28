@@ -18,7 +18,7 @@ import javax.swing.SwingConstants;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment1.cages.Cage;
 
 public class Infos extends JPanel {
 	/**

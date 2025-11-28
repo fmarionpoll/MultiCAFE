@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.experiment;
 
 import java.util.ArrayList;
 
-import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment1.cages.Cage;
 
 public class CombinedExperiment extends Experiment {
 	ArrayList<Experiment> experimentList = null;

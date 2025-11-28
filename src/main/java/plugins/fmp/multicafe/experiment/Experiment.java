@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.experiment1.cages.Cage;
 import plugins.fmp.multicafe.experiment.cages.Cages;
 import plugins.fmp.multicafe.experiment1.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment1.capillaries.Capillary;

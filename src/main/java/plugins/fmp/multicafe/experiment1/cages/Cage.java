@@ -17,6 +17,8 @@ import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillaries;
+import plugins.fmp.multicafe.experiment1.capillaries.Capillary;
 import plugins.fmp.multicafe.experiment1.spots.Spot;
 import plugins.fmp.multicafe.experiment1.spots.SpotString;
 import plugins.fmp.multicafe.experiment1.spots.SpotsArray;
@@ -36,6 +38,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public FlyPositions flyPositions = new FlyPositions();
 	public SpotsArray spotsArray = new SpotsArray();
+	private ArrayList<Capillary> capList = new ArrayList<Capillary>(2);
 	private final AtomicBoolean closed = new AtomicBoolean(false);
 
 	public boolean valid = false;
@@ -91,6 +94,53 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		Rectangle2D rect = cageROI2D.getBounds2D();
 		Point2D pt = new Point2D.Double(rect.getX() + rect.getWidth() / 2, rect.getY());
 		return pt;
+	}
+
+	public Point2D getCenterTipCapillaries(Capillaries capList) {
+		List<Point2D> listpts = new ArrayList<Point2D>();
+		for (Capillary cap : capList.getCapillariesList()) {
+			Point2D pt = cap.getCapillaryTipWithinROI2D(cageROI2D);
+			if (pt != null)
+				listpts.add(pt);
+		}
+		double x = 0;
+		double y = 0;
+		int n = listpts.size();
+		for (Point2D pt : listpts) {
+			x += pt.getX();
+			y += pt.getY();
+		}
+		Point2D pt = new Point2D.Double(x / n, y / n);
+		return pt;
+	}
+	
+	public void addCapillaryIfUnique(Capillary cap) {
+		if (capList.size() == 0) {
+			capList.add(cap);
+			return;
+		}
+
+		for (Capillary capCage : capList) {
+			if (capCage.compareTo(cap) == 0) {
+				return;
+			}
+		}
+		capList.add(cap);
+	}
+
+	public void addCapillaryIfUniqueBulkFilteredOnCageID(List<Capillary> capillaryList) {
+		for (Capillary cap : capillaryList) {
+			if (cap.capCageID == prop.getCageID())
+				addCapillaryIfUnique(cap);
+		}
+	}
+
+	public void clearCapillaryList() {
+		capList.clear();
+	}
+
+	public ArrayList<Capillary> getCapillaryList() {
+		return capList;
 	}
 
 	public void copyCageInfo(Cage cageFrom) {
