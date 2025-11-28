@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.sequence;
 
 import java.awt.Color;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.sequence;
 
 import java.text.DateFormat;
 import java.text.ParseException;

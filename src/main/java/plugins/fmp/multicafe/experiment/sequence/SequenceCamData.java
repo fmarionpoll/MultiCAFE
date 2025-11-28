@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.experiment;
+package plugins.fmp.multicafe.experiment.sequence;
 
 import java.awt.Rectangle;
 import java.io.File;

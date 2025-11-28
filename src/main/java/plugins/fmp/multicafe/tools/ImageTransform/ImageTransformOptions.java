@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import icy.image.IcyBufferedImage;
-import plugins.fmp.multicafe.experiment.SequenceCamData;
+import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
 
 public class ImageTransformOptions {
 	public ImageTransformEnums transformOption;

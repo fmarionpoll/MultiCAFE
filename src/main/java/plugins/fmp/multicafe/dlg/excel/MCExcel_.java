@@ -18,9 +18,9 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.tools.JComponents.Dialog;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportCapillariesResults;
+import plugins.fmp.multicafe.tools.toExcel.XLSExportGulpsResults;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportMoveResults;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
-import plugins.fmp.multicafe.tools1.toExcel.XLSExportGulpsResults;
 
 public class MCExcel_ extends JPanel implements PropertyChangeListener {
 	/**

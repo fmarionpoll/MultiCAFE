@@ -19,6 +19,8 @@ import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.cages.Cages;
 import plugins.fmp.multicafe.experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.tools.Directories;
 import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;

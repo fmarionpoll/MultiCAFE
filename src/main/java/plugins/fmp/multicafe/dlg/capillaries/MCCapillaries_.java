@@ -17,7 +17,7 @@ import icy.gui.component.PopupPanel;
 import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.SequenceKymosUtils;
+import plugins.fmp.multicafe.experiment.sequence.SequenceKymosUtils;
 
 public class MCCapillaries_ extends JPanel implements PropertyChangeListener, ChangeListener {
 	/**

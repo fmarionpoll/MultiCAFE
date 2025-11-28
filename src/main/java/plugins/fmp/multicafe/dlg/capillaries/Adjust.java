@@ -22,7 +22,7 @@ import icy.roi.ROI2D;
 import icy.type.collection.array.Array1DUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.SequenceCamData;
+import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.tools.Line2DPlus;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DLine;

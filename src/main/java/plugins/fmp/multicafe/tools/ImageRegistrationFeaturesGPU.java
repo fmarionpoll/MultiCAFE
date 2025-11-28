@@ -26,9 +26,9 @@ import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
 import icy.type.collection.array.Array1DUtil;
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.SequenceCamData;
 import plugins.fmp.multicafe.experiment.cages.Cage;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.workinprogress_gpu.EnumCLFunction;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 

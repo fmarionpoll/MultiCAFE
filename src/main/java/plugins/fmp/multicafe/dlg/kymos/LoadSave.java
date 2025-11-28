@@ -26,8 +26,8 @@ import loci.formats.FormatException;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.ImageFileDescriptor;
-import plugins.fmp.multicafe.experiment.SequenceKymos;
 import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.experiment.sequence.SequenceKymos;
 
 public class LoadSave extends JPanel {
 	/**

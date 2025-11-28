@@ -2,6 +2,7 @@ package plugins.fmp.multicafe.experiment;
 
 import java.nio.file.attribute.FileTime;
 
+import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.tools.Logger;
 
 public class ExperimentTimeManager {

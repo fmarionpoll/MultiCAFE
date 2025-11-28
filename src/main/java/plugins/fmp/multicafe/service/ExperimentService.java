@@ -5,8 +5,8 @@ import java.util.List;
 import plugins.fmp.multicafe.experiment.Experiment;
 import plugins.fmp.multicafe.experiment.ExperimentDirectories;
 import plugins.fmp.multicafe.experiment.ImageFileDescriptor;
-import plugins.fmp.multicafe.experiment.SequenceCamData;
-import plugins.fmp.multicafe.experiment.SequenceKymos;
+import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.experiment.sequence.SequenceKymos;
 
 public class ExperimentService {
 

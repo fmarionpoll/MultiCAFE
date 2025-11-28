@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.SequenceCamData;
+import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
 
 public abstract class ImageRegistration {
 	
