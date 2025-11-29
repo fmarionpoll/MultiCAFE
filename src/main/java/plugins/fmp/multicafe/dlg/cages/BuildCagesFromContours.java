@@ -30,10 +30,10 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
-import plugins.fmp.multicafe.tools.Blobs;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools.Overlay.OverlayThreshold;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
+import plugins.fmp.multicafe.tools.overlay.OverlayThreshold;
+import plugins.fmp.multicafe.tools.polyline.Blobs;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class BuildCagesFromContours extends JPanel implements ChangeListener {

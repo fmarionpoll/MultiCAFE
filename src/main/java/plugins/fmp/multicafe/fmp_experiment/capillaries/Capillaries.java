@@ -10,9 +10,9 @@ import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.tools.Comparators;
-import plugins.fmp.multicafe.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.ROI2D.AlongT;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Capillaries {
@@ -252,7 +252,7 @@ public class Capillaries {
 			capillariesListTimeIntervals = new KymoIntervals();
 
 			for (Capillary cap : getCapillariesList()) {
-				for (ROI2DAlongT roiFK : cap.getROIsForKymo()) {
+				for (AlongT roiFK : cap.getROIsForKymo()) {
 					Long[] interval = { roiFK.getStart(), (long) -1 };
 					capillariesListTimeIntervals.addIfNew(interval);
 				}
@@ -266,11 +266,11 @@ public class Capillaries {
 		int item = capillariesListTimeIntervals.addIfNew(interval);
 
 		for (Capillary cap : getCapillariesList()) {
-			List<ROI2DAlongT> listROI2DForKymo = cap.getROIsForKymo();
+			List<AlongT> listROI2DForKymo = cap.getROIsForKymo();
 			ROI2D roi = cap.getRoi();
 			if (item > 0)
 				roi = (ROI2D) listROI2DForKymo.get(item - 1).getRoi().getCopy();
-			listROI2DForKymo.add(item, new ROI2DAlongT(start, roi));
+			listROI2DForKymo.add(item, new AlongT(start, roi));
 		}
 		return item;
 	}

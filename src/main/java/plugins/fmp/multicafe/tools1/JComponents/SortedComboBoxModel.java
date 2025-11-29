@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools.JComponents;
+package plugins.fmp.multicafe.tools1.JComponents;
 
 import java.util.Arrays;
 import java.util.Collections;

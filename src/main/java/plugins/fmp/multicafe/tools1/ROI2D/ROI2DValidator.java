@@ -31,7 +31,7 @@ public final class ROI2DValidator {
      */
     public static void validateNotNull(ROI roi, String parameterName) throws ROI2DValidationException {
         if (roi == null) {
-            throw new ROI2DValidationException(parameterName, null, ROI2DConstants.ErrorMessages.NULL_ROI);
+            throw new ROI2DValidationException(parameterName, null, Constants.ErrorMessages.NULL_ROI);
         }
     }
     
@@ -44,7 +44,7 @@ public final class ROI2DValidator {
      */
     public static void validateNotNull(Sequence sequence, String parameterName) throws ROI2DValidationException {
         if (sequence == null) {
-            throw new ROI2DValidationException(parameterName, null, ROI2DConstants.ErrorMessages.NULL_SEQUENCE);
+            throw new ROI2DValidationException(parameterName, null, Constants.ErrorMessages.NULL_SEQUENCE);
         }
     }
     
@@ -57,7 +57,7 @@ public final class ROI2DValidator {
      */
     public static void validateNotNull(Polygon2D polygon, String parameterName) throws ROI2DValidationException {
         if (polygon == null) {
-            throw new ROI2DValidationException(parameterName, null, ROI2DConstants.ErrorMessages.NULL_POLYGON);
+            throw new ROI2DValidationException(parameterName, null, Constants.ErrorMessages.NULL_POLYGON);
         }
     }
     
@@ -70,10 +70,10 @@ public final class ROI2DValidator {
      */
     public static void validateNotNullOrEmpty(List<Point2D> points, String parameterName) throws ROI2DValidationException {
         if (points == null) {
-            throw new ROI2DValidationException(parameterName, null, ROI2DConstants.ErrorMessages.NULL_POINTS);
+            throw new ROI2DValidationException(parameterName, null, Constants.ErrorMessages.NULL_POINTS);
         }
         if (points.isEmpty()) {
-            throw new ROI2DValidationException(parameterName, points.size(), ROI2DConstants.ErrorMessages.EMPTY_POINTS);
+            throw new ROI2DValidationException(parameterName, points.size(), Constants.ErrorMessages.EMPTY_POINTS);
         }
     }
     
@@ -90,7 +90,7 @@ public final class ROI2DValidator {
         validateNotNull(polygon, parameterName);
         if (polygon.npoints != requiredSides) {
             throw new ROI2DValidationException(parameterName, polygon.npoints, 
-                String.format(ROI2DConstants.ErrorMessages.INVALID_POLYGON_SIDES, requiredSides, polygon.npoints));
+                String.format(Constants.ErrorMessages.INVALID_POLYGON_SIDES, requiredSides, polygon.npoints));
         }
     }
     
@@ -102,15 +102,15 @@ public final class ROI2DValidator {
      * @throws ROI2DValidationException If dimensions are invalid
      */
     public static void validateGridDimensions(int columns, int rows) throws ROI2DValidationException {
-        if (columns < ROI2DConstants.Grid.MIN_GRID_COLUMNS || columns > ROI2DConstants.Grid.MAX_GRID_COLUMNS) {
+        if (columns < Constants.Grid.MIN_GRID_COLUMNS || columns > Constants.Grid.MAX_GRID_COLUMNS) {
             throw new ROI2DValidationException("columns", columns, 
                 String.format("Must be between %d and %d", 
-                    ROI2DConstants.Grid.MIN_GRID_COLUMNS, ROI2DConstants.Grid.MAX_GRID_COLUMNS));
+                    Constants.Grid.MIN_GRID_COLUMNS, Constants.Grid.MAX_GRID_COLUMNS));
         }
-        if (rows < ROI2DConstants.Grid.MIN_GRID_ROWS || rows > ROI2DConstants.Grid.MAX_GRID_ROWS) {
+        if (rows < Constants.Grid.MIN_GRID_ROWS || rows > Constants.Grid.MAX_GRID_ROWS) {
             throw new ROI2DValidationException("rows", rows, 
                 String.format("Must be between %d and %d", 
-                    ROI2DConstants.Grid.MIN_GRID_ROWS, ROI2DConstants.Grid.MAX_GRID_ROWS));
+                    Constants.Grid.MIN_GRID_ROWS, Constants.Grid.MAX_GRID_ROWS));
         }
     }
     
@@ -122,10 +122,10 @@ public final class ROI2DValidator {
      * @throws ROI2DValidationException If there are insufficient points
      */
     public static void validateEllipsePoints(int pointCount, String parameterName) throws ROI2DValidationException {
-        if (pointCount < ROI2DConstants.Geometry.MIN_ELLIPSE_POINTS) {
+        if (pointCount < Constants.Geometry.MIN_ELLIPSE_POINTS) {
             throw new ROI2DValidationException(parameterName, pointCount,
-                String.format(ROI2DConstants.ErrorMessages.INSUFFICIENT_ELLIPSE_POINTS, 
-                    ROI2DConstants.Geometry.MIN_ELLIPSE_POINTS, pointCount));
+                String.format(Constants.ErrorMessages.INSUFFICIENT_ELLIPSE_POINTS, 
+                    Constants.Geometry.MIN_ELLIPSE_POINTS, pointCount));
         }
     }
     
@@ -137,12 +137,12 @@ public final class ROI2DValidator {
      * @throws ROI2DValidationException If the threshold is out of range
      */
     public static void validateThreshold(int threshold, String parameterName) throws ROI2DValidationException {
-        if (threshold < ROI2DConstants.Measurement.MIN_SPOT_THRESHOLD || 
-            threshold > ROI2DConstants.Measurement.MAX_SPOT_THRESHOLD) {
+        if (threshold < Constants.Measurement.MIN_SPOT_THRESHOLD || 
+            threshold > Constants.Measurement.MAX_SPOT_THRESHOLD) {
             throw new ROI2DValidationException(parameterName, threshold,
-                String.format(ROI2DConstants.ErrorMessages.INVALID_THRESHOLD_RANGE,
-                    ROI2DConstants.Measurement.MIN_SPOT_THRESHOLD,
-                    ROI2DConstants.Measurement.MAX_SPOT_THRESHOLD,
+                String.format(Constants.ErrorMessages.INVALID_THRESHOLD_RANGE,
+                    Constants.Measurement.MIN_SPOT_THRESHOLD,
+                    Constants.Measurement.MAX_SPOT_THRESHOLD,
                     threshold));
         }
     }
@@ -157,7 +157,7 @@ public final class ROI2DValidator {
     public static void validatePositiveScaleFactor(double scaleFactor, String parameterName) throws ROI2DValidationException {
         if (scaleFactor <= 0.0) {
             throw new ROI2DValidationException(parameterName, scaleFactor,
-                String.format(ROI2DConstants.ErrorMessages.INVALID_SCALE_FACTOR, scaleFactor));
+                String.format(Constants.ErrorMessages.INVALID_SCALE_FACTOR, scaleFactor));
         }
     }
     
@@ -169,9 +169,9 @@ public final class ROI2DValidator {
      * @throws ROI2DValidationException If intervals are invalid
      */
     public static void validateInterpolationIntervals(int intervals, String parameterName) throws ROI2DValidationException {
-        if (intervals < ROI2DConstants.Measurement.MIN_INTERPOLATION_INTERVALS) {
+        if (intervals < Constants.Measurement.MIN_INTERPOLATION_INTERVALS) {
             throw new ROI2DValidationException(parameterName, intervals,
-                String.format("Must be at least %d", ROI2DConstants.Measurement.MIN_INTERPOLATION_INTERVALS));
+                String.format("Must be at least %d", Constants.Measurement.MIN_INTERPOLATION_INTERVALS));
         }
     }
     
@@ -186,7 +186,7 @@ public final class ROI2DValidator {
     public static void validateArrayIndex(int index, int arrayLength, String parameterName) throws ROI2DValidationException {
         if (index < 0 || index >= arrayLength) {
             throw new ROI2DValidationException(parameterName, index,
-                String.format(ROI2DConstants.ErrorMessages.ARRAY_INDEX_OUT_OF_BOUNDS, index, arrayLength));
+                String.format(Constants.ErrorMessages.ARRAY_INDEX_OUT_OF_BOUNDS, index, arrayLength));
         }
     }
     
@@ -201,7 +201,7 @@ public final class ROI2DValidator {
         validateNotNull(roi, parameterName);
         if (!(roi instanceof ROI2D)) {
             throw new ROI2DValidationException(parameterName, roi.getClass().getSimpleName(),
-                String.format(ROI2DConstants.ErrorMessages.UNSUPPORTED_ROI_TYPE, roi.getClass().getSimpleName()));
+                String.format(Constants.ErrorMessages.UNSUPPORTED_ROI_TYPE, roi.getClass().getSimpleName()));
         }
     }
 } 

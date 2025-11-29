@@ -7,7 +7,7 @@ package plugins.fmp.multicafe.tools1.ROI2D;
  * @author MultiSPOTS96 Team
  * @version 2.0
  */
-public class ROI2DException extends Exception {
+public class ExceptionROI2D extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,7 +19,7 @@ public class ROI2DException extends Exception {
 	 * 
 	 * @param message The error message
 	 */
-	public ROI2DException(String message) {
+	public ExceptionROI2D(String message) {
 		super(message);
 		this.operation = null;
 		this.context = null;
@@ -31,7 +31,7 @@ public class ROI2DException extends Exception {
 	 * @param message The error message
 	 * @param cause   The underlying cause
 	 */
-	public ROI2DException(String message, Throwable cause) {
+	public ExceptionROI2D(String message, Throwable cause) {
 		super(message, cause);
 		this.operation = null;
 		this.context = null;
@@ -44,7 +44,7 @@ public class ROI2DException extends Exception {
 	 * @param operation The operation that failed
 	 * @param context   Additional context information
 	 */
-	public ROI2DException(String message, String operation, String context) {
+	public ExceptionROI2D(String message, String operation, String context) {
 		super(buildMessage(message, operation, context));
 		this.operation = operation;
 		this.context = context;
@@ -58,7 +58,7 @@ public class ROI2DException extends Exception {
 	 * @param operation The operation that failed
 	 * @param context   Additional context information
 	 */
-	public ROI2DException(String message, Throwable cause, String operation, String context) {
+	public ExceptionROI2D(String message, Throwable cause, String operation, String context) {
 		super(buildMessage(message, operation, context), cause);
 		this.operation = operation;
 		this.context = context;

@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.tools1.ROI2D;
 /**
  * Exception thrown when processing operations fail.
  */
-public class ROI2DProcessingException extends ROI2DException {
+public class ROI2DProcessingException extends ExceptionROI2D {
 
 	private static final long serialVersionUID = 1L;
 

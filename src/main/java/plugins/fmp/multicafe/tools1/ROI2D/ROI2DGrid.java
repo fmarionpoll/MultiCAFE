@@ -60,14 +60,14 @@ public class ROI2DGrid implements ROIListener {
      * @param columns Number of columns in the grid
      * @param rows Number of rows in the grid
      * @throws ROI2DValidationException If parameters are invalid
-     * @throws ROI2DGeometryException If grid creation fails
+     * @throws ExceptionGeometry If grid creation fails
      */
     public void createGridFromFrame(Polygon2D polygon, int columns, int rows) 
-            throws ROI2DValidationException, ROI2DGeometryException {
+            throws ROI2DValidationException, ExceptionGeometry {
         
         // Validate inputs
         ROI2DValidator.validateNotNull(polygon, "polygon");
-        ROI2DValidator.validatePolygonSides(polygon, ROI2DConstants.Geometry.REQUIRED_POLYGON_SIDES, "polygon");
+        ROI2DValidator.validatePolygonSides(polygon, Constants.Geometry.REQUIRED_POLYGON_SIDES, "polygon");
         ROI2DValidator.validateGridDimensions(columns, rows);
         
         lock.writeLock().lock();
@@ -92,7 +92,7 @@ public class ROI2DGrid implements ROIListener {
             
         } catch (Exception e) {
             gridInitialized = false;
-            throw new ROI2DGeometryException("createGridFromFrame", "Failed to create grid", e);
+            throw new ExceptionGeometry("createGridFromFrame", "Failed to create grid", e);
         } finally {
             lock.writeLock().unlock();
         }
@@ -104,7 +104,7 @@ public class ROI2DGrid implements ROIListener {
     private void createColumnRois() {
         for (int column = 0; column < gridColumns; column++) {
             ROI2DPolyLine roi = getVerticalROI(column);
-            roi.setName(ROI2DConstants.Grid.COLUMN_PREFIX + column);
+            roi.setName(Constants.Grid.COLUMN_PREFIX + column);
             columnRois.add(roi);
             roi.addListener(this);
         }
@@ -116,7 +116,7 @@ public class ROI2DGrid implements ROIListener {
     private void createRowRois() {
         for (int row = 0; row < gridRows; row++) {
             ROI2DPolyLine roi = getHorizontalROI(row);
-            roi.setName(ROI2DConstants.Grid.ROW_PREFIX + row);
+            roi.setName(Constants.Grid.ROW_PREFIX + row);
             rowRois.add(roi);
             roi.addListener(this);
         }
@@ -290,7 +290,7 @@ public class ROI2DGrid implements ROIListener {
             throws ROI2DValidationException, ROI2DProcessingException {
         
         if (cageRoot == null) {
-            cageRoot = ROI2DConstants.Grid.DEFAULT_CAGE_ROOT_NAME;
+            cageRoot = Constants.Grid.DEFAULT_CAGE_ROOT_NAME;
         }
         
         if (!gridInitialized) {
@@ -306,7 +306,7 @@ public class ROI2DGrid implements ROIListener {
             for (int row = 0; row < (gridRows - 1); row++) {
                 for (int column = 0; column < (gridColumns - 1); column++) {
                     ROI2DPolygonPlus roiP = createRoiPolygon(column, row, widthInterval, heightInterval);
-                    roiP.setName(cageRoot + String.format(ROI2DConstants.XML.CAGE_NAME_FORMAT, index));
+                    roiP.setName(cageRoot + String.format(Constants.XML.CAGE_NAME_FORMAT, index));
                     
                     if (color != null) {
                         roiP.setColor(color);
@@ -372,7 +372,7 @@ public class ROI2DGrid implements ROIListener {
      * Creates a grid with the specified polygon and dimensions.
      */
     private Point2D.Double[][] createGridWithPolygon(Polygon2D polygon, int columns, int rows) 
-            throws ROI2DGeometryException {
+            throws ExceptionGeometry {
 
         try {
             Point2D.Double[][] arrayPoints = new Point2D.Double[columns + 1][rows + 1];
@@ -398,7 +398,7 @@ public class ROI2DGrid implements ROIListener {
             }
             return arrayPoints;
         } catch (Exception e) {
-            throw new ROI2DGeometryException("createGridWithPolygon", "Failed to create grid points", e);
+            throw new ExceptionGeometry("createGridWithPolygon", "Failed to create grid points", e);
         }
     }
 
@@ -579,9 +579,9 @@ public class ROI2DGrid implements ROIListener {
 
                 updateEnabled = false;
                 try {
-                    if (name.contains(ROI2DConstants.Grid.ROW_IDENTIFIER)) {
+                    if (name.contains(Constants.Grid.ROW_IDENTIFIER)) {
                         handleRowUpdate(index, (ROI2DPolyLine) roi);
-                    } else if (name.contains(ROI2DConstants.Grid.COLUMN_IDENTIFIER)) {
+                    } else if (name.contains(Constants.Grid.COLUMN_IDENTIFIER)) {
                         handleColumnUpdate(index, (ROI2DPolyLine) roi);
                     }
                 } finally {
@@ -625,7 +625,7 @@ public class ROI2DGrid implements ROIListener {
      */
     private int extractIndexFromName(String name) {
         try {
-            int lastSeparator = name.lastIndexOf(ROI2DConstants.Grid.NAME_INDEX_SEPARATOR);
+            int lastSeparator = name.lastIndexOf(Constants.Grid.NAME_INDEX_SEPARATOR);
             if (lastSeparator >= 0 && lastSeparator < name.length() - 1) {
                 return Integer.parseInt(name.substring(lastSeparator + 1));
             }

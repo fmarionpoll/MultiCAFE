@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools.ROI2D;
+package plugins.fmp.multicafe.tools1.ROI2D;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ import icy.file.xml.XMLPersistent;
 import icy.roi.ROI2D;
 import icy.util.XMLUtil;
 
-public class ROI2DAlongT implements XMLPersistent {
+public class AlongT implements XMLPersistent {
 	private int index = 0;
 	private ROI2D roi = null;
 	private long start = 0;
@@ -18,12 +18,12 @@ public class ROI2DAlongT implements XMLPersistent {
 	private final String ID_INDEX = "indexT";
 	private final String ID_START = "startT";
 
-	public ROI2DAlongT(long start, ROI2D roi) {
+	public AlongT(long start, ROI2D roi) {
 		setRoi(roi);
 		this.start = start;
 	}
 
-	public ROI2DAlongT() {
+	public AlongT() {
 	}
 
 	public long getStart() {

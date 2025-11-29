@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.tools1.ROI2D;
 /**
  * Exception thrown when ROI validation fails.
  */
-public class ROI2DValidationException extends ROI2DException {
+public class ROI2DValidationException extends ExceptionROI2D {
 
 	private static final long serialVersionUID = 1L;
 

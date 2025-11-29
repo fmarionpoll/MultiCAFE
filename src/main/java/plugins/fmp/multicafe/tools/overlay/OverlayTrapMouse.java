@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools.Overlay;
+package plugins.fmp.multicafe.tools.overlay;
 
 import icy.canvas.IcyCanvas;
 import icy.canvas.IcyCanvas2D;

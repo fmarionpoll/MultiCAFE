@@ -286,7 +286,7 @@ public class ROI2DWithMask implements XMLPersistent {
 	@Override
 	public boolean loadFromXML(Node node) {
 		try {
-			final Node nodeMeta = XMLUtil.getElement(node, ROI2DConstants.XML.ID_META);
+			final Node nodeMeta = XMLUtil.getElement(node, Constants.XML.ID_META);
 			if (nodeMeta == null) {
 				logger.warning("No metadata node found in XML");
 				return false;
@@ -307,7 +307,7 @@ public class ROI2DWithMask implements XMLPersistent {
 	@Override
 	public boolean saveToXML(Node node) {
 		try {
-			final Node nodeMeta = XMLUtil.setElement(node, ROI2DConstants.XML.ID_META);
+			final Node nodeMeta = XMLUtil.setElement(node, Constants.XML.ID_META);
 			if (nodeMeta == null) {
 				logger.warning("Failed to create metadata node in XML");
 				return false;

@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools.chart;
+package plugins.fmp.multicafe.tools1.chart;
 
 import java.awt.Dimension;
 import java.awt.Point;

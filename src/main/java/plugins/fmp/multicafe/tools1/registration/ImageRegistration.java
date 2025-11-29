@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools;
+package plugins.fmp.multicafe.tools1.registration;
 
 import java.io.File;
 import java.io.IOException;

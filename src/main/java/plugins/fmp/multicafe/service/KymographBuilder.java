@@ -21,10 +21,10 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
-import plugins.fmp.multicafe.tools.Bresenham;
 import plugins.fmp.multicafe.tools.Logger;
-import plugins.fmp.multicafe.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
+import plugins.fmp.multicafe.tools.polyline.Bresenham;
+import plugins.fmp.multicafe.tools1.ROI2D.AlongT;
 
 public class KymographBuilder {
 
@@ -129,7 +129,7 @@ public class KymographBuilder {
 	}
 
 	private void analyzeImageWithCapillary(IcyBufferedImage sourceImage, Capillary cap, int t, int kymographColumn) {
-		ROI2DAlongT kymoROI2DatT = cap.getROI2DKymoAtIntervalT(t);
+		AlongT kymoROI2DatT = cap.getROI2DKymoAtIntervalT(t);
 		int sizeC = sourceImage.getSizeC();
 		int kymoImageWidth = cap.cap_Image.getWidth();
 
@@ -202,7 +202,7 @@ public class KymographBuilder {
 		int kymoImageWidth = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
 		int imageHeight = 0;
 		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
-			for (ROI2DAlongT capT : cap.getROIsForKymo()) {
+			for (AlongT capT : cap.getROIsForKymo()) {
 				int imageHeight_i = buildMasks(capT, sizex, sizey, options);
 				if (imageHeight_i > imageHeight)
 					imageHeight = imageHeight_i;
@@ -211,7 +211,7 @@ public class KymographBuilder {
 		buildCapInteger(exp, kymoImageWidth, imageHeight);
 	}
 
-	private int buildMasks(ROI2DAlongT capT, int sizex, int sizey, BuildSeriesOptions options) {
+	private int buildMasks(AlongT capT, int sizex, int sizey, BuildSeriesOptions options) {
 		ArrayList<ArrayList<int[]>> masks = new ArrayList<ArrayList<int[]>>();
 		getPointsfromROIPolyLineUsingBresenham(ROI2DUtilities.getCapillaryPoints(capT.getRoi()), masks,
 				options.diskRadius, sizex, sizey);

@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
-import plugins.fmp.multicafe.tools.JComponents.SortedComboBoxModel;
+import plugins.fmp.multicafe.tools1.JComponents.SortedComboBoxModel;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
 public class Filter extends JPanel {

@@ -30,7 +30,7 @@ import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.DetectLevels;
 import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
 import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools.Overlay.OverlayThreshold;
+import plugins.fmp.multicafe.tools.overlay.OverlayThreshold;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public class Levels extends JPanel implements PropertyChangeListener {

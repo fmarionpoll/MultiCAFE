@@ -63,10 +63,10 @@ public class ROI2DPolygonPlus extends ROI2DPolygon {
 	 */
 	private static List<Point2D> validateAndGetPoints(List<Point2D> points) throws ROI2DValidationException {
 		ROI2DValidator.validateNotNullOrEmpty(points, "points");
-		if (points.size() < ROI2DConstants.Geometry.MIN_POLYGON_POINTS) {
+		if (points.size() < Constants.Geometry.MIN_POLYGON_POINTS) {
 			throw new ROI2DValidationException("points", points.size(),
 					String.format("Polygon requires at least %d points, but only %d provided",
-							ROI2DConstants.Geometry.MIN_POLYGON_POINTS, points.size()));
+							Constants.Geometry.MIN_POLYGON_POINTS, points.size()));
 		}
 		return points;
 	}

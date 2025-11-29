@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools.Overlay;
+package plugins.fmp.multicafe.tools.overlay;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;

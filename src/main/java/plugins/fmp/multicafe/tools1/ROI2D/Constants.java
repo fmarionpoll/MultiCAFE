@@ -7,10 +7,10 @@ package plugins.fmp.multicafe.tools1.ROI2D;
  * @author MultiSPOTS96 Team
  * @version 2.0
  */
-public final class ROI2DConstants {
+public final class Constants {
     
     // Prevent instantiation
-    private ROI2DConstants() {
+    private Constants() {
         throw new AssertionError("Utility class should not be instantiated");
     }
     

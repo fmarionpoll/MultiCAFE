@@ -18,8 +18,8 @@ import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools.JComponents.SortedComboBoxModel;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.JComponents.SortedComboBoxModel;
 
 public class Infos extends JPanel {
 	/**

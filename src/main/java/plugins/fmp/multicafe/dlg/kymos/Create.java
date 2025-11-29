@@ -23,7 +23,6 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.series.BuildKymographs;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
-import plugins.fmp.multicafe.tools.EnumStatusComputation;
 import plugins.fmp.multicafe.tools.JComponents.JComboMs;
 
 public class Create extends JPanel implements PropertyChangeListener {

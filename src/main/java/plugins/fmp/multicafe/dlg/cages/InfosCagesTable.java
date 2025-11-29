@@ -19,7 +19,7 @@ import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.tools.JComponents.CageTableModel;
+import plugins.fmp.multicafe.tools1.JComponents.CageTableModel;
 
 public class InfosCagesTable extends JPanel {
 	/**

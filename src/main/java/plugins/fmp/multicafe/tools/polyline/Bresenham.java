@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools;
+package plugins.fmp.multicafe.tools.polyline;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
