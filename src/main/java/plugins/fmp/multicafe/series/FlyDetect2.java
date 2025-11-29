@@ -2,9 +2,9 @@ package plugins.fmp.multicafe.series;
 
 import icy.image.IcyBufferedImageUtil;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.service.SequenceLoaderService;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
+import plugins.fmp.multicafe.tools0.ImageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools0.ImageTransform.ImageTransformOptions;
 
 public class FlyDetect2 extends FlyDetect {
 	public boolean viewInternalImages = true;

@@ -11,11 +11,11 @@ import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.service.SequenceLoaderService;
-import plugins.fmp.multicafe.tools.Logger;
-import plugins.fmp.multicafe.tools.ViewerFMP;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformInterface;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
+import plugins.fmp.multicafe.tools0.ImageTransform.ImageTransformInterface;
+import plugins.fmp.multicafe.tools0.ImageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.tools1.Logger;
+import plugins.fmp.multicafe.tools1.ViewerFMP;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public abstract class FlyDetect extends BuildSeries {
@@ -47,7 +47,7 @@ public abstract class FlyDetect extends BuildSeries {
 		ImageTransformInterface transformFunction = transformOptions.transformOption.getFunction();
 
 		int t_previous = 0;
-		int totalFrames = exp.getSeqCamData().getnTotalFrames();
+		int totalFrames = exp.getSeqCamData().getImageLoader().getNTotalFrames();
 		SequenceLoaderService loader = new SequenceLoaderService();
 
 		for (int index = 0; index < totalFrames; index++) {
@@ -97,7 +97,7 @@ public abstract class FlyDetect extends BuildSeries {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					seqNegative = newSequence("detectionImage", exp.getSeqCamData().getRefImage());
+					seqNegative = newSequence("detectionImage", exp.getSeqCamData().getReferenceImage());
 					vNegative = new ViewerFMP(seqNegative, false, true);
 					vNegative.setVisible(true);
 				}

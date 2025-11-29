@@ -30,6 +30,7 @@ import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
+import plugins.fmp.multicafe.tools1.DescriptorsIO;
 import plugins.fmp.multicafe.tools1.LazyExperiment;
 import plugins.fmp.multicafe.tools1.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multicafe.tools1.JComponents.SequenceNameListRenderer;
@@ -228,45 +229,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 	}
 
-	private void handleOpenButton() {
-		ExperimentDirectories eDAF = new ExperimentDirectories();
-		final String binDirectory = parent0.expListComboLazy.expListBinSubDirectory;
-		if (eDAF.getDirectoriesFromDialog(binDirectory, null, false)) {
-			String camDataImagesDirectory = eDAF.getCameraImagesDirectory();
-			String resultsDirectory = eDAF.getResultsDirectory();
-			ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory,
-					binDirectory);
-
-			LazyExperiment lazyExp = new LazyExperiment(metadata);
-			int selectedIndex = parent0.expListComboLazy.addLazyExperiment(lazyExp);
-			parent0.paneExperiment.tabInfos.initCombos();
-			parent0.expListComboLazy.setSelectedIndex(selectedIndex);
-		}
-	}
-
-	private void handleSearchButton() {
-		selectedNames = new ArrayList<String>();
-		dialogSelect = new SelectFiles1();
-		dialogSelect.initialize(parent0, selectedNames);
-	}
-
-	private void handleCloseButton() {
-		closeAllExperiments();
-		parent0.expListComboLazy.removeAllItems();
-		parent0.expListComboLazy.updateUI();
-	}
-
-	private void handlePreviousButton() {
-		parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() - 1);
-		updateBrowseInterface();
-	}
-
-	private void handleNextButton() {
-		parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() + 1);
-		updateBrowseInterface();
-	}
-
-	// ----------------------------
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("SELECT1_CLOSED")) {
@@ -414,10 +376,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				protected Void doInBackground() throws Exception {
 					for (int i = 0; i < parent0.expListComboLazy.getItemCount(); i++) {
 						Experiment exp = parent0.expListComboLazy.getItemAtNoLoad(i);
-						String path = getDescriptorsFullName(exp.getResultsDirectory());
+						String path = DescriptorsIO.getDescriptorsFullName(exp.getResultsDirectory());
 						java.io.File f = new java.io.File(path);
 						if (!f.exists()) {
-							buildFromExperiment(exp);
+							DescriptorsIO.buildFromExperiment(exp);
 						}
 					}
 					return null;
@@ -429,6 +391,119 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		}
 	}
 
+	boolean openSelecteExperiment(Experiment exp) {
+		ProgressFrame progressFrame = new ProgressFrame("Load Experiment Data");
+
+		try {
+			// If it's a LazyExperiment, load the data first
+			if (exp instanceof LazyExperiment) {
+				progressFrame.setMessage("Loading experiment data...");
+				((LazyExperiment) exp).loadIfNeeded();
+			}
+
+			exp.xmlLoad_MCExperiment();
+
+			boolean flag = true;
+			progressFrame.setMessage("Load image");
+
+			exp.getSeqCamData().loadImages();
+			parent0.paneExperiment.updateViewerForSequenceCam(exp);
+
+			exp.getSeqCamData().getSequence().addListener(this);
+			if (exp.getSeqCamData() != null) {
+				exp.loadCamDataCapillaries();
+
+				parent0.paneKymos.tabLoadSave.loadDefaultKymos(exp);
+
+				if (exp.getSeqKymos() != null) {
+					parent0.paneLevels.tabFileLevels.dlg_levels_loadCapillaries_Measures(exp);
+					if (parent0.paneExperiment.tabOptions.graphsCheckBox.isSelected())
+						parent0.paneLevels.tabGraphs.displayGraphsPanels(exp);
+				}
+
+				exp.loadCageMeasures();
+				exp.updateROIsAt(0);
+				progressFrame.setMessage("Load data: update dialogs");
+
+				parent0.paneExperiment.updateDialogs(exp);
+				parent0.paneKymos.updateDialogs(exp);
+				parent0.paneCapillaries.updateDialogs(exp);
+			} else {
+				flag = false;
+				LOGGER.severe(
+						"LoadSaveExperiments:openSelectedExperiment() Error: no jpg files found for this experiment\n");
+			}
+			parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);
+			progressFrame.close();
+
+			return flag;
+		} catch (Exception e) {
+			LOGGER.severe("Error opening experiment: " + e.getMessage());
+			progressFrame.close();
+			return false;
+		}
+	}
+
+	private void handleOpenButton() {
+		ExperimentDirectories eDAF = new ExperimentDirectories();
+		final String binDirectory = parent0.expListComboLazy.expListBinSubDirectory;
+		if (eDAF.getDirectoriesFromDialog(binDirectory, null, false)) {
+			String camDataImagesDirectory = eDAF.getCameraImagesDirectory();
+			String resultsDirectory = eDAF.getResultsDirectory();
+			ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory,
+					binDirectory);
+
+			LazyExperiment lazyExp = new LazyExperiment(metadata);
+			int selectedIndex = parent0.expListComboLazy.addLazyExperiment(lazyExp);
+			parent0.paneExperiment.tabInfos.initCombos();
+			parent0.expListComboLazy.setSelectedIndex(selectedIndex);
+		}
+	}
+
+	private void handleSearchButton() {
+		selectedNames = new ArrayList<String>();
+		dialogSelect = new SelectFiles1();
+		dialogSelect.initialize(parent0, selectedNames);
+	}
+
+	private void handleCloseButton() {
+		closeAllExperiments();
+		parent0.expListComboLazy.removeAllItems();
+		parent0.expListComboLazy.updateUI();
+	}
+
+	private void handlePreviousButton() {
+		parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() - 1);
+		updateBrowseInterface();
+	}
+
+	private void handleNextButton() {
+		parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() + 1);
+		updateBrowseInterface();
+	}
+
+	// ----------------------------
+
+	@Override
+	public void sequenceChanged(SequenceEvent sequenceEvent) {
+		if (sequenceEvent.getSourceType() == SequenceEventSourceType.SEQUENCE_DATA) {
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+			if (exp != null) {
+				if (exp.getSeqCamData().getSequence() != null
+						&& sequenceEvent.getSequence() == exp.getSeqCamData().getSequence()) {
+					Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
+					int t = v.getPositionT();
+					v.setTitle(exp.getSeqCamData().getDecoratedImageName(t));
+				}
+			}
+		}
+	}
+
+	@Override
+	public void sequenceClosed(Sequence sequence) {
+		sequence.removeListener(this);
+	}
+
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -437,7 +512,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				openSelecteExperiment(exp);
 		} else if (e.getStateChange() == ItemEvent.DESELECTED) {
 			Experiment exp = (Experiment) e.getItem();
-			closeViewsForCurrentExperiment(exp);
+			if (exp != null)
+				closeViewsForCurrentExperiment(exp);
+			else
+				System.out.println("experiment = null");
 		}
 	}
 
@@ -477,72 +555,27 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		nextButton.setEnabled(flag2);
 	}
 
-	boolean openSelecteExperiment(Experiment exp) {
-		ProgressFrame progressFrame = new ProgressFrame("Load Data");
-		exp.xmlLoad_MCExperiment();
+	/**
+	 * Gets memory usage statistics for monitoring.
+	 * 
+	 * @return Memory usage information
+	 */
+	public String getMemoryUsageInfo() {
+		Runtime runtime = Runtime.getRuntime();
+		long totalMemory = runtime.totalMemory();
+		long freeMemory = runtime.freeMemory();
+		long usedMemory = totalMemory - freeMemory;
 
-		boolean flag = true;
-		progressFrame.setMessage("Load image");
-
-		exp.loadCamDataImages();
-		parent0.paneExperiment.updateViewerForSequenceCam(exp);
-
-		exp.getSeqCamData().getSequence().addListener(this);
-		if (exp.getSeqCamData() != null) {
-			exp.loadCamDataCapillaries();
-
-			parent0.paneKymos.tabLoadSave.loadDefaultKymos(exp);
-
-			if (exp.getSeqKymos() != null) {
-				parent0.paneLevels.tabFileLevels.dlg_levels_loadCapillaries_Measures(exp);
-				if (parent0.paneExperiment.tabOptions.graphsCheckBox.isSelected())
-					parent0.paneLevels.tabGraphs.displayGraphsPanels(exp);
-			}
-
-			exp.loadCageMeasures();
-			exp.updateROIsAt(0);
-			progressFrame.setMessage("Load data: update dialogs");
-
-			parent0.paneExperiment.updateDialogs(exp);
-			parent0.paneKymos.updateDialogs(exp);
-			parent0.paneCapillaries.updateDialogs(exp);
-		} else {
-			flag = false;
-			Logger.error(
-					"LoadSaveExperiments:openSelectedExperiment() Error: no jpg files found for this experiment\n");
-		}
-		parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);
-		progressFrame.close();
-
-		return flag;
+		return String.format("Memory: %dMB used, %dMB total, %d experiments loaded", usedMemory / 1024 / 1024,
+				totalMemory / 1024 / 1024, experimentMetadataList.size());
 	}
 
 	// ------------------------
 
 	private int addExperimentFrom3NamesAnd2Lists(ExperimentDirectories eDAF) {
 		Experiment exp = new Experiment(eDAF);
-		int item = parent0.expListComboLazy.addExperiment(exp, false);
+		int item = parent0.expListComboLazy.addExperiment(exp);
 		return item;
-	}
-
-	@Override
-	public void sequenceChanged(SequenceEvent sequenceEvent) {
-		if (sequenceEvent.getSourceType() == SequenceEventSourceType.SEQUENCE_DATA) {
-			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-			if (exp != null) {
-				if (exp.getSeqCamData().getSequence() != null
-						&& sequenceEvent.getSequence() == exp.getSeqCamData().getSequence()) {
-					Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
-					int t = v.getPositionT();
-					v.setTitle(exp.getSeqCamData().getDecoratedImageName(t));
-				}
-			}
-		}
-	}
-
-	@Override
-	public void sequenceClosed(Sequence sequence) {
-		sequence.removeListener(this);
 	}
 
 }

@@ -29,8 +29,8 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.FlyDetect1;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools.overlay.OverlayThreshold;
+import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools1.overlay.OverlayThreshold;
 
 public class Detect1 extends JPanel implements ChangeListener, ItemListener, PropertyChangeListener, PopupMenuListener {
 	/**

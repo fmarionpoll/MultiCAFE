@@ -29,8 +29,8 @@ import icy.type.collection.array.Array1DUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
-import plugins.fmp.multicafe.service.KymographService;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.fmp_service.KymographService;
+import plugins.fmp.multicafe.tools0.ImageTransform.ImageTransformEnums;
 
 public class MCSpots_1 extends JPanel {
 	/**

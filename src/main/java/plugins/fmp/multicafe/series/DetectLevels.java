@@ -1,7 +1,7 @@
 package plugins.fmp.multicafe.series;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.service.LevelDetector;
+import plugins.fmp.multicafe.fmp_service.LevelDetector;
 
 public class DetectLevels extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {

@@ -119,7 +119,7 @@ public class SequenceKymos extends SequenceCamData {
 			throw new IllegalArgumentException("Image names list cannot be null or empty");
 		}
 		this.configuration = KymographConfiguration.defaultConfiguration();
-		List<String> convertedNames = new plugins.fmp.multicafe.service.KymographService().convertLinexLRFileNames(imageNames);
+		List<String> convertedNames = new plugins.fmp.multicafe.fmp_service.KymographService().convertLinexLRFileNames(imageNames);
 		setImagesList(convertedNames);
 		setStatus(EnumStatus.KYMOGRAPH);
 	}

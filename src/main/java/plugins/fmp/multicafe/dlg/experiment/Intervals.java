@@ -15,7 +15,7 @@ import javax.swing.SwingConstants;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools.JComponents.JComboMs;
+import plugins.fmp.multicafe.tools0.JComponents.JComboMs;
 
 public class Intervals extends JPanel {
 	/**

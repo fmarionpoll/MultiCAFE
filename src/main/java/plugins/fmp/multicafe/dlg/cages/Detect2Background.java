@@ -27,11 +27,11 @@ import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
 import plugins.fmp.multicafe.series.BuildBackground;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
-import plugins.fmp.multicafe.service.SequenceLoaderService;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools.overlay.OverlayThreshold;
+import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools1.overlay.OverlayThreshold;
 
 public class Detect2Background extends JPanel implements ChangeListener, PropertyChangeListener {
 	private static final long serialVersionUID = 1L;
@@ -180,12 +180,12 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 		if (ov == null) {
 			ov = new OverlayThreshold(seqCamData);
 			int t = exp.getSeqCamData().getCurrentFrame();
-			exp.getSeqCamData().setRefImage(IcyBufferedImageUtil.getCopy(exp.getSeqCamData().getSeqImage(t, 0)));
+			exp.getSeqCamData().setReferenceImage(IcyBufferedImageUtil.getCopy(exp.getSeqCamData().getSeqImage(t, 0)));
 		} else {
 			seqCamData.getSequence().removeOverlay(ov);
 			ov.setSequence(seqCamData);
 		}
-		ov.setReferenceImage(exp.getSeqCamData().getRefImage());
+		ov.setReferenceImage(exp.getSeqCamData().getReferenceImage());
 		seqCamData.getSequence().addOverlay(ov);
 
 		boolean ifGreater = true;

@@ -26,13 +26,13 @@ import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.FlyDetect2;
-import plugins.fmp.multicafe.service.SequenceLoaderService;
-import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformOptions;
-import plugins.fmp.multicafe.tools.overlay.OverlayThreshold;
+import plugins.fmp.multicafe.tools0.overlay.OverlayThreshold;
+import plugins.fmp.multicafe.tools1.canvas2D.Canvas2DWithTransforms;
+import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
 
 public class Detect2Flies extends JPanel implements ChangeListener, PropertyChangeListener, PopupMenuListener {
 	private static final long serialVersionUID = -5257698990389571518L;
@@ -199,7 +199,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 			exp.getSeqCamData().getSequence().removeOverlay(overlayThreshold);
 			overlayThreshold.setSequence(exp.getSeqCamData());
 		}
-		overlayThreshold.setReferenceImage(exp.getSeqCamData().getRefImage());
+		overlayThreshold.setReferenceImage(exp.getSeqCamData().getReferenceImage());
 		exp.getSeqCamData().getSequence().addOverlay(overlayThreshold);
 	}
 
@@ -315,10 +315,10 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		optionsStep1.backgroundImage = null;
 		int index = 0;
 		if (display) {
-			if (exp.getSeqCamData().getRefImage() == null) {
+			if (exp.getSeqCamData().getReferenceImage() == null) {
 				new SequenceLoaderService().loadReferenceImage(exp);
 			}
-			optionsStep1.backgroundImage = exp.getSeqCamData().getRefImage();
+			optionsStep1.backgroundImage = exp.getSeqCamData().getReferenceImage();
 			index = 1;
 		}
 		canvas.selectItemStep1(imageTransformStep1[index], optionsStep1);

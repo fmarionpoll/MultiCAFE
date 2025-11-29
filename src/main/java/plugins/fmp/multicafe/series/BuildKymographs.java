@@ -8,8 +8,8 @@ import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
-import plugins.fmp.multicafe.service.KymographBuilder;
-import plugins.fmp.multicafe.tools.Logger;
+import plugins.fmp.multicafe.fmp_service.KymographBuilder;
+import plugins.fmp.multicafe.tools1.Logger;
 
 public class BuildKymographs extends BuildSeries {
 	public Sequence seqData = new Sequence();
@@ -33,7 +33,7 @@ public class BuildKymographs extends BuildSeries {
 		boolean flag = exp.loadMCCapillaries_Only();
 		SequenceCamData seqData = exp.getSeqCamData();
 
-		seqData.setSequence(seqData.initSequenceFromFirstImage(seqData.getImagesList(true)));
+		seqData.setSequence(seqData.getImageLoader().initSequenceFromFirstImage(seqData.getImagesList(true)));
 		exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(exp.getCamImageFirst_ms());
 		return flag;
 	}
@@ -61,7 +61,8 @@ public class BuildKymographs extends BuildSeries {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					seqData = newSequence("analyze stack starting with file " + exp.getSeqCamData().getSequence().getName(),
+					seqData = newSequence(
+							"analyze stack starting with file " + exp.getSeqCamData().getSequence().getName(),
 							exp.getSeqCamData().getSeqImage(0, 0));
 					vData = new Viewer(seqData, true);
 				}

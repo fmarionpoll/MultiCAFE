@@ -8,8 +8,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
 
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.tools.JComponents.TableCellColorEditor;
-import plugins.fmp.multicafe.tools.JComponents.TableCellColorRenderer;
+import plugins.fmp.multicafe.tools0.JComponents.TableCellColorEditor;
+import plugins.fmp.multicafe.tools0.JComponents.TableCellColorRenderer;
 
 public class CageTable extends JTable {
 	/**

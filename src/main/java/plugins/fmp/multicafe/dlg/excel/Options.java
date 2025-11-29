@@ -13,7 +13,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import plugins.fmp.multicafe.tools.JComponents.JComboMs;
+import plugins.fmp.multicafe.tools0.JComponents.JComboMs;
 
 public class Options extends JPanel {
 	/**

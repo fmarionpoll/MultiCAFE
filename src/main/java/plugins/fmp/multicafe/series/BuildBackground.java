@@ -10,10 +10,10 @@ import icy.image.IcyBufferedImageCursor;
 import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.service.SequenceLoaderService;
-import plugins.fmp.multicafe.tools.ViewerFMP;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
+import plugins.fmp.multicafe.tools0.ImageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools0.ImageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.tools1.ViewerFMP;
 
 public class BuildBackground extends BuildSeries {
 	public Sequence seqData = new Sequence();
@@ -54,7 +54,7 @@ public class BuildBackground extends BuildSeries {
 					seqData = newSequence("data recorded", exp.getSeqCamData().getSeqImage(0, 0));
 					vData = new ViewerFMP(seqData, true, true);
 
-					seqReference = newSequence("referenceImage", exp.getSeqCamData().getRefImage());
+					seqReference = newSequence("referenceImage", exp.getSeqCamData().getReferenceImage());
 					exp.setSeqReference(seqReference);
 					vReference = new ViewerFMP(seqReference, true, true);
 				}
@@ -100,8 +100,8 @@ public class BuildBackground extends BuildSeries {
 		final int t_first = (int) ((first_ms - exp.getCages().getDetectFirst_Ms()) / exp.getCamImageBin_ms());
 
 		int t_last = options.backgroundFirst + options.backgroundNFrames;
-		if (t_last > exp.getSeqCamData().getnTotalFrames())
-			t_last = exp.getSeqCamData().getnTotalFrames();
+		if (t_last > exp.getSeqCamData().getImageLoader().getNTotalFrames())
+			t_last = exp.getSeqCamData().getImageLoader().getNTotalFrames();
 
 		for (int t = t_first + 1; t <= t_last && !stopFlag; t++) {
 			IcyBufferedImage currentImage = loader.imageIORead(exp.getSeqCamData().getFileNameFromImageList(t));
@@ -114,7 +114,7 @@ public class BuildBackground extends BuildSeries {
 			if (transformOptions.npixels_changed < 10)
 				break;
 		}
-		exp.getSeqCamData().setRefImage(IcyBufferedImageUtil.getCopy(seqReference.getFirstImage()));
+		exp.getSeqCamData().setReferenceImage(IcyBufferedImageUtil.getCopy(seqReference.getFirstImage()));
 		progress.close();
 	}
 

@@ -14,8 +14,8 @@ import javax.swing.JTextField;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.tools0.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 
 public class Edit extends JPanel {
 	/**

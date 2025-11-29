@@ -28,9 +28,9 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.DetectLevels;
-import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools.overlay.OverlayThreshold;
+import plugins.fmp.multicafe.tools0.overlay.OverlayThreshold;
+import plugins.fmp.multicafe.tools1.canvas2D.Canvas2DWithTransforms;
+import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public class Levels extends JPanel implements PropertyChangeListener {

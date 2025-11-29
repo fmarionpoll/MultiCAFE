@@ -14,8 +14,8 @@ import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools.Logger;
-import plugins.fmp.multicafe.tools.JComponents.ExperimentsJComboBox;
+import plugins.fmp.multicafe.tools0.JComponents.ExperimentsJComboBox;
+import plugins.fmp.multicafe.tools1.Logger;
 
 public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 

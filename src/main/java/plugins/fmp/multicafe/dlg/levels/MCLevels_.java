@@ -12,7 +12,7 @@ import javax.swing.JTabbedPane;
 
 import icy.gui.component.PopupPanel;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.tools.ImageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
 
 public class MCLevels_ extends JPanel implements PropertyChangeListener {
 	/**

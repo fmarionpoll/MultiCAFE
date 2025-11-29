@@ -288,6 +288,30 @@ public class ExperimentDirectories {
 		return true;
 	}
 
+	private String getV2BinSubDirectory(String expListBinSubDirectory, String resultsDirectory,
+			String binSubDirectory) {
+		List<String> expList = Directories.getSortedListOfSubDirectoriesWithTIFF(resultsDirectory);
+		move_TIFFandLINEfiles_From_Results_to_BinDirectory(resultsDirectory, expList);
+		String binDirectory = binSubDirectory;
+		if (binDirectory == null) {
+			if (expList.size() > 1) {
+				if (expListBinSubDirectory == null)
+					binDirectory = selectSubDirDialog(expList, "Select item", Experiment.BIN, false);
+			} else if (expList.size() == 1) {
+				binDirectory = expList.get(0).toLowerCase();
+				if (!binDirectory.contains(Experiment.BIN))
+					binDirectory = Experiment.BIN + "60";
+			} else
+				binDirectory = Experiment.BIN + "60";
+		}
+		if (expListBinSubDirectory != null)
+			binDirectory = expListBinSubDirectory;
+
+		move_XML_From_Bin_to_Results(binDirectory, resultsDirectory);
+
+		return binDirectory;
+	}
+
 	public List<String> getV2ImagesListFromDialog(String strPath) {
 		List<String> list = new ArrayList<String>();
 		LoaderDialog dialog = new LoaderDialog(false);

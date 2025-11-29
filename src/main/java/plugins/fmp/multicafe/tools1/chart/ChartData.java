@@ -43,13 +43,8 @@ public class ChartData {
 	/** Logger for this class */
 	private static final Logger LOGGER = Logger.getLogger(ChartData.class.getName());
 
-	/** Y-axis range information */
 	private MaxMinDouble yMaxMin;
-
-	/** X-axis range information */
 	private MaxMinDouble xMaxMin;
-
-	/** The XY dataset containing the chart data */
 	private XYSeriesCollection xyDataset;
 
 	/**

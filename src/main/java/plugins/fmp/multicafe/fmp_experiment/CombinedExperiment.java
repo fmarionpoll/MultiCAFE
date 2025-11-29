@@ -2,8 +2,8 @@ package plugins.fmp.multicafe.fmp_experiment;
 
 import java.util.ArrayList;
 
-import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 
 public class CombinedExperiment extends Experiment {
 	ArrayList<Experiment> experimentList = null;
@@ -76,12 +76,14 @@ public class CombinedExperiment extends Experiment {
 		for (int i = 1; i < experimentList.size(); i++) {
 			Experiment expi = experimentList.get(i);
 			expi.initTmsForFlyPositions(time_start_ms);
-			for (Cage cell : getCages().getCageList()) {
-				String cellName = cell.getRoiName();
-				for (Cage cellExpi : expi.getCages().getCageList()) {
-					if (!cellName.equals(cellExpi.getRoiName()))
+			for (Cage cage : getCages().getCageList()) {
+				String cageName = cage.getRoi().getName();
+				FlyPositions flyPos = cage.getFlyPositions();
+				for (Cage cage_i : expi.getCages().getCageList()) {
+					if (!cageName.equals(cage_i.getRoi().getName()))
 						continue;
-					cell.addFlyPositionsFromOtherCage(cellExpi);
+					FlyPositions flypos_i = cage_i.getFlyPositions();
+					flyPos.getFlyPositionList().addAll(flypos_i.getFlyPositionList());
 				}
 			}
 		}

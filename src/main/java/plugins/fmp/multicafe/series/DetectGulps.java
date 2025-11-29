@@ -1,8 +1,8 @@
 package plugins.fmp.multicafe.series;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.service.GulpDetector;
-import plugins.fmp.multicafe.service.KymographService;
+import plugins.fmp.multicafe.fmp_service.GulpDetector;
+import plugins.fmp.multicafe.fmp_service.KymographService;
 
 public class DetectGulps extends BuildSeries {
 
