@@ -13,7 +13,7 @@ import icy.image.IcyBufferedImage;
 import icy.roi.BooleanMask2D;
 import icy.roi.ROI2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.tools1.ROI2D.ROI2DUtilities;
+import plugins.fmp.multicafe.tools1.ROI2D.Utilities;
 import plugins.fmp.multicafe.tools1.ROI2D.ROI2DWithMask;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
@@ -708,7 +708,7 @@ public class Spot implements Comparable<Spot> {
 			final Node nodeMeta = XMLUtil.getElement(node, ID_META);
 			if (nodeMeta != null) {
 				try {
-					spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
+					spotROI2D = (ROI2DShape) Utilities.loadFromXML_ROI(nodeMeta);
 					if (spotROI2D != null) {
 						spotROI2D.setColor(getProperties().getColor());
 						getProperties().setName(spotROI2D.getName());
@@ -779,7 +779,7 @@ public class Spot implements Comparable<Spot> {
 			final Node nodeMeta = XMLUtil.setElement(node, ID_META);
 			if (nodeMeta != null && spotROI2D != null) {
 				try {
-					ROI2DUtilities.saveToXML_ROI(nodeMeta, spotROI2D);
+					Utilities.saveToXML_ROI(nodeMeta, spotROI2D);
 					// System.out.println(" Saved ROI: " + spotROI2D.getName());
 				} catch (Exception e) {
 					System.err.println("ERROR saving ROI: " + e.getMessage());

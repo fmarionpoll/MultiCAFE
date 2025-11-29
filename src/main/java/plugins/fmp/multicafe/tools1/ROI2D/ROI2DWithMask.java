@@ -40,9 +40,9 @@ public class ROI2DWithMask implements XMLPersistent {
 	 * 
 	 * @param timePoint The time point for this ROI
 	 * @param roi       The ROI at this time point
-	 * @throws ROI2DValidationException If parameters are invalid
+	 * @throws ValidationException If parameters are invalid
 	 */
-	public ROI2DWithMask(ROI2D roi) throws ROI2DValidationException {
+	public ROI2DWithMask(ROI2D roi) throws ValidationException {
 		setInputRoi(roi);
 	}
 
@@ -66,9 +66,9 @@ public class ROI2DWithMask implements XMLPersistent {
 	 * Sets the input ROI.
 	 * 
 	 * @param roi The input ROI to set
-	 * @throws ROI2DValidationException If the ROI is invalid
+	 * @throws ValidationException If the ROI is invalid
 	 */
-	public void setInputRoi(ROI2D roi) throws ROI2DValidationException {
+	public void setInputRoi(ROI2D roi) throws ValidationException {
 		if (roi != null) {
 			ROI2DValidator.validateROI2D(roi, "roi");
 			this.inputRoi = (ROI2D) roi.getCopy();
@@ -193,11 +193,11 @@ public class ROI2DWithMask implements XMLPersistent {
 	/**
 	 * Builds the 2D mask from the input ROI.
 	 * 
-	 * @throws ROI2DProcessingException If mask building fails
+	 * @throws ProcessingException If mask building fails
 	 */
-	public void buildMask2DFromInputRoi() throws ROI2DProcessingException {
+	public void buildMask2DFromInputRoi() throws ProcessingException {
 		if (inputRoi == null) {
-			throw new ROI2DProcessingException("buildMask2D", "Input ROI is not set");
+			throw new ProcessingException("buildMask2D", "Input ROI is not set");
 		}
 
 		try {
@@ -206,9 +206,9 @@ public class ROI2DWithMask implements XMLPersistent {
 			calculateYBounds();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			throw new ROI2DProcessingException("buildMask2D", "Operation was interrupted", e);
+			throw new ProcessingException("buildMask2D", "Operation was interrupted", e);
 		} catch (Exception e) {
-			throw new ROI2DProcessingException("buildMask2D", "Failed to build mask from ROI", e);
+			throw new ProcessingException("buildMask2D", "Failed to build mask from ROI", e);
 		}
 	}
 
@@ -216,11 +216,11 @@ public class ROI2DWithMask implements XMLPersistent {
 	 * Calculates the height of the 2D mask.
 	 * 
 	 * @return The height of the mask (yMax - yMin + 1)
-	 * @throws ROI2DProcessingException If mask points are not available
+	 * @throws ProcessingException If mask points are not available
 	 */
-	public int getMask2DHeight() throws ROI2DProcessingException {
+	public int getMask2DHeight() throws ProcessingException {
 		if (maskPoints == null || maskPoints.length == 0) {
-			throw new ROI2DProcessingException("getMask2DHeight",
+			throw new ProcessingException("getMask2DHeight",
 					"Mask points are not available. Call buildMask2DFromInputRoi() first");
 		}
 
@@ -292,7 +292,7 @@ public class ROI2DWithMask implements XMLPersistent {
 				return false;
 			}
 
-			inputRoi = ROI2DUtilities.loadFromXML_ROI(nodeMeta);
+			inputRoi = Utilities.loadFromXML_ROI(nodeMeta);
 
 			// Clear dependent data since we loaded a new ROI
 			clearMaskData();
@@ -314,7 +314,7 @@ public class ROI2DWithMask implements XMLPersistent {
 			}
 
 			if (inputRoi != null) {
-				ROI2DUtilities.saveToXML_ROI(nodeMeta, inputRoi);
+				Utilities.saveToXML_ROI(nodeMeta, inputRoi);
 			}
 
 			return true;

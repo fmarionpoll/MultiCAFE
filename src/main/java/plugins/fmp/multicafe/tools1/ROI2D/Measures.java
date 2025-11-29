@@ -32,7 +32,7 @@ import plugins.kernel.roi.roi3d.ROI3DPoint;
 // copy of ROIEllipsoidFittingDescriptor from package plugins.adufour.roi;
 // copy of ROIMassCenterDescriptorsPlugin from package plugins.adufour.vars.lang;
 
-public class ROI2DMeasures {
+public class Measures {
 
 	/*
 	 * @param roi the {@link ROI} we want to compute orientation information

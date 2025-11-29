@@ -32,9 +32,9 @@ public class ROI2DPolygonPlus extends ROI2DPolygon {
 	 * 
 	 * @param cageRow    The row position of the cage
 	 * @param cageColumn The column position of the cage
-	 * @throws ROI2DValidationException If coordinates are invalid
+	 * @throws ValidationException If coordinates are invalid
 	 */
-	public ROI2DPolygonPlus(int cageRow, int cageColumn) throws ROI2DValidationException {
+	public ROI2DPolygonPlus(int cageRow, int cageColumn) throws ValidationException {
 		super();
 		setCageRow(cageRow);
 		setCageColumn(cageColumn);
@@ -46,9 +46,9 @@ public class ROI2DPolygonPlus extends ROI2DPolygon {
 	 * @param points     The polygon points
 	 * @param cageRow    The row position of the cage
 	 * @param cageColumn The column position of the cage
-	 * @throws ROI2DValidationException If parameters are invalid
+	 * @throws ValidationException If parameters are invalid
 	 */
-	public ROI2DPolygonPlus(List<Point2D> points, int cageRow, int cageColumn) throws ROI2DValidationException {
+	public ROI2DPolygonPlus(List<Point2D> points, int cageRow, int cageColumn) throws ValidationException {
 		super(validateAndGetPoints(points));
 		setCageRow(cageRow);
 		setCageColumn(cageColumn);
@@ -59,12 +59,12 @@ public class ROI2DPolygonPlus extends ROI2DPolygon {
 	 * 
 	 * @param points The points to validate
 	 * @return The validated points list
-	 * @throws ROI2DValidationException If points are invalid
+	 * @throws ValidationException If points are invalid
 	 */
-	private static List<Point2D> validateAndGetPoints(List<Point2D> points) throws ROI2DValidationException {
+	private static List<Point2D> validateAndGetPoints(List<Point2D> points) throws ValidationException {
 		ROI2DValidator.validateNotNullOrEmpty(points, "points");
 		if (points.size() < Constants.Geometry.MIN_POLYGON_POINTS) {
-			throw new ROI2DValidationException("points", points.size(),
+			throw new ValidationException("points", points.size(),
 					String.format("Polygon requires at least %d points, but only %d provided",
 							Constants.Geometry.MIN_POLYGON_POINTS, points.size()));
 		}
@@ -84,11 +84,11 @@ public class ROI2DPolygonPlus extends ROI2DPolygon {
 	 * Sets the cage row position.
 	 * 
 	 * @param cageRow The cage row position (must be non-negative or -1 for unset)
-	 * @throws ROI2DValidationException If the row position is invalid
+	 * @throws ValidationException If the row position is invalid
 	 */
-	public void setCageRow(int cageRow) throws ROI2DValidationException {
+	public void setCageRow(int cageRow) throws ValidationException {
 		if (cageRow < -1) {
-			throw new ROI2DValidationException("cageRow", cageRow, "Row must be non-negative or -1 for unset");
+			throw new ValidationException("cageRow", cageRow, "Row must be non-negative or -1 for unset");
 		}
 		this.cageRow = cageRow;
 	}
@@ -107,11 +107,11 @@ public class ROI2DPolygonPlus extends ROI2DPolygon {
 	 * 
 	 * @param cageColumn The cage column position (must be non-negative or -1 for
 	 *                   unset)
-	 * @throws ROI2DValidationException If the column position is invalid
+	 * @throws ValidationException If the column position is invalid
 	 */
-	public void setCageColumn(int cageColumn) throws ROI2DValidationException {
+	public void setCageColumn(int cageColumn) throws ValidationException {
 		if (cageColumn < -1) {
-			throw new ROI2DValidationException("cageColumn", cageColumn, "Column must be non-negative or -1 for unset");
+			throw new ValidationException("cageColumn", cageColumn, "Column must be non-negative or -1 for unset");
 		}
 		this.cageColumn = cageColumn;
 	}
@@ -130,11 +130,11 @@ public class ROI2DPolygonPlus extends ROI2DPolygon {
 	 * 
 	 * @param cagePosition The cage position index (must be non-negative or -1 for
 	 *                     unset)
-	 * @throws ROI2DValidationException If the position index is invalid
+	 * @throws ValidationException If the position index is invalid
 	 */
-	public void setCagePosition(int cagePosition) throws ROI2DValidationException {
+	public void setCagePosition(int cagePosition) throws ValidationException {
 		if (cagePosition < -1) {
-			throw new ROI2DValidationException("cagePosition", cagePosition,
+			throw new ValidationException("cagePosition", cagePosition,
 					"Position must be non-negative or -1 for unset");
 		}
 		this.cagePosition = cagePosition;
@@ -214,7 +214,7 @@ public class ROI2DPolygonPlus extends ROI2DPolygon {
 			copy.setCageColumn(this.cageColumn);
 			copy.setCagePosition(this.cagePosition);
 			copy.setSelected(this.selected);
-		} catch (ROI2DValidationException e) {
+		} catch (ValidationException e) {
 			// This should not happen as we're copying valid values
 			throw new RuntimeException("Failed to copy cage properties", e);
 		}

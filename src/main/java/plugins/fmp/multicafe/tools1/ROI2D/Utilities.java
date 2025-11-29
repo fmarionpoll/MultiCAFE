@@ -23,7 +23,7 @@ import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DRectShape;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
-public class ROI2DUtilities {
+public class Utilities {
 	private static final String ID_ROIMC = "roiMC";
 
 	public static Polygon2D getPolygonEnclosingROI2Ds(ArrayList<ROI2D> listRois, String filter) {

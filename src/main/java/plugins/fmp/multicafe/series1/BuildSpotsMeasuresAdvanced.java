@@ -19,8 +19,8 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.tools1.ViewerFMP;
-import plugins.fmp.multicafe.tools1.ROI2D.ROI2DProcessingException;
-import plugins.fmp.multicafe.tools1.ROI2D.ROI2DValidationException;
+import plugins.fmp.multicafe.tools1.ROI2D.ProcessingException;
+import plugins.fmp.multicafe.tools1.ROI2D.ValidationException;
 import plugins.fmp.multicafe.tools1.ROI2D.ROI2DWithMask;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
@@ -538,7 +538,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				try {
 					roiT = new ROI2DWithMask(spot.getRoi());
 					roiT.buildMask2DFromInputRoi();
-				} catch (ROI2DProcessingException | ROI2DValidationException e) {
+				} catch (ProcessingException | ValidationException e) {
 					System.err.println("Error building mask for ROI: " + e.getMessage());
 					e.printStackTrace();
 				}

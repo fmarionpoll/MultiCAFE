@@ -59,11 +59,11 @@ public class ROI2DGrid implements ROIListener {
      * @param polygon The polygon defining the grid bounds
      * @param columns Number of columns in the grid
      * @param rows Number of rows in the grid
-     * @throws ROI2DValidationException If parameters are invalid
-     * @throws ExceptionGeometry If grid creation fails
+     * @throws ValidationException If parameters are invalid
+     * @throws GeometryException If grid creation fails
      */
     public void createGridFromFrame(Polygon2D polygon, int columns, int rows) 
-            throws ROI2DValidationException, ExceptionGeometry {
+            throws ValidationException, GeometryException {
         
         // Validate inputs
         ROI2DValidator.validateNotNull(polygon, "polygon");
@@ -92,7 +92,7 @@ public class ROI2DGrid implements ROIListener {
             
         } catch (Exception e) {
             gridInitialized = false;
-            throw new ExceptionGeometry("createGridFromFrame", "Failed to create grid", e);
+            throw new GeometryException("createGridFromFrame", "Failed to create grid", e);
         } finally {
             lock.writeLock().unlock();
         }
@@ -191,9 +191,9 @@ public class ROI2DGrid implements ROIListener {
      * 
      * @param position The position index
      * @return The ROI at the specified position, or null if not found
-     * @throws ROI2DValidationException If position is invalid
+     * @throws ValidationException If position is invalid
      */
-    public ROI2DPolygonPlus getAreaAt(int position) throws ROI2DValidationException {
+    public ROI2DPolygonPlus getAreaAt(int position) throws ValidationException {
         lock.readLock().lock();
         try {
             if (areaRois == null) {
@@ -255,9 +255,9 @@ public class ROI2DGrid implements ROIListener {
      * Clears all grid ROIs from the sequence.
      * 
      * @param sequence The sequence to clear ROIs from
-     * @throws ROI2DValidationException If sequence is null
+     * @throws ValidationException If sequence is null
      */
-    public void clearGridRois(Sequence sequence) throws ROI2DValidationException {
+    public void clearGridRois(Sequence sequence) throws ValidationException {
         ROI2DValidator.validateNotNull(sequence, "sequence");
         
         lock.writeLock().lock();
@@ -283,18 +283,18 @@ public class ROI2DGrid implements ROIListener {
      * @param color The color for the ROIs
      * @param widthInterval The width interval
      * @param heightInterval The height interval
-     * @throws ROI2DValidationException If parameters are invalid
-     * @throws ROI2DProcessingException If grid conversion fails
+     * @throws ValidationException If parameters are invalid
+     * @throws ProcessingException If grid conversion fails
      */
     public void gridToRois(String cageRoot, Color color, int widthInterval, int heightInterval) 
-            throws ROI2DValidationException, ROI2DProcessingException {
+            throws ValidationException, ProcessingException {
         
         if (cageRoot == null) {
             cageRoot = Constants.Grid.DEFAULT_CAGE_ROOT_NAME;
         }
         
         if (!gridInitialized) {
-            throw new ROI2DProcessingException("gridToRois", "Grid has not been initialized. Call createGridFromFrame() first");
+            throw new ProcessingException("gridToRois", "Grid has not been initialized. Call createGridFromFrame() first");
         }
         
         lock.writeLock().lock();
@@ -316,18 +316,18 @@ public class ROI2DGrid implements ROIListener {
                          roiP.setCageRow(row);
                          roiP.setCageColumn(column);
                          roiP.setCagePosition(index);
-                     } catch (ROI2DValidationException e) {
-                         throw new ROI2DProcessingException("gridToRois", "Failed to set cage properties", e);
+                     } catch (ValidationException e) {
+                         throw new ProcessingException("gridToRois", "Failed to set cage properties", e);
                      }
                     
                     areaRois.add(roiP);
                     index++;
                 }
             }
-        } catch (ROI2DValidationException e) {
+        } catch (ValidationException e) {
             throw e;
         } catch (Exception e) {
-            throw new ROI2DProcessingException("gridToRois", "Failed to convert grid to ROIs", e);
+            throw new ProcessingException("gridToRois", "Failed to convert grid to ROIs", e);
         } finally {
             lock.writeLock().unlock();
         }
@@ -337,7 +337,7 @@ public class ROI2DGrid implements ROIListener {
      * Creates a polygon ROI for the specified grid cell with validation.
      */
     private ROI2DPolygonPlus createRoiPolygon(int column, int row, int width, int height) 
-            throws ROI2DValidationException {
+            throws ValidationException {
         
         ROI2DValidator.validateArrayIndex(column, gridColumns - 1, "column");
         ROI2DValidator.validateArrayIndex(row, gridRows - 1, "row");
@@ -372,7 +372,7 @@ public class ROI2DGrid implements ROIListener {
      * Creates a grid with the specified polygon and dimensions.
      */
     private Point2D.Double[][] createGridWithPolygon(Polygon2D polygon, int columns, int rows) 
-            throws ExceptionGeometry {
+            throws GeometryException {
 
         try {
             Point2D.Double[][] arrayPoints = new Point2D.Double[columns + 1][rows + 1];
@@ -398,7 +398,7 @@ public class ROI2DGrid implements ROIListener {
             }
             return arrayPoints;
         } catch (Exception e) {
-            throw new ExceptionGeometry("createGridWithPolygon", "Failed to create grid points", e);
+            throw new GeometryException("createGridWithPolygon", "Failed to create grid points", e);
         }
     }
 
