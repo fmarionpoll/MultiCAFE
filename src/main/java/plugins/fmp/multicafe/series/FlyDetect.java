@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
-import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.service.SequenceLoaderService;
 import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.ViewerFMP;

@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 
 public class Edit extends JPanel {
 	/**

@@ -31,7 +31,7 @@ import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportCapillariesResults;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;

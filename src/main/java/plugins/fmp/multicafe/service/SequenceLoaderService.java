@@ -14,9 +14,9 @@ import icy.file.SequenceFileImporter;
 import icy.image.IcyBufferedImage;
 import icy.image.ImageUtil;
 import icy.sequence.Sequence;
-import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.ExperimentDirectories;
-import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
+import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.tools.Logger;
 
 public class SequenceLoaderService {

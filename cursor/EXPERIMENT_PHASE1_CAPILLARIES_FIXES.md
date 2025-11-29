@@ -395,3 +395,4 @@ Some methods use deprecated APIs (e.g., `getImageWidthMax()`, `validateRois()`).
 ## Next Steps
 Proceed to Phase 2: Kymograph Support (if needed) or Phase 3: Legacy Accessors.
 
+

@@ -15,7 +15,7 @@ import javax.swing.JTabbedPane;
 import icy.gui.component.PopupPanel;
 import icy.system.thread.ThreadUtil;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.tools.JComponents.Dialog;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportCapillariesResults;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportGulpsResults;

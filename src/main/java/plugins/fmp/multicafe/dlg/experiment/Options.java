@@ -16,7 +16,7 @@ import icy.canvas.Layer;
 import icy.gui.viewer.Viewer;
 import icy.roi.ROI;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 
 public class Options extends JPanel {
 	private static final long serialVersionUID = 6565346204580890307L;

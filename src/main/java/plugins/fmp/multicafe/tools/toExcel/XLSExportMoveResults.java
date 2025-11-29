@@ -7,10 +7,10 @@ import java.util.List;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import plugins.fmp.multicafe.experiment.CombinedExperiment;
-import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cages.Cage;
-import plugins.fmp.multicafe.experiment.cages.FlyPosition;
+import plugins.fmp.multicafe.fmp_experiment.CombinedExperiment;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.cages.FlyPosition;
 
 public class XLSExportMoveResults extends XLSExport {
 	//

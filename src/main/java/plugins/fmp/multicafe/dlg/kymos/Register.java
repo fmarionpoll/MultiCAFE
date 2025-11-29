@@ -18,7 +18,7 @@ import javax.swing.SwingUtilities;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.tools.ImageRegistration;
 import plugins.fmp.multicafe.tools.ImageRegistrationFeatures;
 import plugins.fmp.multicafe.tools.ImageRegistrationFeaturesGPU;

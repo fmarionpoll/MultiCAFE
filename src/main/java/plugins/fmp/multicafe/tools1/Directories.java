@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import plugins.fmp.multicafe.experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 
 /**
  * Utility class for directory and file operations. This class provides various

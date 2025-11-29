@@ -346,3 +346,4 @@ This mapping ensures backward compatibility while using the new field structure.
 ## Next Steps
 All phases of the Experiment adaptation are now complete! The `experiment1.Experiment` class should now be a functional replacement for `experiment.Experiment` while retaining its modular architecture.
 
+

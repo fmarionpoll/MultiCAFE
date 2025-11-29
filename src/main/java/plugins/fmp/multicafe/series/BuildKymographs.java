@@ -6,8 +6,8 @@ import javax.swing.SwingUtilities;
 
 import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
-import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.service.KymographBuilder;
 import plugins.fmp.multicafe.tools.Logger;
 

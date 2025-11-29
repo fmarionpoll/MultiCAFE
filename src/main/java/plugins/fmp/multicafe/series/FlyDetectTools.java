@@ -12,9 +12,9 @@ import icy.image.IcyBufferedImage;
 import icy.roi.BooleanMask2D;
 import icy.system.SystemUtil;
 import icy.system.thread.Processor;
-import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cages.Cage;
-import plugins.fmp.multicafe.experiment.cages.CagesArray;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyDetectTools {

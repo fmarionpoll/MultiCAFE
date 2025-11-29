@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe.series;
 
-import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 
 public class AdjustMeasuresToDimensions extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {

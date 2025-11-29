@@ -2,8 +2,8 @@ package plugins.fmp.multicafe.tools.JComponents;
 
 import javax.swing.table.AbstractTableModel;
 
-import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 
 public class CageTableModel extends AbstractTableModel {
 	/**

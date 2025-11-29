@@ -2,11 +2,11 @@ package plugins.fmp.multicafe.service;
 
 import java.util.List;
 
-import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.ExperimentDirectories;
-import plugins.fmp.multicafe.experiment.ImageFileDescriptor;
-import plugins.fmp.multicafe.experiment.sequence.SequenceCamData;
-import plugins.fmp.multicafe.experiment.sequence.SequenceKymos;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
+import plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor;
+import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 
 public class ExperimentService {
 

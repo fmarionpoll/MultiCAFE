@@ -12,11 +12,11 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cages.Cage;
-import plugins.fmp.multicafe.experiment.cages.CageProperties;
-import plugins.fmp.multicafe.experiment.spots.Spot;
-import plugins.fmp.multicafe.experiment.spots.SpotMeasure;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotMeasure;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
 import plugins.fmp.multicafe.tools1.toExcel.XLSExportOptions;
 

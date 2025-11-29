@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.series1;
 
 import java.util.logging.Logger;
 
-import plugins.fmp.multicafe.experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 
 /**
  * Refactored Registration class following clean code principles.

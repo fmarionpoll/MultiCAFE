@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import org.jfree.chart.ChartPanel;
 
-import plugins.fmp.multicafe.experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 
 /**
  * Container class that pairs a chart panel with its associated cage. This class

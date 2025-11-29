@@ -13,10 +13,10 @@ import icy.image.IcyBufferedImage;
 import icy.roi.BooleanMask2D;
 import icy.sequence.Sequence;
 import icy.system.thread.Processor;
-import plugins.fmp.multicafe.experiment.Experiment;
-import plugins.fmp.multicafe.experiment.cages.Cage;
-import plugins.fmp.multicafe.experiment.spots.Spot;
-import plugins.fmp.multicafe.experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
