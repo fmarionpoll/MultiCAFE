@@ -22,6 +22,7 @@ import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
@@ -856,23 +857,23 @@ public class Experiment {
 		return flag;
 	}
 
-	public void copyExperimentFields(plugins.fmp.multicafe.fmp_experiment.Experiment expSource) {
+	public void copyExperimentFields(Experiment expSource) {
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID,
-				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_BOXID));
+				expSource.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT,
-				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_EXPT));
+				expSource.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM1,
-				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_STIM));
+				expSource.getExperimentField(EnumXLSColumnHeader.EXP_STIM1));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC1,
-				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_CONC));
+				expSource.getExperimentField(EnumXLSColumnHeader.EXP_CONC1));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STRAIN,
-				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_STRAIN));
+				expSource.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_SEX,
-				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_SEX));
+				expSource.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM2,
-				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_COND1));
+				expSource.getExperimentField(EnumXLSColumnHeader.EXP_STIM2));
 		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC2,
-				expSource.getExperimentField(plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.EXP_COND2));
+				expSource.getExperimentField(EnumXLSColumnHeader.EXP_CONC2));
 	}
 
 	public void getFieldValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
@@ -1242,7 +1243,8 @@ public class Experiment {
 		String kymosImagesDirectory = getKymosBinFullDirectory();
 		boolean flag2 = capillaries.load_Capillaries(kymosImagesDirectory);
 		if (flag1 & flag2) {
-			// TODO: Add loadListOfPotentialKymographsFromCapillaries method to SequenceKymos
+			// TODO: Add loadListOfPotentialKymographsFromCapillaries method to
+			// SequenceKymos
 			// For now, this functionality may need to be implemented
 		}
 		return flag1 & flag2;
@@ -1412,22 +1414,20 @@ public class Experiment {
 	public boolean loadKymographs() {
 		if (getSeqKymos() == null)
 			setSeqKymos(new SequenceKymos());
-		
+
 		// Use KymographService to get list of potential kymographs from capillaries
 		plugins.fmp.multicafe.service.KymographService kymoService = new plugins.fmp.multicafe.service.KymographService();
-		List<plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor> myList = 
-			kymoService.loadListOfPotentialKymographsFromCapillaries(getKymosBinFullDirectory(), capillaries);
-		
+		List<plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor> myList = kymoService
+				.loadListOfPotentialKymographsFromCapillaries(getKymosBinFullDirectory(), capillaries);
+
 		// Filter to get existing file names
 		plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor.getExistingFileNames(myList);
-		
+
 		// Convert to experiment1 ImageFileDescriptor format
-		List<plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor> newList = 
-			new ArrayList<plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor>();
+		List<plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor> newList = new ArrayList<plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor>();
 		for (plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor oldDesc : myList) {
 			if (oldDesc.fileName != null && oldDesc.exists) {
-				plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor newDesc = 
-					new plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor();
+				plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor newDesc = new plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor();
 				newDesc.fileName = oldDesc.fileName;
 				newDesc.exists = oldDesc.exists;
 				newDesc.imageHeight = oldDesc.imageHeight;
@@ -1435,16 +1435,17 @@ public class Experiment {
 				newList.add(newDesc);
 			}
 		}
-		
+
 		if (newList.isEmpty())
 			return false;
-		
+
 		// Load images using the new API
 		return getSeqKymos().loadKymographImagesFromList(newList, true);
 	}
 
 	public boolean loadCamDataCapillaries() {
-		// TODO: Adapt ExperimentService.loadCamDataCapillaries to work with experiment1.Experiment
+		// TODO: Adapt ExperimentService.loadCamDataCapillaries to work with
+		// experiment1.Experiment
 		// For now, return false - this needs to be implemented
 		return false;
 	}
@@ -1467,11 +1468,11 @@ public class Experiment {
 		if (capillaries.getCapillariesList().size() == 0)
 			loadMCCapillaries_Only();
 		// Convert new enum to old enum for Capillary compatibility
-		plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader oldEnum = convertToOldEnum(fieldEnumCode);
+		EnumXLSColumnHeader oldEnum = convertToOldEnum(fieldEnumCode);
 		if (oldEnum == null)
 			return false;
 		boolean flag = false;
-		for (plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary cap : capillaries.getCapillariesList()) {
+		for (Capillary cap : capillaries.getCapillariesList()) {
 			if (cap.getCapillaryField(oldEnum).equals(oldValue)) {
 				cap.setCapillaryField(oldEnum, newValue);
 				flag = true;
@@ -1483,21 +1484,21 @@ public class Experiment {
 	private void addCapillariesValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
 		if (capillaries.getCapillariesList().size() == 0)
 			loadMCCapillaries_Only();
-		// Convert new enum to old enum for Capillary compatibility
-		plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader oldEnum = convertToOldEnum(fieldEnumCode);
-		if (oldEnum == null)
-			return;
-		for (plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary cap : capillaries.getCapillariesList())
-			addValueIfUnique(cap.getCapillaryField(oldEnum), textList);
+//		// Convert new enum to old enum for Capillary compatibility
+//		EnumXLSColumnHeader oldEnum = convertToOldEnum(fieldEnumCode);
+//		if (oldEnum == null)
+//			return;
+		for (Capillary cap : capillaries.getCapillariesList())
+			addValueIfUnique(cap.getCapillaryField(fieldEnumCode), textList);
 	}
 
-	private plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader convertToOldEnum(EnumXLSColumnHeader newEnum) {
+	private EnumXLSColumnHeader convertToOldEnum(EnumXLSColumnHeader newEnum) {
 		// Convert new enum values to old enum values for Capillary compatibility
 		switch (newEnum) {
 		case SPOT_STIM:
-			return plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.CAP_STIM;
+			return EnumXLSColumnHeader.CAP_STIM;
 		case SPOT_CONC:
-			return plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader.CAP_CONC;
+			return EnumXLSColumnHeader.CAP_CONC;
 		default:
 			return null;
 		}
