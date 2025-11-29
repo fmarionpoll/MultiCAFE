@@ -35,7 +35,7 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.tools1.Comparators;
+import plugins.fmp.multicafe.tools1.Comparators1;
 import plugins.fmp.multicafe.tools1.ROI2D.Utilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
@@ -202,7 +202,7 @@ public class SequenceKymos extends SequenceCamData {
 			}
 
 			// Sort ROIs by name
-			Collections.sort(roiList, new Comparators.ROI2D_Name());
+			Collections.sort(roiList, new Comparators1.ROI2D_Name());
 
 			long processingTime = System.currentTimeMillis() - startTime;
 
@@ -238,7 +238,7 @@ public class SequenceKymos extends SequenceCamData {
 			roi.setName("gulp" + String.format("%07d", (int) line.xpoints[0]));
 			roi.setColor(Color.red);
 		}
-		Collections.sort(listRois, new Comparators.ROI2D_Name());
+		Collections.sort(listRois, new Comparators1.ROI2D_Name());
 	}
 
 	public void removeROIsPolylineAtT(int t) {

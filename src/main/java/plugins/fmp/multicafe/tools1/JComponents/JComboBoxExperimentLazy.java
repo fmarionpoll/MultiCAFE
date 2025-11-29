@@ -48,7 +48,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	public int index0 = 0;
 	public int index1 = 0;
 	public int maxSizeOfSpotsArrays = 0;
-	public String stringExpBinSubDirectory = null;
+	public String expListBinSubDirectory = null;
 
 	// Metadata storage for lazy loading
 	private List<ExperimentMetadata> experimentMetadataList = new ArrayList<>();
@@ -59,7 +59,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	@Override
 	public void removeAllItems() {
 		super.removeAllItems();
-		stringExpBinSubDirectory = null;
+		expListBinSubDirectory = null;
 		experimentMetadataList.clear();
 	}
 
@@ -118,7 +118,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 
 		// Create metadata from the experiment
 		ExperimentMetadata metadata = new ExperimentMetadata(
-				exp.seqCamData != null ? exp.seqCamData.getImagesDirectory() : exp.toString(),
+				exp.getSeqCamData() != null ? exp.getSeqCamData().getImagesDirectory() : exp.toString(),
 				exp.getResultsDirectory(), exp.getBinDirectory());
 		return new LazyExperiment(metadata);
 	}
@@ -165,8 +165,8 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		Experiment expAll = new Experiment();
 		Experiment exp0 = getItemAt(0);
 		if (options.fixedIntervals) {
-			expAll.seqCamData.getTimeManager().setFirstImageMs(options.startAll_Ms);
-			expAll.seqCamData.setLastImageMs(options.endAll_Ms);
+			expAll.getSeqCamData().getTimeManager().setFirstImageMs(options.startAll_Ms);
+			expAll.getSeqCamData().setLastImageMs(options.endAll_Ms);
 		} else {
 			if (options.absoluteTime) {
 				Experiment expFirst = exp0.getFirstChainedExperiment(options.collateSeries);
@@ -182,39 +182,39 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 					if (expAll.lastImage_FileTime.compareTo(expLast.lastImage_FileTime) < 0)
 						expAll.setFileTimeImageLast(expLast.lastImage_FileTime);
 				}
-				expAll.seqCamData.setFirstImageMs(expAll.firstImage_FileTime.toMillis());
-				expAll.seqCamData.setLastImageMs(expAll.lastImage_FileTime.toMillis());
+				expAll.getSeqCamData().setFirstImageMs(expAll.firstImage_FileTime.toMillis());
+				expAll.getSeqCamData().setLastImageMs(expAll.lastImage_FileTime.toMillis());
 			} else {
-				expAll.seqCamData.setFirstImageMs(0);
-				expAll.seqCamData.setLastImageMs(exp0.seqCamData.getTimeManager().getBinLast_ms()
-						- exp0.seqCamData.getTimeManager().getBinFirst_ms());
+				expAll.getSeqCamData().setFirstImageMs(0);
+				expAll.getSeqCamData().setLastImageMs(exp0.getSeqCamData().getTimeManager().getBinLast_ms()
+						- exp0.getSeqCamData().getTimeManager().getBinFirst_ms());
 				long firstOffset_Ms = 0;
 				long lastOffset_Ms = 0;
 
 				for (int i = 0; i < getItemCount(); i++) {
 					Experiment exp = getItemAt(i);
 					Experiment expFirst = exp.getFirstChainedExperiment(options.collateSeries);
-					firstOffset_Ms = expFirst.seqCamData.getTimeManager().getBinFirst_ms()
-							+ expFirst.seqCamData.getFirstImageMs();
-					exp.chainImageFirst_ms = expFirst.seqCamData.getFirstImageMs()
-							+ expFirst.seqCamData.getTimeManager().getBinFirst_ms();
+					firstOffset_Ms = expFirst.getSeqCamData().getTimeManager().getBinFirst_ms()
+							+ expFirst.getSeqCamData().getFirstImageMs();
+					exp.chainImageFirst_ms = expFirst.getSeqCamData().getFirstImageMs()
+							+ expFirst.getSeqCamData().getTimeManager().getBinFirst_ms();
 
 					Experiment expLast = exp.getLastChainedExperiment(options.collateSeries);
-					if (expLast.seqCamData.getTimeManager().getBinLast_ms() <= 0) {
-						expLast.seqCamData.getTimeManager().setBinLast_ms(
-								expLast.seqCamData.getLastImageMs() - expLast.seqCamData.getFirstImageMs());
+					if (expLast.getSeqCamData().getTimeManager().getBinLast_ms() <= 0) {
+						expLast.getSeqCamData().getTimeManager().setBinLast_ms(
+								expLast.getSeqCamData().getLastImageMs() - expLast.getSeqCamData().getFirstImageMs());
 					}
-					lastOffset_Ms = expLast.seqCamData.getTimeManager().getBinLast_ms()
-							+ expLast.seqCamData.getFirstImageMs();
+					lastOffset_Ms = expLast.getSeqCamData().getTimeManager().getBinLast_ms()
+							+ expLast.getSeqCamData().getFirstImageMs();
 
 					long diff = lastOffset_Ms - firstOffset_Ms;
 					if (diff < 1) {
 						System.out.println("ExperimentCombo:get_MsTime_of_StartAndEnd_AllExperiments() Expt # " + i
 								+ ": FileTime difference between last and first image < 1; set dt between images = 1 ms");
-						diff = exp.seqCamData.getSequence().getSizeT();
+						diff = exp.getSeqCamData().getSequence().getSizeT();
 					}
-					if (expAll.seqCamData.getLastImageMs() < diff)
-						expAll.seqCamData.setLastImageMs(diff);
+					if (expAll.getSeqCamData().getLastImageMs() < diff)
+						expAll.getSeqCamData().setLastImageMs(diff);
 				}
 			}
 		}
@@ -257,8 +257,8 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 					if (loadDrosoTrack)
 						exp.zopenPositionsMeasures();
 
-					int nCages = exp.cages.cagesList.size();
-					int nSpotsPerCage = exp.cages.nColumnsPerCage * exp.cages.nRowsPerCage;
+					int nCages = exp.getCages().cagesList.size();
+					int nSpotsPerCage = exp.getCages().nColumnsPerCage * exp.getCages().nRowsPerCage;
 					int nMaxSpots = nCages * nSpotsPerCage;
 					if (maxSizeOfSpotsArrays < nMaxSpots) {
 						maxSizeOfSpotsArrays = nMaxSpots;
@@ -299,8 +299,8 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		for (int i = 0; i < getItemCount(); i++) {
 			Experiment expi = getItemAt(i);
 			Experiment expFirst = expi.getFirstChainedExperiment(collate);
-			expi.chainImageFirst_ms = expFirst.seqCamData.getFirstImageMs()
-					+ expFirst.seqCamData.getTimeManager().getBinFirst_ms();
+			expi.chainImageFirst_ms = expFirst.getSeqCamData().getFirstImageMs()
+					+ expFirst.getSeqCamData().getTimeManager().getBinFirst_ms();
 		}
 	}
 

@@ -13,10 +13,10 @@ import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.fmp_experiment.CombinedExperiment;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.Logger;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools.toExcel.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.Comparators;
 
 public class ExperimentsJComboBox extends JComboBox<Experiment> {
 
@@ -197,7 +197,7 @@ public class ExperimentsJComboBox extends JComboBox<Experiment> {
 			if (list.size() < 2)
 				continue;
 
-			Collections.sort(list, new Comparators.Experiment_Start_Comparator());
+			Collections.sort(list, new Comparators.Experiment_Start());
 			for (int k = 0; k < list.size(); k++) {
 				Experiment expk = list.get(k);
 				if (k > 0)

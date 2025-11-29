@@ -9,9 +9,9 @@ import java.util.List;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
-import plugins.fmp.multicafe.tools.Comparators;
 import plugins.fmp.multicafe.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.Comparators;
 import plugins.fmp.multicafe.tools1.ROI2D.AlongT;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
@@ -174,7 +174,7 @@ public class Capillaries {
 
 	public void updateCapillariesFromSequence(Sequence seq) {
 		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", seq);
-		Collections.sort(listROISCap, new Comparators.ROI2D_Name_Comparator());
+		Collections.sort(listROISCap, new Comparators.ROI2D_Name());
 		for (Capillary cap : getCapillariesList()) {
 			cap.valid = false;
 			String capName = Capillary.replace_LR_with_12(cap.getRoiName());

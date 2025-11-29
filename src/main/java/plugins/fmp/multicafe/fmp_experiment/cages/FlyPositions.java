@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.tools1.Comparators;
+import plugins.fmp.multicafe.tools1.Comparators1;
 import plugins.fmp.multicafe.tools1.ROI2D.Measures;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DArea;
@@ -151,7 +151,7 @@ public class FlyPositions {
 		}
 
 		if (bAdded)
-			Collections.sort(flyPositionList, new Comparators.XYTaValue_Tindex());
+			Collections.sort(flyPositionList, new Comparators1.XYTaValue_Tindex());
 		return true;
 	}
 

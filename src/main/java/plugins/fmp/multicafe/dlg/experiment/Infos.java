@@ -18,8 +18,8 @@ import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools1.JComponents.SortedComboBoxModel;
+import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
 
 public class Infos extends JPanel {
 	/**
@@ -38,12 +38,12 @@ public class Infos extends JPanel {
 
 	private JLabel experimentLabel = new JLabel(EnumXLSColumnHeader.EXP_EXPT.toString());
 	private JLabel boxIDLabel = new JLabel(EnumXLSColumnHeader.EXP_BOXID.toString());
-	private JLabel stim1Label = new JLabel(EnumXLSColumnHeader.EXP_STIM.toString());
-	private JLabel conc1Label = new JLabel(EnumXLSColumnHeader.EXP_CONC.toString());
+	private JLabel stim1Label = new JLabel(EnumXLSColumnHeader.EXP_STIM1.toString());
+	private JLabel conc1Label = new JLabel(EnumXLSColumnHeader.EXP_CONC1.toString());
 	private JLabel strainLabel = new JLabel(EnumXLSColumnHeader.EXP_STRAIN.toString());
 	private JLabel sexLabel = new JLabel(EnumXLSColumnHeader.EXP_SEX.toString());
-	private JLabel stim2Label = new JLabel(EnumXLSColumnHeader.EXP_COND1.toString());
-	private JLabel conc2Label = new JLabel(EnumXLSColumnHeader.EXP_COND2.toString());
+	private JLabel stim2Label = new JLabel(EnumXLSColumnHeader.EXP_STIM2.toString());
+	private JLabel conc2Label = new JLabel(EnumXLSColumnHeader.EXP_CONC2.toString());
 
 	private JButton openButton = new JButton("Load...");
 	private JButton saveButton = new JButton("Save...");
@@ -154,12 +154,12 @@ public class Infos extends JPanel {
 	public void transferPreviousExperimentInfosToDialog(Experiment exp_source, Experiment exp_destination) {
 		setInfoCombo(exp_destination, exp_source, boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
 		setInfoCombo(exp_destination, exp_source, exptCombo, EnumXLSColumnHeader.EXP_EXPT);
-		setInfoCombo(exp_destination, exp_source, stim1Combo, EnumXLSColumnHeader.EXP_STIM);
-		setInfoCombo(exp_destination, exp_source, stim2Combo, EnumXLSColumnHeader.EXP_CONC);
+		setInfoCombo(exp_destination, exp_source, stim1Combo, EnumXLSColumnHeader.EXP_STIM1);
+		setInfoCombo(exp_destination, exp_source, stim2Combo, EnumXLSColumnHeader.EXP_CONC1);
 		setInfoCombo(exp_destination, exp_source, strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
 		setInfoCombo(exp_destination, exp_source, sexCombo, EnumXLSColumnHeader.EXP_SEX);
-		setInfoCombo(exp_destination, exp_source, conc1Combo, EnumXLSColumnHeader.EXP_COND1);
-		setInfoCombo(exp_destination, exp_source, conc2Combo, EnumXLSColumnHeader.EXP_COND2);
+		setInfoCombo(exp_destination, exp_source, conc1Combo, EnumXLSColumnHeader.EXP_STIM2);
+		setInfoCombo(exp_destination, exp_source, conc2Combo, EnumXLSColumnHeader.EXP_CONC2);
 	}
 
 	private void setInfoCombo(Experiment exp_dest, Experiment exp_source, JComboBox<String> combo,
@@ -176,12 +176,12 @@ public class Infos extends JPanel {
 	public void getExperimentInfosFromDialog(Experiment exp) {
 		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID, (String) boxIDCombo.getSelectedItem());
 		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT, (String) exptCombo.getSelectedItem());
-		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM, (String) stim1Combo.getSelectedItem());
-		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC, (String) stim2Combo.getSelectedItem());
+		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM1, (String) stim1Combo.getSelectedItem());
+		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC1, (String) stim2Combo.getSelectedItem());
 		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STRAIN, (String) strainCombo.getSelectedItem());
 		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_SEX, (String) sexCombo.getSelectedItem());
-		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND1, (String) conc1Combo.getSelectedItem());
-		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND2, (String) conc2Combo.getSelectedItem());
+		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM2, (String) conc1Combo.getSelectedItem());
+		exp.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC2, (String) conc2Combo.getSelectedItem());
 	}
 
 	private void addItemToComboIfNew(String toAdd, JComboBox<String> combo) {
@@ -192,18 +192,38 @@ public class Infos extends JPanel {
 			model.addElement(toAdd);
 	}
 
-	public void initInfosCombos() {
-		parent0.expListComboLazy.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
-		parent0.expListComboLazy.getFieldValuesToCombo(stim1Combo, EnumXLSColumnHeader.EXP_STIM);
-		parent0.expListComboLazy.getFieldValuesToCombo(stim2Combo, EnumXLSColumnHeader.EXP_CONC);
-		parent0.expListComboLazy.getFieldValuesToCombo(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
-		parent0.expListComboLazy.getFieldValuesToCombo(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
-		parent0.expListComboLazy.getFieldValuesToCombo(sexCombo, EnumXLSColumnHeader.EXP_SEX);
-		parent0.expListComboLazy.getFieldValuesToCombo(conc1Combo, EnumXLSColumnHeader.EXP_COND1);
-		parent0.expListComboLazy.getFieldValuesToCombo(conc2Combo, EnumXLSColumnHeader.EXP_COND2);
+	public void initCombos() {
+		// Prefer DescriptorIndex when ready; fallback to lightweight combo collection
+		if (parent0.descriptorIndex != null && parent0.descriptorIndex.isReady()) {
+			refreshComboFromIndex(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
+			refreshComboFromIndex(stim1Combo, EnumXLSColumnHeader.EXP_STIM1);
+			refreshComboFromIndex(conc1Combo, EnumXLSColumnHeader.EXP_CONC1);
+			refreshComboFromIndex(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
+			refreshComboFromIndex(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
+			refreshComboFromIndex(sexCombo, EnumXLSColumnHeader.EXP_SEX);
+			refreshComboFromIndex(stim2Combo, EnumXLSColumnHeader.EXP_STIM2);
+			refreshComboFromIndex(conc2Combo, EnumXLSColumnHeader.EXP_CONC2);
+		} else {
+			// Use lightweight version to avoid loading all experiments
+			parent0.expListComboLazy.getFieldValuesToComboLightweight(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
+			parent0.expListComboLazy.getFieldValuesToComboLightweight(stim1Combo, EnumXLSColumnHeader.EXP_STIM1);
+			parent0.expListComboLazy.getFieldValuesToComboLightweight(conc1Combo, EnumXLSColumnHeader.EXP_CONC1);
+			parent0.expListComboLazy.getFieldValuesToComboLightweight(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
+			parent0.expListComboLazy.getFieldValuesToComboLightweight(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
+			parent0.expListComboLazy.getFieldValuesToComboLightweight(sexCombo, EnumXLSColumnHeader.EXP_SEX);
+			parent0.expListComboLazy.getFieldValuesToComboLightweight(stim2Combo, EnumXLSColumnHeader.EXP_STIM2);
+			parent0.expListComboLazy.getFieldValuesToComboLightweight(conc2Combo, EnumXLSColumnHeader.EXP_CONC2);
+		}
 		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null)
 			transferPreviousExperimentInfosToDialog(exp, exp);
+	}
+
+	private void refreshComboFromIndex(JComboBox<String> combo, EnumXLSColumnHeader field) {
+		combo.removeAllItems();
+		for (String text : parent0.descriptorIndex.getDistinctValues(field)) {
+			combo.addItem(text);
+		}
 	}
 
 	public void clearCombos() {
@@ -229,9 +249,12 @@ public class Infos extends JPanel {
 	}
 
 	void transferPreviousExperimentCapillariesInfos(Experiment exp0, Experiment exp) {
-		exp.getCapillaries().getCapillariesDescription().setGrouping(exp0.getCapillaries().getCapillariesDescription().getGrouping());
-		parent0.paneCapillaries.tabCreate.setGroupedBy2(exp0.getCapillaries().getCapillariesDescription().getGrouping() == 2);
-		exp.getCapillaries().getCapillariesDescription().setVolume(exp0.getCapillaries().getCapillariesDescription().getVolume());
+		exp.getCapillaries().getCapillariesDescription()
+				.setGrouping(exp0.getCapillaries().getCapillariesDescription().getGrouping());
+		parent0.paneCapillaries.tabCreate
+				.setGroupedBy2(exp0.getCapillaries().getCapillariesDescription().getGrouping() == 2);
+		exp.getCapillaries().getCapillariesDescription()
+				.setVolume(exp0.getCapillaries().getCapillariesDescription().getVolume());
 		parent0.paneCapillaries.tabInfos.setAllDescriptors(exp0.getCapillaries());
 	}
 

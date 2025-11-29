@@ -34,7 +34,12 @@ public enum EnumXLSColumnHeader {
 	CAP_CONC("Cap_concentration", 23, EnumXLSMeasure.CAP), //
 	CAP_NFLIES("Nflies", 24, EnumXLSMeasure.CAP), //
 	//
-	DUM4("Dum4", 25, EnumXLSMeasure.COMMON);
+	DUM4("Dum4", 25, EnumXLSMeasure.COMMON),
+	//
+	EXP_STIM1("Stim1", 7, EnumXLSMeasure.COMMON), //
+	EXP_CONC1("Conc1", 8, EnumXLSMeasure.COMMON), //
+	EXP_STIM2("Stim2", 9, EnumXLSMeasure.COMMON), //
+	EXP_CONC2("Conc2", 10, EnumXLSMeasure.COMMON);
 
 	private final String name;
 	private int value;

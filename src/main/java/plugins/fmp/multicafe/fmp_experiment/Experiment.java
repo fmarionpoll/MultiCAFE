@@ -1175,6 +1175,16 @@ public class Experiment {
 		this.capillaries = capillaries;
 	}
 
+	public SequenceCamData getSeqCamData() {
+		if (seqCamData == null)
+			seqCamData = new SequenceCamData();
+		return seqCamData;
+	}
+
+	public void setSeqCamData(SequenceCamData seqCamData) {
+		this.seqCamData = seqCamData;
+	}
+
 	public SequenceKymos getSeqKymos() {
 		if (seqKymos == null)
 			seqKymos = new SequenceKymos();

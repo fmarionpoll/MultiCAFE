@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,12 +51,12 @@ public class SelectFiles1 extends JPanel {
 	private JRadioButton rbDirectory = new JRadioButton("directory");
 	private JList<String> directoriesJList = new JList<String>(new DefaultListModel<String>());
 	private MultiCAFE parent0 = null;
-	private LoadSaveExperiment parent1 = null;
+	List<String> selectedNames = null;
 
-	public void initialize(MultiCAFE parent0) {
+	public void initialize(MultiCAFE parent0, List<String> stringList) {
 		this.parent0 = parent0;
-		this.parent1 = parent0.paneBrowse.panelLoadSave;
-		addPropertyChangeListener(parent1);
+		addPropertyChangeListener(parent0.paneBrowse.panelLoadSave);
+		selectedNames = stringList;
 
 		JPanel mainPanel = GuiUtil.generatePanelWithoutBorder();
 		dialogFrame = new IcyFrame("Select files", true, true);
@@ -284,9 +283,9 @@ public class SelectFiles1 extends JPanel {
 		for (String name : stringList) {
 			String directoryName = Paths.get(name).getParent().toString();
 			if (isDirectoryWithJpg(directoryName))
-				parent1.selectedNames.add(directoryName);
+				selectedNames.add(directoryName);
 		}
-		Collections.sort(parent1.selectedNames);
+		Collections.sort(selectedNames);
 	}
 
 	private boolean isDirectoryWithJpg(String directoryName) {

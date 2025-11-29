@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.tools.toExcel;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import plugins.fmp.multicafe.tools.Comparators;
+import plugins.fmp.multicafe.tools1.Comparators;
 
 public class XLSResultsArray {
 	public ArrayList<XLSResults> resultsList = null;
@@ -31,7 +31,7 @@ public class XLSResultsArray {
 	}
 
 	public void sortRowsByName() {
-		Collections.sort(resultsList, new Comparators.XLSResults_Name_Comparator());
+		Collections.sort(resultsList, new Comparators.XLSResults_Name());
 	}
 
 	public void subtractDeltaT(int i, int j) {

@@ -12,11 +12,14 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import icy.gui.frame.progress.ProgressFrame;
 import icy.gui.viewer.Viewer;
@@ -27,7 +30,8 @@ import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
-import plugins.fmp.multicafe.tools1.Logger;
+import plugins.fmp.multicafe.tools1.LazyExperiment;
+import plugins.fmp.multicafe.tools1.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multicafe.tools1.JComponents.SequenceNameListRenderer;
 
 public class LoadSaveExperiment extends JPanel implements PropertyChangeListener, ItemListener, SequenceListener {
@@ -35,24 +39,62 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	 * 
 	 */
 	private static final long serialVersionUID = -690874563607080412L;
+	private static final Logger LOGGER = Logger.getLogger(LoadSaveExperiment.class.getName());
 
-	private JButton createButton = new JButton("Create...");
+	// Performance constants for metadata-only processing
+	private static final int METADATA_BATCH_SIZE = 20; // Process 20 experiments at a time
+	private static final int PROGRESS_UPDATE_INTERVAL = 10; // Update progress every 10 experiments
+
+	// UI Components
 	private JButton openButton = new JButton("Open...");
+	private JButton createButton = new JButton("Create...");
 	private JButton searchButton = new JButton("Search...");
 	private JButton closeButton = new JButton("Close");
 	public JCheckBox filteredCheck = new JCheckBox("List filtered");
 
+	// Data structures
 	public List<String> selectedNames = new ArrayList<String>();
 	private SelectFiles1 dialogSelect = null;
 
+	// Navigation buttons
 	private JButton previousButton = new JButton("<");
 	private JButton nextButton = new JButton(">");
 
+	// Metadata storage - lightweight experiment information
+	private List<ExperimentMetadata> experimentMetadataList = new ArrayList<>();
+	private volatile boolean isProcessing = false;
+	private final AtomicInteger processingCount = new AtomicInteger(0);
+
+	// Parent reference
 	private MultiCAFE parent0 = null;
+
+	// -----------------------------------------
+	public LoadSaveExperiment() {
+	}
 
 	public JPanel initPanel(MultiCAFE parent0) {
 		this.parent0 = parent0;
+		setLayout(new BorderLayout());
+		setPreferredSize(new Dimension(400, 200));
 
+		JPanel group2Panel = initUI();
+		defineActionListeners();
+		parent0.expListComboLazy.addItemListener(this);
+
+		return group2Panel;
+	}
+
+	private JPanel initUI() {
+		JPanel group2Panel = new JPanel(new GridLayout(2, 1));
+		JPanel navPanel = initNavigationPanel();
+		JPanel buttonPanel = initButtonPanel();
+		group2Panel.add(navPanel);
+		group2Panel.add(buttonPanel);
+		return group2Panel;
+	}
+
+	private JPanel initNavigationPanel() {
+		JPanel navPanel = new JPanel(new BorderLayout());
 		SequenceNameListRenderer renderer = new SequenceNameListRenderer();
 		parent0.expListComboLazy.setRenderer(renderer);
 		int bWidth = 30;
@@ -60,12 +102,14 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		previousButton.setPreferredSize(new Dimension(bWidth, height));
 		nextButton.setPreferredSize(new Dimension(bWidth, height));
 
-		JPanel sequencePanel0 = new JPanel(new BorderLayout());
-		sequencePanel0.add(previousButton, BorderLayout.LINE_START);
-		sequencePanel0.add(parent0.expListComboLazy, BorderLayout.CENTER);
-		sequencePanel0.add(nextButton, BorderLayout.LINE_END);
+		navPanel.add(previousButton, BorderLayout.LINE_START);
+		navPanel.add(parent0.expListComboLazy, BorderLayout.CENTER);
+		navPanel.add(nextButton, BorderLayout.LINE_END);
+		return navPanel;
+	}
 
-		JPanel sequencePanel = new JPanel(new BorderLayout());
+	private JPanel initButtonPanel() {
+		JPanel buttonPanel = new JPanel(new BorderLayout());
 		FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
 		layout.setVgap(1);
 		JPanel subPanel = new JPanel(layout);
@@ -74,50 +118,314 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		subPanel.add(searchButton);
 		subPanel.add(closeButton);
 		subPanel.add(filteredCheck);
-		sequencePanel.add(subPanel, BorderLayout.LINE_START);
-
-		defineActionListeners();
-		parent0.expListComboLazy.addItemListener(this);
-
-		JPanel twoLinesPanel = new JPanel(new GridLayout(2, 1));
-		twoLinesPanel.add(sequencePanel0);
-		twoLinesPanel.add(sequencePanel);
-
-		return twoLinesPanel;
+		buttonPanel.add(subPanel, BorderLayout.LINE_START);
+		return buttonPanel;
 	}
 
+	private void defineActionListeners() {
+		openButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				handleOpenButton();
+			}
+		});
+//		openButton.addActionListener(new ActionListener() {
+//		@Override
+//		public void actionPerformed(ActionEvent arg0) {
+//			ExperimentDirectories eDAF = new ExperimentDirectories();
+//			if (eDAF.getDirectoriesFromDialog(parent0.expListComboLazy, null, false)) {
+//				int item = addExperimentFrom3NamesAnd2Lists(eDAF);
+//				parent0.paneExperiment.tabInfos.initInfosCombos();
+//				parent0.expListComboLazy.setSelectedIndex(item);
+//			}
+//		}
+//	});
+
+		searchButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				handleSearchButton();
+			}
+		});
+//		searchButton.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent arg0) {
+//				selectedNames = new ArrayList<String>();
+//				dialogSelect = new SelectFiles1();
+//				dialogSelect.initialize(parent0);
+//			}
+//		});
+
+		closeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				handleCloseButton();
+			}
+		});
+//		closeButton.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(final ActionEvent e) {
+//				closeAllExperiments();
+//				parent0.paneExperiment.tabsPane.setSelectedIndex(0);
+//				parent0.expListComboLazy.removeAllItems();
+//				parent0.expListComboLazy.updateUI();
+//			}
+//		});
+
+		previousButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				handlePreviousButton();
+			}
+		});
+//		previousButton.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(final ActionEvent e) {
+//				parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() - 1);
+//				updateBrowseInterface();
+//			}
+//		});
+
+		nextButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				handleNextButton();
+			}
+		});
+//		nextButton.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(final ActionEvent e) {
+//				parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() + 1);
+//				updateBrowseInterface();
+//			}
+//		});
+
+		parent0.expListComboLazy.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				updateBrowseInterface();
+			}
+		});
+
+		filteredCheck.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				parent0.paneExperiment.tabFilter.filterExperimentList(filteredCheck.isSelected());
+			}
+		});
+
+		createButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ExperimentDirectories eDAF = new ExperimentDirectories();
+				if (eDAF.getDirectoriesFromDialog(parent0.expListComboLazy, null, true)) {
+					int item = addExperimentFrom3NamesAnd2Lists(eDAF);
+					parent0.paneExperiment.tabInfos.initCombos();
+					parent0.expListComboLazy.setSelectedIndex(item);
+				}
+			}
+		});
+
+	}
+
+	private void handleOpenButton() {
+		ExperimentDirectories eDAF = new ExperimentDirectories();
+		final String binDirectory = parent0.expListComboLazy.expListBinSubDirectory;
+		if (eDAF.getDirectoriesFromDialog(binDirectory, null, false)) {
+			String camDataImagesDirectory = eDAF.getCameraImagesDirectory();
+			String resultsDirectory = eDAF.getResultsDirectory();
+			ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory,
+					binDirectory);
+
+			LazyExperiment lazyExp = new LazyExperiment(metadata);
+			int selectedIndex = parent0.expListComboLazy.addLazyExperiment(lazyExp);
+			parent0.paneExperiment.tabInfos.initCombos();
+			parent0.expListComboLazy.setSelectedIndex(selectedIndex);
+		}
+	}
+
+	private void handleSearchButton() {
+		selectedNames = new ArrayList<String>();
+		dialogSelect = new SelectFiles1();
+		dialogSelect.initialize(parent0, selectedNames);
+	}
+
+	private void handleCloseButton() {
+		closeAllExperiments();
+		parent0.expListComboLazy.removeAllItems();
+		parent0.expListComboLazy.updateUI();
+	}
+
+	private void handlePreviousButton() {
+		parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() - 1);
+		updateBrowseInterface();
+	}
+
+	private void handleNextButton() {
+		parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() + 1);
+		updateBrowseInterface();
+	}
+
+	// ----------------------------
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("SELECT1_CLOSED")) {
-			parent0.paneExperiment.tabInfos.disableChangeFile = true;
-			if (selectedNames.size() < 1)
+			if (selectedNames.size() < 1) {
 				return;
+			}
 
-			ExperimentDirectories experimentDirectories = new ExperimentDirectories();
-			if (experimentDirectories.getDirectoriesFromExptPath(parent0.expListComboLazy, selectedNames.get(0), null)) {
-				final int item = addExperimentFrom3NamesAnd2Lists(experimentDirectories);
-				final String binSubDirectory = parent0.expListComboLazy.expListBinSubDirectory;
+			if (isProcessing) {
+				LOGGER.warning("File processing already in progress, ignoring new request");
+				return;
+			}
 
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						parent0.paneExperiment.tabInfos.disableChangeFile = false;
-						for (int i = 1; i < selectedNames.size(); i++) {
-							ExperimentDirectories expDirectories = new ExperimentDirectories();
-							if (expDirectories.getDirectoriesFromExptPath(parent0.expListComboLazy, selectedNames.get(i),
-									binSubDirectory))
-								addExperimentFrom3NamesAnd2Lists(expDirectories);
-						}
-						selectedNames.clear();
-						updateBrowseInterface();
-						parent0.paneExperiment.tabInfos.disableChangeFile = true;
-						parent0.paneExperiment.tabInfos.initInfosCombos();
-						parent0.expListComboLazy.setSelectedIndex(item);
-						Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-						if (exp != null)
-							parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);
-					}
+			processSelectedFilesMetadataOnly();
+		}
+	}
+
+	private void processSelectedFilesMetadataOnly() {
+		isProcessing = true;
+		processingCount.set(0);
+		experimentMetadataList.clear();
+
+		ProgressFrame progressFrame = new ProgressFrame("Processing Experiment Metadata");
+		progressFrame.setMessage("Scanning " + selectedNames.size() + " experiment directories...");
+
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				processMetadataOnly(progressFrame);
+				return null;
+			}
+
+			@Override
+			protected void done() {
+				isProcessing = false;
+				progressFrame.close();
+				SwingUtilities.invokeLater(() -> {
+					updateBrowseInterface();
 				});
 			}
+		};
+
+		worker.execute();
+	}
+
+	private void processMetadataOnly(ProgressFrame progressFrame) {
+		final String subDir = parent0.expListComboLazy.expListBinSubDirectory;
+		final int totalFiles = selectedNames.size();
+
+		try {
+			// Process files in batches for metadata only
+			for (int i = 0; i < totalFiles; i += METADATA_BATCH_SIZE) {
+				int endIndex = Math.min(i + METADATA_BATCH_SIZE, totalFiles);
+
+				// Update progress
+				final int currentBatch = i;
+				final int currentEndIndex = endIndex;
+				SwingUtilities.invokeLater(() -> {
+					progressFrame.setMessage(String.format("Scanning experiments %d-%d of %d", currentBatch + 1,
+							currentEndIndex, totalFiles));
+					progressFrame.setPosition((double) currentBatch / totalFiles);
+				});
+
+				// Process batch for metadata only
+				for (int j = i; j < endIndex; j++) {
+					final String fileName = selectedNames.get(j);
+					processSingleFileMetadataOnly(fileName, subDir);
+					processingCount.incrementAndGet();
+
+					// Update progress periodically
+					if (j % PROGRESS_UPDATE_INTERVAL == 0) {
+						final int currentProgress = j;
+						SwingUtilities.invokeLater(() -> {
+							progressFrame.setMessage(String.format("Found %d experiments...", currentProgress + 1));
+						});
+					}
+
+					// Minimal delay to prevent UI freezing
+					try {
+						Thread.sleep(1); // Very small delay
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+				}
+			}
+
+			// Add metadata to UI
+			SwingUtilities.invokeLater(() -> {
+				addMetadataToUI();
+			});
+
+			// Clear selected names after processing
+			selectedNames.clear();
+
+		} catch (Exception e) {
+			LOGGER.severe("Error processing experiment metadata: " + e.getMessage());
+			SwingUtilities.invokeLater(() -> {
+				progressFrame.setMessage("Error: " + e.getMessage());
+			});
+		}
+	}
+
+	private void processSingleFileMetadataOnly(String fileName, String subDir) {
+		try {
+			// Create lightweight ExperimentDirectories for metadata scanning only
+			ExperimentDirectories expDirectories = new ExperimentDirectories();
+
+			// Only check if the experiment directory exists and is valid
+			if (expDirectories.getDirectoriesFromExptPath(subDir, fileName)) {
+				String camDataImagesDirectory = expDirectories.getCameraImagesDirectory();
+				String resultsDirectory = expDirectories.getResultsDirectory();
+				ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory, subDir);
+				experimentMetadataList.add(metadata);
+			}
+
+		} catch (Exception e) {
+			LOGGER.warning("Failed to process metadata for file " + fileName + ": " + e.getMessage());
+		}
+	}
+
+	private void addMetadataToUI() {
+		try {
+			List<LazyExperiment> lazyExperiments = new ArrayList<>();
+			for (ExperimentMetadata metadata : experimentMetadataList) {
+				LazyExperiment lazyExp = new LazyExperiment(metadata);
+				lazyExperiments.add(lazyExp);
+			}
+
+			parent0.expListComboLazy.addLazyExperimentsBulk(lazyExperiments);
+			parent0.paneExperiment.tabInfos.initCombos();
+
+			// Kick off background descriptor preloading for fast filters/infos
+			parent0.descriptorIndex.preloadFromCombo(parent0.expListComboLazy, new Runnable() {
+				@Override
+				public void run() {
+					// Once preloaded, refresh Infos and Filter combos if tabs are visited
+					parent0.paneExperiment.tabInfos.initCombos();
+					parent0.paneExperiment.tabFilter.initCombos();
+				}
+			});
+
+			// Also generate descriptors files in background for any experiment missing it
+			new javax.swing.SwingWorker<Void, Void>() {
+				@Override
+				protected Void doInBackground() throws Exception {
+					for (int i = 0; i < parent0.expListComboLazy.getItemCount(); i++) {
+						Experiment exp = parent0.expListComboLazy.getItemAtNoLoad(i);
+						String path = getDescriptorsFullName(exp.getResultsDirectory());
+						java.io.File f = new java.io.File(path);
+						if (!f.exists()) {
+							buildFromExperiment(exp);
+						}
+					}
+					return null;
+				}
+			}.execute();
+
+		} catch (Exception e) {
+			LOGGER.warning("Error adding metadata to UI: " + e.getMessage());
 		}
 	}
 
@@ -210,81 +518,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	}
 
 	// ------------------------
-
-	private void defineActionListeners() {
-		parent0.expListComboLazy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				updateBrowseInterface();
-			}
-		});
-
-		nextButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() + 1);
-				updateBrowseInterface();
-			}
-		});
-
-		previousButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() - 1);
-				updateBrowseInterface();
-			}
-		});
-
-		searchButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				selectedNames = new ArrayList<String>();
-				dialogSelect = new SelectFiles1();
-				dialogSelect.initialize(parent0);
-			}
-		});
-
-		createButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				ExperimentDirectories eDAF = new ExperimentDirectories();
-				if (eDAF.getDirectoriesFromDialog(parent0.expListComboLazy, null, true)) {
-					int item = addExperimentFrom3NamesAnd2Lists(eDAF);
-					parent0.paneExperiment.tabInfos.initInfosCombos();
-					parent0.expListComboLazy.setSelectedIndex(item);
-				}
-			}
-		});
-
-		openButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				ExperimentDirectories eDAF = new ExperimentDirectories();
-				if (eDAF.getDirectoriesFromDialog(parent0.expListComboLazy, null, false)) {
-					int item = addExperimentFrom3NamesAnd2Lists(eDAF);
-					parent0.paneExperiment.tabInfos.initInfosCombos();
-					parent0.expListComboLazy.setSelectedIndex(item);
-				}
-			}
-		});
-
-		closeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				closeAllExperiments();
-				parent0.paneExperiment.tabsPane.setSelectedIndex(0);
-				parent0.expListComboLazy.removeAllItems();
-				parent0.expListComboLazy.updateUI();
-			}
-		});
-
-		filteredCheck.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				parent0.paneExperiment.tabFilter.filterExperimentList(filteredCheck.isSelected());
-			}
-		});
-	}
 
 	private int addExperimentFrom3NamesAnd2Lists(ExperimentDirectories eDAF) {
 		Experiment exp = new Experiment(eDAF);

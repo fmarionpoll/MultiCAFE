@@ -20,7 +20,7 @@ import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
-import plugins.fmp.multicafe.tools.Comparators;
+import plugins.fmp.multicafe.tools1.Comparators;
 import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DShape;
@@ -212,7 +212,7 @@ public class ROI2DUtilities {
 
 	public static List<ROI2D> getROIs2DContainingString(String string, Sequence seq) {
 		List<ROI2D> roiList = seq.getROI2Ds();
-		Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
+		Collections.sort(roiList, new Comparators.ROI2D_Name());
 		List<ROI2D> listROIsMatchingString = new ArrayList<ROI2D>();
 		for (ROI2D roi : roiList) {
 			if ((roi instanceof ROI2DShape) && roi.getName().contains(string))

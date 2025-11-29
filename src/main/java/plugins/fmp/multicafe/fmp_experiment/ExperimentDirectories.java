@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import icy.file.FileUtil;
 import icy.gui.dialog.LoaderDialog;
 import plugins.fmp.multicafe.tools1.Directories;
+import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
 
 public class ExperimentDirectories {
 	private String cameraImagesDirectory = null;
@@ -266,6 +267,87 @@ public class ExperimentDirectories {
 		jcb.setEditable(editable);
 		JOptionPane.showMessageDialog(null, jcb, title, JOptionPane.QUESTION_MESSAGE);
 		return (String) jcb.getSelectedItem();
+	}
+
+	// -----------------------
+	public boolean getDirectoriesFromDialog(JComboBoxExperimentLazy expListCombo, String rootDirectory,
+			boolean createResults) {
+		cameraImagesList = getV2ImagesListFromDialog(rootDirectory);
+		if (!checkCameraImagesList())
+			return false;
+
+		cameraImagesDirectory = Directories.getDirectoryFromName(cameraImagesList.get(0));
+
+		resultsDirectory = getV2ResultsDirectoryDialog(cameraImagesDirectory, Experiment.RESULTS, createResults);
+		binSubDirectory = getV2BinSubDirectory(expListCombo.expListBinSubDirectory, resultsDirectory, null);
+
+		String kymosDir = resultsDirectory + File.separator + binSubDirectory;
+		kymosImagesList = getV2ImagesListFromPath(kymosDir);
+		kymosImagesList = keepOnlyAcceptedNames_List0(kymosImagesList, "tiff");
+		// TODO wrong if any bin
+		return true;
+	}
+
+	public List<String> getV2ImagesListFromDialog(String strPath) {
+		List<String> list = new ArrayList<String>();
+		LoaderDialog dialog = new LoaderDialog(false);
+		if (strPath != null)
+			dialog.setCurrentDirectory(new File(strPath));
+		File[] selectedFiles = dialog.getSelectedFiles();
+		if (selectedFiles.length == 0)
+			return null;
+
+		// TODO check strPath and provide a way to skip the dialog part (or different
+		// routine)
+		String strDirectory = Directories.getDirectoryFromName(selectedFiles[0].toString());
+		if (strDirectory != null) {
+			if (selectedFiles.length == 1)
+				list = getV2ImagesListFromPath(strDirectory);
+		}
+		return list;
+	}
+
+	private String getV2ResultsDirectoryDialog(String parentDirectory, String filter, boolean createResults) {
+		List<String> expList = Directories.fetchSubDirectoriesMatchingFilter(parentDirectory, filter);
+		expList = Directories.reduceFullNameToLastDirectory(expList);
+		String name = null;
+		if (createResults || expList.size() > 1) {
+			name = selectSubDirDialog(expList, "Select item or type " + Experiment.RESULTS + "xxx", Experiment.RESULTS,
+					true);
+		} else if (expList.size() == 1)
+			name = expList.get(0);
+		else
+			name = filter;
+		return parentDirectory + File.separator + name;
+	}
+
+	public static List<String> getV2ImagesListFromPath(String strDirectory) {
+		List<String> list = new ArrayList<String>();
+		Path pathDir = Paths.get(strDirectory);
+		if (Files.exists(pathDir)) {
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathDir)) {
+				for (Path entry : stream) {
+					String toAdd = FileUtil.getGenericPath(entry.toString());
+					list.add(toAdd);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+
+	public static List<String> keepOnlyAcceptedNames_List0(List<String> namesList, String strExtension) {
+		int count = namesList.size();
+		List<String> outList = new ArrayList<String>(count);
+		String ext = strExtension.toLowerCase();
+		for (String name : namesList) {
+			String nameGeneric = FileUtil.getGenericPath(name);
+			if (nameGeneric.toLowerCase().endsWith(ext))
+				outList.add(nameGeneric);
+		}
+		Collections.sort(outList);
+		return outList;
 	}
 
 }

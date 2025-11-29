@@ -20,7 +20,7 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.tools1.JComponents.SortedComboBoxModel;
-import plugins.fmp.multicafe.tools.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
 
 public class Filter extends JPanel {
 	/**
@@ -41,12 +41,12 @@ public class Filter extends JPanel {
 
 	private JCheckBox experimentCheck = new JCheckBox(EnumXLSColumnHeader.EXP_EXPT.toString());
 	private JCheckBox boxIDCheck = new JCheckBox(EnumXLSColumnHeader.EXP_BOXID.toString());
-	private JCheckBox stim1Check = new JCheckBox(EnumXLSColumnHeader.EXP_STIM.toString());
-	private JCheckBox conc1Check = new JCheckBox(EnumXLSColumnHeader.EXP_CONC.toString());
+	private JCheckBox stim1Check = new JCheckBox(EnumXLSColumnHeader.EXP_STIM1.toString());
+	private JCheckBox conc1Check = new JCheckBox(EnumXLSColumnHeader.EXP_CONC1.toString());
 	private JCheckBox strainCheck = new JCheckBox(EnumXLSColumnHeader.EXP_STRAIN.toString());
 	private JCheckBox sexCheck = new JCheckBox(EnumXLSColumnHeader.EXP_SEX.toString());
-	private JCheckBox stim2Check = new JCheckBox(EnumXLSColumnHeader.EXP_COND1.toString());
-	private JCheckBox conc2Check = new JCheckBox(EnumXLSColumnHeader.EXP_COND2.toString());
+	private JCheckBox stim2Check = new JCheckBox(EnumXLSColumnHeader.EXP_STIM2.toString());
+	private JCheckBox conc2Check = new JCheckBox(EnumXLSColumnHeader.EXP_CONC2.toString());
 //	private JCheckBox capStimCheck = new JCheckBox(EnumXLSColumnHeader.CAP_STIM.toString());
 //	private JCheckBox capConcCheck = new JCheckBox(EnumXLSColumnHeader.CAP_CONC.toString());
 
@@ -103,17 +103,17 @@ public class Filter extends JPanel {
 			add(element5, c);
 	}
 
-	public void initFilterCombos() {
+	public void initCombos() {
 		if (!parent0.paneBrowse.panelLoadSave.filteredCheck.isSelected())
 			filterExpList.setExperimentsFromList(parent0.expListComboLazy.getExperimentsAsList());
 		filterExpList.getFieldValuesToComboLightweight(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
-		filterExpList.getFieldValuesToComboLightweight(stim1Combo, EnumXLSColumnHeader.EXP_STIM);
-		filterExpList.getFieldValuesToComboLightweight(stim2Combo, EnumXLSColumnHeader.EXP_CONC);
+		filterExpList.getFieldValuesToComboLightweight(stim1Combo, EnumXLSColumnHeader.EXP_STIM1);
+		filterExpList.getFieldValuesToComboLightweight(stim2Combo, EnumXLSColumnHeader.EXP_CONC1);
 		filterExpList.getFieldValuesToComboLightweight(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
 		filterExpList.getFieldValuesToComboLightweight(sexCombo, EnumXLSColumnHeader.EXP_SEX);
 		filterExpList.getFieldValuesToComboLightweight(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
-		filterExpList.getFieldValuesToComboLightweight(conc1Combo, EnumXLSColumnHeader.EXP_COND1);
-		filterExpList.getFieldValuesToComboLightweight(conc2Combo, EnumXLSColumnHeader.EXP_COND2);
+		filterExpList.getFieldValuesToComboLightweight(conc1Combo, EnumXLSColumnHeader.EXP_STIM2);
+		filterExpList.getFieldValuesToComboLightweight(conc2Combo, EnumXLSColumnHeader.EXP_CONC2);
 	}
 
 	private void defineActionListeners() {
@@ -166,17 +166,17 @@ public class Filter extends JPanel {
 		if (boxIDCheck.isSelected())
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_BOXID, (String) boxIDCombo.getSelectedItem());
 		if (stim1Check.isSelected())
-			filterItem(filteredList, EnumXLSColumnHeader.EXP_STIM, (String) stim1Combo.getSelectedItem());
+			filterItem(filteredList, EnumXLSColumnHeader.EXP_STIM1, (String) stim1Combo.getSelectedItem());
 		if (conc1Check.isSelected())
-			filterItem(filteredList, EnumXLSColumnHeader.EXP_CONC, (String) stim2Combo.getSelectedItem());
+			filterItem(filteredList, EnumXLSColumnHeader.EXP_CONC1, (String) stim2Combo.getSelectedItem());
 		if (sexCheck.isSelected())
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_SEX, (String) sexCombo.getSelectedItem());
 		if (strainCheck.isSelected())
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_STRAIN, (String) strainCombo.getSelectedItem());
 		if (stim2Check.isSelected())
-			filterItem(filteredList, EnumXLSColumnHeader.EXP_COND1, (String) conc1Combo.getSelectedItem());
+			filterItem(filteredList, EnumXLSColumnHeader.EXP_STIM2, (String) conc1Combo.getSelectedItem());
 		if (conc2Check.isSelected())
-			filterItem(filteredList, EnumXLSColumnHeader.EXP_COND2, (String) conc2Combo.getSelectedItem());
+			filterItem(filteredList, EnumXLSColumnHeader.EXP_CONC2, (String) conc2Combo.getSelectedItem());
 		return filteredList;
 	}
 

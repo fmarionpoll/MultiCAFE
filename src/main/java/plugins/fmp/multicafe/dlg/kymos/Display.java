@@ -34,9 +34,9 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
-import plugins.fmp.multicafe.tools.Directories;
 import plugins.fmp.multicafe.tools.ViewerFMP;
 import plugins.fmp.multicafe.tools.Canvas2D.Canvas2DWithTransforms;
+import plugins.fmp.multicafe.tools1.Directories;
 
 public class Display extends JPanel implements ViewerListener {
 	/**

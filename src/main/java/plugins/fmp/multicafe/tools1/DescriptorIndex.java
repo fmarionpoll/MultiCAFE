@@ -104,8 +104,8 @@ public class DescriptorIndex {
 					// Load cage and spot descriptors (no image I/O) and aggregate distincts
 					try {
 						exp.load_MS96_cages();
-						if (exp.cages != null && exp.cages.cagesList != null) {
-							for (Cage cage : exp.cages.cagesList) {
+						if (exp.getCages() != null && exp.getCages().cagesList != null) {
+							for (Cage cage : exp.getCages().cagesList) {
 								addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.CAGE_SEX),
 										cage.getField(EnumXLSColumnHeader.CAGE_SEX));
 								addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.CAGE_STRAIN),

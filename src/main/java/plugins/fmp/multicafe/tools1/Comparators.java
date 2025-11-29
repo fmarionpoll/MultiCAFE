@@ -13,32 +13,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.tools1.toExcel.XLSResults;
 
-/**
- * Collection of comparator classes for MultiSPOTS96 data structures. This class
- * provides various comparator implementations for sorting different types of
- * objects used throughout the MultiSPOTS96 plugin.
- * 
- * <p>
- * The comparators handle null values gracefully and provide consistent sorting
- * behavior for collections of ROIs, spots, cages, and other experiment-related
- * objects.
- * </p>
- * 
- * <p>
- * Usage example:
- * 
- * <pre>
- * List&lt;Spot&gt; spots = getSpots();
- * Collections.sort(spots, new Comparators.Spot_Name());
- * 
- * List&lt;Cage&gt; cages = getCages();
- * Collections.sort(cages, new Comparators.Cage_Name());
- * </pre>
- * 
- * @author MultiSPOTS96
- */
 public class Comparators {
-
 	/** Logger for this class */
 	private static final Logger LOGGER = Logger.getLogger(Comparators.class.getName());
 
@@ -110,29 +85,6 @@ public class Comparators {
 			}
 
 			return name1.compareTo(name2);
-		}
-	}
-
-	/**
-	 * Comparator for Spot objects based on their cage position. Calculates position
-	 * as (cageRow * 8 + cageColumn) for consistent ordering.
-	 */
-	public static class Spot_cagePosition implements Comparator<Spot> {
-		@Override
-		public int compare(Spot spot1, Spot spot2) {
-			if (spot1 == null && spot2 == null) {
-				return 0;
-			}
-			if (spot1 == null) {
-				return 1;
-			}
-			if (spot2 == null) {
-				return -1;
-			}
-
-			int y1 = spot1.getProperties().getCageRow() * CAGE_GRID_WIDTH + spot1.getProperties().getCageColumn();
-			int y2 = spot2.getProperties().getCageRow() * CAGE_GRID_WIDTH + spot2.getProperties().getCageColumn();
-			return Integer.compare(y1, y2);
 		}
 	}
 
@@ -307,53 +259,6 @@ public class Comparators {
 	}
 
 	/**
-	 * Comparator for Spot objects based on their ROI names. Handles null values by
-	 * treating them as greater than non-null values.
-	 */
-	public static class Spot_Name implements Comparator<Spot> {
-		@Override
-		public int compare(Spot o1, Spot o2) {
-			if (o1 == null && o2 == null) {
-				return 0;
-			}
-			if (o1 == null) {
-				return 1;
-			}
-			if (o2 == null) {
-				return -1;
-			}
-
-			ROI2D roi1 = o1.getRoi();
-			ROI2D roi2 = o2.getRoi();
-
-			if (roi1 == null && roi2 == null) {
-				return 0;
-			}
-			if (roi1 == null) {
-				return 1;
-			}
-			if (roi2 == null) {
-				return -1;
-			}
-
-			String name1 = roi1.getName();
-			String name2 = roi2.getName();
-
-			if (name1 == null && name2 == null) {
-				return 0;
-			}
-			if (name1 == null) {
-				return 1;
-			}
-			if (name2 == null) {
-				return -1;
-			}
-
-			return name1.compareTo(name2);
-		}
-	}
-
-	/**
 	 * Comparator for FlyPosition objects based on their time index. Handles null
 	 * values by treating them as greater than non-null values.
 	 */
@@ -394,10 +299,80 @@ public class Comparators {
 
 			// Note: The original code had a bug - it was adding the same value twice
 			// Fixed to use the correct comparison
-			long time1 = exp1.seqCamData.getFirstImageMs();
-			long time2 = exp2.seqCamData.getFirstImageMs();
+			long time1 = exp1.getSeqCamData().getFirstImageMs();
+			long time2 = exp2.getSeqCamData().getFirstImageMs();
 
 			return Long.compare(time1, time2);
+		}
+
+		/**
+		 * Comparator for Spot objects based on their cage position. Calculates position
+		 * as (cageRow * 8 + cageColumn) for consistent ordering.
+		 */
+		public static class Spot_cagePosition implements Comparator<Spot> {
+			@Override
+			public int compare(Spot spot1, Spot spot2) {
+				if (spot1 == null && spot2 == null) {
+					return 0;
+				}
+				if (spot1 == null) {
+					return 1;
+				}
+				if (spot2 == null) {
+					return -1;
+				}
+
+				int y1 = spot1.getProperties().getCageRow() * CAGE_GRID_WIDTH + spot1.getProperties().getCageColumn();
+				int y2 = spot2.getProperties().getCageRow() * CAGE_GRID_WIDTH + spot2.getProperties().getCageColumn();
+				return Integer.compare(y1, y2);
+			}
+		}
+
+		/**
+		 * Comparator for Spot objects based on their ROI names. Handles null values by
+		 * treating them as greater than non-null values.
+		 */
+		public static class Spot_Name implements Comparator<Spot> {
+			@Override
+			public int compare(Spot o1, Spot o2) {
+				if (o1 == null && o2 == null) {
+					return 0;
+				}
+				if (o1 == null) {
+					return 1;
+				}
+				if (o2 == null) {
+					return -1;
+				}
+
+				ROI2D roi1 = o1.getRoi();
+				ROI2D roi2 = o2.getRoi();
+
+				if (roi1 == null && roi2 == null) {
+					return 0;
+				}
+				if (roi1 == null) {
+					return 1;
+				}
+				if (roi2 == null) {
+					return -1;
+				}
+
+				String name1 = roi1.getName();
+				String name2 = roi2.getName();
+
+				if (name1 == null && name2 == null) {
+					return 0;
+				}
+				if (name1 == null) {
+					return 1;
+				}
+				if (name2 == null) {
+					return -1;
+				}
+
+				return name1.compareTo(name2);
+			}
 		}
 	}
 }
