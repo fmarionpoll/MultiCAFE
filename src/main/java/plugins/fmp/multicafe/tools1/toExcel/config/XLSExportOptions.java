@@ -1,6 +1,7 @@
-package plugins.fmp.multicafe.tools1.toExcel;
+package plugins.fmp.multicafe.tools1.toExcel.config;
 
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 
 public class XLSExportOptions {
 	public boolean xyImage = true;

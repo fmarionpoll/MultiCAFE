@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools1.toExcel;
+package plugins.fmp.multicafe.tools1.toExcel.enums;
 
 import java.util.Arrays;
 import java.util.Map;

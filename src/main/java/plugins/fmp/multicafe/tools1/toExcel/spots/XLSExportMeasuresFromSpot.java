@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools1.toExcel;
+package plugins.fmp.multicafe.tools1.toExcel.spots;
 
 import java.awt.Point;
 
@@ -9,6 +9,11 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.tools1.toExcel.XLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.config.ExcelExportConstants;
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.data.XLSResults;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelResourceException;
 

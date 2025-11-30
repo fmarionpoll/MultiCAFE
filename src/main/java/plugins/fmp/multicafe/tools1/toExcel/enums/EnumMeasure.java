@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools1.toExcel;
+package plugins.fmp.multicafe.tools1.toExcel.enums;
 
 public enum EnumMeasure {
 	TS("t", "s"), TI("i", "n"), X("x", "mm"), Y("y", "mm"), W("w", "mm"), H("h", "mm"), ALIVE("alive", "0/1"),

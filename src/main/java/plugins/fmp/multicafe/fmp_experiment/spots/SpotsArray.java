@@ -18,7 +18,7 @@ import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.series1.BuildSeriesOptions;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 
 /**
  * Manages a collection of spots with comprehensive operations and data

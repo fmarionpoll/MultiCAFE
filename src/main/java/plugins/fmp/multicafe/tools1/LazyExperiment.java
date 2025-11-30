@@ -10,7 +10,7 @@ import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
 
 /**
  * Shared LazyExperiment implementation that can be used across different
@@ -64,8 +64,8 @@ public class LazyExperiment extends Experiment {
 						metadata.getCameraDirectory())) {
 					Experiment fullExp = new Experiment(expDirectories);
 					// Copy essential public properties from the fully loaded experiment
-					this.seqCamData = fullExp.seqCamData;
-					this.cages = fullExp.cages;
+					setSeqCamData(fullExp.getSeqCamData());
+					setCages(fullExp.getCages());
 					this.firstImage_FileTime = fullExp.firstImage_FileTime;
 					this.lastImage_FileTime = fullExp.lastImage_FileTime;
 					this.col = fullExp.col;

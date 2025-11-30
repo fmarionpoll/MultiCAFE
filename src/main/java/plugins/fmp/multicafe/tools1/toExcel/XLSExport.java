@@ -16,9 +16,16 @@ import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
+import plugins.fmp.multicafe.tools1.toExcel.config.ExcelExportConstants;
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.data.XLSResults;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelDataException;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelResourceException;
+import plugins.fmp.multicafe.tools1.toExcel.utils.ExcelResourceManager;
+import plugins.fmp.multicafe.tools1.toExcel.utils.XLSUtils;
 
 /**
  * Template Method pattern base class for Excel export operations. Provides
@@ -249,7 +256,7 @@ public abstract class XLSExport {
 		boolean transpose = options.transpose;
 		Point pt = new Point(0, row);
 
-		long duration = expAll.seqCamData.getLastImageMs() - expAll.seqCamData.getFirstImageMs();
+		long duration = expAll.getSeqCamData().getLastImageMs() - expAll.getSeqCamData().getFirstImageMs();
 		long interval = 0;
 
 		while (interval < duration) {
@@ -325,7 +332,7 @@ public abstract class XLSExport {
 	private void writeFileInformation(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp) {
 		String filename = exp.getResultsDirectory();
 		if (filename == null) {
-			filename = exp.seqCamData.getImagesDirectory();
+			filename = exp.getSeqCamData().getImagesDirectory();
 		}
 
 		Path path = Paths.get(filename);
@@ -423,8 +430,8 @@ public abstract class XLSExport {
 	 */
 	protected void handleExportError(Experiment exp, int nOutputFrames) {
 		String error = String.format(ExcelExportConstants.ErrorMessages.EXPORT_ERROR_FORMAT, exp.getResultsDirectory(),
-				nOutputFrames, exp.seqCamData.getTimeManager().getBinFirst_ms(),
-				exp.seqCamData.getTimeManager().getBinLast_ms());
+				nOutputFrames, exp.getSeqCamData().getTimeManager().getBinFirst_ms(),
+				exp.getSeqCamData().getTimeManager().getBinLast_ms());
 		System.err.println(error);
 	}
 
@@ -442,10 +449,10 @@ public abstract class XLSExport {
 			return;
 		}
 
-		for (long coltime = expAll.seqCamData.getFirstImageMs(); coltime < expAll.seqCamData
+		for (long coltime = expAll.getSeqCamData().getFirstImageMs(); coltime < expAll.getSeqCamData()
 				.getLastImageMs(); coltime += options.buildExcelStepMs, pt.y++) {
 
-			int i_from = (int) ((coltime - expAll.seqCamData.getFirstImageMs()) / options.buildExcelStepMs);
+			int i_from = (int) ((coltime - expAll.getSeqCamData().getFirstImageMs()) / options.buildExcelStepMs);
 
 			if (i_from >= xlsResult.getValuesOutLength()) {
 				break;

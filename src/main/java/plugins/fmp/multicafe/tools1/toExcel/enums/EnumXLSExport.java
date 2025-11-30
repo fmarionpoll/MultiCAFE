@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools1.toExcel;
+package plugins.fmp.multicafe.tools1.toExcel.enums;
 
 public enum EnumXLSExport {
 

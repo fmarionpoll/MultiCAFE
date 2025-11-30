@@ -15,8 +15,8 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.tools1.Comparators;
 import plugins.fmp.multicafe.tools1.LazyExperiment;
 import plugins.fmp.multicafe.tools1.LazyExperiment.ExperimentMetadata;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
-import plugins.fmp.multicafe.tools1.toExcel.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
 
 /**
  * Memory-optimized version of JComboBoxExperiment that uses LazyExperiment

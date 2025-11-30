@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools1.toExcel;
+package plugins.fmp.multicafe.tools1.toExcel.utils;
 
 import java.awt.Point;
 
@@ -7,6 +7,7 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
 
 public class XLSUtils {
 	public static void setValue(SXSSFSheet sheet, Point pt, boolean transpose, int ivalue) {

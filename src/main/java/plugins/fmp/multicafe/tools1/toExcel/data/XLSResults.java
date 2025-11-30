@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools1.toExcel;
+package plugins.fmp.multicafe.tools1.toExcel.data;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -6,8 +6,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotProperties;
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 
 public class XLSResults {
 	private String name = null;
@@ -145,6 +148,48 @@ public class XLSResults {
 
 	public void getDataFromSpot(Spot spot, long binData, long binExcel, XLSExportOptions xlsExportOptions) {
 		dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportOptions.exportType, binData, binExcel);
+		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT) {
+			relativeToMaximum();
+		}
+	}
+
+	/**
+	 * Gets data from a capillary and converts it to dataValues.
+	 * Capillary.getCapillaryMeasuresForXLSPass1() returns ArrayList<Integer>,
+	 * so we convert to ArrayList<Double>.
+	 * 
+	 * @param capillary      The capillary to get data from
+	 * @param binData        The bin duration for the data
+	 * @param binExcel       The bin duration for Excel output
+	 * @param xlsExportOptions The export options
+	 * @param subtractT0     Whether to subtract T0 value (for TOPLEVEL, TOPRAW, etc.)
+	 */
+	public void getDataFromCapillary(Capillary capillary, long binData, long binExcel, 
+			XLSExportOptions xlsExportOptions, boolean subtractT0) {
+		ArrayList<Integer> intData = capillary.getCapillaryMeasuresForXLSPass1(
+			xlsExportOptions.exportType, binData, binExcel);
+		
+		if (intData == null || intData.isEmpty()) {
+			dataValues = new ArrayList<>();
+			return;
+		}
+		
+		// Convert Integer to Double
+		dataValues = new ArrayList<>(intData.size());
+		int t0Value = 0;
+		
+		if (subtractT0 && intData.size() > 0) {
+			t0Value = intData.get(0);
+		}
+		
+		for (Integer intValue : intData) {
+			if (subtractT0) {
+				dataValues.add((double)(intValue - t0Value));
+			} else {
+				dataValues.add(intValue.doubleValue());
+			}
+		}
+		
 		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT) {
 			relativeToMaximum();
 		}

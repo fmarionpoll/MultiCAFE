@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools1.toExcel;
+package plugins.fmp.multicafe.tools1.toExcel.query;
 
 import java.awt.Point;
 import java.text.SimpleDateFormat;
@@ -12,9 +12,18 @@ import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.tools1.toExcel.config.ExcelExportConstants;
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.data.XLSResults;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumColumnType;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLS_QueryColumnHeader;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelDataException;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelResourceException;
+import plugins.fmp.multicafe.tools1.toExcel.spots.XLSExportMeasuresFromSpot;
+import plugins.fmp.multicafe.tools1.toExcel.utils.ExcelResourceManager;
+import plugins.fmp.multicafe.tools1.toExcel.utils.XLSUtils;
 
 public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	ArrayList<EnumXLS_QueryColumnHeader> headers = new ArrayList<EnumXLS_QueryColumnHeader>();

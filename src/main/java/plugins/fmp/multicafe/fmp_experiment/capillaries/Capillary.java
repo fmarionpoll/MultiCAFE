@@ -18,8 +18,8 @@ import icy.util.XMLUtil;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.tools1.ROI2D.AlongT;
 import plugins.fmp.multicafe.tools1.ROI2D.ROI2DUtilities;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 

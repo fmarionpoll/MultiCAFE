@@ -1,6 +1,10 @@
 package plugins.fmp.multicafe.tools1.toExcel;
 
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelExportException;
+import plugins.fmp.multicafe.tools1.toExcel.spots.XLSExportMeasuresFromSpot;
+import plugins.fmp.multicafe.tools1.toExcel.spots.XLSExportMeasuresFromSpotOptimized;
+import plugins.fmp.multicafe.tools1.toExcel.spots.XLSExportMeasuresFromSpotStreaming;
 
 /**
  * Factory class for creating appropriate XLSExport implementations based on
