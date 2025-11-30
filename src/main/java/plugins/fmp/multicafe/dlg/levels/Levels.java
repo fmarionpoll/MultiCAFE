@@ -28,9 +28,9 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.DetectLevels;
-import plugins.fmp.multicafe.tools0.overlay.OverlayThreshold;
 import plugins.fmp.multicafe.tools1.canvas2D.Canvas2DWithTransforms;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools1.overlay.OverlayThreshold;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public class Levels extends JPanel implements PropertyChangeListener {
@@ -55,7 +55,7 @@ public class Levels extends JPanel implements PropertyChangeListener {
 			new String[] { " threshold >", " threshold <" });
 	private JSpinner threshold2Spinner = new JSpinner(new SpinnerNumberModel(40, 1, 255, 1));
 	private ImageTransformEnums[] transformPass2 = new ImageTransformEnums[] { ImageTransformEnums.YDIFFN,
-			ImageTransformEnums.YDIFFN1D, ImageTransformEnums.DERICHE, ImageTransformEnums.DERICHE_COLOR,
+			ImageTransformEnums.YDIFFN2, ImageTransformEnums.DERICHE, ImageTransformEnums.DERICHE_COLOR,
 			ImageTransformEnums.MINUSHORIZAVG, ImageTransformEnums.COLORDISTANCE_L1_Y,
 			ImageTransformEnums.COLORDISTANCE_L2_Y, ImageTransformEnums.SUBTRACT_1RSTCOL,
 			ImageTransformEnums.L1DIST_TO_1RSTCOL };
@@ -454,10 +454,10 @@ public class Levels extends JPanel implements PropertyChangeListener {
 		if (exp.getSeqKymos() == null)
 			return;
 		if (overlayThreshold == null)
-			overlayThreshold = new OverlayThreshold(exp.getSeqKymos());
+			overlayThreshold = new OverlayThreshold(exp.getSeqKymos().getSequence());
 		else {
 			exp.getSeqKymos().getSequence().removeOverlay(overlayThreshold);
-			overlayThreshold.setSequence(exp.getSeqKymos());
+			overlayThreshold.setSequence(exp.getSeqKymos().getSequence());
 		}
 
 		if (transformPass1DisplayButton.isSelected() || transformPass2DisplayButton.isSelected()) {

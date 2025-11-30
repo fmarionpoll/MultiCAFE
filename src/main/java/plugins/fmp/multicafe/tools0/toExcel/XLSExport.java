@@ -19,8 +19,8 @@ import plugins.fmp.multicafe.fmp_experiment.CombinedExperiment;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.tools0.JComponents.ExperimentsJComboBox;
 import plugins.fmp.multicafe.tools1.Logger;
+import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
 
 public abstract class XLSExport {
 	protected XLSExportOptions options = null;
@@ -31,7 +31,7 @@ public abstract class XLSExport {
 	XSSFFont font_red = null;
 	XSSFFont font_blue = null;
 	XSSFWorkbook workbook = null;
-	ExperimentsJComboBox expList = null;
+	JComboBoxExperimentLazy expList = null;
 
 	// ------------------------------------------------
 

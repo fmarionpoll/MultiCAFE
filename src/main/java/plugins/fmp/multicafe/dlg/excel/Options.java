@@ -13,7 +13,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import plugins.fmp.multicafe.tools0.JComponents.JComboMs;
+import plugins.fmp.multicafe.tools1.JComponents.JComboBoxMs;
 
 public class Options extends JPanel {
 	/**
@@ -27,13 +27,13 @@ public class Options extends JPanel {
 	JCheckBox onlyAliveCheckBox = new JCheckBox("dead=empty", false);
 	// JCheckBox absoluteTimeCheckBox = new JCheckBox("absolute time", false);
 	JSpinner binSize = new JSpinner(new SpinnerNumberModel(1., 1., 1000., 1.));
-	JComboMs binUnit = new JComboMs();
+	JComboBoxMs binUnit = new JComboBoxMs();
 
 	JRadioButton isFloatingFrameButton = new JRadioButton("all", true);
 	JRadioButton isFixedFrameButton = new JRadioButton("from ", false);
 	JSpinner startJSpinner = new JSpinner(new SpinnerNumberModel(0., 0., 10000., 1.));
 	JSpinner endJSpinner = new JSpinner(new SpinnerNumberModel(240., 1., 99999999., 1.));
-	JComboMs intervalsUnit = new JComboMs();
+	JComboBoxMs intervalsUnit = new JComboBoxMs();
 
 	void init(GridLayout capLayout) {
 		setLayout(capLayout);

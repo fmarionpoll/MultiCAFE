@@ -58,7 +58,7 @@ public class AlongT implements XMLPersistent {
 
 		index = XMLUtil.getElementIntValue(nodeMeta, ID_INDEX, 0);
 		start = XMLUtil.getElementLongValue(nodeMeta, ID_START, 0);
-		roi = Utilities.loadFromXML_ROI(nodeMeta);
+		roi = ROI2DUtilities.loadFromXML_ROI(nodeMeta);
 		return true;
 	}
 
@@ -69,7 +69,7 @@ public class AlongT implements XMLPersistent {
 			return false;
 		XMLUtil.setElementIntValue(nodeMeta, ID_INDEX, index);
 		XMLUtil.setElementLongValue(nodeMeta, ID_START, start);
-		Utilities.saveToXML_ROI(nodeMeta, roi);
+		ROI2DUtilities.saveToXML_ROI(nodeMeta, roi);
 		return true;
 	}
 }

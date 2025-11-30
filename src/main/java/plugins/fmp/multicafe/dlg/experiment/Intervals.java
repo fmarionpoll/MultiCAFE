@@ -15,7 +15,7 @@ import javax.swing.SwingConstants;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools0.JComponents.JComboMs;
+import plugins.fmp.multicafe.tools1.JComponents.JComboBoxMs;
 
 public class Intervals extends JPanel {
 	/**
@@ -30,7 +30,7 @@ public class Intervals extends JPanel {
 	JSpinner frameFirstJSpinner = new JSpinner(new SpinnerNumberModel(val, min, max, step));
 	JSpinner frameLastJSpinner = new JSpinner(new SpinnerNumberModel(maxLast, step, maxLast, step));
 	JSpinner binSizeJSpinner = new JSpinner(new SpinnerNumberModel(1., 0., 1000., 1.));
-	JComboMs binUnit = new JComboMs();
+	JComboBoxMs binUnit = new JComboBoxMs();
 	JButton applyButton = new JButton("Apply changes");
 	JButton refreshButton = new JButton("Refresh");
 	private MultiCAFE parent0 = null;

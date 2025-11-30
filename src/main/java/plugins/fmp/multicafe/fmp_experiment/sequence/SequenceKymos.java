@@ -36,7 +36,7 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.tools1.Comparators1;
-import plugins.fmp.multicafe.tools1.ROI2D.Utilities;
+import plugins.fmp.multicafe.tools1.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 /**
@@ -183,7 +183,7 @@ public class SequenceKymos extends SequenceCamData {
 
 				try {
 					if (roi.getName() != null && roi.getName().contains("level") || roi.getName().contains("gulp")) {
-						Utilities.interpolateMissingPointsAlongXAxis((ROI2DPolyLine) roi, sequenceWidth);
+						ROI2DUtilities.interpolateMissingPointsAlongXAxis((ROI2DPolyLine) roi, sequenceWidth);
 						processed++;
 					} else if (roi.getName() != null && roi.getName().contains("derivative")) {
 						// Skip derivative ROIs
@@ -227,7 +227,7 @@ public class SequenceKymos extends SequenceCamData {
 				continue;
 			// interpolate missing points if necessary
 			if (roi.getName().contains("level") || roi.getName().contains("gulp")) {
-				Utilities.interpolateMissingPointsAlongXAxis((ROI2DPolyLine) roi, width);
+				ROI2DUtilities.interpolateMissingPointsAlongXAxis((ROI2DPolyLine) roi, width);
 				continue;
 			}
 			if (roi.getName().contains("deriv"))
@@ -312,7 +312,7 @@ public class SequenceKymos extends SequenceCamData {
 
 	public void transferCapillariesMeasuresToKymos(Capillaries capillaries) {
 		List<ROI2D> seqRoisList = getSequence().getROI2Ds(false);
-		Utilities.removeROIsMissingChar(seqRoisList, '_');
+		ROI2DUtilities.removeROIsMissingChar(seqRoisList, '_');
 
 		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
 		int ncapillaries = capillaries.getCapillariesList().size();
@@ -320,7 +320,7 @@ public class SequenceKymos extends SequenceCamData {
 			List<ROI2D> listOfRois = capillaries.getCapillariesList().get(i).transferMeasuresToROIs();
 			newRoisList.addAll(listOfRois);
 		}
-		Utilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, getSequence());
+		ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, getSequence());
 		getSequence().removeAllROI();
 		getSequence().addROIs(seqRoisList, false);
 	}

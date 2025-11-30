@@ -17,7 +17,7 @@ import icy.type.geom.Polyline2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.tools1.ROI2D.AlongT;
-import plugins.fmp.multicafe.tools1.ROI2D.Utilities;
+import plugins.fmp.multicafe.tools1.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DLine;
@@ -528,7 +528,7 @@ public class Capillary implements Comparable<Capillary> {
 			capConcentration = XMLUtil.getElementValue(nodeMeta, ID_CONCL, ID_CONCL);
 			capSide = XMLUtil.getElementValue(nodeMeta, ID_SIDE, ".");
 
-			roiCap = Utilities.loadFromXML_ROI(nodeMeta);
+			roiCap = ROI2DUtilities.loadFromXML_ROI(nodeMeta);
 			limitsOptions.loadFromXML(nodeMeta);
 
 			xmlLoad_Intervals(node);
@@ -589,7 +589,7 @@ public class Capillary implements Comparable<Capillary> {
 		XMLUtil.setElementValue(nodeMeta, ID_SIDE, capSide);
 		XMLUtil.setElementValue(nodeMeta, ID_CONCL, capConcentration);
 
-		Utilities.saveToXML_ROI(nodeMeta, roiCap);
+		ROI2DUtilities.saveToXML_ROI(nodeMeta, roiCap);
 
 		boolean flag = xmlSave_Intervals(node);
 		return flag;

@@ -127,7 +127,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 				if (exp != null) {
 					if (overlayCheckBox.isSelected()) {
 						if (overlayThreshold1 == null)
-							overlayThreshold1 = new OverlayThreshold(exp.getSeqCamData());
+							overlayThreshold1 = new OverlayThreshold(exp.getSeqCamData().getSequence());
 						exp.getSeqCamData().getSequence().addOverlay(overlayThreshold1);
 						updateOverlay(exp);
 					} else
@@ -163,10 +163,10 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		if (seqCamData == null)
 			return;
 		if (overlayThreshold1 == null)
-			overlayThreshold1 = new OverlayThreshold(seqCamData);
+			overlayThreshold1 = new OverlayThreshold(seqCamData.getSequence());
 		else {
 			seqCamData.getSequence().removeOverlay(overlayThreshold1);
-			overlayThreshold1.setSequence(seqCamData);
+			overlayThreshold1.setSequence(seqCamData.getSequence());
 		}
 		seqCamData.getSequence().addOverlay(overlayThreshold1);
 		boolean ifGreater = true;
@@ -268,7 +268,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 			cagesComboBox.removeAllItems();
 			cagesComboBox.addItem("all cells");
 			for (Cage cage : exp.getCages().getCageList()) {
-				cagesComboBox.addItem(cage.getCageIDasString());
+				cagesComboBox.addItem(Integer.toString(cage.getCageID()));
 			}
 		}
 	}

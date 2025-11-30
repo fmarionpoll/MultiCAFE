@@ -7,8 +7,8 @@ import icy.roi.ROI2D;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.tools0.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools1.Logger;
+import plugins.fmp.multicafe.tools1.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class SequenceKymosUtils {

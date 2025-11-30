@@ -30,10 +30,10 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
-import plugins.fmp.multicafe.tools0.ROI2D.ROI2DUtilities;
-import plugins.fmp.multicafe.tools0.overlay.OverlayThreshold;
-import plugins.fmp.multicafe.tools0.polyline.Blobs;
+import plugins.fmp.multicafe.tools1.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools1.overlay.OverlayThreshold;
+import plugins.fmp.multicafe.tools1.polyline.Blobs;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class BuildCagesFromContours extends JPanel implements ChangeListener {
@@ -140,11 +140,11 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		if (seqCamData == null)
 			return;
 		if (overlayThreshold == null) {
-			overlayThreshold = new OverlayThreshold(seqCamData);
+			overlayThreshold = new OverlayThreshold(seqCamData.getSequence());
 			seqCamData.getSequence().addOverlay(overlayThreshold);
 		} else {
 			seqCamData.getSequence().removeOverlay(overlayThreshold);
-			overlayThreshold.setSequence(seqCamData);
+			overlayThreshold.setSequence(seqCamData.getSequence());
 			seqCamData.getSequence().addOverlay(overlayThreshold);
 		}
 		exp.getCages().setDetect_threshold((int) thresholdSpinner.getValue());
@@ -170,7 +170,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 			if (exp != null) {
 				if (overlayCheckBox.isSelected()) {
 					if (overlayThreshold == null)
-						overlayThreshold = new OverlayThreshold(exp.getSeqCamData());
+						overlayThreshold = new OverlayThreshold(exp.getSeqCamData().getSequence());
 					exp.getSeqCamData().getSequence().addOverlay(overlayThreshold);
 					updateOverlay(exp);
 				} else
@@ -181,7 +181,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSequence());
-		exp.getCages().clearCageList();
+		exp.getCages().getCageList().clear();
 
 		int t = exp.getSeqCamData().getCurrentFrame();
 		IcyBufferedImage img0 = IcyBufferedImageUtil.convertToType(overlayThreshold.getTransformedImage(t),

@@ -29,10 +29,10 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.FlyDetect2;
-import plugins.fmp.multicafe.tools0.overlay.OverlayThreshold;
 import plugins.fmp.multicafe.tools1.canvas2D.Canvas2DWithTransforms;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.tools1.overlay.OverlayThreshold;
 
 public class Detect2Flies extends JPanel implements ChangeListener, PropertyChangeListener, PopupMenuListener {
 	private static final long serialVersionUID = -5257698990389571518L;
@@ -194,10 +194,10 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		if (exp.getSeqCamData() == null)
 			return;
 		if (overlayThreshold == null) {
-			overlayThreshold = new OverlayThreshold(exp.getSeqCamData());
+			overlayThreshold = new OverlayThreshold(exp.getSeqCamData().getSequence());
 		} else {
 			exp.getSeqCamData().getSequence().removeOverlay(overlayThreshold);
-			overlayThreshold.setSequence(exp.getSeqCamData());
+			overlayThreshold.setSequence(exp.getSeqCamData().getSequence());
 		}
 		overlayThreshold.setReferenceImage(exp.getSeqCamData().getReferenceImage());
 		exp.getSeqCamData().getSequence().addOverlay(overlayThreshold);
@@ -277,13 +277,14 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 	public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 		int nitems = 1;
 		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-		if (exp != null)
+		if (exp != null) {
 			nitems = exp.getCages().getCageList().size() + 1;
-		if (allCagesComboBox.getItemCount() != nitems) {
-			allCagesComboBox.removeAllItems();
-			allCagesComboBox.addItem("all cells");
-			for (Cage cage : exp.getCages().getCageList()) {
-				allCagesComboBox.addItem(cage.getCageIDasString());
+			if (allCagesComboBox.getItemCount() != nitems) {
+				allCagesComboBox.removeAllItems();
+				allCagesComboBox.addItem("all cells");
+				for (Cage cage : exp.getCages().getCageList()) {
+					allCagesComboBox.addItem(String.valueOf(cage.getCageID()));
+				}
 			}
 		}
 	}

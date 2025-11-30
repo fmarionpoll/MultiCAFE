@@ -3,8 +3,8 @@ package plugins.fmp.multicafe.series;
 import icy.image.IcyBufferedImageUtil;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
-import plugins.fmp.multicafe.tools0.ImageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools0.ImageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
 
 public class FlyDetect2 extends FlyDetect {
 	public boolean viewInternalImages = true;
@@ -27,7 +27,7 @@ public class FlyDetect2 extends FlyDetect {
 	protected ImageTransformOptions setupTransformOptions(Experiment exp) {
 		ImageTransformOptions transformOptions = new ImageTransformOptions();
 		transformOptions.transformOption = ImageTransformEnums.SUBTRACT_REF;
-		transformOptions.backgroundImage = IcyBufferedImageUtil.getCopy(exp.getSeqCamData().getRefImage());
+		transformOptions.backgroundImage = IcyBufferedImageUtil.getCopy(exp.getSeqCamData().getReferenceImage());
 		return transformOptions;
 	}
 }

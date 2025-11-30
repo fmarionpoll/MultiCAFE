@@ -22,9 +22,9 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.tools1.Logger;
-import plugins.fmp.multicafe.tools0.ROI2D.ROI2DUtilities;
-import plugins.fmp.multicafe.tools0.polyline.Bresenham;
 import plugins.fmp.multicafe.tools1.ROI2D.AlongT;
+import plugins.fmp.multicafe.tools1.ROI2D.ROI2DUtilities;
+import plugins.fmp.multicafe.tools1.polyline.Bresenham;
 
 public class KymographBuilder {
 
@@ -53,7 +53,7 @@ public class KymographBuilder {
 
 		for (long ii_ms = first; ii_ms <= last; ii_ms += step, iToColumn++) {
 			int sourceImageIndex = exp.findNearestIntervalWithBinarySearch(ii_ms, 0,
-					exp.getSeqCamData().getnTotalFrames());
+					exp.getSeqCamData().getImageLoader().getNTotalFrames());
 			final int fromSourceImageIndex = sourceImageIndex;
 			final int kymographColumn = iToColumn;
 
@@ -195,7 +195,8 @@ public class KymographBuilder {
 	private void initArraysToBuildKymographImages(Experiment exp, BuildSeriesOptions options) {
 		SequenceCamData seqCamData = exp.getSeqCamData();
 		if (seqCamData.getSequence() == null)
-			seqCamData.setSequence(exp.getSeqCamData().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
+			seqCamData.setSequence(exp.getSeqCamData().getImageLoader()
+					.initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 		int sizex = seqCamData.getSequence().getSizeX();
 		int sizey = seqCamData.getSequence().getSizeY();
 

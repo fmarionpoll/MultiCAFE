@@ -23,7 +23,7 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.series.BuildKymographs;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
-import plugins.fmp.multicafe.tools0.JComponents.JComboMs;
+import plugins.fmp.multicafe.tools1.JComponents.JComboBoxMs;
 
 public class Create extends JPanel implements PropertyChangeListener {
 	/**
@@ -40,13 +40,13 @@ public class Create extends JPanel implements PropertyChangeListener {
 //	JLabel		startFrameLabel			= new JLabel ("starting at frame");
 //	JSpinner	startFrameSpinner 		= new JSpinner(new SpinnerNumberModel(0, 0, 100000, 1));
 	JSpinner binSize = new JSpinner(new SpinnerNumberModel(1., 1., 1000., 1.));
-	JComboMs binUnit = new JComboMs();
+	JComboBoxMs binUnit = new JComboBoxMs();
 
 	JRadioButton isFloatingFrameButton = new JRadioButton("all", true);
 	JRadioButton isFixedFrameButton = new JRadioButton("from ", false);
 	JSpinner startJSpinner = new JSpinner(new SpinnerNumberModel(0., 0., 10000., 1.));
 	JSpinner endJSpinner = new JSpinner(new SpinnerNumberModel(240., 1., 99999999., 1.));
-	JComboMs intervalsUnit = new JComboMs();
+	JComboBoxMs intervalsUnit = new JComboBoxMs();
 
 	EnumStatusComputation sComputation = EnumStatusComputation.START_COMPUTATION;
 	private MultiCAFE parent0 = null;

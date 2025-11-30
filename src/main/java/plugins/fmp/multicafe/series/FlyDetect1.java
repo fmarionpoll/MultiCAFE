@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.series;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
-import plugins.fmp.multicafe.tools0.ImageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
 
 public class FlyDetect1 extends FlyDetect {
 	public boolean buildBackground = true;

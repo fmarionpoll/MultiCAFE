@@ -138,7 +138,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 				if (exp != null) {
 					if (overlayCheckBox.isSelected()) {
 						if (ov == null)
-							ov = new OverlayThreshold(exp.getSeqCamData());
+							ov = new OverlayThreshold(exp.getSeqCamData().getSequence());
 						exp.getSeqCamData().getSequence().addOverlay(ov);
 						updateOverlay(exp);
 					} else
@@ -178,12 +178,12 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 		if (seqCamData == null)
 			return;
 		if (ov == null) {
-			ov = new OverlayThreshold(seqCamData);
+			ov = new OverlayThreshold(seqCamData.getSequence());
 			int t = exp.getSeqCamData().getCurrentFrame();
 			exp.getSeqCamData().setReferenceImage(IcyBufferedImageUtil.getCopy(exp.getSeqCamData().getSeqImage(t, 0)));
 		} else {
 			seqCamData.getSequence().removeOverlay(ov);
-			ov.setSequence(seqCamData);
+			ov.setSequence(seqCamData.getSequence());
 		}
 		ov.setReferenceImage(exp.getSeqCamData().getReferenceImage());
 		seqCamData.getSequence().addOverlay(ov);

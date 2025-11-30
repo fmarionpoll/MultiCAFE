@@ -292,7 +292,7 @@ public class ROI2DWithMask implements XMLPersistent {
 				return false;
 			}
 
-			inputRoi = Utilities.loadFromXML_ROI(nodeMeta);
+			inputRoi = ROI2DUtilities.loadFromXML_ROI(nodeMeta);
 
 			// Clear dependent data since we loaded a new ROI
 			clearMaskData();
@@ -314,7 +314,7 @@ public class ROI2DWithMask implements XMLPersistent {
 			}
 
 			if (inputRoi != null) {
-				Utilities.saveToXML_ROI(nodeMeta, inputRoi);
+				ROI2DUtilities.saveToXML_ROI(nodeMeta, inputRoi);
 			}
 
 			return true;

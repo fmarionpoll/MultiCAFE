@@ -23,7 +23,7 @@ import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
-import plugins.fmp.multicafe.tools0.ROI2D.ROI2DUtilities;
+import plugins.fmp.multicafe.tools1.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class BuildCagesAsArray extends JPanel {
@@ -157,7 +157,7 @@ public class BuildCagesAsArray extends JPanel {
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSequence());
-		exp.getCages().clearCageList();
+		exp.getCages().getCageList().clear();
 
 		// read values from text boxes
 		try {
@@ -175,7 +175,7 @@ public class BuildCagesAsArray extends JPanel {
 
 		// generate cage frames
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSequence());
-		exp.getCages().clearCageList();
+		exp.getCages().getCageList().clear();
 		String cageRoot = "cage";
 		int iRoot = 0;
 

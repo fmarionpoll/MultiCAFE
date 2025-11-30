@@ -13,11 +13,11 @@ public class CapillariesWithTimeTableModel extends AbstractTableModel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ExperimentsJComboBox expList = null;
+	private JComboBoxExperimentLazy expList = null;
 	private final String columnNames[] = { "Starting at frame", "End frame" };
 	private ArrayList<Long[]> intervals = null;
 
-	public CapillariesWithTimeTableModel(ExperimentsJComboBox expList) {
+	public CapillariesWithTimeTableModel(JComboBoxExperimentLazy expList) {
 		super();
 		this.expList = expList;
 	}
