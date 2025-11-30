@@ -36,295 +36,289 @@ import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelResourceException;
  */
 public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 
-    // Reusable buffers to minimize object creation
-    private final SpotDataBuffer spotDataBuffer;
-    private final ExcelRowBuffer excelRowBuffer;
-    
-    // Memory management constants
-    private static final int BUFFER_SIZE = 1024;
-    private static final int GC_INTERVAL = 100; // Force GC every 100 spots
-    
-    private int processedSpots = 0;
+	// Reusable buffers to minimize object creation
+	private final SpotDataBuffer spotDataBuffer;
+	private final ExcelRowBuffer excelRowBuffer;
 
-    /**
-     * Creates a new optimized Excel export instance.
-     */
-    public XLSExportMeasuresFromSpotOptimized() {
-        this.spotDataBuffer = new SpotDataBuffer(BUFFER_SIZE);
-        this.excelRowBuffer = new ExcelRowBuffer(BUFFER_SIZE);
-    }
+	// Memory management constants
+	private static final int BUFFER_SIZE = 1024;
+	private static final int GC_INTERVAL = 100; // Force GC every 100 spots
 
-    /**
-     * Exports spot data for a single experiment using streaming approach.
-     * 
-     * @param exp         The experiment to export
-     * @param startColumn The starting column for export
-     * @param charSeries  The series identifier
-     * @return The next available column
-     * @throws ExcelExportException If export fails
-     */
-    @Override
-    protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
-            String charSeries) throws ExcelExportException {
-        int column = startColumn;
+	private int processedSpots = 0;
 
-        if (options.spotAreas) {
-            column = exportSpotDataStreaming(exp, column, charSeries, EnumXLSExport.AREA_SUM);
-            exportSpotDataStreaming(exp, column, charSeries, EnumXLSExport.AREA_FLYPRESENT);
-            exportSpotDataStreaming(exp, column, charSeries, EnumXLSExport.AREA_SUMCLEAN);
-        }
+	/**
+	 * Creates a new optimized Excel export instance.
+	 */
+	public XLSExportMeasuresFromSpotOptimized() {
+		this.spotDataBuffer = new SpotDataBuffer(BUFFER_SIZE);
+		this.excelRowBuffer = new ExcelRowBuffer(BUFFER_SIZE);
+	}
 
-        return column;
-    }
+	/**
+	 * Exports spot data for a single experiment using streaming approach.
+	 * 
+	 * @param exp         The experiment to export
+	 * @param startColumn The starting column for export
+	 * @param charSeries  The series identifier
+	 * @return The next available column
+	 * @throws ExcelExportException If export fails
+	 */
+	@Override
+	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+			String charSeries) throws ExcelExportException {
+		int column = startColumn;
 
-    /**
-     * Exports spot data using streaming approach to minimize memory usage.
-     * 
-     * @param exp        The experiment to export
-     * @param col0       The starting column
-     * @param charSeries The series identifier
-     * @param exportType The export type
-     * @return The next available column
-     * @throws ExcelExportException If export fails
-     */
-    protected int exportSpotDataStreaming(Experiment exp, int col0, String charSeries, EnumXLSExport exportType)
-            throws ExcelExportException {
-        try {
-            options.exportType = exportType;
-            SXSSFSheet sheet = getSheet(exportType.toString(), exportType);
-            int colmax = writeExperimentDataToSheetStreaming(exp, sheet, exportType, col0, charSeries);
+		if (options.spotAreas) {
+			column = exportSpotDataStreaming(exp, column, charSeries, EnumXLSExport.AREA_SUM);
+			exportSpotDataStreaming(exp, column, charSeries, EnumXLSExport.AREA_FLYPRESENT);
+			exportSpotDataStreaming(exp, column, charSeries, EnumXLSExport.AREA_SUMCLEAN);
+		}
 
-            if (options.onlyalive) {
-                sheet = getSheet(exportType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, exportType);
-                writeExperimentDataToSheetStreaming(exp, sheet, exportType, col0, charSeries);
-            }
+		return column;
+	}
 
-            return colmax;
-        } catch (ExcelResourceException e) {
-            throw new ExcelExportException("Failed to export spot data", "export_spot_data_streaming",
-                    exportType.toString(), e);
-        }
-    }
+	/**
+	 * Exports spot data using streaming approach to minimize memory usage.
+	 * 
+	 * @param exp        The experiment to export
+	 * @param col0       The starting column
+	 * @param charSeries The series identifier
+	 * @param exportType The export type
+	 * @return The next available column
+	 * @throws ExcelExportException If export fails
+	 */
+	protected int exportSpotDataStreaming(Experiment exp, int col0, String charSeries, EnumXLSExport exportType)
+			throws ExcelExportException {
+		try {
+			options.exportType = exportType;
+			SXSSFSheet sheet = getSheet(exportType.toString(), exportType);
+			int colmax = writeExperimentDataToSheetStreaming(exp, sheet, exportType, col0, charSeries);
 
-    /**
-     * Writes experiment data to sheet using streaming approach.
-     * 
-     * @param exp           The experiment to export
-     * @param sheet         The sheet to write to
-     * @param xlsExportType The export type
-     * @param col0          The starting column
-     * @param charSeries    The series identifier
-     * @return The next available column
-     */
-    protected int writeExperimentDataToSheetStreaming(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType,
-            int col0, String charSeries) {
-        Point pt = new Point(col0, 0);
-        pt = writeExperimentSeparator(sheet, pt);
+			if (options.onlyalive) {
+				sheet = getSheet(exportType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, exportType);
+				writeExperimentDataToSheetStreaming(exp, sheet, exportType, col0, charSeries);
+			}
 
-        for (Cage cage : exp.cages.cagesList) {
-            double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
-            cage.updateSpotsStimulus_i();
+			return colmax;
+		} catch (ExcelResourceException e) {
+			throw new ExcelExportException("Failed to export spot data", "export_spot_data_streaming",
+					exportType.toString(), e);
+		}
+	}
 
-            for (Spot spot : cage.spotsArray.getSpotsList()) {
-                pt.y = 0;
-                pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
-                
-                // Process spot data directly without intermediate XLSResults
-                writeSpotDataDirectly(sheet, pt, spot, scalingFactorToPhysicalUnits, xlsExportType);
-                
-                pt.x++;
-                processedSpots++;
-                
-                // Force garbage collection periodically
-                if (processedSpots % GC_INTERVAL == 0) {
-                    System.gc();
-                }
-            }
-        }
-        return pt.x;
-    }
+	/**
+	 * Writes experiment data to sheet using streaming approach.
+	 * 
+	 * @param exp           The experiment to export
+	 * @param sheet         The sheet to write to
+	 * @param xlsExportType The export type
+	 * @param col0          The starting column
+	 * @param charSeries    The series identifier
+	 * @return The next available column
+	 */
+	protected int writeExperimentDataToSheetStreaming(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType,
+			int col0, String charSeries) {
+		Point pt = new Point(col0, 0);
+		pt = writeExperimentSeparator(sheet, pt);
 
-    /**
-     * Writes spot data directly to Excel without intermediate data structures.
-     * 
-     * @param sheet                        The Excel sheet
-     * @param pt                          The current position
-     * @param spot                        The spot to process
-     * @param scalingFactorToPhysicalUnits The scaling factor
-     * @param xlsExportType               The export type
-     */
-    protected void writeSpotDataDirectly(SXSSFSheet sheet, Point pt, Spot spot, 
-            double scalingFactorToPhysicalUnits, EnumXLSExport xlsExportType) {
-        
-        // Get data directly from spot using streaming approach
-        List<Double> dataList = spot.getMeasuresForExcelPass1(xlsExportType, 
-                getBinData(spot), getBinExcel());
-        
-        if (dataList == null || dataList.isEmpty()) {
-            return;
-        }
+		for (Cage cage : exp.getCages().cagesList) {
+			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
+			cage.updateSpotsStimulus_i();
 
-        // Apply relative to T0 if needed
-        if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT) {
-            dataList = applyRelativeToMaximum(dataList);
-        }
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
+				pt.y = 0;
+				pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
 
-        // Write data directly to Excel row by row
-        int row = pt.y + getDescriptorRowCount();
-        Iterator<Double> dataIterator = dataList.iterator();
-        
-        while (dataIterator.hasNext() && row < excelRowBuffer.getMaxRows()) {
-            double value = dataIterator.next();
-            double scaledValue = value * scalingFactorToPhysicalUnits;
-            
-            excelRowBuffer.setValue(row, pt.x, scaledValue);
-            row++;
-        }
-        
-        // Flush buffer to Excel
-        excelRowBuffer.flushToSheet(sheet);
-    }
+				// Process spot data directly without intermediate XLSResults
+				writeSpotDataDirectly(sheet, pt, spot, scalingFactorToPhysicalUnits, xlsExportType);
 
-    /**
-     * Gets the bin data duration for the current experiment.
-     * 
-     * @param spot The spot (used to get experiment context)
-     * @return The bin duration in milliseconds
-     */
-    private long getBinData(Spot spot) {
-        // This would need to be implemented based on the experiment context
-        // For now, using a default value - this should be extracted from the experiment
-        return 1000; // Default 1 second bin
-    }
+				pt.x++;
+				processedSpots++;
 
-    /**
-     * Gets the Excel bin duration.
-     * 
-     * @return The Excel bin duration in milliseconds
-     */
-    private long getBinExcel() {
-        return options.buildExcelStepMs;
-    }
+				// Force garbage collection periodically
+				if (processedSpots % GC_INTERVAL == 0) {
+					System.gc();
+				}
+			}
+		}
+		return pt.x;
+	}
 
-    /**
-     * Applies relative to maximum calculation to a data list.
-     * 
-     * @param dataList The data list to process
-     * @return The processed data list
-     */
-    private List<Double> applyRelativeToMaximum(List<Double> dataList) {
-        if (dataList == null || dataList.isEmpty()) {
-            return dataList;
-        }
+	/**
+	 * Writes spot data directly to Excel without intermediate data structures.
+	 * 
+	 * @param sheet                        The Excel sheet
+	 * @param pt                           The current position
+	 * @param spot                         The spot to process
+	 * @param scalingFactorToPhysicalUnits The scaling factor
+	 * @param xlsExportType                The export type
+	 */
+	protected void writeSpotDataDirectly(SXSSFSheet sheet, Point pt, Spot spot, double scalingFactorToPhysicalUnits,
+			EnumXLSExport xlsExportType) {
 
-        double maximum = dataList.stream()
-                .mapToDouble(Double::doubleValue)
-                .max()
-                .orElse(1.0);
+		// Get data directly from spot using streaming approach
+		List<Double> dataList = spot.getMeasuresForExcelPass1(xlsExportType, getBinData(spot), getBinExcel());
 
-        if (maximum == 0.0) {
-            return dataList;
-        }
+		if (dataList == null || dataList.isEmpty()) {
+			return;
+		}
 
-        return dataList.stream()
-                .map(value -> value / maximum)
-                .collect(java.util.stream.Collectors.toList());
-    }
+		// Apply relative to T0 if needed
+		if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT) {
+			dataList = applyRelativeToMaximum(dataList);
+		}
 
-    /**
-     * Reusable buffer for spot data to minimize object creation.
-     */
-    private static class SpotDataBuffer {
-        private final double[] buffer;
-        private final int size;
+		// Write data directly to Excel row by row
+		int row = pt.y + getDescriptorRowCount();
+		Iterator<Double> dataIterator = dataList.iterator();
 
-        public SpotDataBuffer(int size) {
-            this.size = size;
-            this.buffer = new double[size];
-        }
+		while (dataIterator.hasNext() && row < excelRowBuffer.getMaxRows()) {
+			double value = dataIterator.next();
+			double scaledValue = value * scalingFactorToPhysicalUnits;
 
-        public void clear() {
-            java.util.Arrays.fill(buffer, 0.0);
-        }
+			excelRowBuffer.setValue(row, pt.x, scaledValue);
+			row++;
+		}
 
-        public double[] getBuffer() {
-            return buffer;
-        }
+		// Flush buffer to Excel
+		excelRowBuffer.flushToSheet(sheet);
+	}
 
-        public int getSize() {
-            return size;
-        }
-    }
+	/**
+	 * Gets the bin data duration for the current experiment.
+	 * 
+	 * @param spot The spot (used to get experiment context)
+	 * @return The bin duration in milliseconds
+	 */
+	private long getBinData(Spot spot) {
+		// This would need to be implemented based on the experiment context
+		// For now, using a default value - this should be extracted from the experiment
+		return 1000; // Default 1 second bin
+	}
 
-    /**
-     * Reusable buffer for Excel row data to minimize object creation.
-     */
-    private static class ExcelRowBuffer {
-        private final double[][] buffer;
-        private final int maxRows;
-        private final int maxCols;
-        private int currentRow = 0;
-        private int currentCol = 0;
+	/**
+	 * Gets the Excel bin duration.
+	 * 
+	 * @return The Excel bin duration in milliseconds
+	 */
+	private long getBinExcel() {
+		return options.buildExcelStepMs;
+	}
 
-        public ExcelRowBuffer(int size) {
-            this.maxRows = size;
-            this.maxCols = size;
-            this.buffer = new double[maxRows][maxCols];
-        }
+	/**
+	 * Applies relative to maximum calculation to a data list.
+	 * 
+	 * @param dataList The data list to process
+	 * @return The processed data list
+	 */
+	private List<Double> applyRelativeToMaximum(List<Double> dataList) {
+		if (dataList == null || dataList.isEmpty()) {
+			return dataList;
+		}
 
-        public void setValue(int row, int col, double value) {
-            if (row < maxRows && col < maxCols) {
-                buffer[row][col] = value;
-            }
-        }
+		double maximum = dataList.stream().mapToDouble(Double::doubleValue).max().orElse(1.0);
 
-        public void flushToSheet(SXSSFSheet sheet) {
-            // Implementation would write the buffer to the sheet
-            // This is a simplified version - actual implementation would use POI
-            clear();
-        }
+		if (maximum == 0.0) {
+			return dataList;
+		}
 
-        public void clear() {
-            for (int i = 0; i < maxRows; i++) {
-                java.util.Arrays.fill(buffer[i], 0.0);
-            }
-            currentRow = 0;
-            currentCol = 0;
-        }
+		return dataList.stream().map(value -> value / maximum).collect(java.util.stream.Collectors.toList());
+	}
 
-        public int getMaxRows() {
-            return maxRows;
-        }
-    }
+	/**
+	 * Reusable buffer for spot data to minimize object creation.
+	 */
+	private static class SpotDataBuffer {
+		private final double[] buffer;
+		private final int size;
 
-    /**
-     * Gets the number of output frames for the experiment.
-     * 
-     * @param exp The experiment
-     * @return The number of output frames
-     */
-    protected int getNOutputFrames(Experiment exp, XLSExportOptions options) {
-        TimeManager timeManager = exp.seqCamData.getTimeManager();
-        long durationMs = timeManager.getBinLast_ms() - timeManager.getBinFirst_ms();
-        int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
+		public SpotDataBuffer(int size) {
+			this.size = size;
+			this.buffer = new double[size];
+		}
 
-        if (nOutputFrames <= 1) {
-            long binLastMs = timeManager.getBinFirst_ms()
-                    + exp.seqCamData.getImageLoader().getNTotalFrames() * timeManager.getBinDurationMs();
-            timeManager.setBinLast_ms(binLastMs);
+		public void clear() {
+			java.util.Arrays.fill(buffer, 0.0);
+		}
 
-            if (binLastMs <= 0) {
-                handleExportError(exp, -1);
-            }
+		public double[] getBuffer() {
+			return buffer;
+		}
 
-            nOutputFrames = (int) ((binLastMs - timeManager.getBinFirst_ms()) / options.buildExcelStepMs + 1);
+		public int getSize() {
+			return size;
+		}
+	}
 
-            if (nOutputFrames <= 1) {
-                nOutputFrames = exp.seqCamData.getImageLoader().getNTotalFrames();
-                handleExportError(exp, nOutputFrames);
-            }
-        }
+	/**
+	 * Reusable buffer for Excel row data to minimize object creation.
+	 */
+	private static class ExcelRowBuffer {
+		private final double[][] buffer;
+		private final int maxRows;
+		private final int maxCols;
+		private int currentRow = 0;
+		private int currentCol = 0;
 
-        return nOutputFrames;
-    }
-} 
+		public ExcelRowBuffer(int size) {
+			this.maxRows = size;
+			this.maxCols = size;
+			this.buffer = new double[maxRows][maxCols];
+		}
+
+		public void setValue(int row, int col, double value) {
+			if (row < maxRows && col < maxCols) {
+				buffer[row][col] = value;
+			}
+		}
+
+		public void flushToSheet(SXSSFSheet sheet) {
+			// Implementation would write the buffer to the sheet
+			// This is a simplified version - actual implementation would use POI
+			clear();
+		}
+
+		public void clear() {
+			for (int i = 0; i < maxRows; i++) {
+				java.util.Arrays.fill(buffer[i], 0.0);
+			}
+			currentRow = 0;
+			currentCol = 0;
+		}
+
+		public int getMaxRows() {
+			return maxRows;
+		}
+	}
+
+	/**
+	 * Gets the number of output frames for the experiment.
+	 * 
+	 * @param exp The experiment
+	 * @return The number of output frames
+	 */
+	protected int getNOutputFrames(Experiment exp, XLSExportOptions options) {
+		TimeManager timeManager = exp.getSeqCamData().getTimeManager();
+		long durationMs = timeManager.getBinLast_ms() - timeManager.getBinFirst_ms();
+		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
+
+		if (nOutputFrames <= 1) {
+			long binLastMs = timeManager.getBinFirst_ms()
+					+ exp.getSeqCamData().getImageLoader().getNTotalFrames() * timeManager.getBinDurationMs();
+			timeManager.setBinLast_ms(binLastMs);
+
+			if (binLastMs <= 0) {
+				handleExportError(exp, -1);
+			}
+
+			nOutputFrames = (int) ((binLastMs - timeManager.getBinFirst_ms()) / options.buildExcelStepMs + 1);
+
+			if (nOutputFrames <= 1) {
+				nOutputFrames = exp.getSeqCamData().getImageLoader().getNTotalFrames();
+				handleExportError(exp, nOutputFrames);
+			}
+		}
+
+		return nOutputFrames;
+	}
+}

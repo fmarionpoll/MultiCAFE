@@ -1,6 +1,7 @@
-package plugins.fmp.multicafe.tools0.toExcel;
+package plugins.fmp.multicafe.tools1.toExcel;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.tools0.toExcel.EnumXLSExport;
 
 public class XLSExportGulpsResults extends XLSExportCapillariesResults {
 	// -----------------------

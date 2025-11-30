@@ -9,9 +9,10 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import icy.gui.frame.progress.ProgressFrame;
@@ -21,6 +22,9 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools1.Logger;
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
+import plugins.fmp.multicafe.tools1.toExcel.EnumColumnType;
+import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.XLSUtils;
 
 public abstract class XLSExport {
 	protected XLSExportOptions options = null;
@@ -30,7 +34,7 @@ public abstract class XLSExport {
 	XSSFCellStyle xssfCellStyle_blue = null;
 	XSSFFont font_red = null;
 	XSSFFont font_blue = null;
-	XSSFWorkbook workbook = null;
+	SXSSFWorkbook workbook = null;
 	JComboBoxExperimentLazy expList = null;
 
 	// ------------------------------------------------
@@ -79,15 +83,15 @@ public abstract class XLSExport {
 
 	protected abstract int processExperiment(Experiment exp, int col0, String charSeries);
 
-	int writeTop_descriptors(XSSFSheet sheet, EnumXLSExport xlsExport) {
+	int writeTop_descriptors(SXSSFSheet sheet, EnumXLSExport xlsExport) {
 		Point pt = new Point(0, 0);
 		int x = 0;
 		boolean transpose = options.transpose;
 		int columnIndex = 0;
 		for (EnumXLSColumnHeader dumb : EnumXLSColumnHeader.values()) {
-			EnumXLSMeasure columnType = dumb.toType();
+			EnumColumnType columnType = dumb.toType();
 			dumb.setValue(columnIndex);
-			if (columnType == EnumXLSMeasure.COMMON || xlsExport.toType() == columnType) {
+			if (columnType == EnumColumnType.COMMON || xlsExport.toType() == columnType) {
 				XLSUtils.setValue(sheet, x, columnIndex, transpose, dumb.getName());
 				columnIndex++;
 			}
@@ -96,7 +100,7 @@ public abstract class XLSExport {
 		return pt.y;
 	}
 
-	void writeTop_timeIntervals(XSSFSheet sheet, int row, EnumXLSExport xlsExport) {
+	void writeTop_timeIntervals(SXSSFSheet sheet, int row, EnumXLSExport xlsExport) {
 		switch (xlsExport) {
 		case AUTOCORREL:
 		case CROSSCORREL:
@@ -111,7 +115,7 @@ public abstract class XLSExport {
 		}
 	}
 
-	void writeTop_timeIntervals_Correl(XSSFSheet sheet, int row) {
+	void writeTop_timeIntervals_Correl(SXSSFSheet sheet, int row) {
 		boolean transpose = options.transpose;
 		Point pt = new Point(0, row);
 		long interval = -options.nbinscorrelation;
@@ -123,7 +127,7 @@ public abstract class XLSExport {
 		}
 	}
 
-	void writeTop_timeIntervals_Default(XSSFSheet sheet, int row) {
+	void writeTop_timeIntervals_Default(SXSSFSheet sheet, int row) {
 		boolean transpose = options.transpose;
 		Point pt = new Point(0, row);
 		long duration = expAll.getCamImageLast_ms() - expAll.getCamImageFirst_ms();
@@ -183,8 +187,8 @@ public abstract class XLSExport {
 		return Integer.valueOf(name.substring(4, 5));
 	}
 
-	XSSFWorkbook xlsInitWorkbook() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
+	SXSSFWorkbook xlsInitWorkbook() {
+		SXSSFWorkbook workbook = new XSSFWorkbook();
 		workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
 		xssfCellStyle_red = workbook.createCellStyle();
 		font_red = workbook.createFont();
@@ -198,8 +202,8 @@ public abstract class XLSExport {
 		return workbook;
 	}
 
-	XSSFSheet xlsGetSheet(String title, EnumXLSExport xlsExport) {
-		XSSFSheet sheet = workbook.getSheet(title);
+	SXSSFSheet xlsGetSheet(String title, EnumXLSExport xlsExport) {
+		SXSSFSheet sheet = workbook.getSheet(title);
 		if (sheet == null) {
 			sheet = workbook.createSheet(title);
 			int row = writeTop_descriptors(sheet, xlsExport);
@@ -209,7 +213,7 @@ public abstract class XLSExport {
 		return sheet;
 	}
 
-	protected Point writeExperiment_data(XLSResultsArray rowListForOneExp, XSSFSheet sheet, EnumXLSExport option,
+	protected Point writeExperiment_data(XLSResultsArray rowListForOneExp, SXSSFSheet sheet, EnumXLSExport option,
 			Point pt_main) {
 		int rowSeries = pt_main.x + 2;
 		int column_dataArea = pt_main.y;
@@ -219,7 +223,7 @@ public abstract class XLSExport {
 		return pt_main;
 	}
 
-	private void writeExperiment_data_as_rows(XLSResultsArray rowListForOneExp, XSSFSheet sheet, int column_dataArea,
+	private void writeExperiment_data_as_rows(XLSResultsArray rowListForOneExp, SXSSFSheet sheet, int column_dataArea,
 			int rowSeries, Point pt) {
 		for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
 			XLSResults row = rowListForOneExp.getRow(iRow);
@@ -227,7 +231,7 @@ public abstract class XLSExport {
 		}
 	}
 
-	private void writeExperiment_data_single_row(XSSFSheet sheet, int column_dataArea, int rowSeries, Point pt,
+	private void writeExperiment_data_single_row(SXSSFSheet sheet, int column_dataArea, int rowSeries, Point pt,
 			XLSResults row) {
 		boolean transpose = options.transpose;
 		pt.y = column_dataArea;
@@ -251,12 +255,12 @@ public abstract class XLSExport {
 		pt.x++;
 	}
 
-	protected void exportExperimentField(XSSFSheet sheet, int x, int y, boolean transpose, Experiment exp,
+	protected void exportExperimentField(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp,
 			EnumXLSColumnHeader colHeader) {
 		XLSUtils.setValue(sheet, x, y + colHeader.getValue(), transpose, exp.getExperimentField(colHeader));
 	}
 
-	protected void XLSExportExperimentParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
+	protected void XLSExportExperimentParameters(SXSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
 			Experiment exp) {
 		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_PATH);
 		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_DATE);
@@ -271,7 +275,7 @@ public abstract class XLSExport {
 		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_COND2);
 	}
 
-	protected void xlsExportCageParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
+	protected void xlsExportCageParameters(SXSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
 			Experiment exp, Cage cage) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_INDEX.getValue(), transpose, cage.getCageIDasString());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_ID.getValue(), transpose,
@@ -282,7 +286,7 @@ public abstract class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cage.getCageComment());
 	}
 
-	protected void XLSExportCapillaryParameters(XSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
+	protected void XLSExportCapillaryParameters(SXSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
 			Experiment exp, Capillary cap, EnumXLSExport xlsExportOption, int index) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP.getValue(), transpose,
 				cap.getSideDescriptor(xlsExportOption));
@@ -300,7 +304,7 @@ public abstract class XLSExport {
 				desc_getChoiceTestType(exp.getCapillaries().getCapillariesList(), index));
 	}
 
-	private void outputStimAndConc_according_to_DataOption(XSSFSheet sheet, EnumXLSExport xlsExportOption,
+	private void outputStimAndConc_according_to_DataOption(SXSSFSheet sheet, EnumXLSExport xlsExportOption,
 			Capillary cap, boolean transpose, int x, int y) {
 		switch (xlsExportOption) {
 		case TOPLEVEL_LR:
@@ -353,7 +357,7 @@ public abstract class XLSExport {
 		return choiceText;
 	}
 
-	protected int writeSeparator_Between_Experiments(XSSFSheet sheet, Point pt, boolean transpose) {
+	protected int writeSeparator_Between_Experiments(SXSSFSheet sheet, Point pt, boolean transpose) {
 		XLSUtils.setValue(sheet, pt, transpose, "..");
 		pt.x++;
 		XLSUtils.setValue(sheet, pt, transpose, "..");

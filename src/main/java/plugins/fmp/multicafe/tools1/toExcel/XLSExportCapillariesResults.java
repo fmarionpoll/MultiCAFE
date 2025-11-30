@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.tools0.toExcel;
+package plugins.fmp.multicafe.tools1.toExcel;
 
 import java.awt.Point;
 import java.util.List;
@@ -9,6 +9,10 @@ import plugins.fmp.multicafe.fmp_experiment.CombinedExperiment;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.tools0.toExcel.XLSExportOptions;
+import plugins.fmp.multicafe.tools0.toExcel.XLSResults;
+import plugins.fmp.multicafe.tools0.toExcel.XLSResultsArray;
+import plugins.fmp.multicafe.tools0.toExcel.XLSResultsFromCapillaries;
 import plugins.fmp.multicafe.tools1.Logger;
 
 public class XLSExportCapillariesResults extends XLSExport {

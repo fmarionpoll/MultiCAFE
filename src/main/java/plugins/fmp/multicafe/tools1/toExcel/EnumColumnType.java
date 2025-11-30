@@ -1,7 +1,13 @@
 package plugins.fmp.multicafe.tools1.toExcel;
 
 public enum EnumColumnType {
-	SPOT("spot"), MOVE("move"), COMMON("common"), DESCRIPTOR_STR("descriptor_str"), DESCRIPTOR_INT("descriptor_int"), MEASURE("measure");
+	CAP("capillary"), //
+	SPOT("spot"), //
+	MOVE("move"), //
+	COMMON("common"), //
+	DESCRIPTOR_STR("descriptor_str"), //
+	DESCRIPTOR_INT("descriptor_int"), //
+	MEASURE("measure");
 
 	private String label;
 
