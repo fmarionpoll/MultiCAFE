@@ -24,7 +24,7 @@ import icy.gui.util.GuiUtil;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.tools1.MaxMinDouble;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 
 /**
  * Chart display class for fly position data. This class creates and manages

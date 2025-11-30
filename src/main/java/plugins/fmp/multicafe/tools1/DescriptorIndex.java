@@ -16,7 +16,7 @@ import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
 
 public class DescriptorIndex {
 

@@ -22,8 +22,8 @@ import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
-import plugins.fmp.multicafe.tools.MaxMinDouble;
-import plugins.fmp.multicafe.tools0.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.MaxMinDouble;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 
 public class ChartPositions extends IcyFrame {
 	public JPanel mainChartPanel = null;
@@ -53,10 +53,10 @@ public class ChartPositions extends IcyFrame {
 		for (Cage cell : cellList) {
 			if (cell.getFlyPositions() != null && cell.getFlyPositions().getFlyPositionList().size() > 0) {
 				ChartData chartData = getDataSet(cell, option);
-				XYSeriesCollection xyDataset = chartData.xyDataset;
-				yMaxMin = chartData.yMaxMin;
+				XYSeriesCollection xyDataset = chartData.getXYDataset();
+				yMaxMin = chartData.getYMaxMin();
 				if (count != 0)
-					yMaxMin.getMaxMin(chartData.yMaxMin);
+					yMaxMin.getMaxMin(chartData.getYMaxMin());
 				xyDataSetList.add(xyDataset);
 				count++;
 			}
@@ -73,7 +73,7 @@ public class ChartPositions extends IcyFrame {
 			xyChart.setTextAntiAlias(true);
 
 			ValueAxis yAxis = xyChart.getXYPlot().getRangeAxis(0);
-			yAxis.setRange(yMaxMin.min, yMaxMin.max);
+			yAxis.setRange(yMaxMin.getMin(), yMaxMin.getMax());
 			yAxis.setTickLabelsVisible(displayLabels);
 
 			ValueAxis xAxis = xyChart.getXYPlot().getDomainAxis(0);
@@ -99,10 +99,12 @@ public class ChartPositions extends IcyFrame {
 		if (itmax > 0) {
 			switch (option) {
 			case DISTANCE:
-				double previousY = results.getFlyPositionList().get(0).getX() + results.getFlyPositionList().get(0).getH() / 2;
+				double previousY = results.getFlyPositionList().get(0).getX()
+						+ results.getFlyPositionList().get(0).getH() / 2;
 
 				for (int it = 0; it < itmax; it++) {
-					double currentY = results.getFlyPositionList().get(it).getY() + results.getFlyPositionList().get(it).getH() / 2;
+					double currentY = results.getFlyPositionList().get(it).getY()
+							+ results.getFlyPositionList().get(it).getH() / 2;
 					double ypos = currentY - previousY;
 					addxyPos(seriesXY, results, it, ypos);
 					previousY = currentY;

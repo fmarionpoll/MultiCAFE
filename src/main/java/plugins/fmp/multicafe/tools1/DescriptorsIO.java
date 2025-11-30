@@ -18,7 +18,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
 
 public class DescriptorsIO {
 
@@ -148,8 +148,8 @@ public class DescriptorsIO {
 		// cages/spots
 		try {
 			exp.load_MS96_cages();
-			if (exp.cages != null && exp.cages.cagesList != null) {
-				for (Cage cage : exp.cages.cagesList) {
+			if (exp.getCages() != null && exp.getCages().cagesList != null) {
+				for (Cage cage : exp.getCages().cagesList) {
 					addIfNotEmpty(dicts.get(EnumXLSColumnHeader.CAGE_SEX), cage.getField(EnumXLSColumnHeader.CAGE_SEX));
 					addIfNotEmpty(dicts.get(EnumXLSColumnHeader.CAGE_STRAIN),
 							cage.getField(EnumXLSColumnHeader.CAGE_STRAIN));

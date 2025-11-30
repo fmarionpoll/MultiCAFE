@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import plugins.fmp.multicafe.fmp_experiment.sequence.TIntervalsArray;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 
 /**
  * Modern, thread-safe implementation of spots array management with clean code

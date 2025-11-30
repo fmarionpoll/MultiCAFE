@@ -21,12 +21,12 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.tools1.Logger;
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
-import plugins.fmp.multicafe.tools1.toExcel.EnumColumnType;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
-import plugins.fmp.multicafe.tools1.toExcel.XLSExportOptions;
-import plugins.fmp.multicafe.tools1.toExcel.XLSResultsArray;
-import plugins.fmp.multicafe.tools1.toExcel.XLSUtils;
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.data.XLSResultsArray;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumColumnType;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.utils.XLSUtils;
 
 public abstract class XLSExport {
 	protected XLSExportOptions options = null;

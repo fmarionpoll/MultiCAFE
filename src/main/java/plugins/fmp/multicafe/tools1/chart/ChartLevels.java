@@ -32,11 +32,10 @@ import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools0.toExcel.EnumXLSExport;
-import plugins.fmp.multicafe.tools0.toExcel.XLSExportOptions;
-import plugins.fmp.multicafe.tools0.toExcel.XLSResults;
-import plugins.fmp.multicafe.tools0.toExcel.XLSResultsArray;
-import plugins.fmp.multicafe.tools1.toExcel.XLSExportCapillariesResults;
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.data.XLSResultsArray;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.legacy.XLSExportCapillariesResults;
 
 public class ChartLevels extends IcyFrame {
 	public JPanel mainChartPanel = null;

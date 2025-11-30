@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.tools1.Comparators;
 import plugins.fmp.multicafe.tools1.ROI2D.Measures;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyPositions {

@@ -9,11 +9,15 @@ import plugins.fmp.multicafe.fmp_experiment.CombinedExperiment;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.tools0.toExcel.XLSExportOptions;
-import plugins.fmp.multicafe.tools0.toExcel.XLSResults;
-import plugins.fmp.multicafe.tools0.toExcel.XLSResultsArray;
 import plugins.fmp.multicafe.tools0.toExcel.XLSResultsFromCapillaries;
 import plugins.fmp.multicafe.tools1.Logger;
+import plugins.fmp.multicafe.tools1.toExcel.XLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.data.XLSResultsArray;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelExportException;
+import plugins.fmp.multicafe.tools1.toExcel.utils.XLSUtils;
 
 public class XLSExportCapillariesResults extends XLSExport {
 	//
@@ -144,7 +148,7 @@ public class XLSExportCapillariesResults extends XLSExport {
 			nOutputFrames = (int) ((expi.getKymoLast_ms() - expi.getKymoFirst_ms()) / options.buildExcelStepMs + 1);
 
 			if (nOutputFrames <= 1) {
-				nOutputFrames = expi.getSeqCamData().getnTotalFrames();
+				nOutputFrames = expi.getSeqCamData().getTimeIntervals().getNTotalFrames();
 				exportError(expi, nOutputFrames);
 			}
 		}
@@ -423,6 +427,13 @@ public class XLSExportCapillariesResults extends XLSExport {
 		pt.x = col0;
 		pt.y = rowmax + 1;
 		return pt;
+	}
+
+	@Override
+	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+			String charSeries) throws ExcelExportException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

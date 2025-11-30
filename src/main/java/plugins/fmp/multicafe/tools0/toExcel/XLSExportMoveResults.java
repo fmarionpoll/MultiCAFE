@@ -11,11 +11,11 @@ import plugins.fmp.multicafe.fmp_experiment.CombinedExperiment;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPosition;
-import plugins.fmp.multicafe.tools1.toExcel.EnumMeasure;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
-import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
-import plugins.fmp.multicafe.tools1.toExcel.XLSExportOptions;
-import plugins.fmp.multicafe.tools1.toExcel.XLSUtils;
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumMeasure;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.utils.XLSUtils;
 
 public class XLSExportMoveResults extends XLSExport {
 	//

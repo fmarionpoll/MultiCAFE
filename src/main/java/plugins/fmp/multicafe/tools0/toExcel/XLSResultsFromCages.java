@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.tools0.toExcel;
 
 import java.util.ArrayList;
 
-import plugins.fmp.multicafe.tools1.toExcel.XLSResultsArray;
+import plugins.fmp.multicafe.tools1.toExcel.data.XLSResultsArray;
 
 public class XLSResultsFromCages extends XLSResultsArray {
 	public XLSResultsFromCages(int size) {
