@@ -9,6 +9,9 @@ import java.util.Map;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.XLSResultsArray;
 
 public class XLSResultsFromCapillaries extends XLSResultsArray {
 

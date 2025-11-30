@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.fmpp_resource;
+package plugins.fmp.multicafe.fmp_resource;
 
 import java.awt.Image;
 import java.io.InputStream;

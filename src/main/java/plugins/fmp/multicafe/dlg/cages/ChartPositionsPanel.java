@@ -21,8 +21,8 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
-import plugins.fmp.multicafe.tools0.toExcel.EnumXLSExport;
 import plugins.fmp.multicafe.tools1.chart.ChartPositions;
+import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
 
 public class ChartPositionsPanel extends JPanel implements SequenceListener {
 	/**
@@ -90,7 +90,7 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 
 		if (moveCheckbox.isSelected()) {
 			ypositionsChart = plotYToChart("flies Y positions", ypositionsChart, rectv, ptRelative, exp,
-					EnumXLSExport.XYTOPCELL);
+					EnumXLSExport.XYTOPCAGE);
 			ptRelative.y += deltay;
 		} else if (ypositionsChart != null)
 			closeChart(ypositionsChart);

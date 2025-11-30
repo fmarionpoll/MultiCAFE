@@ -5,6 +5,7 @@ import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
 public class XLSExportOptions {
 	public boolean xyImage = true;
 	public boolean xyCage = true;
+	public boolean xyCapillaries = true;
 	public boolean ellipseAxes = false;
 
 	public boolean distance = false;
@@ -17,6 +18,20 @@ public class XLSExportOptions {
 	public boolean sum2 = true;
 	public boolean nPixels = true;
 
+	public boolean topLevel = true;
+	public boolean topLevelDelta = false;
+	public boolean bottomLevel = false;
+	public boolean derivative = false;
+	public boolean lrPI = true;
+	public double lrPIThreshold = 0.;
+
+	public boolean sumGulps = false;
+	public boolean nbGulps = false;
+	public boolean amplitudeGulps = false;
+	public boolean tToNextGulp = false;
+	public boolean tToNextGulp_LR = false;
+
+	public boolean markovChain = false;
 	public boolean autocorrelation = false;
 	public boolean crosscorrelation = false;
 	public boolean crosscorrelationLR = false;
@@ -41,6 +56,8 @@ public class XLSExportOptions {
 	public boolean collateSeries = false;
 	public boolean padIntervals = true;
 
+	public int firstExp = -1;
+	public int lastExp = -1;
 	public int experimentIndexFirst = -1;
 	public int experimentIndexLast = -1;
 	public int cageIndexFirst = -1;

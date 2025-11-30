@@ -6,14 +6,13 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.fmp_experiment.CombinedExperiment;
@@ -24,16 +23,19 @@ import plugins.fmp.multicafe.tools1.Logger;
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.tools1.toExcel.EnumColumnType;
 import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.XLSResultsArray;
 import plugins.fmp.multicafe.tools1.toExcel.XLSUtils;
 
 public abstract class XLSExport {
 	protected XLSExportOptions options = null;
 	protected CombinedExperiment expAll = null;
 
-	XSSFCellStyle xssfCellStyle_red = null;
-	XSSFCellStyle xssfCellStyle_blue = null;
-	XSSFFont font_red = null;
-	XSSFFont font_blue = null;
+	CellStyle xssfCellStyle_red = null;
+	CellStyle xssfCellStyle_blue = null;
+	Font font_red = null;
+	Font font_blue = null;
 	SXSSFWorkbook workbook = null;
 	JComboBoxExperimentLazy expList = null;
 
@@ -118,8 +120,8 @@ public abstract class XLSExport {
 	void writeTop_timeIntervals_Correl(SXSSFSheet sheet, int row) {
 		boolean transpose = options.transpose;
 		Point pt = new Point(0, row);
-		long interval = -options.nbinscorrelation;
-		while (interval < options.nbinscorrelation) {
+		long interval = -options.nBinsCorrelation;
+		while (interval < options.nBinsCorrelation) {
 			int i = (int) interval;
 			XLSUtils.setValue(sheet, pt, transpose, "t" + i);
 			pt.y++;
@@ -188,7 +190,7 @@ public abstract class XLSExport {
 	}
 
 	SXSSFWorkbook xlsInitWorkbook() {
-		SXSSFWorkbook workbook = new XSSFWorkbook();
+		SXSSFWorkbook workbook = new SXSSFWorkbook();
 		workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
 		xssfCellStyle_red = workbook.createCellStyle();
 		font_red = workbook.createFont();
@@ -262,28 +264,33 @@ public abstract class XLSExport {
 
 	protected void XLSExportExperimentParameters(SXSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
 			Experiment exp) {
-		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_PATH);
-		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_DATE);
-		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_CAM);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.PATH);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.DATE);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.CAM);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_BOXID.getValue(), transpose, charSeries);
 		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_EXPT);
-		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_STIM);
-		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_CONC);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_STIM1);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_CONC1);
 		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_STRAIN);
 		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_SEX);
-		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_COND1);
-		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_COND2);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_STIM2);
+		exportExperimentField(sheet, x, y, transpose, exp, EnumXLSColumnHeader.EXP_CONC2);
 	}
 
 	protected void xlsExportCageParameters(SXSSFSheet sheet, boolean transpose, int x, int y, String charSeries,
 			Experiment exp, Cage cage) {
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_INDEX.getValue(), transpose, cage.getCageIDasString());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_ID.getValue(), transpose,
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose,
+				Integer.toString(cage.getProperties().getCagePosition()));
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
 				charSeries + "_" + cage.getCageID());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cage.getCageStrain());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.getCageSex());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.getCageAge());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cage.getCageComment());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose,
+				cage.getProperties().getFlyStrain());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose,
+				cage.getProperties().getFlySex());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose,
+				cage.getProperties().getFlyAge());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose,
+				cage.getProperties().getComment());
 	}
 
 	protected void XLSExportCapillaryParameters(SXSSFSheet sheet, boolean transpose, int x, int y, String charSeries,

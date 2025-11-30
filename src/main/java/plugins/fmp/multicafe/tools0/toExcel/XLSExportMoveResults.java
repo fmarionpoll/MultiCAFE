@@ -5,12 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 import plugins.fmp.multicafe.fmp_experiment.CombinedExperiment;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPosition;
+import plugins.fmp.multicafe.tools1.toExcel.EnumMeasure;
+import plugins.fmp.multicafe.tools1.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.tools1.toExcel.EnumXLSExport;
+import plugins.fmp.multicafe.tools1.toExcel.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.XLSUtils;
 
 public class XLSExportMoveResults extends XLSExport {
 	//
@@ -34,7 +39,7 @@ public class XLSExportMoveResults extends XLSExport {
 		if (options.xyImage)
 			exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.XYIMAGE);
 		if (options.xyCage)
-			exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.XYTOPCELL);
+			exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.XYTOPCAGE);
 		if (options.xyCapillaries)
 			exportMoveDataFromExpCombined(combinedExp, charSeries, options, EnumXLSExport.XYTIPCAPS);
 		if (options.ellipseAxes)
@@ -51,7 +56,7 @@ public class XLSExportMoveResults extends XLSExport {
 
 	private void exportMoveDataFromExpCombined(CombinedExperiment combinedExp, String charSeries,
 			XLSExportOptions options, EnumXLSExport xlsExportOption) {
-		XSSFSheet sheet = xlsGetSheet(xlsExportOption.toString(), xlsExportOption);
+		SXSSFSheet sheet = xlsGetSheet(xlsExportOption.toString(), xlsExportOption);
 		CellAddress cellAddress = sheet.getActiveCell();
 		int x = cellAddress.getRow();
 		int y = 0;
@@ -76,7 +81,7 @@ public class XLSExportMoveResults extends XLSExport {
 		sheet.setActiveCell(new CellAddress(x, y));
 	}
 
-	private void writeData(XSSFSheet sheet, Cage cage, int x, int y, EnumMeasure exportType) {
+	private void writeData(SXSSFSheet sheet, Cage cage, int x, int y, EnumMeasure exportType) {
 		boolean transpose = options.transpose;
 
 		Point pt = new Point(x, y);
