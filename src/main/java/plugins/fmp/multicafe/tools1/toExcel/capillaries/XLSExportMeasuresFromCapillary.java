@@ -13,13 +13,14 @@ import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.tools1.toExcel.data.XLSResults;
 import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
-import plugins.fmp.multicafe.tools1.toExcel.utils.XLSUtils;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.tools1.toExcel.exceptions.ExcelResourceException;
+import plugins.fmp.multicafe.tools1.toExcel.utils.XLSUtils;
 
 /**
- * Excel export implementation for capillary measurements. Uses the Template Method
- * pattern for structured export operations, following the same pattern as spot exports.
+ * Excel export implementation for capillary measurements. Uses the Template
+ * Method pattern for structured export operations, following the same pattern
+ * as spot exports.
  * 
  * <p>
  * This class exports capillary data including:
@@ -123,6 +124,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(xlsExportType);
 
+		// TODO: add loop for cage?
 		for (Capillary capillary : exp.getCapillaries().getCapillariesList()) {
 			pt.y = 0;
 			pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, capillary, xlsExportType);
@@ -137,10 +139,10 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	/**
 	 * Gets the results for a capillary.
 	 * 
-	 * @param exp           The experiment
-	 * @param capillary     The capillary
+	 * @param exp              The experiment
+	 * @param capillary        The capillary
 	 * @param xlsExportOptions The export options
-	 * @param subtractT0    Whether to subtract T0 value
+	 * @param subtractT0       Whether to subtract T0 value
 	 * @return The XLS results
 	 */
 	public XLSResults getXLSResultsDataValuesFromCapillaryMeasures(Experiment exp, Capillary capillary,
@@ -167,7 +169,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	/**
 	 * Gets the number of output frames for the experiment.
 	 * 
-	 * @param exp The experiment
+	 * @param exp     The experiment
 	 * @param options The export options
 	 * @return The number of output frames
 	 */
@@ -175,7 +177,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		// For capillaries, use kymograph timing
 		long kymoFirst_ms = exp.getKymoFirst_ms();
 		long kymoLast_ms = exp.getKymoLast_ms();
-		
+
 		if (kymoLast_ms <= kymoFirst_ms) {
 			// Try to get from kymograph sequence
 			if (exp.getSeqKymos() != null) {
@@ -219,10 +221,12 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		int y = pt.y;
 		boolean transpose = options.transpose;
 
-		// Write basic file information (duplicate logic from base class since it's private)
+		// Write basic file information (duplicate logic from base class since it's
+		// private)
 		writeFileInformationForCapillary(sheet, x, y, transpose, exp);
 
-		// Write experiment properties (duplicate logic from base class since it's private)
+		// Write experiment properties (duplicate logic from base class since it's
+		// private)
 		writeExperimentPropertiesForCapillary(sheet, x, y, transpose, exp, charSeries);
 
 		// Write capillary properties
@@ -294,16 +298,11 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 				capillary.getSideDescriptor(xlsExportType));
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_INDEX.getValue(), transpose,
 				charSeries + "_" + capillary.getLast2ofCapillaryName());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose,
-				capillary.capVolume);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose,
-				capillary.capPixels);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose,
-				capillary.capStimulus);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose,
-				capillary.capConcentration);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose,
-				capillary.capNFlies);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, capillary.capVolume);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, capillary.capPixels);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, capillary.capStimulus);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, capillary.capConcentration);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, capillary.capNFlies);
 	}
 
 	/**

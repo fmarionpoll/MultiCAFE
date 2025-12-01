@@ -24,10 +24,7 @@ public class Levels extends JPanel {
 	JCheckBox topLevelCheckBox = new JCheckBox("top", true);
 	JCheckBox topLevelDeltaCheckBox = new JCheckBox("delta top", false);
 	JCheckBox bottomLevelCheckBox = new JCheckBox("bottom", false);
-	JCheckBox t0CheckBox = new JCheckBox("t-t0", true);
-
 	JCheckBox subtractEvaporationCheckBox = new JCheckBox("subtract evaporation", true);
-
 	JCheckBox lrPICheckBox = new JCheckBox("L+R & pref index", true);
 	JLabel lrPILabel = new JLabel("compute PI only if L+R > ");
 	JCheckBox sumPerCageCheckBox = new JCheckBox("sum/cell", false);
@@ -42,7 +39,6 @@ public class Levels extends JPanel {
 		panel0.add(topLevelCheckBox);
 		panel0.add(topLevelDeltaCheckBox);
 		panel0.add(bottomLevelCheckBox);
-		panel0.add(t0CheckBox);
 		panel0.add(subtractEvaporationCheckBox);
 		add(panel0);
 

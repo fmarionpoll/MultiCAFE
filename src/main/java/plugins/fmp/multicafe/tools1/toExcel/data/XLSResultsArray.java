@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 
 public class XLSResultsArray {
 	ArrayList<XLSResults> resultsList = null;

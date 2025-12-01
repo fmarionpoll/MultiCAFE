@@ -16,11 +16,11 @@ import icy.gui.component.PopupPanel;
 import icy.system.thread.ThreadUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.tools0.toExcel.XLSExportCapillariesResults;
+import plugins.fmp.multicafe.tools0.toExcel.XLSExportGulpsResults;
 import plugins.fmp.multicafe.tools0.toExcel.XLSExportMoveResults;
 import plugins.fmp.multicafe.tools1.JComponents.Dialog;
 import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.tools1.toExcel.legacy.XLSExportCapillariesResults;
-import plugins.fmp.multicafe.tools1.toExcel.legacy.XLSExportGulpsResults;
 
 public class MCExcel_ extends JPanel implements PropertyChangeListener {
 	/**
@@ -158,7 +158,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		options.lrPI = tabLevels.lrPICheckBox.isSelected();
 		options.lrPIThreshold = (double) tabLevels.lrPIThresholdJSpinner.getValue();
 		options.sumPerCage = tabLevels.sumPerCageCheckBox.isSelected();
-		options.t0 = tabLevels.t0CheckBox.isSelected();
+		// options.t0 = tabLevels.t0CheckBox.isSelected();
 		options.subtractEvaporation = tabLevels.subtractEvaporationCheckBox.isSelected();
 		getCommonOptions(options, exp);
 		return options;
@@ -180,7 +180,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		options.markovChain = tabGulps.markovChainCheckBox.isSelected();
 		options.autocorrelation = tabGulps.autocorrelationCheckBox.isSelected();
 		options.crosscorrelation = tabGulps.crosscorrelationCheckBox.isSelected();
-		options.nbinscorrelation = (int) tabGulps.nbinsJSpinner.getValue();
+		options.nBinsCorrelation = (int) tabGulps.nbinsJSpinner.getValue();
 
 		options.subtractEvaporation = false;
 		getCommonOptions(options, exp);
