@@ -149,9 +149,9 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 			XLSExportOptions xlsExportOptions, boolean subtractT0) {
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
 
-		// Create XLSResults with capillary properties
 		XLSResults xlsResults = new XLSResults(capillary.getRoiName(), capillary.capNFlies, capillary.capCageID, 0,
 				xlsExportOptions.exportType);
+
 		xlsResults.setStimulus(capillary.capStimulus);
 		xlsResults.setConcentration(capillary.capConcentration);
 		xlsResults.initValuesOutArray(nOutputFrames, Double.NaN);
@@ -159,10 +159,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		// Get bin durations
 		long binData = exp.getKymoBin_ms();
 		long binExcel = xlsExportOptions.buildExcelStepMs;
-
-		// Get data from capillary
 		xlsResults.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, subtractT0);
-
 		return xlsResults;
 	}
 

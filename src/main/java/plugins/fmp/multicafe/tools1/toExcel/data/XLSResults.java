@@ -121,7 +121,7 @@ public class XLSResults {
 
 	// ---------------------------
 
-	void initValuesOutArray(int dimension, Double val) {
+	public void initValuesOutArray(int dimension, Double val) {
 		this.valuesOutLength = dimension;
 		valuesOut = new double[dimension];
 		Arrays.fill(valuesOut, val);
@@ -155,41 +155,42 @@ public class XLSResults {
 
 	/**
 	 * Gets data from a capillary and converts it to dataValues.
-	 * Capillary.getCapillaryMeasuresForXLSPass1() returns ArrayList<Integer>,
-	 * so we convert to ArrayList<Double>.
+	 * Capillary.getCapillaryMeasuresForXLSPass1() returns ArrayList<Integer>, so we
+	 * convert to ArrayList<Double>.
 	 * 
-	 * @param capillary      The capillary to get data from
-	 * @param binData        The bin duration for the data
-	 * @param binExcel       The bin duration for Excel output
+	 * @param capillary        The capillary to get data from
+	 * @param binData          The bin duration for the data
+	 * @param binExcel         The bin duration for Excel output
 	 * @param xlsExportOptions The export options
-	 * @param subtractT0     Whether to subtract T0 value (for TOPLEVEL, TOPRAW, etc.)
+	 * @param subtractT0       Whether to subtract T0 value (for TOPLEVEL, TOPRAW,
+	 *                         etc.)
 	 */
-	public void getDataFromCapillary(Capillary capillary, long binData, long binExcel, 
+	public void getDataFromCapillary(Capillary capillary, long binData, long binExcel,
 			XLSExportOptions xlsExportOptions, boolean subtractT0) {
-		ArrayList<Integer> intData = capillary.getCapillaryMeasuresForXLSPass1(
-			xlsExportOptions.exportType, binData, binExcel);
-		
+		ArrayList<Integer> intData = capillary.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, binData,
+				binExcel);
+
 		if (intData == null || intData.isEmpty()) {
 			dataValues = new ArrayList<>();
 			return;
 		}
-		
+
 		// Convert Integer to Double
 		dataValues = new ArrayList<>(intData.size());
 		int t0Value = 0;
-		
+
 		if (subtractT0 && intData.size() > 0) {
 			t0Value = intData.get(0);
 		}
-		
+
 		for (Integer intValue : intData) {
 			if (subtractT0) {
-				dataValues.add((double)(intValue - t0Value));
+				dataValues.add((double) (intValue - t0Value));
 			} else {
 				dataValues.add(intValue.doubleValue());
 			}
 		}
-		
+
 		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT) {
 			relativeToMaximum();
 		}
