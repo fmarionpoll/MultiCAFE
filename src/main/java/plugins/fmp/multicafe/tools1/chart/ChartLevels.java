@@ -32,7 +32,7 @@ import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools0.toExcel.XLSExportCapillariesResults;
+import plugins.fmp.multicafe.tools1.toExcel.capillaries.XLSExportMeasuresFromCapillary;
 import plugins.fmp.multicafe.tools1.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.tools1.toExcel.data.XLSResults;
 import plugins.fmp.multicafe.tools1.toExcel.data.XLSResultsArray;
@@ -204,14 +204,14 @@ public class ChartLevels extends IcyFrame {
 		List<XYSeriesCollection> xyList = new ArrayList<XYSeriesCollection>();
 		for (int iRow = 0; iRow < resultsArray1.size(); iRow++) {
 			XLSResults xlsResults = resultsArray1.getRow(iRow);
-			if (oldCage != xlsResults.cageID) {
+			if (oldCage != xlsResults.getCageID()) {
 				xyDataset = new XYSeriesCollection();
-				oldCage = xlsResults.cageID;
+				oldCage = xlsResults.getCageID();
 				xyList.add(xyDataset);
 			}
 
-			XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.name.substring(4));
-			seriesXY.setDescription("cell " + xlsResults.cageID + "_" + xlsResults.nflies);
+			XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.getName().substring(4));
+			seriesXY.setDescription("cell " + xlsResults.getCageID() + "_" + xlsResults.getNflies());
 			if (resultsArray2 != null)
 				appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow));
 
@@ -228,8 +228,8 @@ public class ChartLevels extends IcyFrame {
 		options.relativeToT0 = true;
 		options.subtractEvaporation = subtractEvaporation;
 
-		XLSExportCapillariesResults xlsExport = new XLSExportCapillariesResults();
-		return xlsExport.getCapDataFromOneExperiment(exp, exportType, options);
+		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
+		return xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, exportType, options);
 	}
 
 	private void updateGlobalMaxMin() {
@@ -250,9 +250,9 @@ public class ChartLevels extends IcyFrame {
 
 	private XYSeries getXYSeries(XLSResults results, String name) {
 		XYSeries seriesXY = new XYSeries(name, false);
-		if (results.valuesOut != null && results.valuesOut.length > 0) {
-			xmax = results.valuesOut.length;
-			ymax = results.valuesOut[0];
+		if (results.getValuesOut() != null && results.getValuesOut().length > 0) {
+			xmax = results.getValuesOut().length;
+			ymax = results.getValuesOut()[0];
 			ymin = ymax;
 			addPointsAndUpdateExtrema(seriesXY, results, 0);
 		}
@@ -260,7 +260,7 @@ public class ChartLevels extends IcyFrame {
 	}
 
 	private void appendDataToXYSeries(XYSeries seriesXY, XLSResults results) {
-		if (results.valuesOut != null && results.valuesOut.length > 0) {
+		if (results.getValuesOut() != null && results.getValuesOut().length > 0) {
 			seriesXY.add(Double.NaN, Double.NaN);
 			addPointsAndUpdateExtrema(seriesXY, results, 0);
 		}
@@ -268,9 +268,9 @@ public class ChartLevels extends IcyFrame {
 
 	private void addPointsAndUpdateExtrema(XYSeries seriesXY, XLSResults results, int startFrame) {
 		int x = 0;
-		int npoints = results.valuesOut.length;
+		int npoints = results.getValuesOut().length;
 		for (int j = 0; j < npoints; j++) {
-			double y = results.valuesOut[j];
+			double y = results.getValuesOut()[j];
 			seriesXY.add(x + startFrame, y);
 			if (ymax < y)
 				ymax = y;

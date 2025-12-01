@@ -191,7 +191,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		String stim2 = exp.getProperties().getField_stim2();
 		String conc2 = exp.getProperties().getField_conc2();
 
-		for (Cage cage : exp.cages.cagesList) {
+		for (Cage cage : exp.getCages().cagesList) {
 
 			if (cage.spotsArray.getSpotsList().size() == 0)
 				continue;
@@ -305,7 +305,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		switch (col) {
 		case DATE:
 			SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-			return df.format(exp.seqCamData.getTimeManager().getFirstImageMs());
+			return df.format(exp.getSeqCamData().getTimeManager().getFirstImageMs());
 		case EXP_BOXID:
 			return exp.getProperties().getFfield_boxID();
 		case CAGEID:

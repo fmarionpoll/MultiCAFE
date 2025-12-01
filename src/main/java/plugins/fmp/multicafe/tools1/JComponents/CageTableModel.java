@@ -10,9 +10,9 @@ public class CageTableModel extends AbstractTableModel {
 	 * 
 	 */
 	private static final long serialVersionUID = -3501225818220221949L;
-	private ExperimentsJComboBox expList = null;
+	private JComboBoxExperimentLazy expList = null;
 
-	public CageTableModel(ExperimentsJComboBox expList) {
+	public CageTableModel(JComboBoxExperimentLazy expList) {
 		super();
 		this.expList = expList;
 	}
@@ -83,13 +83,13 @@ public class CageTableModel extends AbstractTableModel {
 			case 1:
 				return cage.getCageNFlies();
 			case 2:
-				return cage.getCageStrain();
+				return cage.prop.getFlyStrain();
 			case 3:
-				return cage.getCageSex();
+				return cage.prop.getFlySex();
 			case 4:
-				return cage.getCageAge();
+				return cage.prop.getFlyAge();
 			case 5:
-				return cage.getCageComment();
+				return cage.prop.getComment();
 			}
 		}
 		return null;
@@ -107,30 +107,30 @@ public class CageTableModel extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		Cage cell = null;
+		Cage cage = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			cell = exp.getCages().getCageList().get(rowIndex);
+			cage = exp.getCages().getCageList().get(rowIndex);
 		}
-		if (cell != null) {
+		if (cage != null) {
 			switch (columnIndex) {
 			case 0:
-				cell.getCageRoi2D().setName(aValue.toString());
+				cage.getCageRoi2D().setName(aValue.toString());
 				break;
 			case 1:
-				cell.setCageNFlies((int) aValue);
+				cage.setCageNFlies((int) aValue);
 				break;
 			case 2:
-				cell.setCageStrain(aValue.toString());
+				cage.prop.setFlyStrain(aValue.toString());
 				break;
 			case 3:
-				cell.setCageSex(aValue.toString());
+				cage.prop.setFlySex(aValue.toString());
 				break;
 			case 4:
-				cell.setCageAge((int) aValue);
+				cage.prop.setFlyAge((int) aValue);
 				break;
 			case 5:
-				cell.setCageComment(aValue.toString());
+				cage.prop.setComment(aValue.toString());
 				break;
 			}
 		}

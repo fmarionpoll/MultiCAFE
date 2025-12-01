@@ -2,6 +2,7 @@ package plugins.fmp.multicafe.tools1.toExcel.config;
 
 import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.tools1.toExcel.config.ExcelExportConstants.DefaultOptions;
+import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
 
 /**
  * Builder pattern implementation for XLSExportOptions. Provides a fluent
