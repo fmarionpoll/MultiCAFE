@@ -1,11 +1,14 @@
 package plugins.fmp.multicafe.tools1.toExcel.data;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
+import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
+import plugins.fmp.multicafe.fmp_experiment.cages.FlyPosition;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotProperties;
@@ -192,6 +195,90 @@ public class XLSResults {
 		}
 
 		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT) {
+			relativeToMaximum();
+		}
+	}
+
+	/**
+	 * Gets data from fly positions and converts it to dataValues.
+	 * 
+	 * @param flyPositions    The fly positions to get data from
+	 * @param binData         The bin duration for the data
+	 * @param binExcel        The bin duration for Excel output
+	 * @param xlsExportOptions The export options
+	 */
+	public void getDataFromFlyPositions(FlyPositions flyPositions, long binData, long binExcel,
+			XLSExportOptions xlsExportOptions) {
+		if (flyPositions == null || flyPositions.flyPositionList == null || flyPositions.flyPositionList.isEmpty()) {
+			dataValues = new ArrayList<>();
+			return;
+		}
+
+		dataValues = new ArrayList<>();
+		EnumXLSExport exportType = xlsExportOptions.exportType;
+
+		switch (exportType) {
+		case XYIMAGE:
+		case XYTOPCAGE:
+		case XYTIPCAPS:
+			// Extract X or Y coordinate based on export type
+			for (FlyPosition pos : flyPositions.flyPositionList) {
+				Point2D center = pos.getCenterRectangle();
+				if (exportType == EnumXLSExport.XYIMAGE || exportType == EnumXLSExport.XYTOPCAGE) {
+					// For XYIMAGE and XYTOPCAGE, we might need to extract X or Y
+					// Defaulting to Y coordinate (vertical position)
+					dataValues.add(center.getY());
+				} else {
+					// XYTIPCAPS - could be X coordinate
+					dataValues.add(center.getX());
+				}
+			}
+			break;
+
+		case DISTANCE:
+			// Compute distance between consecutive points
+			flyPositions.computeDistanceBetweenConsecutivePoints();
+			for (FlyPosition pos : flyPositions.flyPositionList) {
+				dataValues.add(pos.distance);
+			}
+			break;
+
+		case ISALIVE:
+			// Get alive status as double array
+			flyPositions.computeIsAlive();
+			for (FlyPosition pos : flyPositions.flyPositionList) {
+				dataValues.add(pos.bAlive ? 1.0 : 0.0);
+			}
+			break;
+
+		case SLEEP:
+			// Get sleep status as double array
+			flyPositions.computeSleep();
+			for (FlyPosition pos : flyPositions.flyPositionList) {
+				dataValues.add(pos.bSleep ? 1.0 : 0.0);
+			}
+			break;
+
+		case ELLIPSEAXES:
+			// Get ellipse axes
+			flyPositions.computeEllipseAxes();
+			for (FlyPosition pos : flyPositions.flyPositionList) {
+				// Use axis1 (major axis) or could combine both
+				dataValues.add(pos.axis1);
+			}
+			break;
+
+		default:
+			// Default: extract Y coordinate
+			for (FlyPosition pos : flyPositions.flyPositionList) {
+				Point2D center = pos.getCenterRectangle();
+				dataValues.add(center.getY());
+			}
+			break;
+		}
+
+		// Apply relative to T0 if needed (not applicable for boolean types)
+		if (xlsExportOptions.relativeToT0 && exportType != EnumXLSExport.ISALIVE && exportType != EnumXLSExport.SLEEP) {
 			relativeToMaximum();
 		}
 	}
