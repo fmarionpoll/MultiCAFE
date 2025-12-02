@@ -36,7 +36,7 @@ public class ExperimentService {
 		String imagesDirectory = ExperimentDirectories.getImagesDirectoryAsParentFromFileName(filename);
 		exp.setImagesDirectory(imagesDirectory);
 		List<String> imagesList = ExperimentDirectories.getV2ImagesListFromPath(imagesDirectory);
-		String[] strExt = {"jpg"};
+		String[] strExt = { "jpg" };
 		imagesList = ExperimentDirectories.keepOnlyAcceptedNames_List(imagesList, strExt);
 		if (imagesList.size() < 1) {
 			exp.setSeqCamData(null);
@@ -68,10 +68,10 @@ public class ExperimentService {
 		if (exp.getSeqKymos() == null)
 			exp.setSeqKymos(new SequenceKymos());
 		String fullDir = exp.getKymosBinFullDirectory();
-		List<ImageFileData> myList = new KymographService()
-				.loadListOfPotentialKymographsFromCapillaries(fullDir, exp.getCapillaries());
-		
+		List<ImageFileData> myList = new KymographService().loadListOfPotentialKymographsFromCapillaries(fullDir,
+				exp.getCapillaries());
+
 		ImageFileDescriptor.getExistingFileNames(myList);
-		return  new KymographService().loadImagesFromList(exp.getSeqKymos(), myList, true);
+		return new KymographService().loadImagesFromList(exp.getSeqKymos(), myList, true);
 	}
 }

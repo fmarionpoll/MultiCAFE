@@ -136,7 +136,7 @@ public class LoadSave extends JPanel {
 		String localString = parent0.expListComboLazy.expListBinSubDirectory;
 		if (localString == null) {
 			exp.checkKymosDirectory(exp.getBinSubDirectory());
-			parent0.expListComboLazy.expListBinSubDirectory = exp.getSeqKymos().getBinSubDirectory();
+			parent0.expListComboLazy.expListBinSubDirectory = exp.getBinSubDirectory();
 		} else
 			exp.setBinSubDirectory(localString);
 
@@ -145,7 +145,9 @@ public class LoadSave extends JPanel {
 		int nItems = ImageFileDescriptor.getExistingFileNames(myList);
 
 		if (nItems > 0) {
-			flag = seqKymos.loadImagesFromList(myList);
+			ImageFileDescriptor.getExistingFileNames(myList);
+			flag = new KymographService().loadImagesFromList(exp.getSeqKymos(), myList, true);
+//			flag = seqKymos.loadImagesFromList(myList);
 			parent0.paneKymos.tabDisplay.transferCapillaryNamesToComboBox(exp);
 		} else
 			seqKymos.closeSequence();
