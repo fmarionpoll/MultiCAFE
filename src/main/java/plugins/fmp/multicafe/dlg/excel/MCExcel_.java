@@ -17,11 +17,12 @@ import icy.system.thread.ThreadUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
+import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.capillaries.XLSExportMeasuresFromCapillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.gulps.XLSExportMeasuresFromGulp;
 import plugins.fmp.multicafe.fmp_tools.toExcel.move.XLSExportMeasuresFromFlyPosition;
-
 
 public class MCExcel_ extends JPanel implements PropertyChangeListener {
 	/**
@@ -90,7 +91,12 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 				@Override
 				public void run() {
 					XLSExportMeasuresFromFlyPosition xlsExport = new XLSExportMeasuresFromFlyPosition();
-					xlsExport.exportToFile(file, getMoveOptions(exp));
+					try {
+						xlsExport.exportToFile(file, getMoveOptions(exp));
+					} catch (ExcelExportException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			});
 		} else if (evt.getPropertyName().equals("EXPORT_KYMOSDATA")) {
@@ -102,7 +108,12 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 				@Override
 				public void run() {
 					XLSExportMeasuresFromCapillary xlsExport2 = new XLSExportMeasuresFromCapillary();
-					xlsExport2.exportToFile(file, getLevelsOptions(exp));
+					try {
+						xlsExport2.exportToFile(file, getLevelsOptions(exp));
+					} catch (ExcelExportException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			});
 		} else if (evt.getPropertyName().equals("EXPORT_GULPSDATA")) {
@@ -114,7 +125,12 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 				@Override
 				public void run() {
 					XLSExportMeasuresFromGulp xlsExport2 = new XLSExportMeasuresFromGulp();
-					xlsExport2.exportToFile(file, getGulpsOptions(exp));
+					try {
+						xlsExport2.exportToFile(file, getGulpsOptions(exp));
+					} catch (ExcelExportException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			});
 		}
@@ -125,7 +141,14 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		Path directory = Paths.get(filename0).getParent();
 		Path subpath = directory.getName(directory.getNameCount() - 1);
 		String tentativeName = subpath.toString() + pattern;
-		return Dialog.saveFileAs(tentativeName, directory.getParent().toString(), "xlsx");
+
+		try {
+			return Dialog.saveFileAs(tentativeName, directory.getParent().toString(), "xlsx");
+		} catch (FileDialogException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return tentativeName;
 	}
 
 	private void updateParametersCurrentExperiment(Experiment exp) {
@@ -172,7 +195,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		options.bottomLevel = false;
 		options.derivative = tabGulps.derivativeCheckBox.isSelected();
 		options.sumPerCage = false;
-		options.t0 = false;
+//		options.t0 = false;
 		options.sumGulps = tabGulps.sumGulpsCheckBox.isSelected();
 		options.lrPI = tabGulps.sumCheckBox.isSelected();
 		options.nbGulps = tabGulps.nbGulpsCheckBox.isSelected();
