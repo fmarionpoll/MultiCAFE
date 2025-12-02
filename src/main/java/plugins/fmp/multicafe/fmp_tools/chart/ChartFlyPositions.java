@@ -51,10 +51,10 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
  * @see plugins.fmp.multiSPOTS96.experiment.cages.Cage
  * @see plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport
  */
-public class ChartFliesPositions extends IcyFrame {
+public class ChartFlyPositions extends IcyFrame {
 
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ChartFliesPositions.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ChartFlyPositions.class.getName());
 
 	/** Default chart width in pixels */
 	private static final int DEFAULT_CHART_WIDTH = 100;

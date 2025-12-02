@@ -229,7 +229,8 @@ public class ChartLevels extends IcyFrame {
 		options.subtractEvaporation = subtractEvaporation;
 
 		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
-		return xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, exportType, options);
+//		return xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, exportType, options);
+		return null; // TODO adapt getXLSResults... to collect data from all capillaries
 	}
 
 	private void updateGlobalMaxMin() {

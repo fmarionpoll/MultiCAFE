@@ -1,7 +1,5 @@
 package plugins.fmp.multicafe.fmp_tools.chart;
 
-import java.util.logging.Logger;
-
 import org.jfree.data.xy.XYSeriesCollection;
 
 import plugins.fmp.multicafe.fmp_tools.MaxMinDouble;
@@ -41,7 +39,7 @@ import plugins.fmp.multicafe.fmp_tools.MaxMinDouble;
 public class ChartData {
 
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ChartData.class.getName());
+//	private static final Logger LOGGER = Logger.getLogger(ChartData.class.getName());
 
 	private MaxMinDouble yMaxMin;
 	private MaxMinDouble xMaxMin;

@@ -16,18 +16,11 @@ public class ChartCagePanel extends ChartPanel implements PropertyChangeListener
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	/** Background color for charts with data */
 	private static final Color BACKGROUND_WITH_DATA = Color.WHITE;
-
-	/** Background color for charts without data */
 	private static final Color BACKGROUND_WITHOUT_DATA = Color.LIGHT_GRAY;
-
-	/** Grid color for charts with data */
 	private static final Color GRID_WITH_DATA = Color.GRAY;
-
-	/** Grid color for charts without data */
 	private static final Color GRID_WITHOUT_DATA = Color.WHITE;
-	
+
 	private Cage cageListened = null;
 
 	public ChartCagePanel(JFreeChart chart, int width, int height, int minimumDrawWidth, int minimumDrawHeight,
@@ -56,15 +49,15 @@ public class ChartCagePanel extends ChartPanel implements PropertyChangeListener
 			// LOGGER.fine("Set background for chart with no flies");
 		}
 	}
-	
+
 	public void subscribeToCagePropertiesUpdates(Cage cage) {
 		this.cageListened = cage;
-		this.cageListened.getProperties().addPropertyChangeListener(this); 
+		this.cageListened.getProperties().addPropertyChangeListener(this);
 	}
 
 	@Override
 	public void close() throws Exception {
-		this.cageListened.getProperties().removePropertyChangeListener(this); 
+		this.cageListened.getProperties().removePropertyChangeListener(this);
 		this.cageListened = null;
 	}
 
@@ -78,4 +71,3 @@ public class ChartCagePanel extends ChartPanel implements PropertyChangeListener
 	}
 
 }
-

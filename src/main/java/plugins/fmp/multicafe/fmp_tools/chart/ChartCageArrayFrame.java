@@ -110,7 +110,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	private JPanel mainChartPanel = null;
 
 	/** Main chart frame */
-	private IcyFrame mainChartFrame = null;
+	public IcyFrame mainChartFrame = null;
 
 	/** Y-axis range for charts */
 	private Range yRange = null;
