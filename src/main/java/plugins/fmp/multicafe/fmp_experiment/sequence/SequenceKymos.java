@@ -26,6 +26,7 @@ import icy.type.collection.array.Array1DUtil;
 import icy.type.geom.Polyline2D;
 import loci.formats.FormatException;
 import ome.xml.meta.OMEXMLMetadata;
+
 import plugins.fmp.multicafe.fmp_experiment.EnumStatus;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
@@ -35,8 +36,10 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_tools.Comparators1;
+import plugins.fmp.multicafe.fmp_service.KymographService;
+import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
+
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 /**
@@ -119,7 +122,7 @@ public class SequenceKymos extends SequenceCamData {
 			throw new IllegalArgumentException("Image names list cannot be null or empty");
 		}
 		this.configuration = KymographConfiguration.defaultConfiguration();
-		List<String> convertedNames = new plugins.fmp.multicafe.fmp_service.KymographService().convertLinexLRFileNames(imageNames);
+		List<String> convertedNames = new KymographService().convertLinexLRFileNames(imageNames);
 		setImagesList(convertedNames);
 		setStatus(EnumStatus.KYMOGRAPH);
 	}
@@ -202,7 +205,7 @@ public class SequenceKymos extends SequenceCamData {
 			}
 
 			// Sort ROIs by name
-			Collections.sort(roiList, new Comparators1.ROI2D_Name());
+			Collections.sort(roiList, new Comparators.ROI2D_Name());
 
 			long processingTime = System.currentTimeMillis() - startTime;
 
@@ -238,7 +241,7 @@ public class SequenceKymos extends SequenceCamData {
 			roi.setName("gulp" + String.format("%07d", (int) line.xpoints[0]));
 			roi.setColor(Color.red);
 		}
-		Collections.sort(listRois, new Comparators1.ROI2D_Name());
+		Collections.sort(listRois, new Comparators.ROI2D_Name());
 	}
 
 	public void removeROIsPolylineAtT(int t) {
@@ -312,7 +315,7 @@ public class SequenceKymos extends SequenceCamData {
 
 	public void transferCapillariesMeasuresToKymos(Capillaries capillaries) {
 		List<ROI2D> seqRoisList = getSequence().getROI2Ds(false);
-		ROI2DUtilities.removeROIsMissingChar(seqRoisList, '_');
+		ROI2DUtilities.removeROI2DsMissingChar(seqRoisList, '_');
 
 		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
 		int ncapillaries = capillaries.getCapillariesList().size();
@@ -338,7 +341,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param adjustmentOptions the adjustment options
 	 * @return processing result
 	 */
-	public ImageProcessingResult loadKymographs(List<ImageFileDescriptor> imageDescriptors,
+	public ImageProcessingResult loadKymographs(List<ImageFileData> imageDescriptors,
 			ImageAdjustmentOptions adjustmentOptions) {
 		if (imageDescriptors == null) {
 			throw new IllegalArgumentException("Image descriptors cannot be null");
@@ -407,7 +410,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param imageDescriptors the image descriptors
 	 * @return processing result
 	 */
-	public ImageProcessingResult loadKymographs(List<ImageFileDescriptor> imageDescriptors) {
+	public ImageProcessingResult loadKymographs(List<ImageFileData> imageDescriptors) {
 		return loadKymographs(imageDescriptors, ImageAdjustmentOptions.defaultOptions());
 	}
 
@@ -418,7 +421,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param cagesArray    the cages array
 	 * @return list of image file descriptors
 	 */
-	public List<ImageFileDescriptor> createKymographFileList(String baseDirectory, CagesArray cagesArray) {
+	public List<ImageFileData> createKymographFileList(String baseDirectory, CagesArray cagesArray) {
 		if (baseDirectory == null || baseDirectory.trim().isEmpty()) {
 			throw new IllegalArgumentException("Base directory cannot be null or empty");
 		}
@@ -443,7 +446,7 @@ public class SequenceKymos extends SequenceCamData {
 
 			// Calculate total expected files
 			int totalExpectedFiles = cagesArray.cagesList.size() * firstCage.spotsArray.getSpotsList().size();
-			List<ImageFileDescriptor> fileList = new ArrayList<>(totalExpectedFiles);
+			List<ImageFileData> fileList = new ArrayList<>(totalExpectedFiles);
 
 			// Generate file descriptors for each spot in each cage
 			for (Cage cage : cagesArray.cagesList) {
@@ -451,7 +454,7 @@ public class SequenceKymos extends SequenceCamData {
 					continue;
 
 				for (Spot spot : cage.spotsArray.getSpotsList()) {
-					ImageFileDescriptor descriptor = new ImageFileDescriptor();
+					ImageFileData descriptor = new ImageFileData();
 					descriptor.fileName = fullDirectory + spot.getRoi().getName() + ".tiff";
 					descriptor.exists = new File(descriptor.fileName).exists();
 					fileList.add(descriptor);
@@ -511,7 +514,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @deprecated Use {@link #createKymographFileList(String, CagesArray)} instead
 	 */
 	@Deprecated
-	public List<ImageFileDescriptor> loadListOfPotentialKymographsFromSpots(String dir, CagesArray cagesArray) {
+	public List<ImageFileData> loadListOfPotentialKymographsFromSpots(String dir, CagesArray cagesArray) {
 		return createKymographFileList(dir, cagesArray);
 	}
 
@@ -519,7 +522,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @deprecated Use {@link #loadKymographs(List, ImageAdjustmentOptions)} instead
 	 */
 	@Deprecated
-	public boolean loadKymographImagesFromList(List<ImageFileDescriptor> kymoImagesDesc, boolean adjustImagesSize) {
+	public boolean loadKymographImagesFromList(List<ImageFileData> kymoImagesDesc, boolean adjustImagesSize) {
 		ImageAdjustmentOptions options = adjustImagesSize
 				? ImageAdjustmentOptions.withSizeAdjustment(calculateMaxDimensions(kymoImagesDesc))
 				: ImageAdjustmentOptions.noAdjustment();
@@ -586,11 +589,11 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param imageDescriptors the image descriptors
 	 * @return rectangle representing maximum dimensions
 	 */
-	public Rectangle calculateMaxDimensions(List<ImageFileDescriptor> imageDescriptors) {
+	public Rectangle calculateMaxDimensions(List<ImageFileData> imageDescriptors) {
 		int maxWidth = 0;
 		int maxHeight = 0;
 
-		for (ImageFileDescriptor descriptor : imageDescriptors) {
+		for (ImageFileData descriptor : imageDescriptors) {
 			if (!descriptor.exists)
 				continue;
 
@@ -615,7 +618,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param descriptor the file descriptor
 	 * @throws Exception if dimensions cannot be retrieved
 	 */
-	private void updateImageDimensions(ImageFileDescriptor descriptor) throws Exception {
+	private void updateImageDimensions(ImageFileData descriptor) throws Exception {
 		try {
 			OMEXMLMetadata metadata = Loader.getOMEXMLMetaData(descriptor.fileName);
 			descriptor.imageWidth = MetaDataUtil.getSizeX(metadata, 0);
@@ -633,7 +636,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param options          the adjustment options
 	 * @return processing result
 	 */
-	private ImageProcessingResult adjustImageSizes(List<ImageFileDescriptor> imageDescriptors,
+	private ImageProcessingResult adjustImageSizes(List<ImageFileData> imageDescriptors,
 			Rectangle targetDimensions, ImageAdjustmentOptions options) {
 		if (!options.isAdjustSize()) {
 			return ImageProcessingResult.success(0, "Size adjustment disabled");
@@ -651,7 +654,7 @@ public class SequenceKymos extends SequenceCamData {
 		}
 
 		try {
-			for (ImageFileDescriptor descriptor : imageDescriptors) {
+			for (ImageFileData descriptor : imageDescriptors) {
 				if (!descriptor.exists)
 					continue;
 
@@ -700,7 +703,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param targetDimensions the target dimensions
 	 * @throws Exception if adjustment fails
 	 */
-	private void adjustSingleImage(ImageFileDescriptor descriptor, Rectangle targetDimensions) throws Exception {
+	private void adjustSingleImage(ImageFileData descriptor, Rectangle targetDimensions) throws Exception {
 		try {
 			// Load source image
 			IcyBufferedImage sourceImage = Loader.loadImage(descriptor.fileName);
@@ -763,9 +766,9 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param descriptors the image descriptors
 	 * @return list of valid image file paths
 	 */
-	private List<String> extractValidImageFiles(List<ImageFileDescriptor> descriptors) {
+	private List<String> extractValidImageFiles(List<ImageFileData> descriptors) {
 		List<String> validFiles = new ArrayList<>();
-		for (ImageFileDescriptor descriptor : descriptors) {
+		for (ImageFileData descriptor : descriptors) {
 			if (descriptor.exists) {
 				validFiles.add(descriptor.fileName);
 			}
@@ -833,15 +836,15 @@ public class SequenceKymos extends SequenceCamData {
 	 * @deprecated Use {@link #calculateMaxDimensions(List)} instead
 	 */
 	@Deprecated
-	Rectangle getMaxSizeofTiffFiles(List<ImageFileDescriptor> files) {
+	Rectangle getMaxSizeofTiffFiles(List<ImageFileData> files) {
 		return calculateMaxDimensions(files);
 	}
 
 	/**
-	 * @deprecated Use {@link #updateImageDimensions(ImageFileDescriptor)} instead
+	 * @deprecated Use {@link #updateImageDimensions(ImageFileData)} instead
 	 */
 	@Deprecated
-	boolean getImageDim(final ImageFileDescriptor fileProp) {
+	boolean getImageDim(final ImageFileData fileProp) {
 		try {
 			updateImageDimensions(fileProp);
 			return true;
@@ -857,7 +860,7 @@ public class SequenceKymos extends SequenceCamData {
 	 *             instead
 	 */
 	@Deprecated
-	void adjustImagesToMaxSize(List<ImageFileDescriptor> files, Rectangle rect) {
+	void adjustImagesToMaxSize(List<ImageFileData> files, Rectangle rect) {
 		ImageAdjustmentOptions options = ImageAdjustmentOptions.withSizeAdjustment(rect);
 		adjustImageSizes(files, rect, options);
 	}
@@ -947,4 +950,6 @@ public class SequenceKymos extends SequenceCamData {
 			return sequence;
 		}
 	}
+
+
 }

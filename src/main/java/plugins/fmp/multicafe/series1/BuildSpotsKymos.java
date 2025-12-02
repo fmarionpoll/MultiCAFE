@@ -24,7 +24,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	// -----------------------------------
 
 	void analyzeExperiment(Experiment exp) {
-		if (!loadExperimentDataToBuildKymos(exp) || exp.cages.getTotalNumberOfSpots() < 1)
+		if (!loadExperimentDataToBuildKymos(exp) || exp.getCages().getTotalNumberOfSpots() < 1)
 			return;
 		openKymoViewers(exp);
 		getTimeLimitsOfSequence(exp);
@@ -37,8 +37,8 @@ public class BuildSpotsKymos extends BuildSeries {
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
 		boolean flag = exp.load_MS96_cages();
-		exp.seqCamData.attachSequence(
-				exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
+		exp.getSeqCamData().attachSequence(
+				exp.getSeqCamData().getImageLoader().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 		return flag;
 	}
 
@@ -86,7 +86,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private boolean buildKymo(Experiment exp) {
-		if (exp.cages.getTotalNumberOfSpots() < 1) {
+		if (exp.getCages().getTotalNumberOfSpots() < 1) {
 			System.out.println("BuildKymoSpots:buildKymo Abort (1): nb spots = 0");
 			return false;
 		}
@@ -97,9 +97,9 @@ public class BuildSpotsKymos extends BuildSeries {
 		stopFlag = false;
 
 		final int iiFirst = 0;
-		int iiLast = exp.seqCamData.getImageLoader().getFixedNumberOfImages() > 0
-				? (int) exp.seqCamData.getImageLoader().getFixedNumberOfImages()
-				: exp.seqCamData.getImageLoader().getNTotalFrames();
+		int iiLast = exp.getSeqCamData().getImageLoader().getFixedNumberOfImages() > 0
+				? (int) exp.getSeqCamData().getImageLoader().getFixedNumberOfImages()
+				: exp.getSeqCamData().getImageLoader().getNTotalFrames();
 //		final int iiDelta = (int) exp.seqKymos.getTimeManager().getDeltaImage();
 //		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack frame ");
 //
@@ -110,13 +110,13 @@ public class BuildSpotsKymos extends BuildSeries {
 //		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(ntasks);
 //		tasks.clear();
 //
-//		vData.setTitle(exp.seqCamData.getCSCamFileName());
+//		vData.setTitle(exp.getSeqCamData().getCSCamFileName());
 //
 //		for (int ii = iiFirst; ii < iiLast; ii += iiDelta) {
 //			final int t = ii;
 //
 //			if (options.concurrentDisplay) {
-//				IcyBufferedImage sourceImage0 = imageIORead(exp.seqCamData.getFileNameFromImageList(t));
+//				IcyBufferedImage sourceImage0 = imageIORead(exp.getSeqCamData().getFileNameFromImageList(t));
 //				seqData.setImage(0, 0, sourceImage0);
 //				vData.setTitle("Frame #" + ii + " /" + iiLast);
 //			}
@@ -182,9 +182,9 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private IcyBufferedImage loadImageFromIndex(Experiment exp, int frameIndex) {
-		IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(frameIndex));
+		IcyBufferedImage sourceImage = imageIORead(exp.getSeqCamData().getFileNameFromImageList(frameIndex));
 		if (options.doRegistration) {
-			String referenceImageName = exp.seqCamData.getFileNameFromImageList(options.referenceFrame);
+			String referenceImageName = exp.getSeqCamData().getFileNameFromImageList(options.referenceFrame);
 			IcyBufferedImage referenceImage = imageIORead(referenceImageName);
 			adjustImage(sourceImage, referenceImage);
 		}
@@ -224,7 +224,7 @@ public class BuildSpotsKymos extends BuildSeries {
 
 	private int getMaxImageHeight(Experiment exp) {
 		int maxImageHeight = 0;
-		for (Cage cage : exp.cages.cagesList) {
+		for (Cage cage : exp.getCages().cagesList) {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				int height = spot.getSpotImage().getHeight();
 				if (height > maxImageHeight)
@@ -247,9 +247,9 @@ public class BuildSpotsKymos extends BuildSeries {
 //		SequenceCamData seqCamData = exp.seqCamData;
 //		if (seqCamData.getSequence() == null)
 //			seqCamData.attachSequence(
-//					exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
+//					exp.getSeqCamData().getImageLoader().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 //
-//		kymoImageWidth = exp.seqCamData.getImageLoader().getNTotalFrames();
+//		kymoImageWidth = exp.getSeqCamData().getImageLoader().getNTotalFrames();
 //		int numC = seqCamData.getSequence().getSizeC();
 //		if (numC <= 0)
 //			numC = 3;
@@ -298,8 +298,8 @@ public class BuildSpotsKymos extends BuildSeries {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					seqData = newSequence("analyze stack starting with file " + exp.seqCamData.getSequence().getName(),
-							exp.seqCamData.getSeqImage(0, 0));
+					seqData = newSequence("analyze stack starting with file " + exp.getSeqCamData().getSequence().getName(),
+							exp.getSeqCamData().getSeqImage(0, 0));
 					vData = new ViewerFMP(seqData, true, true);
 				}
 			});

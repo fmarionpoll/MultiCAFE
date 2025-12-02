@@ -3,6 +3,8 @@ package plugins.fmp.multicafe.series1;
 import java.util.logging.Logger;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 
 /**
  * Refactored Registration class following clean code principles.
@@ -103,10 +105,10 @@ public class RegistrationRefactored extends BuildSeries {
     /**
      * Creates ImageTransformOptions from ImageTransformEnums.
      */
-    private plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions createImageTransformOptions(
-            plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums transformEnum) {
-        plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions options = 
-            new plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions();
+    private ImageTransformOptions createImageTransformOptions(
+            ImageTransformEnums transformEnum) {
+        ImageTransformOptions options = 
+            new ImageTransformOptions();
         options.transformOption = transformEnum;
         return options;
     }

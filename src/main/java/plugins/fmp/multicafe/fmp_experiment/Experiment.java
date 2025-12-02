@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.fmp_experiment;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -19,15 +20,20 @@ import icy.image.ImageUtil;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.util.XMLUtil;
+
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_experiment.sequence.ImageAdjustmentOptions;
+import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
+import plugins.fmp.multicafe.fmp_experiment.sequence.ImageProcessingResult;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
@@ -1426,18 +1432,17 @@ public class Experiment {
 			setSeqKymos(new SequenceKymos());
 
 		// Use KymographService to get list of potential kymographs from capillaries
-		plugins.fmp.multicafe.fmp_service.KymographService kymoService = new plugins.fmp.multicafe.fmp_service.KymographService();
-		List<plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor> myList = kymoService
+		List<ImageFileData> myList = new KymographService()
 				.loadListOfPotentialKymographsFromCapillaries(getKymosBinFullDirectory(), capillaries);
 
 		// Filter to get existing file names
-		plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor.getExistingFileNames(myList);
+		ImageFileData.getExistingFileNames(myList);
 
 		// Convert to experiment1 ImageFileDescriptor format
-		List<plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor> newList = new ArrayList<plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor>();
-		for (plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor oldDesc : myList) {
+		ArrayList<ImageFileData> newList = new ArrayList<ImageFileData>();
+		for (ImageFileData oldDesc : myList) {
 			if (oldDesc.fileName != null && oldDesc.exists) {
-				plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor newDesc = new plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileDescriptor();
+				ImageFileData newDesc = new ImageFileData();
 				newDesc.fileName = oldDesc.fileName;
 				newDesc.exists = oldDesc.exists;
 				newDesc.imageHeight = oldDesc.imageHeight;
@@ -1446,11 +1451,12 @@ public class Experiment {
 			}
 		}
 
-		if (newList.isEmpty())
-			return false;
-
 		// Load images using the new API
-		return getSeqKymos().loadKymographImagesFromList(newList, true);
+		Rectangle rectMax = getSeqKymos().calculateMaxDimensions(newList);
+		ImageAdjustmentOptions options = 
+				ImageAdjustmentOptions.withSizeAdjustment(rectMax);
+		ImageProcessingResult result = getSeqKymos().loadKymographs(newList, options);
+		return result.isSuccess(); 
 	}
 
 	public boolean loadCamDataCapillaries() {

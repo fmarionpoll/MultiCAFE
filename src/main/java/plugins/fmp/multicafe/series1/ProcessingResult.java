@@ -2,7 +2,8 @@ package plugins.fmp.multicafe.series1;
 
 import java.util.Optional;
 
-import plugins.fmp.multiSPOTS96.series.exceptions.SeriesProcessingException;
+import plugins.fmp.multicafe.series1.exceptions.SeriesProcessingException;
+
 
 /**
  * Generic processing result that can represent success or failure.

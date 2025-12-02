@@ -17,10 +17,11 @@ import icy.system.thread.ThreadUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
+import plugins.fmp.multicafe.fmp_tools.toExcel.capillaries.XLSExportMeasuresFromCapillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.tools0.toExcel.XLSExportCapillariesResults;
-import plugins.fmp.multicafe.tools0.toExcel.XLSExportGulpsResults;
-import plugins.fmp.multicafe.tools0.toExcel.XLSExportMoveResults;
+import plugins.fmp.multicafe.fmp_tools.toExcel.gulps.XLSExportMeasuresFromGulp;
+import plugins.fmp.multicafe.fmp_tools.toExcel.move.XLSExportMeasuresFromFlyPosition;
+
 
 public class MCExcel_ extends JPanel implements PropertyChangeListener {
 	/**
@@ -88,7 +89,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 			ThreadUtil.bgRun(new Runnable() {
 				@Override
 				public void run() {
-					XLSExportMoveResults xlsExport = new XLSExportMoveResults();
+					XLSExportMeasuresFromFlyPosition xlsExport = new XLSExportMeasuresFromFlyPosition();
 					xlsExport.exportToFile(file, getMoveOptions(exp));
 				}
 			});
@@ -100,7 +101,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 			ThreadUtil.bgRun(new Runnable() {
 				@Override
 				public void run() {
-					XLSExportCapillariesResults xlsExport2 = new XLSExportCapillariesResults();
+					XLSExportMeasuresFromCapillary xlsExport2 = new XLSExportMeasuresFromCapillary();
 					xlsExport2.exportToFile(file, getLevelsOptions(exp));
 				}
 			});
@@ -112,7 +113,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 			ThreadUtil.bgRun(new Runnable() {
 				@Override
 				public void run() {
-					XLSExportGulpsResults xlsExport2 = new XLSExportGulpsResults();
+					XLSExportMeasuresFromGulp xlsExport2 = new XLSExportMeasuresFromGulp();
 					xlsExport2.exportToFile(file, getGulpsOptions(exp));
 				}
 			});

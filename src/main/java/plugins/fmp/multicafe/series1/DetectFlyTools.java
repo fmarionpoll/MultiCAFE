@@ -160,10 +160,10 @@ public class DetectFlyTools {
 
 	public void initParametersForDetection(Experiment exp, BuildSeriesOptions options) {
 		this.options = options;
-		exp.cages.detect_nframes = (int) (((exp.cages.detectLast_Ms - exp.cages.detectFirst_Ms)
-				/ exp.cages.detectBin_Ms) + 1);
-		exp.cages.clearAllMeasures(options.detectCage);
-		cages = exp.cages;
+		exp.getCages().detect_nframes = (int) (((exp.getCages().detectLast_Ms - exp.getCages().detectFirst_Ms)
+				/ exp.getCages().detectBin_Ms) + 1);
+		exp.getCages().clearAllMeasures(options.detectCage);
+		cages = exp.getCages();
 		cages.computeBooleanMasksForCages();
 		rectangleAllCages = null;
 		for (Cage cage : cages.cagesList) {

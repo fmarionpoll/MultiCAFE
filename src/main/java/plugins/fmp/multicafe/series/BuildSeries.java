@@ -15,7 +15,7 @@ import icy.sequence.Sequence;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.Logger;
-import plugins.fmp.multicafe.fmp_tools.JComponents.ExperimentsJComboBox;
+import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 
 public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 
@@ -34,7 +34,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		Logger.info("BuildSeries:doInBackground loop over experiments");
 		threadRunning = true;
 		int nbiterations = 0;
-		ExperimentsJComboBox expList = options.expList;
+		JComboBoxExperimentLazy expList = options.expList;
 		ProgressFrame progress = new ProgressFrame("Analyze series");
 		selectedExperimentIndex = expList.getSelectedIndex();
 
@@ -68,7 +68,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		return nbiterations;
 	}
 
-	private void selectList(ExperimentsJComboBox expList, int index) {
+	private void selectList(JComboBoxExperimentLazy expList, int index) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
@@ -166,7 +166,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 
 	protected boolean loadDrosoTrack(Experiment exp) {
 		exp.getSeqCamData()
-				.setSequence(exp.getSeqCamData().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
+				.setSequence(exp.getSeqCamData().getImageLoader().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 		boolean flag = exp.loadCageMeasures();
 		return flag;
 	}

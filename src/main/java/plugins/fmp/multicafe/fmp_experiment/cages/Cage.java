@@ -90,6 +90,14 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		cageROI2D = roi;
 	}
 
+	public BooleanMask2D getCageMask2D() {
+		return cageMask2D;
+	}
+	
+	public void setMask2D (BooleanMask2D mask) {
+		cageMask2D = mask;
+	}
+	
 	public int getCageNFlies() {
 		return prop.getCageNFlies();
 	}

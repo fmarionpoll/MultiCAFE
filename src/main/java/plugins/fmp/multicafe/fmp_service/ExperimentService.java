@@ -5,6 +5,7 @@ import java.util.List;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
 import plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor;
+import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 
@@ -35,13 +36,14 @@ public class ExperimentService {
 		String imagesDirectory = ExperimentDirectories.getImagesDirectoryAsParentFromFileName(filename);
 		exp.setImagesDirectory(imagesDirectory);
 		List<String> imagesList = ExperimentDirectories.getV2ImagesListFromPath(imagesDirectory);
-		imagesList = ExperimentDirectories.keepOnlyAcceptedNames_List(imagesList, "jpg");
+		String[] strExt = {"jpg"};
+		imagesList = ExperimentDirectories.keepOnlyAcceptedNames_List(imagesList, strExt);
 		if (imagesList.size() < 1) {
 			exp.setSeqCamData(null);
 		} else {
 			SequenceCamData seqCamData = new SequenceCamData();
 			seqCamData.setImagesList(imagesList);
-			seqCamData.attachSequence(seqCamData.loadSequenceFromImagesList(imagesList));
+			seqCamData.attachSequence(seqCamData.getImageLoader().loadSequenceFromImagesList(imagesList));
 			exp.setSeqCamData(seqCamData);
 		}
 		return exp.getSeqCamData();
@@ -65,9 +67,11 @@ public class ExperimentService {
 	public boolean loadKymographs(Experiment exp) {
 		if (exp.getSeqKymos() == null)
 			exp.setSeqKymos(new SequenceKymos());
-		List<ImageFileDescriptor> myList = exp.getSeqKymos()
-				.loadListOfPotentialKymographsFromCapillaries(exp.getKymosBinFullDirectory(), exp.getCapillaries());
+		String fullDir = exp.getKymosBinFullDirectory();
+		List<ImageFileData> myList = new KymographService()
+				.loadListOfPotentialKymographsFromCapillaries(fullDir, exp.getCapillaries());
+		
 		ImageFileDescriptor.getExistingFileNames(myList);
-		return exp.getSeqKymos().loadImagesFromList(myList, true);
+		return  new KymographService().loadImagesFromList(exp.getSeqKymos(), myList, true);
 	}
 }

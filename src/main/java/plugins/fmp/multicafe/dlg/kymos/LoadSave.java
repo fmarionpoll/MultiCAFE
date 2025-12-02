@@ -27,7 +27,9 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
+import plugins.fmp.multicafe.fmp_service.KymographService;
 
 public class LoadSave extends JPanel {
 	/**
@@ -134,16 +136,16 @@ public class LoadSave extends JPanel {
 		String localString = parent0.expListComboLazy.expListBinSubDirectory;
 		if (localString == null) {
 			exp.checkKymosDirectory(exp.getBinSubDirectory());
-			parent0.expListComboLazy.expListBinSubDirectory = exp.getBinSubDirectory();
+			parent0.expListComboLazy.expListBinSubDirectory = exp.getSeqKymos().getBinSubDirectory();
 		} else
 			exp.setBinSubDirectory(localString);
 
-		List<ImageFileDescriptor> myList = exp.getSeqKymos()
+		List<ImageFileData> myList = new KymographService()
 				.loadListOfPotentialKymographsFromCapillaries(exp.getKymosBinFullDirectory(), exp.getCapillaries());
 		int nItems = ImageFileDescriptor.getExistingFileNames(myList);
 
 		if (nItems > 0) {
-			flag = seqKymos.loadImagesFromList(myList, true);
+			flag = seqKymos.loadImagesFromList(myList);
 			parent0.paneKymos.tabDisplay.transferCapillaryNamesToComboBox(exp);
 		} else
 			seqKymos.closeSequence();

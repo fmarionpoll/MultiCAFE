@@ -99,7 +99,7 @@ public class BuildBackground extends BuildSeries {
 			return ProcessingResult.failure("Experiment cannot be null");
 		}
 
-		if (experiment.seqCamData == null) {
+		if (experiment.getSeqCamData() == null) {
 			return ProcessingResult.failure("Experiment must have camera data");
 		}
 
@@ -175,7 +175,7 @@ public class BuildBackground extends BuildSeries {
 	private void initializeDetectionParameters(Experiment experiment) {
 		experiment.cleanPreviousDetectedFliesROIs();
 		flyDetectionTools.initParametersForDetection(experiment, options);
-		experiment.cages.initFlyPositions(options.detectCage);
+		experiment.getCages().initFlyPositions(options.detectCage);
 		options.threshold = options.thresholdDiff;
 	}
 
@@ -198,7 +198,7 @@ public class BuildBackground extends BuildSeries {
 	 * Creates the data sequence viewer.
 	 */
 	private void createDataSequence(Experiment experiment) {
-		dataSequence = newSequence("data recorded", experiment.seqCamData.getSeqImage(0, 0));
+		dataSequence = newSequence("data recorded", experiment.getSeqCamData().getSeqImage(0, 0));
 		dataViewer = new ViewerFMP(dataSequence, true, true);
 	}
 
@@ -206,8 +206,8 @@ public class BuildBackground extends BuildSeries {
 	 * Creates the reference sequence viewer.
 	 */
 	private void createReferenceSequence(Experiment experiment) {
-		referenceSequence = newSequence("referenceImage", experiment.seqCamData.getReferenceImage());
-		experiment.seqReference = referenceSequence;
+		referenceSequence = newSequence("referenceImage", experiment.getSeqCamData().getReferenceImage());
+		experiment.setSeqReference(referenceSequence);
 		referenceViewer = new ViewerFMP(referenceSequence, true, true);
 	}
 
@@ -273,7 +273,7 @@ public class BuildBackground extends BuildSeries {
 	 * Loads the initial background image.
 	 */
 	private ProcessingResult<IcyBufferedImage> loadInitialBackgroundImage(Experiment experiment) {
-		String filename = experiment.seqCamData.getFileNameFromImageList(options.backgroundFirst);
+		String filename = experiment.getSeqCamData().getFileNameFromImageList(options.backgroundFirst);
 		return imageProcessor.loadImage(filename);
 	}
 
@@ -281,13 +281,13 @@ public class BuildBackground extends BuildSeries {
 	 * Calculates the frame range for background processing.
 	 */
 	private FrameRange calculateFrameRange(Experiment experiment) {
-		long firstMs = experiment.cages.detectFirst_Ms
-				+ (options.backgroundFirst * experiment.seqCamData.getTimeManager().getBinImage_ms());
-		int firstFrame = (int) ((firstMs - experiment.cages.detectFirst_Ms)
-				/ experiment.seqCamData.getTimeManager().getBinImage_ms());
+		long firstMs = experiment.getCages().detectFirst_Ms
+				+ (options.backgroundFirst * experiment.getSeqCamData().getTimeManager().getBinImage_ms());
+		int firstFrame = (int) ((firstMs - experiment.getCages().detectFirst_Ms)
+				/ experiment.getSeqCamData().getTimeManager().getBinImage_ms());
 
 		int lastFrame = options.backgroundFirst + options.backgroundNFrames;
-		int totalFrames = experiment.seqCamData.getImageLoader().getNTotalFrames();
+		int totalFrames = experiment.getSeqCamData().getImageLoader().getNTotalFrames();
 
 		if (lastFrame > totalFrames) {
 			lastFrame = totalFrames;
@@ -343,7 +343,7 @@ public class BuildBackground extends BuildSeries {
 	 * Loads a frame with proper error handling.
 	 */
 	private ProcessingResult<IcyBufferedImage> loadFrame(Experiment experiment, int frameIndex) {
-		String filename = experiment.seqCamData.getFileNameFromImageList(frameIndex);
+		String filename = experiment.getSeqCamData().getFileNameFromImageList(frameIndex);
 		return imageProcessor.loadImage(filename);
 	}
 
@@ -352,7 +352,7 @@ public class BuildBackground extends BuildSeries {
 	 */
 	private ProcessingResult<Void> saveBackgroundResults(Experiment experiment) {
 		try {
-			experiment.seqCamData.setReferenceImage(IcyBufferedImageUtil.getCopy(referenceSequence.getFirstImage()));
+			experiment.getSeqCamData().setReferenceImage(IcyBufferedImageUtil.getCopy(referenceSequence.getFirstImage()));
 			experiment.saveReferenceImage(referenceSequence.getFirstImage());
 			return ProcessingResult.success();
 		} catch (Exception e) {

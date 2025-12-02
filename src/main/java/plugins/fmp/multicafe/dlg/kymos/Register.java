@@ -113,7 +113,7 @@ public class Register extends JPanel {
 			exp.getSeqCamData().setReferenceROI2DPolygon(referencePolygon);
 
 			int startFrame = 0;
-			int endFrame = exp.getSeqCamData().getnTotalFrames() - 1;
+			int endFrame = exp.getSeqCamData().getImageLoader().getNTotalFrames() - 1;
 
 			boolean reverse = directionCombo.getSelectedIndex() == 0; // Backward
 			int referenceFrame = (referenceCombo.getSelectedIndex() == 0) ? endFrame : startFrame;

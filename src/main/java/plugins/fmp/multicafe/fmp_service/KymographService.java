@@ -20,12 +20,13 @@ import icy.type.DataType;
 import icy.type.collection.array.Array1DUtil;
 import loci.formats.FormatException;
 import ome.xml.meta.OMEXMLMetadata;
+
 import plugins.fmp.multicafe.fmp_experiment.EnumStatus;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
-import plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymosUtils;
 import plugins.fmp.multicafe.fmp_tools.Logger;
@@ -62,14 +63,14 @@ public class KymographService {
 		seqKymos.getSequence().endUpdate();
 	}
 
-	public List<ImageFileDescriptor> loadListOfPotentialKymographsFromCapillaries(String dir, Capillaries capillaries) {
+	public List<ImageFileData> loadListOfPotentialKymographsFromCapillaries(String dir, Capillaries capillaries) {
 		renameCapillary_Files(dir);
 
 		String directoryFull = dir + File.separator;
 		int ncapillaries = capillaries.getCapillariesList().size();
-		List<ImageFileDescriptor> myListOfFiles = new ArrayList<ImageFileDescriptor>(ncapillaries);
+		List<ImageFileData> myListOfFiles = new ArrayList<ImageFileData>(ncapillaries);
 		for (int i = 0; i < ncapillaries; i++) {
-			ImageFileDescriptor temp = new ImageFileDescriptor();
+			ImageFileData temp = new ImageFileData();
 			temp.fileName = directoryFull + capillaries.getCapillariesList().get(i).getKymographName() + ".tiff";
 			myListOfFiles.add(temp);
 		}
@@ -91,7 +92,7 @@ public class KymographService {
 		}
 	}
 
-	public boolean loadImagesFromList(SequenceKymos seqKymos, List<ImageFileDescriptor> kymoImagesDesc,
+	public boolean loadImagesFromList(SequenceKymos seqKymos, List<ImageFileData> kymoImagesDesc,
 			boolean adjustImagesSize) {
 		seqKymos.setRunning_loadImages(true);
 		boolean flag = (kymoImagesDesc.size() > 0);
@@ -102,13 +103,14 @@ public class KymographService {
 			adjustImagesToMaxSize(seqKymos, kymoImagesDesc, getMaxSizeofTiffFiles(seqKymos, kymoImagesDesc));
 
 		List<String> myList = new ArrayList<String>();
-		for (ImageFileDescriptor prop : kymoImagesDesc) {
+		for (ImageFileData prop : kymoImagesDesc) {
 			if (prop.exists)
 				myList.add(prop.fileName);
 		}
 
 		if (myList.size() > 0) {
-			myList = ExperimentDirectories.keepOnlyAcceptedNames_List(myList, "tiff");
+			String[] strExt = {"tiff"};
+			myList = ExperimentDirectories.keepOnlyAcceptedNames_List(myList, strExt);
 			seqKymos.setImagesList(convertLinexLRFileNames(myList));
 
 			// threaded by default here
@@ -128,11 +130,11 @@ public class KymographService {
 		}
 	}
 
-	private Rectangle getMaxSizeofTiffFiles(SequenceKymos seqKymos, List<ImageFileDescriptor> files) {
+	private Rectangle getMaxSizeofTiffFiles(SequenceKymos seqKymos, List<ImageFileData> files) {
 		seqKymos.setImageWidthMax(0);
 		seqKymos.setImageHeightMax(0);
 		for (int i = 0; i < files.size(); i++) {
-			ImageFileDescriptor fileProp = files.get(i);
+			ImageFileData fileProp = files.get(i);
 			if (!fileProp.exists)
 				continue;
 			getImageDim(fileProp);
@@ -144,7 +146,7 @@ public class KymographService {
 		return new Rectangle(0, 0, seqKymos.getImageWidthMax(), seqKymos.getImageHeightMax());
 	}
 
-	private boolean getImageDim(final ImageFileDescriptor fileProp) {
+	private boolean getImageDim(final ImageFileData fileProp) {
 		boolean flag = false;
 		OMEXMLMetadata metaData = null;
 		try {
@@ -159,11 +161,11 @@ public class KymographService {
 		return flag;
 	}
 
-	private void adjustImagesToMaxSize(SequenceKymos seqKymos, List<ImageFileDescriptor> files, Rectangle rect) {
+	private void adjustImagesToMaxSize(SequenceKymos seqKymos, List<ImageFileData> files, Rectangle rect) {
 		ProgressFrame progress = new ProgressFrame("Make kymographs the same width and height");
 		progress.setLength(files.size());
 		for (int i = 0; i < files.size(); i++) {
-			ImageFileDescriptor fileProp = files.get(i);
+			ImageFileData fileProp = files.get(i);
 			if (!fileProp.exists)
 				continue;
 			if (fileProp.imageWidth == rect.width && fileProp.imageHeight == rect.height)

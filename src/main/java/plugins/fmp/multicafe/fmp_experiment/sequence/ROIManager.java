@@ -12,7 +12,8 @@ import icy.gui.viewer.Viewer;
 import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
-import plugins.fmp.multicafe.fmp_tools.Comparators1;
+import plugins.fmp.multicafe.fmp_tools.Comparators;
+
 
 public class ROIManager {
     private static final Logger LOGGER = Logger.getLogger(ROIManager.class.getName());
@@ -57,7 +58,7 @@ public class ROIManager {
         }
         
         ArrayList<ROI2D> roiList = seq.getROI2Ds();
-        Collections.sort(roiList, new Comparators1.ROI_Name());
+        Collections.sort(roiList, new Comparators.ROI_Name());
         
         ArrayList<ROI2D> matchingROIs = new ArrayList<>();
         for (ROI2D roi : roiList) {
@@ -75,7 +76,7 @@ public class ROIManager {
         }
         
         List<ROI> roiList = seq.getROIs();
-        Collections.sort(roiList, new Comparators1.ROI_Name());
+        Collections.sort(roiList, new Comparators.ROI_Name());
         
         List<ROI> matchingROIs = new ArrayList<>();
         for (ROI roi : roiList) {

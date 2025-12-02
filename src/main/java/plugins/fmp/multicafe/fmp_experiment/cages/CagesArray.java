@@ -26,7 +26,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.TIntervalsArray;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotString;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
-import plugins.fmp.multicafe.fmp_tools.Comparators1;
+import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
 import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
@@ -595,10 +595,10 @@ public class CagesArray {
 	public void transferROIsFromSequenceToCages(SequenceCamData seqCamData) {
 		// Use modern ROI finding API
 		List<ROI2D> roiList = seqCamData.findROIs("cage");
-		Collections.sort(roiList, new Comparators1.ROI2D_Name());
+		Collections.sort(roiList, new Comparators.ROI2D_Name());
 		addMissingCages(roiList);
 		removeOrphanCages(roiList);
-		Collections.sort(cagesList, new Comparators1.Cage_Name());
+		Collections.sort(cagesList, new Comparators.Cage_Name());
 	}
 
 	public void removeAllRoiDetFromSequence(SequenceCamData seqCamData) {
@@ -677,7 +677,7 @@ public class CagesArray {
 
 	public void orderFlyPositions() {
 		for (Cage cage : cagesList)
-			Collections.sort(cage.flyPositions.flyPositionList, new Comparators1.XYTaValue_Tindex());
+			Collections.sort(cage.flyPositions.flyPositionList, new Comparators.XYTaValue_Tindex());
 	}
 
 	public void initFlyPositions(int option_cagenumber) {
@@ -821,7 +821,7 @@ public class CagesArray {
 				for (Spot spot : cage.spotsArray.getSpotsList())
 					spotROIList.add(spot.getRoi());
 			}
-			Collections.sort(spotROIList, new Comparators1.ROI2D_Name());
+			Collections.sort(spotROIList, new Comparators.ROI2D_Name());
 			seqCamData.getSequence().addROIs(spotROIList, true);
 		}
 	}
@@ -833,7 +833,7 @@ public class CagesArray {
 //		Viewer v = seqCamData.getSequence().getFirstViewer();
 //		if (v != null)
 //			T = v.getPositionT();
-		Collections.sort(listSeqRois, new Comparators1.ROI_Name());
+		Collections.sort(listSeqRois, new Comparators.ROI_Name());
 		for (Cage cage : cagesList) {
 			Iterator<Spot> iteratorSpots = cage.spotsArray.getSpotsList().iterator();
 			while (iteratorSpots.hasNext()) {

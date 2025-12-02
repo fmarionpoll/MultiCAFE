@@ -132,14 +132,14 @@ public class Edit extends JPanel {
 		if (findFirst(exp)) {
 			selectImageT(exp, foundT);
 			Cage cage = exp.getCages().getCageFromID(foundCell);
-			String name = "det" + cage.getCageIDasString() + "_" + foundT;
+			String name = "det" + Integer.toString(cage.prop.getCageID()) + "_" + foundT;
 			foundCombo.setSelectedItem(name);
 		} else
 			MessageDialog.showDialog("no missed point found", MessageDialog.INFORMATION_MESSAGE);
 	}
 
 	boolean findFirst(Experiment exp) {
-		int dataSize = exp.getSeqCamData().getnTotalFrames();
+		int dataSize = exp.getSeqCamData().getImageLoader().getNTotalFrames();
 		foundT = -1;
 		foundCell = -1;
 		for (int frame = 0; frame < dataSize; frame++) {
@@ -164,14 +164,14 @@ public class Edit extends JPanel {
 
 	void findAllMissedPoints(Experiment exp) {
 		foundCombo.removeAllItems();
-		int dataSize = exp.getSeqCamData().getnTotalFrames();
+		int dataSize = exp.getSeqCamData().getImageLoader().getNTotalFrames();
 		for (int frame = 0; frame < dataSize; frame++) {
 			for (Cage cage : exp.getCages().getCageList()) {
 				if (frame >= cage.getFlyPositions().getFlyPositionList().size())
 					continue;
 				Rectangle2D rect = cage.getFlyPositions().getFlyPositionList().get(frame).getRectangle2D();
 				if (rect.getX() == -1 && rect.getY() == -1) {
-					String name = "det" + cage.getCageIDasString() + "_"
+					String name = "det" + Integer.toString(cage.prop.getCageID()) + "_"
 							+ cage.getFlyPositions().getFlyPositionList().get(frame).getFlyIndexT();
 					foundCombo.addItem(name);
 				}

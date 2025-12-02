@@ -191,11 +191,11 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 			return ProcessingResult.failure("Experiment cannot be null");
 		}
 
-		if (experiment.seqCamData == null) {
+		if (experiment.getSeqCamData() == null) {
 			return ProcessingResult.failure("Experiment must have camera data");
 		}
 
-		if (experiment.cages == null) {
+		if (experiment.getCages() == null) {
 			return ProcessingResult.failure("Experiment must have cages array");
 		}
 
@@ -278,7 +278,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 	 */
 	private ProcessingResult<IcyBufferedImage> loadReferenceImage(Experiment experiment, int referenceFrame,
 			RegistrationOptions options) {
-		String fileName = experiment.seqCamData.getFileNameFromImageList(referenceFrame);
+		String fileName = experiment.getSeqCamData().getFileNameFromImageList(referenceFrame);
 		if (fileName == null) {
 			return ProcessingResult.failure("Reference frame file not found: %d", referenceFrame);
 		}
@@ -298,7 +298,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 	 * Extracts the region of interest from the image.
 	 */
 	private IcyBufferedImage extractRegionOfInterest(IcyBufferedImage image, Experiment experiment) {
-		Polygon2D polygon2D = experiment.cages.getPolygon2DEnclosingAllCages();
+		Polygon2D polygon2D = experiment.getCages().getPolygon2DEnclosingAllCages();
 		Rectangle rect = polygon2D.getBounds();
 		return IcyBufferedImageUtil.getSubImage(image, rect.x, rect.y, rect.height, rect.width);
 	}
@@ -311,7 +311,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 			boolean correctRotation, boolean correctTranslation, double translationThreshold,
 			double rotationThreshold) {
 
-		String fileName = experiment.seqCamData.getFileNameFromImageList(frame);
+		String fileName = experiment.getSeqCamData().getFileNameFromImageList(frame);
 		if (fileName == null) {
 			return ProcessingResult.failure("Frame file not found: %d", frame);
 		}

@@ -35,7 +35,7 @@ public class LevelsToGulps extends JPanel implements PropertyChangeListener {
 
 	JCheckBox allKymosCheckBox = new JCheckBox("all kymographs", true);
 	ImageTransformEnums[] gulpTransforms = new ImageTransformEnums[] { ImageTransformEnums.XDIFFN,
-			ImageTransformEnums.YDIFFN, ImageTransformEnums.YDIFFN1D, ImageTransformEnums.XYDIFFN };
+			ImageTransformEnums.YDIFFN, ImageTransformEnums.YDIFFN2, ImageTransformEnums.XYDIFFN };
 
 	JComboBox<ImageTransformEnums> gulpTransforms_comboBox = new JComboBox<ImageTransformEnums>(gulpTransforms);
 	JSpinner start_spinner = new JSpinner(new SpinnerNumberModel(0, 0, 100000, 1));

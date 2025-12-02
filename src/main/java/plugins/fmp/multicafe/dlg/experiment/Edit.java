@@ -15,7 +15,8 @@ import javax.swing.JTextField;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
-import plugins.fmp.multicafe.tools0.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
+
 
 public class Edit extends JPanel {
 	/**
@@ -25,8 +26,8 @@ public class Edit extends JPanel {
 
 	private JComboBox<EnumXLSColumnHeader> fieldNamesCombo = new JComboBox<EnumXLSColumnHeader>(
 			new EnumXLSColumnHeader[] { EnumXLSColumnHeader.EXP_EXPT, EnumXLSColumnHeader.EXP_BOXID,
-					EnumXLSColumnHeader.EXP_STIM, EnumXLSColumnHeader.EXP_CONC, EnumXLSColumnHeader.EXP_STRAIN,
-					EnumXLSColumnHeader.EXP_SEX, EnumXLSColumnHeader.EXP_COND1, EnumXLSColumnHeader.EXP_COND2,
+					EnumXLSColumnHeader.EXP_STIM1, EnumXLSColumnHeader.EXP_CONC1, EnumXLSColumnHeader.EXP_STRAIN,
+					EnumXLSColumnHeader.EXP_SEX, EnumXLSColumnHeader.EXP_STIM2, EnumXLSColumnHeader.EXP_CONC2,
 					EnumXLSColumnHeader.CAP_STIM, EnumXLSColumnHeader.CAP_CONC });
 
 	private JComboBox<String> fieldOldValuesCombo = new JComboBox<String>();

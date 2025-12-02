@@ -19,6 +19,7 @@ import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_tools.JComponents.CageTableModel;
 
 public class InfosCagesTable extends JPanel {
@@ -99,17 +100,15 @@ public class InfosCagesTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
-					for (Cage cellFrom : cageArrayCopy) {
-						cellFrom.setValid(false);
-						for (Cage cellTo : exp.getCages().getCageList()) {
-							if (!cellFrom.getCageRoi2D().getName().equals(cellTo.getCageRoi2D().getName()))
+					for (Cage cageFrom : cageArrayCopy) {
+						for (Cage cageTo : exp.getCages().getCageList()) {
+							if (!cageFrom.getCageRoi2D().getName().equals(cageTo.getCageRoi2D().getName()))
 								continue;
-							cellFrom.setValid(true);
-							cellTo.setCageNFlies(cellFrom.getCageNFlies());
-							cellTo.setCageAge(cellFrom.getCageAge());
-							cellTo.setCageComment(cellFrom.getCageComment());
-							cellTo.setCageSex(cellFrom.getCageSex());
-							cellTo.setCageStrain(cellFrom.getCageStrain());
+							cageTo.setCageNFlies(cageFrom.getCageNFlies());
+							cageTo.prop.setFlyAge(cageFrom.prop.getFlyAge());
+							cageTo.prop.setComment(cageFrom.prop.getComment());
+							cageTo.prop.setFlySex(cageFrom.prop.getFlySex());
+							cageTo.prop.setFlyStrain(cageFrom.prop.getFlyStrain());
 						}
 					}
 					cageTableModel.fireTableDataChanged();
@@ -125,25 +124,27 @@ public class InfosCagesTable extends JPanel {
 					int rowIndex = tableView.getSelectedRow();
 					int columnIndex = tableView.getSelectedColumn();
 					if (rowIndex >= 0) {
-						Cage cell0 = exp.getCages().getCageList().get(rowIndex);
-						for (Cage cell : exp.getCages().getCageList()) {
-							if (cell.getCageRoi2D().getName().equals(cell0.getCageRoi2D().getName()))
+						Cage cage0 = exp.getCages().getCageList().get(rowIndex);
+						CageProperties prop0 = cage0.prop;
+						for (Cage cage : exp.getCages().getCageList()) {
+							CageProperties prop = cage.getProperties();
+							if (cage.getCageRoi2D().getName().equals(cage0.getCageRoi2D().getName()))
 								continue;
 							switch (columnIndex) {
 							case 1:
-								cell.setCageNFlies(cell0.getCageNFlies());
+								cage.setCageNFlies(cage0.getCageNFlies());
 								break;
 							case 2:
-								cell.setCageStrain(cell0.getCageStrain());
+								prop.setFlyStrain(prop0.getFlyStrain());
 								break;
 							case 3:
-								cell.setCageSex(cell0.getCageSex());
+								prop.setFlySex(prop0.getFlySex());
 								break;
 							case 4:
-								cell.setCageAge(cell0.getCageAge());
+								prop.setFlyAge(prop0.getFlyAge());
 								break;
 							case 5:
-								cell.setCageComment(cell0.getCageComment());
+								prop.setComment(prop0.getComment());
 								break;
 							default:
 								break;

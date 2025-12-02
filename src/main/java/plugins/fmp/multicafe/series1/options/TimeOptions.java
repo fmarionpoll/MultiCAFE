@@ -1,5 +1,7 @@
 package plugins.fmp.multicafe.series1.options;
 
+import plugins.fmp.multicafe.series1.BuildSeriesOptions;
+
 /**
  * Configuration for time-related parameters. Replaces time-related fields from
  * BuildSeriesOptions.
@@ -211,7 +213,7 @@ public class TimeOptions {
 	}
 
 	// Create from legacy BuildSeriesOptions
-	public static TimeOptions fromLegacyOptions(plugins.fmp.multiSPOTS96.series.BuildSeriesOptions legacy) {
+	public static TimeOptions fromLegacyOptions(BuildSeriesOptions legacy) {
 		return builder().frameFixed(legacy.isFrameFixed).firstMs(legacy.t_Ms_First).lastMs(legacy.t_Ms_Last)
 				.binDurationMs(legacy.t_Ms_BinDuration).fromFrame(legacy.fromFrame)
 				.referenceFrame(legacy.referenceFrame).seriesFirst(legacy.seriesFirst).seriesLast(legacy.seriesLast)

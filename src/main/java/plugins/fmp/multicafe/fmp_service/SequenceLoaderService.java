@@ -33,8 +33,8 @@ public class SequenceLoaderService {
 			Logger.warn("SequenceLoaderService:loadReferenceImage() image not loaded / not found: " + path);
 			return false;
 		}
-		exp.getSeqCamData().setRefImage(IcyBufferedImage.createFrom(image));
-		exp.setSeqReference(new Sequence(exp.getSeqCamData().getRefImage()));
+		exp.getSeqCamData().setReferenceImage(IcyBufferedImage.createFrom(image));
+		exp.setSeqReference(new Sequence(exp.getSeqCamData().getReferenceImage()));
 		exp.getSeqReference().setName("referenceImage");
 		return true;
 	}
@@ -42,7 +42,7 @@ public class SequenceLoaderService {
 	public boolean saveReferenceImage(Experiment exp) {
 		String path = exp.getExperimentDirectory() + File.separator + "referenceImage.jpg";
 		File outputfile = new File(path);
-		RenderedImage image = ImageUtil.toRGBImage(exp.getSeqCamData().getRefImage());
+		RenderedImage image = ImageUtil.toRGBImage(exp.getSeqCamData().getReferenceImage());
 		return ImageUtil.save(image, "jpg", outputfile);
 	}
 
@@ -83,7 +83,8 @@ public class SequenceLoaderService {
 
 	public void loadImageList(SequenceCamData seqData) {
 		List<String> imagesList = ExperimentDirectories.getV2ImagesListFromPath(seqData.getImagesDirectory());
-		imagesList = ExperimentDirectories.keepOnlyAcceptedNames_List(imagesList, "jpg");
+		String[] strExt = {"jpg"};
+		imagesList = ExperimentDirectories.keepOnlyAcceptedNames_List(imagesList, strExt);
 		if (imagesList.size() > 0) {
 			seqData.setImagesList(imagesList);
 			seqData.attachSequence(loadSequenceFromImagesList(imagesList));
