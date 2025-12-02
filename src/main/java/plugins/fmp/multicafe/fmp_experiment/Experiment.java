@@ -20,7 +20,6 @@ import icy.image.ImageUtil;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.util.XMLUtil;
-
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
@@ -188,7 +187,7 @@ public class Experiment {
 
 	private final static String ID_IMAGESDIRECTORY = "imagesDirectory";
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
-	private final String ID_MS96_experiment_XML = "MS96_experiment.xml";
+	private final String ID_MS96_experiment_XML = "MCexperiment"; // "MS96_experiment.xml";
 	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 
 	private final static int EXPT_DIRECTORY = 1;
@@ -1453,10 +1452,9 @@ public class Experiment {
 
 		// Load images using the new API
 		Rectangle rectMax = getSeqKymos().calculateMaxDimensions(newList);
-		ImageAdjustmentOptions options = 
-				ImageAdjustmentOptions.withSizeAdjustment(rectMax);
+		ImageAdjustmentOptions options = ImageAdjustmentOptions.withSizeAdjustment(rectMax);
 		ImageProcessingResult result = getSeqKymos().loadKymographs(newList, options);
-		return result.isSuccess(); 
+		return result.isSuccess();
 	}
 
 	public boolean loadCamDataCapillaries() {

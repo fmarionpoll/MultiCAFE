@@ -43,7 +43,7 @@ public class LazyExperiment extends Experiment {
 
 	// XML file constants for properties loading
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
-	private final static String ID_MS96_experiment_XML = "MS96_experiment.xml";
+	private final static String ID_MS96_experiment_XML = "MCexperiment"; // "MS96_experiment.xml";
 //	private final static String ID_MS96_cages_XML = "MS96_cages.xml";
 
 	public LazyExperiment(ExperimentMetadata metadata) {
