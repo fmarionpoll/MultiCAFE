@@ -20,8 +20,8 @@ import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools1.ViewerFMP;
-import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
+import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
+import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public abstract class BuildSeries extends SwingWorker<Integer, Integer> {

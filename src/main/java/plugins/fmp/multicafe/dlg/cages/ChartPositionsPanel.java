@@ -21,8 +21,8 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
-import plugins.fmp.multicafe.tools1.chart.ChartPositions;
-import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartPositions;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 
 public class ChartPositionsPanel extends JPanel implements SequenceListener {
 	/**

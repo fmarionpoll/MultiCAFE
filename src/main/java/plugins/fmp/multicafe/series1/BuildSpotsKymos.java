@@ -12,9 +12,9 @@ import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.tools1.GaspardRigidRegistration;
-import plugins.fmp.multicafe.tools1.ViewerFMP;
-import plugins.fmp.multicafe.tools1.ROI2D.ROI2DWithMask;
+import plugins.fmp.multicafe.fmp_tools.GaspardRigidRegistration;
+import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
+import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DWithMask;
 
 public class BuildSpotsKymos extends BuildSeries {
 	public Sequence seqData = new Sequence();

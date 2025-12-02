@@ -7,9 +7,9 @@ import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformInterface;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 
 public class DetectFlyFromCleanBackground extends BuildSeries {
 	private DetectFlyTools find_flies = new DetectFlyTools();

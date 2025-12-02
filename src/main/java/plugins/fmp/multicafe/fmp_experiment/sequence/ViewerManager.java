@@ -7,9 +7,9 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 import icy.sequence.Sequence;
-import plugins.fmp.multicafe.tools1.ViewerFMP;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools1.overlay.OverlayThreshold;
+import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.fmp_tools.overlay.OverlayThreshold;
 
 public class ViewerManager {
 	private static final Logger LOGGER = Logger.getLogger(ViewerManager.class.getName());

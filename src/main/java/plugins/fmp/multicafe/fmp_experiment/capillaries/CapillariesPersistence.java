@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
 import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.tools1.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class CapillariesPersistence {

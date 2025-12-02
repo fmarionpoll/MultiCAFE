@@ -10,8 +10,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
 import plugins.fmp.multicafe.MultiCAFE;
-import plugins.fmp.multicafe.tools1.JComponents.TableCellColorEditor;
-import plugins.fmp.multicafe.tools1.JComponents.TableCellColorRenderer;
+import plugins.fmp.multicafe.fmp_tools.JComponents.TableCellColorEditor;
+import plugins.fmp.multicafe.fmp_tools.JComponents.TableCellColorRenderer;
 
 public class SpotTable extends JTable {
 	/**

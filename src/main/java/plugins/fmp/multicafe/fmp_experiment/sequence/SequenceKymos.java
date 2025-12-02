@@ -35,8 +35,8 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.tools1.Comparators1;
-import plugins.fmp.multicafe.tools1.ROI2D.ROI2DUtilities;
+import plugins.fmp.multicafe.fmp_tools.Comparators1;
+import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 /**

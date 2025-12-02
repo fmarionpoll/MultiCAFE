@@ -19,10 +19,10 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools1.registration.ImageRegistration;
-import plugins.fmp.multicafe.tools1.registration.ImageRegistrationFeatures;
-import plugins.fmp.multicafe.tools1.registration.ImageRegistrationFeaturesGPU;
-import plugins.fmp.multicafe.tools1.registration.ImageRegistrationGaspard;
+import plugins.fmp.multicafe.fmp_tools.registration.ImageRegistration;
+import plugins.fmp.multicafe.fmp_tools.registration.ImageRegistrationFeatures;
+import plugins.fmp.multicafe.fmp_tools.registration.ImageRegistrationFeaturesGPU;
+import plugins.fmp.multicafe.fmp_tools.registration.ImageRegistrationGaspard;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class Register extends JPanel {

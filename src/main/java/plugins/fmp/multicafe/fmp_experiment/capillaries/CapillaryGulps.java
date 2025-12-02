@@ -14,7 +14,7 @@ import icy.roi.ROI2D;
 import icy.type.geom.Polyline2D;
 import icy.util.StringUtil;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 public class CapillaryGulps {

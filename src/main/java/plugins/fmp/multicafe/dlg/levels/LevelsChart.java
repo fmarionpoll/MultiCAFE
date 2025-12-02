@@ -20,8 +20,8 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartLevels;
 import plugins.fmp.multicafe.tools0.toExcel.EnumXLSExport;
-import plugins.fmp.multicafe.tools1.chart.ChartLevels;
 
 public class LevelsChart extends JPanel implements SequenceListener {
 	/**

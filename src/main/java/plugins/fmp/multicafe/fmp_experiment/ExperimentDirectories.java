@@ -17,8 +17,8 @@ import javax.swing.JOptionPane;
 
 import icy.file.FileUtil;
 import icy.gui.dialog.LoaderDialog;
-import plugins.fmp.multicafe.tools1.Directories;
-import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
+import plugins.fmp.multicafe.fmp_tools.Directories;
+import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 
 public class ExperimentDirectories {
 	private String cameraImagesDirectory = null;

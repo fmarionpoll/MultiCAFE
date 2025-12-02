@@ -32,15 +32,15 @@ import icy.type.collection.array.Array1DUtil;
 import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_tools.GaspardRigidRegistration;
+import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 import plugins.fmp.multicafe.series1.ProcessingResult;
 import plugins.fmp.multicafe.series1.ProgressReporter;
 import plugins.fmp.multicafe.series1.RegistrationOptions;
 import plugins.fmp.multicafe.series1.RegistrationProcessor;
 import plugins.fmp.multicafe.series1.SafeRegistrationProcessor;
-import plugins.fmp.multicafe.tools1.GaspardRigidRegistration;
-import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
 
 public class CorrectDrift extends JPanel implements ViewerListener, PropertyChangeListener {
 	/**

@@ -13,8 +13,8 @@ import icy.image.IcyBufferedImageUtil;
 import icy.image.ImageUtil;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools1.GaspardRigidRegistration;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformInterface;
+import plugins.fmp.multicafe.fmp_tools.GaspardRigidRegistration;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
 
 /**
  * Safe implementation of RegistrationProcessor with proper error handling.

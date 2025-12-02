@@ -1,7 +1,7 @@
 package plugins.fmp.multicafe.series1;
 
 import icy.image.IcyBufferedImage;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 
 /**
  * Service interface for image processing operations.

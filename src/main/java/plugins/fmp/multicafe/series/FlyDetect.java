@@ -12,10 +12,10 @@ import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
-import plugins.fmp.multicafe.tools1.Logger;
-import plugins.fmp.multicafe.tools1.ViewerFMP;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformInterface;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_tools.Logger;
+import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public abstract class FlyDetect extends BuildSeries {

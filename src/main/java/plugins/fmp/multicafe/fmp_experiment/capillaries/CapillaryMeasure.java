@@ -11,7 +11,7 @@ import icy.roi.ROI;
 import icy.type.geom.Polyline2D;
 import icy.util.StringUtil;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.tools1.Level2D;
+import plugins.fmp.multicafe.fmp_tools.Level2D;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 public class CapillaryMeasure {

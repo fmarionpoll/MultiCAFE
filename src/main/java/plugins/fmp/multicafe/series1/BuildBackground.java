@@ -8,9 +8,9 @@ import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools1.ViewerFMP;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 
 /**
  * Refactored BuildBackground class with improved architecture. Demonstrates

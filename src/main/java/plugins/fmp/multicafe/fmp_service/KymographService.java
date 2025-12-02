@@ -28,9 +28,9 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymosUtils;
-import plugins.fmp.multicafe.tools1.Logger;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformInterface;
+import plugins.fmp.multicafe.fmp_tools.Logger;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
 
 public class KymographService {
 

@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe.series1;
 
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 
 /**
  * Configuration options for image registration operations. Encapsulates all

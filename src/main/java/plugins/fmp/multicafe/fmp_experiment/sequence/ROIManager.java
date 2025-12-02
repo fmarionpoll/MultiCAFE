@@ -12,7 +12,7 @@ import icy.gui.viewer.Viewer;
 import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
-import plugins.fmp.multicafe.tools1.Comparators1;
+import plugins.fmp.multicafe.fmp_tools.Comparators1;
 
 public class ROIManager {
     private static final Logger LOGGER = Logger.getLogger(ROIManager.class.getName());

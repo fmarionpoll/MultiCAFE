@@ -19,8 +19,8 @@ import plugins.fmp.multicafe.dlg.excel.MCExcel_;
 import plugins.fmp.multicafe.dlg.experiment.MCExperiment_;
 import plugins.fmp.multicafe.dlg.kymos.MCKymos_;
 import plugins.fmp.multicafe.dlg.levels.MCLevels_;
-import plugins.fmp.multicafe.tools1.DescriptorIndex;
-import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
+import plugins.fmp.multicafe.fmp_tools.DescriptorIndex;
+import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
 
 public class MultiCAFE extends PluginActionable {

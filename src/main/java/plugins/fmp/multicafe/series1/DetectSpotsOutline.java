@@ -3,8 +3,8 @@ package plugins.fmp.multicafe.series1;
 import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformInterface;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 
 public class DetectSpotsOutline extends BuildSeries {
 	public boolean buildBackground = true;

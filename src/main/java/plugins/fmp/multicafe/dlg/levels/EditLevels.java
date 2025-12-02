@@ -24,7 +24,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
-import plugins.fmp.multicafe.tools1.Level2D;
+import plugins.fmp.multicafe.fmp_tools.Level2D;
 
 public class EditLevels extends JPanel {
 	/**

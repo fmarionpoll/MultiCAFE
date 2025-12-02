@@ -5,7 +5,7 @@ import java.awt.Color;
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools1.JComponents.JComboBoxExperimentLazy;
+import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 
 public class CageTableModel extends AbstractTableModel {
 	/**

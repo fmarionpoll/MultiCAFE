@@ -22,7 +22,7 @@ import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.tools1.JComponents.CapillaryTableModel;
+import plugins.fmp.multicafe.fmp_tools.JComponents.CapillaryTableModel;
 
 public class InfosCapillaryTable extends JPanel {
 	/**

@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe.series1.options;
 
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 
 /**
  * Configuration for image transformation parameters. Replaces image

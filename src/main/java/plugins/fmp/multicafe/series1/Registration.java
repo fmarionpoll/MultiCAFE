@@ -14,9 +14,9 @@ import icy.image.ImageUtil;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.dlg.a_experiment.CorrectDrift;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools1.GaspardRigidRegistration;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformInterface;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_tools.GaspardRigidRegistration;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 
 public class Registration extends BuildSeries {
 //	private final ImageProcessor imageProcessor;

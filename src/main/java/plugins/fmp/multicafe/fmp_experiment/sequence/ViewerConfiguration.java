@@ -1,7 +1,8 @@
 package plugins.fmp.multicafe.fmp_experiment.sequence;
 
 import java.awt.Rectangle;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
+
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 
 /**
  * Configuration class for viewer settings and operations.

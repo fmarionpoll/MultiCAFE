@@ -6,7 +6,7 @@ import java.util.List;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.tools1.toExcel.enums.EnumXLSColumnHeader;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
 public class ExperimentProperties {
 

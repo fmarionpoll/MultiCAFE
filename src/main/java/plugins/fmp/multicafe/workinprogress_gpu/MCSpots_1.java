@@ -30,7 +30,7 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_service.KymographService;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 
 public class MCSpots_1 extends JPanel {
 	/**

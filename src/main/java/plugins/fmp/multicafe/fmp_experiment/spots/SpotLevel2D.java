@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import icy.roi.ROI2D;
 import icy.type.geom.Polyline2D;
-import plugins.fmp.multicafe.tools1.polyline.Level2D;
+import plugins.fmp.multicafe.fmp_tools.polyline.Level2D;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 public class SpotLevel2D {

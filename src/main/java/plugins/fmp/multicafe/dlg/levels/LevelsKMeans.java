@@ -20,7 +20,7 @@ import icy.sequence.Sequence;
 import icy.swimmingPool.SwimmingObject;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.tools1.ImageKMeans;
+import plugins.fmp.multicafe.fmp_tools.ImageKMeans;
 import plugins.nherve.maskeditor.MaskEditor;
 import plugins.nherve.toolbox.image.feature.region.SupportRegionException;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;

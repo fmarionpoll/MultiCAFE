@@ -12,7 +12,7 @@ import icy.image.IcyBufferedImage;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.EnumStatus;
-import plugins.fmp.multicafe.tools1.imageTransform.ImageTransformEnums;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 
 /**
  * Manages camera sequence data including images, ROIs, timing, and viewer
