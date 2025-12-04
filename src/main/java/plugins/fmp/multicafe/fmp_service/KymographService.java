@@ -15,11 +15,9 @@ import icy.file.Loader;
 import icy.file.Saver;
 import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
-import icy.sequence.MetaDataUtil;
 import icy.type.DataType;
 import icy.type.collection.array.Array1DUtil;
 import loci.formats.FormatException;
-import ome.xml.meta.OMEXMLMetadata;
 
 import plugins.fmp.multicafe.fmp_experiment.EnumStatus;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
@@ -27,6 +25,7 @@ import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
+import plugins.fmp.multicafe.fmp_experiment.sequence.KymographInfo;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymosUtils;
 import plugins.fmp.multicafe.fmp_tools.Logger;
@@ -94,7 +93,6 @@ public class KymographService {
 
 	public boolean loadImagesFromList(SequenceKymos seqKymos, List<ImageFileData> kymoImagesDesc,
 			boolean adjustImagesSize) {
-		seqKymos.setRunning_loadImages(true);
 		boolean flag = (kymoImagesDesc.size() > 0);
 		if (!flag)
 			return flag;
@@ -118,7 +116,6 @@ public class KymographService {
 			setParentDirectoryAsCSCamFileName(seqKymos, seqKymos.getImagesList().get(0));
 			seqKymos.setStatus(EnumStatus.KYMOGRAPH);
 		}
-		seqKymos.setRunning_loadImages(false);
 		return flag;
 	}
 
@@ -131,34 +128,7 @@ public class KymographService {
 	}
 
 	private Rectangle getMaxSizeofTiffFiles(SequenceKymos seqKymos, List<ImageFileData> files) {
-		seqKymos.setImageWidthMax(0);
-		seqKymos.setImageHeightMax(0);
-		for (int i = 0; i < files.size(); i++) {
-			ImageFileData fileProp = files.get(i);
-			if (!fileProp.exists)
-				continue;
-			getImageDim(fileProp);
-			if (fileProp.imageWidth > seqKymos.getImageWidthMax())
-				seqKymos.setImageWidthMax(fileProp.imageWidth);
-			if (fileProp.imageHeight > seqKymos.getImageHeightMax())
-				seqKymos.setImageHeightMax(fileProp.imageHeight);
-		}
-		return new Rectangle(0, 0, seqKymos.getImageWidthMax(), seqKymos.getImageHeightMax());
-	}
-
-	private boolean getImageDim(final ImageFileData fileProp) {
-		boolean flag = false;
-		OMEXMLMetadata metaData = null;
-		try {
-			metaData = Loader.getOMEXMLMetaData(fileProp.fileName);
-			fileProp.imageWidth = MetaDataUtil.getSizeX(metaData, 0);
-			fileProp.imageHeight = MetaDataUtil.getSizeY(metaData, 0);
-			flag = true;
-		} catch (UnsupportedFormatException | IOException | InterruptedException e) {
-			Logger.error("KymographService:readImageProperties() Failed to read image properties: " + fileProp.fileName,
-					e);
-		}
-		return flag;
+		return seqKymos.calculateMaxDimensions(files);
 	}
 
 	private void adjustImagesToMaxSize(SequenceKymos seqKymos, List<ImageFileData> files, Rectangle rect) {
@@ -179,8 +149,12 @@ public class KymographService {
 				Logger.error("KymographService:adjustImagesToMaxSize() Failed to load image: " + fileProp.fileName, e1);
 			}
 
-			IcyBufferedImage ibufImage2 = new IcyBufferedImage(seqKymos.getImageWidthMax(),
-					seqKymos.getImageHeightMax(), ibufImage1.getSizeC(), ibufImage1.getDataType_());
+			if (ibufImage1 == null)
+				continue;
+
+			KymographInfo kymoInfo = seqKymos.getKymographInfo();
+			IcyBufferedImage ibufImage2 = new IcyBufferedImage(kymoInfo.getMaxWidth(),
+					kymoInfo.getMaxHeight(), ibufImage1.getSizeC(), ibufImage1.getDataType_());
 			transferImage1To2(ibufImage1, ibufImage2);
 
 			try {

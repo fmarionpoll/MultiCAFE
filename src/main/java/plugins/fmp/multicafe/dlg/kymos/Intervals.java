@@ -15,6 +15,7 @@ import javax.swing.SwingConstants;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.sequence.KymographInfo;
 
 public class Intervals extends JPanel {
 	/**
@@ -105,7 +106,8 @@ public class Intervals extends JPanel {
 	void displayDlgKymoIntervals(Experiment exp) {
 		double binsize_Ms = getBinSize_Ms();
 		firstColumnJSpinner.setValue(0.);
-		lastColumnJSpinner.setValue((double) exp.getSeqKymos().getImageWidthMax());
+		KymographInfo kymoInfo = exp.getSeqKymos().getKymographInfo();
+		lastColumnJSpinner.setValue((double) kymoInfo.getMaxWidth());
 		if (exp.getKymoBin_ms() <= 0)
 			exp.setKymoBin_ms((long) binsize_Ms);
 		binColumnJSpinner.setValue((double) exp.getKymoBin_ms() / binsize_Ms);
