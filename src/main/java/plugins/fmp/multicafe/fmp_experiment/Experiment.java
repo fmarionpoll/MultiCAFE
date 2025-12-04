@@ -28,6 +28,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.ImageAdjustmentOptions;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageProcessingResult;
+import plugins.fmp.multicafe.fmp_experiment.sequence.KymographInfo;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
@@ -1374,13 +1375,13 @@ public class Experiment {
 	}
 
 	public boolean adjustCapillaryMeasuresDimensions() {
-		if (seqKymos.getImageWidthMax() < 1) {
+		KymographInfo kymoInfo = seqKymos.getKymographInfo();
+		if (kymoInfo.getMaxWidth() < 1) {
 			seqKymos.setImageWidthMax(seqKymos.getSequence().getSizeX());
 			if (seqKymos.getImageWidthMax() < 1)
 				return false;
 		}
-		int imageWidth = seqKymos.getImageWidthMax();
-		capillaries.adjustToImageWidth(imageWidth);
+		capillaries.adjustToImageWidth(kymoInfo.getMaxWidth());
 		seqKymos.getSequence().removeAllROI();
 		seqKymos.transferCapillariesMeasuresToKymos(capillaries);
 		return true;
