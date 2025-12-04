@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.vecmath.Vector2d;
 
@@ -121,7 +122,7 @@ public class ImageRegistrationFeaturesGPU extends ImageRegistration {
 					return new String(java.nio.file.Files.readAllBytes(file.toPath()), java.nio.charset.StandardCharsets.UTF_8);
 				}
 			} else {
-				java.util.Scanner s = new java.util.Scanner(is, "UTF-8").useDelimiter("\\A");
+				Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
 				String result = s.hasNext() ? s.next() : "";
 				s.close();
 				is.close();

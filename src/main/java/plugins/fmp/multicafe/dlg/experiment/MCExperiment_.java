@@ -194,8 +194,8 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 		// experiments)
 		if (viewer != null) {
 			globalCamDataViewerBounds = viewer.getBounds();
+			viewer.removeListener(this);
 		}
-		viewer.removeListener(this);
 	}
 
 	@Override

@@ -50,7 +50,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	// Memory management constants
 	private static final int CHUNK_SIZE = 512; // Process 512 spots at a time
 	private static final int BUFFER_SIZE = 2048; // Buffer size for data processing
-	private static final int GC_INTERVAL = 50; // Force GC every 50 spots
+//	private static final int GC_INTERVAL = 50; // Force GC every 50 spots
 
 	// Progress tracking
 	private final AtomicInteger processedSpots = new AtomicInteger(0);
@@ -62,14 +62,14 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 
 	// Memory pools for object reuse
 	private final DataChunkProcessor chunkProcessor;
-	private final MemoryPool memoryPool;
+//	private final MemoryPool memoryPool;
 
 	/**
 	 * Creates a new streaming Excel export instance.
 	 */
 	public XLSExportMeasuresFromSpotStreaming() {
 		this.chunkProcessor = new DataChunkProcessor(CHUNK_SIZE, BUFFER_SIZE);
-		this.memoryPool = new MemoryPool();
+//		this.memoryPool = new MemoryPool();
 	}
 
 	/**
@@ -267,8 +267,12 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 		final double finalMaximum = maximum;
 
 		// Second pass: apply normalization
-		return tempList.stream().map(value -> value != null && !Double.isNaN(value) ? value / finalMaximum : value)
-				.iterator();
+		return tempList.stream().map(value -> {
+			if (value != null && !Double.isNaN(value)) {
+				return value / finalMaximum;
+			}
+			return value;
+		}).iterator();
 	}
 
 	/**
@@ -461,13 +465,13 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * Chunk processor for efficient data handling.
 	 */
 	private static class DataChunkProcessor {
-		private final int chunkSize;
+//		private final int chunkSize;
 		private final int bufferSize;
 		private final double[] buffer;
 		private int bufferPosition = 0;
 
 		public DataChunkProcessor(int chunkSize, int bufferSize) {
-			this.chunkSize = chunkSize;
+//			this.chunkSize = chunkSize;
 			this.bufferSize = bufferSize;
 			this.buffer = new double[bufferSize];
 		}
@@ -485,50 +489,50 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 			bufferPosition = 0;
 		}
 
-		public void clear() {
-			bufferPosition = 0;
-			java.util.Arrays.fill(buffer, 0.0);
-		}
+//		public void clear() {
+//			bufferPosition = 0;
+//			java.util.Arrays.fill(buffer, 0.0);
+//		}
 	}
 
-	/**
-	 * Memory pool for object reuse to reduce garbage collection pressure.
-	 */
-	private static class MemoryPool {
-		private final java.util.Queue<double[]> doubleArrayPool = new java.util.LinkedList<>();
-		private final java.util.Queue<java.util.List<Double>> listPool = new java.util.LinkedList<>();
-		private static final int POOL_SIZE = 10;
-
-		public double[] getDoubleArray(int size) {
-			double[] array = doubleArrayPool.poll();
-			if (array == null || array.length != size) {
-				array = new double[size];
-			}
-			return array;
-		}
-
-		public void returnDoubleArray(double[] array) {
-			if (doubleArrayPool.size() < POOL_SIZE) {
-				java.util.Arrays.fill(array, 0.0);
-				doubleArrayPool.offer(array);
-			}
-		}
-
-		public java.util.List<Double> getList() {
-			java.util.List<Double> list = listPool.poll();
-			if (list == null) {
-				list = new java.util.ArrayList<>();
-			} else {
-				list.clear();
-			}
-			return list;
-		}
-
-		public void returnList(java.util.List<Double> list) {
-			if (listPool.size() < POOL_SIZE) {
-				list.clear();
-				listPool.offer(list);
-			}
-		}
-	}
+//	/**
+//	 * Memory pool for object reuse to reduce garbage collection pressure.
+//	 */
+//	private static class MemoryPool {
+//		private final java.util.Queue<double[]> doubleArrayPool = new java.util.LinkedList<>();
+//		private final java.util.Queue<java.util.List<Double>> listPool = new java.util.LinkedList<>();
+//		private static final int POOL_SIZE = 10;
+//
+//		public double[] getDoubleArray(int size) {
+//			double[] array = doubleArrayPool.poll();
+//			if (array == null || array.length != size) {
+//				array = new double[size];
+//			}
+//			return array;
+//		}
+//
+//		public void returnDoubleArray(double[] array) {
+//			if (doubleArrayPool.size() < POOL_SIZE) {
+//				java.util.Arrays.fill(array, 0.0);
+//				doubleArrayPool.offer(array);
+//			}
+//		}
+//
+//		public java.util.List<Double> getList() {
+//			java.util.List<Double> list = listPool.poll();
+//			if (list == null) {
+//				list = new java.util.ArrayList<>();
+//			} else {
+//				list.clear();
+//			}
+//			return list;
+//		}
+//
+//		public void returnList(java.util.List<Double> list) {
+//			if (listPool.size() < POOL_SIZE) {
+//				list.clear();
+//				listPool.offer(list);
+//			}
+//		}
+//	}
 }

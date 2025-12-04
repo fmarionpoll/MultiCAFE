@@ -9,7 +9,7 @@ public class LineChartDisplay extends Plugin implements Block {
 
 	@Override
 	public void declareInput(VarList inputMap) {
-		inputMap.add(chartVar.getVariable());
+		inputMap.add(chartVar.getVariable().getName(), chartVar.getVariable());
 	}
 
 	@Override

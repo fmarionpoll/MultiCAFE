@@ -15,7 +15,7 @@ import plugins.adufour.vars.lang.Var;
 
 public class VarMultiLineChart extends Var<XYSeriesCollection> {
 	public VarMultiLineChart(String name, XYSeriesCollection defaultValue) {
-		super(name, XYSeriesCollection.class, defaultValue);
+		super(name, XYSeriesCollection.class, defaultValue, null);
 	}
 
 	@Override

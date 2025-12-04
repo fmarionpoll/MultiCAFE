@@ -14,10 +14,10 @@ public class XYChartDisplay extends Plugin implements Block {
 
 	@Override
 	public void declareInput(VarList inputMap) {
-		inputMap.add(xVar.getVariable());
-		inputMap.add(yVar.getVariable());
-		inputMap.add(chartVar.getVariable());
-		VarListener listener = new VarListener<double[]>() {
+		inputMap.add(xVar.getVariable().getName(), xVar.getVariable());
+		inputMap.add(yVar.getVariable().getName(), yVar.getVariable());
+		inputMap.add(chartVar.getVariable().getName(), chartVar.getVariable());
+		VarListener<double[]> listener = new VarListener<double[]>() {
 
 			@Override
 			public void valueChanged(Var<double[]> source, double[] oldValue, double[] newValue) {

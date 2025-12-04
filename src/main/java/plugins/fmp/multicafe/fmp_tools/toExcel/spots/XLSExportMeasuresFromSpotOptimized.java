@@ -41,7 +41,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException
 public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 
 	// Reusable buffers to minimize object creation
-	private final SpotDataBuffer spotDataBuffer;
+//	private final SpotDataBuffer spotDataBuffer;
 	private final ExcelRowBuffer excelRowBuffer;
 
 	// Memory management constants
@@ -54,7 +54,7 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 	 * Creates a new optimized Excel export instance.
 	 */
 	public XLSExportMeasuresFromSpotOptimized() {
-		this.spotDataBuffer = new SpotDataBuffer(BUFFER_SIZE);
+//		this.spotDataBuffer = new SpotDataBuffer(BUFFER_SIZE);
 		this.excelRowBuffer = new ExcelRowBuffer(BUFFER_SIZE);
 	}
 
@@ -229,30 +229,30 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 		return dataList.stream().map(value -> value / maximum).collect(java.util.stream.Collectors.toList());
 	}
 
-	/**
-	 * Reusable buffer for spot data to minimize object creation.
-	 */
-	private static class SpotDataBuffer {
-		private final double[] buffer;
-		private final int size;
-
-		public SpotDataBuffer(int size) {
-			this.size = size;
-			this.buffer = new double[size];
-		}
-
-		public void clear() {
-			java.util.Arrays.fill(buffer, 0.0);
-		}
-
-		public double[] getBuffer() {
-			return buffer;
-		}
-
-		public int getSize() {
-			return size;
-		}
-	}
+//	/**
+//	 * Reusable buffer for spot data to minimize object creation.
+//	 */
+//	private static class SpotDataBuffer {
+//		private final double[] buffer;
+//		private final int size;
+//
+//		public SpotDataBuffer(int size) {
+//			this.size = size;
+//			this.buffer = new double[size];
+//		}
+//
+//		public void clear() {
+//			java.util.Arrays.fill(buffer, 0.0);
+//		}
+//
+//		public double[] getBuffer() {
+//			return buffer;
+//		}
+//
+//		public int getSize() {
+//			return size;
+//		}
+//	}
 
 	/**
 	 * Reusable buffer for Excel row data to minimize object creation.
@@ -261,8 +261,8 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 		private final double[][] buffer;
 		private final int maxRows;
 		private final int maxCols;
-		private int currentRow = 0;
-		private int currentCol = 0;
+//		private int currentRow = 0;
+//		private int currentCol = 0;
 
 		public ExcelRowBuffer(int size) {
 			this.maxRows = size;
@@ -286,8 +286,8 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 			for (int i = 0; i < maxRows; i++) {
 				java.util.Arrays.fill(buffer[i], 0.0);
 			}
-			currentRow = 0;
-			currentCol = 0;
+//			currentRow = 0;
+//			currentCol = 0;
 		}
 
 		public int getMaxRows() {
