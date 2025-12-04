@@ -132,19 +132,24 @@ public class CapillaryGulps {
 	}
 
 	ArrayList<Integer> getTToNextGulp(List<Integer> datai, int npoints) {
-		int nintervals = -1;
-		ArrayList<Integer> data_out = null;
-		for (int index = datai.size() - 1; index >= 0; index--) {
+		if (datai == null || datai.isEmpty()) {
+			return new ArrayList<Integer>(Collections.nCopies(npoints, 0));
+		}
+
+		int size = datai.size();
+		ArrayList<Integer> data_out = new ArrayList<Integer>(Collections.nCopies(size, 0));
+		
+		boolean foundGulp = false;
+		int distanceToNextGulp = 0;
+		
+		for (int index = size - 1; index >= 0; index--) {
 			if (datai.get(index) == 1) {
-				if (nintervals < 0) {
-					int nitems = index + 1;
-					data_out = new ArrayList<Integer>(Collections.nCopies(nitems, 0));
-				}
-				nintervals = 0;
-				data_out.set(index, nintervals);
-			} else if (nintervals >= 0) {
-				nintervals++;
-				data_out.set(index, nintervals);
+				distanceToNextGulp = 0;
+				foundGulp = true;
+				data_out.set(index, distanceToNextGulp);
+			} else if (foundGulp) {
+				distanceToNextGulp++;
+				data_out.set(index, distanceToNextGulp);
 			}
 		}
 		return data_out;
