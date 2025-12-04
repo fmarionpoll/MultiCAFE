@@ -1,7 +1,5 @@
 package plugins.fmp.multicafe.fmp_tools;
 
-import java.util.logging.Logger;
-
 /**
  * Utility class for tracking minimum and maximum double values. This class
  * provides a convenient way to maintain running min/max values and can be used
@@ -31,7 +29,7 @@ import java.util.logging.Logger;
 public class MaxMinDouble {
 
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(MaxMinDouble.class.getName());
+//	private static final Logger LOGGER = Logger.getLogger(MaxMinDouble.class.getName());
 
 	/** Maximum value tracked */
 	private double max = 0;

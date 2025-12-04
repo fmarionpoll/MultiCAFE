@@ -201,12 +201,16 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
-		if (tabbedPane.getSelectedIndex() == 0)
-			tabInfos.initCombos();
-		else if (tabbedPane.getSelectedIndex() == 1)
-			tabFilter.initCombos();
-		else if (tabbedPane.getSelectedIndex() == 2)
-			tabEdit.initEditCombos();
+		if (tabbedPane.getSelectedIndex() == 0) {
+			if (tabInfos != null)
+				tabInfos.initCombos();
+		} else if (tabbedPane.getSelectedIndex() == 1) {
+			if (tabFilter != null)
+				tabFilter.initCombos();
+		} else if (tabbedPane.getSelectedIndex() == 2) {
+			if (tabEdit != null)
+				tabEdit.initEditCombos();
+		}
 	}
 
 }

@@ -33,7 +33,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.workinprogress_gpu.EnumCLFunction;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
-public class ImageRegistrationFeaturesGPU extends ImageRegistration {
+public class ImageRegistrationFeaturesGPU extends ImageRegistration implements AutoCloseable {
 
 	private CLContext context = null;
 	private CLProgram program = null;
@@ -122,11 +122,14 @@ public class ImageRegistrationFeaturesGPU extends ImageRegistration {
 					return new String(java.nio.file.Files.readAllBytes(file.toPath()), java.nio.charset.StandardCharsets.UTF_8);
 				}
 			} else {
-				Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
-				String result = s.hasNext() ? s.next() : "";
-				s.close();
-				is.close();
-				return result;
+				try (Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A")) {
+					String result = s.hasNext() ? s.next() : "";
+					return result;
+				} finally {
+					if (is != null) {
+						is.close();
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -518,11 +521,15 @@ public class ImageRegistrationFeaturesGPU extends ImageRegistration {
 		return res;
 	}
 
+	/**
+	 * Releases GPU resources. Should be called when this object is no longer needed,
+	 * or use try-with-resources for automatic cleanup.
+	 */
 	@Override
-	protected void finalize() throws Throwable {
+	public void close() {
 		if (context != null) {
 			context.release();
+			context = null;
 		}
-		super.finalize();
 	}
 }

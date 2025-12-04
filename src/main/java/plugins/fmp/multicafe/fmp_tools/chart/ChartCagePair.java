@@ -1,7 +1,5 @@
 package plugins.fmp.multicafe.fmp_tools.chart;
 
-import java.util.logging.Logger;
-
 import org.jfree.chart.ChartPanel;
 
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
@@ -38,7 +36,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 public class ChartCagePair {
 
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ChartCagePair.class.getName());
+//	private static final Logger LOGGER = Logger.getLogger(ChartCagePair.class.getName());
 
 	/** The chart panel associated with this pair */
 	private ChartPanel chartPanel;

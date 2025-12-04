@@ -142,7 +142,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 				&& isThereAnyDataToDisplay(exp, EnumXLSExport.BOTTOMLEVEL)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartTopBottomBounds;
-			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+//			Rectangle pos = (savedPos != null) ? savedPos : rectv;
 //			plotTopAndBottom = plotToChart(exp, "top + bottom levels", EnumXLSExport.TOPLEVEL, plotTopAndBottom, pos);
 			plotMeasuresToChart(exp, EnumXLSExport.TOPLEVEL, plotTopAndBottom);
 			if (savedPos == null) {
@@ -155,7 +155,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 		if (deltaCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.TOPLEVELDELTA)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartDeltaBounds;
-			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+//			Rectangle pos = (savedPos != null) ? savedPos : rectv;
 //			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumXLSExport.TOPLEVELDELTA, plotDelta, pos);
 			plotMeasuresToChart(exp, EnumXLSExport.TOPLEVELDELTA, plotDelta);
 			if (savedPos == null) {
@@ -168,7 +168,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 		if (derivativeCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.DERIVEDVALUES)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartDerivativeBounds;
-			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+//			Rectangle pos = (savedPos != null) ? savedPos : rectv;
 			// plotDerivative = plotToChart(exp, "Derivative", EnumXLSExport.DERIVEDVALUES,
 			// plotDerivative, pos);
 			plotMeasuresToChart(exp, EnumXLSExport.DERIVEDVALUES, plotDerivative);
@@ -182,7 +182,7 @@ public class LevelsChart extends JPanel implements SequenceListener {
 		if (consumptionCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.SUMGULPS)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartSumGulpsBounds;
-			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+//			Rectangle pos = (savedPos != null) ? savedPos : rectv;
 			// plotSumgulps = plotToChart(exp, "Cumulated gulps", EnumXLSExport.SUMGULPS,
 			// plotSumgulps, pos);
 			plotMeasuresToChart(exp, EnumXLSExport.SUMGULPS, plotSumgulps);

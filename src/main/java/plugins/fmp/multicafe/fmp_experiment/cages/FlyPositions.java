@@ -466,8 +466,10 @@ public class FlyPositions {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				pos.axis1 = ellipsoidValues[0];
-				pos.axis2 = ellipsoidValues[1];
+				if (ellipsoidValues != null && ellipsoidValues.length >= 2) {
+					pos.axis1 = ellipsoidValues[0];
+					pos.axis2 = ellipsoidValues[1];
+				}
 			} else if (pos.rectPosition != null) {
 				pos.axis1 = pos.rectPosition.getHeight();
 				pos.axis2 = pos.rectPosition.getWidth();

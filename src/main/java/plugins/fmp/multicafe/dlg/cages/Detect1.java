@@ -267,8 +267,10 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		if (cagesComboBox.getItemCount() != nitems) {
 			cagesComboBox.removeAllItems();
 			cagesComboBox.addItem("all cells");
-			for (Cage cage : exp.getCages().getCageList()) {
-				cagesComboBox.addItem(Integer.toString(cage.getCageID()));
+			if (exp != null) {
+				for (Cage cage : exp.getCages().getCageList()) {
+					cagesComboBox.addItem(Integer.toString(cage.getCageID()));
+				}
 			}
 		}
 	}

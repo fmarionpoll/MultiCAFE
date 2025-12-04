@@ -1,7 +1,5 @@
 package plugins.fmp.multicafe.fmp_tools;
 
-import java.util.logging.Logger;
-
 import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
 
@@ -34,7 +32,7 @@ import icy.sequence.Sequence;
 public class ViewerFMP extends Viewer {
 
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ViewerFMP.class.getName());
+//	private static final Logger LOGGER = Logger.getLogger(ViewerFMP.class.getName());
 
 	/** Flag to control whether title refresh is inhibited */
 	private boolean inhibitRefreshViewerTitle = false;

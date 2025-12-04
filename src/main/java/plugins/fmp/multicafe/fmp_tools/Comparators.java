@@ -1,7 +1,6 @@
 package plugins.fmp.multicafe.fmp_tools;
 
 import java.util.Comparator;
-import java.util.logging.Logger;
 
 import icy.roi.ROI;
 import icy.roi.ROI2D;
@@ -15,7 +14,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
 
 public class Comparators {
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(Comparators.class.getName());
+//	private static final Logger LOGGER = Logger.getLogger(Comparators.class.getName());
 
 	/** Default cage grid width for position calculations */
 	private static final int CAGE_GRID_WIDTH = 8;
