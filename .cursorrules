@@ -1,0 +1,11 @@
+# Cursor AI Rules for MultiCAFE Project
+
+## File Modifications
+- Only modify files locally, never commit changes
+- All file changes remain on local disk until explicitly committed by the user
+- Never run git commit, git push, or any version control operations
+
+## Project Context
+- Always read ./Cursor_setup/PROJECT_CONTEXT_DATABASE.md whenever the user starts a new chat
+- Avoid redundant comments
+
