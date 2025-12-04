@@ -1377,8 +1377,8 @@ public class Experiment {
 	public boolean adjustCapillaryMeasuresDimensions() {
 		KymographInfo kymoInfo = seqKymos.getKymographInfo();
 		if (kymoInfo.getMaxWidth() < 1) {
-			seqKymos.setImageWidthMax(seqKymos.getSequence().getSizeX());
-			if (seqKymos.getImageWidthMax() < 1)
+			kymoInfo = seqKymos.updateMaxDimensionsFromSequence();
+			if (kymoInfo.getMaxWidth() < 1)
 				return false;
 		}
 		capillaries.adjustToImageWidth(kymoInfo.getMaxWidth());
@@ -1388,12 +1388,13 @@ public class Experiment {
 	}
 
 	public boolean cropCapillaryMeasuresDimensions() {
-		if (seqKymos.getImageWidthMax() < 1) {
-			seqKymos.setImageWidthMax(seqKymos.getSequence().getSizeX());
-			if (seqKymos.getImageWidthMax() < 1)
+		KymographInfo kymoInfo = seqKymos.getKymographInfo();
+		if (kymoInfo.getMaxWidth() < 1) {
+			kymoInfo = seqKymos.updateMaxDimensionsFromSequence();
+			if (kymoInfo.getMaxWidth() < 1)
 				return false;
 		}
-		int imageWidth = seqKymos.getImageWidthMax();
+		int imageWidth = kymoInfo.getMaxWidth();
 		capillaries.cropToImageWidth(imageWidth);
 		seqKymos.getSequence().removeAllROI();
 		seqKymos.transferCapillariesMeasuresToKymos(capillaries);
@@ -1403,7 +1404,7 @@ public class Experiment {
 	public boolean saveCapillariesMeasures(String directory) {
 		boolean flag = false;
 		if (seqKymos != null && seqKymos.getSequence() != null) {
-			seqKymos.validateRois();
+			seqKymos.validateROIs();
 			seqKymos.transferKymosRoisToCapillaries_Measures(capillaries);
 			flag = capillaries.save_Capillaries(directory);
 		}
@@ -1415,7 +1416,7 @@ public class Experiment {
 			cage.clearCapillaryList();
 		}
 
-		for (plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary cap : capillaries.getCapillariesList()) {
+		for (Capillary cap : capillaries.getCapillariesList()) {
 			int cageID = cap.getCageIndexFromRoiName();
 			Cage cage = cages.getCageFromID(cageID);
 			if (cage == null) {

@@ -26,7 +26,6 @@ import icy.type.collection.array.Array1DUtil;
 import icy.type.geom.Polyline2D;
 import loci.formats.FormatException;
 import ome.xml.meta.OMEXMLMetadata;
-
 import plugins.fmp.multicafe.fmp_experiment.EnumStatus;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
@@ -39,7 +38,6 @@ import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
-
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 /**
@@ -191,13 +189,13 @@ public class SequenceKymos extends SequenceCamData {
 					} else if (roi.getName() != null && roi.getName().contains("derivative")) {
 						// Skip derivative ROIs
 						continue;
-					} 
+					}
 					// if gulp not found - add an index to it
 					ROI2DPolyLine roiLine = (ROI2DPolyLine) roi;
 					Polyline2D line = roiLine.getPolyline2D();
 					roi.setName("gulp" + String.format("%07d", (int) line.xpoints[0]));
 					roi.setColor(Color.red);
-					
+
 				} catch (Exception e) {
 					LOGGER.log(Level.WARNING, "Failed to process ROI: " + roi.getName(), e);
 					failed++;
@@ -329,7 +327,7 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public void saveKymosCurvesToCapillariesMeasures(Experiment exp) {
-		exp.getSeqKymos().validateRois();
+		exp.getSeqKymos().validateROIs();
 		exp.getSeqKymos().transferKymosRoisToCapillaries_Measures(exp.getCapillaries());
 		exp.saveCapillaries();
 	}
@@ -540,7 +538,7 @@ public class SequenceKymos extends SequenceCamData {
 	public boolean isRunning_loadImages() {
 		return isLoadingImages;
 	}
-	
+
 	/**
 	 * @deprecated Use {@link #getKymographInfo()} instead
 	 */
@@ -556,7 +554,7 @@ public class SequenceKymos extends SequenceCamData {
 	public int getImageWidthMax() {
 		return maxImageWidth;
 	}
-	
+
 	/**
 	 * @deprecated Use {@link #getKymographInfo()} instead
 	 */
@@ -572,13 +570,34 @@ public class SequenceKymos extends SequenceCamData {
 	public int getImageHeightMax() {
 		return maxImageHeight;
 	}
-	
+
 	/**
 	 * @deprecated Use {@link #getKymographInfo()} instead
 	 */
 	@Deprecated
 	public void setImageHeightMax(int maxImageHeight) {
 		this.maxImageHeight = maxImageHeight;
+	}
+
+	/**
+	 * Updates the maximum dimensions from the current sequence dimensions.
+	 * This is useful when the sequence has been loaded and dimensions need to be synchronized.
+	 * 
+	 * @return updated KymographInfo with the new dimensions
+	 * @throws IllegalStateException if sequence is not initialized
+	 */
+	public KymographInfo updateMaxDimensionsFromSequence() {
+		if (getSequence() == null) {
+			throw new IllegalStateException("Sequence is not initialized");
+		}
+		processingLock.lock();
+		try {
+			maxImageWidth = getSequence().getSizeX();
+			maxImageHeight = getSequence().getSizeY();
+			return getKymographInfo();
+		} finally {
+			processingLock.unlock();
+		}
 	}
 
 	// === PRIVATE HELPER METHODS ===
@@ -636,8 +655,8 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param options          the adjustment options
 	 * @return processing result
 	 */
-	private ImageProcessingResult adjustImageSizes(List<ImageFileData> imageDescriptors,
-			Rectangle targetDimensions, ImageAdjustmentOptions options) {
+	private ImageProcessingResult adjustImageSizes(List<ImageFileData> imageDescriptors, Rectangle targetDimensions,
+			ImageAdjustmentOptions options) {
 		if (!options.isAdjustSize()) {
 			return ImageProcessingResult.success(0, "Size adjustment disabled");
 		}
@@ -950,6 +969,5 @@ public class SequenceKymos extends SequenceCamData {
 			return sequence;
 		}
 	}
-
 
 }
