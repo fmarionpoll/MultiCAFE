@@ -326,7 +326,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 				if (i == j)
 					continue;
 				Experiment expj = getItemAt(j);
-				if (!expi.getProperties().isSameProperties(expj.getProperties()))
+				if (!expi.getProperties().areFieldsEqual(expj.getProperties()))
 					continue;
 				if (expj.chainToNextExperiment != null || expj.chainToPreviousExperiment != null)
 					continue;

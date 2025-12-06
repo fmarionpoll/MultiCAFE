@@ -129,20 +129,20 @@ public class DescriptorsIO {
 		// experiment-level
 		ExperimentProperties p = exp.getProperties();
 		if (p != null) {
-			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_EXPT), p.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
+			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_EXPT), p.getField(EnumXLSColumnHeader.EXP_EXPT));
 			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_BOXID),
-					p.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
+					p.getField(EnumXLSColumnHeader.EXP_BOXID));
 			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_STIM1),
-					p.getExperimentField(EnumXLSColumnHeader.EXP_STIM1));
+					p.getField(EnumXLSColumnHeader.EXP_STIM1));
 			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_CONC1),
-					p.getExperimentField(EnumXLSColumnHeader.EXP_CONC1));
+					p.getField(EnumXLSColumnHeader.EXP_CONC1));
 			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_STRAIN),
-					p.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
-			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_SEX), p.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
+					p.getField(EnumXLSColumnHeader.EXP_STRAIN));
+			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_SEX), p.getField(EnumXLSColumnHeader.EXP_SEX));
 			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_STIM2),
-					p.getExperimentField(EnumXLSColumnHeader.EXP_STIM2));
+					p.getField(EnumXLSColumnHeader.EXP_STIM2));
 			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_CONC2),
-					p.getExperimentField(EnumXLSColumnHeader.EXP_CONC2));
+					p.getField(EnumXLSColumnHeader.EXP_CONC2));
 		}
 
 		// cages/spots

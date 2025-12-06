@@ -417,11 +417,11 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 				parent0.paneKymos.tabLoadSave.loadDefaultKymos(exp);
 
-				if (exp.getSeqKymos() != null) {
-					parent0.paneLevels.tabFileLevels.dlg_levels_loadCapillaries_Measures(exp);
-					if (parent0.paneExperiment.tabOptions.graphsCheckBox.isSelected())
-						parent0.paneLevels.tabGraphs.displayGraphsPanels(exp);
-				}
+//				if (exp.getSeqKymos() != null) { // capillary measures can be computed by other means than from kymographs
+				parent0.paneLevels.tabFileLevels.dlg_levels_loadCapillaries_Measures(exp);
+				if (parent0.paneExperiment.tabOptions.graphsCheckBox.isSelected())
+					parent0.paneLevels.tabGraphs.displayGraphsPanels(exp);
+//				}
 
 				exp.loadCageMeasures();
 				exp.updateROIsAt(0);

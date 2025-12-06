@@ -23,6 +23,7 @@ import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillariesDescription;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageAdjustmentOptions;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
@@ -264,19 +265,19 @@ public class Experiment {
 	// ------------------------------ Legacy Metadata Accessors
 
 	public String getBoxID() {
-		return prop.ffield_boxID;
+		return prop.field_boxID;
 	}
 
 	public void setBoxID(String boxID) {
-		prop.ffield_boxID = boxID;
+		prop.field_boxID = boxID;
 	}
 
 	public String getExperiment() {
-		return prop.ffield_experiment;
+		return prop.field_experiment;
 	}
 
 	public void setExperiment(String experiment) {
-		prop.ffield_experiment = experiment;
+		prop.field_experiment = experiment;
 	}
 
 	public String getComment1() {
@@ -851,7 +852,7 @@ public class Experiment {
 		case EXP_SEX:
 		case EXP_STIM2:
 		case EXP_CONC2:
-			textList.add(prop.getExperimentField(fieldEnumCode));
+			textList.add(prop.getField(fieldEnumCode));
 			break;
 		case SPOT_STIM:
 		case SPOT_CONC:
@@ -871,9 +872,9 @@ public class Experiment {
 
 	public boolean replaceExperimentFieldIfEqualOldValue(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
-		boolean flag = prop.getExperimentField(fieldEnumCode).equals(oldValue);
+		boolean flag = prop.getField(fieldEnumCode).equals(oldValue);
 		if (flag) {
-			prop.setExperimentFieldNoTest(fieldEnumCode, newValue);
+			prop.setFieldNoTest(fieldEnumCode, newValue);
 		}
 		return flag;
 	}
@@ -915,7 +916,7 @@ public class Experiment {
 			strField = getCondition2();
 			break;
 		default:
-			strField = prop.getExperimentField(fieldEnumCode);
+			strField = prop.getField(fieldEnumCode);
 			break;
 		}
 		return strField;
@@ -977,7 +978,7 @@ public class Experiment {
 			setCondition2(newValue);
 			break;
 		default:
-			prop.setExperimentFieldNoTest(fieldEnumCode, newValue);
+			prop.setFieldNoTest(fieldEnumCode, newValue);
 			break;
 		}
 	}
@@ -1027,7 +1028,7 @@ public class Experiment {
 			addCapillariesValues(fieldEnumCode, textList);
 			break;
 		default:
-			textList.add(prop.getExperimentField(fieldEnumCode));
+			textList.add(prop.getField(fieldEnumCode));
 			break;
 		}
 	}
@@ -1365,11 +1366,11 @@ public class Experiment {
 			flag = xmlLoadOldCapillaries();
 
 		// load MCcapillaries description of experiment
-		if (prop.ffield_boxID.contentEquals("..") && prop.ffield_experiment.contentEquals("..")
+		if (prop.field_boxID.contentEquals("..") && prop.field_experiment.contentEquals("..")
 				&& prop.field_comment1.contentEquals("..") && prop.field_comment2.contentEquals("..")
 				&& prop.field_sex.contentEquals("..") && prop.field_strain.contentEquals("..")) {
-			prop.ffield_boxID = capillaries.getCapillariesDescription().getOld_boxID();
-			prop.ffield_experiment = capillaries.getCapillariesDescription().getOld_experiment();
+			prop.field_boxID = capillaries.getCapillariesDescription().getOld_boxID();
+			prop.field_experiment = capillaries.getCapillariesDescription().getOld_experiment();
 			prop.field_comment1 = capillaries.getCapillariesDescription().getOld_comment1();
 			prop.field_comment2 = capillaries.getCapillariesDescription().getOld_comment2();
 			prop.field_sex = capillaries.getCapillariesDescription().getOld_sex();
@@ -1454,14 +1455,15 @@ public class Experiment {
 	}
 
 	private void transferExpDescriptorsToCapillariesDescriptors() {
-		capillaries.getCapillariesDescription().setOld_boxID(prop.ffield_boxID);
-		capillaries.getCapillariesDescription().setOld_experiment(prop.ffield_experiment);
-		capillaries.getCapillariesDescription().setOld_comment1(prop.field_comment1);
-		capillaries.getCapillariesDescription().setOld_comment2(prop.field_comment2);
-		capillaries.getCapillariesDescription().setOld_strain(prop.field_strain);
-		capillaries.getCapillariesDescription().setOld_sex(prop.field_sex);
-		capillaries.getCapillariesDescription().setOld_cond1(prop.field_stim2);
-		capillaries.getCapillariesDescription().setOld_cond2(prop.field_conc2);
+		CapillariesDescription desc = capillaries.getCapillariesDescription();
+		desc.setOld_boxID(prop.field_boxID);
+		desc.setOld_experiment(prop.field_experiment);
+		desc.setOld_comment1(prop.field_comment1);
+		desc.setOld_comment2(prop.field_comment2);
+		desc.setOld_strain(prop.field_strain);
+		desc.setOld_sex(prop.field_sex);
+		desc.setOld_cond1(prop.field_stim2);
+		desc.setOld_cond2(prop.field_conc2);
 	}
 
 	public boolean loadCapillaries() {
@@ -1534,8 +1536,8 @@ public class Experiment {
 		if (seqKymos != null && seqKymos.getSequence() != null) {
 			seqKymos.validateROIs();
 			seqKymos.transferKymosRoisToCapillaries_Measures(capillaries);
-			flag = capillaries.save_Capillaries(directory);
 		}
+		flag = capillaries.save_Capillaries(directory);
 		return flag;
 	}
 
@@ -1588,10 +1590,10 @@ public class Experiment {
 	}
 
 	public boolean loadCamDataCapillaries() {
-		// TODO: Adapt ExperimentService.loadCamDataCapillaries to work with
-		// experiment1.Experiment
-		// For now, return false - this needs to be implemented
-		return false;
+		if (resultsDirectory == null) {
+			return false;
+		}
+		return loadMCCapillaries_Only();
 	}
 
 	public boolean openMeasures(boolean loadCapillaries, boolean loadDrosoPositions) {

@@ -393,7 +393,7 @@ public class CagesArray {
 			}
 
 			int ncages = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
-			if (ncages <= 0) {
+			if (ncages < 0) {
 				System.err.println("ERROR: Invalid number of cages: " + ncages);
 				return false;
 			}

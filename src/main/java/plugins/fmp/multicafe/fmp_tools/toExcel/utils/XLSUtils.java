@@ -79,7 +79,7 @@ public class XLSUtils {
 
 	public static void setFieldValue(SXSSFSheet sheet, int x, int y, boolean transpose, ExperimentProperties expDesc,
 			EnumXLSColumnHeader field) {
-		setValue(sheet, x, y + field.getValue(), transpose, expDesc.getExperimentField(field));
+		setValue(sheet, x, y + field.getValue(), transpose, expDesc.getField(field));
 	}
 
 }

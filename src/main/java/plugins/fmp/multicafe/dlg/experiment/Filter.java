@@ -184,7 +184,7 @@ public class Filter extends JPanel {
 		Iterator<Experiment> iterator = filteredList.iterator();
 		while (iterator.hasNext()) {
 			Experiment exp = iterator.next();
-			int compare = exp.getProperties().getExperimentField(header).compareTo(filter);
+			int compare = exp.getProperties().getField(header).compareTo(filter);
 			if (compare != 0)
 				iterator.remove();
 		}

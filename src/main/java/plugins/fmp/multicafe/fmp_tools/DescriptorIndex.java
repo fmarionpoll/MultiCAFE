@@ -154,21 +154,21 @@ public class DescriptorIndex {
 	private void updateDistinctLocal(EnumMap<EnumXLSColumnHeader, TreeSet<String>> distinctLocal,
 			ExperimentProperties props) {
 		addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.EXP_EXPT),
-				props.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
+				props.getField(EnumXLSColumnHeader.EXP_EXPT));
 		addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.EXP_BOXID),
-				props.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
+				props.getField(EnumXLSColumnHeader.EXP_BOXID));
 		addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.EXP_STIM1),
-				props.getExperimentField(EnumXLSColumnHeader.EXP_STIM1));
+				props.getField(EnumXLSColumnHeader.EXP_STIM1));
 		addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.EXP_CONC1),
-				props.getExperimentField(EnumXLSColumnHeader.EXP_CONC1));
+				props.getField(EnumXLSColumnHeader.EXP_CONC1));
 		addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.EXP_STRAIN),
-				props.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
+				props.getField(EnumXLSColumnHeader.EXP_STRAIN));
 		addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.EXP_SEX),
-				props.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
+				props.getField(EnumXLSColumnHeader.EXP_SEX));
 		addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.EXP_STIM2),
-				props.getExperimentField(EnumXLSColumnHeader.EXP_STIM2));
+				props.getField(EnumXLSColumnHeader.EXP_STIM2));
 		addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.EXP_CONC2),
-				props.getExperimentField(EnumXLSColumnHeader.EXP_CONC2));
+				props.getField(EnumXLSColumnHeader.EXP_CONC2));
 	}
 
 	private void addIfNotEmpty(Set<String> set, String value) {
@@ -223,7 +223,7 @@ public class DescriptorIndex {
 				}
 			}
 			if (props != null) {
-				String value = props.getExperimentField(field);
+				String value = props.getField(field);
 				if (value != null && !value.isEmpty())
 					set.add(value);
 			}

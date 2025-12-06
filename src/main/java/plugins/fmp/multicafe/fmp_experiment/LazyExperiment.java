@@ -122,7 +122,7 @@ public class LazyExperiment extends Experiment {
 
 	public String getFieldValue(EnumXLSColumnHeader field) {
 		if (loadPropertiesIfNeeded() && cachedExperimentProperties != null) {
-			return cachedExperimentProperties.getExperimentField(field);
+			return cachedExperimentProperties.getField(field);
 		}
 		return "..";
 	}
