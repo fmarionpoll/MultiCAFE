@@ -18,13 +18,9 @@ import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.cages.CageString;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.fmp_tools.chart.ChartCageArrayFrame;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptionsBuilder;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartLevels;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 
 public class LevelsChart extends JPanel implements SequenceListener {
@@ -36,10 +32,10 @@ public class LevelsChart extends JPanel implements SequenceListener {
 //	private ChartLevels plotDelta = null;
 //	private ChartLevels plotDerivative = null;
 //	private ChartLevels plotSumgulps = null;
-	private ChartCageArrayFrame plotTopAndBottom = null;
-	private ChartCageArrayFrame plotDelta = null;
-	private ChartCageArrayFrame plotDerivative = null;
-	private ChartCageArrayFrame plotSumgulps = null;
+	private ChartLevels plotTopAndBottom = null;
+	private ChartLevels plotDelta = null;
+	private ChartLevels plotDerivative = null;
+	private ChartLevels plotSumgulps = null;
 
 	private MultiCAFE parent0 = null;
 
@@ -138,6 +134,10 @@ public class LevelsChart extends JPanel implements SequenceListener {
 	}
 
 	public void displayGraphsPanels(Experiment exp) {
+		if (exp == null) {
+			return;
+		}
+
 		if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
 			exp.getSeqKymos().getSequence().addListener(this);
 		}
@@ -150,101 +150,62 @@ public class LevelsChart extends JPanel implements SequenceListener {
 				&& isThereAnyDataToDisplay(exp, EnumXLSExport.BOTTOMLEVEL)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartTopBottomBounds;
-//			Rectangle pos = (savedPos != null) ? savedPos : rectv;
-//			plotTopAndBottom = plotToChart(exp, "top + bottom levels", EnumXLSExport.TOPLEVEL, plotTopAndBottom, pos);
-			plotMeasuresToChart(exp, EnumXLSExport.TOPLEVEL, plotTopAndBottom);
+			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+			plotTopAndBottom = plotToChart(exp, "top + bottom levels", EnumXLSExport.TOPLEVEL, plotTopAndBottom, pos);
 			if (savedPos == null) {
 				rectv.translate(dx, dy);
 			}
-			plotTopAndBottom.toFront();
 		} else if (plotTopAndBottom != null)
 			closeChart(plotTopAndBottom);
 
 		if (deltaCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.TOPLEVELDELTA)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartDeltaBounds;
-//			Rectangle pos = (savedPos != null) ? savedPos : rectv;
-//			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumXLSExport.TOPLEVELDELTA, plotDelta, pos);
-			plotMeasuresToChart(exp, EnumXLSExport.TOPLEVELDELTA, plotDelta);
+			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumXLSExport.TOPLEVELDELTA, plotDelta, pos);
 			if (savedPos == null) {
 				rectv.translate(dx, dy);
 			}
-			plotDelta.toFront();
 		} else if (plotDelta != null)
 			closeChart(plotDelta);
 
 		if (derivativeCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.DERIVEDVALUES)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartDerivativeBounds;
-//			Rectangle pos = (savedPos != null) ? savedPos : rectv;
-			// plotDerivative = plotToChart(exp, "Derivative", EnumXLSExport.DERIVEDVALUES,
-			// plotDerivative, pos);
-			plotMeasuresToChart(exp, EnumXLSExport.DERIVEDVALUES, plotDerivative);
+			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+			plotDerivative = plotToChart(exp, "Derivative", EnumXLSExport.DERIVEDVALUES, plotDerivative, pos);
 			if (savedPos == null) {
 				rectv.translate(dx, dy);
 			}
-			plotDerivative.toFront();
 		} else if (plotDerivative != null)
 			closeChart(plotDerivative);
 
 		if (consumptionCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.SUMGULPS)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartSumGulpsBounds;
-//			Rectangle pos = (savedPos != null) ? savedPos : rectv;
-			// plotSumgulps = plotToChart(exp, "Cumulated gulps", EnumXLSExport.SUMGULPS,
-			// plotSumgulps, pos);
-			plotMeasuresToChart(exp, EnumXLSExport.SUMGULPS, plotSumgulps);
+			Rectangle pos = (savedPos != null) ? savedPos : rectv;
+			plotSumgulps = plotToChart(exp, "Cumulated gulps", EnumXLSExport.SUMGULPS, plotSumgulps, pos);
 			if (savedPos == null) {
 				rectv.translate(dx, dy);
 			}
-			plotSumgulps.toFront();
 		} else if (plotSumgulps != null)
 			closeChart(plotSumgulps);
 	}
 
-	private ChartCageArrayFrame plotMeasuresToChart(Experiment exp, EnumXLSExport exportType,
-			ChartCageArrayFrame iChart) {
-		if (iChart != null)
-			iChart.getMainChartFrame().dispose();
 
-		int first = 0;
-		int last = exp.getCages().cagesList.size() - 1;
-		if (!displayAllButton.isSelected()) {
-			Cage cageFound = exp.getCages().findFirstCageWithSelectedSpot();
-			if (cageFound == null)
-				cageFound = exp.getCages().findFirstSelectedCage();
-			if (cageFound == null)
-				return null;
-			exp.getSeqCamData().centerDisplayOnRoi(cageFound.getRoi());
-			String cageNumber = CageString.getCageNumberFromCageRoiName(cageFound.getRoi().getName());
-			first = Integer.parseInt(cageNumber);
-			last = first;
+	private ChartLevels plotToChart(Experiment exp, String title, EnumXLSExport option, ChartLevels iChart,
+			Rectangle rectv) {
+		if (iChart != null && iChart.mainChartFrame != null)
+			iChart.mainChartFrame.dispose();
+		iChart = new ChartLevels();
+		iChart.createChartPanel(parent0, title, rectv);
+		iChart.displayData(exp, option, title, correctEvaporationCheckbox.isSelected());
+		if (iChart.mainChartFrame != null) {
+			iChart.mainChartFrame.toFront();
+			iChart.mainChartFrame.requestFocus();
 		}
-
-		XLSExportOptions options = XLSExportOptionsBuilder.forChart().withBuildExcelStepMs(60000)
-//				.withRelativeToT0(relativeToCheckbox.isSelected())
-				.withExportType(exportType).withCageRange(first, last).build();
-
-		iChart = new ChartCageArrayFrame();
-		iChart.createMainChartPanel("Spots measures", exp, options, parent0);
-		iChart.setChartSpotUpperLeftLocation(getInitialUpperLeftPosition(exp));
-		iChart.displayData(exp, options);
-		iChart.getMainChartFrame().toFront();
-		iChart.getMainChartFrame().requestFocus();
 		return iChart;
 	}
-
-//	private ChartLevels plotToChart(Experiment exp, String title, EnumXLSExport option, ChartLevels iChart,
-//			Rectangle rectv) {
-//		if (iChart != null)
-//			iChart.mainChartFrame.dispose();
-//		iChart = new ChartLevels();
-//		iChart.createChartPanel(parent0, title, rectv);
-//		iChart.displayData(exp, option, title, correctEvaporationCheckbox.isSelected());
-//		iChart.mainChartFrame.toFront();
-//		iChart.mainChartFrame.requestFocus();
-//		return iChart;
-//	}
 
 	public void closeAllCharts() {
 		closeChart(plotTopAndBottom);
@@ -253,8 +214,8 @@ public class LevelsChart extends JPanel implements SequenceListener {
 		closeChart(plotDelta);
 	}
 
-	private void closeChart(ChartCageArrayFrame chart) {
-		if (chart != null)
+	private void closeChart(ChartLevels chart) {
+		if (chart != null && chart.mainChartFrame != null)
 			chart.mainChartFrame.dispose();
 		chart = null;
 	}

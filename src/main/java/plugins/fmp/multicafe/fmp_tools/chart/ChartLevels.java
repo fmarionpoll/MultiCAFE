@@ -32,6 +32,7 @@ import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.capillaries.XLSExportMeasuresFromCapillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
@@ -92,7 +93,7 @@ public class ChartLevels extends IcyFrame {
 		for (XYSeriesCollection xySeriesCollection : xyDataSetList) {
 			String[] description = xySeriesCollection.getSeries(0).getDescription().split("_");
 
-			NumberAxis xAxis = new NumberAxis(description[0]);
+			NumberAxis xAxis = new NumberAxis("Time (minutes)");
 			XYLineAndShapeRenderer subPlotRenderer = new XYLineAndShapeRenderer(true, false);
 			final XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, null, subPlotRenderer);
 			int icolor = 0;
@@ -193,10 +194,12 @@ public class ChartLevels extends IcyFrame {
 
 	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumXLSExport exportType,
 			boolean subtractEvaporation) {
-		XLSResultsArray resultsArray1 = getDataAsResultsArray(exp, exportType, subtractEvaporation);
+		XLSExportOptions options = new XLSExportOptions();
+		options.buildExcelStepMs = 60000;
+		XLSResultsArray resultsArray1 = getDataAsResultsArray(exp, exportType, subtractEvaporation, options);
 		XLSResultsArray resultsArray2 = null;
 		if (exportType == EnumXLSExport.TOPLEVEL)
-			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExport.BOTTOMLEVEL, subtractEvaporation);
+			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExport.BOTTOMLEVEL, subtractEvaporation, options);
 
 		XYSeriesCollection xyDataset = null;
 		int oldCage = -1;
@@ -204,16 +207,24 @@ public class ChartLevels extends IcyFrame {
 		List<XYSeriesCollection> xyList = new ArrayList<XYSeriesCollection>();
 		for (int iRow = 0; iRow < resultsArray1.size(); iRow++) {
 			XLSResults xlsResults = resultsArray1.getRow(iRow);
+			if (xlsResults == null) {
+				continue;
+			}
 			if (oldCage != xlsResults.getCageID()) {
 				xyDataset = new XYSeriesCollection();
 				oldCage = xlsResults.getCageID();
 				xyList.add(xyDataset);
 			}
 
-			XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.getName().substring(4));
+			if (xyDataset == null) {
+				xyDataset = new XYSeriesCollection();
+				xyList.add(xyDataset);
+			}
+
+			XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.getName().substring(4), options.buildExcelStepMs);
 			seriesXY.setDescription("cell " + xlsResults.getCageID() + "_" + xlsResults.getNflies());
 			if (resultsArray2 != null)
-				appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow));
+				appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow), options.buildExcelStepMs);
 
 			xyDataset.addSeries(seriesXY);
 			updateGlobalMaxMin();
@@ -222,15 +233,31 @@ public class ChartLevels extends IcyFrame {
 	}
 
 	private XLSResultsArray getDataAsResultsArray(Experiment exp, EnumXLSExport exportType,
-			boolean subtractEvaporation) {
+			boolean subtractEvaporation, XLSExportOptions optionsParam) {
+		if (exp == null || exp.getCapillaries() == null || exp.getCapillaries().getCapillariesList() == null) {
+			return new XLSResultsArray();
+		}
+
 		XLSExportOptions options = new XLSExportOptions();
-		options.buildExcelStepMs = 60000;
+		options.buildExcelStepMs = optionsParam.buildExcelStepMs;
 		options.relativeToT0 = true;
 		options.subtractEvaporation = subtractEvaporation;
+		options.exportType = exportType;
 
 		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
-//		return xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, exportType, options);
-		return null; // TODO adapt getXLSResults... to collect data from all capillaries
+
+		XLSResultsArray resultsArray = new XLSResultsArray();
+		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
+
+		for (Capillary capillary : exp.getCapillaries().getCapillariesList()) {
+			XLSResults xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, options, false);
+			if (xlsResults != null) {
+				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
+				resultsArray.add(xlsResults);
+			}
+		}
+
+		return resultsArray;
 	}
 
 	private void updateGlobalMaxMin() {
@@ -249,36 +276,40 @@ public class ChartLevels extends IcyFrame {
 		}
 	}
 
-	private XYSeries getXYSeries(XLSResults results, String name) {
+	private XYSeries getXYSeries(XLSResults results, String name, long buildExcelStepMs) {
 		XYSeries seriesXY = new XYSeries(name, false);
 		if (results.getValuesOut() != null && results.getValuesOut().length > 0) {
-			xmax = results.getValuesOut().length;
+			xmax = (results.getValuesOut().length - 1) * (buildExcelStepMs / 60000.0);
 			ymax = results.getValuesOut()[0];
 			ymin = ymax;
-			addPointsAndUpdateExtrema(seriesXY, results, 0);
+			addPointsAndUpdateExtrema(seriesXY, results, 0, buildExcelStepMs);
 		}
 		return seriesXY;
 	}
 
-	private void appendDataToXYSeries(XYSeries seriesXY, XLSResults results) {
+	private void appendDataToXYSeries(XYSeries seriesXY, XLSResults results, long buildExcelStepMs) {
 		if (results.getValuesOut() != null && results.getValuesOut().length > 0) {
-			seriesXY.add(Double.NaN, Double.NaN);
-			addPointsAndUpdateExtrema(seriesXY, results, 0);
+			int currentLength = seriesXY.getItemCount();
+			double timeMinutes = currentLength * (buildExcelStepMs / 60000.0);
+			seriesXY.add(timeMinutes, Double.NaN);
+			addPointsAndUpdateExtrema(seriesXY, results, currentLength, buildExcelStepMs);
 		}
 	}
 
-	private void addPointsAndUpdateExtrema(XYSeries seriesXY, XLSResults results, int startFrame) {
-		int x = 0;
+	private void addPointsAndUpdateExtrema(XYSeries seriesXY, XLSResults results, int startIndex, long buildExcelStepMs) {
 		int npoints = results.getValuesOut().length;
+		double timeStepMinutes = buildExcelStepMs / 60000.0; // Convert ms to minutes
 		for (int j = 0; j < npoints; j++) {
+			double timeMinutes = (startIndex + j) * timeStepMinutes;
 			double y = results.getValuesOut()[j];
-			seriesXY.add(x + startFrame, y);
+			seriesXY.add(timeMinutes, y);
 			if (ymax < y)
 				ymax = y;
 			if (ymin > y)
 				ymin = y;
-			x++;
 		}
+		if ((startIndex + npoints - 1) * timeStepMinutes > xmax)
+			xmax = (startIndex + npoints - 1) * timeStepMinutes;
 	}
 
 }

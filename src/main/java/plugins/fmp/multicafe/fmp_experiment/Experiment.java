@@ -1593,7 +1593,11 @@ public class Experiment {
 		if (resultsDirectory == null) {
 			return false;
 		}
-		return loadMCCapillaries_Only();
+		boolean flag = loadMCCapillaries_Only();
+		if (flag && seqCamData != null && seqCamData.getSequence() != null) {
+			capillaries.transferCapillaryRoiToSequence(seqCamData.getSequence());
+		}
+		return flag;
 	}
 
 	public boolean openMeasures(boolean loadCapillaries, boolean loadDrosoPositions) {

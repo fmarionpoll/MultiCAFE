@@ -33,6 +33,11 @@ public class XLSResultsArray {
 		return resultsList.get(index);
 	}
 
+	public void add(XLSResults results) {
+		if (results != null)
+			resultsList.add(results);
+	}
+
 	public void subtractDeltaT(int i, int j) {
 		for (XLSResults row : resultsList)
 			row.subtractDeltaT(1, 1); // options.buildExcelStepMs);

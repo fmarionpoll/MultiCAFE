@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -33,6 +35,7 @@ import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
 import plugins.fmp.multicafe.fmp_experiment.LazyExperiment;
 import plugins.fmp.multicafe.fmp_experiment.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multicafe.fmp_tools.DescriptorsIO;
+import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.JComponents.SequenceNameListRenderer;
 
 public class LoadSaveExperiment extends JPanel implements PropertyChangeListener, ItemListener, SequenceListener {
@@ -406,35 +409,74 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			boolean flag = true;
 			progressFrame.setMessage("Load image");
 
+			// Step 1: Load seqCamData images
 			exp.getSeqCamData().loadImages();
 			parent0.paneExperiment.updateViewerForSequenceCam(exp);
 
-			if (exp.getSeqCamData() != null) {
-				if (exp.getSeqCamData().getSequence() != null)
-					exp.getSeqCamData().getSequence().addListener(this);
-
-				exp.loadCamDataCapillaries();
-
-				parent0.paneKymos.tabLoadSave.loadDefaultKymos(exp);
-
-//				if (exp.getSeqKymos() != null) { // capillary measures can be computed by other means than from kymographs
-				parent0.paneLevels.tabFileLevels.dlg_levels_loadCapillaries_Measures(exp);
-				if (parent0.paneExperiment.tabOptions.graphsCheckBox.isSelected())
-					parent0.paneLevels.tabGraphs.displayGraphsPanels(exp);
-//				}
-
-				exp.loadCageMeasures();
-				exp.updateROIsAt(0);
-				progressFrame.setMessage("Load data: update dialogs");
-
-				parent0.paneExperiment.updateDialogs(exp);
-				parent0.paneKymos.updateDialogs(exp);
-				parent0.paneCapillaries.updateDialogs(exp);
-			} else {
+			if (exp.getSeqCamData() == null) {
 				flag = false;
 				LOGGER.severe(
 						"LoadSaveExperiments:openSelectedExperiment() Error: no jpg files found for this experiment\n");
+				progressFrame.close();
+				return flag;
 			}
+
+			if (exp.getSeqCamData().getSequence() != null)
+				exp.getSeqCamData().getSequence().addListener(this);
+
+			// Step 1 (continued): Check if MCcapillaries.xml exists and load capillaries + display on seqCamData
+			progressFrame.setMessage("Load capillaries");
+			if (exp.loadCamDataCapillaries()) {
+				// Capillaries loaded and displayed on seqCamData images
+			}
+
+			// Step 2: Identify and select bin directory (bin_60, bin_xx)
+			progressFrame.setMessage("Select bin directory");
+			String selectedBinDir = selectBinDirectory(exp);
+			if (selectedBinDir != null) {
+				exp.setBinSubDirectory(selectedBinDir);
+				parent0.expListComboLazy.expListBinSubDirectory = selectedBinDir;
+			}
+
+			// Step 3: Load kymographs from selected bin directory and display in another window
+			progressFrame.setMessage("Load kymographs");
+			boolean kymosLoaded = false;
+			if (selectedBinDir != null) {
+				kymosLoaded = parent0.paneKymos.tabLoadSave.loadDefaultKymos(exp);
+				if (kymosLoaded && exp.getSeqKymos() != null) {
+					parent0.paneKymos.tabDisplay.displayUpdateOnSwingThread();
+				}
+			}
+
+			// Step 4: Load CapillaryMeasures.csv from bin directory and display measures
+			progressFrame.setMessage("Load capillary measures");
+			if (selectedBinDir != null && exp.getBinSubDirectory() != null) {
+				// Ensure we're loading from the correct bin directory
+				String binFullDir = exp.getKymosBinFullDirectory();
+				if (binFullDir != null) {
+					exp.loadCapillaries();
+					if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
+						exp.getSeqKymos().transferCapillariesMeasuresToKymos(exp.getCapillaries());
+					}
+				}
+			}
+
+			// Step 5: If kymographs are present, transfer measures to kymographs
+			if (kymosLoaded && exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
+				exp.getSeqKymos().transferCapillariesMeasuresToKymos(exp.getCapillaries());
+			}
+
+			if (parent0.paneExperiment.tabOptions.graphsCheckBox.isSelected())
+				parent0.paneLevels.tabGraphs.displayGraphsPanels(exp);
+
+			exp.loadCageMeasures();
+			exp.updateROIsAt(0);
+			progressFrame.setMessage("Load data: update dialogs");
+
+			parent0.paneExperiment.updateDialogs(exp);
+			parent0.paneKymos.updateDialogs(exp);
+			parent0.paneCapillaries.updateDialogs(exp);
+
 			parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);
 			progressFrame.close();
 
@@ -447,6 +489,77 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			progressFrame.close();
 			return false;
 		}
+	}
+
+	/**
+	 * Detects and selects bin directory (bin_60, bin_xx) according to rules:
+	 * - If loading single experiment and multiple bins exist, ask user
+	 * - If loading series and not first file, keep previously selected bin
+	 * - If directory not found, ask user what to do
+	 */
+	private String selectBinDirectory(Experiment exp) {
+		String resultsDir = exp.getResultsDirectory();
+		if (resultsDir == null) {
+			return null;
+		}
+
+		List<String> binDirs = Directories.getSortedListOfSubDirectoriesWithTIFF(resultsDir);
+		if (binDirs == null || binDirs.isEmpty()) {
+			// No bin directories found - ask user what to do
+			int response = JOptionPane.showConfirmDialog(null,
+					"No bin directories found in " + resultsDir + "\nDo you want to continue without kymographs?",
+					"No Bin Directory Found", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (response == JOptionPane.YES_OPTION) {
+				return null;
+			} else {
+				// User can manually select a directory
+				return selectBinDirectoryDialog(binDirs);
+			}
+		}
+
+		// Check if we're loading a single experiment or a series
+		boolean isFirstExperiment = (parent0.expListComboLazy.getSelectedIndex() == 0);
+		boolean isSingleExperiment = (parent0.expListComboLazy.getItemCount() == 1);
+
+		// If we have a previously selected bin directory and it exists, use it (for series)
+		String previousBinDir = parent0.expListComboLazy.expListBinSubDirectory;
+		if (!isFirstExperiment && previousBinDir != null && binDirs.contains(previousBinDir)) {
+			return previousBinDir;
+		}
+
+		// If single experiment or first in series
+		if (isSingleExperiment || isFirstExperiment) {
+			if (binDirs.size() > 1) {
+				// Multiple bin directories - ask user which one
+				return selectBinDirectoryDialog(binDirs);
+			} else if (binDirs.size() == 1) {
+				// Only one bin directory - use it
+				return binDirs.get(0);
+			}
+		}
+
+		// Default: use first available or ask
+		if (binDirs.size() > 0) {
+			return binDirs.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Shows a dialog to let user select a bin directory from the list
+	 */
+	private String selectBinDirectoryDialog(List<String> binDirs) {
+		if (binDirs == null || binDirs.isEmpty()) {
+			return null;
+		}
+
+		Object[] array = binDirs.toArray();
+		JComboBox<Object> jcb = new JComboBox<Object>(array);
+		jcb.setEditable(false);
+		JOptionPane.showMessageDialog(null, jcb, "Select bin directory", JOptionPane.QUESTION_MESSAGE);
+		Object selected = jcb.getSelectedItem();
+		return (selected != null) ? selected.toString() : null;
 	}
 
 	private void handleOpenButton() {
