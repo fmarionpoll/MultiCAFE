@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.fmp_experiment.cages;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -585,6 +586,131 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		spotSUM.computeSUM(spot1, spot2);
 		return spotSUM;
 	}
+
+	// ----------------------------------------
+	// CSV Import methods
+
+	public void csvImport_CAGE_Header(String[] data) {
+		if (data == null || data.length < 8) {
+			System.err.println("Cage:csvImport_CAGE_Header() Invalid data array length");
+			return;
+		}
+
+		int i = 0;
+		// Parse cageID (as String first, then convert to int)
+		String cageIDStr = data[i];
+		i++;
+		try {
+			int cageIDInt = Integer.valueOf(cageIDStr);
+			prop.setCageID(cageIDInt);
+			prop.setStrCageNumber(cageIDStr);
+		} catch (NumberFormatException e) {
+			System.err.println("Cage:csvImport_CAGE_Header() Invalid cageID: " + cageIDStr);
+		}
+
+		// Parse nFlies
+		if (i < data.length) {
+			try {
+				int nFlies = Integer.valueOf(data[i]);
+				prop.setCageNFlies(nFlies);
+				i++;
+			} catch (NumberFormatException e) {
+				System.err.println("Cage:csvImport_CAGE_Header() Invalid nFlies: " + data[i]);
+				i++;
+			}
+		}
+
+		// Parse age
+		if (i < data.length) {
+			try {
+				int age = Integer.valueOf(data[i]);
+				prop.setFlyAge(age);
+				i++;
+			} catch (NumberFormatException e) {
+				System.err.println("Cage:csvImport_CAGE_Header() Invalid age: " + data[i]);
+				i++;
+			}
+		}
+
+		// Parse comment
+		if (i < data.length) {
+			prop.setComment(data[i]);
+			i++;
+		}
+
+		// Parse strain
+		if (i < data.length) {
+			prop.setFlyStrain(data[i]);
+			i++;
+		}
+
+		// Parse sex
+		if (i < data.length) {
+			prop.setFlySex(data[i]);
+			i++;
+		}
+
+		// Parse ROI name
+		String cageROI_name = "";
+		if (i < data.length) {
+			cageROI_name = data[i];
+			i++;
+		}
+
+		// Parse npoints
+		int npoints = 0;
+		if (i < data.length) {
+			try {
+				npoints = Integer.valueOf(data[i]);
+				i++;
+			} catch (NumberFormatException e) {
+				System.err.println("Cage:csvImport_CAGE_Header() Invalid npoints: " + data[i]);
+			}
+		}
+
+		// Parse polygon vertices (x, y pairs)
+		if (npoints > 0 && i + (npoints * 2) <= data.length) {
+			double[] x = new double[npoints];
+			double[] y = new double[npoints];
+			for (int j = 0; j < npoints; j++) {
+				try {
+					x[j] = Double.valueOf(data[i]);
+					i++;
+					y[j] = Double.valueOf(data[i]);
+					i++;
+				} catch (NumberFormatException e) {
+					System.err.println("Cage:csvImport_CAGE_Header() Invalid coordinate at index " + j);
+					break;
+				}
+			}
+			Polygon2D polygon = new Polygon2D(x, y, npoints);
+			cageROI2D = new ROI2DPolygon(polygon);
+			if (cageROI_name != null && !cageROI_name.isEmpty()) {
+				cageROI2D.setName(cageROI_name);
+			}
+			cageROI2D.setColor(Color.MAGENTA);
+		}
+	}
+
+	public void csvImport_MEASURE_Data_v0(EnumCageMeasures measureType, String[] data, boolean complete) {
+		switch (measureType) {
+		case POSITION:
+			if (complete) {
+				flyPositions.csvImport_Rectangle_FromRow(data, 1);
+			} else {
+				flyPositions.csvImport_XY_FromRow(data, 1);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	public void csvImport_MEASURE_Data_Parameters(String[] data) {
+		flyPositions.cvsImport_Parameter_FromRow(data);
+	}
+
+	// ----------------------------------------
 
 	@Override
 	public void close() throws Exception {

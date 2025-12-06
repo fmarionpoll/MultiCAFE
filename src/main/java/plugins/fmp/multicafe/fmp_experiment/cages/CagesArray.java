@@ -2,7 +2,9 @@ package plugins.fmp.multicafe.fmp_experiment.cages;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -190,15 +192,161 @@ public class CagesArray {
 	}
 
 	public boolean loadCagesMeasures(String directory) {
-		// csvLoadCagesMeasures(directory);
-		String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
-		xmlReadCagesFromFileNoQuestion(tempName);
-		return true;
+		boolean flag = false;
+		try {
+			flag = csvLoadCagesMeasures(directory);
+		} catch (Exception e) {
+			System.err.println("CagesArray:loadCagesMeasures() Failed to load cages from CSV: " + directory);
+			e.printStackTrace();
+		}
+
+		if (!flag) {
+			String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
+			flag = xmlReadCagesFromFileNoQuestion(tempName);
+		}
+		return flag;
 	}
 
 	// -----------------------------------------------------
 
 	final String csvSep = ";";
+
+	private boolean csvLoadCagesMeasures(String directory) throws Exception {
+		String pathToCsv = directory + File.separator + "CagesMeasures.csv";
+		File csvFile = new File(pathToCsv);
+		if (!csvFile.isFile())
+			return false;
+
+		// Clear existing cages before loading
+		cagesList.clear();
+
+		BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
+		String row;
+		String sep = csvSep;
+		while ((row = csvReader.readLine()) != null) {
+			if (row.length() > 0 && row.charAt(0) == '#')
+				sep = String.valueOf(row.charAt(1));
+
+			String[] data = row.split(sep);
+			if (data.length > 0 && data[0].equals("#")) {
+				if (data.length > 1) {
+					switch (data[1]) {
+					case "DESCRIPTION":
+						csvLoad_DESCRIPTION(csvReader, sep);
+						break;
+					case "CAGE":
+						csvLoad_CAGE(csvReader, sep);
+						break;
+					case "POSITION":
+						csvLoad_Measures(csvReader, EnumCageMeasures.POSITION, sep);
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+		csvReader.close();
+		return cagesList.size() > 0;
+	}
+
+	private void csvLoad_DESCRIPTION(BufferedReader csvReader, String sep) {
+		String row;
+		try {
+			while ((row = csvReader.readLine()) != null) {
+				String[] data = row.split(sep);
+				if (data.length > 0 && data[0].equals("#"))
+					return;
+
+				if (data.length > 0) {
+					String test = data[0].substring(0, Math.min(data[0].length(), 7));
+					if (test.equals("n cages") || test.equals("n cells")) {
+						if (data.length > 1) {
+							int ncages = Integer.valueOf(data[1]);
+							if (ncages >= cagesList.size()) {
+								cagesList.ensureCapacity(ncages);
+							} else {
+								cagesList.subList(ncages, cagesList.size()).clear();
+							}
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			System.err.println("CagesArray:csvLoad_DESCRIPTION() Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private void csvLoad_CAGE(BufferedReader csvReader, String sep) {
+		String row;
+		try {
+			row = csvReader.readLine(); // Skip header row
+			while ((row = csvReader.readLine()) != null) {
+				String[] data = row.split(sep);
+				if (data.length > 0 && data[0].equals("#"))
+					return;
+
+				if (data.length > 0) {
+					int cageID = 0;
+					try {
+						cageID = Integer.valueOf(data[0]);
+					} catch (NumberFormatException e) {
+						System.err.println("CagesArray: Invalid integer input: " + data[0]);
+						continue;
+					}
+					Cage cage = getCageFromID(cageID);
+					if (cage == null) {
+						cage = new Cage();
+						cagesList.add(cage);
+					}
+					cage.csvImport_CAGE_Header(data);
+				}
+			}
+		} catch (IOException e) {
+			System.err.println("CagesArray:csvLoad_CAGE() Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private void csvLoad_Measures(BufferedReader csvReader, EnumCageMeasures measureType, String sep) {
+		String row;
+		try {
+			row = csvReader.readLine(); // Header row
+			boolean complete = (row != null && row.contains("w(i)"));
+			boolean v0 = (row != null && row.contains("x(i)"));
+			
+			while ((row = csvReader.readLine()) != null) {
+				String[] data = row.split(sep);
+				if (data.length > 0 && data[0].equals("#"))
+					return;
+
+				if (data.length > 0) {
+					int cageID = -1;
+					try {
+						cageID = Integer.valueOf(data[0]);
+					} catch (NumberFormatException e) {
+						System.err.println("CagesArray: Invalid integer input: " + data[0]);
+						continue;
+					}
+					Cage cage = getCageFromID(cageID);
+					if (cage == null) {
+						cage = new Cage();
+						cagesList.add(cage);
+						cage.prop.setCageID(cageID);
+					}
+					if (v0) {
+						cage.csvImport_MEASURE_Data_v0(measureType, data, complete);
+					} else {
+						cage.csvImport_MEASURE_Data_Parameters(data);
+					}
+				}
+			}
+		} catch (IOException e) {
+			System.err.println("CagesArray:csvLoad_Measures() Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 
 	private boolean csvSaveCagesMeasures(String directory) {
 		try {
