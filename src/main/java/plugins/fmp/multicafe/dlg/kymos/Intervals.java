@@ -104,6 +104,9 @@ public class Intervals extends JPanel {
 	}
 
 	void displayDlgKymoIntervals(Experiment exp) {
+		if (exp == null || exp.getSeqKymos() == null || exp.getSeqKymos().getSequence() == null) {
+			return; // cannot display intervals without kymographs sequence
+		}
 		double binsize_Ms = getBinSize_Ms();
 		firstColumnJSpinner.setValue(0.);
 		KymographInfo kymoInfo = exp.getSeqKymos().getKymographInfo();

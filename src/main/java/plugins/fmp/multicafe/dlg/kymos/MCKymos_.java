@@ -84,7 +84,8 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 	}
 
 	public void updateDialogs(Experiment exp) {
-		tabIntervals.displayDlgKymoIntervals(exp);
+		if (exp != null && exp.getSeqKymos() != null)
+			tabIntervals.displayDlgKymoIntervals(exp);
 	}
 
 	void tabbedCapillariesAndKymosSelected() {

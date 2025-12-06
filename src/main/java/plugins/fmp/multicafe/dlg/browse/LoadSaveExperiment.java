@@ -409,8 +409,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			exp.getSeqCamData().loadImages();
 			parent0.paneExperiment.updateViewerForSequenceCam(exp);
 
-			exp.getSeqCamData().getSequence().addListener(this);
 			if (exp.getSeqCamData() != null) {
+				if (exp.getSeqCamData().getSequence() != null)
+					exp.getSeqCamData().getSequence().addListener(this);
+
 				exp.loadCamDataCapillaries();
 
 				parent0.paneKymos.tabLoadSave.loadDefaultKymos(exp);
@@ -438,7 +440,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 			return flag;
 		} catch (Exception e) {
-			LOGGER.severe("Error opening experiment: " + e.getMessage());
+			LOGGER.severe("Error opening experiment: "
+					+ (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
+			LOGGER.severe("Exception details: " + e.toString());
+			e.printStackTrace();
 			progressFrame.close();
 			return false;
 		}

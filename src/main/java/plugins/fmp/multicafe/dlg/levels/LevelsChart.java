@@ -120,19 +120,27 @@ public class LevelsChart extends JPanel implements SequenceListener {
 
 	private Rectangle getInitialUpperLeftPosition(Experiment exp) {
 		Rectangle rectv = new Rectangle(50, 500, 10, 10);
-		Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
-		if (v != null) {
-			rectv = v.getBounds();
-			// rectv.translate(0, rectv.height);
+		if (exp.getSeqCamData() != null && exp.getSeqCamData().getSequence() != null) {
+			Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
+			if (v != null) {
+				rectv = v.getBounds();
+			} else {
+				rectv = parent0.mainFrame.getBounds();
+				rectv.translate(0, 150);
+			}
 		} else {
-			rectv = parent0.mainFrame.getBounds();
-//			rectv.translate(rectv.width, rectv.height + 100);
-			rectv.translate(0, 150);
+			if (parent0 != null && parent0.mainFrame != null) {
+				rectv = parent0.mainFrame.getBounds();
+				rectv.translate(0, 150);
+			}
 		}
 		return rectv;
 	}
 
 	public void displayGraphsPanels(Experiment exp) {
+		if (exp.getSeqKymos() == null || exp.getSeqKymos().getSequence() == null) {
+			return; // Cannot display graphs without kymographs sequence
+		}
 		exp.getSeqKymos().getSequence().addListener(this);
 		Rectangle rectv = getInitialUpperLeftPosition(exp);
 		int dx = 5;

@@ -635,13 +635,21 @@ public class Experiment {
 			}
 			imgLoader.setAbsoluteIndexFirstImage(frameFirst);
 
+			// nframes is optional - older XML files may not have it
 			long nImages = XMLUtil.getElementLongValue(node, ID_NFRAMES, -1);
-			if (nImages <= 0) {
-				System.err.println("ERROR: Invalid number of frames: " + nImages + " in " + csFileName);
-				return false;
+			if (nImages > 0) {
+				// only set if present and valid in XML
+				imgLoader.setFixedNumberOfImages(nImages);
+				imgLoader.setNTotalFrames((int) (nImages - frameFirst));
+			} else {
+				// nFrames not in XML
+				int loadedImagesCount = imgLoader.getImagesCount();
+				if (loadedImagesCount > 0) {
+					nImages = loadedImagesCount + frameFirst;
+					imgLoader.setFixedNumberOfImages(nImages);
+					imgLoader.setNTotalFrames((int) (nImages - frameFirst));
+				}
 			}
-			imgLoader.setFixedNumberOfImages(nImages);
-			imgLoader.setNTotalFrames((int) (nImages - frameFirst));
 
 			// Load TimeManager configuration with validation
 			TimeManager timeManager = seqCamData.getTimeManager();
