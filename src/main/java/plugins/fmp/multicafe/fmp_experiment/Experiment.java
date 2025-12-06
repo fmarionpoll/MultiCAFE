@@ -64,7 +64,7 @@ public class Experiment {
 	public long chainImageFirst_ms = 0;
 	public int experimentID = 0;
 	private String generatorProgram = null;
-	
+
 	private static String staticProgramContext = null;
 
 	// -----------------------------------------
@@ -191,7 +191,7 @@ public class Experiment {
 
 	private final static String ID_IMAGESDIRECTORY = "imagesDirectory";
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
-	private final String ID_MS96_experiment_XML = "MCexperiment"; // "MS96_experiment.xml";
+	private final String ID_MS96_experiment_XML = "MCexperiment.xml"; // "MS96_experiment.xml";
 	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	private final static String ID_GENERATOR_PROGRAM = "generatorProgram";
 
@@ -384,27 +384,26 @@ public class Experiment {
 	private static boolean isRootProgramClass(Class<?> clazz) {
 		String className = clazz.getName();
 		String simpleName = clazz.getSimpleName();
-		
+
 		if (className == null || simpleName == null) {
 			return false;
 		}
-		
-		if (className.contains("Experiment") || className.contains("Persistence") || 
-		    className.contains("fmp_experiment") || className.contains("fmp_tools")) {
+
+		if (className.contains("Experiment") || className.contains("Persistence")
+				|| className.contains("fmp_experiment") || className.contains("fmp_tools")) {
 			return false;
 		}
-		
+
 		try {
 			Class<?> superClass = clazz.getSuperclass();
-			if (superClass != null && 
-			    superClass.getName().equals("icy.plugin.abstract_.PluginActionable")) {
+			if (superClass != null && superClass.getName().equals("icy.plugin.abstract_.PluginActionable")) {
 				if (simpleName.startsWith("Multi")) {
 					return true;
 				}
 			}
 		} catch (Exception e) {
 		}
-		
+
 		return false;
 	}
 

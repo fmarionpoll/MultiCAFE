@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.fmp_tools;
+package plugins.fmp.multicafe.fmp_experiment;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -7,9 +7,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
-import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
 /**
@@ -43,7 +40,7 @@ public class LazyExperiment extends Experiment {
 
 	// XML file constants for properties loading
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
-	private final static String ID_MS96_experiment_XML = "MCexperiment"; // "MS96_experiment.xml";
+	private final static String ID_MS96_experiment_XML = "MCexperiment.xml"; // "MS96_experiment.xml";
 //	private final static String ID_MS96_cages_XML = "MS96_cages.xml";
 
 	public LazyExperiment(ExperimentMetadata metadata) {

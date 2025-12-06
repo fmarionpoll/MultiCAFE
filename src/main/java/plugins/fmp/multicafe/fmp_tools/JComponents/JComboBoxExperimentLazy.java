@@ -12,9 +12,9 @@ import icy.gui.frame.progress.ProgressFrame;
 import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.LazyExperiment;
+import plugins.fmp.multicafe.fmp_experiment.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
-import plugins.fmp.multicafe.fmp_tools.LazyExperiment;
-import plugins.fmp.multicafe.fmp_tools.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
