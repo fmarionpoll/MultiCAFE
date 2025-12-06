@@ -35,6 +35,7 @@ public class ExperimentPersistence {
 	private final static String ID_SEX = "sex";
 	private final static String ID_COND1 = "cond1";
 	private final static String ID_COND2 = "cond2";
+	private final static String ID_GENERATOR_PROGRAM = "generatorProgram";
 
 	public boolean xmlLoadExperiment(Experiment exp, String csFileName) {
 		final Document doc = XMLUtil.loadDocument(csFileName);
@@ -82,6 +83,10 @@ public class ExperimentPersistence {
 			exp.setCondition1(XMLUtil.getElementValue(node, ID_COND1, ".."));
 			exp.setCondition2(XMLUtil.getElementValue(node, ID_COND2, ".."));
 		}
+		String generatorProgram = XMLUtil.getElementValue(node, ID_GENERATOR_PROGRAM, null);
+		if (generatorProgram != null) {
+			exp.setGeneratorProgram(generatorProgram);
+		}
 		return true;
 	}
 
@@ -112,6 +117,19 @@ public class ExperimentPersistence {
 			XMLUtil.setElementValue(node, ID_SEX, exp.getSex());
 			XMLUtil.setElementValue(node, ID_COND1, exp.getCondition1());
 			XMLUtil.setElementValue(node, ID_COND2, exp.getCondition2());
+			
+			// Save generator program (optional field)
+			// Auto-determine if not already set - Experiment class handles detection automatically
+			String programToSave = exp.getGeneratorProgram();
+			if (programToSave == null) {
+				programToSave = Experiment.determineProgramFromStackTraceStatic();
+				if (programToSave != null) {
+					exp.setGeneratorProgram(programToSave);
+				}
+			}
+			if (programToSave != null) {
+				XMLUtil.setElementValue(node, ID_GENERATOR_PROGRAM, programToSave);
+			}
 
 			XMLUtil.saveDocument(doc, csFileName);
 			return true;

@@ -63,6 +63,9 @@ public class Experiment {
 	public Experiment chainToNextExperiment = null;
 	public long chainImageFirst_ms = 0;
 	public int experimentID = 0;
+	private String generatorProgram = null;
+	
+	private static String staticProgramContext = null;
 
 	// -----------------------------------------
 
@@ -190,6 +193,7 @@ public class Experiment {
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
 	private final String ID_MS96_experiment_XML = "MCexperiment"; // "MS96_experiment.xml";
 	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
+	private final static String ID_GENERATOR_PROGRAM = "generatorProgram";
 
 	private final static int EXPT_DIRECTORY = 1;
 	private final static int IMG_DIRECTORY = 2;
@@ -321,6 +325,109 @@ public class Experiment {
 
 	public void setCondition2(String condition2) {
 		prop.field_conc2 = condition2;
+	}
+
+	public String getGeneratorProgram() {
+		return generatorProgram;
+	}
+
+	public void setGeneratorProgram(String generatorProgram) {
+		this.generatorProgram = generatorProgram;
+	}
+
+	public static void setProgramContext(String programName) {
+		staticProgramContext = programName;
+	}
+
+	public static String getProgramContext() {
+		return staticProgramContext;
+	}
+
+	private String getOrDetermineGeneratorProgram() {
+		if (generatorProgram != null) {
+			return generatorProgram;
+		}
+		String programName = determineProgramFromStackTrace();
+		if (programName != null) {
+			return programName;
+		}
+		if (staticProgramContext != null) {
+			return staticProgramContext;
+		}
+		return null;
+	}
+
+	private String determineProgramFromStackTrace() {
+		return determineProgramFromStackTraceStatic();
+	}
+
+	public static String determineProgramFromStackTraceStatic() {
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		for (StackTraceElement element : stackTrace) {
+			String className = element.getClassName();
+			try {
+				Class<?> clazz = Class.forName(className);
+				if (isRootProgramClass(clazz)) {
+					return convertClassNameToProgramName(clazz.getSimpleName());
+				}
+			} catch (ClassNotFoundException e) {
+				continue;
+			} catch (NoClassDefFoundError e) {
+				continue;
+			} catch (Exception e) {
+				continue;
+			}
+		}
+		return null;
+	}
+
+	private static boolean isRootProgramClass(Class<?> clazz) {
+		String className = clazz.getName();
+		String simpleName = clazz.getSimpleName();
+		
+		if (className == null || simpleName == null) {
+			return false;
+		}
+		
+		if (className.contains("Experiment") || className.contains("Persistence") || 
+		    className.contains("fmp_experiment") || className.contains("fmp_tools")) {
+			return false;
+		}
+		
+		try {
+			Class<?> superClass = clazz.getSuperclass();
+			if (superClass != null && 
+			    superClass.getName().equals("icy.plugin.abstract_.PluginActionable")) {
+				if (simpleName.startsWith("Multi")) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+		}
+		
+		return false;
+	}
+
+	public static String convertClassNameToProgramName(String className) {
+		if (className == null || className.isEmpty()) {
+			return null;
+		}
+		char[] chars = className.toCharArray();
+		if (chars.length == 0) {
+			return className.toLowerCase();
+		}
+		StringBuilder result = new StringBuilder();
+		for (int i = 0; i < chars.length; i++) {
+			char c = chars[i];
+			if (i == 0) {
+				result.append(Character.toLowerCase(c));
+			} else if (Character.isUpperCase(c)) {
+				result.append(Character.toLowerCase(c));
+			} else {
+				result.append(c);
+			}
+		}
+		return result.toString();
 	}
 
 	public boolean createDirectoryIfDoesNotExist(String directory) {
@@ -563,6 +670,12 @@ public class Experiment {
 				return false;
 			}
 
+			// Load generator program (optional field)
+			String generatorProgramValue = XMLUtil.getElementValue(node, ID_GENERATOR_PROGRAM, null);
+			if (generatorProgramValue != null) {
+				generatorProgram = generatorProgramValue;
+			}
+
 			ugly_checkOffsetValues();
 
 			return true;
@@ -618,6 +731,14 @@ public class Experiment {
 			} catch (Exception e) {
 				System.err.println("ERROR: Failed to save experiment properties: " + e.getMessage());
 				return false;
+			}
+
+			// Save generator program (optional field)
+			// Auto-determine if not already set
+			String programToSave = getOrDetermineGeneratorProgram();
+			if (programToSave != null) {
+				generatorProgram = programToSave;
+				XMLUtil.setElementValue(node, ID_GENERATOR_PROGRAM, generatorProgram);
 			}
 
 			if (camDataImagesDirectory == null)
