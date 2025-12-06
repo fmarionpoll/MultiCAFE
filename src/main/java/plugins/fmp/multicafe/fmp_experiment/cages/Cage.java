@@ -31,6 +31,7 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Cage implements Comparable<Cage>, AutoCloseable {
 	private static final Logger LOGGER = Logger.getLogger(CageModern.class.getName());
+	private static final Color FLY_POSITION_ROI_COLOR = Color.YELLOW;
 
 	private ROI2D cageROI2D = null;
 	public int kymographIndex = -1;
@@ -244,6 +245,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.rectPosition);
 		flyRoiR.setName("detR" + getCageNumberFromRoiName() + "_" + t);
 		flyRoiR.setT(t);
+		flyRoiR.setColor(FLY_POSITION_ROI_COLOR);
 		return flyRoiR;
 	}
 

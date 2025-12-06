@@ -93,7 +93,7 @@ public class ChartLevels extends IcyFrame {
 		for (XYSeriesCollection xySeriesCollection : xyDataSetList) {
 			String[] description = xySeriesCollection.getSeries(0).getDescription().split("_");
 
-			NumberAxis xAxis = new NumberAxis("Time (minutes)");
+			NumberAxis xAxis = new NumberAxis(description[0]);
 			XYLineAndShapeRenderer subPlotRenderer = new XYLineAndShapeRenderer(true, false);
 			final XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, null, subPlotRenderer);
 			int icolor = 0;
@@ -194,12 +194,10 @@ public class ChartLevels extends IcyFrame {
 
 	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumXLSExport exportType,
 			boolean subtractEvaporation) {
-		XLSExportOptions options = new XLSExportOptions();
-		options.buildExcelStepMs = 60000;
-		XLSResultsArray resultsArray1 = getDataAsResultsArray(exp, exportType, subtractEvaporation, options);
+		XLSResultsArray resultsArray1 = getDataAsResultsArray(exp, exportType, subtractEvaporation);
 		XLSResultsArray resultsArray2 = null;
 		if (exportType == EnumXLSExport.TOPLEVEL)
-			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExport.BOTTOMLEVEL, subtractEvaporation, options);
+			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExport.BOTTOMLEVEL, subtractEvaporation);
 
 		XYSeriesCollection xyDataset = null;
 		int oldCage = -1;
@@ -216,33 +214,25 @@ public class ChartLevels extends IcyFrame {
 				xyList.add(xyDataset);
 			}
 
-			if (xyDataset == null) {
-				xyDataset = new XYSeriesCollection();
-				xyList.add(xyDataset);
+			if (xyDataset != null) {
+				XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.getName().substring(4));
+				seriesXY.setDescription("cell " + xlsResults.getCageID() + "_" + xlsResults.getNflies());
+				if (resultsArray2 != null)
+					appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow));
+
+				xyDataset.addSeries(seriesXY);
+				updateGlobalMaxMin();
 			}
-
-			XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.getName().substring(4), options.buildExcelStepMs);
-			seriesXY.setDescription("cell " + xlsResults.getCageID() + "_" + xlsResults.getNflies());
-			if (resultsArray2 != null)
-				appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow), options.buildExcelStepMs);
-
-			xyDataset.addSeries(seriesXY);
-			updateGlobalMaxMin();
 		}
 		return xyList;
 	}
 
 	private XLSResultsArray getDataAsResultsArray(Experiment exp, EnumXLSExport exportType,
-			boolean subtractEvaporation, XLSExportOptions optionsParam) {
-		if (exp == null || exp.getCapillaries() == null || exp.getCapillaries().getCapillariesList() == null) {
-			return new XLSResultsArray();
-		}
-
+			boolean subtractEvaporation) {
 		XLSExportOptions options = new XLSExportOptions();
-		options.buildExcelStepMs = optionsParam.buildExcelStepMs;
+		options.buildExcelStepMs = 60000;
 		options.relativeToT0 = true;
 		options.subtractEvaporation = subtractEvaporation;
-		options.exportType = exportType;
 
 		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
 
@@ -250,7 +240,13 @@ public class ChartLevels extends IcyFrame {
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
 
 		for (Capillary capillary : exp.getCapillaries().getCapillariesList()) {
-			XLSResults xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, options, false);
+			XLSExportOptions capOptions = new XLSExportOptions();
+			capOptions.buildExcelStepMs = options.buildExcelStepMs;
+			capOptions.relativeToT0 = options.relativeToT0;
+			capOptions.subtractEvaporation = options.subtractEvaporation;
+			capOptions.exportType = exportType;
+
+			XLSResults xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, capOptions, false);
 			if (xlsResults != null) {
 				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
 				resultsArray.add(xlsResults);
@@ -276,40 +272,36 @@ public class ChartLevels extends IcyFrame {
 		}
 	}
 
-	private XYSeries getXYSeries(XLSResults results, String name, long buildExcelStepMs) {
+	private XYSeries getXYSeries(XLSResults results, String name) {
 		XYSeries seriesXY = new XYSeries(name, false);
 		if (results.getValuesOut() != null && results.getValuesOut().length > 0) {
-			xmax = (results.getValuesOut().length - 1) * (buildExcelStepMs / 60000.0);
+			xmax = results.getValuesOut().length;
 			ymax = results.getValuesOut()[0];
 			ymin = ymax;
-			addPointsAndUpdateExtrema(seriesXY, results, 0, buildExcelStepMs);
+			addPointsAndUpdateExtrema(seriesXY, results, 0);
 		}
 		return seriesXY;
 	}
 
-	private void appendDataToXYSeries(XYSeries seriesXY, XLSResults results, long buildExcelStepMs) {
+	private void appendDataToXYSeries(XYSeries seriesXY, XLSResults results) {
 		if (results.getValuesOut() != null && results.getValuesOut().length > 0) {
-			int currentLength = seriesXY.getItemCount();
-			double timeMinutes = currentLength * (buildExcelStepMs / 60000.0);
-			seriesXY.add(timeMinutes, Double.NaN);
-			addPointsAndUpdateExtrema(seriesXY, results, currentLength, buildExcelStepMs);
+			seriesXY.add(Double.NaN, Double.NaN);
+			addPointsAndUpdateExtrema(seriesXY, results, 0);
 		}
 	}
 
-	private void addPointsAndUpdateExtrema(XYSeries seriesXY, XLSResults results, int startIndex, long buildExcelStepMs) {
+	private void addPointsAndUpdateExtrema(XYSeries seriesXY, XLSResults results, int startFrame) {
+		int x = 0;
 		int npoints = results.getValuesOut().length;
-		double timeStepMinutes = buildExcelStepMs / 60000.0; // Convert ms to minutes
 		for (int j = 0; j < npoints; j++) {
-			double timeMinutes = (startIndex + j) * timeStepMinutes;
 			double y = results.getValuesOut()[j];
-			seriesXY.add(timeMinutes, y);
+			seriesXY.add(x + startFrame, y);
 			if (ymax < y)
 				ymax = y;
 			if (ymin > y)
 				ymin = y;
+			x++;
 		}
-		if ((startIndex + npoints - 1) * timeStepMinutes > xmax)
-			xmax = (startIndex + npoints - 1) * timeStepMinutes;
 	}
 
 }
