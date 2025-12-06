@@ -138,10 +138,10 @@ public class LevelsChart extends JPanel implements SequenceListener {
 	}
 
 	public void displayGraphsPanels(Experiment exp) {
-		if (exp.getSeqKymos() == null || exp.getSeqKymos().getSequence() == null) {
-			return; // Cannot display graphs without kymographs sequence
+		if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
+			exp.getSeqKymos().getSequence().addListener(this);
 		}
-		exp.getSeqKymos().getSequence().addListener(this);
+
 		Rectangle rectv = getInitialUpperLeftPosition(exp);
 		int dx = 5;
 		int dy = 10;

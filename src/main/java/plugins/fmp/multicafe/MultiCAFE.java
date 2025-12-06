@@ -19,6 +19,7 @@ import plugins.fmp.multicafe.dlg.excel.MCExcel_;
 import plugins.fmp.multicafe.dlg.experiment.MCExperiment_;
 import plugins.fmp.multicafe.dlg.kymos.MCKymos_;
 import plugins.fmp.multicafe.dlg.levels.MCLevels_;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.DescriptorIndex;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
@@ -44,6 +45,9 @@ public class MultiCAFE extends PluginActionable {
 
 	@Override
 	public void run() {
+		// Set the program context so it can be saved in MCExperiment.xml
+		Experiment.setProgramContext("multiCAFE");
+
 		JPanel mainPanel = GuiUtil.generatePanelWithoutBorder();
 		paneBrowse.init(mainPanel, "Browse", this);
 		paneExperiment.init(mainPanel, "Experiment", this);
