@@ -82,7 +82,6 @@ public class ChartLevels extends IcyFrame {
 		ymin = 0;
 		flagMaxMinSet = false;
 		List<XYSeriesCollection> xyDataSetList = getDataArrays(exp, option, subtractEvaporation);
-		;
 
 		final NumberAxis yAxis = new NumberAxis("volume (µl)");
 		yAxis.setAutoRangeIncludesZero(false);
@@ -216,7 +215,7 @@ public class ChartLevels extends IcyFrame {
 
 			if (xyDataset != null) {
 				XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.getName().substring(4));
-				seriesXY.setDescription("cell " + xlsResults.getCageID() + "_" + xlsResults.getNflies());
+				seriesXY.setDescription("cage " + xlsResults.getCageID() + "_" + xlsResults.getNflies());
 				if (resultsArray2 != null)
 					appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow));
 
@@ -246,7 +245,8 @@ public class ChartLevels extends IcyFrame {
 			capOptions.subtractEvaporation = options.subtractEvaporation;
 			capOptions.exportType = exportType;
 
-			XLSResults xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, capOptions, false);
+			XLSResults xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, capOptions,
+					false);
 			if (xlsResults != null) {
 				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
 				resultsArray.add(xlsResults);

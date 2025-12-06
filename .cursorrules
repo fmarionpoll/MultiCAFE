@@ -9,3 +9,6 @@
 - Always read ./Cursor_setup/PROJECT_CONTEXT_DATABASE.md whenever the user starts a new chat
 - Avoid redundant comments
 
+## Communication
+- Answer questions directly without writing code unless the user specifically requests code changes
+

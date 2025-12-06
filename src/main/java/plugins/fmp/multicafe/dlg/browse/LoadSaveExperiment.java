@@ -374,7 +374,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			});
 
 			// Also generate descriptors files in background for any experiment missing it
-			new javax.swing.SwingWorker<Void, Void>() {
+			new SwingWorker<Void, Void>() {
 				@Override
 				protected Void doInBackground() throws Exception {
 					for (int i = 0; i < parent0.expListComboLazy.getItemCount(); i++) {
@@ -424,7 +424,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			if (exp.getSeqCamData().getSequence() != null)
 				exp.getSeqCamData().getSequence().addListener(this);
 
-			// Step 1 (continued): Check if MCcapillaries.xml exists and load capillaries + display on seqCamData
+			// Step 1 (continued): Check if MCcapillaries.xml exists and load capillaries +
+			// display on seqCamData
 			progressFrame.setMessage("Load capillaries");
 			if (exp.loadCamDataCapillaries()) {
 				// Capillaries loaded and displayed on seqCamData images
@@ -438,7 +439,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				parent0.expListComboLazy.expListBinSubDirectory = selectedBinDir;
 			}
 
-			// Step 3: Load kymographs from selected bin directory and display in another window
+			// Step 3: Load kymographs from selected bin directory and display in another
+			// window
 			progressFrame.setMessage("Load kymographs");
 			boolean kymosLoaded = false;
 			if (selectedBinDir != null) {
@@ -492,10 +494,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	}
 
 	/**
-	 * Detects and selects bin directory (bin_60, bin_xx) according to rules:
-	 * - If loading single experiment and multiple bins exist, ask user
-	 * - If loading series and not first file, keep previously selected bin
-	 * - If directory not found, ask user what to do
+	 * Detects and selects bin directory (bin_60, bin_xx) according to rules: - If
+	 * loading single experiment and multiple bins exist, ask user - If loading
+	 * series and not first file, keep previously selected bin - If directory not
+	 * found, ask user what to do
 	 */
 	private String selectBinDirectory(Experiment exp) {
 		String resultsDir = exp.getResultsDirectory();
@@ -521,7 +523,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		boolean isFirstExperiment = (parent0.expListComboLazy.getSelectedIndex() == 0);
 		boolean isSingleExperiment = (parent0.expListComboLazy.getItemCount() == 1);
 
-		// If we have a previously selected bin directory and it exists, use it (for series)
+		// If we have a previously selected bin directory and it exists, use it (for
+		// series)
 		String previousBinDir = parent0.expListComboLazy.expListBinSubDirectory;
 		if (!isFirstExperiment && previousBinDir != null && binDirs.contains(previousBinDir)) {
 			return previousBinDir;
@@ -652,6 +655,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				exp.xmlSave_MCExperiment();
 				exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
 				exp.saveCageAndMeasures();
+				// Save MS96_descriptors.xml
+				DescriptorsIO.buildFromExperiment(exp);
 			}
 			exp.closeSequences();
 		}
