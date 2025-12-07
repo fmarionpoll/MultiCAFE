@@ -22,12 +22,12 @@ public class Options extends JPanel {
 	private static final long serialVersionUID = 6565346204580890307L;
 
 	JCheckBox kymographsCheckBox = new JCheckBox("kymos", true);
-	JCheckBox cellsCheckBox = new JCheckBox("cells", true);
+	JCheckBox cagesCheckBox = new JCheckBox("cages", true);
 	JCheckBox measuresCheckBox = new JCheckBox("measures", true);
 	public JCheckBox graphsCheckBox = new JCheckBox("graphs", true);
 
 	public JCheckBox viewCapillariesCheckBox = new JCheckBox("capillaries", true);
-	public JCheckBox viewCellsCheckbox = new JCheckBox("cells", true);
+	public JCheckBox viewCellsCheckbox = new JCheckBox("cages", true);
 	JCheckBox viewFlyCheckbox = new JCheckBox("flies center", false);
 	JCheckBox viewFlyRectCheckbox = new JCheckBox("flies rect", false);
 	private MultiCAFE parent0 = null;
@@ -42,7 +42,7 @@ public class Options extends JPanel {
 		JPanel panel2 = new JPanel(layout);
 		panel2.add(new JLabel("Load: "));
 		panel2.add(kymographsCheckBox);
-		panel2.add(cellsCheckBox);
+		panel2.add(cagesCheckBox);
 		panel2.add(measuresCheckBox);
 		panel2.add(graphsCheckBox);
 		panel2.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);

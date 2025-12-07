@@ -42,7 +42,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 	 */
 	private static final long serialVersionUID = -121724000730795396L;
 	private JButton drawPolygon2DButton = new JButton("Draw Polygon2D");
-	private JButton createCellsButton = new JButton("Create cells");
+	private JButton createCellsButton = new JButton("Create cages");
 	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(60, 0, 10000, 1));
 	public JCheckBox overlayCheckBox = new JCheckBox("Overlay ", false);
 	private JButton deleteButton = new JButton("Cut points within selected polygon");

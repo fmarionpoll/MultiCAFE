@@ -32,7 +32,7 @@ public class BuildCagesAsArray extends JPanel {
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
 	private JButton drawPolygon2DButton = new JButton("Draw Polygon2D");
-	private JButton createCellsButton = new JButton("Create cells");
+	private JButton createCellsButton = new JButton("Create cages");
 	private JSpinner nColumnsTextField = new JSpinner(new SpinnerNumberModel(10, 0, 10000, 1));
 	private JSpinner width_cageTextField = new JSpinner(new SpinnerNumberModel(20, 0, 10000, 1));
 	private JSpinner width_intervalTextField = new JSpinner(new SpinnerNumberModel(3, 0, 10000, 1));
@@ -58,15 +58,15 @@ public class BuildCagesAsArray extends JPanel {
 
 		JLabel nColumnsLabel = new JLabel("N columns ");
 		JLabel nRowsLabel = new JLabel("N rows ");
-		JLabel cellWidthLabel = new JLabel("cell width ");
-		JLabel betweenCellsLabel = new JLabel("between cells ");
+		JLabel cageWidthLabel = new JLabel("cage width ");
+		JLabel betweenCellsLabel = new JLabel("between cages ");
 		nColumnsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		cellWidthLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		cageWidthLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		betweenCellsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		nRowsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(cellWidthLabel);
+		panel2.add(cageWidthLabel);
 		panel2.add(width_cageTextField);
 		panel2.add(nColumnsLabel);
 		panel2.add(nColumnsTextField);

@@ -197,10 +197,10 @@ public class Edit extends JPanel {
 		String csName = roi.getName();
 		int cageNumber = getCageNumberFromName(csName);
 		if (cageNumber >= 0) {
-			Cage cell = exp.getCages().getCageFromID(cageNumber);
-			Rectangle2D rect0 = cell.getFlyPositions().getFlyPositionList().get(frame).getRectangle2D();
+			Cage cage = exp.getCages().getCageFromID(cageNumber);
+			Rectangle2D rect0 = cage.getFlyPositions().getFlyPositionList().get(frame).getRectangle2D();
 			if (rect0.getX() == -1 && rect0.getY() == -1) {
-				Rectangle rect = cell.getCageRoi2D().getBounds();
+				Rectangle rect = cage.getCageRoi2D().getBounds();
 				Point2D point2 = new Point2D.Double(rect.x + rect.width / 2, rect.y + rect.height / 2);
 				roi.setPosition2D(point2);
 			}

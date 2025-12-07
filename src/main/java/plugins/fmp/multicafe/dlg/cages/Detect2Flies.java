@@ -40,7 +40,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 	private String detectString = "Detect...";
 	private JButton startComputationButton = new JButton(detectString);
-	private JComboBox<String> allCagesComboBox = new JComboBox<String>(new String[] { "all cells" });
+	private JComboBox<String> allCagesComboBox = new JComboBox<String>(new String[] { "all cages" });
 	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
 
 	private JCheckBox objectLowsizeCheckBox = new JCheckBox("size >");
@@ -281,7 +281,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 			nitems = exp.getCages().getCageList().size() + 1;
 			if (allCagesComboBox.getItemCount() != nitems) {
 				allCagesComboBox.removeAllItems();
-				allCagesComboBox.addItem("all cells");
+				allCagesComboBox.addItem("all cages");
 				for (Cage cage : exp.getCages().getCageList()) {
 					allCagesComboBox.addItem(String.valueOf(cage.getCageID()));
 				}

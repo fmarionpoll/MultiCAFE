@@ -29,7 +29,7 @@ public class CombinedExperiment extends Experiment {
 		setFirstImage_FileTime(expi.getFirstImage_FileTime());
 		expi = experimentList.get(experimentList.size() - 1);
 		setLastImage_FileTime(expi.getLastImage_FileTime());
-		// TODO: load capillaries descriptors and load cells descriptors
+		// TODO: load capillaries descriptors and load cages descriptors
 		// loadMCCapillaries_Descriptors(filename)
 	}
 

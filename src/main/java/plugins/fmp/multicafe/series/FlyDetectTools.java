@@ -18,18 +18,18 @@ import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyDetectTools {
-	public List<BooleanMask2D> cellMaskList = new ArrayList<BooleanMask2D>();
+	public List<BooleanMask2D> cageMaskList = new ArrayList<BooleanMask2D>();
 	public Rectangle rectangleAllCages = null;
 	public BuildSeriesOptions options = null;
 	public CagesArray box = null;
 
 	// -----------------------------------------------------
 
-	BooleanMask2D findLargestBlob(ROI2DArea roiAll, BooleanMask2D cellMask) throws InterruptedException {
-		if (cellMask == null)
+	BooleanMask2D findLargestBlob(ROI2DArea roiAll, BooleanMask2D cageMask) throws InterruptedException {
+		if (cageMask == null)
 			return null;
 
-		ROI2DArea roi = new ROI2DArea(roiAll.getBooleanMask(true).getIntersection(cellMask));
+		ROI2DArea roi = new ROI2DArea(roiAll.getBooleanMask(true).getIntersection(cageMask));
 
 		// find largest component in the threshold
 		int max = 0;
@@ -116,21 +116,21 @@ public class FlyDetectTools {
 		return listRectangles;
 	}
 
-	BooleanMask2D getBestMask(ROI2DArea binarizedImageRoi, BooleanMask2D cellMask) {
+	BooleanMask2D getBestMask(ROI2DArea binarizedImageRoi, BooleanMask2D cageMask) {
 		BooleanMask2D bestMask = null;
 		try {
-			bestMask = findLargestBlob(binarizedImageRoi, cellMask);
+			bestMask = findLargestBlob(binarizedImageRoi, cageMask);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		return bestMask;
 	}
 
-	Rectangle2D saveBestMask(BooleanMask2D bestMask, Cage cell, int t) {
+	Rectangle2D saveBestMask(BooleanMask2D bestMask, Cage cage, int t) {
 		Rectangle2D rect = null;
 		if (bestMask != null)
 			rect = bestMask.getOptimizedBounds();
-		cell.getFlyPositions().addPositionWithoutRoiArea(t, rect);
+		cage.getFlyPositions().addPositionWithoutRoiArea(t, rect);
 		return rect;
 	}
 
@@ -166,10 +166,10 @@ public class FlyDetectTools {
 		box = exp.getCages();
 		box.computeBooleanMasksForCages();
 		rectangleAllCages = null;
-		for (Cage cell : box.getCageList()) {
-			if (cell.getCageNFlies() < 1)
+		for (Cage cage : box.getCageList()) {
+			if (cage.getCageNFlies() < 1)
 				continue;
-			Rectangle rect = cell.getCageRoi2D().getBounds();
+			Rectangle rect = cage.getCageRoi2D().getBounds();
 			if (rectangleAllCages == null)
 				rectangleAllCages = new Rectangle(rect);
 			else

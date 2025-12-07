@@ -104,8 +104,8 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 
 		if (aliveCheckbox.isSelected()) {
 			double threshold = (double) aliveThresholdSpinner.getValue();
-			for (Cage cell : exp.getCages().getCageList()) {
-				FlyPositions posSeries = cell.getFlyPositions();
+			for (Cage cage : exp.getCages().getCageList()) {
+				FlyPositions posSeries = cage.getFlyPositions();
 				posSeries.setMoveThreshold(threshold);
 				posSeries.computeIsAlive();
 			}
@@ -115,8 +115,8 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 			closeChart(aliveChart);
 
 		if (sleepCheckbox.isSelected()) {
-			for (Cage cell : exp.getCages().getCageList()) {
-				FlyPositions posSeries = cell.getFlyPositions();
+			for (Cage cage : exp.getCages().getCageList()) {
+				FlyPositions posSeries = cage.getFlyPositions();
 				posSeries.computeSleep();
 			}
 			sleepChart = plotYToChart("flies asleep", sleepChart, rectv, ptRelative, exp, EnumXLSExport.SLEEP);

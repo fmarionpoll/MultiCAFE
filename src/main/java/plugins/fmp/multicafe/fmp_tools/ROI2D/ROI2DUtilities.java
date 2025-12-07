@@ -449,12 +449,12 @@ public class ROI2DUtilities {
 		return points;
 	}
 
-	public static Polygon2D inflate(Polygon2D roiPolygon, int ncolumns, int nrows, int width_cell, int width_interval) {
-		double width_x_current = ncolumns * (width_cell + 2 * width_interval) - 2 * width_interval;
+	public static Polygon2D inflate(Polygon2D roiPolygon, int ncolumns, int nrows, int width_cage, int width_interval) {
+		double width_x_current = ncolumns * (width_cage + 2 * width_interval) - 2 * width_interval;
 		double deltax_top = (roiPolygon.xpoints[3] - roiPolygon.xpoints[0]) * width_interval / width_x_current;
 		double deltax_bottom = (roiPolygon.xpoints[2] - roiPolygon.xpoints[1]) * width_interval / width_x_current;
 
-		double width_y_current = nrows * (width_cell + 2 * width_interval) - 2 * width_interval;
+		double width_y_current = nrows * (width_cage + 2 * width_interval) - 2 * width_interval;
 		double deltay_left = (roiPolygon.ypoints[1] - roiPolygon.ypoints[0]) * width_interval / width_y_current;
 		double deltay_right = (roiPolygon.ypoints[2] - roiPolygon.ypoints[3]) * width_interval / width_y_current;
 

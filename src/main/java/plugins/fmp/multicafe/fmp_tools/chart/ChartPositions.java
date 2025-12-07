@@ -46,13 +46,13 @@ public class ChartPositions extends IcyFrame {
 		pt = new Point(rectv.x + deltapt.x, rectv.y + deltapt.y);
 	}
 
-	public void displayData(List<Cage> cellList, EnumXLSExport option) {
+	public void displayData(List<Cage> cageList, EnumXLSExport option) {
 		List<XYSeriesCollection> xyDataSetList = new ArrayList<XYSeriesCollection>();
 		MaxMinDouble yMaxMin = new MaxMinDouble();
 		int count = 0;
-		for (Cage cell : cellList) {
-			if (cell.getFlyPositions() != null && cell.getFlyPositions().getFlyPositionList().size() > 0) {
-				ChartData chartData = getDataSet(cell, option);
+		for (Cage cage : cageList) {
+			if (cage.getFlyPositions() != null && cage.getFlyPositions().getFlyPositionList().size() > 0) {
+				ChartData chartData = getDataSet(cage, option);
 				XYSeriesCollection xyDataset = chartData.getXYDataset();
 				yMaxMin = chartData.getYMaxMin();
 				if (count != 0)
@@ -92,8 +92,8 @@ public class ChartPositions extends IcyFrame {
 		mainChartFrame.setVisible(true);
 	}
 
-	private MaxMinDouble addPointsToXYSeries(Cage cell, EnumXLSExport option, XYSeries seriesXY) {
-		FlyPositions results = cell.getFlyPositions();
+	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumXLSExport option, XYSeries seriesXY) {
+		FlyPositions results = cage.getFlyPositions();
 		int itmax = results.getFlyPositionList().size();
 		MaxMinDouble yMaxMin = null;
 		if (itmax > 0) {
@@ -109,7 +109,7 @@ public class ChartPositions extends IcyFrame {
 					addxyPos(seriesXY, results, it, ypos);
 					previousY = currentY;
 				}
-				Rectangle rect = cell.getCageRoi2D().getBounds();
+				Rectangle rect = cage.getCageRoi2D().getBounds();
 				double length_diagonal = Math.sqrt((rect.height * rect.height) + (rect.width * rect.width));
 				yMaxMin = new MaxMinDouble(0.0, length_diagonal);
 				break;
@@ -133,7 +133,7 @@ public class ChartPositions extends IcyFrame {
 				break;
 
 			default:
-				Rectangle rect1 = cell.getCageRoi2D().getBounds();
+				Rectangle rect1 = cage.getCageRoi2D().getBounds();
 				double yOrigin = rect1.getY() + rect1.getHeight();
 				for (int it = 0; it < itmax; it++) {
 					Rectangle2D itRect = results.getFlyPositionList().get(it).getRectangle2D();
@@ -154,12 +154,12 @@ public class ChartPositions extends IcyFrame {
 			globalXMax = indexT;
 	}
 
-	private ChartData getDataSet(Cage cell, EnumXLSExport option) {
+	private ChartData getDataSet(Cage cage, EnumXLSExport option) {
 		XYSeriesCollection xyDataset = new XYSeriesCollection();
-		String name = cell.getCageRoi2D().getName();
+		String name = cage.getCageRoi2D().getName();
 		XYSeries seriesXY = new XYSeries(name);
 		seriesXY.setDescription(name);
-		MaxMinDouble yMaxMin = addPointsToXYSeries(cell, option, seriesXY);
+		MaxMinDouble yMaxMin = addPointsToXYSeries(cage, option, seriesXY);
 		xyDataset.addSeries(seriesXY);
 		return new ChartData(new MaxMinDouble(globalXMax, 0), yMaxMin, xyDataset);
 	}

@@ -52,7 +52,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 	private JComboBox<ImageTransformEnums> backgroundComboBox = new JComboBox<>(new ImageTransformEnums[] {
 			ImageTransformEnums.NONE, ImageTransformEnums.SUBTRACT_TM1, ImageTransformEnums.SUBTRACT_T0 });
 
-	private JComboBox<String> cagesComboBox = new JComboBox<String>(new String[] { "all cells" });
+	private JComboBox<String> cagesComboBox = new JComboBox<String>(new String[] { "all cages" });
 	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(60, 0, 255, 1));
 	private JSpinner jitterTextField = new JSpinner(new SpinnerNumberModel(5, 0, 1000, 1));
 	private JSpinner objectLowsizeSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 9999, 1));
@@ -266,7 +266,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 			nitems = exp.getCages().getCageList().size() + 1;
 		if (cagesComboBox.getItemCount() != nitems) {
 			cagesComboBox.removeAllItems();
-			cagesComboBox.addItem("all cells");
+			cagesComboBox.addItem("all cages");
 			if (exp != null) {
 				for (Cage cage : exp.getCages().getCageList()) {
 					cagesComboBox.addItem(Integer.toString(cage.getCageID()));
