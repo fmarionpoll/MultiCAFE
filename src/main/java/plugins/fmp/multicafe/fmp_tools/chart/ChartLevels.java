@@ -78,8 +78,8 @@ public class ChartLevels extends IcyFrame {
 
 	public void displayData(Experiment exp, EnumXLSExport option, String title, boolean subtractEvaporation) {
 		xyChartList.clear();
-		ymax = 0;
-		ymin = 0;
+		ymax = Double.NaN;
+		ymin = Double.NaN;
 		flagMaxMinSet = false;
 		List<XYSeriesCollection> xyDataSetList = getDataArrays(exp, option, subtractEvaporation);
 
@@ -234,7 +234,7 @@ public class ChartLevels extends IcyFrame {
 			kymoBin_ms = 60000;
 		}
 		options.buildExcelStepMs = (int) kymoBin_ms;
-		options.relativeToT0 = true;
+		options.relativeToT0 = false;
 		options.subtractEvaporation = subtractEvaporation;
 
 		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
@@ -280,17 +280,20 @@ public class ChartLevels extends IcyFrame {
 		XYSeries seriesXY = new XYSeries(name, false);
 		if (results.getValuesOut() != null && results.getValuesOut().length > 0) {
 			xmax = results.getValuesOut().length;
-			double capVolume = 5.0;
-			Capillary capillary = getCapillaryFromResults(results, exp);
-			if (capillary != null) {
-				capVolume = capillary.capVolume;
+
+			// Find first valid (non-NaN) value for initial ymax/ymin
+			double firstValue = Double.NaN;
+			for (int i = 0; i < results.getValuesOut().length; i++) {
+				double val = results.getValuesOut()[i];
+				if (!Double.isNaN(val)) {
+					firstValue = val;
+					break;
+				}
 			}
-			double firstValue = results.getValuesOut()[0];
-			if (exportType == EnumXLSExport.BOTTOMLEVEL) {
-				firstValue = capVolume - firstValue;
+			if (!Double.isNaN(firstValue)) {
+				ymax = firstValue;
+				ymin = firstValue;
 			}
-			ymax = firstValue;
-			ymin = firstValue;
 			addPointsAndUpdateExtrema(seriesXY, results, 0, exp, exportType);
 		}
 		return seriesXY;
@@ -305,39 +308,22 @@ public class ChartLevels extends IcyFrame {
 
 	private void addPointsAndUpdateExtrema(XYSeries seriesXY, XLSResults results, int startFrame, Experiment exp,
 			EnumXLSExport exportType) {
-		double capVolume = 5.0;
-		Capillary capillary = getCapillaryFromResults(results, exp);
-		if (capillary != null) {
-			capVolume = capillary.capVolume;
-		}
 
 		int x = 0;
 		int npoints = results.getValuesOut().length;
 		for (int j = 0; j < npoints; j++) {
 			double y = results.getValuesOut()[j];
-			if (exportType == EnumXLSExport.BOTTOMLEVEL) {
-				y = capVolume - y;
+			if (Double.isNaN(y)) {
+				seriesXY.add(x + startFrame, Double.NaN);
+			} else {
+				seriesXY.add(x + startFrame, y);
+				if (Double.isNaN(ymax) || ymax < y)
+					ymax = y;
+				if (Double.isNaN(ymin) || ymin > y)
+					ymin = y;
 			}
-			seriesXY.add(x + startFrame, y);
-			if (ymax < y)
-				ymax = y;
-			if (ymin > y)
-				ymin = y;
 			x++;
 		}
 	}
 
-	private Capillary getCapillaryFromResults(XLSResults results, Experiment exp) {
-		if (results == null || exp == null || results.getName() == null)
-			return null;
-		String capillaryName = results.getName();
-		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
-			if (cap.getRoiName() != null && cap.getRoiName().equals(capillaryName)) {
-				return cap;
-			}
-		}
-		return null;
-	}
-
 }
-
