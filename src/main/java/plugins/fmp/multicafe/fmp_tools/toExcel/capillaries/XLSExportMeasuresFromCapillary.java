@@ -147,19 +147,27 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 */
 	public XLSResults getXLSResultsDataValuesFromCapillaryMeasures(Experiment exp, Capillary capillary,
 			XLSExportOptions xlsExportOptions, boolean subtractT0) {
-		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
-
 		XLSResults xlsResults = new XLSResults(capillary.getRoiName(), capillary.capNFlies, capillary.capCageID, 0,
 				xlsExportOptions.exportType);
 
 		xlsResults.setStimulus(capillary.capStimulus);
 		xlsResults.setConcentration(capillary.capConcentration);
-		xlsResults.initValuesOutArray(nOutputFrames, Double.NaN);
 
 		// Get bin durations
 		long binData = exp.getKymoBin_ms();
 		long binExcel = xlsExportOptions.buildExcelStepMs;
 		xlsResults.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, subtractT0);
+		
+		// Initialize valuesOut array with the actual size of dataValues
+		if (xlsResults.getDataValues() != null && xlsResults.getDataValues().size() > 0) {
+			int actualSize = xlsResults.getDataValues().size();
+			xlsResults.initValuesOutArray(actualSize, Double.NaN);
+		} else {
+			// Fallback to calculated size if no data
+			int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
+			xlsResults.initValuesOutArray(nOutputFrames, Double.NaN);
+		}
+		
 		return xlsResults;
 	}
 
@@ -174,13 +182,24 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		// For capillaries, use kymograph timing
 		long kymoFirst_ms = exp.getKymoFirst_ms();
 		long kymoLast_ms = exp.getKymoLast_ms();
+		long kymoBin_ms = exp.getKymoBin_ms();
+
+		// If buildExcelStepMs equals kymoBin_ms, we want 1:1 mapping - use actual frame count
+		if (kymoBin_ms > 0 && options.buildExcelStepMs == kymoBin_ms && exp.getSeqKymos() != null) {
+			ImageLoader imgLoader = exp.getSeqKymos().getImageLoader();
+			if (imgLoader != null) {
+				int nFrames = imgLoader.getNTotalFrames();
+				if (nFrames > 0) {
+					return nFrames;
+				}
+			}
+		}
 
 		if (kymoLast_ms <= kymoFirst_ms) {
 			// Try to get from kymograph sequence
 			if (exp.getSeqKymos() != null) {
 				ImageLoader imgLoader = exp.getSeqKymos().getImageLoader();
 				if (imgLoader != null) {
-					long kymoBin_ms = exp.getKymoBin_ms();
 					if (kymoBin_ms > 0) {
 						kymoLast_ms = kymoFirst_ms + imgLoader.getNTotalFrames() * kymoBin_ms;
 						exp.setKymoLast_ms(kymoLast_ms);

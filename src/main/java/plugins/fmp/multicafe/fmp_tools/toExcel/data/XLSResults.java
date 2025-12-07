@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
-import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPosition;
+import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotProperties;
@@ -202,9 +202,9 @@ public class XLSResults {
 	/**
 	 * Gets data from fly positions and converts it to dataValues.
 	 * 
-	 * @param flyPositions    The fly positions to get data from
-	 * @param binData         The bin duration for the data
-	 * @param binExcel        The bin duration for Excel output
+	 * @param flyPositions     The fly positions to get data from
+	 * @param binData          The bin duration for the data
+	 * @param binExcel         The bin duration for Excel output
 	 * @param xlsExportOptions The export options
 	 */
 	public void getDataFromFlyPositions(FlyPositions flyPositions, long binData, long binExcel,
