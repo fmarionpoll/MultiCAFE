@@ -44,9 +44,9 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResultsArray;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 
 /**
- * Enhanced chart display class for capillary level data visualization. This class
- * creates and manages charts displaying capillary measurements over time, with
- * improved error handling, logging, and interactive functionality.
+ * Enhanced chart display class for capillary level data visualization. This
+ * class creates and manages charts displaying capillary measurements over time,
+ * with improved error handling, logging, and interactive functionality.
  * 
  * <p>
  * ChartLevelsFrame extends the original ChartLevels functionality with:
@@ -104,9 +104,8 @@ public class ChartLevelsFrame extends IcyFrame {
 	/** Mouse button for left click */
 	private static final int LEFT_MOUSE_BUTTON = MouseEvent.BUTTON1;
 
-
 	/** Main chart panel containing all charts */
-	private JPanel mainChartPanel = null;
+	public JPanel mainChartPanel = null;
 
 	/** Main chart frame */
 	private IcyFrame mainChartFrame = null;
@@ -172,8 +171,8 @@ public class ChartLevelsFrame extends IcyFrame {
 		mainChartPanel = new JPanel();
 		mainChartPanel.setLayout(new BoxLayout(mainChartPanel, BoxLayout.LINE_AXIS));
 
-		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(), new Dimension(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT),
-				true, true, true, true);
+		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(),
+				new Dimension(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT), true, true, true, true);
 		JScrollPane scrollPane = new JScrollPane(mainChartPanel);
 		mainChartFrame.add(scrollPane);
 
@@ -188,9 +187,9 @@ public class ChartLevelsFrame extends IcyFrame {
 	/**
 	 * Displays capillary level data for the experiment.
 	 * 
-	 * @param exp                the experiment containing the data
-	 * @param option             the export type option
-	 * @param title              the chart title
+	 * @param exp                 the experiment containing the data
+	 * @param option              the export type option
+	 * @param title               the chart title
 	 * @param subtractEvaporation whether to subtract evaporation
 	 * @throws IllegalArgumentException if exp or option is null
 	 */
@@ -224,9 +223,9 @@ public class ChartLevelsFrame extends IcyFrame {
 	/**
 	 * Creates and displays the chart with the provided data.
 	 * 
-	 * @param exp            the experiment
-	 * @param option         the export option
-	 * @param title          the chart title
+	 * @param exp           the experiment
+	 * @param option        the export option
+	 * @param title         the chart title
 	 * @param xyDataSetList the list of XY series collections
 	 */
 	private void createAndDisplayChart(Experiment exp, EnumXLSExport option, String title,
@@ -476,8 +475,8 @@ public class ChartLevelsFrame extends IcyFrame {
 	/**
 	 * Gets data arrays for the experiment.
 	 * 
-	 * @param exp                the experiment
-	 * @param exportType         the export type
+	 * @param exp                 the experiment
+	 * @param exportType          the export type
 	 * @param subtractEvaporation whether to subtract evaporation
 	 * @return list of XY series collections
 	 */
@@ -580,8 +579,8 @@ public class ChartLevelsFrame extends IcyFrame {
 	/**
 	 * Gets data as results array.
 	 * 
-	 * @param exp                the experiment
-	 * @param exportType         the export type
+	 * @param exp                 the experiment
+	 * @param exportType          the export type
 	 * @param subtractEvaporation whether to subtract evaporation
 	 * @return the results array
 	 */
@@ -700,8 +699,7 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * @param exp        the experiment
 	 * @param exportType the export type
 	 */
-	private void appendDataToXYSeries(XYSeries seriesXY, XLSResults results, Experiment exp,
-			EnumXLSExport exportType) {
+	private void appendDataToXYSeries(XYSeries seriesXY, XLSResults results, Experiment exp, EnumXLSExport exportType) {
 		if (results == null || results.getValuesOut() == null || results.getValuesOut().length == 0) {
 			return;
 		}
@@ -816,8 +814,8 @@ public class ChartLevelsFrame extends IcyFrame {
 		/**
 		 * Creates a new mouse listener.
 		 * 
-		 * @param exp     the experiment
-		 * @param option  the export option (currently unused, kept for future use)
+		 * @param exp    the experiment
+		 * @param option the export option (currently unused, kept for future use)
 		 */
 		public CapillaryChartMouseListener(Experiment exp, @SuppressWarnings("unused") EnumXLSExport option) {
 			this.experiment = exp;

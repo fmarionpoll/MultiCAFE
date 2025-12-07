@@ -41,7 +41,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 
 public class ChartLevels extends IcyFrame {
 	public JPanel mainChartPanel = null;
-	public IcyFrame mainChartFrame = null;
+	private IcyFrame mainChartFrame = null;
 
 	private MultiCAFE parent0 = null;
 
@@ -324,6 +324,15 @@ public class ChartLevels extends IcyFrame {
 			}
 			x++;
 		}
+	}
+
+	/**
+	 * Gets the main chart frame.
+	 * 
+	 * @return the main chart frame
+	 */
+	public IcyFrame getMainChartFrame() {
+		return mainChartFrame;
 	}
 
 }

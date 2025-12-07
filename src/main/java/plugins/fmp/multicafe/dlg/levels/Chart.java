@@ -20,7 +20,7 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.fmp_tools.chart.ChartLevels;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartLevelsFrame;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 
 public class Chart extends JPanel implements SequenceListener {
@@ -29,10 +29,10 @@ public class Chart extends JPanel implements SequenceListener {
 	 */
 	private static final long serialVersionUID = -7079184380174992501L;
 
-	private ChartLevels plotTopAndBottom = null;
-	private ChartLevels plotDelta = null;
-	private ChartLevels plotDerivative = null;
-	private ChartLevels plotSumgulps = null;
+	private ChartLevelsFrame plotTopAndBottom = null;
+	private ChartLevelsFrame plotDelta = null;
+	private ChartLevelsFrame plotDerivative = null;
+	private ChartLevelsFrame plotSumgulps = null;
 
 	private MultiCAFE parent0 = null;
 
@@ -206,16 +206,16 @@ public class Chart extends JPanel implements SequenceListener {
 			closeChart(plotSumgulps);
 	}
 
-	private ChartLevels plotToChart(Experiment exp, String title, EnumXLSExport option, ChartLevels iChart,
+	private ChartLevelsFrame plotToChart(Experiment exp, String title, EnumXLSExport option, ChartLevelsFrame iChart,
 			Rectangle rectv) {
-		if (iChart != null && iChart.mainChartFrame != null)
-			iChart.mainChartFrame.dispose();
-		iChart = new ChartLevels();
+		if (iChart != null && iChart.getMainChartFrame() != null)
+			iChart.getMainChartFrame().dispose();
+		iChart = new ChartLevelsFrame();
 		iChart.createChartPanel(parent0, title, rectv);
 		iChart.displayData(exp, option, title, correctEvaporationCheckbox.isSelected());
-		if (iChart.mainChartFrame != null) {
-			iChart.mainChartFrame.toFront();
-			iChart.mainChartFrame.requestFocus();
+		if (iChart.getMainChartFrame() != null) {
+			iChart.getMainChartFrame().toFront();
+			iChart.getMainChartFrame().requestFocus();
 		}
 		return iChart;
 	}
@@ -227,9 +227,9 @@ public class Chart extends JPanel implements SequenceListener {
 		closeChart(plotDelta);
 	}
 
-	private void closeChart(ChartLevels chart) {
-		if (chart != null && chart.mainChartFrame != null)
-			chart.mainChartFrame.dispose();
+	private void closeChart(ChartLevelsFrame chart) {
+		if (chart != null && chart.getMainChartFrame() != null)
+			chart.getMainChartFrame().dispose();
 		chart = null;
 	}
 
@@ -261,17 +261,17 @@ public class Chart extends JPanel implements SequenceListener {
 
 	private void saveChartPositions() {
 		// Save positions globally - these will be reused for all experiments
-		if (plotTopAndBottom != null && plotTopAndBottom.mainChartFrame != null) {
-			globalChartTopBottomBounds = plotTopAndBottom.mainChartFrame.getBounds();
+		if (plotTopAndBottom != null && plotTopAndBottom.getMainChartFrame() != null) {
+			globalChartTopBottomBounds = plotTopAndBottom.getMainChartFrame().getBounds();
 		}
-		if (plotDelta != null && plotDelta.mainChartFrame != null) {
-			globalChartDeltaBounds = plotDelta.mainChartFrame.getBounds();
+		if (plotDelta != null && plotDelta.getMainChartFrame() != null) {
+			globalChartDeltaBounds = plotDelta.getMainChartFrame().getBounds();
 		}
-		if (plotDerivative != null && plotDerivative.mainChartFrame != null) {
-			globalChartDerivativeBounds = plotDerivative.mainChartFrame.getBounds();
+		if (plotDerivative != null && plotDerivative.getMainChartFrame() != null) {
+			globalChartDerivativeBounds = plotDerivative.getMainChartFrame().getBounds();
 		}
-		if (plotSumgulps != null && plotSumgulps.mainChartFrame != null) {
-			globalChartSumGulpsBounds = plotSumgulps.mainChartFrame.getBounds();
+		if (plotSumgulps != null && plotSumgulps.getMainChartFrame() != null) {
+			globalChartSumGulpsBounds = plotSumgulps.getMainChartFrame().getBounds();
 		}
 	}
 }
