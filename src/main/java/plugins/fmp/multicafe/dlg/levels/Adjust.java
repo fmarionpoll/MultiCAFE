@@ -17,11 +17,11 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
-import plugins.fmp.multicafe.series.AdjustMeasuresToDimensions;
+import plugins.fmp.multicafe.fmp_series.AdjustMeasuresToDimensions;
+import plugins.fmp.multicafe.fmp_series.ClipCageMeasuresToSmallest;
+import plugins.fmp.multicafe.fmp_series.CropMeasuresToDimensions;
+import plugins.fmp.multicafe.fmp_series.CurvesRestoreLength;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
-import plugins.fmp.multicafe.series.ClipCageMeasuresToSmallest;
-import plugins.fmp.multicafe.series.CropMeasuresToDimensions;
-import plugins.fmp.multicafe.series.CurvesRestoreLength;
 
 public class Adjust extends JPanel implements PropertyChangeListener {
 	/**

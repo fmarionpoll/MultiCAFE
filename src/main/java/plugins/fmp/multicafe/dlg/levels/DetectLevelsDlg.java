@@ -26,11 +26,11 @@ import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_series.DetectLevels;
 import plugins.fmp.multicafe.fmp_tools.canvas2D.Canvas2DWithTransforms;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.fmp_tools.overlay.OverlayThreshold;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
-import plugins.fmp.multicafe.series.DetectLevels;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {

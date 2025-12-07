@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.series;
+package plugins.fmp.multicafe.fmp_series;
 
 import java.util.ArrayList;
 

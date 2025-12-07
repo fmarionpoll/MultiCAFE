@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.series;
+package plugins.fmp.multicafe.fmp_series;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_service.LevelDetector;

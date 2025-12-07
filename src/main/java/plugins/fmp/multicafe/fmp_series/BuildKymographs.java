@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.series;
+package plugins.fmp.multicafe.fmp_series;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -38,7 +38,7 @@ public class BuildKymographs extends BuildSeries {
 		return flag;
 	}
 
-	private void getTimeLimitsOfSequence(Experiment exp) {
+	protected void getTimeLimitsOfSequence(Experiment exp) {
 		exp.getFileIntervalsFromSeqCamData();
 		exp.setKymoBin_ms(options.t_Ms_BinDuration);
 		if (options.isFrameFixed) {
