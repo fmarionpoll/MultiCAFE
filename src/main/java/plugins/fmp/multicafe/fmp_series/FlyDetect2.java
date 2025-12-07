@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.series;
+package plugins.fmp.multicafe.fmp_series;
 
 import icy.image.IcyBufferedImageUtil;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;

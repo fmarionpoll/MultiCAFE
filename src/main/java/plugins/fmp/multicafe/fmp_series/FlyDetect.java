@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.series;
+package plugins.fmp.multicafe.fmp_series;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
@@ -16,10 +16,11 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.series.BuildSeries;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public abstract class FlyDetect extends BuildSeries {
-	public FlyDetectTools find_flies = new FlyDetectTools();
+	public DetectFlyTools find_flies = new DetectFlyTools();
 	Sequence seqNegative = null;
 	ViewerFMP vNegative = null;
 
