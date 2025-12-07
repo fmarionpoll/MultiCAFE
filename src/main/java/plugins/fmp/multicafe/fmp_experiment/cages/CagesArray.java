@@ -416,6 +416,15 @@ public class CagesArray {
 	}
 
 	public boolean xmlReadCagesFromFileNoQuestion(String tempname) {
+		if (tempname == null) {
+			return false;
+		}
+		
+		File file = new File(tempname);
+		if (!file.exists()) {
+			return false;
+		}
+		
 		// Memory monitoring before loading
 //		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		// System.out.println("=== XML LOADING: CagesArray ===");
@@ -426,7 +435,6 @@ public class CagesArray {
 		try {
 			final Document doc = XMLUtil.loadDocument(tempname);
 			if (doc == null) {
-				System.err.println("ERROR: Could not load XML document from " + tempname);
 				return false;
 			}
 

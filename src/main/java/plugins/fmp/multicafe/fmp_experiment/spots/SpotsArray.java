@@ -272,6 +272,12 @@ public class SpotsArray {
 			XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
 
 			sortSpots();
+			
+			// If no spots, successfully save empty array
+			if (spotsList.isEmpty()) {
+				return true;
+			}
+			
 			int savedSpots = 0;
 			for (int i = 0; i < spotsList.size(); i++) {
 				try {

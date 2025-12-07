@@ -490,6 +490,8 @@ public class Experiment {
 			seqCamData.closeSequence();
 		if (seqReference != null)
 			seqReference.close();
+		if (seqKymos != null)
+			seqKymos.closeSequence();
 	}
 
 	public boolean zopenPositionsMeasures() {
@@ -787,6 +789,13 @@ public class Experiment {
 
 	public boolean load_MS96_cages() {
 		String fileName = getXML_MS96_cages_Location(cages.ID_MS96_cages_XML);
+		if (fileName == null) {
+			return false;
+		}
+		File file = new File(fileName);
+		if (!file.exists()) {
+			return false;
+		}
 		return cages.xmlReadCagesFromFileNoQuestion(fileName);
 	}
 

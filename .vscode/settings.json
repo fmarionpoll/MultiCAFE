@@ -29,7 +29,11 @@
   
   // Disable auto-save if it's causing issues
   "files.autoSave": "off",
-  "java.compile.nullAnalysis.mode": "automatic"
+  "java.compile.nullAnalysis.mode": "automatic",
+  
+  // Disable telemetry to prevent OpenTelemetry errors
+  "telemetry.telemetryLevel": "off",
+  "cursor.telemetry.enabled": false
 }
 
 
