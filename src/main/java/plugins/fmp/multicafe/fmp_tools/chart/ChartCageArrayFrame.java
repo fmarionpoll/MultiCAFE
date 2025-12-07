@@ -133,7 +133,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/** Current experiment */
 	private Experiment experiment = null;
 
-	/** Parent MultiSPOTS96 instance */
+	/** Parent MultiCAFE/MultiSPOTS96 instance */
 	private MultiCAFE parent = null;
 
 	/**
