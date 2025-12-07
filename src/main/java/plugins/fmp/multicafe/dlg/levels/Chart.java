@@ -23,15 +23,12 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartLevels;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 
-public class LevelsChart extends JPanel implements SequenceListener {
+public class Chart extends JPanel implements SequenceListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7079184380174992501L;
-//	private ChartLevels plotTopAndBottom = null;
-//	private ChartLevels plotDelta = null;
-//	private ChartLevels plotDerivative = null;
-//	private ChartLevels plotSumgulps = null;
+
 	private ChartLevels plotTopAndBottom = null;
 	private ChartLevels plotDelta = null;
 	private ChartLevels plotDerivative = null;
@@ -54,6 +51,13 @@ public class LevelsChart extends JPanel implements SequenceListener {
 	private JButton axisOptionsButton = new JButton("Axis options");
 	private JRadioButton displayAllButton = new JRadioButton("all cages");
 	private JRadioButton displaySelectedButton = new JRadioButton("cage selected");
+
+	private AxisOptions graphOptions = null;
+	private EnumXLSExport[] measures = new EnumXLSExport[] { //
+			EnumXLSExport.AREA_SUM, //
+			EnumXLSExport.AREA_SUMCLEAN // ,
+			// EnumXLSExportType.AREA_DIFF
+	};
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		setLayout(capLayout);
@@ -93,11 +97,6 @@ public class LevelsChart extends JPanel implements SequenceListener {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-//				if (exp != null) {
-//					exp.getSeqKymos().validateRois();
-//					exp.getSeqKymos().transferKymosRoisToCapillaries_Measures(exp.getCapillaries());
-//					displayGraphsPanels(exp);
-//				}
 				if (exp != null)
 					displayGraphsPanels(exp);
 			}
@@ -109,6 +108,21 @@ public class LevelsChart extends JPanel implements SequenceListener {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					displayGraphsPanels(exp);
+				}
+			}
+		});
+
+		axisOptionsButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+				if (exp != null) {
+					if (graphOptions != null) {
+						graphOptions.close();
+					}
+					graphOptions = new AxisOptions();
+					graphOptions.initialize(parent0, chartCageArray);
+					graphOptions.requestFocus();
 				}
 			}
 		});
@@ -191,7 +205,6 @@ public class LevelsChart extends JPanel implements SequenceListener {
 		} else if (plotSumgulps != null)
 			closeChart(plotSumgulps);
 	}
-
 
 	private ChartLevels plotToChart(Experiment exp, String title, EnumXLSExport option, ChartLevels iChart,
 			Rectangle rectv) {

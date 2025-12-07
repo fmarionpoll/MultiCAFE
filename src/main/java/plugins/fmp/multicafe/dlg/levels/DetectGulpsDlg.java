@@ -27,7 +27,7 @@ import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.DetectGulps;
 
-public class LevelsToGulps extends JPanel implements PropertyChangeListener {
+public class DetectGulpsDlg extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */

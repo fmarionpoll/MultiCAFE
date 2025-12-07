@@ -28,7 +28,6 @@ import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
-import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
@@ -133,8 +132,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/** Current experiment */
 	private Experiment experiment = null;
 
-	/** Parent MultiCAFE/MultiSPOTS96 instance */
-	private MultiCAFE parent = null;
+//	/** Parent MultiCAFE/MultiSPOTS96 instance */
+//	private MultiCAFE parent = null;
 
 	/**
 	 * Creates the main chart panel and frame.
@@ -145,8 +144,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param parent0          the parent MultiSPOTS96 instance
 	 * @throws IllegalArgumentException if any required parameter is null
 	 */
-	public void createMainChartPanel(String title, Experiment exp, XLSExportOptions xlsExportOptions,
-			MultiCAFE parent0) {
+	public void createMainChartPanel(String title, Experiment exp, XLSExportOptions xlsExportOptions) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
@@ -157,7 +155,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 			throw new IllegalArgumentException("Title cannot be null or empty");
 		}
 
-		this.parent = parent0;
+//		this.parent = parent0;
 		this.experiment = exp;
 
 		mainChartPanel = new JPanel();

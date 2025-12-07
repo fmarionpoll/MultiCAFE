@@ -33,7 +33,7 @@ import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.fmp.multicafe.series.DetectLevels;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
-public class Levels extends JPanel implements PropertyChangeListener {
+public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 	private static final long serialVersionUID = -6329863521455897561L;
 
 	private JCheckBox pass1CheckBox = new JCheckBox("pass1", true);
