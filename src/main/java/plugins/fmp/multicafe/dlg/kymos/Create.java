@@ -22,8 +22,8 @@ import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_series.BuildKymographs;
+import plugins.fmp.multicafe.fmp_series.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxMs;
-import plugins.fmp.multicafe.series.BuildSeriesOptions;
 
 public class Create extends JPanel implements PropertyChangeListener {
 	/**

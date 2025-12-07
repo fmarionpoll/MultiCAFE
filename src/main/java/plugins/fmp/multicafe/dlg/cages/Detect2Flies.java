@@ -26,13 +26,13 @@ import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_series.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_series.FlyDetect2;
 import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
 import plugins.fmp.multicafe.fmp_tools.canvas2D.Canvas2DWithTransforms;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 import plugins.fmp.multicafe.fmp_tools.overlay.OverlayThreshold;
-import plugins.fmp.multicafe.series.BuildSeriesOptions;
 
 public class Detect2Flies extends JPanel implements ChangeListener, PropertyChangeListener, PopupMenuListener {
 	private static final long serialVersionUID = -5257698990389571518L;

@@ -15,11 +15,11 @@ import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.type.geom.Polyline2D;
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.fmp_series.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.AlongT;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
-import plugins.fmp.multicafe.series.BuildSeriesOptions;
 import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 

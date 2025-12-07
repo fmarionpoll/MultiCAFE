@@ -15,8 +15,8 @@ import icy.type.geom.Polyline2D;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
+import plugins.fmp.multicafe.fmp_series.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_tools.Logger;
-import plugins.fmp.multicafe.series.BuildSeriesOptions;
 
 public class GulpDetector {
 
