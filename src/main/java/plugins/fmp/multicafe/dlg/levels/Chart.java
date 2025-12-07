@@ -53,11 +53,11 @@ public class Chart extends JPanel implements SequenceListener {
 	private JRadioButton displaySelectedButton = new JRadioButton("cage selected");
 
 	private AxisOptions graphOptions = null;
-	private EnumXLSExport[] measures = new EnumXLSExport[] { //
-			EnumXLSExport.AREA_SUM, //
-			EnumXLSExport.AREA_SUMCLEAN // ,
-			// EnumXLSExportType.AREA_DIFF
-	};
+//	private EnumXLSExport[] measures = new EnumXLSExport[] { //
+//			EnumXLSExport.AREA_SUM, //
+//			EnumXLSExport.AREA_SUMCLEAN // ,
+//			// EnumXLSExportType.AREA_DIFF
+//	};
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		setLayout(capLayout);
@@ -121,7 +121,7 @@ public class Chart extends JPanel implements SequenceListener {
 						graphOptions.close();
 					}
 					graphOptions = new AxisOptions();
-					graphOptions.initialize(parent0, chartCageArray);
+//					graphOptions.initialize(parent0, chartCageArray); // TODO
 					graphOptions.requestFocus();
 				}
 			}
