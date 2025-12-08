@@ -235,7 +235,7 @@ public class ChartLevels extends IcyFrame {
 		}
 		options.buildExcelStepMs = (int) kymoBin_ms;
 		options.relativeToT0 = false;
-		options.subtractEvaporation = subtractEvaporation;
+		options.correctEvaporation = subtractEvaporation;
 
 		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
 
@@ -246,7 +246,7 @@ public class ChartLevels extends IcyFrame {
 			XLSExportOptions capOptions = new XLSExportOptions();
 			capOptions.buildExcelStepMs = options.buildExcelStepMs;
 			capOptions.relativeToT0 = options.relativeToT0;
-			capOptions.subtractEvaporation = options.subtractEvaporation;
+			capOptions.correctEvaporation = options.correctEvaporation;
 			capOptions.exportType = exportType;
 
 			XLSResults xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, capOptions,

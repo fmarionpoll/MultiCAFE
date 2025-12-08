@@ -101,7 +101,37 @@ public class Chart extends JPanel implements SequenceListener {
 					displayGraphsPanels(exp);
 			}
 		});
+		
+		limitsCheckbox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+				if (exp != null) {
+					displayGraphsPanels(exp);
+				}
+			}
+		});
+		
+		consumptionCheckbox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+				if (exp != null) {
+					displayGraphsPanels(exp);
+				}
+			}
+		});
 
+		derivativeCheckbox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+				if (exp != null) {
+					displayGraphsPanels(exp);
+				}
+			}
+		});
+		
 		correctEvaporationCheckbox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {

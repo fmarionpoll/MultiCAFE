@@ -44,7 +44,7 @@ public class XLSExportOptions {
 	public boolean relativeToMedianT0 = false;
 	public int medianT0FromNPoints = 5;
 	public boolean onlyalive = true;
-	public boolean subtractEvaporation = false;
+	public boolean correctEvaporation = false;
 
 	public boolean transpose = false;
 	public boolean duplicateSeries = true;

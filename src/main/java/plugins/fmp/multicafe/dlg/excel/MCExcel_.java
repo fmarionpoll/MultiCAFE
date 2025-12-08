@@ -183,7 +183,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		options.lrPIThreshold = (double) tabLevels.lrPIThresholdJSpinner.getValue();
 		options.sumPerCage = tabLevels.sumPerCageCheckBox.isSelected();
 		// options.t0 = tabLevels.t0CheckBox.isSelected();
-		options.subtractEvaporation = tabLevels.subtractEvaporationCheckBox.isSelected();
+		options.correctEvaporation = tabLevels.subtractEvaporationCheckBox.isSelected();
 		getCommonOptions(options, exp);
 		return options;
 	}
@@ -206,7 +206,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		options.crosscorrelation = tabGulps.crosscorrelationCheckBox.isSelected();
 		options.nBinsCorrelation = (int) tabGulps.nbinsJSpinner.getValue();
 
-		options.subtractEvaporation = false;
+		options.correctEvaporation = false;
 		getCommonOptions(options, exp);
 		return options;
 	}

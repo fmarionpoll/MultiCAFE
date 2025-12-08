@@ -190,10 +190,10 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * @param exp                 the experiment containing the data
 	 * @param option              the export type option
 	 * @param title               the chart title
-	 * @param subtractEvaporation whether to subtract evaporation
+	 * @param correcttEvaporation whether to subtract evaporation
 	 * @throws IllegalArgumentException if exp or option is null
 	 */
-	public void displayData(Experiment exp, EnumXLSExport option, String title, boolean subtractEvaporation) {
+	public void displayData(Experiment exp, EnumXLSExport option, String title, boolean correcttEvaporation) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
@@ -210,7 +210,7 @@ public class ChartLevelsFrame extends IcyFrame {
 		ymin = Double.NaN;
 		flagMaxMinSet = false;
 
-		List<XYSeriesCollection> xyDataSetList = getDataArrays(exp, option, subtractEvaporation);
+		List<XYSeriesCollection> xyDataSetList = getDataArrays(exp, option, correcttEvaporation);
 
 		if (xyDataSetList == null || xyDataSetList.isEmpty()) {
 			LOGGER.warning("No data to display for option: " + option);
@@ -477,20 +477,20 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * 
 	 * @param exp                 the experiment
 	 * @param exportType          the export type
-	 * @param subtractEvaporation whether to subtract evaporation
+	 * @param correctEvaporation whether to subtract evaporation
 	 * @return list of XY series collections
 	 */
 	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumXLSExport exportType,
-			boolean subtractEvaporation) {
+			boolean correctEvaporation) {
 		if (exp == null || exportType == null) {
 			LOGGER.warning("Invalid parameters for getDataArrays");
 			return new ArrayList<XYSeriesCollection>();
 		}
 
-		XLSResultsArray resultsArray1 = getDataAsResultsArray(exp, exportType, subtractEvaporation);
+		XLSResultsArray resultsArray1 = getDataAsResultsArray(exp, exportType, correctEvaporation);
 		XLSResultsArray resultsArray2 = null;
 		if (exportType == EnumXLSExport.TOPLEVEL) {
-			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExport.BOTTOMLEVEL, subtractEvaporation);
+			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExport.BOTTOMLEVEL, correctEvaporation);
 		}
 
 		XYSeriesCollection xyDataset = null;
@@ -581,11 +581,11 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * 
 	 * @param exp                 the experiment
 	 * @param exportType          the export type
-	 * @param subtractEvaporation whether to subtract evaporation
+	 * @param correctEvaporation whether to subtract evaporation
 	 * @return the results array
 	 */
 	private XLSResultsArray getDataAsResultsArray(Experiment exp, EnumXLSExport exportType,
-			boolean subtractEvaporation) {
+			boolean correctEvaporation) {
 		if (exp == null || exportType == null) {
 			LOGGER.warning("Invalid parameters for getDataAsResultsArray");
 			return new XLSResultsArray();
@@ -598,7 +598,7 @@ public class ChartLevelsFrame extends IcyFrame {
 		}
 		options.buildExcelStepMs = (int) kymoBin_ms;
 		options.relativeToT0 = false;
-		options.subtractEvaporation = subtractEvaporation;
+		options.correctEvaporation = correctEvaporation;
 
 		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
 
@@ -619,7 +619,7 @@ public class ChartLevelsFrame extends IcyFrame {
 			XLSExportOptions capOptions = new XLSExportOptions();
 			capOptions.buildExcelStepMs = options.buildExcelStepMs;
 			capOptions.relativeToT0 = options.relativeToT0;
-			capOptions.subtractEvaporation = options.subtractEvaporation;
+			capOptions.correctEvaporation = options.correctEvaporation;
 			capOptions.exportType = exportType;
 
 			try {
