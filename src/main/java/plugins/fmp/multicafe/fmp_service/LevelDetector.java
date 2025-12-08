@@ -15,6 +15,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_series.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
+import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 
 public class LevelDetector {
 
@@ -44,18 +45,48 @@ public class LevelDetector {
 		SequenceLoaderService loader = new SequenceLoaderService();
 
 		for (int tKymo = tFirsKymo; tKymo <= tLastKymo; tKymo++) {
-			final Capillary capi = exp.getCapillaries().getCapillariesList().get(tKymo);
-			if (!options.detectR && capi.getKymographName().endsWith("2"))
+			if (exp.getCapillaries() == null || exp.getCapillaries().getCapillariesList() == null) {
+				Logger.warn("LevelDetector:detectLevels - Capillaries or capillaries list is null for tKymo=" + tKymo);
 				continue;
-			if (!options.detectL && capi.getKymographName().endsWith("1"))
+			}
+			if (tKymo >= exp.getCapillaries().getCapillariesList().size()) {
+				Logger.warn("LevelDetector:detectLevels - Index out of bounds for tKymo=" + tKymo + ", list size="
+						+ exp.getCapillaries().getCapillariesList().size());
+				continue;
+			}
+			final Capillary capi = exp.getCapillaries().getCapillariesList().get(tKymo);
+			if (capi == null) {
+				Logger.warn("LevelDetector:detectLevels - Capillary is null for tKymo=" + tKymo);
+				continue;
+			}
+			String kymographName = capi.getKymographName();
+			if (kymographName == null) {
+				Logger.warn("LevelDetector:detectLevels - Kymograph name is null for tKymo=" + tKymo);
+				continue;
+			}
+			if (!options.detectR && kymographName.endsWith("2"))
+				continue;
+			if (!options.detectL && kymographName.endsWith("1"))
 				continue;
 
 			capi.kymographIndex = tKymo;
-			capi.ptsDerivative.clear();
-			capi.ptsGulps.gulps.clear();
-			capi.limitsOptions.copyFrom(options);
-			final IcyBufferedImage rawImage = loader
-					.imageIORead(seqKymos.getFileNameFromImageList(capi.kymographIndex));
+			if (capi.ptsDerivative != null)
+				capi.ptsDerivative.clear();
+			if (capi.ptsGulps != null && capi.ptsGulps.gulps != null)
+				capi.ptsGulps.gulps.clear();
+			if (capi.limitsOptions != null)
+				capi.limitsOptions.copyFrom(options);
+			
+			String fileName = seqKymos.getFileNameFromImageList(capi.kymographIndex);
+			if (fileName == null) {
+				Logger.warn("LevelDetector:detectLevels - File name is null for tKymo=" + tKymo);
+				continue;
+			}
+			final IcyBufferedImage rawImage = loader.imageIORead(fileName);
+			if (rawImage == null) {
+				Logger.warn("LevelDetector:detectLevels - Failed to load image for tKymo=" + tKymo + ", file=" + fileName);
+				continue;
+			}
 
 			futures.add(processor.submit(new Runnable() {
 				@Override
@@ -74,18 +105,28 @@ public class LevelDetector {
 					int columnFirst = (int) searchRect.getX();
 					int columnLast = (int) (searchRect.getWidth() + columnFirst);
 					if (options.analyzePartOnly) {
-						capi.ptsTop.polylineLevel.insertYPoints(capi.ptsTop.limit, columnFirst, columnLast);
-						if (capi.ptsBottom.limit != null)
+						if (capi.ptsTop != null && capi.ptsTop.polylineLevel != null && capi.ptsTop.limit != null)
+							capi.ptsTop.polylineLevel.insertYPoints(capi.ptsTop.limit, columnFirst, columnLast);
+						if (capi.ptsBottom != null && capi.ptsBottom.limit != null && capi.ptsBottom.polylineLevel != null)
 							capi.ptsBottom.polylineLevel.insertYPoints(capi.ptsBottom.limit, columnFirst, columnLast);
 					} else {
-						capi.ptsTop.setPolylineLevelFromTempData(capi.getLast2ofCapillaryName() + "_toplevel",
-								capi.kymographIndex, columnFirst, columnLast);
-						if (capi.ptsBottom.limit != null)
-							capi.ptsBottom.setPolylineLevelFromTempData(capi.getLast2ofCapillaryName() + "_bottomlevel",
-									capi.kymographIndex, columnFirst, columnLast);
+						if (capi.ptsTop != null) {
+							String topLevelName = capi.getLast2ofCapillaryName();
+							if (topLevelName != null)
+								capi.ptsTop.setPolylineLevelFromTempData(topLevelName + "_toplevel",
+										capi.kymographIndex, columnFirst, columnLast);
+						}
+						if (capi.ptsBottom != null && capi.ptsBottom.limit != null) {
+							String bottomLevelName = capi.getLast2ofCapillaryName();
+							if (bottomLevelName != null)
+								capi.ptsBottom.setPolylineLevelFromTempData(bottomLevelName + "_bottomlevel",
+										capi.kymographIndex, columnFirst, columnLast);
+						}
 					}
-					capi.ptsTop.limit = null;
-					capi.ptsBottom.limit = null;
+					if (capi.ptsTop != null)
+						capi.ptsTop.limit = null;
+					if (capi.ptsBottom != null)
+						capi.ptsBottom.limit = null;
 				}
 			}));
 		}
@@ -101,7 +142,12 @@ public class LevelDetector {
 			try {
 				f.get();
 			} catch (ExecutionException e) {
-				Logger.error("LevelDetector:waitFuturesCompletion - Execution exception", e);
+				Throwable cause = e.getCause();
+				if (cause != null) {
+					Logger.error("LevelDetector:waitFuturesCompletion - Execution exception: " + cause.getClass().getSimpleName() + " - " + cause.getMessage(), cause);
+				} else {
+					Logger.error("LevelDetector:waitFuturesCompletion - Execution exception", e);
+				}
 			} catch (InterruptedException e) {
 				Logger.warn("LevelDetector:waitFuturesCompletion - Interrupted exception: " + e.getMessage());
 			}
@@ -111,7 +157,8 @@ public class LevelDetector {
 
 	private void detectPass1(IcyBufferedImage rawImage, ImageTransformInterface transformPass1, Capillary capi,
 			int imageWidth, int imageHeight, Rectangle searchRect, int jitter, BuildSeriesOptions options) {
-		IcyBufferedImage transformedImage1 = transformPass1.getTransformedImage(rawImage, null);
+		ImageTransformOptions transformOptions = new ImageTransformOptions();
+		IcyBufferedImage transformedImage1 = transformPass1.getTransformedImage(rawImage, transformOptions);
 		Object transformedArray1 = transformedImage1.getDataXY(0);
 		int[] transformed1DArray1 = Array1DUtil.arrayToIntArray(transformedArray1,
 				transformedImage1.isSignedDataType());
@@ -153,7 +200,8 @@ public class LevelDetector {
 		if (capi.ptsTop.limit == null)
 			capi.ptsTop.setTempDataFromPolylineLevel();
 
-		IcyBufferedImage transformedImage2 = transformPass2.getTransformedImage(rawImage, null);
+		ImageTransformOptions transformOptions = new ImageTransformOptions();
+		IcyBufferedImage transformedImage2 = transformPass2.getTransformedImage(rawImage, transformOptions);
 		Object transformedArray2 = transformedImage2.getDataXY(0);
 		int[] transformed1DArray2 = Array1DUtil.arrayToIntArray(transformedArray2,
 				transformedImage2.isSignedDataType());

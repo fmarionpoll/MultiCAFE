@@ -578,8 +578,8 @@ public class Experiment {
 
 	public String getDirectoryToSaveResults() {
 		Path dir = Paths.get(resultsDirectory);
-//		if (binSubDirectory != null)
-//			dir = dir.resolve(binSubDirectory);
+		if (binDirectory != null)
+			dir = dir.resolve(binDirectory);
 		String directory = dir.toAbsolutePath().toString();
 		if (!createDirectoryIfDoesNotExist(directory))
 			directory = null;
