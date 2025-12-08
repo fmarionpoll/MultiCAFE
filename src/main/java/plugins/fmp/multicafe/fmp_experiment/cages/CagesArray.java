@@ -28,7 +28,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.TIntervalsArray;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotString;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
-import plugins.fmp.multicafe.fmp_series.BuildSeriesOptions;
+import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
 import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;

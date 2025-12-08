@@ -303,7 +303,7 @@ public class DetectionOptions {
 	}
 
 	// Create from legacy BuildSeriesOptions
-	public static DetectionOptions fromLegacyOptions(plugins.fmp.multicafe.fmp_series.BuildSeriesOptions legacy) {
+	public static DetectionOptions fromLegacyOptions(plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions legacy) {
 		return builder().threshold(legacy.threshold).flyThreshold(legacy.flyThreshold)
 				.flyThresholdUp(legacy.flyThresholdUp).backgroundThreshold(legacy.backgroundThreshold)
 				.spotThreshold(legacy.spotThreshold).spotThresholdUp(legacy.spotThresholdUp)

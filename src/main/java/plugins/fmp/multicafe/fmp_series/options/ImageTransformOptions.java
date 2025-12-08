@@ -361,7 +361,7 @@ public class ImageTransformOptions {
 	}
 
 	// Create from legacy BuildSeriesOptions
-	public static ImageTransformOptions fromLegacyOptions(plugins.fmp.multicafe.fmp_series.BuildSeriesOptions legacy) {
+	public static ImageTransformOptions fromLegacyOptions(plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions legacy) {
 		return builder().transform01(legacy.transform01).transform02(legacy.transform02)
 				.overlayTransform(legacy.overlayTransform).transformop(legacy.transformop)
 				.overlayIfGreater(legacy.overlayIfGreater).trackWhite(legacy.btrackWhite).limitLow(legacy.blimitLow)

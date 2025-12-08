@@ -15,7 +15,7 @@ import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.type.geom.Polyline2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.fmp_series.BuildSeriesOptions;
+import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.AlongT;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;

@@ -1,7 +1,5 @@
 package plugins.fmp.multicafe.fmp_series.options;
 
-import plugins.fmp.multicafe.fmp_series.BuildSeriesOptions;
-
 /**
  * Configuration for time-related parameters. Replaces time-related fields from
  * BuildSeriesOptions.

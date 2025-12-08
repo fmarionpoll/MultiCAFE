@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.fmp_series;
+package plugins.fmp.multicafe.fmp_series.options;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;

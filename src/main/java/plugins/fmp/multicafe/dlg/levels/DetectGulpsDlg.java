@@ -22,8 +22,8 @@ import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.fmp_series.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_series.DetectGulps;
+import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_tools.canvas2D.Canvas2DWithTransforms;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 
