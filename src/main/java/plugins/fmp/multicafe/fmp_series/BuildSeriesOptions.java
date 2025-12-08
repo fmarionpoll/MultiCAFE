@@ -35,6 +35,15 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public boolean detectTop = true;
 	public boolean detectBottom = true;
 	public int detectCage = -1;
+	public boolean detectL = true;
+	public boolean detectR = true;
+	public boolean detectAllKymos = true;
+	public int kymoFirst = 0;
+	public int kymoLast = 0;
+	public double detectGulpsThreshold_uL = .3;
+	public ImageTransformEnums transformForGulps = ImageTransformEnums.XDIFFN;
+	public boolean detectAllGulps = true;
+	public boolean buildGulps = true;
 
 	public boolean detectSelectedROIs = false;
 	public ArrayList<Integer> selectedIndexes = null;
@@ -71,6 +80,9 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public boolean pass2 = false;
 	public boolean directionUp2 = true;
 	public boolean concurrentDisplay = true;
+
+	public boolean directionUp1 = true;
+	public int detectLevel1Threshold = 35;
 
 	public Rectangle searchArea = new Rectangle();
 	public int spanDiffTop = 3;
@@ -111,7 +123,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 
 	}
 
-	void copyFrom(BuildSeriesOptions destination) {
+	public void copyFrom(BuildSeriesOptions destination) {
 		detectTop = destination.detectTop;
 		detectBottom = destination.detectBottom;
 		transform01 = destination.transform01;

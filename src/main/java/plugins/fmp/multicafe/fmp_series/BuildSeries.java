@@ -20,6 +20,7 @@ import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
 import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
@@ -152,8 +153,8 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		if (options.isFrameFixed) {
 			exp.getSeqCamData().getTimeManager().setBinFirst_ms(options.t_Ms_First);
 			exp.getSeqCamData().getTimeManager().setBinLast_ms(options.t_Ms_Last);
-			if (exp.getSeqCamData().getTimeManager().getBinLast_ms() + exp.getSeqCamData().getFirstImageMs() > exp.getSeqCamData()
-					.getLastImageMs())
+			if (exp.getSeqCamData().getTimeManager().getBinLast_ms() + exp.getSeqCamData().getFirstImageMs() > exp
+					.getSeqCamData().getLastImageMs())
 				exp.getSeqCamData().getTimeManager()
 						.setBinLast_ms(exp.getSeqCamData().getLastImageMs() - exp.getSeqCamData().getFirstImageMs());
 		} else {
@@ -174,8 +175,8 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 	}
 
 	protected boolean loadSeqCamDataAndCages(Experiment exp) {
-		exp.getSeqCamData().attachSequence(
-				exp.getSeqCamData().getImageLoader().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
+		exp.getSeqCamData().attachSequence(exp.getSeqCamData().getImageLoader()
+				.initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 		boolean flag = exp.load_MS96_cages();
 		return flag;
 	}
@@ -223,5 +224,13 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		} catch (InvocationTargetException | InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected boolean loadDrosoTrack(Experiment exp) {
+		List<String> imagesList = exp.getSeqCamData().getImagesList(true);
+		Sequence seq = new SequenceLoaderService().initSequenceFromFirstImage(imagesList);
+		exp.getSeqCamData().setSequence(seq);
+		boolean flag = exp.loadCageMeasures();
+		return flag;
 	}
 }

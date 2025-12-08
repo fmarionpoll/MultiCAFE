@@ -16,7 +16,6 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
-import plugins.fmp.multicafe.series.BuildSeries;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public abstract class FlyDetect extends BuildSeries {
