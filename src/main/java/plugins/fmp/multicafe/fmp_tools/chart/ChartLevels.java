@@ -250,7 +250,7 @@ public class ChartLevels extends IcyFrame {
 			capOptions.exportType = exportType;
 
 			XLSResults xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, capOptions,
-					false);
+					capOptions.correctEvaporation);
 			if (xlsResults != null) {
 				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
 				resultsArray.add(xlsResults);
