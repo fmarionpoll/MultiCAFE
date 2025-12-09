@@ -19,13 +19,29 @@ public class XLSResults {
 	private String name = null;
 	private String stimulus = null;
 	private String concentration = null;
+	int nadded = 1;
+	boolean[] padded_out = null;
+
+	public int dimension = 0;
 	private int nflies = 1;
 	private int cageID = 0;
 	private int cagePosition = 0;
 	private Color color;
+	public EnumXLSExport exportType = null;
+	public ArrayList<Integer> dataInt = null;
+	
 	private ArrayList<Double> dataValues = null;
 	private int valuesOutLength = 0;
-	private double[] valuesOut = null;
+	public double[] valuesOut = null;
+
+	
+	public XLSResults(String name, int nflies, int cellID, EnumXLSExport exportType) {
+		this.name = name;
+		this.nflies = nflies;
+		this.cageID = cellID;
+		this.exportType = exportType;
+	}
+
 
 	public XLSResults(String name, int nflies, int cageID, int cagePos, EnumXLSExport exportType) {
 		this.name = name;
@@ -353,5 +369,117 @@ public class XLSResults {
 		}
 		return true;
 	}
+	
+	// ------------------------------
+
+	public void addDataToValOutEvap(XLSResults result) {
+		if (result.valuesOut.length > valuesOut.length) {
+			System.out.println("XLSResults:addDataToValOutEvap() Error: from len=" + result.valuesOut.length
+					+ " to len=" + valuesOut.length);
+			return;
+		}
+
+		for (int i = 0; i < result.valuesOut.length; i++) {
+			valuesOut[i] += result.valuesOut[i];
+		}
+		nflies++;
+	}
+
+	public void averageEvaporation() {
+		if (nflies == 0)
+			return;
+
+		for (int i = 0; i < valuesOut.length; i++)
+			valuesOut[i] = valuesOut[i] / nflies;
+		nflies = 1;
+	}
+
+	public void subtractEvap(XLSResults evap) {
+		if (valuesOut == null)
+			return;
+		int len = Math.min(valuesOut.length, evap.valuesOut.length);
+		for (int i = 0; i < len; i++) {
+			valuesOut[i] -= evap.valuesOut[i];
+		}
+	}
+
+	void sumValues_out(XLSResults dataToAdd) {
+		int len = Math.min(valuesOut.length, dataToAdd.valuesOut.length);
+		for (int i = 0; i < len; i++) {
+			valuesOut[i] += dataToAdd.valuesOut[i];
+		}
+		nadded += 1;
+	}
+
+	public double padWithLastPreviousValue(long to_first_index) {
+		double dvalue = 0;
+		if (to_first_index >= valuesOut.length)
+			return dvalue;
+
+		int index = getIndexOfFirstNonEmptyValueBackwards(to_first_index);
+		if (index >= 0) {
+			dvalue = valuesOut[index];
+			for (int i = index + 1; i < to_first_index; i++) {
+				valuesOut[i] = dvalue;
+				padded_out[i] = true;
+			}
+		}
+		return dvalue;
+	}
+
+	private int getIndexOfFirstNonEmptyValueBackwards(long fromindex) {
+		int index = -1;
+		int ifrom = (int) fromindex;
+		for (int i = ifrom; i >= 0; i--) {
+			if (!Double.isNaN(valuesOut[i])) {
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+
+	public static XLSResults getResultsArrayWithThatName(String testname, XLSResultsArray resultsArrayList) {
+		XLSResults resultsFound = null;
+		for (XLSResults results : resultsArrayList.resultsList) {
+			if (results.name.equals(testname)) {
+				resultsFound = results;
+				break;
+			}
+		}
+		return resultsFound;
+	}
+	
+	public void transferDataIntToValuesOut(double scalingFactorToPhysicalUnits, EnumXLSExport xlsExport) {
+		if (dimension == 0 || dataInt == null || dataInt.size() < 1)
+			return;
+
+		boolean removeZeros = false;
+		if (xlsExport == EnumXLSExport.AMPLITUDEGULPS)
+			removeZeros = true;
+
+		int len = Math.min(dimension, dataInt.size());
+		if (removeZeros) {
+			for (int i = 0; i < len; i++) {
+				int ivalue = dataInt.get(i);
+				valuesOut[i] = (ivalue == 0 ? Double.NaN : ivalue) * scalingFactorToPhysicalUnits;
+			}
+		} else {
+			for (int i = 0; i < len; i++)
+				valuesOut[i] = dataInt.get(i) * scalingFactorToPhysicalUnits;
+		}
+	}
+	
+	public List<Integer> subtractT0() {
+		if (dataInt == null || dataInt.size() < 1)
+			return null;
+		int valueAtT0 = dataInt.get(0);
+		for (int index = 0; index < dataInt.size(); index++) {
+			int value = dataInt.get(index);
+			dataInt.set(index, value - valueAtT0);
+		}
+		return dataInt;
+	}
+
 
 }

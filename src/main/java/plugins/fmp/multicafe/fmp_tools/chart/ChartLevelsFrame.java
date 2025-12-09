@@ -34,11 +34,11 @@ import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
+
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.fmp_tools.toExcel.capillaries.XLSExportMeasuresFromCapillary;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.fmp_tools.toExcel.capillaries.XLSResultsFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResultsArray;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
@@ -590,51 +590,10 @@ public class ChartLevelsFrame extends IcyFrame {
 			LOGGER.warning("Invalid parameters for getDataAsResultsArray");
 			return new XLSResultsArray();
 		}
-
-		XLSExportOptions options = new XLSExportOptions();
-		long kymoBin_ms = exp.getKymoBin_ms();
-		if (kymoBin_ms <= 0) {
-			kymoBin_ms = 60000;
-		}
-		options.buildExcelStepMs = (int) kymoBin_ms;
-		options.relativeToT0 = false;
-		options.correctEvaporation = correctEvaporation;
-
-		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
-
-		XLSResultsArray resultsArray = new XLSResultsArray();
-		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
-
-		List<Capillary> capillaries = exp.getCapillaries().getCapillariesList();
-		if (capillaries == null) {
-			LOGGER.warning("Capillaries list is null");
-			return resultsArray;
-		}
-
-		for (Capillary capillary : capillaries) {
-			if (capillary == null) {
-				continue;
-			}
-
-			XLSExportOptions capOptions = new XLSExportOptions();
-			capOptions.buildExcelStepMs = options.buildExcelStepMs;
-			capOptions.relativeToT0 = options.relativeToT0;
-			capOptions.correctEvaporation = options.correctEvaporation;
-			capOptions.exportType = exportType;
-
-			try {
-				XLSResults xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary,
-						capOptions, false);
-				if (xlsResults != null) {
-					xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
-					resultsArray.add(xlsResults);
-				}
-			} catch (Exception e) {
-				LOGGER.warning("Error processing capillary: " + e.getMessage());
-			}
-		}
-
-		return resultsArray;
+		
+		XLSResultsFromCapillaries xlsResultsFromCaps = new XLSResultsFromCapillaries();
+		return xlsResultsFromCaps.getMeasuresFromAllCapillaries(exp, exportType,
+				correctEvaporation);
 	}
 
 	/**

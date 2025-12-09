@@ -1,15 +1,13 @@
 package plugins.fmp.multicafe.fmp_tools.toExcel.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
-import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.Comparators;
+
 
 public class XLSResultsArray {
-	ArrayList<XLSResults> resultsList = null;
+	protected ArrayList<XLSResults> resultsList = null;
 	String stim = null;
 	String conc = null;
 	double lowestPiAllowed = -1.2;
@@ -33,9 +31,12 @@ public class XLSResultsArray {
 		return resultsList.get(index);
 	}
 
-	public void add(XLSResults results) {
-		if (results != null)
-			resultsList.add(results);
+	public void addRow(XLSResults results) {
+		resultsList.add(results);
+	}
+
+	public void sortRowsByName() {
+		Collections.sort(resultsList, new Comparators.XLSResults_Name());
 	}
 
 	public void subtractDeltaT(int i, int j) {
@@ -43,34 +44,6 @@ public class XLSResultsArray {
 			row.subtractDeltaT(1, 1); // options.buildExcelStepMs);
 	}
 
-	// ---------------------------------------------------
 
-	public void getSpotsArrayResults_T0(CagesArray cagesArray, EnumXLSExport exportType, int nOutputFrames,
-			long kymoBinCol_Ms, XLSExportOptions xlsExportOptions) {
-		xlsExportOptions.exportType = exportType;
-		buildSpotsDataForPass1(cagesArray, nOutputFrames, kymoBinCol_Ms, xlsExportOptions);
-	}
-
-	public void getSpotsArrayResults1(CagesArray cagesArray, int nOutputFrames, long kymoBinCol_Ms,
-			XLSExportOptions xlsExportOptions) {
-		buildSpotsDataForPass1(cagesArray, nOutputFrames, kymoBinCol_Ms, xlsExportOptions);
-	}
-
-	private void buildSpotsDataForPass1(CagesArray cagesArray, int nOutputFrames, long kymoBinCol_Ms,
-			XLSExportOptions xlsExportOptions) {
-		for (Cage cage : cagesArray.cagesList) {
-			double scalingFactorToPhysicalUnits = cage.spotsArray
-					.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
-				XLSResults results = new XLSResults(cage.getProperties(), spot.getProperties(), nOutputFrames);
-				results.setDataValues((ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportOptions.exportType,
-						kymoBinCol_Ms, xlsExportOptions.buildExcelStepMs));
-				if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT)
-					results.relativeToMaximum(); // relativeToT0();
-				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
-				resultsList.add(results);
-			}
-		}
-	}
 
 }
