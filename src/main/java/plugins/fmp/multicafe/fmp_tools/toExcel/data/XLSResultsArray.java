@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 
-
 public class XLSResultsArray {
 	protected ArrayList<XLSResults> resultsList = null;
 	String stim = null;
@@ -44,6 +43,8 @@ public class XLSResultsArray {
 			row.subtractDeltaT(1, 1); // options.buildExcelStepMs);
 	}
 
-
+	public ArrayList<XLSResults> getList() {
+		return resultsList;
+	}
 
 }

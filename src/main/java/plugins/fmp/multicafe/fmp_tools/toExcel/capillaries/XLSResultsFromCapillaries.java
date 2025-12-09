@@ -8,14 +8,14 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResultsArray;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
-import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 
-public class XLSResultsFromCapillaries extends XLSResultsArray  {
+public class XLSResultsFromCapillaries extends XLSResultsArray {
 	/** Logger for this class */
 	private static final Logger LOGGER = Logger.getLogger(XLSResultsFromCapillaries.class.getName());
 	XLSResults evapL = null;
@@ -29,13 +29,13 @@ public class XLSResultsFromCapillaries extends XLSResultsArray  {
 	public XLSResultsFromCapillaries(int size) {
 		resultsList = new ArrayList<XLSResults>(size);
 	}
-	
+
 	public XLSResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumXLSExport exportType,
 			boolean correctEvaporation) {
 		XLSResultsArray resultsArray = new XLSResultsArray();
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
 		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
-		
+
 		XLSExportOptions options = new XLSExportOptions();
 		long kymoBin_ms = exp.getKymoBin_ms();
 		if (kymoBin_ms <= 0) {
@@ -73,13 +73,59 @@ public class XLSResultsFromCapillaries extends XLSResultsArray  {
 				LOGGER.warning("Error processing capillary: " + e.getMessage());
 			}
 		}
-		
+
 		if (correctEvaporation && exportType == EnumXLSExport.TOPLEVEL)
-			subtractEvaporation();
-		
+			compensateEvaporation(resultsArray);
+
 		return resultsArray;
 	}
-	
+
+	public void compensateEvaporation(XLSResultsArray resultsArray) {
+		int dimension = 0;
+		for (XLSResults result : resultsArray.getList()) {
+			if (result.valuesOut == null)
+				continue;
+			if (result.valuesOut.length > dimension)
+				dimension = result.valuesOut.length;
+		}
+		if (dimension == 0)
+			return;
+
+		computeEvaporationFromResultsWithZeroFlies(resultsArray, dimension);
+		subtractEvaporationLocal(resultsArray);
+	}
+
+	private void computeEvaporationFromResultsWithZeroFlies(XLSResultsArray resultsArray, int dimension) {
+		evapL = new XLSResults("L", 0, 0, null);
+		evapR = new XLSResults("R", 0, 0, null);
+		evapL.initValuesOutArray(dimension, 0.);
+		evapR.initValuesOutArray(dimension, 0.);
+
+		for (XLSResults result : resultsArray.getList()) {
+			if (result.valuesOut == null || result.getNflies() != 0)
+				continue;
+			String side = result.getName().substring(result.getName().length() - 1);
+			if (sameLR || side.contains("L"))
+				evapL.addDataToValOutEvap(result);
+			else
+				evapR.addDataToValOutEvap(result);
+		}
+		evapL.averageEvaporation();
+		evapR.averageEvaporation();
+	}
+
+	private void subtractEvaporationLocal(XLSResultsArray resultsArray) {
+		for (XLSResults result : resultsArray.getList()) {
+			String side = result.getName().substring(result.getName().length() - 1);
+			if (sameLR || side.contains("L"))
+				result.subtractEvap(evapL);
+			else
+				result.subtractEvap(evapR);
+		}
+	}
+
+	// ---------------------------------
+
 	public void subtractEvaporation() {
 		int dimension = 0;
 		for (XLSResults result : resultsList) {
@@ -200,7 +246,8 @@ public class XLSResultsFromCapillaries extends XLSResultsArray  {
 		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
 		for (Capillary cap : caps.getCapillariesList()) {
 			checkIfSameStimulusAndConcentration(cap);
-			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID, xlsExportOptions.exportType);
+			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID,
+					xlsExportOptions.exportType);
 			results.initValuesOutArray(nOutputFrames, null);
 			results.dataInt = cap.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
 					xlsExportOptions.buildExcelStepMs);
@@ -210,7 +257,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray  {
 			addRow(results);
 		}
 	}
-	
+
 	public void checkIfSameStimulusAndConcentration(Capillary cap) {
 		if (!sameLR)
 			return;
@@ -440,7 +487,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray  {
 					xlsExportOptions.exportType);
 			stateRow.initValuesOutArray(dimension, null);
 			stateRow.setStimulus(rowL.getStimulus());
-			stateRow.setConcentration( rowL.getConcentration());
+			stateRow.setConcentration(rowL.getConcentration());
 			stateRow.initValuesOutArray(dimension, 0.);
 			for (int t = 0; t < dimension; t++) {
 				stateRow.valuesOut[t] = (states[t] == s) ? 1. : 0.;
@@ -477,7 +524,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray  {
 		}
 		return rows;
 	}
-	
+
 	public XLSResults getNextRowIfSameCage(int irow) {
 		XLSResults rowL = resultsList.get(irow);
 		int cellL = getCageFromKymoFileName(rowL.getName());
@@ -490,11 +537,11 @@ public class XLSResultsFromCapillaries extends XLSResultsArray  {
 		}
 		return rowR;
 	}
-	
+
 	protected int getCageFromKymoFileName(String name) {
 		if (!name.contains("line"))
 			return -1;
 		return Integer.valueOf(name.substring(4, 5));
 	}
-	
+
 }

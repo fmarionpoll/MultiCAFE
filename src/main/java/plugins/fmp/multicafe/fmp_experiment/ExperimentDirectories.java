@@ -192,6 +192,7 @@ public class ExperimentDirectories {
 	private void move_TIFFandLINEfiles_From_Results_to_BinDirectory(String parentDirectory, List<String> expList) {
 		if (expList == null)
 			return;
+
 		for (String subDirectory : expList) {
 			if (subDirectory.contains(Experiment.RESULTS)) {
 				subDirectory = Experiment.BIN + "60";
