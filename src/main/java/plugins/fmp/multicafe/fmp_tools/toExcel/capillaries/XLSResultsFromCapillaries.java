@@ -200,8 +200,8 @@ public class XLSResultsFromCapillaries extends XLSResultsArray  {
 		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
 		for (Capillary cap : caps.getCapillariesList()) {
 			checkIfSameStimulusAndConcentration(cap);
-			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID,
-					xlsExportOptions.exportType, nOutputFrames);
+			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID, xlsExportOptions.exportType);
+			results.initValuesOutArray(nOutputFrames, null);
 			results.dataInt = cap.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
 					xlsExportOptions.buildExcelStepMs);
 			if (subtractT0)
@@ -437,7 +437,8 @@ public class XLSResultsFromCapillaries extends XLSResultsArray  {
 
 		for (int s = 0; s < 4; s++) {
 			XLSResults stateRow = new XLSResults("cage" + cageID + "_" + stateNames[s], rowL.getNflies(), cageID,
-					xlsExportOptions.exportType, dimension);
+					xlsExportOptions.exportType);
+			stateRow.initValuesOutArray(dimension, null);
 			stateRow.setStimulus(rowL.getStimulus());
 			stateRow.setConcentration( rowL.getConcentration());
 			stateRow.initValuesOutArray(dimension, 0.);
@@ -459,7 +460,8 @@ public class XLSResultsFromCapillaries extends XLSResultsArray  {
 		for (int fromState = 0; fromState < 4; fromState++) {
 			for (int toState = 0; toState < 4; toState++) {
 				XLSResults transRow = new XLSResults("cage" + cageID + "_" + transitionNames[transitionIndex],
-						rowL.getNflies(), cageID, xlsExportOptions.exportType, dimension);
+						rowL.getNflies(), cageID, xlsExportOptions.exportType);
+				transRow.initValuesOutArray(dimension, null);
 				transRow.setStimulus(rowL.getStimulus());
 				transRow.setConcentration(rowL.getConcentration());
 				transRow.initValuesOutArray(dimension, 0.);

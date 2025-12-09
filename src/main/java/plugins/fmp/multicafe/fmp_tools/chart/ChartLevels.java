@@ -253,7 +253,7 @@ public class ChartLevels extends IcyFrame {
 					capOptions.correctEvaporation);
 			if (xlsResults != null) {
 				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
-				resultsArray.add(xlsResults);
+				resultsArray.addRow(xlsResults);
 			}
 		}
 

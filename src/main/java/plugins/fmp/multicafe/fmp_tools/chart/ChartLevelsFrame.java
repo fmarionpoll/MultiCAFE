@@ -591,7 +591,7 @@ public class ChartLevelsFrame extends IcyFrame {
 			return new XLSResultsArray();
 		}
 		
-		XLSResultsFromCapillaries xlsResultsFromCaps = new XLSResultsFromCapillaries();
+		XLSResultsFromCapillaries xlsResultsFromCaps = new XLSResultsFromCapillaries(exp.getCapillaries().getCapillariesList().size());
 		return xlsResultsFromCaps.getMeasuresFromAllCapillaries(exp, exportType,
 				correctEvaporation);
 	}
