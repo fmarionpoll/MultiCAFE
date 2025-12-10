@@ -346,6 +346,15 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, capillary.capStimulus);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, capillary.capConcentration);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, capillary.capNFlies);
+		
+		// Add missing fields: CHOICE, CAGEID, CAGEPOS, DUM4
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
+				ExcelExportConstants.CHOICE_NOCHOICE_DEFAULT);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
+				charSeries + capillary.capCageID);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose, capillary.capCageID);
+		// DUM4 should show the export type name (e.g., "topraw", "toplevel", "toplevel_L+R")
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, xlsExportType.toString());
 	}
 
 	/**

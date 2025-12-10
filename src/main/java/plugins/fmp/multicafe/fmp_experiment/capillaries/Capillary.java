@@ -153,9 +153,14 @@ public class Capillary implements Comparable<Capillary> {
 	}
 
 	public String getLast2ofCapillaryName() {
-		if (roiCap == null)
-			return "missing";
-		return roiCap.getName().substring(roiCap.getName().length() - 2);
+		if (roiCap != null && roiCap.getName() != null) {
+			return roiCap.getName().substring(roiCap.getName().length() - 2);
+		}
+		// Fallback: extract from kymographName if ROI is not available
+		if (kymographName != null && kymographName.length() >= 2) {
+			return kymographName.substring(kymographName.length() - 2);
+		}
+		return "??";
 	}
 
 	public String getRoiNamePrefix() {
