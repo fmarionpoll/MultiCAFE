@@ -163,7 +163,23 @@ public class Capillary implements Comparable<Capillary> {
 	}
 
 	public String getCapillarySide() {
-		return roiCap.getName().substring(roiCap.getName().length() - 1);
+		if (roiCap != null && roiCap.getName() != null) {
+			return roiCap.getName().substring(roiCap.getName().length() - 1);
+		}
+		// Fallback: try to extract from kymographName
+		if (kymographName != null && kymographName.length() > 0) {
+			String lastChar = kymographName.substring(kymographName.length() - 1);
+			// Convert "1" to "L" and "2" to "R" if needed
+			if (lastChar.equals("1"))
+				return "L";
+			if (lastChar.equals("2"))
+				return "R";
+			// If it's already L or R, use it
+			if (lastChar.equals("L") || lastChar.equals("R"))
+				return lastChar;
+		}
+		// Final fallback to stored capSide
+		return capSide != null && !capSide.equals(".") ? capSide : "?";
 	}
 
 	public static String replace_LR_with_12(String name) {

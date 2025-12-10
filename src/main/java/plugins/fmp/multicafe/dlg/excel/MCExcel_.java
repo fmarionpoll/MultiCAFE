@@ -229,10 +229,14 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		options.expList.expListBinSubDirectory = exp.getBinSubDirectory();
 		if (tabCommonOptions.exportAllFilesCheckBox.isSelected()) {
 			options.firstExp = 0;
-			options.lastExp = options.expList.getItemCount() - 1;
+			int itemCount = options.expList.getItemCount();
+			options.lastExp = (itemCount > 0) ? itemCount - 1 : 0;
 		} else {
-			options.firstExp = parent0.expListComboLazy.getSelectedIndex();
-			options.lastExp = parent0.expListComboLazy.getSelectedIndex();
+			int selectedIndex = parent0.expListComboLazy.getSelectedIndex();
+			options.firstExp = (selectedIndex >= 0) ? selectedIndex : 0;
+			options.lastExp = options.firstExp;
 		}
+		options.experimentIndexFirst = options.firstExp;
+		options.experimentIndexLast = options.lastExp;
 	}
 }

@@ -1,6 +1,8 @@
 package plugins.fmp.multicafe.fmp_tools.toExcel.capillaries;
 
 import java.awt.Point;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 
@@ -39,6 +41,9 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
  */
 public class XLSExportMeasuresFromCapillary extends XLSExport {
 
+	// Track column position per sheet (each export type uses a different sheet)
+	private Map<String, Integer> sheetColumns = new HashMap<String, Integer>();
+
 	/**
 	 * Exports capillary data for a single experiment.
 	 * 
@@ -51,29 +56,51 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	@Override
 	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
-		int column = startColumn;
+		int maxColumn = startColumn;
 
 		if (options.topLevel) {
-			column = getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPRAW, false);
-			getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVEL, true);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPRAW.toString()), charSeries, EnumXLSExport.TOPRAW, false);
+			updateSheetColumn(EnumXLSExport.TOPRAW.toString(), col);
+			if (col > maxColumn) maxColumn = col;
+			col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVEL.toString()), charSeries, EnumXLSExport.TOPLEVEL, true);
+			updateSheetColumn(EnumXLSExport.TOPLEVEL.toString(), col);
+			if (col > maxColumn) maxColumn = col;
 		}
 		if (options.lrPI && options.topLevel) {
-			getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVEL_LR, true);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVEL_LR.toString()), charSeries, EnumXLSExport.TOPLEVEL_LR, true);
+			updateSheetColumn(EnumXLSExport.TOPLEVEL_LR.toString(), col);
+			if (col > maxColumn) maxColumn = col;
 		}
 		if (options.topLevelDelta) {
-			getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVELDELTA, true);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVELDELTA.toString()), charSeries, EnumXLSExport.TOPLEVELDELTA, true);
+			updateSheetColumn(EnumXLSExport.TOPLEVELDELTA.toString(), col);
+			if (col > maxColumn) maxColumn = col;
 		}
 		if (options.lrPI && options.topLevelDelta) {
-			getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.TOPLEVELDELTA_LR, true);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVELDELTA_LR.toString()), charSeries, EnumXLSExport.TOPLEVELDELTA_LR, true);
+			updateSheetColumn(EnumXLSExport.TOPLEVELDELTA_LR.toString(), col);
+			if (col > maxColumn) maxColumn = col;
 		}
 		if (options.bottomLevel) {
-			getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.BOTTOMLEVEL, false);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.BOTTOMLEVEL.toString()), charSeries, EnumXLSExport.BOTTOMLEVEL, false);
+			updateSheetColumn(EnumXLSExport.BOTTOMLEVEL.toString(), col);
+			if (col > maxColumn) maxColumn = col;
 		}
 		if (options.derivative) {
-			getCapillaryDataAndExport(exp, column, charSeries, EnumXLSExport.DERIVEDVALUES, false);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.DERIVEDVALUES.toString()), charSeries, EnumXLSExport.DERIVEDVALUES, false);
+			updateSheetColumn(EnumXLSExport.DERIVEDVALUES.toString(), col);
+			if (col > maxColumn) maxColumn = col;
 		}
 
-		return column;
+		return maxColumn;
+	}
+
+	private int getSheetColumn(String sheetName) {
+		return sheetColumns.getOrDefault(sheetName, 1);
+	}
+
+	private void updateSheetColumn(String sheetName, int column) {
+		sheetColumns.put(sheetName, column);
 	}
 
 	/**

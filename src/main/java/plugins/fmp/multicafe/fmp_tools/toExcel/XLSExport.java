@@ -15,6 +15,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
@@ -145,6 +146,34 @@ public abstract class XLSExport {
 			for (int index = options.experimentIndexFirst; index <= options.experimentIndexLast; index++) {
 				Experiment exp = expList.getItemAt(index);
 				exp.load_MS96_spotsMeasures();
+				
+				// Ensure bin directory is set before loading capillaries
+				// This is critical for finding the CapillariesMeasures.csv file
+				if (exp.getBinSubDirectory() == null) {
+					// First, try to use shared bin directory from experiment list
+					if (expList.expListBinSubDirectory != null) {
+						exp.setBinSubDirectory(expList.expListBinSubDirectory);
+					} else {
+						// Auto-detect bin directory by finding subdirectories with TIFF files
+						java.util.List<String> binDirs = Directories
+								.getSortedListOfSubDirectoriesWithTIFF(exp.getResultsDirectory());
+						if (binDirs != null && !binDirs.isEmpty()) {
+							// Find first directory containing "bin" (case-insensitive)
+							for (String dir : binDirs) {
+								if (dir.toLowerCase().contains("bin")) {
+									exp.setBinSubDirectory(dir);
+									break;
+								}
+							}
+							// If no "bin" directory found, use the first one
+							if (exp.getBinSubDirectory() == null) {
+								exp.setBinSubDirectory(binDirs.get(0));
+							}
+						}
+					}
+				}
+				
+				exp.loadCapillaries();
 				if (shouldSkipExperiment(exp)) {
 					continue;
 				}

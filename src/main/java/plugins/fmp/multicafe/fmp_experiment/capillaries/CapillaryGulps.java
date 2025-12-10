@@ -197,6 +197,7 @@ public class CapillaryGulps {
 		if (data.length < startAt)
 			return;
 
+		gulps.clear();
 		int ngulps = Integer.valueOf(data[startAt]);
 		if (ngulps > 0) {
 			int offset = startAt + 1;
