@@ -242,7 +242,7 @@ public class ChartLevels extends IcyFrame {
 		XLSResultsArray resultsArray = new XLSResultsArray();
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
 
-		for (Capillary capillary : exp.getCapillaries().getCapillariesList()) {
+		for (Capillary capillary : exp.getCapillaries().getList()) {
 			XLSExportOptions capOptions = new XLSExportOptions();
 			capOptions.buildExcelStepMs = options.buildExcelStepMs;
 			capOptions.relativeToT0 = options.relativeToT0;

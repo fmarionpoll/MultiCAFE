@@ -82,7 +82,7 @@ public class Infos extends JPanel {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.getCapillaries().transferDescriptionToCapillaries();
-					exp.getCages().transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getCapillariesList());
+					exp.getCages().transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getList());
 					dialog = new InfosCagesTable();
 					dialog.initialize(parent0, cagesArrayCopy);
 				}
@@ -136,7 +136,7 @@ public class Infos extends JPanel {
 		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSequence());
-			if (exp.getCapillaries().getCapillariesList().size() > 0) {
+			if (exp.getCapillaries().getList().size() > 0) {
 				int npixels = exp.getCages().getHorizontalSpanOfCages();
 				if (npixels > 0)
 					pixelsSpinner.setValue(npixels);

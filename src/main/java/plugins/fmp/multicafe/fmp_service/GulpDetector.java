@@ -40,7 +40,7 @@ public class GulpDetector {
 		final Sequence seqAnalyzed = exp.getSeqKymos().getSequence();
 
 		for (int indexCapillary = firstKymo; indexCapillary <= lastKymo; indexCapillary++) {
-			final Capillary capi = exp.getCapillaries().getCapillariesList().get(indexCapillary);
+			final Capillary capi = exp.getCapillaries().getList().get(indexCapillary);
 			capi.setGulpsOptions(options);
 			futures.add(processor.submit(new Runnable() {
 				@Override

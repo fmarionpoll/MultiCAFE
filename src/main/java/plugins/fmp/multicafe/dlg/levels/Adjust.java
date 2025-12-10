@@ -130,7 +130,7 @@ public class Adjust extends JPanel implements PropertyChangeListener {
 	void restoreClippedPoints(Experiment exp) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
 		int t = seqKymos.getCurrentFrame();
-		Capillary cap = exp.getCapillaries().getCapillariesList().get(t);
+		Capillary cap = exp.getCapillaries().getList().get(t);
 		cap.restoreClippedMeasures();
 
 		seqKymos.updateROIFromCapillaryMeasure(cap, cap.ptsTop);

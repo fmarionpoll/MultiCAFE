@@ -458,7 +458,7 @@ public class ChartLevelsFrame extends IcyFrame {
 			return null;
 		}
 
-		List<Capillary> capillaries = exp.getCapillaries().getCapillariesList();
+		List<Capillary> capillaries = exp.getCapillaries().getList();
 		if (capillaries == null || capillaries.isEmpty()) {
 			LOGGER.warning("Capillaries list is empty");
 			return null;
@@ -562,7 +562,7 @@ public class ChartLevelsFrame extends IcyFrame {
 			return null;
 		}
 
-		List<Capillary> capillaries = exp.getCapillaries().getCapillariesList();
+		List<Capillary> capillaries = exp.getCapillaries().getList();
 		if (capillaries == null) {
 			return null;
 		}
@@ -591,7 +591,7 @@ public class ChartLevelsFrame extends IcyFrame {
 			return new XLSResultsArray();
 		}
 		
-		XLSResultsFromCapillaries xlsResultsFromCaps = new XLSResultsFromCapillaries(exp.getCapillaries().getCapillariesList().size());
+		XLSResultsFromCapillaries xlsResultsFromCaps = new XLSResultsFromCapillaries(exp.getCapillaries().getList().size());
 		return xlsResultsFromCaps.getMeasuresFromAllCapillaries(exp, exportType,
 				correctEvaporation);
 	}

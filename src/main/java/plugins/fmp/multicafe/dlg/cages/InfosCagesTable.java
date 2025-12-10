@@ -173,7 +173,7 @@ public class InfosCagesTable extends JPanel {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
-			exp.getCages().transferNFliesFromCagesToCapillaries(exp.getCapillaries().getCapillariesList());
+			exp.getCages().transferNFliesFromCagesToCapillaries(exp.getCapillaries().getList());
 			parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);
 		}
 	}

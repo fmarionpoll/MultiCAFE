@@ -266,7 +266,7 @@ public class Chart extends JPanel implements SequenceListener {
 	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExport option) {
 		boolean flag = false;
 		Capillaries capillaries = exp.getCapillaries();
-		for (Capillary cap : capillaries.getCapillariesList()) {
+		for (Capillary cap : capillaries.getList()) {
 			flag = cap.isThereAnyMeasuresDone(option);
 			if (flag)
 				break;

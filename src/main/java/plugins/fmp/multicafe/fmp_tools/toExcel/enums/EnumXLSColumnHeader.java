@@ -48,7 +48,7 @@ public enum EnumXLSColumnHeader {
 	DUM4("Dum4", 26, EnumColumnType.COMMON);
 
 	private final String name;
-	private final int value;
+	private int value;
 	private final EnumColumnType type;
 
 	EnumXLSColumnHeader(String label, int value, EnumColumnType type) {
@@ -63,6 +63,10 @@ public enum EnumXLSColumnHeader {
 
 	public int getValue() {
 		return value;
+	}
+
+	public void setValue(int newValue) {
+		this.value = newValue;
 	}
 
 	static final Map<String, EnumXLSColumnHeader> names = Arrays.stream(EnumXLSColumnHeader.values())

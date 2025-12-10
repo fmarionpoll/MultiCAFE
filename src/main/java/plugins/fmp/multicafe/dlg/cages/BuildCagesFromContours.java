@@ -104,9 +104,9 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
 					exp.getCages().cagesFromROIs(exp.getSeqCamData());
-					if (exp.getCapillaries().getCapillariesList().size() > 0)
+					if (exp.getCapillaries().getList().size() > 0)
 						exp.getCages()
-								.transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getCapillariesList());
+								.transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getList());
 				}
 			}
 		});
@@ -200,7 +200,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		blobs.fillBlanksPixelsWithinBlobs();
 
 		List<Integer> blobsfound = new ArrayList<Integer>();
-		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
+		for (Capillary cap : exp.getCapillaries().getList()) {
 			Point2D pt = cap.getCapillaryROILowestPoint();
 			if (pt != null) {
 				int ix = (int) (pt.getX() - rectGrid.x);
@@ -264,10 +264,10 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 			int rectleft = rect.x + rect.width / 6;
 			int rectright = rect.x + rect.width * 5 / 6;
 			int recttop = rect.y + rect.height * 2 / 3;
-			if (exp.getCapillaries().getCapillariesList().size() > 0) {
-				Rectangle bound0 = exp.getCapillaries().getCapillariesList().get(0).getRoi().getBounds();
-				int last = exp.getCapillaries().getCapillariesList().size() - 1;
-				Rectangle bound1 = exp.getCapillaries().getCapillariesList().get(last).getRoi().getBounds();
+			if (exp.getCapillaries().getList().size() > 0) {
+				Rectangle bound0 = exp.getCapillaries().getList().get(0).getRoi().getBounds();
+				int last = exp.getCapillaries().getList().size() - 1;
+				Rectangle bound1 = exp.getCapillaries().getList().get(last).getRoi().getBounds();
 				rectleft = bound0.x;
 				rectright = bound1.x + bound1.width;
 				int diff = (rectright - rectleft) * 2 / 60;

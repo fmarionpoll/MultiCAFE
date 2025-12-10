@@ -157,10 +157,10 @@ public class Display extends JPanel implements ViewerListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				kymographsCombo.removeAllItems();
-				Collections.sort(exp.getCapillaries().getCapillariesList());
-				int ncapillaries = exp.getCapillaries().getCapillariesList().size();
+				Collections.sort(exp.getCapillaries().getList());
+				int ncapillaries = exp.getCapillaries().getList().size();
 				for (int i = 0; i < ncapillaries; i++) {
-					Capillary cap = exp.getCapillaries().getCapillariesList().get(i);
+					Capillary cap = exp.getCapillaries().getList().get(i);
 					kymographsCombo.addItem(cap.getRoiName());
 				}
 			}
@@ -388,10 +388,10 @@ public class Display extends JPanel implements ViewerListener {
 
 	private void selectCapillary(Experiment exp, int isel) {
 		Capillaries capillaries = exp.getCapillaries();
-		for (Capillary cap : capillaries.getCapillariesList()) {
+		for (Capillary cap : capillaries.getList()) {
 			if (cap.getRoi() != null) {
 				cap.getRoi().setSelected(false);
-				Capillary capSel = capillaries.getCapillariesList().get(isel);
+				Capillary capSel = capillaries.getList().get(isel);
 				capSel.getRoi().setSelected(true);
 			}
 		}

@@ -40,8 +40,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public FlyPositions flyPositions = new FlyPositions();
 	public SpotsArray spotsArray = new SpotsArray();
-	public Capillaries capillariesArray = new Capillaries();
-	private ArrayList<Capillary> capList = new ArrayList<Capillary>(2);
+	private Capillaries capillaries = new Capillaries();
+//	private ArrayList<Capillary> capList = new ArrayList<Capillary>(2);
 	private final AtomicBoolean closed = new AtomicBoolean(false);
 
 	public boolean valid = false;
@@ -72,6 +72,14 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return spotsArray;
 	}
 
+	public void setCapillaries(Capillaries capArray) {
+		capillaries = capArray;
+	}
+
+	public Capillaries getCapillaries() {
+		return capillaries;
+	}
+
 	public CageProperties getProperties() {
 		return prop;
 	}
@@ -95,11 +103,11 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public BooleanMask2D getCageMask2D() {
 		return cageMask2D;
 	}
-	
-	public void setMask2D (BooleanMask2D mask) {
+
+	public void setMask2D(BooleanMask2D mask) {
 		cageMask2D = mask;
 	}
-	
+
 	public int getCageNFlies() {
 		return prop.getCageNFlies();
 	}
@@ -129,7 +137,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public Point2D getCenterTipCapillaries(Capillaries capList) {
 		List<Point2D> listpts = new ArrayList<Point2D>();
-		for (Capillary cap : capList.getCapillariesList()) {
+		for (Capillary cap : capList.getList()) {
 			Point2D pt = cap.getCapillaryTipWithinROI2D(cageROI2D);
 			if (pt != null)
 				listpts.add(pt);
@@ -146,17 +154,17 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public void addCapillaryIfUnique(Capillary cap) {
-		if (capList.size() == 0) {
-			capList.add(cap);
+		if (capillaries.getList().size() == 0) {
+			capillaries.addCapillary(cap);
 			return;
 		}
 
-		for (Capillary capCage : capList) {
+		for (Capillary capCage : capillaries.getList()) {
 			if (capCage.compareTo(cap) == 0) {
 				return;
 			}
 		}
-		capList.add(cap);
+		capillaries.addCapillary(cap);
 	}
 
 	public void addCapillaryIfUniqueBulkFilteredOnCageID(List<Capillary> capillaryList) {
@@ -167,11 +175,11 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public void clearCapillaryList() {
-		capList.clear();
+		capillaries.getList().clear();
 	}
 
-	public ArrayList<Capillary> getCapillaryList() {
-		return capList;
+	public List<Capillary> getCapillaryList() {
+		return capillaries.getList();
 	}
 
 	public void copyCageInfo(Cage cageFrom) {

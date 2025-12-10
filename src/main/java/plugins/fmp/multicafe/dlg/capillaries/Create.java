@@ -105,7 +105,7 @@ public class Create extends JPanel {
 				if (exp == null)
 					return;
 
-				if (exp.getCapillaries() != null && exp.getCapillaries().getCapillariesList().size() > 0) {
+				if (exp.getCapillaries() != null && exp.getCapillaries().getList().size() > 0) {
 					Polygon2D extPolygon = exp.getCapillaries().get2DPolygonEnclosingCapillaries();
 					if (extPolygon == null) {
 						extPolygon = getCapillariesPolygon(exp.getSeqCamData().getSequence());

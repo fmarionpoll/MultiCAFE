@@ -281,9 +281,9 @@ public class SequenceKymos extends SequenceCamData {
 				if (roi instanceof ROI2D && ((ROI2D) roi).getT() == kymo)
 					roisAtT.add(roi);
 			}
-			if (capillaries.getCapillariesList().size() <= kymo)
-				capillaries.getCapillariesList().add(new Capillary());
-			Capillary cap = capillaries.getCapillariesList().get(kymo);
+			if (capillaries.getList().size() <= kymo)
+				capillaries.getList().add(new Capillary());
+			Capillary cap = capillaries.getList().get(kymo);
 			cap.filenameTIFF = getFileNameFromImageList(kymo);
 			cap.kymographIndex = kymo;
 			cap.transferROIsToMeasures(roisAtT);
@@ -301,9 +301,9 @@ public class SequenceKymos extends SequenceCamData {
 			if (roi instanceof ROI2D && ((ROI2D) roi).getT() == t)
 				roisAtT.add(roi);
 		}
-		if (capillaries.getCapillariesList().size() <= t)
-			capillaries.getCapillariesList().add(new Capillary());
-		Capillary cap = capillaries.getCapillariesList().get(t);
+		if (capillaries.getList().size() <= t)
+			capillaries.getList().add(new Capillary());
+		Capillary cap = capillaries.getList().get(t);
 		cap.filenameTIFF = getFileNameFromImageList(t);
 		cap.kymographIndex = t;
 		cap.transferROIsToMeasures(roisAtT);
@@ -316,9 +316,9 @@ public class SequenceKymos extends SequenceCamData {
 		ROI2DUtilities.removeROI2DsMissingChar(seqRoisList, '_');
 
 		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
-		int ncapillaries = capillaries.getCapillariesList().size();
+		int ncapillaries = capillaries.getList().size();
 		for (int i = 0; i < ncapillaries; i++) {
-			List<ROI2D> listOfRois = capillaries.getCapillariesList().get(i).transferMeasuresToROIs();
+			List<ROI2D> listOfRois = capillaries.getList().get(i).transferMeasuresToROIs();
 			newRoisList.addAll(listOfRois);
 		}
 		ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, getSequence());

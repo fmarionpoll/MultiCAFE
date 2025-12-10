@@ -51,7 +51,7 @@ public class CapillaryTableModel extends AbstractTableModel {
 	public int getRowCount() {
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			return exp.getCapillaries().getCapillariesList().size();
+			return exp.getCapillaries().getList().size();
 		}
 		return 0;
 	}
@@ -119,7 +119,7 @@ public class CapillaryTableModel extends AbstractTableModel {
 		Capillary cap = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			cap = exp.getCapillaries().getCapillariesList().get(rowIndex);
+			cap = exp.getCapillaries().getList().get(rowIndex);
 		}
 		return cap;
 	}

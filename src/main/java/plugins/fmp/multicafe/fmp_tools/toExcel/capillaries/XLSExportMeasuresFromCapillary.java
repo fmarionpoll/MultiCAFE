@@ -1,12 +1,18 @@
 package plugins.fmp.multicafe.fmp_tools.toExcel.capillaries;
 
 import java.awt.Point;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
@@ -59,37 +65,51 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		int maxColumn = startColumn;
 
 		if (options.topLevel) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPRAW.toString()), charSeries, EnumXLSExport.TOPRAW, false);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPRAW.toString()), charSeries,
+					EnumXLSExport.TOPRAW, false);
 			updateSheetColumn(EnumXLSExport.TOPRAW.toString(), col);
-			if (col > maxColumn) maxColumn = col;
-			col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVEL.toString()), charSeries, EnumXLSExport.TOPLEVEL, true);
+			if (col > maxColumn)
+				maxColumn = col;
+			col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVEL.toString()), charSeries,
+					EnumXLSExport.TOPLEVEL, true);
 			updateSheetColumn(EnumXLSExport.TOPLEVEL.toString(), col);
-			if (col > maxColumn) maxColumn = col;
+			if (col > maxColumn)
+				maxColumn = col;
 		}
 		if (options.lrPI && options.topLevel) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVEL_LR.toString()), charSeries, EnumXLSExport.TOPLEVEL_LR, true);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVEL_LR.toString()), charSeries,
+					EnumXLSExport.TOPLEVEL_LR, true);
 			updateSheetColumn(EnumXLSExport.TOPLEVEL_LR.toString(), col);
-			if (col > maxColumn) maxColumn = col;
+			if (col > maxColumn)
+				maxColumn = col;
 		}
 		if (options.topLevelDelta) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVELDELTA.toString()), charSeries, EnumXLSExport.TOPLEVELDELTA, true);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVELDELTA.toString()), charSeries,
+					EnumXLSExport.TOPLEVELDELTA, true);
 			updateSheetColumn(EnumXLSExport.TOPLEVELDELTA.toString(), col);
-			if (col > maxColumn) maxColumn = col;
+			if (col > maxColumn)
+				maxColumn = col;
 		}
 		if (options.lrPI && options.topLevelDelta) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVELDELTA_LR.toString()), charSeries, EnumXLSExport.TOPLEVELDELTA_LR, true);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPLEVELDELTA_LR.toString()),
+					charSeries, EnumXLSExport.TOPLEVELDELTA_LR, true);
 			updateSheetColumn(EnumXLSExport.TOPLEVELDELTA_LR.toString(), col);
-			if (col > maxColumn) maxColumn = col;
+			if (col > maxColumn)
+				maxColumn = col;
 		}
 		if (options.bottomLevel) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.BOTTOMLEVEL.toString()), charSeries, EnumXLSExport.BOTTOMLEVEL, false);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.BOTTOMLEVEL.toString()), charSeries,
+					EnumXLSExport.BOTTOMLEVEL, false);
 			updateSheetColumn(EnumXLSExport.BOTTOMLEVEL.toString(), col);
-			if (col > maxColumn) maxColumn = col;
+			if (col > maxColumn)
+				maxColumn = col;
 		}
 		if (options.derivative) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.DERIVEDVALUES.toString()), charSeries, EnumXLSExport.DERIVEDVALUES, false);
+			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.DERIVEDVALUES.toString()), charSeries,
+					EnumXLSExport.DERIVEDVALUES, false);
 			updateSheetColumn(EnumXLSExport.DERIVEDVALUES.toString(), col);
-			if (col > maxColumn) maxColumn = col;
+			if (col > maxColumn)
+				maxColumn = col;
 		}
 
 		return maxColumn;
@@ -152,13 +172,21 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(xlsExportType);
 
 		// TODO: add loop for cage?
-		for (Capillary capillary : exp.getCapillaries().getCapillariesList()) {
-			pt.y = 0;
-			pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, capillary, xlsExportType);
-			XLSResults xlsResults = getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, options, subtractT0);
-			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
-			writeXLSResult(sheet, pt, xlsResults);
-			pt.x++;
+		if (exp.getCages().getCageList().size() < 2) {
+			exp.dispatchCapillariesToCages();
+		}
+
+		for (Cage cage : exp.getCages().getCageList()) {
+
+			for (Capillary capillary : cage.getCapillaries().getList()) {
+				pt.y = 0;
+				pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, cage, capillary, xlsExportType);
+				XLSResults xlsResults = getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, options,
+						subtractT0);
+				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
+				writeXLSResult(sheet, pt, xlsResults);
+				pt.x++;
+			}
 		}
 		return pt.x;
 	}
@@ -184,7 +212,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		long binData = exp.getKymoBin_ms();
 		long binExcel = xlsExportOptions.buildExcelStepMs;
 		xlsResults.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, subtractT0);
-		
+
 		// Initialize valuesOut array with the actual size of dataValues
 		if (xlsResults.getDataValues() != null && xlsResults.getDataValues().size() > 0) {
 			int actualSize = xlsResults.getDataValues().size();
@@ -194,7 +222,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 			int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
 			xlsResults.initValuesOutArray(nOutputFrames, Double.NaN);
 		}
-		
+
 		return xlsResults;
 	}
 
@@ -211,7 +239,8 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		long kymoLast_ms = exp.getKymoLast_ms();
 		long kymoBin_ms = exp.getKymoBin_ms();
 
-		// If buildExcelStepMs equals kymoBin_ms, we want 1:1 mapping - use actual frame count
+		// If buildExcelStepMs equals kymoBin_ms, we want 1:1 mapping - use actual frame
+		// count
 		if (kymoBin_ms > 0 && options.buildExcelStepMs == kymoBin_ms && exp.getSeqKymos() != null) {
 			ImageLoader imgLoader = exp.getSeqKymos().getImageLoader();
 			if (imgLoader != null) {
@@ -259,7 +288,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 * @return The updated point
 	 */
 	protected Point writeExperimentCapillaryInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries,
-			Capillary capillary, EnumXLSExport xlsExportType) {
+			Cage cage, Capillary capillary, EnumXLSExport xlsExportType) {
 		int x = pt.x;
 		int y = pt.y;
 		boolean transpose = options.transpose;
@@ -268,11 +297,8 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		// private)
 		writeFileInformationForCapillary(sheet, x, y, transpose, exp);
 
-		// Write experiment properties (duplicate logic from base class since it's
-		// private)
-		writeExperimentPropertiesForCapillary(sheet, x, y, transpose, exp, charSeries);
-
-		// Write capillary properties
+		writeExperimentProperties(sheet, x, y, transpose, exp, charSeries);
+		writeCageProperties(sheet, x, y, transpose, cage);
 		writeCapillaryProperties(sheet, x, y, transpose, capillary, charSeries, xlsExportType);
 
 		pt.y = y + getDescriptorRowCount();
@@ -288,8 +314,8 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 			filename = exp.getSeqCamData().getImagesDirectory();
 		}
 
-		java.nio.file.Path path = java.nio.file.Paths.get(filename);
-		java.text.SimpleDateFormat df = new java.text.SimpleDateFormat(ExcelExportConstants.DEFAULT_DATE_FORMAT);
+		Path path = Paths.get(filename);
+		SimpleDateFormat df = new SimpleDateFormat(ExcelExportConstants.DEFAULT_DATE_FORMAT);
 		String date = df.format(exp.chainImageFirst_ms);
 		String name0 = path.toString();
 		String cam = extractCameraInfo(name0);
@@ -314,12 +340,9 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		return ExcelExportConstants.CAMERA_DEFAULT_VALUE;
 	}
 
-	/**
-	 * Writes experiment properties to the sheet (for capillaries).
-	 */
-	private void writeExperimentPropertiesForCapillary(SXSSFSheet sheet, int x, int y, boolean transpose,
-			Experiment exp, String charSeries) {
-		plugins.fmp.multicafe.fmp_experiment.ExperimentProperties props = exp.getProperties();
+	private void writeExperimentProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp,
+			String charSeries) {
+		ExperimentProperties props = exp.getProperties();
 
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_BOXID);
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_EXPT);
@@ -332,9 +355,17 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_CONC2);
 	}
 
-	/**
-	 * Writes capillary properties to the sheet.
-	 */
+	private void writeCageProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Cage cage) {
+		CageProperties props = cage.getProperties();
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose, props.getCageID());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose, props.getCagePosition());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_NFLIES.getValue(), transpose, props.getCageNFlies());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, props.getFlyStrain());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, props.getFlySex());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, props.getFlyAge());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, props.getComment());
+	}
+
 	private void writeCapillaryProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Capillary capillary,
 			String charSeries, EnumXLSExport xlsExportType) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP.getValue(), transpose,
@@ -346,14 +377,13 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, capillary.capStimulus);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, capillary.capConcentration);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, capillary.capNFlies);
-		
+
 		// Add missing fields: CHOICE, CAGEID, CAGEPOS, DUM4
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
-				ExcelExportConstants.CHOICE_NOCHOICE_DEFAULT);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
 				charSeries + capillary.capCageID);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose, capillary.capCageID);
-		// DUM4 should show the export type name (e.g., "topraw", "toplevel", "toplevel_L+R")
+		// DUM4 should show the export type name (e.g., "topraw", "toplevel",
+		// "toplevel_L+R")
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, xlsExportType.toString());
 	}
 

@@ -173,7 +173,7 @@ public class InfosCapillaryTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null && exp.getCages().getCageList().size() > 0) {
-					exp.getCages().transferNFliesFromCagesToCapillaries(exp.getCapillaries().getCapillariesList());
+					exp.getCages().transferNFliesFromCagesToCapillaries(exp.getCapillaries().getList());
 					capillaryTableModel.fireTableDataChanged();
 				}
 			}
@@ -184,7 +184,7 @@ public class InfosCapillaryTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
-					exp.getCages().setCageNbFromName(exp.getCapillaries().getCapillariesList());
+					exp.getCages().setCageNbFromName(exp.getCapillaries().getList());
 					capillaryTableModel.fireTableDataChanged();
 				}
 			}
@@ -206,13 +206,13 @@ public class InfosCapillaryTable extends JPanel {
 		int columnIndex = tableView.getSelectedColumn();
 		if (columnIndex < 0)
 			columnIndex = 5;
-		String side0 = exp.getCapillaries().getCapillariesList().get(0).getCapillarySide();
+		String side0 = exp.getCapillaries().getList().get(0).getCapillarySide();
 		Capillary cap0 = new Capillary();
-		storeCapillaryValues(exp.getCapillaries().getCapillariesList().get(0), cap0);
+		storeCapillaryValues(exp.getCapillaries().getList().get(0), cap0);
 		Capillary cap1 = new Capillary();
-		storeCapillaryValues(exp.getCapillaries().getCapillariesList().get(1), cap1);
+		storeCapillaryValues(exp.getCapillaries().getList().get(1), cap1);
 
-		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
+		for (Capillary cap : exp.getCapillaries().getList()) {
 			if ((cap.getCapillarySide().equals(side0)))
 				switchCapillaryValue(cap1, cap, columnIndex);
 			else
@@ -250,7 +250,7 @@ public class InfosCapillaryTable extends JPanel {
 
 	private void copyInfos(Experiment exp) {
 		capillariesArrayCopy.clear();
-		for (Capillary cap : exp.getCapillaries().getCapillariesList())
+		for (Capillary cap : exp.getCapillaries().getList())
 			capillariesArrayCopy.add(cap);
 		pasteButton.setEnabled(true);
 	}
@@ -258,7 +258,7 @@ public class InfosCapillaryTable extends JPanel {
 	private void pasteInfos(Experiment exp) {
 		for (Capillary capFrom : capillariesArrayCopy) {
 			capFrom.valid = false;
-			for (Capillary capTo : exp.getCapillaries().getCapillariesList()) {
+			for (Capillary capTo : exp.getCapillaries().getList()) {
 				if (!capFrom.getRoiName().equals(capTo.getRoiName()))
 					continue;
 				capFrom.valid = true;
@@ -272,9 +272,9 @@ public class InfosCapillaryTable extends JPanel {
 	}
 
 	private void setFliesNumbers(Experiment exp) {
-		int ncapillaries = exp.getCapillaries().getCapillariesList().size();
+		int ncapillaries = exp.getCapillaries().getList().size();
 		for (int i = 0; i < ncapillaries; i++) {
-			Capillary cap = exp.getCapillaries().getCapillariesList().get(i);
+			Capillary cap = exp.getCapillaries().getList().get(i);
 			if (i < 2 || i >= ncapillaries - 2) {
 				cap.capNFlies = 0;
 			} else {
@@ -289,7 +289,7 @@ public class InfosCapillaryTable extends JPanel {
 		if (rowIndex < 0)
 			return;
 
-		Capillary cap0 = exp.getCapillaries().getCapillariesList().get(rowIndex);
+		Capillary cap0 = exp.getCapillaries().getList().get(rowIndex);
 		String side = cap0.getCapillarySide();
 		int modulo2 = 0;
 		if (side.equals("L"))
@@ -299,7 +299,7 @@ public class InfosCapillaryTable extends JPanel {
 		else
 			modulo2 = Integer.valueOf(cap0.getCapillarySide()) % 2;
 
-		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
+		for (Capillary cap : exp.getCapillaries().getList()) {
 			if (cap.getKymographName().equals(cap0.getKymographName()))
 				continue;
 			if ((exp.getCapillaries().getCapillariesDescription().getGrouping() == 2)
@@ -340,8 +340,8 @@ public class InfosCapillaryTable extends JPanel {
 		if (rowIndex < 0)
 			return;
 
-		Capillary cap0 = exp.getCapillaries().getCapillariesList().get(rowIndex);
-		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
+		Capillary cap0 = exp.getCapillaries().getList().get(rowIndex);
+		for (Capillary cap : exp.getCapillaries().getList()) {
 			if (cap.getKymographName().equals(cap0.getKymographName()))
 				continue;
 			switch (columnIndex) {
@@ -369,7 +369,7 @@ public class InfosCapillaryTable extends JPanel {
 		if (rowIndex < 0)
 			return;
 
-		Capillary capFrom = exp.getCapillaries().getCapillariesList().get(rowIndex);
+		Capillary capFrom = exp.getCapillaries().getList().get(rowIndex);
 		int cageFrom = capFrom.capCageID;
 		int cageTo = -1;
 
@@ -377,8 +377,8 @@ public class InfosCapillaryTable extends JPanel {
 		int indexFirstCapillaryOfCageFrom = getIndexFirstCapillaryOfCage(exp, cageFrom);
 		int indexFirstCapillaryOfCageTo = -1;
 
-		for (int i = 0; i < exp.getCapillaries().getCapillariesList().size(); i++) {
-			Capillary cap = exp.getCapillaries().getCapillariesList().get(i);
+		for (int i = 0; i < exp.getCapillaries().getList().size(); i++) {
+			Capillary cap = exp.getCapillaries().getList().get(i);
 			if (cap.capCageID == cageFrom)
 				continue;
 
@@ -391,7 +391,7 @@ public class InfosCapillaryTable extends JPanel {
 				continue;
 
 			int indexFrom = i - indexFirstCapillaryOfCageTo + indexFirstCapillaryOfCageFrom;
-			Capillary cap0 = exp.getCapillaries().getCapillariesList().get(indexFrom);
+			Capillary cap0 = exp.getCapillaries().getList().get(indexFrom);
 
 			switch (columnIndex) {
 			case 2:
@@ -415,7 +415,7 @@ public class InfosCapillaryTable extends JPanel {
 
 	private int getCageNCapillaries(Experiment exp, int cageID) {
 		int nCapillaries = 0;
-		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
+		for (Capillary cap : exp.getCapillaries().getList()) {
 			if (cap.capCageID == cageID)
 				nCapillaries++;
 		}
@@ -425,8 +425,8 @@ public class InfosCapillaryTable extends JPanel {
 
 	private int getIndexFirstCapillaryOfCage(Experiment exp, int cageID) {
 		int index = -1;
-		for (int i = 0; i < exp.getCapillaries().getCapillariesList().size(); i++) {
-			Capillary cap = exp.getCapillaries().getCapillariesList().get(i);
+		for (int i = 0; i < exp.getCapillaries().getList().size(); i++) {
+			Capillary cap = exp.getCapillaries().getList().get(i);
 			if (cap.capCageID == cageID) {
 				index = i;
 				break;

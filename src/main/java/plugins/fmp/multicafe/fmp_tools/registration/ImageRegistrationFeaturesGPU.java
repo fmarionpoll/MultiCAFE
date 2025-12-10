@@ -338,7 +338,7 @@ public class ImageRegistrationFeaturesGPU extends ImageRegistration implements A
 
 	private List<Point2D> extractPoints(Experiment exp) {
 		List<Point2D> points = new ArrayList<>();
-		for (Capillary cap : exp.getCapillaries().getCapillariesList()) {
+		for (Capillary cap : exp.getCapillaries().getList()) {
 			Point2D p1 = cap.getCapillaryROIFirstPoint();
 			if (p1 != null)
 				points.add(p1);

@@ -1371,7 +1371,7 @@ public class Experiment {
 			return xmlLoadOldCapillaries();
 
 		boolean flag = capillaries.loadMCCapillaries_Descriptors(mcCapillaryFileName);
-		if (capillaries.getCapillariesList().size() < 1)
+		if (capillaries.getList().size() < 1)
 			flag = xmlLoadOldCapillaries();
 
 		// load MCcapillaries description of experiment
@@ -1555,7 +1555,7 @@ public class Experiment {
 			cage.clearCapillaryList();
 		}
 
-		for (Capillary cap : capillaries.getCapillariesList()) {
+		for (Capillary cap : capillaries.getList()) {
 			int cageID = cap.getCageIndexFromRoiName();
 			Cage cage = cages.getCageFromID(cageID);
 			if (cage == null) {
@@ -1624,14 +1624,14 @@ public class Experiment {
 
 	private boolean replaceCapillariesValuesIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
-		if (capillaries.getCapillariesList().size() == 0)
+		if (capillaries.getList().size() == 0)
 			loadMCCapillaries_Only();
 		// Convert new enum to old enum for Capillary compatibility
 		EnumXLSColumnHeader oldEnum = convertToOldEnum(fieldEnumCode);
 		if (oldEnum == null)
 			return false;
 		boolean flag = false;
-		for (Capillary cap : capillaries.getCapillariesList()) {
+		for (Capillary cap : capillaries.getList()) {
 			if (cap.getCapillaryField(oldEnum).equals(oldValue)) {
 				cap.setCapillaryField(oldEnum, newValue);
 				flag = true;
@@ -1641,13 +1641,13 @@ public class Experiment {
 	}
 
 	private void addCapillariesValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
-		if (capillaries.getCapillariesList().size() == 0)
+		if (capillaries.getList().size() == 0)
 			loadMCCapillaries_Only();
 //		// Convert new enum to old enum for Capillary compatibility
 //		EnumXLSColumnHeader oldEnum = convertToOldEnum(fieldEnumCode);
 //		if (oldEnum == null)
 //			return;
-		for (Capillary cap : capillaries.getCapillariesList())
+		for (Capillary cap : capillaries.getList())
 			addValueIfUnique(cap.getCapillaryField(fieldEnumCode), textList);
 	}
 

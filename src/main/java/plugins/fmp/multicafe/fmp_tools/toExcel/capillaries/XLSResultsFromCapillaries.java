@@ -45,7 +45,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		options.relativeToT0 = false;
 		options.correctEvaporation = correctEvaporation;
 
-		List<Capillary> capillaries = exp.getCapillaries().getCapillariesList();
+		List<Capillary> capillaries = exp.getCapillaries().getList();
 		if (capillaries == null) {
 			LOGGER.warning("Capillaries list is null");
 			return resultsArray;
@@ -244,7 +244,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 			XLSExportOptions xlsExportOptions, boolean subtractT0) {
 		Capillaries caps = expi.getCapillaries();
 		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
-		for (Capillary cap : caps.getCapillariesList()) {
+		for (Capillary cap : caps.getList()) {
 			checkIfSameStimulusAndConcentration(cap);
 			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID,
 					xlsExportOptions.exportType);

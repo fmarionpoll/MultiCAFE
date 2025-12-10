@@ -45,16 +45,16 @@ public class LevelDetector {
 		SequenceLoaderService loader = new SequenceLoaderService();
 
 		for (int tKymo = tFirsKymo; tKymo <= tLastKymo; tKymo++) {
-			if (exp.getCapillaries() == null || exp.getCapillaries().getCapillariesList() == null) {
+			if (exp.getCapillaries() == null || exp.getCapillaries().getList() == null) {
 				Logger.warn("LevelDetector:detectLevels - Capillaries or capillaries list is null for tKymo=" + tKymo);
 				continue;
 			}
-			if (tKymo >= exp.getCapillaries().getCapillariesList().size()) {
+			if (tKymo >= exp.getCapillaries().getList().size()) {
 				Logger.warn("LevelDetector:detectLevels - Index out of bounds for tKymo=" + tKymo + ", list size="
-						+ exp.getCapillaries().getCapillariesList().size());
+						+ exp.getCapillaries().getList().size());
 				continue;
 			}
-			final Capillary capi = exp.getCapillaries().getCapillariesList().get(tKymo);
+			final Capillary capi = exp.getCapillaries().getList().get(tKymo);
 			if (capi == null) {
 				Logger.warn("LevelDetector:detectLevels - Capillary is null for tKymo=" + tKymo);
 				continue;

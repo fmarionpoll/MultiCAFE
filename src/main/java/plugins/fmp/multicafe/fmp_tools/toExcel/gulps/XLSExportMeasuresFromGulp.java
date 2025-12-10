@@ -135,7 +135,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(xlsExportType);
 
-		for (Capillary capillary : exp.getCapillaries().getCapillariesList()) {
+		for (Capillary capillary : exp.getCapillaries().getList()) {
 			pt.y = 0;
 			pt = writeExperimentGulpInfos(sheet, pt, exp, charSeries, capillary, xlsExportType);
 			XLSResults xlsResults = getXLSResultsDataValuesFromGulpMeasures(exp, capillary, options);

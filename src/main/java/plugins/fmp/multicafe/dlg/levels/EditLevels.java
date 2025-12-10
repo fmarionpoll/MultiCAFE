@@ -97,7 +97,7 @@ public class EditLevels extends JPanel {
 		if (roiRef == null)
 			return;
 
-		Capillary cap = exp.getCapillaries().getCapillariesList().get(t);
+		Capillary cap = exp.getCapillaries().getList().get(t);
 		seqKymos.transferKymosRoisToCapillaries_Measures(exp.getCapillaries());
 
 		int lastX = findLastXLeftOfRoi(cap, roiRef);
@@ -126,7 +126,7 @@ public class EditLevels extends JPanel {
 	void restoreCroppedPoints(Experiment exp) {
 		SequenceKymos seqKymos = exp.getSeqKymos();
 		int t = seqKymos.getCurrentFrame();
-		Capillary cap = exp.getCapillaries().getCapillariesList().get(t);
+		Capillary cap = exp.getCapillaries().getList().get(t);
 		cap.restoreClippedMeasures();
 
 		seqKymos.updateROIFromCapillaryMeasure(cap, cap.ptsTop);
@@ -167,7 +167,7 @@ public class EditLevels extends JPanel {
 			return;
 
 		seqKymos.transferKymosRoi_atT_ToCapillaries_Measures(t, exp.getCapillaries());
-		Capillary cap = exp.getCapillaries().getCapillariesList().get(t);
+		Capillary cap = exp.getCapillaries().getList().get(t);
 		String optionSelected = (String) roiTypeCombo.getSelectedItem();
 		if (optionSelected.contains("gulp")) {
 			List<ROI> listGulpsSelected = selectGulpsWithinRoi(roi, seqKymos.getSequence(), seqKymos.getCurrentFrame());

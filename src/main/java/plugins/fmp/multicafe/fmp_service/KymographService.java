@@ -44,11 +44,11 @@ public class KymographService {
 		if (transform == null)
 			return;
 
-		if (exp.getCapillaries().getCapillariesList().size() != nimages)
+		if (exp.getCapillaries().getList().size() != nimages)
 			SequenceKymosUtils.transferCamDataROIStoKymo(exp);
 
 		for (int t = 0; t < nimages; t++) {
-			Capillary cap = exp.getCapillaries().getCapillariesList().get(t);
+			Capillary cap = exp.getCapillaries().getList().get(t);
 			cap.kymographIndex = t;
 			IcyBufferedImage img = seqKymos.getSeqImage(t, zChannelSource);
 			IcyBufferedImage img2 = transform.getTransformedImage(img, null);
@@ -66,11 +66,11 @@ public class KymographService {
 		renameCapillary_Files(dir);
 
 		String directoryFull = dir + File.separator;
-		int ncapillaries = capillaries.getCapillariesList().size();
+		int ncapillaries = capillaries.getList().size();
 		List<ImageFileData> myListOfFiles = new ArrayList<ImageFileData>(ncapillaries);
 		for (int i = 0; i < ncapillaries; i++) {
 			ImageFileData temp = new ImageFileData();
-			temp.fileName = directoryFull + capillaries.getCapillariesList().get(i).getKymographName() + ".tiff";
+			temp.fileName = directoryFull + capillaries.getList().get(i).getKymographName() + ".tiff";
 			myListOfFiles.add(temp);
 		}
 		return myListOfFiles;

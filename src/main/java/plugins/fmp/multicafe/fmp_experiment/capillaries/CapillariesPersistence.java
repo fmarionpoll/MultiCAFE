@@ -76,10 +76,10 @@ public class CapillariesPersistence {
 			return false;
 		XMLUtil.setElementIntValue(node, "version", 2);
 		Node nodecaps = XMLUtil.setElement(node, ID_LISTOFCAPILLARIES);
-		XMLUtil.setElementIntValue(nodecaps, ID_NCAPILLARIES, capillaries.getCapillariesList().size());
+		XMLUtil.setElementIntValue(nodecaps, ID_NCAPILLARIES, capillaries.getList().size());
 		int i = 0;
-		Collections.sort(capillaries.getCapillariesList());
-		for (Capillary cap : capillaries.getCapillariesList()) {
+		Collections.sort(capillaries.getList());
+		for (Capillary cap : capillaries.getList()) {
 			Node nodecapillary = XMLUtil.setElement(node, ID_CAPILLARY_ + i);
 			cap.xmlSave_CapillaryOnly(nodecapillary);
 			i++;
@@ -124,14 +124,14 @@ public class CapillariesPersistence {
 
 	private boolean xmlLoadCapillaries_Measures(Capillaries capillaries, String directory) {
 		boolean flag = false;
-		int ncapillaries = capillaries.getCapillariesList().size();
+		int ncapillaries = capillaries.getList().size();
 		for (int i = 0; i < ncapillaries; i++) {
-			String csFile = directory + File.separator + capillaries.getCapillariesList().get(i).getKymographName()
+			String csFile = directory + File.separator + capillaries.getList().get(i).getKymographName()
 					+ ".xml";
 			final Document capdoc = XMLUtil.loadDocument(csFile);
 			if (capdoc != null) {
 				Node node = XMLUtil.getRootElement(capdoc, true);
-				Capillary cap = capillaries.getCapillariesList().get(i);
+				Capillary cap = capillaries.getList().get(i);
 				cap.kymographIndex = i;
 				flag |= cap.xmlLoad_MeasuresOnly(node);
 			}
@@ -141,7 +141,7 @@ public class CapillariesPersistence {
 
 	private void xmlLoadCapillaries_v0(Capillaries capillaries, Document doc, String csFileName) {
 		List<ROI> listOfCapillaryROIs = ROI.loadROIsFromXML(XMLUtil.getRootElement(doc));
-		capillaries.getCapillariesList().clear();
+		capillaries.getList().clear();
 		Path directorypath = Paths.get(csFileName).getParent();
 		String directory = directorypath + File.separator;
 		int t = 0;
@@ -154,7 +154,7 @@ public class CapillariesPersistence {
 	private void xmlLoadIndividualCapillary_v0(Capillaries capillaries, ROI2D roiCapillary, String directory, int t) {
 		Capillary cap = new Capillary(roiCapillary);
 		if (!capillaries.isPresent(cap))
-			capillaries.getCapillariesList().add(cap);
+			capillaries.getList().add(cap);
 		String csFile = directory + roiCapillary.getName() + ".xml";
 		cap.kymographIndex = t;
 		final Document dockymo = XMLUtil.loadDocument(csFile);
@@ -186,7 +186,7 @@ public class CapillariesPersistence {
 			cap.xmlLoad_CapillaryOnly(nodecapillary);
 
 			if (!capillaries.isPresent(cap))
-				capillaries.getCapillariesList().add(cap);
+				capillaries.getList().add(cap);
 		}
 		return true;
 	}
@@ -195,7 +195,7 @@ public class CapillariesPersistence {
 		xmlLoadCapillaries_Only_v1(capillaries, doc);
 		Path directorypath = Paths.get(csFileName).getParent();
 		String directory = directorypath + File.separator;
-		for (Capillary cap : capillaries.getCapillariesList()) {
+		for (Capillary cap : capillaries.getList()) {
 			String csFile = directory + cap.getKymographName() + ".xml";
 			final Document capdoc = XMLUtil.loadDocument(csFile);
 			if (capdoc != null) {
@@ -262,7 +262,7 @@ public class CapillariesPersistence {
 				Capillary cap = capillaries.getCapillaryFromKymographName(data[2]);
 				if (cap == null) {
 					cap = new Capillary();
-					capillaries.getCapillariesList().add(cap);
+					capillaries.getList().add(cap);
 				}
 				cap.csvImport_CapillaryDescription(data);
 			}
@@ -284,10 +284,10 @@ public class CapillariesPersistence {
 			data = row.split(sep);
 			if (data[0].substring(0, Math.min(data[0].length(), 5)).equals("n cap")) {
 				int ncapillaries = Integer.valueOf(data[1]);
-				if (ncapillaries >= capillaries.getCapillariesList().size())
-					((ArrayList<Capillary>) capillaries.getCapillariesList()).ensureCapacity(ncapillaries);
+				if (ncapillaries >= capillaries.getList().size())
+					((ArrayList<Capillary>) capillaries.getList()).ensureCapacity(ncapillaries);
 				else
-					capillaries.getCapillariesList().subList(ncapillaries, capillaries.getCapillariesList().size())
+					capillaries.getList().subList(ncapillaries, capillaries.getList().size())
 							.clear();
 
 				row = csvReader.readLine();
@@ -351,12 +351,12 @@ public class CapillariesPersistence {
 		try {
 			csvWriter.append(capillaries.getCapillariesDescription().csvExportSectionHeader(csvSep));
 			csvWriter.append(capillaries.getCapillariesDescription().csvExportExperimentDescriptors(csvSep));
-			csvWriter.append("n caps=" + csvSep + Integer.toString(capillaries.getCapillariesList().size()) + "\n");
+			csvWriter.append("n caps=" + csvSep + Integer.toString(capillaries.getList().size()) + "\n");
 			csvWriter.append("#" + csvSep + "#\n");
 
-			if (capillaries.getCapillariesList().size() > 0) {
-				csvWriter.append(capillaries.getCapillariesList().get(0).csvExport_CapillarySubSectionHeader(csvSep));
-				for (Capillary cap : capillaries.getCapillariesList())
+			if (capillaries.getList().size() > 0) {
+				csvWriter.append(capillaries.getList().get(0).csvExport_CapillarySubSectionHeader(csvSep));
+				for (Capillary cap : capillaries.getList())
 					csvWriter.append(cap.csvExport_CapillaryDescription(csvSep));
 				csvWriter.append("#" + csvSep + "#\n");
 			}
@@ -370,12 +370,12 @@ public class CapillariesPersistence {
 	private boolean csvSave_MeasuresSection(Capillaries capillaries, FileWriter csvWriter,
 			EnumCapillaryMeasures measureType) {
 		try {
-			if (capillaries.getCapillariesList().size() <= 1)
+			if (capillaries.getList().size() <= 1)
 				return false;
 
 			csvWriter.append(
-					capillaries.getCapillariesList().get(0).csvExport_MeasureSectionHeader(measureType, csvSep));
-			for (Capillary cap : capillaries.getCapillariesList())
+					capillaries.getList().get(0).csvExport_MeasureSectionHeader(measureType, csvSep));
+			for (Capillary cap : capillaries.getList())
 				csvWriter.append(cap.csvExport_MeasuresOneType(measureType, csvSep));
 
 			csvWriter.append("#" + csvSep + "#\n");

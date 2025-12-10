@@ -14,14 +14,14 @@ public class ClipCageMeasuresToSmallest extends BuildSeries {
 			SequenceKymos seqKymos = exp.getSeqKymos();
 			ArrayList<Integer> listCageID = new ArrayList<Integer>(seqKymos.getImageLoader().getNTotalFrames());
 			for (int t = 0; t < seqKymos.getImageLoader().getNTotalFrames(); t++) {
-				Capillary tcap = exp.getCapillaries().getCapillariesList().get(t);
+				Capillary tcap = exp.getCapillaries().getList().get(t);
 				int tcage = tcap.capCageID;
 				if (findCageID(tcage, listCageID))
 					continue;
 				listCageID.add(tcage);
 				int minLength = findMinLength(exp, t, tcage);
 				for (int tt = t; tt < seqKymos.getImageLoader().getNTotalFrames(); tt++) {
-					Capillary ttcap = exp.getCapillaries().getCapillariesList().get(tt);
+					Capillary ttcap = exp.getCapillaries().getList().get(tt);
 					int ttcage = ttcap.capCageID;
 					if (ttcage == tcage && ttcap.ptsTop.polylineLevel.npoints > minLength)
 						ttcap.cropMeasuresToNPoints(minLength);
@@ -45,10 +45,10 @@ public class ClipCageMeasuresToSmallest extends BuildSeries {
 	}
 
 	private int findMinLength(Experiment exp, int t, int tCell) {
-		Capillary tcap = exp.getCapillaries().getCapillariesList().get(t);
+		Capillary tcap = exp.getCapillaries().getList().get(t);
 		int minLength = tcap.ptsTop.polylineLevel.npoints;
-		for (int tt = t; tt < exp.getCapillaries().getCapillariesList().size(); tt++) {
-			Capillary ttcap = exp.getCapillaries().getCapillariesList().get(tt);
+		for (int tt = t; tt < exp.getCapillaries().getList().size(); tt++) {
+			Capillary ttcap = exp.getCapillaries().getList().get(tt);
 			int ttCell = ttcap.capCageID;
 			if (ttCell == tCell) {
 				int dataLength = ttcap.ptsTop.polylineLevel.npoints;

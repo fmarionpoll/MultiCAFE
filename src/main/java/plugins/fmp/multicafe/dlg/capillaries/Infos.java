@@ -95,8 +95,8 @@ public class Infos extends JPanel {
 		int npixels = 0;
 		if (exp != null) {
 			exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSequence());
-			if (exp.getCapillaries().getCapillariesList().size() > 0) {
-				Capillary cap = exp.getCapillaries().getCapillariesList().get(0);
+			if (exp.getCapillaries().getList().size() > 0) {
+				Capillary cap = exp.getCapillaries().getList().get(0);
 				npixels = cap.getCapillaryROILength();
 			}
 		}
