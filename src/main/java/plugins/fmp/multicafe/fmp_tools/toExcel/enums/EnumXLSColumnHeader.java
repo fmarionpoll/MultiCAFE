@@ -17,34 +17,35 @@ public enum EnumXLSColumnHeader {
 	EXP_CONC2("Conc2", 8, EnumColumnType.COMMON), // 8
 	EXP_STRAIN("Strain", 9, EnumColumnType.COMMON), // 9
 	EXP_SEX("Sex", 10, EnumColumnType.COMMON), // 10
-	CHOICE_NOCHOICE("Choice", 11, EnumColumnType.COMMON), // 11
+
 	//
-	CAGEID("Cage_ID", 12, EnumColumnType.COMMON), // 12
-	CAGEPOS("Cage_Position", 13, EnumColumnType.COMMON), // 13
+	CAGEID("Cage_ID", 11, EnumColumnType.COMMON), // 12
+	CAGEPOS("Cage_Position", 12, EnumColumnType.COMMON), // 13
+	CAGE_NFLIES("Cage_nflies", 13, EnumColumnType.COMMON), // 11
 	CAGE_STRAIN("Cage_strain", 14, EnumColumnType.COMMON), // 14
 	CAGE_SEX("Cage_sex", 15, EnumColumnType.COMMON), // 15
 	CAGE_AGE("Cage_age", 16, EnumColumnType.COMMON), // 16
 	CAGE_COMMENT("Cage_comment", 17, EnumColumnType.COMMON), // 17
 	//
-	SPOT_INDEX("spot_index", 18, EnumColumnType.COMMON), // 18
-	SPOT_CAGEROW("spot_cageRow", 19, EnumColumnType.COMMON), // 19
-	SPOT_CAGECOL("spot_cageCol", 20, EnumColumnType.COMMON), // 20
-	SPOT_VOLUME("Spot_ul", 21, EnumColumnType.COMMON), // 21
-	SPOT_PIXELS("Spot_npixels", 22, EnumColumnType.COMMON), // 22
-	SPOT_STIM("Spot_stimulus", 23, EnumColumnType.COMMON), // 23
-	SPOT_CONC("Spot_concentration", 24, EnumColumnType.COMMON), // 24
-	SPOT_NFLIES("Spot_Nflies", 25, EnumColumnType.COMMON), // 25
+	SPOT_INDEX("spot_index", 18, EnumColumnType.SPOT), // 18
+	SPOT_CAGEROW("spot_cageRow", 19, EnumColumnType.SPOT), // 19
+	SPOT_CAGECOL("spot_cageCol", 20, EnumColumnType.SPOT), // 20
+	SPOT_VOLUME("Spot_ul", 21, EnumColumnType.SPOT), // 21
+	SPOT_PIXELS("Spot_npixels", 22, EnumColumnType.SPOT), // 22
+	SPOT_STIM("Spot_stimulus", 23, EnumColumnType.SPOT), // 23
+	SPOT_CONC("Spot_concentration", 24, EnumColumnType.SPOT), // 24
+	SPOT_NFLIES("Spot_Nflies", 25, EnumColumnType.SPOT), // 25
 	//
-	CAP("Cap", 26, EnumColumnType.COMMON), //
-	CAP_INDEX("Cap_ID", 27, EnumColumnType.COMMON), //
-	CAP_VOLUME("Cap_ul", 28, EnumColumnType.COMMON), //
-	CAP_PIXELS("Cap_npixels", 29, EnumColumnType.COMMON), //
-	CAP_STIM("Cap_stimulus", 30, EnumColumnType.COMMON), //
-	CAP_CONC("Cap_concentration", 31, EnumColumnType.COMMON), //
-	CAP_NFLIES("Cap_Nflies", 32, EnumColumnType.COMMON), //
-	CAP_COMMENT("Cap_comment", 33, EnumColumnType.COMMON), //
+	CAP("Cap", 18, EnumColumnType.CAP), //
+	CAP_INDEX("Cap_ID", 19, EnumColumnType.CAP), //
+	CAP_VOLUME("Cap_ul", 20, EnumColumnType.CAP), //
+	CAP_PIXELS("Cap_npixels", 21, EnumColumnType.CAP), //
+	CAP_STIM("Cap_stimulus", 22, EnumColumnType.CAP), //
+	CAP_CONC("Cap_concentration", 23, EnumColumnType.CAP), //
+	CAP_NFLIES("Cap_Nflies", 24, EnumColumnType.CAP), //
+	CAP_COMMENT("Cap_comment", 25, EnumColumnType.CAP), //
 	//
-	DUM4("Dum4", 34, EnumColumnType.COMMON);
+	DUM4("Dum4", 26, EnumColumnType.COMMON);
 
 	private final String name;
 	private final int value;
@@ -67,15 +68,8 @@ public enum EnumXLSColumnHeader {
 	static final Map<String, EnumXLSColumnHeader> names = Arrays.stream(EnumXLSColumnHeader.values())
 			.collect(Collectors.toMap(EnumXLSColumnHeader::getName, Function.identity()));
 
-	static final Map<Integer, EnumXLSColumnHeader> values = Arrays.stream(EnumXLSColumnHeader.values())
-			.collect(Collectors.toMap(EnumXLSColumnHeader::getValue, Function.identity()));
-
 	public static EnumXLSColumnHeader fromName(final String name) {
 		return names.get(name);
-	}
-
-	public static EnumXLSColumnHeader fromValue(final int value) {
-		return values.get(value);
 	}
 
 	public String toString() {
