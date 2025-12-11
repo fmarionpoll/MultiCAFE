@@ -14,6 +14,7 @@ import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
@@ -347,30 +348,21 @@ public abstract class XLSExport {
 	 */
 	protected Point writeExperimentSpotInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
 			Spot spot, EnumXLSExport xlsExportType) {
-		int x = pt.x;
-		int y = pt.y;
 		boolean transpose = options.transpose;
 
-		// Write basic file information
-		writeFileInformation(sheet, x, y, transpose, exp);
+		writeFileInformation(sheet, pt, transpose, exp);
+		writeExperimentProperties(sheet, pt, transpose, exp, null);
+		writeCageProperties(sheet, pt, transpose, cage);
+		writeSpotProperties(sheet, pt, transpose, spot, cage, charSeries, xlsExportType);
 
-		// Write experiment properties
-		writeExperimentProperties(sheet, x, y, transpose, exp);
-
-		// Write spot properties
-		writeSpotProperties(sheet, x, y, transpose, spot, cage, charSeries, xlsExportType);
-
-		// Write cage properties
-		writeCageProperties(sheet, x, y, transpose, cage);
-
-		pt.y = y + ExcelExportConstants.ColumnPositions.DUM4 + 1;
+		pt.y = pt.y + EnumXLSColumnHeader.DUM4.getValue() + 1;
 		return pt;
 	}
 
 	/**
 	 * Writes basic file information to the sheet.
 	 */
-	private void writeFileInformation(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp) {
+	protected void writeFileInformation(SXSSFSheet sheet, Point pt, boolean transpose, Experiment exp) {
 		String filename = exp.getResultsDirectory();
 		if (filename == null) {
 			filename = exp.getSeqCamData().getImagesDirectory();
@@ -382,15 +374,15 @@ public abstract class XLSExport {
 		String name0 = path.toString();
 		String cam = extractCameraInfo(name0);
 
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.PATH, transpose, name0);
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.DATE, transpose, date);
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAM, transpose, cam);
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.PATH, transpose, name0);
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.DATE, transpose, date);
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAM, transpose, cam);
 	}
 
 	/**
 	 * Extracts camera information from the filename.
 	 */
-	private String extractCameraInfo(String filename) {
+	public String extractCameraInfo(String filename) {
 		int pos = filename.indexOf(ExcelExportConstants.CAMERA_IDENTIFIER);
 		if (pos > 0) {
 			int pos5 = pos + ExcelExportConstants.CAMERA_IDENTIFIER_LENGTH;
@@ -405,62 +397,60 @@ public abstract class XLSExport {
 	/**
 	 * Writes experiment properties to the sheet.
 	 */
-	private void writeExperimentProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp) {
+	protected void writeExperimentProperties(SXSSFSheet sheet, Point pt, boolean transpose, Experiment exp,
+			String charSeries) {
+		// Ensure experiment properties are loaded
+		exp.load_MS96_experiment();
 		ExperimentProperties props = exp.getProperties();
 
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_BOXID);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_EXPT);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_STIM1);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_CONC1);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_STRAIN);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_SEX);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_STIM2);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_CONC2);
-	}
-
-	/**
-	 * Writes spot properties to the sheet.
-	 */
-	private void writeSpotProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Spot spot, Cage cage,
-			String charSeries, EnumXLSExport xlsExportType) {
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_VOLUME, transpose,
-				spot.getProperties().getSpotVolume());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_PIXELS, transpose,
-				spot.getProperties().getSpotNPixels());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGEPOS, transpose,
-				spot.getCagePosition(xlsExportType));
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_STIM, transpose,
-				spot.getProperties().getStimulus());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_CONC, transpose,
-				spot.getProperties().getConcentration());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_CAGEID, transpose,
-				spot.getProperties().getCageID());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_CAGEROW, transpose,
-				spot.getProperties().getCageRow());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_CAGECOL, transpose,
-				spot.getProperties().getCageColumn());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGEID, transpose,
-				charSeries + spot.getProperties().getCageID());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_NFLIES, transpose,
-				cage.getProperties().getCageNFlies());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CHOICE_NOCHOICE, transpose,
-				ExcelExportConstants.CHOICE_NOCHOICE_DEFAULT);
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.DUM4, transpose,
-				spot.getProperties().getStimulusI());
+		XLSUtils.setFieldValueAtColumn(sheet, pt, transpose, props, EnumXLSColumnHeader.EXP_BOXID, charSeries);
+		XLSUtils.setFieldValueAtColumn(sheet, pt, transpose, props, EnumXLSColumnHeader.EXP_EXPT);
+		XLSUtils.setFieldValueAtColumn(sheet, pt, transpose, props, EnumXLSColumnHeader.EXP_STIM1);
+		XLSUtils.setFieldValueAtColumn(sheet, pt, transpose, props, EnumXLSColumnHeader.EXP_CONC1);
+		XLSUtils.setFieldValueAtColumn(sheet, pt, transpose, props, EnumXLSColumnHeader.EXP_STRAIN);
+		XLSUtils.setFieldValueAtColumn(sheet, pt, transpose, props, EnumXLSColumnHeader.EXP_SEX);
+		XLSUtils.setFieldValueAtColumn(sheet, pt, transpose, props, EnumXLSColumnHeader.EXP_STIM2);
+		XLSUtils.setFieldValueAtColumn(sheet, pt, transpose, props, EnumXLSColumnHeader.EXP_CONC2);
 	}
 
 	/**
 	 * Writes cage properties to the sheet.
 	 */
-	private void writeCageProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Cage cage) {
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_STRAIN, transpose,
-				cage.getProperties().getFlyStrain());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_SEX, transpose,
-				cage.getProperties().getFlySex());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_AGE, transpose,
-				cage.getProperties().getFlyAge());
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_COMMENT, transpose,
-				cage.getProperties().getComment());
+	protected void writeCageProperties(SXSSFSheet sheet, Point pt, boolean transpose, Cage cage) {
+		CageProperties props = cage.getProperties();
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAGEID, transpose, props.getCageID());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAGEPOS, transpose, props.getCagePosition());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAGE_NFLIES, transpose, props.getCageNFlies());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAGE_STRAIN, transpose, props.getFlyStrain());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAGE_SEX, transpose, props.getFlySex());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAGE_AGE, transpose, props.getFlyAge());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAGE_COMMENT, transpose, props.getComment());
+	}
+
+	/**
+	 * Writes spot properties to the sheet.
+	 */
+	private void writeSpotProperties(SXSSFSheet sheet, Point pt, boolean transpose, Spot spot, Cage cage,
+			String charSeries, EnumXLSExport xlsExportType) {
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_VOLUME, transpose,
+				spot.getProperties().getSpotVolume());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_PIXELS, transpose,
+				spot.getProperties().getSpotNPixels());
+
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_STIM, transpose,
+				spot.getProperties().getStimulus());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_CONC, transpose,
+				spot.getProperties().getConcentration());
+
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_CAGEROW, transpose,
+				spot.getProperties().getCageRow());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_CAGECOL, transpose,
+				spot.getProperties().getCageColumn());
+
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_NFLIES, transpose,
+				cage.getProperties().getCageNFlies());
+
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.DUM4, transpose, spot.getProperties().getStimulusI());
 	}
 
 	/**

@@ -83,4 +83,75 @@ public class XLSUtils {
 		setValue(sheet, x, y + field.getValue(), transpose, text);
 	}
 
+	/**
+	 * Sets a value at a specific column position using Point and
+	 * EnumXLSColumnHeader. This encapsulates the arithmetic (y + column.getValue())
+	 * for better readability.
+	 * 
+	 * @param sheet     The sheet to write to
+	 * @param pt        The starting point (x, y)
+	 * @param column    The column header enum
+	 * @param transpose Whether to transpose coordinates
+	 * @param value     The value to write
+	 */
+	public static void setValueAtColumn(SXSSFSheet sheet, Point pt, EnumXLSColumnHeader column, boolean transpose,
+			String value) {
+		setValue(sheet, pt.x, pt.y + column.getValue(), transpose, value);
+	}
+
+	/**
+	 * Sets a value at a specific column position using Point and
+	 * EnumXLSColumnHeader.
+	 * 
+	 * @param sheet     The sheet to write to
+	 * @param pt        The starting point (x, y)
+	 * @param column    The column header enum
+	 * @param transpose Whether to transpose coordinates
+	 * @param value     The value to write
+	 */
+	public static void setValueAtColumn(SXSSFSheet sheet, Point pt, EnumXLSColumnHeader column, boolean transpose,
+			int value) {
+		setValue(sheet, pt.x, pt.y + column.getValue(), transpose, value);
+	}
+
+	/**
+	 * Sets a value at a specific column position using Point and
+	 * EnumXLSColumnHeader.
+	 * 
+	 * @param sheet     The sheet to write to
+	 * @param pt        The starting point (x, y)
+	 * @param column    The column header enum
+	 * @param transpose Whether to transpose coordinates
+	 * @param value     The value to write
+	 */
+	public static void setValueAtColumn(SXSSFSheet sheet, Point pt, EnumXLSColumnHeader column, boolean transpose,
+			double value) {
+		setValue(sheet, pt.x, pt.y + column.getValue(), transpose, value);
+	}
+
+	/**
+	 * Sets a field value from ExperimentProperties at a specific column position.
+	 * 
+	 * @param sheet     The sheet to write to
+	 * @param pt        The starting point (x, y)
+	 * @param transpose Whether to transpose coordinates
+	 * @param expDesc   The experiment properties
+	 * @param field     The field enum
+	 */
+	public static void setFieldValueAtColumn(SXSSFSheet sheet, Point pt, boolean transpose,
+			ExperimentProperties expDesc, EnumXLSColumnHeader field) {
+		String text = expDesc.getField(field);
+		setValueAtColumn(sheet, pt, field, transpose, text);
+	}
+
+	public static void setFieldValueAtColumn(SXSSFSheet sheet, Point pt, boolean transpose,
+			ExperimentProperties expDesc, EnumXLSColumnHeader field, String charString) {
+		String text;
+		if (charString == null)
+			text = expDesc.getField(field);
+		else
+			text = expDesc.getField(field) + "_" + charString;
+		setValueAtColumn(sheet, pt, field, transpose, text);
+	}
+
 }

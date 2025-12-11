@@ -1,9 +1,6 @@
 package plugins.fmp.multicafe.fmp_tools.toExcel.capillaries;
 
 import java.awt.Point;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +8,6 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
@@ -286,115 +282,30 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 */
 	protected Point writeExperimentCapillaryInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries,
 			Cage cage, Capillary capillary, EnumXLSExport xlsExportType) {
-		int x = pt.x;
-		int y = pt.y;
+
 		boolean transpose = options.transpose;
 
-		// Write basic file information (duplicate logic from base class since it's
-		// private)
-		writeFileInformationForCapillary(sheet, x, y, transpose, exp);
+		writeFileInformation(sheet, pt, transpose, exp);
+		writeExperimentProperties(sheet, pt, transpose, exp, charSeries);
+		writeCageProperties(sheet, pt, transpose, cage);
+		writeCapillaryProperties(sheet, pt, transpose, capillary, charSeries, xlsExportType);
 
-		writeExperimentProperties(sheet, x, y, transpose, exp, charSeries);
-		writeCageProperties(sheet, x, y, transpose, cage);
-		writeCapillaryProperties(sheet, x, y, transpose, capillary, charSeries, xlsExportType);
-
-		pt.y = y + getDescriptorRowCount();
+		pt.y += getDescriptorRowCount();
 		return pt;
 	}
 
-	/**
-	 * Writes basic file information to the sheet (for capillaries).
-	 */
-	private void writeFileInformationForCapillary(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp) {
-		String filename = exp.getResultsDirectory();
-		if (filename == null) {
-			filename = exp.getSeqCamData().getImagesDirectory();
-		}
-
-		Path path = Paths.get(filename);
-		SimpleDateFormat df = new SimpleDateFormat(ExcelExportConstants.DEFAULT_DATE_FORMAT);
-		String date = df.format(exp.chainImageFirst_ms);
-		String name0 = path.toString();
-		String cam = extractCameraInfo(name0);
-
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.PATH.getValue(), transpose, name0);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
-	}
-
-	/**
-	 * Extracts camera information from the filename.
-	 */
-	private String extractCameraInfo(String filename) {
-		int pos = filename.indexOf(ExcelExportConstants.CAMERA_IDENTIFIER);
-		if (pos > 0) {
-			int pos5 = pos + ExcelExportConstants.CAMERA_IDENTIFIER_LENGTH;
-			if (pos5 >= filename.length()) {
-				pos5 = filename.length() - 1;
-			}
-			return filename.substring(pos, pos5);
-		}
-		return ExcelExportConstants.CAMERA_DEFAULT_VALUE;
-	}
-
-	private void writeExperimentProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp,
-			String charSeries) {
-		// CRITICAL: Reload experiment properties right before writing to ensure
-		// we have the correct properties for THIS specific experiment
-		// This is especially important when exporting multiple experiments
-		exp.load_MS96_experiment();
-
-		// Use exp.getExperimentField() instead of props.getField() to match
-		// how Infos.java correctly reads the properties (this is the key fix!)
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_BOXID.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_EXPT.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STIM1.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_STIM1));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_CONC1.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_CONC1));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STRAIN.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_BOXID.getValue(), transpose, charSeries);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_SEX.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STIM2.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_STIM2));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_CONC2.getValue(), transpose,
-				exp.getExperimentField(EnumXLSColumnHeader.EXP_CONC2));
-	}
-
-	private void writeCageProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Cage cage) {
-		CageProperties props = cage.getProperties();
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose, props.getCageID());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose, props.getCagePosition());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_NFLIES.getValue(), transpose, props.getCageNFlies());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, props.getFlyStrain());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, props.getFlySex());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, props.getFlyAge());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, props.getComment());
-	}
-
-	private void writeCapillaryProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Capillary capillary,
+	private void writeCapillaryProperties(SXSSFSheet sheet, Point pt, boolean transpose, Capillary capillary,
 			String charSeries, EnumXLSExport xlsExportType) {
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP.getValue(), transpose,
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP, transpose,
 				capillary.getSideDescriptor(xlsExportType));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_INDEX.getValue(), transpose,
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_INDEX, transpose,
 				charSeries + "_" + capillary.getLast2ofCapillaryName());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, capillary.capVolume);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, capillary.capPixels);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, capillary.capStimulus);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, capillary.capConcentration);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, capillary.capNFlies);
-
-		// Add missing fields: CHOICE, CAGEID, CAGEPOS, DUM4
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
-				charSeries + capillary.getCageID());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose, capillary.getCageID());
-		// DUM4 should show the export type name (e.g., "topraw", "toplevel",
-		// "toplevel_L+R")
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, xlsExportType.toString());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_VOLUME, transpose, capillary.capVolume);
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_PIXELS, transpose, capillary.capPixels);
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_STIM, transpose, capillary.capStimulus);
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_CONC, transpose, capillary.capConcentration);
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_NFLIES, transpose, capillary.capNFlies);
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.DUM4, transpose, xlsExportType.toString());
 	}
 
 	/**

@@ -266,21 +266,6 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	}
 
 	/**
-	 * Extracts camera information from the filename.
-	 */
-	private String extractCameraInfo(String filename) {
-		int pos = filename.indexOf(ExcelExportConstants.CAMERA_IDENTIFIER);
-		if (pos > 0) {
-			int pos5 = pos + ExcelExportConstants.CAMERA_IDENTIFIER_LENGTH;
-			if (pos5 >= filename.length()) {
-				pos5 = filename.length() - 1;
-			}
-			return filename.substring(pos, pos5);
-		}
-		return ExcelExportConstants.CAMERA_DEFAULT_VALUE;
-	}
-
-	/**
 	 * Writes experiment properties to the sheet (for gulps).
 	 */
 	private void writeExperimentPropertiesForGulp(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp,

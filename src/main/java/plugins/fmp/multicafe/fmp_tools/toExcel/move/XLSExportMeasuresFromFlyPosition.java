@@ -20,8 +20,9 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException
 import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
 
 /**
- * Excel export implementation for fly position measurements. Uses the Template Method
- * pattern for structured export operations, following the same pattern as spot and capillary exports.
+ * Excel export implementation for fly position measurements. Uses the Template
+ * Method pattern for structured export operations, following the same pattern
+ * as spot and capillary exports.
  * 
  * <p>
  * This class exports fly position data including:
@@ -119,8 +120,8 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @param charSeries    The series identifier
 	 * @return The next available column
 	 */
-	protected int xlsExportExperimentFlyPositionDataToSheet(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType,
-			int col0, String charSeries) {
+	protected int xlsExportExperimentFlyPositionDataToSheet(Experiment exp, SXSSFSheet sheet,
+			EnumXLSExport xlsExportType, int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
@@ -129,7 +130,8 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 
 		for (Cage cage : exp.getCages().cagesList) {
 			FlyPositions flyPositions = cage.flyPositions;
-			if (flyPositions == null || flyPositions.flyPositionList == null || flyPositions.flyPositionList.isEmpty()) {
+			if (flyPositions == null || flyPositions.flyPositionList == null
+					|| flyPositions.flyPositionList.isEmpty()) {
 				continue;
 			}
 
@@ -146,9 +148,9 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	/**
 	 * Gets the results for fly positions.
 	 * 
-	 * @param exp           The experiment
-	 * @param cage          The cage
-	 * @param flyPositions  The fly positions
+	 * @param exp              The experiment
+	 * @param cage             The cage
+	 * @param flyPositions     The fly positions
 	 * @param xlsExportOptions The export options
 	 * @return The XLS results
 	 */
@@ -174,7 +176,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	/**
 	 * Gets the number of output frames for the experiment.
 	 * 
-	 * @param exp The experiment
+	 * @param exp     The experiment
 	 * @param options The export options
 	 * @return The number of output frames
 	 */
@@ -256,21 +258,6 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	}
 
 	/**
-	 * Extracts camera information from the filename.
-	 */
-	private String extractCameraInfo(String filename) {
-		int pos = filename.indexOf(ExcelExportConstants.CAMERA_IDENTIFIER);
-		if (pos > 0) {
-			int pos5 = pos + ExcelExportConstants.CAMERA_IDENTIFIER_LENGTH;
-			if (pos5 >= filename.length()) {
-				pos5 = filename.length() - 1;
-			}
-			return filename.substring(pos, pos5);
-		}
-		return ExcelExportConstants.CAMERA_DEFAULT_VALUE;
-	}
-
-	/**
 	 * Writes experiment properties to the sheet (for fly positions).
 	 */
 	private void writeExperimentPropertiesForFlyPosition(SXSSFSheet sheet, int x, int y, boolean transpose,
@@ -321,4 +308,3 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 		System.err.println(error);
 	}
 }
-
