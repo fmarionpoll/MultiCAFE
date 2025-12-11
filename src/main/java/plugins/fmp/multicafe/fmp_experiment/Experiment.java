@@ -889,46 +889,19 @@ public class Experiment {
 	}
 
 	public String getExperimentField(EnumXLSColumnHeader fieldEnumCode) {
-		String strField = null;
+		// Handle non-property fields that are derived from experiment data
 		switch (fieldEnumCode) {
 		case PATH:
-			strField = getPath();
-			break;
+			return getPath();
 		case DATE:
-			strField = getDate();
-			break;
+			return getDate();
 		case CAM:
-			strField = getCam();
-			break;
-		case EXP_STIM1:
-			strField = getComment1();
-			break;
-		case EXP_CONC1:
-			strField = getComment2();
-			break;
-		case EXP_EXPT:
-			strField = getExperiment();
-			break;
-		case EXP_BOXID:
-			strField = getBoxID();
-			break;
-		case EXP_STRAIN:
-			strField = getStrain();
-			break;
-		case EXP_SEX:
-			strField = getSex();
-			break;
-		case EXP_STIM2:
-			strField = getCondition1();
-			break;
-		case EXP_CONC2:
-			strField = getCondition2();
-			break;
+			return getCam();
 		default:
-			strField = prop.getField(fieldEnumCode);
-			break;
+			// Delegate all property fields to ExperimentProperties
+			// This keeps property access logic in one place
+			return prop.getField(fieldEnumCode);
 		}
-		return strField;
 	}
 
 	private String getPath() {
@@ -963,10 +936,10 @@ public class Experiment {
 	public void setExperimentFieldNoTest(EnumXLSColumnHeader fieldEnumCode, String newValue) {
 		switch (fieldEnumCode) {
 		case EXP_STIM1:
-			setComment1(newValue);
+			prop.field_stim1 = newValue;
 			break;
 		case EXP_CONC1:
-			setComment2(newValue);
+			prop.field_conc1 = newValue;
 			break;
 		case EXP_EXPT:
 			setExperiment(newValue);

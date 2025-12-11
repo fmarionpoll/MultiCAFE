@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
@@ -347,12 +346,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		// CRITICAL: Reload experiment properties right before writing to ensure
 		// we have the correct properties for THIS specific experiment
 		// This is especially important when exporting multiple experiments
-		String resultsDir = exp.getResultsDirectory();
-		// Force reload of properties from XML file
-		boolean loaded = exp.load_MS96_experiment();
-
-		// Get properties AFTER reloading
-		ExperimentProperties props = exp.getProperties();
+		exp.load_MS96_experiment();
 
 		// Use exp.getExperimentField() instead of props.getField() to match
 		// how Infos.java correctly reads the properties (this is the key fix!)
