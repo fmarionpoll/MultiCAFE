@@ -20,7 +20,7 @@ public enum EnumXLSColumnHeader {
 
 	//
 	CAGEID("Cage_ID", 11, EnumColumnType.COMMON), // 12
-	CAGEPOS("Cage_Position", 12, EnumColumnType.COMMON), // 13
+	CAGEPOS("Cage_position", 12, EnumColumnType.COMMON), // 13
 	CAGE_NFLIES("Cage_nflies", 13, EnumColumnType.COMMON), // 11
 	CAGE_STRAIN("Cage_strain", 14, EnumColumnType.COMMON), // 14
 	CAGE_SEX("Cage_sex", 15, EnumColumnType.COMMON), // 15
@@ -34,7 +34,7 @@ public enum EnumXLSColumnHeader {
 	SPOT_PIXELS("Spot_npixels", 22, EnumColumnType.SPOT), // 22
 	SPOT_STIM("Spot_stimulus", 23, EnumColumnType.SPOT), // 23
 	SPOT_CONC("Spot_concentration", 24, EnumColumnType.SPOT), // 24
-	SPOT_NFLIES("Spot_Nflies", 25, EnumColumnType.SPOT), // 25
+	SPOT_NFLIES("Spot_nflies", 25, EnumColumnType.SPOT), // 25
 	//
 	CAP("Cap", 18, EnumColumnType.CAP), //
 	CAP_INDEX("Cap_ID", 19, EnumColumnType.CAP), //
@@ -42,7 +42,7 @@ public enum EnumXLSColumnHeader {
 	CAP_PIXELS("Cap_npixels", 21, EnumColumnType.CAP), //
 	CAP_STIM("Cap_stimulus", 22, EnumColumnType.CAP), //
 	CAP_CONC("Cap_concentration", 23, EnumColumnType.CAP), //
-	CAP_NFLIES("Cap_Nflies", 24, EnumColumnType.CAP), //
+	CAP_NFLIES("Cap_nflies", 24, EnumColumnType.CAP), //
 	CAP_COMMENT("Cap_comment", 25, EnumColumnType.CAP), //
 	//
 	DUM4("Dum4", 26, EnumColumnType.COMMON);

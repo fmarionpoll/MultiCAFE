@@ -71,7 +71,7 @@ public class ExperimentProperties {
 
 		// Load new fields first (if present in new format)
 		// Check if new format fields exist by testing if element is present
-		org.w3c.dom.Node stim1Node = XMLUtil.getElement(node, ID_STIM1_NEW);
+		Node stim1Node = XMLUtil.getElement(node, ID_STIM1_NEW);
 		if (stim1Node != null) {
 			// New format: use new field names
 			field_stim1 = XMLUtil.getElementValue(node, ID_STIM1_NEW, "..");
@@ -83,7 +83,7 @@ public class ExperimentProperties {
 		} else {
 			// Old format: try to load from legacy field names
 			// Try MS96Experiment.xml format first (stim/conc/cond1/cond2)
-			org.w3c.dom.Node stimOldNode = XMLUtil.getElement(node, ID_STIM1_OLD);
+			Node stimOldNode = XMLUtil.getElement(node, ID_STIM1_OLD);
 			if (stimOldNode != null) {
 				// MS96Experiment.xml format
 				field_stim1 = XMLUtil.getElementValue(node, ID_STIM1_OLD, "..");

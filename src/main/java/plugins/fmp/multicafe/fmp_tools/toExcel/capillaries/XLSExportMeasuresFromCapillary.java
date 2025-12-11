@@ -170,13 +170,9 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(xlsExportType);
 
-		// Fallback: if cages weren't loaded (shouldn't happen as they're loaded in
-		// executeExport),
-		// create cage structures from capillaries
-// if (exp.getCages().getCageList().size() < 2) {
+		// update cage structures from capillaries so that we can do operations within a
+		// cage more easily (not yet implemented)
 		exp.dispatchCapillariesToCages();
-//		}
-
 		for (Cage cage : exp.getCages().getCageList()) {
 
 			for (Capillary capillary : cage.getCapillaries().getList()) {
