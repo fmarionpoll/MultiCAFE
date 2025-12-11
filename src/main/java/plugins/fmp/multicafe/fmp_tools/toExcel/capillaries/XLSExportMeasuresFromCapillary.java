@@ -171,10 +171,12 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(xlsExportType);
 
-		// TODO: add loop for cage?
-		if (exp.getCages().getCageList().size() < 2) {
-			exp.dispatchCapillariesToCages();
-		}
+		// Fallback: if cages weren't loaded (shouldn't happen as they're loaded in
+		// executeExport),
+		// create cage structures from capillaries
+// if (exp.getCages().getCageList().size() < 2) {
+		exp.dispatchCapillariesToCages();
+//		}
 
 		for (Cage cage : exp.getCages().getCageList()) {
 
@@ -202,7 +204,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 */
 	public XLSResults getXLSResultsDataValuesFromCapillaryMeasures(Experiment exp, Capillary capillary,
 			XLSExportOptions xlsExportOptions, boolean subtractT0) {
-		XLSResults xlsResults = new XLSResults(capillary.getRoiName(), capillary.capNFlies, capillary.capCageID, 0,
+		XLSResults xlsResults = new XLSResults(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
 				xlsExportOptions.exportType);
 
 		xlsResults.setStimulus(capillary.capStimulus);
@@ -380,7 +382,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 
 		// Add missing fields: CHOICE, CAGEID, CAGEPOS, DUM4
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
-				charSeries + capillary.capCageID);
+				charSeries + capillary.getCageID());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose, capillary.capCageID);
 		// DUM4 should show the export type name (e.g., "topraw", "toplevel",
 		// "toplevel_L+R")

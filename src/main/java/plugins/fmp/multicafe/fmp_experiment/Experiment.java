@@ -1556,11 +1556,13 @@ public class Experiment {
 		}
 
 		for (Capillary cap : capillaries.getList()) {
-			int cageID = cap.getCageIndexFromRoiName();
+			int nflies = cap.capNFlies;
+			int cageID = cap.getCageID();
 			Cage cage = cages.getCageFromID(cageID);
 			if (cage == null) {
 				cage = new Cage();
 				cage.getProperties().setCageID(cageID);
+				cage.getProperties().setCageNFlies(nflies);
 				cages.getCageList().add(cage);
 			}
 			cage.addCapillaryIfUnique(cap);

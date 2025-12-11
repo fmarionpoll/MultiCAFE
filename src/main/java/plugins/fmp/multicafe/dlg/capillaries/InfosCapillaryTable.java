@@ -262,7 +262,7 @@ public class InfosCapillaryTable extends JPanel {
 				if (!capFrom.getRoiName().equals(capTo.getRoiName()))
 					continue;
 				capFrom.valid = true;
-				capTo.capCageID = capFrom.capCageID;
+				capTo.setCageID(capFrom.getCageID());
 				capTo.capNFlies = capFrom.capNFlies;
 				capTo.capVolume = capFrom.capVolume;
 				capTo.capStimulus = capFrom.capStimulus;
@@ -370,7 +370,7 @@ public class InfosCapillaryTable extends JPanel {
 			return;
 
 		Capillary capFrom = exp.getCapillaries().getList().get(rowIndex);
-		int cageFrom = capFrom.capCageID;
+		int cageFrom = capFrom.getCageID();
 		int cageTo = -1;
 
 		int nCapillariesPerCage = getCageNCapillaries(exp, cageFrom);
@@ -379,15 +379,15 @@ public class InfosCapillaryTable extends JPanel {
 
 		for (int i = 0; i < exp.getCapillaries().getList().size(); i++) {
 			Capillary cap = exp.getCapillaries().getList().get(i);
-			if (cap.capCageID == cageFrom)
+			if (cap.getCageID() == cageFrom)
 				continue;
 
-			if (cap.capCageID != cageTo) {
-				cageTo = cap.capCageID;
+			if (cap.getCageID() != cageTo) {
+				cageTo = cap.getCageID();
 				indexFirstCapillaryOfCageTo = getIndexFirstCapillaryOfCage(exp, cageTo);
 			}
 
-			if (getCageNCapillaries(exp, cap.capCageID) != nCapillariesPerCage)
+			if (getCageNCapillaries(exp, cap.getCageID()) != nCapillariesPerCage)
 				continue;
 
 			int indexFrom = i - indexFirstCapillaryOfCageTo + indexFirstCapillaryOfCageFrom;
@@ -416,7 +416,7 @@ public class InfosCapillaryTable extends JPanel {
 	private int getCageNCapillaries(Experiment exp, int cageID) {
 		int nCapillaries = 0;
 		for (Capillary cap : exp.getCapillaries().getList()) {
-			if (cap.capCageID == cageID)
+			if (cap.getCageID() == cageID)
 				nCapillaries++;
 		}
 
@@ -427,7 +427,7 @@ public class InfosCapillaryTable extends JPanel {
 		int index = -1;
 		for (int i = 0; i < exp.getCapillaries().getList().size(); i++) {
 			Capillary cap = exp.getCapillaries().getList().get(i);
-			if (cap.capCageID == cageID) {
+			if (cap.getCageID() == cageID) {
 				index = i;
 				break;
 			}

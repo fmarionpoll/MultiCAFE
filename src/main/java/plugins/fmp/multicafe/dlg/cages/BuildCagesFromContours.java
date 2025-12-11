@@ -105,8 +105,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 					createROIsFromSelectedPolygon(exp);
 					exp.getCages().cagesFromROIs(exp.getSeqCamData());
 					if (exp.getCapillaries().getList().size() > 0)
-						exp.getCages()
-								.transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getList());
+						exp.getCages().transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getList());
 				}
 			}
 		});
@@ -220,7 +219,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 					int cagenb = cap.getCageIndexFromRoiName();
 					roiP.setName("cage" + String.format("%03d", cagenb));
 					roiP.setColor(Color.MAGENTA);
-					cap.capCageID = cagenb;
+					cap.setCageID(cagenb);
 					exp.getSeqCamData().getSequence().addROI(roiP);
 				}
 			}

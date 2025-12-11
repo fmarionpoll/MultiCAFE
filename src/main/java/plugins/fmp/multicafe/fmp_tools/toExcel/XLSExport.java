@@ -174,6 +174,7 @@ public abstract class XLSExport {
 				}
 				
 				exp.loadCapillaries();
+				exp.loadCageMeasures();
 				if (shouldSkipExperiment(exp)) {
 					continue;
 				}

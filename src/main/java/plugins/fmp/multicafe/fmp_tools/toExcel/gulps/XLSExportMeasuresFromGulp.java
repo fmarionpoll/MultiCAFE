@@ -19,7 +19,8 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
 
 /**
  * Excel export implementation for gulp measurements. Uses the Template Method
- * pattern for structured export operations, following the same pattern as spot and capillary exports.
+ * pattern for structured export operations, following the same pattern as spot
+ * and capillary exports.
  * 
  * <p>
  * This class exports gulp data including:
@@ -149,8 +150,8 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	/**
 	 * Gets the results for a gulp.
 	 * 
-	 * @param exp           The experiment
-	 * @param capillary     The capillary
+	 * @param exp              The experiment
+	 * @param capillary        The capillary
 	 * @param xlsExportOptions The export options
 	 * @return The XLS results
 	 */
@@ -159,7 +160,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
 
 		// Create XLSResults with capillary properties
-		XLSResults xlsResults = new XLSResults(capillary.getRoiName(), capillary.capNFlies, capillary.capCageID, 0,
+		XLSResults xlsResults = new XLSResults(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
 				xlsExportOptions.exportType);
 		xlsResults.setStimulus(capillary.capStimulus);
 		xlsResults.setConcentration(capillary.capConcentration);
@@ -169,7 +170,8 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		long binData = exp.getKymoBin_ms();
 		long binExcel = xlsExportOptions.buildExcelStepMs;
 
-		// Get data from capillary (gulps are extracted via getCapillaryMeasuresForXLSPass1)
+		// Get data from capillary (gulps are extracted via
+		// getCapillaryMeasuresForXLSPass1)
 		xlsResults.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, false);
 
 		return xlsResults;
@@ -178,7 +180,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	/**
 	 * Gets the number of output frames for the experiment.
 	 * 
-	 * @param exp The experiment
+	 * @param exp     The experiment
 	 * @param options The export options
 	 * @return The number of output frames
 	 */
@@ -186,7 +188,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		// For gulps, use kymograph timing (same as capillaries)
 		long kymoFirst_ms = exp.getKymoFirst_ms();
 		long kymoLast_ms = exp.getKymoLast_ms();
-		
+
 		if (kymoLast_ms <= kymoFirst_ms) {
 			// Try to get from kymograph sequence
 			if (exp.getSeqKymos() != null) {
@@ -281,8 +283,8 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	/**
 	 * Writes experiment properties to the sheet (for gulps).
 	 */
-	private void writeExperimentPropertiesForGulp(SXSSFSheet sheet, int x, int y, boolean transpose,
-			Experiment exp, String charSeries) {
+	private void writeExperimentPropertiesForGulp(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp,
+			String charSeries) {
 		plugins.fmp.multicafe.fmp_experiment.ExperimentProperties props = exp.getProperties();
 
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_BOXID);
@@ -305,16 +307,11 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 				capillary.getSideDescriptor(xlsExportType));
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_INDEX.getValue(), transpose,
 				charSeries + "_" + capillary.getLast2ofCapillaryName());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose,
-				capillary.capVolume);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose,
-				capillary.capPixels);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose,
-				capillary.capStimulus);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose,
-				capillary.capConcentration);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose,
-				capillary.capNFlies);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, capillary.capVolume);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, capillary.capPixels);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, capillary.capStimulus);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, capillary.capConcentration);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, capillary.capNFlies);
 	}
 
 	/**
@@ -330,4 +327,3 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		System.err.println(error);
 	}
 }
-

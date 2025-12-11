@@ -315,7 +315,7 @@ public class CagesArray {
 			row = csvReader.readLine(); // Header row
 			boolean complete = (row != null && row.contains("w(i)"));
 			boolean v0 = (row != null && row.contains("x(i)"));
-			
+
 			while ((row = csvReader.readLine()) != null) {
 				String[] data = row.split(sep);
 				if (data.length > 0 && data[0].equals("#"))
@@ -419,12 +419,12 @@ public class CagesArray {
 		if (tempname == null) {
 			return false;
 		}
-		
+
 		File file = new File(tempname);
 		if (!file.exists()) {
 			return false;
 		}
-		
+
 		// Memory monitoring before loading
 //		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		// System.out.println("=== XML LOADING: CagesArray ===");
@@ -772,7 +772,7 @@ public class CagesArray {
 		for (Cage cage : cagesList) {
 			int cagenb = cage.getCageID();
 			for (Capillary cap : capList) {
-				if (cap.capCageID == cagenb) {
+				if (cap.getCageID() == cagenb) {
 					cage.setCageNFlies(cap.capNFlies);
 					break;
 				}
@@ -784,7 +784,7 @@ public class CagesArray {
 		for (Cage cage : cagesList) {
 			int cageIndex = cage.getCageID();
 			for (Capillary cap : capList) {
-				if (cap.capCageID != cageIndex)
+				if (cap.getCageID() != cageIndex)
 					continue;
 				cap.capNFlies = cage.getCageNFlies();
 			}
@@ -794,7 +794,7 @@ public class CagesArray {
 	public void setCageNbFromName(List<Capillary> capList) {
 		for (Capillary cap : capList) {
 			int cageIndex = cap.getCageIndexFromRoiName();
-			cap.capCageID = cageIndex;
+			cap.setCageID(cageIndex);
 		}
 	}
 

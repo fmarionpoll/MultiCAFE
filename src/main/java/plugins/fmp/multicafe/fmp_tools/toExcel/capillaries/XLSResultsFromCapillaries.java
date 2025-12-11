@@ -246,7 +246,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
 		for (Capillary cap : caps.getList()) {
 			checkIfSameStimulusAndConcentration(cap);
-			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.capCageID,
+			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.getCageID(),
 					xlsExportOptions.exportType);
 			results.initValuesOutArray(nOutputFrames, null);
 			results.dataInt = cap.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,

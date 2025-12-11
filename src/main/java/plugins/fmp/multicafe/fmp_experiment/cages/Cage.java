@@ -169,7 +169,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public void addCapillaryIfUniqueBulkFilteredOnCageID(List<Capillary> capillaryList) {
 		for (Capillary cap : capillaryList) {
-			if (cap.capCageID == prop.getCageID())
+			if (cap.getCageID() == prop.getCageID())
 				addCapillaryIfUnique(cap);
 		}
 	}

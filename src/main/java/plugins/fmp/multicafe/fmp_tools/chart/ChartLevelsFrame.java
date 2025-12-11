@@ -34,7 +34,6 @@ import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
-
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
@@ -475,8 +474,8 @@ public class ChartLevelsFrame extends IcyFrame {
 	/**
 	 * Gets data arrays for the experiment.
 	 * 
-	 * @param exp                 the experiment
-	 * @param exportType          the export type
+	 * @param exp                the experiment
+	 * @param exportType         the export type
 	 * @param correctEvaporation whether to subtract evaporation
 	 * @return list of XY series collections
 	 */
@@ -568,7 +567,7 @@ public class ChartLevelsFrame extends IcyFrame {
 		}
 
 		for (Capillary cap : capillaries) {
-			if (cap != null && cap.capCageID == cageID) {
+			if (cap != null && cap.getCageID() == cageID) {
 				return cap;
 			}
 		}
@@ -579,8 +578,8 @@ public class ChartLevelsFrame extends IcyFrame {
 	/**
 	 * Gets data as results array.
 	 * 
-	 * @param exp                 the experiment
-	 * @param exportType          the export type
+	 * @param exp                the experiment
+	 * @param exportType         the export type
 	 * @param correctEvaporation whether to subtract evaporation
 	 * @return the results array
 	 */
@@ -590,10 +589,10 @@ public class ChartLevelsFrame extends IcyFrame {
 			LOGGER.warning("Invalid parameters for getDataAsResultsArray");
 			return new XLSResultsArray();
 		}
-		
-		XLSResultsFromCapillaries xlsResultsFromCaps = new XLSResultsFromCapillaries(exp.getCapillaries().getList().size());
-		return xlsResultsFromCaps.getMeasuresFromAllCapillaries(exp, exportType,
-				correctEvaporation);
+
+		XLSResultsFromCapillaries xlsResultsFromCaps = new XLSResultsFromCapillaries(
+				exp.getCapillaries().getList().size());
+		return xlsResultsFromCaps.getMeasuresFromAllCapillaries(exp, exportType, correctEvaporation);
 	}
 
 	/**

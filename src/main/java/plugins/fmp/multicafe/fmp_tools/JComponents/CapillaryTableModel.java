@@ -64,7 +64,7 @@ public class CapillaryTableModel extends AbstractTableModel {
 			case 0:
 				return cap.getRoiName();
 			case 1:
-				return cap.capCageID;
+				return cap.getCageID();
 			case 2:
 				return cap.capNFlies;
 			case 3:
@@ -97,7 +97,7 @@ public class CapillaryTableModel extends AbstractTableModel {
 				cap.setRoiName(aValue.toString());
 				break;
 			case 1:
-				cap.capCageID = (int) aValue;
+				cap.setCageID((int) aValue);
 				break;
 			case 2:
 				cap.capNFlies = (int) aValue;

@@ -34,7 +34,7 @@ public class Capillary implements Comparable<Capillary> {
 	public String capConcentration = new String("..");
 	public String capSide = ".";
 	public int capNFlies = 1;
-	public int capCageID = 0;
+	private int capCageID = 0;
 	public double capVolume = 5.;
 	public int capPixels = 5;
 	public boolean descriptionOK = false;
@@ -134,6 +134,14 @@ public class Capillary implements Comparable<Capillary> {
 		this.kymographName = name;
 	}
 
+	public int getCageID() {
+		return capCageID;
+	}
+
+	public void setCageID(int iID) {
+		capCageID = iID;
+	}
+
 	public ROI2D getRoi() {
 		return roiCap;
 	}
@@ -197,6 +205,10 @@ public class Capillary implements Comparable<Capillary> {
 	}
 
 	public int getCageIndexFromRoiName() {
+		if (roiCap == null) {
+			System.out.println("roicap is null");
+			return -1;
+		}
 		String name = roiCap.getName();
 		if (!name.contains("line"))
 			return -1;
