@@ -23,42 +23,42 @@ public class ExperimentProperties {
 
 	private final static String ID_BOXID = "boxID";
 	private final static String ID_EXPERIMENT = "experiment";
-	private final static String ID_STIM = "stim";
-	private final static String ID_CONC = "conc";
+	private final static String ID_STIM1 = "stim";
+	private final static String ID_CONC1 = "conc";
 
 	private final static String ID_COMMENT1 = "comment";
 	private final static String ID_COMMENT2 = "comment2";
 	private final static String ID_STRAIN = "strain";
 	private final static String ID_SEX = "sex";
-	private final static String ID_COND1 = "cond1";
-	private final static String ID_COND2 = "cond2";
+	private final static String ID_STIM2 = "cond1";
+	private final static String ID_CONC2 = "cond2";
 
 	public void saveXML_Properties(Node node) {
 		XMLUtil.setElementValue(node, ID_BOXID, field_boxID);
 		XMLUtil.setElementValue(node, ID_EXPERIMENT, field_experiment);
-		XMLUtil.setElementValue(node, ID_STIM, field_stim1);
-		XMLUtil.setElementValue(node, ID_CONC, field_conc1);
+		XMLUtil.setElementValue(node, ID_STIM1, field_stim1);
+		XMLUtil.setElementValue(node, ID_CONC1, field_conc1);
 
 		XMLUtil.setElementValue(node, ID_COMMENT1, field_comment1);
 		XMLUtil.setElementValue(node, ID_COMMENT2, field_comment2);
 		XMLUtil.setElementValue(node, ID_STRAIN, field_strain);
 		XMLUtil.setElementValue(node, ID_SEX, field_sex);
-		XMLUtil.setElementValue(node, ID_COND1, field_stim2);
-		XMLUtil.setElementValue(node, ID_COND2, field_conc2);
+		XMLUtil.setElementValue(node, ID_STIM2, field_stim2);
+		XMLUtil.setElementValue(node, ID_CONC2, field_conc2);
 	}
 
 	public void loadXML_Properties(Node node) {
 		field_boxID = XMLUtil.getElementValue(node, ID_BOXID, "..");
 		field_experiment = XMLUtil.getElementValue(node, ID_EXPERIMENT, "..");
-		field_stim1 = XMLUtil.getElementValue(node, ID_STIM, "..");
-		field_conc1 = XMLUtil.getElementValue(node, ID_CONC, "..");
+		field_stim1 = XMLUtil.getElementValue(node, ID_STIM1, "..");
+		field_conc1 = XMLUtil.getElementValue(node, ID_CONC1, "..");
 
 		field_comment1 = XMLUtil.getElementValue(node, ID_COMMENT1, "..");
 		field_comment2 = XMLUtil.getElementValue(node, ID_COMMENT2, "..");
 		field_strain = XMLUtil.getElementValue(node, ID_STRAIN, "..");
 		field_sex = XMLUtil.getElementValue(node, ID_SEX, "..");
-		field_stim2 = XMLUtil.getElementValue(node, ID_COND1, "..");
-		field_conc2 = XMLUtil.getElementValue(node, ID_COND2, "..");
+		field_stim2 = XMLUtil.getElementValue(node, ID_STIM2, "..");
+		field_conc2 = XMLUtil.getElementValue(node, ID_CONC2, "..");
 	}
 
 	public String getField(EnumXLSColumnHeader fieldEnumCode) {
@@ -161,8 +161,8 @@ public class ExperimentProperties {
 	public String csvExportSectionHeader(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("#" + csvSep + "DESCRIPTION" + csvSep + "multiSPOTS96 data\n");
-		List<String> row2 = Arrays.asList(ID_BOXID, ID_EXPERIMENT, ID_STIM, ID_CONC, ID_COMMENT1, ID_COMMENT2,
-				ID_STRAIN, ID_SEX, ID_COND1, ID_COND2);
+		List<String> row2 = Arrays.asList(ID_BOXID, ID_EXPERIMENT, ID_STIM1, ID_CONC1, ID_COMMENT1, ID_COMMENT2,
+				ID_STRAIN, ID_SEX, ID_STIM2, ID_CONC2);
 		sbf.append(String.join(csvSep, row2));
 		sbf.append("\n");
 		return sbf.toString();

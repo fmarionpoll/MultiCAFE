@@ -344,17 +344,35 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 
 	private void writeExperimentProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp,
 			String charSeries) {
+		// CRITICAL: Reload experiment properties right before writing to ensure
+		// we have the correct properties for THIS specific experiment
+		// This is especially important when exporting multiple experiments
+		String resultsDir = exp.getResultsDirectory();
+		// Force reload of properties from XML file
+		boolean loaded = exp.load_MS96_experiment();
+
+		// Get properties AFTER reloading
 		ExperimentProperties props = exp.getProperties();
 
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_BOXID);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_EXPT);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_STIM1);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_CONC1);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_STRAIN);
+		// Use exp.getExperimentField() instead of props.getField() to match
+		// how Infos.java correctly reads the properties (this is the key fix!)
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_BOXID.getValue(), transpose,
+				exp.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_EXPT.getValue(), transpose,
+				exp.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STIM1.getValue(), transpose,
+				exp.getExperimentField(EnumXLSColumnHeader.EXP_STIM1));
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_CONC1.getValue(), transpose,
+				exp.getExperimentField(EnumXLSColumnHeader.EXP_CONC1));
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STRAIN.getValue(), transpose,
+				exp.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_BOXID.getValue(), transpose, charSeries);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_SEX);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_STIM2);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_CONC2);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_SEX.getValue(), transpose,
+				exp.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STIM2.getValue(), transpose,
+				exp.getExperimentField(EnumXLSColumnHeader.EXP_STIM2));
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_CONC2.getValue(), transpose,
+				exp.getExperimentField(EnumXLSColumnHeader.EXP_CONC2));
 	}
 
 	private void writeCageProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Cage cage) {
@@ -383,7 +401,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		// Add missing fields: CHOICE, CAGEID, CAGEPOS, DUM4
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
 				charSeries + capillary.getCageID());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose, capillary.capCageID);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose, capillary.getCageID());
 		// DUM4 should show the export type name (e.g., "topraw", "toplevel",
 		// "toplevel_L+R")
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, xlsExportType.toString());

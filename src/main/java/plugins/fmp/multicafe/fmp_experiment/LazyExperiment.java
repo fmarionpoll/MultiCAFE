@@ -56,21 +56,27 @@ public class LazyExperiment extends Experiment {
 	public void loadIfNeeded() {
 		if (!isLoaded) {
 			try {
+				// Load cached properties first if available (for lightweight access)
+				loadPropertiesIfNeeded();
+				
 				ExperimentDirectories expDirectories = new ExperimentDirectories();
 				if (expDirectories.getDirectoriesFromExptPath(metadata.getBinDirectory(),
 						metadata.getCameraDirectory())) {
-					Experiment fullExp = new Experiment(expDirectories);
-					// Copy essential public properties from the fully loaded experiment
-					setSeqCamData(fullExp.getSeqCamData());
-					setCages(fullExp.getCages());
-					this.firstImage_FileTime = fullExp.firstImage_FileTime;
-					this.lastImage_FileTime = fullExp.lastImage_FileTime;
-					this.col = fullExp.col;
-					this.chainToPreviousExperiment = fullExp.chainToPreviousExperiment;
-					this.chainToNextExperiment = fullExp.chainToNextExperiment;
-					this.chainImageFirst_ms = fullExp.chainImageFirst_ms;
-					this.experimentID = fullExp.experimentID;
-					this.isLoaded = true;
+				Experiment fullExp = new Experiment(expDirectories);
+				// Copy essential public properties from the fully loaded experiment
+				setSeqCamData(fullExp.getSeqCamData());
+				setCages(fullExp.getCages());
+				this.firstImage_FileTime = fullExp.firstImage_FileTime;
+				this.lastImage_FileTime = fullExp.lastImage_FileTime;
+				this.col = fullExp.col;
+				this.chainToPreviousExperiment = fullExp.chainToPreviousExperiment;
+				this.chainToNextExperiment = fullExp.chainToNextExperiment;
+				this.chainImageFirst_ms = fullExp.chainImageFirst_ms;
+				this.experimentID = fullExp.experimentID;
+				// Copy experiment properties (EXP_STIM1, EXP_CONC1, EXP_STIM2, EXP_CONC2, etc.)
+				// Always use properties from the fully loaded experiment to ensure correctness
+				getProperties().copyFieldsFrom(fullExp.getProperties());
+				this.isLoaded = true;
 				}
 			} catch (Exception e) {
 				LOGGER.warning("Error loading experiment " + metadata.getCameraDirectory() + ": " + e.getMessage());
@@ -142,6 +148,14 @@ public class LazyExperiment extends Experiment {
 	public ExperimentProperties getCachedProperties() {
 		loadPropertiesIfNeeded();
 		return cachedExperimentProperties;
+	}
+
+	@Override
+	public ExperimentProperties getProperties() {
+		// Always return the parent's prop object (not cached properties)
+		// The parent's prop should be loaded via load_MS96_experiment() or loadIfNeeded()
+		// Don't sync cached properties here as they might be stale or from a different experiment
+		return super.getProperties();
 	}
 
 	/**

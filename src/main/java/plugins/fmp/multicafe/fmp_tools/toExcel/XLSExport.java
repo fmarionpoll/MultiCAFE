@@ -145,6 +145,16 @@ public abstract class XLSExport {
 
 			for (int index = options.experimentIndexFirst; index <= options.experimentIndexLast; index++) {
 				Experiment exp = expList.getItemAt(index);
+				
+				// Ensure experiment is fully loaded (for LazyExperiment, this triggers loadIfNeeded)
+				// and experiment properties are loaded from XML
+				// This is critical for EXP_STIM1, EXP_CONC1, EXP_STIM2, EXP_CONC2 fields
+				if (exp instanceof plugins.fmp.multicafe.fmp_experiment.LazyExperiment) {
+					((plugins.fmp.multicafe.fmp_experiment.LazyExperiment) exp).loadIfNeeded();
+				}
+				// Ensure properties are loaded (reload to ensure they're up to date)
+				exp.load_MS96_experiment();
+				
 				exp.load_MS96_spotsMeasures();
 				
 				// Ensure bin directory is set before loading capillaries
