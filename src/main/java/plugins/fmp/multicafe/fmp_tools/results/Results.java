@@ -42,7 +42,6 @@ public class Results {
 		this.exportType = exportType;
 	}
 
-
 	public Results(String name, int nflies, int cageID, int cagePos, EnumExport exportType) {
 		this.name = name;
 		this.nflies = nflies;
