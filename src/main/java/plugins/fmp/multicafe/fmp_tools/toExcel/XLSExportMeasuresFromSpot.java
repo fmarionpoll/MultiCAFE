@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.fmp_tools.toExcel.spots;
+package plugins.fmp.multicafe.fmp_tools.toExcel;
 
 import java.awt.Point;
 
@@ -9,13 +9,12 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
+import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
-import plugins.fmp.multicafe.fmp_tools.toExcel.results.Results;
 
 /**
  * Excel export implementation for spot measurements. Uses the Template Method

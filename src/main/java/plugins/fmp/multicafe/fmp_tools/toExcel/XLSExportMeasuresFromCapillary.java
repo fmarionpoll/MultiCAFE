@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.fmp_tools.toExcel.capillaries;
+package plugins.fmp.multicafe.fmp_tools.toExcel;
 
 import java.awt.Point;
 import java.util.HashMap;
@@ -9,15 +9,14 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
+import plugins.fmp.multicafe.fmp_tools.results.Results;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
-import plugins.fmp.multicafe.fmp_tools.toExcel.results.Results;
-import plugins.fmp.multicafe.fmp_tools.toExcel.results.ResultsFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
 
 /**

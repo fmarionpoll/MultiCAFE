@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.fmp_tools.toExcel.results;
+package plugins.fmp.multicafe.fmp_tools.results;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;

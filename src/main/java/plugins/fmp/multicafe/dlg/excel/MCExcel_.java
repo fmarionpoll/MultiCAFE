@@ -18,11 +18,11 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
 import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
-import plugins.fmp.multicafe.fmp_tools.toExcel.capillaries.XLSExportMeasuresFromCapillary;
+import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExportMeasuresFromCapillary;
+import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExportMeasuresFromFlyPosition;
+import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExportMeasuresFromGulp;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
-import plugins.fmp.multicafe.fmp_tools.toExcel.gulps.XLSExportMeasuresFromGulp;
-import plugins.fmp.multicafe.fmp_tools.toExcel.move.XLSExportMeasuresFromFlyPosition;
 
 public class MCExcel_ extends JPanel implements PropertyChangeListener {
 	/**

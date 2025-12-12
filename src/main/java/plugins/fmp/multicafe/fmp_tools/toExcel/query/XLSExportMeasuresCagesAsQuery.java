@@ -12,6 +12,8 @@ import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_tools.results.Results;
+import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExportMeasuresFromSpot;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumColumnType;
@@ -20,8 +22,6 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLS_QueryColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelDataException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
-import plugins.fmp.multicafe.fmp_tools.toExcel.results.Results;
-import plugins.fmp.multicafe.fmp_tools.toExcel.spots.XLSExportMeasuresFromSpot;
 import plugins.fmp.multicafe.fmp_tools.toExcel.utils.ExcelResourceManager;
 import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
 

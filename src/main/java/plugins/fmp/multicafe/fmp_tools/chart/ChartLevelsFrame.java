@@ -37,10 +37,10 @@ import icy.roi.ROI2D;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_tools.results.Results;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
-import plugins.fmp.multicafe.fmp_tools.toExcel.results.Results;
-import plugins.fmp.multicafe.fmp_tools.toExcel.results.ResultsArray;
-import plugins.fmp.multicafe.fmp_tools.toExcel.results.ResultsFromCapillaries;
 
 /**
  * Enhanced chart display class for capillary level data visualization. This
