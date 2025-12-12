@@ -22,7 +22,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelDataException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
@@ -254,7 +254,7 @@ public abstract class XLSExport {
 	 * @return The sheet instance
 	 * @throws ExcelResourceException If sheet creation fails
 	 */
-	protected SXSSFSheet getSheet(String title, EnumXLSExport xlsExport) throws ExcelResourceException {
+	protected SXSSFSheet getSheet(String title, EnumExport xlsExport) throws ExcelResourceException {
 		SXSSFWorkbook workbook = resourceManager.getWorkbook();
 		SXSSFSheet sheet = workbook.getSheet(title);
 
@@ -294,7 +294,7 @@ public abstract class XLSExport {
 	 * @param row       The starting row
 	 * @param xlsExport The export type
 	 */
-	protected void writeTopRowTimeIntervals(SXSSFSheet sheet, int row, EnumXLSExport xlsExport) {
+	protected void writeTopRowTimeIntervals(SXSSFSheet sheet, int row, EnumExport xlsExport) {
 		boolean transpose = options.transpose;
 		Point pt = new Point(0, row);
 
@@ -347,7 +347,7 @@ public abstract class XLSExport {
 	 * @return The updated point
 	 */
 	protected Point writeExperimentSpotInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
-			Spot spot, EnumXLSExport xlsExportType) {
+			Spot spot, EnumExport xlsExportType) {
 		boolean transpose = options.transpose;
 
 		writeFileInformation(sheet, pt, transpose, exp);
@@ -431,7 +431,7 @@ public abstract class XLSExport {
 	 * Writes spot properties to the sheet.
 	 */
 	private void writeSpotProperties(SXSSFSheet sheet, Point pt, boolean transpose, Spot spot, Cage cage,
-			String charSeries, EnumXLSExport xlsExportType) {
+			String charSeries, EnumExport xlsExportType) {
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_VOLUME, transpose,
 				spot.getProperties().getSpotVolume());
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_PIXELS, transpose,

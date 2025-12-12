@@ -12,7 +12,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
@@ -57,34 +57,34 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		int column = startColumn;
 
 		if (options.sumGulps) {
-			column = getGulpDataAndExport(exp, column, charSeries, EnumXLSExport.SUMGULPS);
+			column = getGulpDataAndExport(exp, column, charSeries, EnumExport.SUMGULPS);
 		}
 		if (options.lrPI && options.sumGulps) {
-			getGulpDataAndExport(exp, column, charSeries, EnumXLSExport.SUMGULPS_LR);
+			getGulpDataAndExport(exp, column, charSeries, EnumExport.SUMGULPS_LR);
 		}
 		if (options.nbGulps) {
-			getGulpDataAndExport(exp, column, charSeries, EnumXLSExport.NBGULPS);
+			getGulpDataAndExport(exp, column, charSeries, EnumExport.NBGULPS);
 		}
 		if (options.amplitudeGulps) {
-			getGulpDataAndExport(exp, column, charSeries, EnumXLSExport.AMPLITUDEGULPS);
+			getGulpDataAndExport(exp, column, charSeries, EnumExport.AMPLITUDEGULPS);
 		}
 		if (options.tToNextGulp) {
-			getGulpDataAndExport(exp, column, charSeries, EnumXLSExport.TTOGULP);
+			getGulpDataAndExport(exp, column, charSeries, EnumExport.TTOGULP);
 		}
 		if (options.tToNextGulp_LR) {
-			getGulpDataAndExport(exp, column, charSeries, EnumXLSExport.TTOGULP_LR);
+			getGulpDataAndExport(exp, column, charSeries, EnumExport.TTOGULP_LR);
 		}
 		if (options.markovChain) {
-			getGulpDataAndExport(exp, column, charSeries, EnumXLSExport.MARKOV_CHAIN);
+			getGulpDataAndExport(exp, column, charSeries, EnumExport.MARKOV_CHAIN);
 		}
 		if (options.autocorrelation) {
-			getGulpDataAndExport(exp, column, charSeries, EnumXLSExport.AUTOCORREL);
+			getGulpDataAndExport(exp, column, charSeries, EnumExport.AUTOCORREL);
 		}
 		if (options.crosscorrelation) {
-			getGulpDataAndExport(exp, column, charSeries, EnumXLSExport.CROSSCORREL);
+			getGulpDataAndExport(exp, column, charSeries, EnumExport.CROSSCORREL);
 		}
 		if (options.crosscorrelationLR) {
-			getGulpDataAndExport(exp, column, charSeries, EnumXLSExport.CROSSCORREL_LR);
+			getGulpDataAndExport(exp, column, charSeries, EnumExport.CROSSCORREL_LR);
 		}
 
 		return column;
@@ -100,7 +100,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int getGulpDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExport exportType)
+	protected int getGulpDataAndExport(Experiment exp, int col0, String charSeries, EnumExport exportType)
 			throws ExcelExportException {
 		try {
 			options.exportType = exportType;
@@ -129,7 +129,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * @param charSeries    The series identifier
 	 * @return The next available column
 	 */
-	protected int xlsExportExperimentGulpDataToSheet(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType,
+	protected int xlsExportExperimentGulpDataToSheet(Experiment exp, SXSSFSheet sheet, EnumExport xlsExportType,
 			int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
@@ -160,11 +160,11 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
 
 		// Create XLSResults with capillary properties
-		Results xlsResults = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
+		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
 				xlsExportOptions.exportType);
-		xlsResults.setStimulus(capillary.capStimulus);
-		xlsResults.setConcentration(capillary.capConcentration);
-		xlsResults.initValuesOutArray(nOutputFrames, Double.NaN);
+		results.setStimulus(capillary.capStimulus);
+		results.setConcentration(capillary.capConcentration);
+		results.initValuesOutArray(nOutputFrames, Double.NaN);
 
 		// Get bin durations
 		long binData = exp.getKymoBin_ms();
@@ -172,9 +172,9 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 
 		// Get data from capillary (gulps are extracted via
 		// getCapillaryMeasuresForXLSPass1)
-		xlsResults.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, false);
+		results.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, false);
 
-		return xlsResults;
+		return results;
 	}
 
 	/**
@@ -227,7 +227,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * @return The updated point
 	 */
 	protected Point writeExperimentGulpInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries,
-			Capillary capillary, EnumXLSExport xlsExportType) {
+			Capillary capillary, EnumExport xlsExportType) {
 		int x = pt.x;
 		int y = pt.y;
 		boolean transpose = options.transpose;
@@ -287,7 +287,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * Writes capillary properties to the sheet.
 	 */
 	private void writeCapillaryProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Capillary capillary,
-			String charSeries, EnumXLSExport xlsExportType) {
+			String charSeries, EnumExport xlsExportType) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP.getValue(), transpose,
 				capillary.getSideDescriptor(xlsExportType));
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_INDEX.getValue(), transpose,

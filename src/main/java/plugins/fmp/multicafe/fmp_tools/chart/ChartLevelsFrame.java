@@ -40,7 +40,7 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.ResultsArray;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.ResultsFromCapillaries;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 /**
  * Enhanced chart display class for capillary level data visualization. This
@@ -192,7 +192,7 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * @param correcttEvaporation whether to subtract evaporation
 	 * @throws IllegalArgumentException if exp or option is null
 	 */
-	public void displayData(Experiment exp, EnumXLSExport option, String title, boolean correcttEvaporation) {
+	public void displayData(Experiment exp, EnumExport option, String title, boolean correcttEvaporation) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
@@ -227,7 +227,7 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * @param title         the chart title
 	 * @param xyDataSetList the list of XY series collections
 	 */
-	private void createAndDisplayChart(Experiment exp, EnumXLSExport option, String title,
+	private void createAndDisplayChart(Experiment exp, EnumExport option, String title,
 			List<XYSeriesCollection> xyDataSetList) {
 		final NumberAxis yAxis = new NumberAxis("volume (µl)");
 		yAxis.setAutoRangeIncludesZero(false);
@@ -479,7 +479,7 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * @param correctEvaporation whether to subtract evaporation
 	 * @return list of XY series collections
 	 */
-	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumXLSExport exportType,
+	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumExport exportType,
 			boolean correctEvaporation) {
 		if (exp == null || exportType == null) {
 			LOGGER.warning("Invalid parameters for getDataArrays");
@@ -488,8 +488,8 @@ public class ChartLevelsFrame extends IcyFrame {
 
 		ResultsArray resultsArray1 = getDataAsResultsArray(exp, exportType, correctEvaporation);
 		ResultsArray resultsArray2 = null;
-		if (exportType == EnumXLSExport.TOPLEVEL) {
-			resultsArray2 = getDataAsResultsArray(exp, EnumXLSExport.BOTTOMLEVEL, correctEvaporation);
+		if (exportType == EnumExport.TOPLEVEL) {
+			resultsArray2 = getDataAsResultsArray(exp, EnumExport.BOTTOMLEVEL, correctEvaporation);
 		}
 
 		XYSeriesCollection xyDataset = null;
@@ -534,7 +534,7 @@ public class ChartLevelsFrame extends IcyFrame {
 					if (resultsArray2 != null && iRow < resultsArray2.size()) {
 						Results bottomResults = resultsArray2.getRow(iRow);
 						if (bottomResults != null) {
-							appendDataToXYSeries(seriesXY, bottomResults, exp, EnumXLSExport.BOTTOMLEVEL);
+							appendDataToXYSeries(seriesXY, bottomResults, exp, EnumExport.BOTTOMLEVEL);
 						}
 					}
 
@@ -583,7 +583,7 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * @param correctEvaporation whether to subtract evaporation
 	 * @return the results array
 	 */
-	private ResultsArray getDataAsResultsArray(Experiment exp, EnumXLSExport exportType,
+	private ResultsArray getDataAsResultsArray(Experiment exp, EnumExport exportType,
 			boolean correctEvaporation) {
 		if (exp == null || exportType == null) {
 			LOGGER.warning("Invalid parameters for getDataAsResultsArray");
@@ -625,7 +625,7 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * @param exportType the export type
 	 * @return the XY series
 	 */
-	private XYSeries getXYSeries(Results results, String name, Experiment exp, EnumXLSExport exportType) {
+	private XYSeries getXYSeries(Results results, String name, Experiment exp, EnumExport exportType) {
 		XYSeries seriesXY = new XYSeries(name, false);
 		if (results == null || results.getValuesOut() == null || results.getValuesOut().length == 0) {
 			return seriesXY;
@@ -659,7 +659,7 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * @param exp        the experiment
 	 * @param exportType the export type
 	 */
-	private void appendDataToXYSeries(XYSeries seriesXY, Results results, Experiment exp, EnumXLSExport exportType) {
+	private void appendDataToXYSeries(XYSeries seriesXY, Results results, Experiment exp, EnumExport exportType) {
 		if (results == null || results.getValuesOut() == null || results.getValuesOut().length == 0) {
 			return;
 		}
@@ -678,7 +678,7 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * @param exportType the export type
 	 */
 	private void addPointsAndUpdateExtrema(XYSeries seriesXY, Results results, int startFrame, Experiment exp,
-			EnumXLSExport exportType) {
+			EnumExport exportType) {
 		if (results == null || results.getValuesOut() == null) {
 			return;
 		}
@@ -777,7 +777,7 @@ public class ChartLevelsFrame extends IcyFrame {
 		 * @param exp    the experiment
 		 * @param option the export option (currently unused, kept for future use)
 		 */
-		public CapillaryChartMouseListener(Experiment exp, @SuppressWarnings("unused") EnumXLSExport option) {
+		public CapillaryChartMouseListener(Experiment exp, @SuppressWarnings("unused") EnumExport option) {
 			this.experiment = exp;
 		}
 

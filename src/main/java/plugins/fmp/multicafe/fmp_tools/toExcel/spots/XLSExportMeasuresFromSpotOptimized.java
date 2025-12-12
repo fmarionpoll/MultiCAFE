@@ -13,7 +13,7 @@ import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
 
@@ -73,9 +73,9 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 		int column = startColumn;
 
 		if (options.spotAreas) {
-			column = exportSpotDataStreaming(exp, column, charSeries, EnumXLSExport.AREA_SUM);
-			exportSpotDataStreaming(exp, column, charSeries, EnumXLSExport.AREA_FLYPRESENT);
-			exportSpotDataStreaming(exp, column, charSeries, EnumXLSExport.AREA_SUMCLEAN);
+			column = exportSpotDataStreaming(exp, column, charSeries, EnumExport.AREA_SUM);
+			exportSpotDataStreaming(exp, column, charSeries, EnumExport.AREA_FLYPRESENT);
+			exportSpotDataStreaming(exp, column, charSeries, EnumExport.AREA_SUMCLEAN);
 		}
 
 		return column;
@@ -91,7 +91,7 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int exportSpotDataStreaming(Experiment exp, int col0, String charSeries, EnumXLSExport exportType)
+	protected int exportSpotDataStreaming(Experiment exp, int col0, String charSeries, EnumExport exportType)
 			throws ExcelExportException {
 		try {
 			options.exportType = exportType;
@@ -120,7 +120,7 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 	 * @param charSeries    The series identifier
 	 * @return The next available column
 	 */
-	protected int writeExperimentDataToSheetStreaming(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType,
+	protected int writeExperimentDataToSheetStreaming(Experiment exp, SXSSFSheet sheet, EnumExport xlsExportType,
 			int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
@@ -158,7 +158,7 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 	 * @param xlsExportType                The export type
 	 */
 	protected void writeSpotDataDirectly(SXSSFSheet sheet, Point pt, Spot spot, double scalingFactorToPhysicalUnits,
-			EnumXLSExport xlsExportType) {
+			EnumExport xlsExportType) {
 
 		// Get data directly from spot using streaming approach
 		List<Double> dataList = spot.getMeasuresForExcelPass1(xlsExportType, getBinData(spot), getBinExcel());
@@ -168,7 +168,7 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 		}
 
 		// Apply relative to T0 if needed
-		if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT) {
+		if (options.relativeToT0 && xlsExportType != EnumExport.AREA_FLYPRESENT) {
 			dataList = applyRelativeToMaximum(dataList);
 		}
 

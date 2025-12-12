@@ -24,7 +24,7 @@ import icy.gui.util.GuiUtil;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_tools.MaxMinDouble;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 /**
  * Chart display class for fly position data. This class creates and manages
@@ -49,7 +49,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
  * @author MultiSPOTS96
  * @see org.jfree.chart.ChartPanel
  * @see plugins.fmp.multiSPOTS96.experiment.cages.Cage
- * @see plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport
+ * @see plugins.fmp.EnumExport.tools.toExcel.EnumXLSExport
  */
 public class ChartFlyPositions extends IcyFrame {
 
@@ -175,7 +175,7 @@ public class ChartFlyPositions extends IcyFrame {
 	 * @param option   the type of data to display
 	 * @throws IllegalArgumentException if cageList is null
 	 */
-	public void displayData(List<Cage> cageList, EnumXLSExport option) {
+	public void displayData(List<Cage> cageList, EnumExport option) {
 		if (cageList == null) {
 			throw new IllegalArgumentException("Cage list cannot be null");
 		}
@@ -266,7 +266,7 @@ public class ChartFlyPositions extends IcyFrame {
 	 * @param seriesXY the series to add points to
 	 * @return MaxMinDouble containing the Y-axis range
 	 */
-	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumXLSExport option, XYSeries seriesXY) {
+	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumExport option, XYSeries seriesXY) {
 		if (cage == null || seriesXY == null) {
 			LOGGER.warning("Cannot add points: cage or series is null");
 			return new MaxMinDouble(0.0, 1.0);
@@ -423,7 +423,7 @@ public class ChartFlyPositions extends IcyFrame {
 	 * @param option the export option
 	 * @return ChartData containing the dataset and axis information
 	 */
-	private ChartData getDataSet(Cage cage, EnumXLSExport option) {
+	private ChartData getDataSet(Cage cage, EnumExport option) {
 		if (cage == null) {
 			LOGGER.warning("Cannot get dataset: cage is null");
 			return new ChartData();

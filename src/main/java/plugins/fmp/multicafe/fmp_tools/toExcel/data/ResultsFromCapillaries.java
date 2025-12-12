@@ -8,10 +8,14 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.cages.CageCapillariesComputation;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
+import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
+import plugins.fmp.multicafe.fmp_tools.toExcel.capillaries.XLSExportMeasuresFromCapillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class ResultsFromCapillaries extends ResultsArray {
 	/** Logger for this class */
@@ -28,24 +32,254 @@ public class ResultsFromCapillaries extends ResultsArray {
 		resultsList = new ArrayList<Results>(size);
 	}
 
-	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumXLSExport exportType,
+	/**
+	 * Gets the results for a capillary.
+	 * 
+	 * @param exp              The experiment
+	 * @param capillary        The capillary
+	 * @param xlsExportOptions The export options
+	 * @param subtractT0       Whether to subtract T0 value
+	 * @return The XLS results
+	 */
+	static public Results getDataValuesFromCapillaryMeasures(Experiment exp, Capillary capillary,
+			XLSExportOptions xlsExportOptions, boolean subtractT0) {
+		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
+				xlsExportOptions.exportType);
+
+		results.setStimulus(capillary.capStimulus);
+		results.setConcentration(capillary.capConcentration);
+
+		// Get bin durations
+		long binData = exp.getKymoBin_ms();
+		long binExcel = xlsExportOptions.buildExcelStepMs;
+
+		// Validate bin sizes to prevent division by zero
+		if (binData <= 0) {
+			binData = 60000; // Default to 60 seconds if invalid
+		}
+		if (binExcel <= 0) {
+			binExcel = binData; // Default to binData if invalid
+		}
+
+		// For TOPLEVEL_LR, read from CageCapillariesComputation instead of capillary
+		if (xlsExportOptions.exportType == EnumExport.TOPLEVEL_LR) {
+			getLRDataFromCage(exp, capillary, results, binData, binExcel, subtractT0);
+		} else {
+			results.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, subtractT0);
+		}
+
+		// Initialize valuesOut array with the actual size of dataValues
+		if (results.getDataValues() != null && results.getDataValues().size() > 0) {
+			int actualSize = results.getDataValues().size();
+			results.initValuesOutArray(actualSize, Double.NaN);
+		} else {
+			// Fallback to calculated size if no data
+			int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
+			results.initValuesOutArray(nOutputFrames, Double.NaN);
+		}
+
+		return results;
+	}
+
+	/**
+	 * Gets L+R data (SUM or PI) from CageCapillariesComputation for TOPLEVEL_LR
+	 * export. For L capillaries: exports SUM measure For R capillaries: exports PI
+	 * measure
+	 * 
+	 * @param exp        The experiment
+	 * @param capillary  The capillary
+	 * @param xlsResults The XLS results to populate
+	 * @param binData    The bin duration for the data
+	 * @param binExcel   The bin duration for Excel output
+	 * @param subtractT0 Whether to subtract T0 value
+	 */
+	private static void getLRDataFromCage(Experiment exp, Capillary capillary, Results xlsResults, long binData,
+			long binExcel, boolean subtractT0) {
+
+		int cageID = capillary.getCageID();
+		CageCapillariesComputation cageComp = exp.getCages().getCageComputation(cageID);
+
+		if (cageComp == null) {
+			// No computation available, fall back to raw
+			XLSExportOptions fallbackOptions = new XLSExportOptions();
+			fallbackOptions.exportType = EnumExport.TOPRAW;
+			xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+			return;
+		}
+
+		// Determine which measure to use based on capillary side
+		String side = getCapillarySide(capillary);
+		CapillaryMeasure measure = null;
+
+		if (side != null && (side.contains("L") || side.contains("1"))) {
+			// L capillary: use SUM
+			measure = cageComp.getSumMeasure();
+		} else if (side != null && (side.contains("R") || side.contains("2"))) {
+			// R capillary: use PI
+			measure = cageComp.getPIMeasure();
+		} else {
+			// Side unclear, try first capillary as L, second as R
+			List<Capillary> caps = exp.getCages().getCageList().stream().filter(c -> c.getCageID() == cageID)
+					.findFirst().map(c -> c.getCapillaries().getList()).orElse(java.util.Collections.emptyList());
+
+			if (!caps.isEmpty() && caps.get(0) == capillary) {
+				measure = cageComp.getSumMeasure();
+			} else if (caps.size() >= 2 && caps.get(1) == capillary) {
+				measure = cageComp.getPIMeasure();
+			}
+		}
+
+		if (measure != null && measure.polylineLevel != null && measure.polylineLevel.npoints > 0) {
+			// Get measures by binning polyline data (similar to getMeasures implementation)
+			if (binData <= 0 || binExcel <= 0) {
+				// Invalid bin sizes, fall back to raw
+				XLSExportOptions fallbackOptions = new XLSExportOptions();
+				fallbackOptions.exportType = EnumExport.TOPRAW;
+				xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+				return;
+			}
+			plugins.fmp.multicafe.fmp_tools.Level2D polyline = measure.polylineLevel;
+			long maxMs = (polyline.npoints - 1) * binData;
+			int nOutputFrames = (int) (maxMs / binExcel) + 1;
+
+			java.util.ArrayList<Integer> intData = new ArrayList<>(nOutputFrames);
+			for (int i = 0; i < nOutputFrames; i++) {
+				long timeMs = i * binExcel;
+				int index = (int) (timeMs / binData);
+				if (index >= 0 && index < polyline.npoints) {
+					intData.add((int) polyline.ypoints[index]);
+				} else {
+					intData.add(0);
+				}
+			}
+
+			if (intData != null && !intData.isEmpty()) {
+				// Convert Integer to Double
+				java.util.ArrayList<Double> dataValues = new ArrayList<>(intData.size());
+				int t0Value = 0;
+
+				if (subtractT0 && intData.size() > 0) {
+					t0Value = intData.get(0);
+				}
+
+				for (Integer intValue : intData) {
+					if (subtractT0) {
+						dataValues.add((double) (intValue - t0Value));
+					} else {
+						dataValues.add(intValue.doubleValue());
+					}
+				}
+
+				xlsResults.setDataValues(dataValues);
+				return;
+			}
+		}
+
+		// Fallback to raw if computation failed
+		XLSExportOptions fallbackOptions = new XLSExportOptions();
+		fallbackOptions.exportType = EnumExport.TOPRAW;
+		xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+	}
+
+	/**
+	 * Helper method to determine capillary side from capSide or name.
+	 */
+	private String getCapillarySide(Capillary cap) {
+		if (cap.capSide != null && !cap.capSide.equals("."))
+			return cap.capSide;
+		// Try to get from name
+		String name = cap.getRoiName();
+		if (name != null) {
+			name = name.toUpperCase();
+			if (name.contains("L") || name.contains("1"))
+				return "L";
+			if (name.contains("R") || name.contains("2"))
+				return "R";
+		}
+		return "";
+	}
+
+	/**
+	 * Gets the number of output frames for the experiment.
+	 * 
+	 * @param exp     The experiment
+	 * @param options The export options
+	 * @return The number of output frames
+	 */
+	protected static int getNOutputFrames(Experiment exp, XLSExportOptions options) {
+		// For capillaries, use kymograph timing
+		long kymoFirst_ms = exp.getKymoFirst_ms();
+		long kymoLast_ms = exp.getKymoLast_ms();
+		long kymoBin_ms = exp.getKymoBin_ms();
+
+		// If buildExcelStepMs equals kymoBin_ms, we want 1:1 mapping - use actual frame
+		// count
+		if (kymoBin_ms > 0 && options.buildExcelStepMs == kymoBin_ms && exp.getSeqKymos() != null) {
+			ImageLoader imgLoader = exp.getSeqKymos().getImageLoader();
+			if (imgLoader != null) {
+				int nFrames = imgLoader.getNTotalFrames();
+				if (nFrames > 0) {
+					return nFrames;
+				}
+			}
+		}
+
+		if (kymoLast_ms <= kymoFirst_ms) {
+			// Try to get from kymograph sequence
+			if (exp.getSeqKymos() != null) {
+				ImageLoader imgLoader = exp.getSeqKymos().getImageLoader();
+				if (imgLoader != null) {
+					if (kymoBin_ms > 0) {
+						kymoLast_ms = kymoFirst_ms + imgLoader.getNTotalFrames() * kymoBin_ms;
+						exp.setKymoLast_ms(kymoLast_ms);
+					}
+				}
+			}
+		}
+
+		long durationMs = kymoLast_ms - kymoFirst_ms;
+		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
+
+		if (nOutputFrames <= 1) {
+			handleExportError(exp, -1);
+			// Fallback to a reasonable default
+			nOutputFrames = 1000;
+		}
+
+		return nOutputFrames;
+	}
+
+	/**
+	 * Handles export errors by logging them.
+	 * 
+	 * @param exp           The experiment
+	 * @param nOutputFrames The number of output frames
+	 */
+	protected static void handleExportError(Experiment exp, int nOutputFrames) {
+		String error = String.format(
+				"XLSExport:ExportError() ERROR in %s\n nOutputFrames=%d kymoFirstCol_Ms=%d kymoLastCol_Ms=%d",
+				exp.getExperimentDirectory(), nOutputFrames, exp.getKymoFirst_ms(), exp.getKymoLast_ms());
+		System.err.println(error);
+	}
+
+	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumExport exportType,
 			boolean correctEvaporation) {
 		// Dispatch capillaries to cages first
 		exp.dispatchCapillariesToCages();
-		
+
 		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (correctEvaporation && exportType == EnumXLSExport.TOPLEVEL) {
+		if (correctEvaporation && exportType == EnumExport.TOPLEVEL) {
 			exp.getCages().computeEvaporationCorrection(exp);
 		}
-		
+
 		// Compute L+R measures if needed (must be done after evaporation correction)
-		if (exportType == EnumXLSExport.TOPLEVEL_LR) {
+		if (exportType == EnumExport.TOPLEVEL_LR) {
 			if (correctEvaporation) {
 				exp.getCages().computeEvaporationCorrection(exp);
 			}
 			exp.getCages().computeLRMeasures(exp, 0.0); // Use default threshold of 0.0 for chart/display
 		}
-		
+
 		ResultsArray resultsArray = new ResultsArray();
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
 		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
@@ -77,8 +311,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 			capOptions.exportType = exportType;
 
 			try {
-				Results xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary,
-						capOptions, false);
+				Results xlsResults = getDataValuesFromCapillaryMeasures(exp, capillary, capOptions, false);
 				if (xlsResults != null) {
 					xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
 					resultsArray.addRow(xlsResults);
@@ -88,8 +321,10 @@ public class ResultsFromCapillaries extends ResultsArray {
 			}
 		}
 
-		// Note: Evaporation compensation is now handled by CagesArray.computeEvaporationCorrection()
-		// which should be called before this method. The old compensateEvaporation() method
+		// Note: Evaporation compensation is now handled by
+		// CagesArray.computeEvaporationCorrection()
+		// which should be called before this method. The old compensateEvaporation()
+		// method
 		// has been deprecated in favor of the new computation-based approach.
 
 		return resultsArray;
@@ -237,7 +472,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 
 	// ---------------------------------------------------
 
-	public void getResults1(Experiment expi, EnumXLSExport exportType, int nOutputFrames, long kymoBinCol_Ms,
+	public void getResults1(Experiment expi, EnumExport exportType, int nOutputFrames, long kymoBinCol_Ms,
 			XLSExportOptions xlsExportOptions) {
 		xlsExportOptions.exportType = exportType;
 		buildDataForPass1(expi, nOutputFrames, kymoBinCol_Ms, xlsExportOptions, false);
@@ -246,7 +481,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		buildDataForPass2(xlsExportOptions);
 	}
 
-	public void getResults_T0(Experiment expi, EnumXLSExport exportType, int nOutputFrames, long kymoBinCol_Ms,
+	public void getResults_T0(Experiment expi, EnumExport exportType, int nOutputFrames, long kymoBinCol_Ms,
 			XLSExportOptions xlsExportOptions) {
 		xlsExportOptions.exportType = exportType;
 		buildDataForPass1(expi, nOutputFrames, kymoBinCol_Ms, xlsExportOptions, xlsExportOptions.subtractT0);

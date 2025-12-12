@@ -16,7 +16,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumColumnType;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLS_QueryColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelDataException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
@@ -139,13 +139,13 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	@Override
 	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
-		int column = getCageDataAndExport(exp, startColumn, charSeries, xlsExportOptions, EnumXLSExport.AREA_SUMCLEAN);
-		column = getCageDataAndExport(exp, startColumn, charSeries, xlsExportOptions, EnumXLSExport.AREA_SUM);
+		int column = getCageDataAndExport(exp, startColumn, charSeries, xlsExportOptions, EnumExport.AREA_SUMCLEAN);
+		column = getCageDataAndExport(exp, startColumn, charSeries, xlsExportOptions, EnumExport.AREA_SUM);
 		return column;
 	}
 
 	protected int getCageDataAndExport(Experiment exp, int col0, String charSeries, XLSExportOptions xlsExportOptions,
-			EnumXLSExport exportType) throws ExcelDataException {
+			EnumExport exportType) throws ExcelDataException {
 		options.exportType = exportType;
 		int colmax = 0;
 		try {
@@ -158,7 +158,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		return colmax;
 	}
 
-	SXSSFSheet xlsGetQSheet(String title, EnumXLSExport xlsExport) throws ExcelResourceException {
+	SXSSFSheet xlsGetQSheet(String title, EnumExport xlsExport) throws ExcelResourceException {
 		SXSSFWorkbook workbook = resourceManager.getWorkbook();
 		SXSSFSheet sheet = workbook.getSheet(title);
 
@@ -184,7 +184,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	}
 
 	int xlsExportExperimentCageDataToSheet(SXSSFSheet sheet, Experiment exp, XLSExportOptions xlsExportOptions,
-			EnumXLSExport xlsExportType, int col0, String charSeries) {
+			EnumExport xlsExportType, int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		String stim1 = exp.getProperties().getField_stim1();
 		String conc1 = exp.getProperties().getField_conc1();
@@ -246,7 +246,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	}
 
 	Results getResultForCage(Experiment exp, Cage cage, Spot spot, double scaling, XLSExportOptions xlsExportOptions,
-			EnumXLSExport xlsExportType) {
+			EnumExport xlsExportType) {
 		Results xlsResults = null;
 		if (spot != null) {
 			xlsResults = getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot, xlsExportOptions);
@@ -256,7 +256,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	}
 
 	void writeCageProperties(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
-			EnumXLSExport xlsExportType) {
+			EnumExport xlsExportType) {
 		boolean transpose = options.transpose;
 		for (int i = 0; i < headers.size(); i++) {
 			if (headers.get(i).toType() == EnumColumnType.DESCRIPTOR_STR) {
@@ -274,7 +274,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	}
 
 	void writeCageMeasuresAtT(SXSSFSheet sheet, Point pt, int t, Results xlsStim1, Results xlsStim2,
-			Results xlsPI, Results xlsSUM, EnumXLSExport xlsExportType) {
+			Results xlsPI, Results xlsSUM, EnumExport xlsExportType) {
 		pt.y = EnumXLS_QueryColumnHeader.VAL_TIME.getValue();
 		XLSUtils.setValue(sheet, pt, options.transpose, t);
 

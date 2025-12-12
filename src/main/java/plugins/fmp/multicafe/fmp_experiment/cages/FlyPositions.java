@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.Measures;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyPositions {
@@ -23,7 +23,7 @@ public class FlyPositions {
 	public ArrayList<FlyPosition> flyPositionList = new ArrayList<FlyPosition>();
 
 	public String name = null;
-	public EnumXLSExport exportType = null;
+	public EnumExport exportType = null;
 	public int binsize = 1;
 	public Point2D origin = new Point2D.Double(0, 0);
 	public double pixelsize = 1.;
@@ -39,7 +39,7 @@ public class FlyPositions {
 	public FlyPositions() {
 	}
 
-	public FlyPositions(String name, EnumXLSExport exportType, int nFrames, int binsize) {
+	public FlyPositions(String name, EnumExport exportType, int nFrames, int binsize) {
 		this.name = name;
 		this.exportType = exportType;
 		this.binsize = binsize;
@@ -514,11 +514,11 @@ public class FlyPositions {
 		this.name = name;
 	}
 
-	public EnumXLSExport getExportType() {
+	public EnumExport getExportType() {
 		return exportType;
 	}
 
-	public void setExportType(EnumXLSExport exportType) {
+	public void setExportType(EnumExport exportType) {
 		this.exportType = exportType;
 	}
 

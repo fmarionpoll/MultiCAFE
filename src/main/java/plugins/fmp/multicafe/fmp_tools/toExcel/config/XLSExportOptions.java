@@ -1,7 +1,7 @@
 package plugins.fmp.multicafe.fmp_tools.toExcel.config;
 
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class XLSExportOptions {
 	public boolean xyImage = true;
@@ -71,7 +71,7 @@ public class XLSExportOptions {
 	// internal parameters
 	public boolean trim_alive = false;
 	public boolean compensateEvaporation = false;
-	public EnumXLSExport exportType;
+	public EnumExport exportType;
 
 	public void copy(XLSExportOptions xlsExportOptions) {
 		this.xyImage = xlsExportOptions.xyImage;

@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import plugins.fmp.multicafe.fmp_experiment.sequence.TIntervalsArray;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 /**
  * Modern, thread-safe implementation of spots array management with clean code
@@ -114,7 +114,7 @@ public class ModernSpotsArray implements AutoCloseable {
 
 			int validSpots = (int) spotsList.stream().filter(spot -> spot.isValid()).count();
 			int spotsWithMeasures = (int) spotsList.stream().filter(spot -> spot
-					.getMeasurements(EnumXLSExport.AREA_SUMCLEAN).getSpotLevel2D().getLevel2D().getPointCount() > 0)
+					.getMeasurements(EnumExport.AREA_SUMCLEAN).getSpotLevel2D().getLevel2D().getPointCount() > 0)
 					.count();
 			int spotsReady = (int) spotsList.stream().filter(spot -> spot.isReadyForAnalysis()).count();
 

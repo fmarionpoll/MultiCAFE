@@ -12,7 +12,7 @@ import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.AlongT;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Capillaries {
@@ -294,7 +294,7 @@ public class Capillaries {
 		return getKymoIntervalsFromCapillaries().get(selectedItem)[0];
 	}
 
-	public double getScalingFactorToPhysicalUnits(EnumXLSExport xlsoption) {
+	public double getScalingFactorToPhysicalUnits(EnumExport xlsoption) {
 		double scalingFactorToPhysicalUnits;
 		switch (xlsoption) {
 		case NBGULPS:

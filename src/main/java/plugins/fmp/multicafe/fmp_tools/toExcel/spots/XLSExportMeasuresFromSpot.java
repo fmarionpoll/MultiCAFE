@@ -13,7 +13,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
 
@@ -38,9 +38,9 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 		int column = startColumn;
 
 		if (options.spotAreas) {
-			column = getSpotDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_SUM);
-			getSpotDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_FLYPRESENT);
-			getSpotDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_SUMCLEAN);
+			column = getSpotDataAndExport(exp, column, charSeries, EnumExport.AREA_SUM);
+			getSpotDataAndExport(exp, column, charSeries, EnumExport.AREA_FLYPRESENT);
+			getSpotDataAndExport(exp, column, charSeries, EnumExport.AREA_SUMCLEAN);
 		}
 
 		return column;
@@ -56,7 +56,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int getSpotDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExport exportType)
+	protected int getSpotDataAndExport(Experiment exp, int col0, String charSeries, EnumExport exportType)
 			throws ExcelExportException {
 		try {
 			options.exportType = exportType;
@@ -85,7 +85,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 	 * @param charSeries    The series identifier
 	 * @return The next available column
 	 */
-	protected int xlsExportExperimentSpotDataToSheet(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType,
+	protected int xlsExportExperimentSpotDataToSheet(Experiment exp, SXSSFSheet sheet, EnumExport xlsExportType,
 			int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);

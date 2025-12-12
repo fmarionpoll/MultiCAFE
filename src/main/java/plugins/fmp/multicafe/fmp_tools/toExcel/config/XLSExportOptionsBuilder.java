@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.fmp_tools.toExcel.config;
 
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants.DefaultOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 /**
  * Builder pattern implementation for XLSExportOptions. Provides a fluent
@@ -68,7 +68,7 @@ public class XLSExportOptionsBuilder {
 	// Internal processing options
 	private boolean trim_alive = DefaultOptions.TRIM_ALIVE;
 	private boolean compensateEvaporation = DefaultOptions.COMPENSATE_EVAPORATION;
-	private EnumXLSExport exportType = null;
+	private EnumExport exportType = null;
 
 	/**
 	 * Creates a new builder with default values.
@@ -214,7 +214,7 @@ public class XLSExportOptionsBuilder {
 		return this;
 	}
 
-	public XLSExportOptionsBuilder withExportType(EnumXLSExport exportType) {
+	public XLSExportOptionsBuilder withExportType(EnumExport exportType) {
 		this.exportType = exportType;
 		return this;
 	}

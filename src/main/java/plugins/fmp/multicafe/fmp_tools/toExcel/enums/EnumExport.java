@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe.fmp_tools.toExcel.enums;
 
-public enum EnumXLSExport {
+public enum EnumExport {
 
 	TOPRAW("topraw", "volume (ul)", "top liquid level (t-t0)"),
 	TOPLEVEL("toplevel", "volume (ul)", "top liquid compensated for evaporation (t-t0)"),
@@ -42,7 +42,7 @@ public enum EnumXLSExport {
 	private String unit;
 	private String title;
 
-	EnumXLSExport(String label, String unit, String title) {
+	EnumExport(String label, String unit, String title) {
 		this.label = label;
 		this.unit = unit;
 		this.title = title;
@@ -60,8 +60,8 @@ public enum EnumXLSExport {
 		return title;
 	}
 
-	public static EnumXLSExport findByText(String abbr) {
-		for (EnumXLSExport v : values()) {
+	public static EnumExport findByText(String abbr) {
+		for (EnumExport v : values()) {
 			if (v.toString().equals(abbr))
 				return v;
 		}

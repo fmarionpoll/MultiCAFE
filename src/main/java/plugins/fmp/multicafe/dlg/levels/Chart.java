@@ -21,7 +21,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartLevelsFrame;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class Chart extends JPanel implements SequenceListener {
 	/**
@@ -190,45 +190,45 @@ public class Chart extends JPanel implements SequenceListener {
 		int dx = 5;
 		int dy = 10;
 
-		if (limitsCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.TOPLEVEL)
-				&& isThereAnyDataToDisplay(exp, EnumXLSExport.BOTTOMLEVEL)) {
+		if (limitsCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumExport.TOPLEVEL)
+				&& isThereAnyDataToDisplay(exp, EnumExport.BOTTOMLEVEL)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartTopBottomBounds;
 			Rectangle pos = (savedPos != null) ? savedPos : rectv;
-			plotTopAndBottom = plotToChart(exp, "top + bottom levels", EnumXLSExport.TOPLEVEL, plotTopAndBottom, pos);
+			plotTopAndBottom = plotToChart(exp, "top + bottom levels", EnumExport.TOPLEVEL, plotTopAndBottom, pos);
 			if (savedPos == null) {
 				rectv.translate(dx, dy);
 			}
 		} else if (plotTopAndBottom != null)
 			closeChart(plotTopAndBottom);
 
-		if (deltaCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.TOPLEVELDELTA)) {
+		if (deltaCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumExport.TOPLEVELDELTA)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartDeltaBounds;
 			Rectangle pos = (savedPos != null) ? savedPos : rectv;
-			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumXLSExport.TOPLEVELDELTA, plotDelta, pos);
+			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumExport.TOPLEVELDELTA, plotDelta, pos);
 			if (savedPos == null) {
 				rectv.translate(dx, dy);
 			}
 		} else if (plotDelta != null)
 			closeChart(plotDelta);
 
-		if (derivativeCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.DERIVEDVALUES)) {
+		if (derivativeCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumExport.DERIVEDVALUES)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartDerivativeBounds;
 			Rectangle pos = (savedPos != null) ? savedPos : rectv;
-			plotDerivative = plotToChart(exp, "Derivative", EnumXLSExport.DERIVEDVALUES, plotDerivative, pos);
+			plotDerivative = plotToChart(exp, "Derivative", EnumExport.DERIVEDVALUES, plotDerivative, pos);
 			if (savedPos == null) {
 				rectv.translate(dx, dy);
 			}
 		} else if (plotDerivative != null)
 			closeChart(plotDerivative);
 
-		if (consumptionCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumXLSExport.SUMGULPS)) {
+		if (consumptionCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumExport.SUMGULPS)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartSumGulpsBounds;
 			Rectangle pos = (savedPos != null) ? savedPos : rectv;
-			plotSumgulps = plotToChart(exp, "Cumulated gulps", EnumXLSExport.SUMGULPS, plotSumgulps, pos);
+			plotSumgulps = plotToChart(exp, "Cumulated gulps", EnumExport.SUMGULPS, plotSumgulps, pos);
 			if (savedPos == null) {
 				rectv.translate(dx, dy);
 			}
@@ -236,7 +236,7 @@ public class Chart extends JPanel implements SequenceListener {
 			closeChart(plotSumgulps);
 	}
 
-	private ChartLevelsFrame plotToChart(Experiment exp, String title, EnumXLSExport option, ChartLevelsFrame iChart,
+	private ChartLevelsFrame plotToChart(Experiment exp, String title, EnumExport option, ChartLevelsFrame iChart,
 			Rectangle rectv) {
 		if (iChart != null && iChart.getMainChartFrame() != null)
 			iChart.getMainChartFrame().dispose();
@@ -263,7 +263,7 @@ public class Chart extends JPanel implements SequenceListener {
 		chart = null;
 	}
 
-	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExport option) {
+	private boolean isThereAnyDataToDisplay(Experiment exp, EnumExport option) {
 		boolean flag = false;
 		Capillaries capillaries = exp.getCapillaries();
 		for (Capillary cap : capillaries.getList()) {

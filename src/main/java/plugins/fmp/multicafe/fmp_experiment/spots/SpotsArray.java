@@ -18,7 +18,7 @@ import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 /**
  * Manages a collection of spots with comprehensive operations and data
@@ -488,7 +488,7 @@ public class SpotsArray {
 		});
 	}
 
-	public double getScalingFactorToPhysicalUnits(EnumXLSExport xlsOption) {
+	public double getScalingFactorToPhysicalUnits(EnumExport xlsOption) {
 		// Implementation would depend on specific scaling logic
 		return 1.0;
 	}

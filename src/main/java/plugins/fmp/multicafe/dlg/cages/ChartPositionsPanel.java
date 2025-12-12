@@ -22,7 +22,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartPositions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class ChartPositionsPanel extends JPanel implements SequenceListener {
 	/**
@@ -90,14 +90,14 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 
 		if (moveCheckbox.isSelected()) {
 			ypositionsChart = plotYToChart("flies Y positions", ypositionsChart, rectv, ptRelative, exp,
-					EnumXLSExport.XYTOPCAGE);
+					EnumExport.XYTOPCAGE);
 			ptRelative.y += deltay;
 		} else if (ypositionsChart != null)
 			closeChart(ypositionsChart);
 
 		if (distanceCheckbox.isSelected()) {
 			distanceChart = plotYToChart("distance between positions at t+1 and t", distanceChart, rectv, ptRelative,
-					exp, EnumXLSExport.DISTANCE);
+					exp, EnumExport.DISTANCE);
 			ptRelative.y += deltay;
 		} else if (distanceChart != null)
 			closeChart(distanceChart);
@@ -109,7 +109,7 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 				posSeries.setMoveThreshold(threshold);
 				posSeries.computeIsAlive();
 			}
-			aliveChart = plotYToChart("flies alive", aliveChart, rectv, ptRelative, exp, EnumXLSExport.ISALIVE);
+			aliveChart = plotYToChart("flies alive", aliveChart, rectv, ptRelative, exp, EnumExport.ISALIVE);
 			ptRelative.y += deltay;
 		} else if (aliveChart != null)
 			closeChart(aliveChart);
@@ -119,14 +119,14 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 				FlyPositions posSeries = cage.getFlyPositions();
 				posSeries.computeSleep();
 			}
-			sleepChart = plotYToChart("flies asleep", sleepChart, rectv, ptRelative, exp, EnumXLSExport.SLEEP);
+			sleepChart = plotYToChart("flies asleep", sleepChart, rectv, ptRelative, exp, EnumExport.SLEEP);
 			ptRelative.y += deltay;
 		} else if (sleepChart != null)
 			closeChart(sleepChart);
 	}
 
 	private ChartPositions plotYToChart(String title, ChartPositions iChart, Rectangle rectv, Point ptRelative,
-			Experiment exp, EnumXLSExport option) {
+			Experiment exp, EnumExport option) {
 		if (iChart != null)
 			iChart.mainChartFrame.dispose();
 
