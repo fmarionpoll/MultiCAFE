@@ -13,7 +13,6 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class ResultsFromCapillaries extends ResultsArray {
@@ -41,7 +40,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	 * @return The XLS results
 	 */
 	static public Results getResultsFromCapillaryMeasures(Experiment exp, Capillary capillary,
-			XLSExportOptions xlsExportOptions, boolean subtractT0) {
+			ResultsOptions xlsExportOptions, boolean subtractT0) {
 		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
 				xlsExportOptions.exportType);
 
@@ -100,7 +99,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 
 		if (cageComp == null) {
 			// No computation available, fall back to raw
-			XLSExportOptions fallbackOptions = new XLSExportOptions();
+			ResultsOptions fallbackOptions = new ResultsOptions();
 			fallbackOptions.exportType = EnumExport.TOPRAW;
 			xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 			return;
@@ -132,7 +131,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 			// Get measures by binning polyline data (similar to getMeasures implementation)
 			if (binData <= 0 || binExcel <= 0) {
 				// Invalid bin sizes, fall back to raw
-				XLSExportOptions fallbackOptions = new XLSExportOptions();
+				ResultsOptions fallbackOptions = new ResultsOptions();
 				fallbackOptions.exportType = EnumExport.TOPRAW;
 				xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 				return;
@@ -175,7 +174,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 
 		// Fallback to raw if computation failed
-		XLSExportOptions fallbackOptions = new XLSExportOptions();
+		ResultsOptions fallbackOptions = new ResultsOptions();
 		fallbackOptions.exportType = EnumExport.TOPRAW;
 		xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 	}
@@ -205,7 +204,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	 * @param options The export options
 	 * @return The number of output frames
 	 */
-	protected static int getNOutputFrames(Experiment exp, XLSExportOptions options) {
+	protected static int getNOutputFrames(Experiment exp, ResultsOptions options) {
 		// For capillaries, use kymograph timing
 		long kymoFirst_ms = exp.getKymoFirst_ms();
 		long kymoLast_ms = exp.getKymoLast_ms();
@@ -282,7 +281,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		ResultsArray resultsArray = new ResultsArray();
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
 
-		XLSExportOptions options = new XLSExportOptions();
+		ResultsOptions options = new ResultsOptions();
 		long kymoBin_ms = exp.getKymoBin_ms();
 		if (kymoBin_ms <= 0) {
 			kymoBin_ms = 60000;
@@ -302,7 +301,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 				continue;
 			}
 
-			XLSExportOptions capOptions = new XLSExportOptions();
+			ResultsOptions capOptions = new ResultsOptions();
 			capOptions.buildExcelStepMs = options.buildExcelStepMs;
 			capOptions.relativeToT0 = options.relativeToT0;
 			capOptions.correctEvaporation = options.correctEvaporation;
@@ -471,7 +470,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	// ---------------------------------------------------
 
 	public void getResults1(Experiment expi, EnumExport exportType, int nOutputFrames, long kymoBinCol_Ms,
-			XLSExportOptions xlsExportOptions) {
+			ResultsOptions xlsExportOptions) {
 		xlsExportOptions.exportType = exportType;
 		buildDataForPass1(expi, nOutputFrames, kymoBinCol_Ms, xlsExportOptions, false);
 		if (xlsExportOptions.compensateEvaporation)
@@ -480,7 +479,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	}
 
 	public void getResults_T0(Experiment expi, EnumExport exportType, int nOutputFrames, long kymoBinCol_Ms,
-			XLSExportOptions xlsExportOptions) {
+			ResultsOptions xlsExportOptions) {
 		xlsExportOptions.exportType = exportType;
 		buildDataForPass1(expi, nOutputFrames, kymoBinCol_Ms, xlsExportOptions, xlsExportOptions.subtractT0);
 		if (xlsExportOptions.compensateEvaporation)
@@ -489,7 +488,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	}
 
 	private void buildDataForPass1(Experiment expi, int nOutputFrames, long kymoBinCol_Ms,
-			XLSExportOptions xlsExportOptions, boolean subtractT0) {
+			ResultsOptions xlsExportOptions, boolean subtractT0) {
 		Capillaries caps = expi.getCapillaries();
 		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
 		for (Capillary cap : caps.getList()) {
@@ -517,7 +516,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		sameLR &= conc.equals(cap.capConcentration);
 	}
 
-	public void buildDataForPass2(XLSExportOptions xlsExportOptions) {
+	public void buildDataForPass2(ResultsOptions xlsExportOptions) {
 		switch (xlsExportOptions.exportType) {
 		case TOPLEVEL_LR:
 		case TOPLEVELDELTA_LR:
@@ -555,14 +554,14 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 	}
 
-	private void buildAutocorrel(XLSExportOptions xlsExportOptions) {
+	private void buildAutocorrel(ResultsOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			Results rowL = getRow(irow);
 			correl(rowL, rowL, rowL, xlsExportOptions.nBinsCorrelation);
 		}
 	}
 
-	private void buildCrosscorrel(XLSExportOptions xlsExportOptions) {
+	private void buildCrosscorrel(ResultsOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			Results rowL = getRow(irow);
 			Results rowR = getNextRowIfSameCage(irow);
@@ -582,7 +581,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 	}
 
-	private void buildCrosscorrelLR(XLSExportOptions xlsExportOptions) {
+	private void buildCrosscorrelLR(ResultsOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			Results rowL = getRow(irow);
 			Results rowR = getNextRowIfSameCage(irow);
@@ -629,7 +628,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 	}
 
-	private void buildAutocorrelLR(XLSExportOptions xlsExportOptions) {
+	private void buildAutocorrelLR(ResultsOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			Results rowL = getRow(irow);
 			Results rowR = getNextRowIfSameCage(irow);
@@ -646,7 +645,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 	}
 
-	private void buildMarkovChain(XLSExportOptions xlsExportOptions) {
+	private void buildMarkovChain(ResultsOptions xlsExportOptions) {
 		ArrayList<Results> newResultsList = new ArrayList<Results>();
 		Map<Integer, List<Results>> cagesMap = groupResultsByCage();
 
@@ -678,7 +677,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	}
 
 	private List<Results> processCageMarkovChain(int cageID, List<Results> cageResults,
-			XLSExportOptions xlsExportOptions) {
+			ResultsOptions xlsExportOptions) {
 		Results rowL = getResultSide(cageResults, "L");
 		Results rowR = getResultSide(cageResults, "R");
 
@@ -726,7 +725,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	}
 
 	private List<Results> createStateRows(int cageID, Results rowL, int[] states, int dimension,
-			XLSExportOptions xlsExportOptions) {
+			ResultsOptions xlsExportOptions) {
 		List<Results> rows = new ArrayList<>();
 		String[] stateNames = { "Ls", "Rs", "LR", "N" };
 
@@ -746,7 +745,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	}
 
 	private List<Results> createTransitionRows(int cageID, Results rowL, int[] states, int dimension,
-			XLSExportOptions xlsExportOptions) {
+			ResultsOptions xlsExportOptions) {
 		List<Results> rows = new ArrayList<>();
 		String[] transitionNames = { "Ls-Ls", "Rs-Ls", "LR-Ls", "N-Ls", "Ls-Rs", "Rs-Rs", "LR-Rs", "N-Rs", "Ls-LR",
 				"Rs-LR", "LR-LR", "N-LR", "Ls-N", "Rs-N", "LR-N", "N-N" };

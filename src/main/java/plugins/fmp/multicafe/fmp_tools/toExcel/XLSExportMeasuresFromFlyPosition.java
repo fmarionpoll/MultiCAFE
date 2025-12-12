@@ -10,8 +10,8 @@ import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
@@ -51,7 +51,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @throws ExcelExportException If export fails
 	 */
 	@Override
-	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+	protected int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
 		int column = startColumn;
 
@@ -154,7 +154,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @return The XLS results
 	 */
 	public Results getXLSResultsDataValuesFromFlyPositionMeasures(Experiment exp, Cage cage,
-			FlyPositions flyPositions, XLSExportOptions xlsExportOptions) {
+			FlyPositions flyPositions, ResultsOptions xlsExportOptions) {
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
 
 		// Create XLSResults with cage properties
@@ -179,7 +179,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @param options The export options
 	 * @return The number of output frames
 	 */
-	protected int getNOutputFrames(Experiment exp, XLSExportOptions options) {
+	protected int getNOutputFrames(Experiment exp, ResultsOptions options) {
 		// For fly positions, use camera sequence timing
 		TimeManager timeManager = exp.getSeqCamData().getTimeManager();
 		ImageLoader imgLoader = exp.getSeqCamData().getImageLoader();

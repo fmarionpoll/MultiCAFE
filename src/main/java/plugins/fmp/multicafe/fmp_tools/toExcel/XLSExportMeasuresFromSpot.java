@@ -10,8 +10,8 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
@@ -32,7 +32,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 	 * @throws ExcelExportException If export fails
 	 **/
 	@Override
-	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+	protected int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
 		int column = startColumn;
 
@@ -115,7 +115,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 	 * @return The XLS results
 	 */
 	public Results getXLSResultsDataValuesFromSpotMeasures(Experiment exp, Cage cage, Spot spot,
-			XLSExportOptions xlsExportOptions) {
+			ResultsOptions xlsExportOptions) {
 		/*
 		 * 1) get n input frames for signal between timefirst and time last; locate
 		 * binfirst and bin last in the array of long in seqcamdata 2) given excelBinms,
@@ -137,7 +137,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 	 * @param exp The experiment
 	 * @return The number of output frames
 	 */
-	protected int getNOutputFrames(Experiment exp, XLSExportOptions options) {
+	protected int getNOutputFrames(Experiment exp, ResultsOptions options) {
 		TimeManager timeManager = exp.getSeqCamData().getTimeManager();
 		ImageLoader imgLoader = exp.getSeqCamData().getImageLoader();
 		long durationMs = timeManager.getBinLast_ms() - timeManager.getBinFirst_ms();

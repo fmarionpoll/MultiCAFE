@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe.fmp_tools.toExcel;
 
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 
 /**
@@ -40,7 +40,7 @@ public class XLSExportFactory {
      * @return The appropriate XLSExport implementation
      * @throws ExcelExportException If no suitable implementation can be created
      */
-    public static XLSExport createExporter(int experimentCount, XLSExportOptions options) 
+    public static XLSExport createExporter(int experimentCount, ResultsOptions options) 
             throws ExcelExportException {
         
         // Estimate memory requirements
@@ -67,7 +67,7 @@ public class XLSExportFactory {
      * @return The appropriate XLSExport implementation
      * @throws ExcelExportException If no suitable implementation can be created
      */
-    public static XLSExport createExporter(int experimentCount, XLSExportOptions options, 
+    public static XLSExport createExporter(int experimentCount, ResultsOptions options, 
             boolean enableMemoryMonitoring) throws ExcelExportException {
         
         XLSExport exporter = createExporter(experimentCount, options);
@@ -188,7 +188,7 @@ public class XLSExportFactory {
      * @return The appropriate XLSExport implementation
      * @throws ExcelExportException If no suitable implementation can be created
      */
-    public static XLSExport createExporterWithCustomThresholds(int experimentCount, XLSExportOptions options,
+    public static XLSExport createExporterWithCustomThresholds(int experimentCount, ResultsOptions options,
             int smallDatasetThreshold, int mediumDatasetThreshold, double memoryUsageThreshold) 
             throws ExcelExportException {
         

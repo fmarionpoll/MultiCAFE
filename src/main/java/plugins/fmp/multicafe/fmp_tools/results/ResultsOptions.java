@@ -1,9 +1,9 @@
-package plugins.fmp.multicafe.fmp_tools.toExcel.config;
+package plugins.fmp.multicafe.fmp_tools.results;
 
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
-public class XLSExportOptions {
+public class ResultsOptions {
 	public boolean xyImage = true;
 	public boolean xyCage = true;
 	public boolean xyCapillaries = true;
@@ -73,7 +73,7 @@ public class XLSExportOptions {
 	public boolean compensateEvaporation = false;
 	public EnumExport exportType;
 
-	public void copy(XLSExportOptions xlsExportOptions) {
+	public void copy(ResultsOptions xlsExportOptions) {
 		this.xyImage = xlsExportOptions.xyImage;
 		this.xyCage = xlsExportOptions.xyCage;
 		this.ellipseAxes = xlsExportOptions.ellipseAxes;

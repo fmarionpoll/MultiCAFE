@@ -11,8 +11,8 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
@@ -54,7 +54,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 * @throws ExcelExportException If export fails
 	 */
 	@Override
-	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+	protected int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
 		int maxColumn = startColumn;
 
@@ -188,7 +188,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 				pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, cage, capillary, xlsExportType);
 
 				// Create a copy of options with the correct exportType for this specific export
-				XLSExportOptions capOptions = new XLSExportOptions();
+				ResultsOptions capOptions = new ResultsOptions();
 				capOptions.buildExcelStepMs = options.buildExcelStepMs;
 				capOptions.relativeToT0 = options.relativeToT0;
 				capOptions.correctEvaporation = options.correctEvaporation;

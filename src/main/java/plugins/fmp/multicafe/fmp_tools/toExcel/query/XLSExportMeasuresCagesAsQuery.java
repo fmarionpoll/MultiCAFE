@@ -13,9 +13,9 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExportMeasuresFromSpot;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumColumnType;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLS_QueryColumnHeader;
@@ -28,7 +28,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
 public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	ArrayList<EnumXLS_QueryColumnHeader> headers = new ArrayList<EnumXLS_QueryColumnHeader>();
 
-	public void exportQToFile(String filename, XLSExportOptions options) throws ExcelExportException {
+	public void exportQToFile(String filename, ResultsOptions options) throws ExcelExportException {
 		System.out.println("XLSExportBase:exportQToFile() - " + ExcelExportConstants.EXPORT_START_MESSAGE);
 
 		this.options = options;
@@ -137,14 +137,14 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	}
 
 	@Override
-	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+	protected int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
 		int column = getCageDataAndExport(exp, startColumn, charSeries, xlsExportOptions, EnumExport.AREA_SUMCLEAN);
 		column = getCageDataAndExport(exp, startColumn, charSeries, xlsExportOptions, EnumExport.AREA_SUM);
 		return column;
 	}
 
-	protected int getCageDataAndExport(Experiment exp, int col0, String charSeries, XLSExportOptions xlsExportOptions,
+	protected int getCageDataAndExport(Experiment exp, int col0, String charSeries, ResultsOptions xlsExportOptions,
 			EnumExport exportType) throws ExcelDataException {
 		options.exportType = exportType;
 		int colmax = 0;
@@ -183,7 +183,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		return pt.y;
 	}
 
-	int xlsExportExperimentCageDataToSheet(SXSSFSheet sheet, Experiment exp, XLSExportOptions xlsExportOptions,
+	int xlsExportExperimentCageDataToSheet(SXSSFSheet sheet, Experiment exp, ResultsOptions xlsExportOptions,
 			EnumExport xlsExportType, int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		String stim1 = exp.getProperties().getField_stim1();
@@ -245,7 +245,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		return pt.x;
 	}
 
-	Results getResultForCage(Experiment exp, Cage cage, Spot spot, double scaling, XLSExportOptions xlsExportOptions,
+	Results getResultForCage(Experiment exp, Cage cage, Spot spot, double scaling, ResultsOptions xlsExportOptions,
 			EnumExport xlsExportType) {
 		Results xlsResults = null;
 		if (spot != null) {

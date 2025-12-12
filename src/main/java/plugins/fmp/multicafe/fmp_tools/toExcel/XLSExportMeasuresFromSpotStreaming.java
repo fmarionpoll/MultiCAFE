@@ -11,8 +11,8 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
@@ -81,7 +81,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * @throws ExcelExportException If export fails
 	 */
 	@Override
-	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+	protected int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
 		int column = startColumn;
 
@@ -435,7 +435,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * @param exp The experiment
 	 * @return The number of output frames
 	 */
-	protected int getNOutputFrames(Experiment exp, XLSExportOptions options) {
+	protected int getNOutputFrames(Experiment exp, ResultsOptions options) {
 		TimeManager timeManager = exp.getSeqCamData().getTimeManager();
 		long durationMs = timeManager.getBinLast_ms() - timeManager.getBinFirst_ms();
 		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);

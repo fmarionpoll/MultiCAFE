@@ -1,6 +1,7 @@
 package plugins.fmp.multicafe.fmp_tools.toExcel.config;
 
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants.DefaultOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
@@ -82,7 +83,7 @@ public class XLSExportOptionsBuilder {
 	 * 
 	 * @param existing The existing options to copy from
 	 */
-	public XLSExportOptionsBuilder(XLSExportOptions existing) {
+	public XLSExportOptionsBuilder(ResultsOptions existing) {
 		this.xyImage = existing.xyImage;
 		this.xyCage = existing.xyCage;
 		this.ellipseAxes = existing.ellipseAxes;
@@ -265,7 +266,7 @@ public class XLSExportOptionsBuilder {
 		return this;
 	}
 
-	public XLSExportOptions withBuildExcelUnitMs(int buildExcelUnitMs) {
+	public ResultsOptions withBuildExcelUnitMs(int buildExcelUnitMs) {
 		this.buildExcelUnitMs = buildExcelUnitMs;
 		return null;
 	}
@@ -275,8 +276,8 @@ public class XLSExportOptionsBuilder {
 	 * 
 	 * @return A new XLSExportOptions instance
 	 */
-	public XLSExportOptions build() {
-		XLSExportOptions options = new XLSExportOptions();
+	public ResultsOptions build() {
+		ResultsOptions options = new ResultsOptions();
 
 		// Copy all configured values
 		options.xyImage = this.xyImage;

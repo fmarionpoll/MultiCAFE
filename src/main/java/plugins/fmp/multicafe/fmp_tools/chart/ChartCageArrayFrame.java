@@ -31,7 +31,7 @@ import icy.roi.ROI2D;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
  * Chart display class for spot data visualization. This class creates and
@@ -144,7 +144,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param parent0          the parent MultiSPOTS96 instance
 	 * @throws IllegalArgumentException if any required parameter is null
 	 */
-	public void createMainChartPanel(String title, Experiment exp, XLSExportOptions xlsExportOptions) {
+	public void createMainChartPanel(String title, Experiment exp, ResultsOptions xlsExportOptions) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
@@ -183,7 +183,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param xlsExportOptions the export options
 	 * @return configured NumberAxis
 	 */
-	private NumberAxis setYaxis(String label, int row, int col, XLSExportOptions xlsExportOptions) {
+	private NumberAxis setYaxis(String label, int row, int col, ResultsOptions xlsExportOptions) {
 		NumberAxis yAxis = new NumberAxis();
 		row = row * experiment.getCages().nRowsPerCage;
 		col = col * experiment.getCages().nColumnsPerCage;
@@ -208,7 +208,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param xlsExportOptions the export options
 	 * @return configured NumberAxis
 	 */
-	private NumberAxis setXaxis(String label, XLSExportOptions xlsExportOptions) {
+	private NumberAxis setXaxis(String label, ResultsOptions xlsExportOptions) {
 		NumberAxis xAxis = new NumberAxis();
 		xAxis.setLabel(label);
 		xAxis.setAutoRange(true);
@@ -223,7 +223,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param xlsExportOptions the export options for data processing
 	 * @throws IllegalArgumentException if exp or xlsExportOptions is null
 	 */
-	public void displayData(Experiment exp, XLSExportOptions xlsExportOptions) {
+	public void displayData(Experiment exp, ResultsOptions xlsExportOptions) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
@@ -244,7 +244,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * 
 	 * @param xlsExportOptions the export options
 	 */
-	private void createChartPanelArray(XLSExportOptions xlsExportOptions) {
+	private void createChartPanelArray(ResultsOptions xlsExportOptions) {
 		int indexCage = 0;
 		for (int row = 0; row < experiment.getCages().nCagesAlongY; row++) {
 			for (int col = 0; col < experiment.getCages().nCagesAlongX; col++, indexCage++) {
@@ -277,7 +277,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param xlsExportOptions the export options
 	 * @return configured ChartPanel
 	 */
-	private ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, XLSExportOptions xlsExportOptions) {
+	private ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, ResultsOptions xlsExportOptions) {
 
 		if (cage.spotsArray.getSpotsCount() < 1) {
 //			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
@@ -331,7 +331,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * 
 	 * @param xlsExportOptions the export options
 	 */
-	private void arrangePanelsInDisplay(XLSExportOptions xlsExportOptions) {
+	private void arrangePanelsInDisplay(ResultsOptions xlsExportOptions) {
 		if (xlsExportOptions.cageIndexFirst == xlsExportOptions.cageIndexLast) {
 			int indexCage = xlsExportOptions.cageIndexFirst;
 			int row = indexCage / experiment.getCages().nCagesAlongX;
@@ -547,7 +547,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param xlsExportOptions the export options
 	 * @param spot             the spot to select time for
 	 */
-	private void selectT(Experiment exp, XLSExportOptions xlsExportOptions, Spot spot) {
+	private void selectT(Experiment exp, ResultsOptions xlsExportOptions, Spot spot) {
 		if (exp == null || spot == null) {
 			LOGGER.warning("Cannot select time: experiment or spot is null");
 			return;
@@ -588,7 +588,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param xlsExportOptions the export options
 	 * @param clickedSpot      the clicked spot
 	 */
-	private void chartSelectClickedSpot(Experiment exp, XLSExportOptions xlsExportOptions, Spot clickedSpot) {
+	private void chartSelectClickedSpot(Experiment exp, ResultsOptions xlsExportOptions, Spot clickedSpot) {
 		if (clickedSpot == null) {
 			LOGGER.warning("Clicked spot is null");
 			return;
@@ -681,7 +681,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 */
 	private class SpotChartMouseListener implements ChartMouseListener {
 		private final Experiment experiment;
-		private final XLSExportOptions xlsOptions;
+		private final ResultsOptions xlsOptions;
 
 		/**
 		 * Creates a new mouse listener.
@@ -689,7 +689,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		 * @param exp     the experiment
 		 * @param options the export options
 		 */
-		public SpotChartMouseListener(Experiment exp, XLSExportOptions options) {
+		public SpotChartMouseListener(Experiment exp, ResultsOptions options) {
 			this.experiment = exp;
 			this.xlsOptions = options;
 		}

@@ -17,7 +17,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotMeasure;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 /**
@@ -202,7 +202,7 @@ public class ChartCageBuild {
 	 * @return XYSeriesCollection containing the cage's data
 	 */
 	static XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage,
-			XLSExportOptions xlsExportOptions) {
+			ResultsOptions xlsExportOptions) {
 		if (cage == null || cage.spotsArray == null || cage.spotsArray.getSpotsCount() < 1) {
 			LOGGER.warning("Cannot get spot data: spot array is empty or cage is null");
 			return new XYSeriesCollection();
@@ -244,7 +244,7 @@ public class ChartCageBuild {
 	}
 
 	private static XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot,
-			XLSExportOptions xlsExportOptions) {
+			ResultsOptions xlsExportOptions) {
 		XYSeries seriesXY = new XYSeries(spot.getName(), false);
 
 		if (exp.getSeqCamData().getTimeManager().getCamImagesTime_Ms() == null)

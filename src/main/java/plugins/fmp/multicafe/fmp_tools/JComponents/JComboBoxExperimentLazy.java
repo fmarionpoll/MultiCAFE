@@ -15,7 +15,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.LazyExperiment;
 import plugins.fmp.multicafe.fmp_experiment.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
 /**
@@ -161,7 +161,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		return null;
 	}
 
-	public Experiment get_MsTime_of_StartAndEnd_AllExperiments(XLSExportOptions options) {
+	public Experiment get_MsTime_of_StartAndEnd_AllExperiments(ResultsOptions options) {
 		Experiment expAll = new Experiment();
 		Experiment exp0 = getItemAt(0);
 		if (options.fixedIntervals) {

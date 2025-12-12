@@ -18,10 +18,10 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
 import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExportMeasuresFromCapillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExportMeasuresFromFlyPosition;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExportMeasuresFromGulp;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 
 public class MCExcel_ extends JPanel implements PropertyChangeListener {
@@ -156,8 +156,8 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		parent0.paneExperiment.tabInfos.getExperimentInfosFromDialog(exp);
 	}
 
-	private XLSExportOptions getMoveOptions(Experiment exp) {
-		XLSExportOptions options = new XLSExportOptions();
+	private ResultsOptions getMoveOptions(Experiment exp) {
+		ResultsOptions options = new ResultsOptions();
 		options.xyImage = tabMove.xyCenterCheckBox.isSelected();
 		options.xyCage = tabMove.xyCageCheckBox.isSelected();
 		options.xyCapillaries = tabMove.xyTipCapsCheckBox.isSelected();
@@ -170,8 +170,8 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		return options;
 	}
 
-	private XLSExportOptions getLevelsOptions(Experiment exp) {
-		XLSExportOptions options = new XLSExportOptions();
+	private ResultsOptions getLevelsOptions(Experiment exp) {
+		ResultsOptions options = new ResultsOptions();
 		options.sumGulps = false;
 		options.nbGulps = false;
 
@@ -188,8 +188,8 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		return options;
 	}
 
-	private XLSExportOptions getGulpsOptions(Experiment exp) {
-		XLSExportOptions options = new XLSExportOptions();
+	private ResultsOptions getGulpsOptions(Experiment exp) {
+		ResultsOptions options = new ResultsOptions();
 		options.topLevel = false;
 		options.topLevelDelta = false;
 		options.bottomLevel = false;
@@ -211,7 +211,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		return options;
 	}
 
-	private void getCommonOptions(XLSExportOptions options, Experiment exp) {
+	private void getCommonOptions(ResultsOptions options, Experiment exp) {
 		options.transpose = tabCommonOptions.transposeCheckBox.isSelected();
 		options.buildExcelStepMs = tabCommonOptions.getExcelBuildStep();
 		options.buildExcelUnitMs = tabCommonOptions.binUnit.getMsUnitValue();

@@ -12,7 +12,6 @@ import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotProperties;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class Results {
@@ -164,7 +163,7 @@ public class Results {
 		nflies = 0;
 	}
 
-	public void getDataFromSpot(Spot spot, long binData, long binExcel, XLSExportOptions xlsExportOptions) {
+	public void getDataFromSpot(Spot spot, long binData, long binExcel, ResultsOptions xlsExportOptions) {
 		dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportOptions.exportType, binData, binExcel);
 		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumExport.AREA_FLYPRESENT) {
 			relativeToMaximum();
@@ -184,7 +183,7 @@ public class Results {
 	 *                         etc.)
 	 */
 	public void getDataFromCapillary(Capillary capillary, long binData, long binExcel,
-			XLSExportOptions xlsExportOptions, boolean subtractT0) {
+			ResultsOptions xlsExportOptions, boolean subtractT0) {
 		ArrayList<Integer> intData = capillary.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, binData,
 				binExcel);
 
@@ -223,7 +222,7 @@ public class Results {
 	 * @param xlsExportOptions The export options
 	 */
 	public void getDataFromFlyPositions(FlyPositions flyPositions, long binData, long binExcel,
-			XLSExportOptions xlsExportOptions) {
+			ResultsOptions xlsExportOptions) {
 		if (flyPositions == null || flyPositions.flyPositionList == null || flyPositions.flyPositionList.isEmpty()) {
 			dataValues = new ArrayList<>();
 			return;

@@ -19,8 +19,8 @@ import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelDataException;
@@ -39,7 +39,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
  */
 public abstract class XLSExport {
 
-	protected XLSExportOptions options = null;
+	protected ResultsOptions options = null;
 	protected Experiment expAll = null;
 	protected JComboBoxExperimentLazy expList = null;
 
@@ -58,7 +58,7 @@ public abstract class XLSExport {
 	 * @param options  The export options
 	 * @throws ExcelExportException If export fails
 	 */
-	public final void exportToFile(String filename, XLSExportOptions options) throws ExcelExportException {
+	public final void exportToFile(String filename, ResultsOptions options) throws ExcelExportException {
 		System.out.println("XLSExportBase:exportToFile() - " + ExcelExportConstants.EXPORT_START_MESSAGE);
 
 		this.options = options;
@@ -232,7 +232,7 @@ public abstract class XLSExport {
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected abstract int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+	protected abstract int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
 			String charSeries) throws ExcelExportException;
 
 	/**

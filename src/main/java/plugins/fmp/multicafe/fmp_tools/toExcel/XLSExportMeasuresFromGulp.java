@@ -8,8 +8,8 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
@@ -51,7 +51,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * @throws ExcelExportException If export fails
 	 */
 	@Override
-	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+	protected int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
 		int column = startColumn;
 
@@ -155,7 +155,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * @return The XLS results
 	 */
 	public Results getXLSResultsDataValuesFromGulpMeasures(Experiment exp, Capillary capillary,
-			XLSExportOptions xlsExportOptions) {
+			ResultsOptions xlsExportOptions) {
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
 
 		// Create XLSResults with capillary properties
@@ -183,7 +183,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * @param options The export options
 	 * @return The number of output frames
 	 */
-	protected int getNOutputFrames(Experiment exp, XLSExportOptions options) {
+	protected int getNOutputFrames(Experiment exp, ResultsOptions options) {
 		// For gulps, use kymograph timing (same as capillaries)
 		long kymoFirst_ms = exp.getKymoFirst_ms();
 		long kymoLast_ms = exp.getKymoLast_ms();

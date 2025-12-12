@@ -36,7 +36,7 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class ChartLevels extends IcyFrame {
@@ -242,7 +242,7 @@ public class ChartLevels extends IcyFrame {
 			exp.getCages().computeLRMeasures(exp, 0.0); // Use default threshold of 0.0 for display
 		}
 
-		XLSExportOptions options = new XLSExportOptions();
+		ResultsOptions options = new ResultsOptions();
 		long kymoBin_ms = exp.getKymoBin_ms();
 		if (kymoBin_ms <= 0) {
 			kymoBin_ms = 60000;
@@ -255,7 +255,7 @@ public class ChartLevels extends IcyFrame {
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
 
 		for (Capillary capillary : exp.getCapillaries().getList()) {
-			XLSExportOptions capOptions = new XLSExportOptions();
+			ResultsOptions capOptions = new ResultsOptions();
 			capOptions.buildExcelStepMs = options.buildExcelStepMs;
 			capOptions.relativeToT0 = options.relativeToT0;
 			capOptions.correctEvaporation = options.correctEvaporation;
