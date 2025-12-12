@@ -33,10 +33,10 @@ import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.fmp_tools.toExcel.capillaries.XLSExportMeasuresFromCapillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.data.ResultsArray;
+import plugins.fmp.multicafe.fmp_tools.toExcel.data.ResultsFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class ChartLevels extends IcyFrame {
@@ -251,8 +251,6 @@ public class ChartLevels extends IcyFrame {
 		options.relativeToT0 = false;
 		options.correctEvaporation = subtractEvaporation;
 
-		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
-
 		ResultsArray resultsArray = new ResultsArray();
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
 
@@ -263,11 +261,11 @@ public class ChartLevels extends IcyFrame {
 			capOptions.correctEvaporation = options.correctEvaporation;
 			capOptions.exportType = exportType;
 
-			Results xlsResults = xlsExport.getDataValuesFromCapillaryMeasures(exp, capillary, capOptions,
+			Results results = ResultsFromCapillaries.getDataValuesFromCapillaryMeasures(exp, capillary, capOptions,
 					capOptions.correctEvaporation);
-			if (xlsResults != null) {
-				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
-				resultsArray.addRow(xlsResults);
+			if (results != null) {
+				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
+				resultsArray.addRow(results);
 			}
 		}
 

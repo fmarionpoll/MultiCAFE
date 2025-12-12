@@ -13,7 +13,6 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
-import plugins.fmp.multicafe.fmp_tools.toExcel.capillaries.XLSExportMeasuresFromCapillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
@@ -184,7 +183,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	/**
 	 * Helper method to determine capillary side from capSide or name.
 	 */
-	private String getCapillarySide(Capillary cap) {
+	private static String getCapillarySide(Capillary cap) {
 		if (cap.capSide != null && !cap.capSide.equals("."))
 			return cap.capSide;
 		// Try to get from name
@@ -282,7 +281,6 @@ public class ResultsFromCapillaries extends ResultsArray {
 
 		ResultsArray resultsArray = new ResultsArray();
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
-		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
 
 		XLSExportOptions options = new XLSExportOptions();
 		long kymoBin_ms = exp.getKymoBin_ms();
