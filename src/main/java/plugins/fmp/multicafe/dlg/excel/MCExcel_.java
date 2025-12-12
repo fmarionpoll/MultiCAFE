@@ -171,72 +171,72 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 	}
 
 	private ResultsOptions getLevelsOptions(Experiment exp) {
-		ResultsOptions options = new ResultsOptions();
-		options.sumGulps = false;
-		options.nbGulps = false;
+		ResultsOptions resultsOptions = new ResultsOptions();
+		resultsOptions.sumGulps = false;
+		resultsOptions.nbGulps = false;
 
-		options.topLevel = tabLevels.topLevelCheckBox.isSelected();
-		options.topLevelDelta = tabLevels.topLevelDeltaCheckBox.isSelected();
-		options.bottomLevel = tabLevels.bottomLevelCheckBox.isSelected();
-		options.sumGulps = false;
-		options.lrPI = tabLevels.lrPICheckBox.isSelected();
-		options.lrPIThreshold = (double) tabLevels.lrPIThresholdJSpinner.getValue();
-		options.sumPerCage = tabLevels.sumPerCageCheckBox.isSelected();
+		resultsOptions.topLevel = tabLevels.topLevelCheckBox.isSelected();
+		resultsOptions.topLevelDelta = tabLevels.topLevelDeltaCheckBox.isSelected();
+		resultsOptions.bottomLevel = tabLevels.bottomLevelCheckBox.isSelected();
+		resultsOptions.sumGulps = false;
+		resultsOptions.lrPI = tabLevels.lrPICheckBox.isSelected();
+		resultsOptions.lrPIThreshold = (double) tabLevels.lrPIThresholdJSpinner.getValue();
+		resultsOptions.sumPerCage = tabLevels.sumPerCageCheckBox.isSelected();
 		// options.t0 = tabLevels.t0CheckBox.isSelected();
-		options.correctEvaporation = tabLevels.subtractEvaporationCheckBox.isSelected();
-		getCommonOptions(options, exp);
-		return options;
+		resultsOptions.correctEvaporation = tabLevels.subtractEvaporationCheckBox.isSelected();
+		getCommonOptions(resultsOptions, exp);
+		return resultsOptions;
 	}
 
 	private ResultsOptions getGulpsOptions(Experiment exp) {
-		ResultsOptions options = new ResultsOptions();
-		options.topLevel = false;
-		options.topLevelDelta = false;
-		options.bottomLevel = false;
-		options.derivative = tabGulps.derivativeCheckBox.isSelected();
-		options.sumPerCage = false;
+		ResultsOptions resultsOptions = new ResultsOptions();
+		resultsOptions.topLevel = false;
+		resultsOptions.topLevelDelta = false;
+		resultsOptions.bottomLevel = false;
+		resultsOptions.derivative = tabGulps.derivativeCheckBox.isSelected();
+		resultsOptions.sumPerCage = false;
 //		options.t0 = false;
-		options.sumGulps = tabGulps.sumGulpsCheckBox.isSelected();
-		options.lrPI = tabGulps.sumCheckBox.isSelected();
-		options.nbGulps = tabGulps.nbGulpsCheckBox.isSelected();
-		options.amplitudeGulps = tabGulps.amplitudeGulpsCheckBox.isSelected();
+		resultsOptions.sumGulps = tabGulps.sumGulpsCheckBox.isSelected();
+		resultsOptions.lrPI = tabGulps.sumCheckBox.isSelected();
+		resultsOptions.nbGulps = tabGulps.nbGulpsCheckBox.isSelected();
+		resultsOptions.amplitudeGulps = tabGulps.amplitudeGulpsCheckBox.isSelected();
 
-		options.markovChain = tabGulps.markovChainCheckBox.isSelected();
-		options.autocorrelation = tabGulps.autocorrelationCheckBox.isSelected();
-		options.crosscorrelation = tabGulps.crosscorrelationCheckBox.isSelected();
-		options.nBinsCorrelation = (int) tabGulps.nbinsJSpinner.getValue();
+		resultsOptions.markovChain = tabGulps.markovChainCheckBox.isSelected();
+		resultsOptions.autocorrelation = tabGulps.autocorrelationCheckBox.isSelected();
+		resultsOptions.crosscorrelation = tabGulps.crosscorrelationCheckBox.isSelected();
+		resultsOptions.nBinsCorrelation = (int) tabGulps.nbinsJSpinner.getValue();
 
-		options.correctEvaporation = false;
-		getCommonOptions(options, exp);
-		return options;
+		resultsOptions.correctEvaporation = false;
+		getCommonOptions(resultsOptions, exp);
+		return resultsOptions;
 	}
 
-	private void getCommonOptions(ResultsOptions options, Experiment exp) {
-		options.transpose = tabCommonOptions.transposeCheckBox.isSelected();
-		options.buildExcelStepMs = tabCommonOptions.getExcelBuildStep();
-		options.buildExcelUnitMs = tabCommonOptions.binUnit.getMsUnitValue();
-		options.fixedIntervals = tabCommonOptions.isFixedFrameButton.isSelected();
-		options.startAll_Ms = tabCommonOptions.getStartAllMs();
-		options.endAll_Ms = tabCommonOptions.getEndAllMs();
+	private void getCommonOptions(ResultsOptions resultsOptions, Experiment exp) {
+		resultsOptions.transpose = tabCommonOptions.transposeCheckBox.isSelected();
+		resultsOptions.buildExcelStepMs = tabCommonOptions.getExcelBuildStep();
+		resultsOptions.buildExcelUnitMs = tabCommonOptions.binUnit.getMsUnitValue();
+		resultsOptions.fixedIntervals = tabCommonOptions.isFixedFrameButton.isSelected();
+		resultsOptions.startAll_Ms = tabCommonOptions.getStartAllMs();
+		resultsOptions.endAll_Ms = tabCommonOptions.getEndAllMs();
 
-		options.collateSeries = tabCommonOptions.collateSeriesCheckBox.isSelected();
-		options.padIntervals = tabCommonOptions.padIntervalsCheckBox.isSelected();
-		options.absoluteTime = false; // tabCommonOptions.absoluteTimeCheckBox.isSelected();
-		options.onlyalive = tabCommonOptions.onlyAliveCheckBox.isSelected();
-		options.exportAllFiles = tabCommonOptions.exportAllFilesCheckBox.isSelected();
+		resultsOptions.collateSeries = tabCommonOptions.collateSeriesCheckBox.isSelected();
+		resultsOptions.padIntervals = tabCommonOptions.padIntervalsCheckBox.isSelected();
+		resultsOptions.absoluteTime = false; // tabCommonOptions.absoluteTimeCheckBox.isSelected();
+		resultsOptions.onlyalive = tabCommonOptions.onlyAliveCheckBox.isSelected();
+		resultsOptions.exportAllFiles = tabCommonOptions.exportAllFilesCheckBox.isSelected();
 
-		options.expList = parent0.expListComboLazy;
-		options.expList.expListBinSubDirectory = exp.getBinSubDirectory();
+		resultsOptions.expList = parent0.expListComboLazy;
+		resultsOptions.expList.expListBinSubDirectory = exp.getBinSubDirectory();
 		if (tabCommonOptions.exportAllFilesCheckBox.isSelected()) {
-			options.firstExp = 0;
-			int itemCount = options.expList.getItemCount();
-			options.lastExp = (itemCount > 0) ? itemCount - 1 : 0;
+			resultsOptions.firstExp = 0;
+			int itemCount = resultsOptions.expList.getItemCount();
+			resultsOptions.lastExp = (itemCount > 0) ? itemCount - 1 : 0;
 		} else {
 			int selectedIndex = parent0.expListComboLazy.getSelectedIndex();
-			options.firstExp = (selectedIndex >= 0) ? selectedIndex : 0;
-			options.lastExp = options.firstExp;
+			resultsOptions.firstExp = (selectedIndex >= 0) ? selectedIndex : 0;
+			resultsOptions.lastExp = resultsOptions.firstExp;
 		}
-		options.experimentIndexFirst = options.firstExp;
-		options.experimentIndexLast = options.lastExp;
+		resultsOptions.experimentIndexFirst = resultsOptions.firstExp;
+		resultsOptions.experimentIndexLast = resultsOptions.lastExp;
 	}
 }
