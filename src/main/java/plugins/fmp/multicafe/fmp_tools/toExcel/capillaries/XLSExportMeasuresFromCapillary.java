@@ -59,6 +59,19 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 			String charSeries) throws ExcelExportException {
 		int maxColumn = startColumn;
 
+		// Dispatch capillaries to cages for computation
+		exp.dispatchCapillariesToCages();
+
+		// Compute evaporation correction if needed (for TOPLEVEL exports)
+		if (options.correctEvaporation && (options.topLevel || (options.lrPI && options.topLevel))) {
+			exp.getCages().computeEvaporationCorrection(exp);
+		}
+
+		// Compute L+R measures if needed (must be done after evaporation correction)
+		if (options.lrPI && options.topLevel) {
+			exp.getCages().computeLRMeasures(exp, options.lrPIThreshold);
+		}
+
 		if (options.topLevel) {
 			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumXLSExport.TOPRAW.toString()), charSeries,
 					EnumXLSExport.TOPRAW, false);
@@ -204,7 +217,13 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		// Get bin durations
 		long binData = exp.getKymoBin_ms();
 		long binExcel = xlsExportOptions.buildExcelStepMs;
-		xlsResults.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, subtractT0);
+		
+		// For TOPLEVEL_LR, read from CageCapillariesComputation instead of capillary
+		if (xlsExportOptions.exportType == EnumXLSExport.TOPLEVEL_LR) {
+			getLRDataFromCage(exp, capillary, xlsResults, binData, binExcel, subtractT0);
+		} else {
+			xlsResults.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, subtractT0);
+		}
 
 		// Initialize valuesOut array with the actual size of dataValues
 		if (xlsResults.getDataValues() != null && xlsResults.getDataValues().size() > 0) {
@@ -217,6 +236,122 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		}
 
 		return xlsResults;
+	}
+	
+	/**
+	 * Gets L+R data (SUM or PI) from CageCapillariesComputation for TOPLEVEL_LR export.
+	 * For L capillaries: exports SUM measure
+	 * For R capillaries: exports PI measure
+	 * 
+	 * @param exp The experiment
+	 * @param capillary The capillary
+	 * @param xlsResults The XLS results to populate
+	 * @param binData The bin duration for the data
+	 * @param binExcel The bin duration for Excel output
+	 * @param subtractT0 Whether to subtract T0 value
+	 */
+	private void getLRDataFromCage(Experiment exp, Capillary capillary, XLSResults xlsResults,
+			long binData, long binExcel, boolean subtractT0) {
+		
+		int cageID = capillary.getCageID();
+		plugins.fmp.multicafe.fmp_experiment.cages.CageCapillariesComputation cageComp = 
+			exp.getCages().getCageComputation(cageID);
+		
+		if (cageComp == null) {
+			// No computation available, fall back to raw
+			XLSExportOptions fallbackOptions = new XLSExportOptions();
+			fallbackOptions.exportType = EnumXLSExport.TOPRAW;
+			xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+			return;
+		}
+		
+		// Determine which measure to use based on capillary side
+		String side = getCapillarySide(capillary);
+		plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure measure = null;
+		
+		if (side != null && (side.contains("L") || side.contains("1"))) {
+			// L capillary: use SUM
+			measure = cageComp.getSumMeasure();
+		} else if (side != null && (side.contains("R") || side.contains("2"))) {
+			// R capillary: use PI
+			measure = cageComp.getPIMeasure();
+		} else {
+			// Side unclear, try first capillary as L, second as R
+			java.util.List<plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary> caps = 
+				exp.getCages().getCageList().stream()
+					.filter(c -> c.getCageID() == cageID)
+					.findFirst()
+					.map(c -> c.getCapillaries().getList())
+					.orElse(java.util.Collections.emptyList());
+			
+			if (!caps.isEmpty() && caps.get(0) == capillary) {
+				measure = cageComp.getSumMeasure();
+			} else if (caps.size() >= 2 && caps.get(1) == capillary) {
+				measure = cageComp.getPIMeasure();
+			}
+		}
+		
+		if (measure != null && measure.polylineLevel != null && measure.polylineLevel.npoints > 0) {
+			// Get measures by binning polyline data (similar to getMeasures implementation)
+			plugins.fmp.multicafe.fmp_tools.Level2D polyline = measure.polylineLevel;
+			long maxMs = (polyline.npoints - 1) * binData;
+			int nOutputFrames = (int) (maxMs / binExcel) + 1;
+			
+			java.util.ArrayList<Integer> intData = new java.util.ArrayList<>(nOutputFrames);
+			for (int i = 0; i < nOutputFrames; i++) {
+				long timeMs = i * binExcel;
+				int index = (int) (timeMs / binData);
+				if (index >= 0 && index < polyline.npoints) {
+					intData.add((int) polyline.ypoints[index]);
+				} else {
+					intData.add(0);
+				}
+			}
+			
+			if (intData != null && !intData.isEmpty()) {
+				// Convert Integer to Double
+				java.util.ArrayList<Double> dataValues = new java.util.ArrayList<>(intData.size());
+				int t0Value = 0;
+				
+				if (subtractT0 && intData.size() > 0) {
+					t0Value = intData.get(0);
+				}
+				
+				for (Integer intValue : intData) {
+					if (subtractT0) {
+						dataValues.add((double) (intValue - t0Value));
+					} else {
+						dataValues.add(intValue.doubleValue());
+					}
+				}
+				
+				xlsResults.setDataValues(dataValues);
+				return;
+			}
+		}
+		
+		// Fallback to raw if computation failed
+		XLSExportOptions fallbackOptions = new XLSExportOptions();
+		fallbackOptions.exportType = EnumXLSExport.TOPRAW;
+		xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+	}
+	
+	/**
+	 * Helper method to determine capillary side from capSide or name.
+	 */
+	private String getCapillarySide(plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary cap) {
+		if (cap.capSide != null && !cap.capSide.equals("."))
+			return cap.capSide;
+		// Try to get from name
+		String name = cap.getRoiName();
+		if (name != null) {
+			name = name.toUpperCase();
+			if (name.contains("L") || name.contains("1"))
+				return "L";
+			if (name.contains("R") || name.contains("2"))
+				return "R";
+		}
+		return "";
 	}
 
 	/**

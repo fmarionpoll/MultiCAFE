@@ -40,6 +40,10 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 public class CagesArray {
 	public ArrayList<Cage> cagesList = new ArrayList<Cage>();
 	private TIntervalsArray cagesListTimeIntervals = null;
+	
+	// Transient map to store CageCapillariesComputation instances for each cage
+	// This allows efficient access to computed L+R measures
+	private transient java.util.Map<Integer, CageCapillariesComputation> cageComputations = new java.util.HashMap<>();
 
 	public int nCagesAlongX = 6;
 	public int nCagesAlongY = 8;
@@ -1237,6 +1241,76 @@ public class CagesArray {
 	public void cleanUpSpotNames() {
 		for (Cage cage : cagesList) {
 			cage.cleanUpSpotNames();
+		}
+	}
+
+	// --------------------------------------------------------
+	// Capillary measure computation methods - delegated to CagesArrayCapillariesComputation
+
+	/**
+	 * Computes evaporation correction for all capillaries across all cages.
+	 * Delegates to CagesArrayCapillariesComputation.
+	 * 
+	 * @param exp The experiment containing all capillaries
+	 */
+	public void computeEvaporationCorrection(Experiment exp) {
+		CagesArrayCapillariesComputation computation = new CagesArrayCapillariesComputation(this);
+		computation.computeEvaporationCorrection(exp);
+	}
+
+	/**
+	 * Computes L+R measures (SUM and PI) for capillaries within each cage.
+	 * Delegates to CageCapillariesComputation for each cage.
+	 * Stores computation instances in a transient map for later access.
+	 * 
+	 * @param exp The experiment
+	 * @param threshold Minimum SUM value required to compute PI
+	 */
+	public void computeLRMeasures(Experiment exp, double threshold) {
+		if (exp == null)
+			return;
+
+		exp.dispatchCapillariesToCages();
+		
+		// Clear existing computations
+		if (cageComputations != null) {
+			cageComputations.clear();
+		} else {
+			cageComputations = new java.util.HashMap<>();
+		}
+
+		for (Cage cage : cagesList) {
+			CageCapillariesComputation cageComputation = new CageCapillariesComputation(cage);
+			cageComputation.computeLRMeasures(threshold);
+			// Store for later access
+			cageComputations.put(cage.getCageID(), cageComputation);
+		}
+	}
+	
+	/**
+	 * Gets the CageCapillariesComputation for a specific cage ID.
+	 * Returns null if computation hasn't been performed yet.
+	 * 
+	 * @param cageID The cage ID
+	 * @return The CageCapillariesComputation instance, or null if not computed
+	 */
+	public CageCapillariesComputation getCageComputation(int cageID) {
+		return cageComputations != null ? cageComputations.get(cageID) : null;
+	}
+
+	/**
+	 * Clears all computed measures from capillaries in all cages.
+	 */
+	public void clearComputedMeasures() {
+		CagesArrayCapillariesComputation computation = new CagesArrayCapillariesComputation(this);
+		computation.clearComputedMeasures();
+		
+		// Clear cage computations map
+		if (cageComputations != null) {
+			for (CageCapillariesComputation cageComp : cageComputations.values()) {
+				cageComp.clearComputedMeasures();
+			}
+			cageComputations.clear();
 		}
 	}
 }
