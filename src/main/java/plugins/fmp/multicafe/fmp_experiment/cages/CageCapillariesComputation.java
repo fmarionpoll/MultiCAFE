@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.fmp_experiment.cages;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -176,7 +177,7 @@ public class CageCapillariesComputation {
 		plugins.fmp.multicafe.fmp_tools.Level2D aggregatedPolyline = 
 			new plugins.fmp.multicafe.fmp_tools.Level2D(xpoints, sumY, maxPoints);
 		
-		CapillaryMeasure aggregated = new CapillaryMeasure("aggregated", -1, null);
+		CapillaryMeasure aggregated = new CapillaryMeasure("aggregated", -1, new ArrayList<Point2D>());
 		aggregated.polylineLevel = aggregatedPolyline;
 		
 		return aggregated;
@@ -224,11 +225,11 @@ public class CageCapillariesComputation {
 			new plugins.fmp.multicafe.fmp_tools.Level2D(xpoints, piY, npoints);
 		
 		String cageName = cage.prop.getStrCageNumber();
-		CapillaryMeasure sumMeasure = new CapillaryMeasure(cageName + "_SUM", -1, null);
+		CapillaryMeasure sumMeasure = new CapillaryMeasure(cageName + "_SUM", -1, new ArrayList<Point2D>());
 		sumMeasure.polylineLevel = sumPolyline;
 		computedMeasures.put("SUM", sumMeasure);
 		
-		CapillaryMeasure piMeasure = new CapillaryMeasure(cageName + "_PI", -1, null);
+		CapillaryMeasure piMeasure = new CapillaryMeasure(cageName + "_PI", -1, new ArrayList<Point2D>());
 		piMeasure.polylineLevel = piPolyline;
 		computedMeasures.put("PI", piMeasure);
 	}

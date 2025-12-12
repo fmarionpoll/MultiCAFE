@@ -1,35 +1,39 @@
 package plugins.fmp.multicafe.fmp_experiment.cages;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
+import plugins.fmp.multicafe.fmp_tools.Level2D;
 
 /**
- * Handles experiment-wide capillary measure computations that require access to all cages.
- * This includes evaporation correction which needs to find all capillaries with nFlies=0
- * across all cages to compute the average evaporation.
+ * Handles experiment-wide capillary measure computations that require access to
+ * all cages. This includes evaporation correction which needs to find all
+ * capillaries with nFlies=0 across all cages to compute the average
+ * evaporation.
  * 
  * @author MultiSPOTS96
  * @version 2.3.3
  */
 public class CagesArrayCapillariesComputation {
-	
+
 	private final CagesArray cagesArray;
-	
+
 	public CagesArrayCapillariesComputation(CagesArray cagesArray) {
 		if (cagesArray == null) {
 			throw new IllegalArgumentException("CagesArray cannot be null");
 		}
 		this.cagesArray = cagesArray;
 	}
-	
+
 	/**
-	 * Computes evaporation correction for all capillaries across all cages.
-	 * For capillaries with capNFlies == 0, computes average evaporation separately for L and R sides.
-	 * Subtracts the average evaporation from ptsTop to create ptsTopCorrected.
+	 * Computes evaporation correction for all capillaries across all cages. For
+	 * capillaries with capNFlies == 0, computes average evaporation separately for
+	 * L and R sides. Subtracts the average evaporation from ptsTop to create
+	 * ptsTopCorrected.
 	 * 
 	 * @param exp The experiment containing all capillaries
 	 */
@@ -46,7 +50,8 @@ public class CagesArrayCapillariesComputation {
 
 		for (Cage cage : cagesArray.getCageList()) {
 			for (Capillary cap : cage.getCapillaries().getList()) {
-				if (cap.capNFlies == 0 && cap.ptsTop != null && cap.ptsTop.polylineLevel != null && cap.ptsTop.polylineLevel.npoints > 0) {
+				if (cap.capNFlies == 0 && cap.ptsTop != null && cap.ptsTop.polylineLevel != null
+						&& cap.ptsTop.polylineLevel.npoints > 0) {
 					// Determine side from capSide or capillary name
 					String side = getCapillarySide(cap);
 					if (side.contains("L") || side.contains("1")) {
@@ -63,8 +68,8 @@ public class CagesArrayCapillariesComputation {
 		}
 
 		// Compute average evaporation for L and R sides
-		plugins.fmp.multicafe.fmp_tools.Level2D avgEvapL = computeAverageMeasure(zeroFliesCapillariesL);
-		plugins.fmp.multicafe.fmp_tools.Level2D avgEvapR = computeAverageMeasure(zeroFliesCapillariesR);
+		Level2D avgEvapL = computeAverageMeasure(zeroFliesCapillariesL);
+		Level2D avgEvapR = computeAverageMeasure(zeroFliesCapillariesR);
 
 		// Apply evaporation correction to all capillaries
 		for (Cage cage : cagesArray.getCageList()) {
@@ -73,7 +78,7 @@ public class CagesArrayCapillariesComputation {
 					continue;
 
 				String side = getCapillarySide(cap);
-				plugins.fmp.multicafe.fmp_tools.Level2D avgEvap = null;
+				Level2D avgEvap = null;
 				if (side.contains("L") || side.contains("1")) {
 					avgEvap = avgEvapL;
 				} else if (side.contains("R") || side.contains("2")) {
@@ -119,8 +124,7 @@ public class CagesArrayCapillariesComputation {
 		return "";
 	}
 
-	private plugins.fmp.multicafe.fmp_tools.Level2D computeAverageMeasure(
-			List<Capillary> capillaries) {
+	private Level2D computeAverageMeasure(List<Capillary> capillaries) {
 		if (capillaries == null || capillaries.isEmpty())
 			return null;
 
@@ -148,7 +152,7 @@ public class CagesArrayCapillariesComputation {
 		for (Capillary cap : capillaries) {
 			if (cap.ptsTop == null || cap.ptsTop.polylineLevel == null || cap.ptsTop.polylineLevel.npoints == 0)
 				continue;
-			plugins.fmp.multicafe.fmp_tools.Level2D polyline = cap.ptsTop.polylineLevel;
+			Level2D polyline = cap.ptsTop.polylineLevel;
 			if (polyline == null)
 				continue;
 
@@ -170,16 +174,15 @@ public class CagesArrayCapillariesComputation {
 				avgY[i] = 0.0;
 		}
 
-		return new plugins.fmp.multicafe.fmp_tools.Level2D(xpoints, avgY, maxPoints);
+		return new Level2D(xpoints, avgY, maxPoints);
 	}
 
-	private CapillaryMeasure subtractEvaporation(
-			CapillaryMeasure original,
-			plugins.fmp.multicafe.fmp_tools.Level2D evaporation) {
-		if (original == null || original.polylineLevel == null || original.polylineLevel.npoints == 0 || evaporation == null)
+	private CapillaryMeasure subtractEvaporation(CapillaryMeasure original, Level2D evaporation) {
+		if (original == null || original.polylineLevel == null || original.polylineLevel.npoints == 0
+				|| evaporation == null)
 			return null;
 
-		plugins.fmp.multicafe.fmp_tools.Level2D polyline = original.polylineLevel;
+		Level2D polyline = original.polylineLevel;
 		if (polyline == null)
 			return null;
 
@@ -192,15 +195,11 @@ public class CagesArrayCapillariesComputation {
 			correctedY[i] = polyline.ypoints[i] - evaporation.ypoints[i];
 		}
 
-		plugins.fmp.multicafe.fmp_tools.Level2D correctedPolyline = 
-			new plugins.fmp.multicafe.fmp_tools.Level2D(xpoints, correctedY, npoints);
+		Level2D correctedPolyline = new Level2D(xpoints, correctedY, npoints);
 
-		CapillaryMeasure corrected = 
-			new CapillaryMeasure(original.capName + "_corrected", -1, null);
+		CapillaryMeasure corrected = new CapillaryMeasure(original.capName + "_corrected", -1, new ArrayList<Point2D>());
 		corrected.polylineLevel = correctedPolyline;
 
 		return corrected;
 	}
 }
-
-

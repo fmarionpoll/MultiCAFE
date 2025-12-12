@@ -266,3 +266,4 @@ All chart/graph display code continues to work as before, using the same data ac
 The graph and chart methods were not modified because they access capillary data directly through existing methods (`getCapillaryMeasuresForXLSPass1()`, etc.) which continue to work for non-L+R measures. L+R measures are only needed for export, not for display.
 
 
+

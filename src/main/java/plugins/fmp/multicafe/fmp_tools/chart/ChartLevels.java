@@ -228,6 +228,23 @@ public class ChartLevels extends IcyFrame {
 
 	private XLSResultsArray getDataAsResultsArray(Experiment exp, EnumXLSExport exportType,
 			boolean subtractEvaporation) {
+		// Dispatch capillaries to cages for computation
+		exp.dispatchCapillariesToCages();
+
+		// Compute evaporation correction if needed (for TOPLEVEL exports)
+		if (subtractEvaporation && exportType == EnumXLSExport.TOPLEVEL) {
+			exp.getCages().computeEvaporationCorrection(exp);
+		}
+
+		// Compute L+R measures if needed (must be done after evaporation correction)
+		if (exportType == EnumXLSExport.TOPLEVEL_LR) {
+			// Use default threshold of 0.0 for chart display
+			if (subtractEvaporation) {
+				exp.getCages().computeEvaporationCorrection(exp);
+			}
+			exp.getCages().computeLRMeasures(exp, 0.0);
+		}
+
 		XLSExportOptions options = new XLSExportOptions();
 		long kymoBin_ms = exp.getKymoBin_ms();
 		if (kymoBin_ms <= 0) {

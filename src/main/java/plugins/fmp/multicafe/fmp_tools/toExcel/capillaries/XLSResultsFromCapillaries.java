@@ -74,8 +74,9 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 			}
 		}
 
-		if (correctEvaporation && exportType == EnumXLSExport.TOPLEVEL)
-			compensateEvaporation(resultsArray);
+		// Note: Evaporation compensation is now handled by CagesArray.computeEvaporationCorrection()
+		// which should be called before this method. The old compensateEvaporation() method
+		// has been deprecated in favor of the new computation-based approach.
 
 		return resultsArray;
 	}
