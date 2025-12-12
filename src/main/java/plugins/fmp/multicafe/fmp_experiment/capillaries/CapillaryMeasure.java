@@ -105,12 +105,16 @@ public class CapillaryMeasure {
 	ArrayList<Integer> getMeasures(long seriesBinMs, long outputBinMs) {
 		if (polylineLevel == null || polylineLevel.npoints == 0)
 			return null;
+		if (seriesBinMs <= 0 || outputBinMs <= 0)
+			return null;
 		long maxMs = (polylineLevel.ypoints.length - 1) * seriesBinMs;
 		long npoints = (maxMs / outputBinMs) + 1;
 		ArrayList<Integer> arrayInt = new ArrayList<Integer>((int) npoints);
 		for (double iMs = 0; iMs <= maxMs; iMs += outputBinMs) {
 			int index = (int) (iMs / seriesBinMs);
-			arrayInt.add((int) polylineLevel.ypoints[index]);
+			if (index >= 0 && index < polylineLevel.npoints) {
+				arrayInt.add((int) polylineLevel.ypoints[index]);
+			}
 		}
 		return arrayInt;
 	}

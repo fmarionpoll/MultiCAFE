@@ -13,7 +13,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
+import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
@@ -187,7 +187,15 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 			for (Capillary capillary : cage.getCapillaries().getList()) {
 				pt.y = 0;
 				pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, cage, capillary, xlsExportType);
-				XLSResults xlsResults = getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, options,
+				
+				// Create a copy of options with the correct exportType for this specific export
+				XLSExportOptions capOptions = new XLSExportOptions();
+				capOptions.buildExcelStepMs = options.buildExcelStepMs;
+				capOptions.relativeToT0 = options.relativeToT0;
+				capOptions.correctEvaporation = options.correctEvaporation;
+				capOptions.exportType = xlsExportType; // Use the parameter, not the field
+				
+				Results xlsResults = getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary, capOptions,
 						subtractT0);
 				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
 				writeXLSResult(sheet, pt, xlsResults);
@@ -206,9 +214,9 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 * @param subtractT0       Whether to subtract T0 value
 	 * @return The XLS results
 	 */
-	public XLSResults getXLSResultsDataValuesFromCapillaryMeasures(Experiment exp, Capillary capillary,
+	public Results getXLSResultsDataValuesFromCapillaryMeasures(Experiment exp, Capillary capillary,
 			XLSExportOptions xlsExportOptions, boolean subtractT0) {
-		XLSResults xlsResults = new XLSResults(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
+		Results xlsResults = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
 				xlsExportOptions.exportType);
 
 		xlsResults.setStimulus(capillary.capStimulus);
@@ -217,6 +225,14 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		// Get bin durations
 		long binData = exp.getKymoBin_ms();
 		long binExcel = xlsExportOptions.buildExcelStepMs;
+		
+		// Validate bin sizes to prevent division by zero
+		if (binData <= 0) {
+			binData = 60000; // Default to 60 seconds if invalid
+		}
+		if (binExcel <= 0) {
+			binExcel = binData; // Default to binData if invalid
+		}
 		
 		// For TOPLEVEL_LR, read from CageCapillariesComputation instead of capillary
 		if (xlsExportOptions.exportType == EnumXLSExport.TOPLEVEL_LR) {
@@ -250,7 +266,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 * @param binExcel The bin duration for Excel output
 	 * @param subtractT0 Whether to subtract T0 value
 	 */
-	private void getLRDataFromCage(Experiment exp, Capillary capillary, XLSResults xlsResults,
+	private void getLRDataFromCage(Experiment exp, Capillary capillary, Results xlsResults,
 			long binData, long binExcel, boolean subtractT0) {
 		
 		int cageID = capillary.getCageID();
@@ -293,6 +309,13 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		
 		if (measure != null && measure.polylineLevel != null && measure.polylineLevel.npoints > 0) {
 			// Get measures by binning polyline data (similar to getMeasures implementation)
+			if (binData <= 0 || binExcel <= 0) {
+				// Invalid bin sizes, fall back to raw
+				XLSExportOptions fallbackOptions = new XLSExportOptions();
+				fallbackOptions.exportType = EnumXLSExport.TOPRAW;
+				xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+				return;
+			}
 			plugins.fmp.multicafe.fmp_tools.Level2D polyline = measure.polylineLevel;
 			long maxMs = (polyline.npoints - 1) * binData;
 			int nOutputFrames = (int) (maxMs / binExcel) + 1;

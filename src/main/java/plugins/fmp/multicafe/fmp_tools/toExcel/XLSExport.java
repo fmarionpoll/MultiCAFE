@@ -20,7 +20,7 @@ import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
+import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelDataException;
@@ -473,7 +473,7 @@ public abstract class XLSExport {
 	 * @param pt        The starting point
 	 * @param xlsResult The results to write
 	 */
-	protected void writeXLSResult(SXSSFSheet sheet, Point pt, XLSResults xlsResult) {
+	protected void writeXLSResult(SXSSFSheet sheet, Point pt, Results xlsResult) {
 		boolean transpose = options.transpose;
 
 		if (xlsResult.getValuesOutLength() < 1) {

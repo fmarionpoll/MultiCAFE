@@ -10,7 +10,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
+import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
@@ -139,7 +139,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		for (Capillary capillary : exp.getCapillaries().getList()) {
 			pt.y = 0;
 			pt = writeExperimentGulpInfos(sheet, pt, exp, charSeries, capillary, xlsExportType);
-			XLSResults xlsResults = getXLSResultsDataValuesFromGulpMeasures(exp, capillary, options);
+			Results xlsResults = getXLSResultsDataValuesFromGulpMeasures(exp, capillary, options);
 			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
 			writeXLSResult(sheet, pt, xlsResults);
 			pt.x++;
@@ -155,12 +155,12 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * @param xlsExportOptions The export options
 	 * @return The XLS results
 	 */
-	public XLSResults getXLSResultsDataValuesFromGulpMeasures(Experiment exp, Capillary capillary,
+	public Results getXLSResultsDataValuesFromGulpMeasures(Experiment exp, Capillary capillary,
 			XLSExportOptions xlsExportOptions) {
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
 
 		// Create XLSResults with capillary properties
-		XLSResults xlsResults = new XLSResults(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
+		Results xlsResults = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
 				xlsExportOptions.exportType);
 		xlsResults.setStimulus(capillary.capStimulus);
 		xlsResults.setConcentration(capillary.capConcentration);

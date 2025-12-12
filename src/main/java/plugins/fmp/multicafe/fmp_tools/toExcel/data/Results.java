@@ -15,7 +15,7 @@ import plugins.fmp.multicafe.fmp_experiment.spots.SpotProperties;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 
-public class XLSResults {
+public class Results {
 	private String name = null;
 	private String stimulus = null;
 	private String concentration = null;
@@ -35,7 +35,7 @@ public class XLSResults {
 	public double[] valuesOut = null;
 
 	
-	public XLSResults(String name, int nflies, int cellID, EnumXLSExport exportType) {
+	public Results(String name, int nflies, int cellID, EnumXLSExport exportType) {
 		this.name = name;
 		this.nflies = nflies;
 		this.cageID = cellID;
@@ -43,14 +43,14 @@ public class XLSResults {
 	}
 
 
-	public XLSResults(String name, int nflies, int cageID, int cagePos, EnumXLSExport exportType) {
+	public Results(String name, int nflies, int cageID, int cagePos, EnumXLSExport exportType) {
 		this.name = name;
 		this.nflies = nflies;
 		this.cageID = cageID;
 		this.cagePosition = cagePos;
 	}
 
-	public XLSResults(CageProperties cageProperties, SpotProperties spotProperties, int nFrames) {
+	public Results(CageProperties cageProperties, SpotProperties spotProperties, int nFrames) {
 		this.name = spotProperties.getName();
 		this.color = spotProperties.getColor();
 		this.nflies = cageProperties.getCageNFlies();
@@ -316,7 +316,7 @@ public class XLSResults {
 		}
 	}
 
-	public void copyValuesOut(XLSResults sourceRow) {
+	public void copyValuesOut(Results sourceRow) {
 		if (sourceRow.valuesOut.length != valuesOut.length) {
 			this.valuesOutLength = sourceRow.valuesOutLength;
 			valuesOut = new double[valuesOutLength];
@@ -372,7 +372,7 @@ public class XLSResults {
 	
 	// ------------------------------
 
-	public void addDataToValOutEvap(XLSResults result) {
+	public void addDataToValOutEvap(Results result) {
 		if (result.valuesOut.length > valuesOut.length) {
 			System.out.println("XLSResults:addDataToValOutEvap() Error: from len=" + result.valuesOut.length
 					+ " to len=" + valuesOut.length);
@@ -394,7 +394,7 @@ public class XLSResults {
 		nflies = 1;
 	}
 
-	public void subtractEvap(XLSResults evap) {
+	public void subtractEvap(Results evap) {
 		if (valuesOut == null)
 			return;
 		int len = Math.min(valuesOut.length, evap.valuesOut.length);
@@ -403,7 +403,7 @@ public class XLSResults {
 		}
 	}
 
-	void sumValues_out(XLSResults dataToAdd) {
+	void sumValues_out(Results dataToAdd) {
 		int len = Math.min(valuesOut.length, dataToAdd.valuesOut.length);
 		for (int i = 0; i < len; i++) {
 			valuesOut[i] += dataToAdd.valuesOut[i];
@@ -439,9 +439,9 @@ public class XLSResults {
 		return index;
 	}
 
-	public static XLSResults getResultsArrayWithThatName(String testname, XLSResultsArray resultsArrayList) {
-		XLSResults resultsFound = null;
-		for (XLSResults results : resultsArrayList.resultsList) {
+	public static Results getResultsArrayWithThatName(String testname, ResultsArray resultsArrayList) {
+		Results resultsFound = null;
+		for (Results results : resultsArrayList.resultsList) {
 			if (results.name.equals(testname)) {
 				resultsFound = results;
 				break;

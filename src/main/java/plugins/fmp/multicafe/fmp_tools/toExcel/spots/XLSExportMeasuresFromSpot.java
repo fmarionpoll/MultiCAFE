@@ -12,7 +12,7 @@ import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
+import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
@@ -97,7 +97,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				pt.y = 0;
 				pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
-				XLSResults xlsResults = getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot, options);
+				Results xlsResults = getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot, options);
 				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
 				writeXLSResult(sheet, pt, xlsResults);
 				pt.x++;
@@ -115,7 +115,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 	 * @param xlsExportType The export type
 	 * @return The XLS results
 	 */
-	public XLSResults getXLSResultsDataValuesFromSpotMeasures(Experiment exp, Cage cage, Spot spot,
+	public Results getXLSResultsDataValuesFromSpotMeasures(Experiment exp, Cage cage, Spot spot,
 			XLSExportOptions xlsExportOptions) {
 		/*
 		 * 1) get n input frames for signal between timefirst and time last; locate
@@ -124,7 +124,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 		 */
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
 
-		XLSResults xlsResults = new XLSResults(cage.getProperties(), spot.getProperties(), nOutputFrames);
+		Results xlsResults = new Results(cage.getProperties(), spot.getProperties(), nOutputFrames);
 
 		long binData = exp.getSeqCamData().getTimeManager().getBinDurationMs();
 		long binExcel = xlsExportOptions.buildExcelStepMs;

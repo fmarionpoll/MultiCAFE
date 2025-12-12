@@ -14,7 +14,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
+import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumColumnType;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLS_QueryColumnHeader;
@@ -202,23 +202,23 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 
 			Spot spot1 = cage.combineSpotsWithSameStimConc(stim1, conc1);
-			XLSResults xlsStim1 = getResultForCage(exp, cage, spot1, scalingFactorToPhysicalUnits, xlsExportOptions,
+			Results xlsStim1 = getResultForCage(exp, cage, spot1, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
 			if (spot1 != null)
 				cage.getProperties().setCountSpotsStim1(spot1.getProperties().getCountAggregatedSpots());
 
 			Spot spot2 = cage.combineSpotsWithSameStimConc(stim2, conc2);
-			XLSResults xlsStim2 = getResultForCage(exp, cage, spot2, scalingFactorToPhysicalUnits, xlsExportOptions,
+			Results xlsStim2 = getResultForCage(exp, cage, spot2, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
 			if (spot2 != null)
 				cage.getProperties().setCountSpotsStim2(spot2.getProperties().getCountAggregatedSpots());
 
 			Spot spotSUM = cage.createSpotSUM(spot1, spot2);
-			XLSResults xlsSUM = getResultForCage(exp, cage, spotSUM, scalingFactorToPhysicalUnits, xlsExportOptions,
+			Results xlsSUM = getResultForCage(exp, cage, spotSUM, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
 
 			Spot spotPI = cage.createSpotPI(spot1, spot2);
-			XLSResults xlsPI = getResultForCage(exp, cage, spotPI, scalingFactorToPhysicalUnits, xlsExportOptions,
+			Results xlsPI = getResultForCage(exp, cage, spotPI, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
 
 			int tStart = 0;
@@ -245,9 +245,9 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		return pt.x;
 	}
 
-	XLSResults getResultForCage(Experiment exp, Cage cage, Spot spot, double scaling, XLSExportOptions xlsExportOptions,
+	Results getResultForCage(Experiment exp, Cage cage, Spot spot, double scaling, XLSExportOptions xlsExportOptions,
 			EnumXLSExport xlsExportType) {
-		XLSResults xlsResults = null;
+		Results xlsResults = null;
 		if (spot != null) {
 			xlsResults = getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot, xlsExportOptions);
 			xlsResults.transferDataValuesToValuesOut(scaling, xlsExportType);
@@ -273,8 +273,8 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		}
 	}
 
-	void writeCageMeasuresAtT(SXSSFSheet sheet, Point pt, int t, XLSResults xlsStim1, XLSResults xlsStim2,
-			XLSResults xlsPI, XLSResults xlsSUM, EnumXLSExport xlsExportType) {
+	void writeCageMeasuresAtT(SXSSFSheet sheet, Point pt, int t, Results xlsStim1, Results xlsStim2,
+			Results xlsPI, Results xlsSUM, EnumXLSExport xlsExportType) {
 		pt.y = EnumXLS_QueryColumnHeader.VAL_TIME.getValue();
 		XLSUtils.setValue(sheet, pt, options.transpose, t);
 
@@ -290,7 +290,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		pt.y++;
 	}
 
-	void writeDataToXLS(SXSSFSheet sheet, Point pt, int t, XLSResults xlsResult) {
+	void writeDataToXLS(SXSSFSheet sheet, Point pt, int t, Results xlsResult) {
 		if (xlsResult == null)
 			return;
 		double value = xlsResult.getValuesOut()[t];

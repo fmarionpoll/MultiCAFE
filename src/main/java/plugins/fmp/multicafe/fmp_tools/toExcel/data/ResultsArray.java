@@ -5,32 +5,32 @@ import java.util.Collections;
 
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 
-public class XLSResultsArray {
-	protected ArrayList<XLSResults> resultsList = null;
+public class ResultsArray {
+	protected ArrayList<Results> resultsList = null;
 	String stim = null;
 	String conc = null;
 	double lowestPiAllowed = -1.2;
 	double highestPiAllowed = 1.2;
 
-	public XLSResultsArray(int size) {
-		resultsList = new ArrayList<XLSResults>(size);
+	public ResultsArray(int size) {
+		resultsList = new ArrayList<Results>(size);
 	}
 
-	public XLSResultsArray() {
-		resultsList = new ArrayList<XLSResults>();
+	public ResultsArray() {
+		resultsList = new ArrayList<Results>();
 	}
 
 	public int size() {
 		return resultsList.size();
 	}
 
-	public XLSResults getRow(int index) {
+	public Results getRow(int index) {
 		if (index >= resultsList.size())
 			return null;
 		return resultsList.get(index);
 	}
 
-	public void addRow(XLSResults results) {
+	public void addRow(Results results) {
 		resultsList.add(results);
 	}
 
@@ -39,11 +39,11 @@ public class XLSResultsArray {
 	}
 
 	public void subtractDeltaT(int i, int j) {
-		for (XLSResults row : resultsList)
+		for (Results row : resultsList)
 			row.subtractDeltaT(1, 1); // options.buildExcelStepMs);
 	}
 
-	public ArrayList<XLSResults> getList() {
+	public ArrayList<Results> getList() {
 		return resultsList;
 	}
 

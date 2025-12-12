@@ -10,7 +10,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPosition;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
+import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 
 public class Comparators {
 	/** Logger for this class */
@@ -146,9 +146,9 @@ public class Comparators {
 	 * Comparator for XLSResults objects based on their names. Handles null values
 	 * by treating them as greater than non-null values.
 	 */
-	public static class XLSResults_Name implements Comparator<XLSResults> {
+	public static class XLSResults_Name implements Comparator<Results> {
 		@Override
-		public int compare(XLSResults o1, XLSResults o2) {
+		public int compare(Results o1, Results o2) {
 			if (o1 == null && o2 == null) {
 				return 0;
 			}

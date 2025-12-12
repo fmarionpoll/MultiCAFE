@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.fmp_tools.toExcel.capillaries;
+package plugins.fmp.multicafe.fmp_tools.toExcel.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,28 +11,42 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResultsArray;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 
-public class XLSResultsFromCapillaries extends XLSResultsArray {
+public class ResultsFromCapillaries extends ResultsArray {
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(XLSResultsFromCapillaries.class.getName());
-	XLSResults evapL = null;
-	XLSResults evapR = null;
+	private static final Logger LOGGER = Logger.getLogger(ResultsFromCapillaries.class.getName());
+	Results evapL = null;
+	Results evapR = null;
 	boolean sameLR = true;
 	String stim = null;
 	String conc = null;
 	double lowestPiAllowed = -1.2;
 	double highestPiAllowed = 1.2;
 
-	public XLSResultsFromCapillaries(int size) {
-		resultsList = new ArrayList<XLSResults>(size);
+	public ResultsFromCapillaries(int size) {
+		resultsList = new ArrayList<Results>(size);
 	}
 
-	public XLSResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumXLSExport exportType,
+	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumXLSExport exportType,
 			boolean correctEvaporation) {
-		XLSResultsArray resultsArray = new XLSResultsArray();
+		// Dispatch capillaries to cages first
+		exp.dispatchCapillariesToCages();
+		
+		// Compute evaporation correction if needed (for TOPLEVEL exports)
+		if (correctEvaporation && exportType == EnumXLSExport.TOPLEVEL) {
+			exp.getCages().computeEvaporationCorrection(exp);
+		}
+		
+		// Compute L+R measures if needed (must be done after evaporation correction)
+		if (exportType == EnumXLSExport.TOPLEVEL_LR) {
+			if (correctEvaporation) {
+				exp.getCages().computeEvaporationCorrection(exp);
+			}
+			exp.getCages().computeLRMeasures(exp, 0.0); // Use default threshold of 0.0 for chart/display
+		}
+		
+		ResultsArray resultsArray = new ResultsArray();
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
 		XLSExportMeasuresFromCapillary xlsExport = new XLSExportMeasuresFromCapillary();
 
@@ -63,7 +77,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 			capOptions.exportType = exportType;
 
 			try {
-				XLSResults xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary,
+				Results xlsResults = xlsExport.getXLSResultsDataValuesFromCapillaryMeasures(exp, capillary,
 						capOptions, false);
 				if (xlsResults != null) {
 					xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
@@ -81,9 +95,9 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		return resultsArray;
 	}
 
-	public void compensateEvaporation(XLSResultsArray resultsArray) {
+	public void compensateEvaporation(ResultsArray resultsArray) {
 		int dimension = 0;
-		for (XLSResults result : resultsArray.getList()) {
+		for (Results result : resultsArray.getList()) {
 			if (result.valuesOut == null)
 				continue;
 			if (result.valuesOut.length > dimension)
@@ -96,13 +110,13 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		subtractEvaporationLocal(resultsArray);
 	}
 
-	private void computeEvaporationFromResultsWithZeroFlies(XLSResultsArray resultsArray, int dimension) {
-		evapL = new XLSResults("L", 0, 0, null);
-		evapR = new XLSResults("R", 0, 0, null);
+	private void computeEvaporationFromResultsWithZeroFlies(ResultsArray resultsArray, int dimension) {
+		evapL = new Results("L", 0, 0, null);
+		evapR = new Results("R", 0, 0, null);
 		evapL.initValuesOutArray(dimension, 0.);
 		evapR.initValuesOutArray(dimension, 0.);
 
-		for (XLSResults result : resultsArray.getList()) {
+		for (Results result : resultsArray.getList()) {
 			if (result.valuesOut == null || result.getNflies() != 0)
 				continue;
 			String side = result.getName().substring(result.getName().length() - 1);
@@ -115,8 +129,8 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		evapR.averageEvaporation();
 	}
 
-	private void subtractEvaporationLocal(XLSResultsArray resultsArray) {
-		for (XLSResults result : resultsArray.getList()) {
+	private void subtractEvaporationLocal(ResultsArray resultsArray) {
+		for (Results result : resultsArray.getList()) {
 			String side = result.getName().substring(result.getName().length() - 1);
 			if (sameLR || side.contains("L"))
 				result.subtractEvap(evapL);
@@ -129,7 +143,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 
 	public void subtractEvaporation() {
 		int dimension = 0;
-		for (XLSResults result : resultsList) {
+		for (Results result : resultsList) {
 			if (result.valuesOut == null)
 				continue;
 			if (result.valuesOut.length > dimension)
@@ -143,12 +157,12 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 	}
 
 	private void computeEvaporationFromResultsWithZeroFlies(int dimension) {
-		evapL = new XLSResults("L", 0, 0, null);
-		evapR = new XLSResults("R", 0, 0, null);
+		evapL = new Results("L", 0, 0, null);
+		evapR = new Results("R", 0, 0, null);
 		evapL.initValuesOutArray(dimension, 0.);
 		evapR.initValuesOutArray(dimension, 0.);
 
-		for (XLSResults result : resultsList) {
+		for (Results result : resultsList) {
 			if (result.valuesOut == null || result.getNflies() != 0)
 				continue;
 			String side = result.getName().substring(result.getName().length() - 1);
@@ -162,7 +176,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 	}
 
 	private void subtractEvaporationLocal() {
-		for (XLSResults result : resultsList) {
+		for (Results result : resultsList) {
 			String side = result.getName().substring(result.getName().length() - 1);
 			if (sameLR || side.contains("L"))
 				result.subtractEvap(evapL);
@@ -171,13 +185,13 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		}
 	}
 
-	private int getLen(XLSResults rowL, XLSResults rowR) {
+	private int getLen(Results rowL, Results rowR) {
 		int lenL = rowL.valuesOut.length;
 		int lenR = rowR.valuesOut.length;
 		return Math.min(lenL, lenR);
 	}
 
-	public void getPI_and_SUM_from_LR(XLSResults rowL, XLSResults rowR, double threshold) {
+	public void getPI_and_SUM_from_LR(Results rowL, Results rowR, double threshold) {
 		int len = getLen(rowL, rowR);
 		for (int index = 0; index < len; index++) {
 			double dataL = rowL.valuesOut[index];
@@ -193,7 +207,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		}
 	}
 
-	void getMinTimeToGulpLR(XLSResults rowL, XLSResults rowR, XLSResults rowOut) {
+	void getMinTimeToGulpLR(Results rowL, Results rowR, Results rowOut) {
 		int len = getLen(rowL, rowR);
 		for (int index = 0; index < len; index++) {
 			double dataMax = Double.NaN;
@@ -207,7 +221,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		}
 	}
 
-	void getMaxTimeToGulpLR(XLSResults rowL, XLSResults rowR, XLSResults rowOut) {
+	void getMaxTimeToGulpLR(Results rowL, Results rowR, Results rowOut) {
 		int len = getLen(rowL, rowR);
 		for (int index = 0; index < len; index++) {
 			double dataMin = Double.NaN;
@@ -247,7 +261,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
 		for (Capillary cap : caps.getList()) {
 			checkIfSameStimulusAndConcentration(cap);
-			XLSResults results = new XLSResults(cap.getRoiName(), cap.capNFlies, cap.getCageID(),
+			Results results = new Results(cap.getRoiName(), cap.capNFlies, cap.getCageID(),
 					xlsExportOptions.exportType);
 			results.initValuesOutArray(nOutputFrames, null);
 			results.dataInt = cap.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
@@ -299,8 +313,8 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 
 	private void buildLR(double threshold) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
-			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRowIfSameCage(irow);
+			Results rowL = getRow(irow);
+			Results rowR = getNextRowIfSameCage(irow);
 			if (rowR != null && rowL != null) {
 				irow++;
 				getPI_and_SUM_from_LR(rowL, rowR, threshold);
@@ -310,22 +324,22 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 
 	private void buildAutocorrel(XLSExportOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
-			XLSResults rowL = getRow(irow);
+			Results rowL = getRow(irow);
 			correl(rowL, rowL, rowL, xlsExportOptions.nBinsCorrelation);
 		}
 	}
 
 	private void buildCrosscorrel(XLSExportOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
-			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRowIfSameCage(irow);
+			Results rowL = getRow(irow);
+			Results rowR = getNextRowIfSameCage(irow);
 			if (rowR != null) {
 				irow++;
-				XLSResults rowLtoR = new XLSResults("corrLtoR", 0, 0, null);
+				Results rowLtoR = new Results("corrLtoR", 0, 0, null);
 				rowLtoR.initValuesOutArray(rowL.dimension, 0.);
 				correl(rowL, rowR, rowLtoR, xlsExportOptions.nBinsCorrelation);
 
-				XLSResults rowRtoL = new XLSResults("corrRtoL", 0, 0, null);
+				Results rowRtoL = new Results("corrRtoL", 0, 0, null);
 				rowRtoL.initValuesOutArray(rowL.dimension, 0.);
 				correl(rowR, rowL, rowRtoL, xlsExportOptions.nBinsCorrelation);
 
@@ -337,12 +351,12 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 
 	private void buildCrosscorrelLR(XLSExportOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
-			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRowIfSameCage(irow);
+			Results rowL = getRow(irow);
+			Results rowR = getNextRowIfSameCage(irow);
 			if (rowR != null) {
 				irow++;
 
-				XLSResults rowLR = new XLSResults("corrLR", 0, 0, null);
+				Results rowLR = new Results("corrLR", 0, 0, null);
 				rowLR.initValuesOutArray(rowL.dimension, 0.);
 				combineIntervals(rowL, rowR, rowLR);
 
@@ -352,7 +366,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		}
 	}
 
-	private void correl(XLSResults row1, XLSResults row2, XLSResults rowOut, int nbins) {
+	private void correl(Results row1, Results row2, Results rowOut, int nbins) {
 		double[] sumBins = new double[2 * nbins + 1];
 		Arrays.fill(sumBins, 0);
 		double nitems = 0;
@@ -375,7 +389,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 			rowOut.valuesOut[i] = sumBins[i] / nitems;
 	}
 
-	private void combineIntervals(XLSResults row1, XLSResults row2, XLSResults rowOut) {
+	private void combineIntervals(Results row1, Results row2, Results rowOut) {
 		for (int i = 0; i < rowOut.valuesOut.length; i++) {
 			if ((row2.valuesOut[i] + row1.valuesOut[i]) > 0.)
 				rowOut.valuesOut[i] = 1.;
@@ -384,12 +398,12 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 
 	private void buildAutocorrelLR(XLSExportOptions xlsExportOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
-			XLSResults rowL = getRow(irow);
-			XLSResults rowR = getNextRowIfSameCage(irow);
+			Results rowL = getRow(irow);
+			Results rowR = getNextRowIfSameCage(irow);
 			if (rowR != null) {
 				irow++;
 
-				XLSResults rowLR = new XLSResults("LR", 0, 0, null);
+				Results rowLR = new Results("LR", 0, 0, null);
 				rowLR.initValuesOutArray(rowL.dimension, 0.);
 				combineIntervals(rowL, rowR, rowLR);
 
@@ -400,13 +414,13 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 	}
 
 	private void buildMarkovChain(XLSExportOptions xlsExportOptions) {
-		ArrayList<XLSResults> newResultsList = new ArrayList<XLSResults>();
-		Map<Integer, List<XLSResults>> cagesMap = groupResultsByCage();
+		ArrayList<Results> newResultsList = new ArrayList<Results>();
+		Map<Integer, List<Results>> cagesMap = groupResultsByCage();
 
-		for (Map.Entry<Integer, List<XLSResults>> entry : cagesMap.entrySet()) {
+		for (Map.Entry<Integer, List<Results>> entry : cagesMap.entrySet()) {
 			int cageID = entry.getKey();
-			List<XLSResults> cageResults = entry.getValue();
-			List<XLSResults> cageMarkovResults = processCageMarkovChain(cageID, cageResults, xlsExportOptions);
+			List<Results> cageResults = entry.getValue();
+			List<Results> cageMarkovResults = processCageMarkovChain(cageID, cageResults, xlsExportOptions);
 			if (cageMarkovResults != null)
 				newResultsList.addAll(cageMarkovResults);
 		}
@@ -416,9 +430,9 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		resultsList.addAll(newResultsList);
 	}
 
-	private Map<Integer, List<XLSResults>> groupResultsByCage() {
-		Map<Integer, List<XLSResults>> cagesMap = new HashMap<>();
-		for (XLSResults result : resultsList) {
+	private Map<Integer, List<Results>> groupResultsByCage() {
+		Map<Integer, List<Results>> cagesMap = new HashMap<>();
+		for (Results result : resultsList) {
 			if (result.valuesOut == null)
 				continue;
 			int cageID = result.getCageID();
@@ -430,10 +444,10 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		return cagesMap;
 	}
 
-	private List<XLSResults> processCageMarkovChain(int cageID, List<XLSResults> cageResults,
+	private List<Results> processCageMarkovChain(int cageID, List<Results> cageResults,
 			XLSExportOptions xlsExportOptions) {
-		XLSResults rowL = getResultSide(cageResults, "L");
-		XLSResults rowR = getResultSide(cageResults, "R");
+		Results rowL = getResultSide(cageResults, "L");
+		Results rowR = getResultSide(cageResults, "R");
 
 		if (rowL == null || rowR == null || rowL.valuesOut == null || rowR.valuesOut == null)
 			return null;
@@ -444,15 +458,15 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 
 		int[] states = computeStates(rowL, rowR, dimension);
 
-		List<XLSResults> results = new ArrayList<>();
+		List<Results> results = new ArrayList<>();
 		results.addAll(createStateRows(cageID, rowL, states, dimension, xlsExportOptions));
 		results.addAll(createTransitionRows(cageID, rowL, states, dimension, xlsExportOptions));
 
 		return results;
 	}
 
-	private XLSResults getResultSide(List<XLSResults> cageResults, String side) {
-		for (XLSResults result : cageResults) {
+	private Results getResultSide(List<Results> cageResults, String side) {
+		for (Results result : cageResults) {
 			String name = result.getName();
 			if (name != null && name.endsWith(side)) {
 				return result;
@@ -461,7 +475,7 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		return null;
 	}
 
-	private int[] computeStates(XLSResults rowL, XLSResults rowR, int dimension) {
+	private int[] computeStates(Results rowL, Results rowR, int dimension) {
 		int[] states = new int[dimension];
 		for (int t = 0; t < dimension; t++) {
 			int gulpL = (rowL.valuesOut[t] > 0) ? 1 : 0;
@@ -478,13 +492,13 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		return states;
 	}
 
-	private List<XLSResults> createStateRows(int cageID, XLSResults rowL, int[] states, int dimension,
+	private List<Results> createStateRows(int cageID, Results rowL, int[] states, int dimension,
 			XLSExportOptions xlsExportOptions) {
-		List<XLSResults> rows = new ArrayList<>();
+		List<Results> rows = new ArrayList<>();
 		String[] stateNames = { "Ls", "Rs", "LR", "N" };
 
 		for (int s = 0; s < 4; s++) {
-			XLSResults stateRow = new XLSResults("cage" + cageID + "_" + stateNames[s], rowL.getNflies(), cageID,
+			Results stateRow = new Results("cage" + cageID + "_" + stateNames[s], rowL.getNflies(), cageID,
 					xlsExportOptions.exportType);
 			stateRow.initValuesOutArray(dimension, null);
 			stateRow.setStimulus(rowL.getStimulus());
@@ -498,16 +512,16 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		return rows;
 	}
 
-	private List<XLSResults> createTransitionRows(int cageID, XLSResults rowL, int[] states, int dimension,
+	private List<Results> createTransitionRows(int cageID, Results rowL, int[] states, int dimension,
 			XLSExportOptions xlsExportOptions) {
-		List<XLSResults> rows = new ArrayList<>();
+		List<Results> rows = new ArrayList<>();
 		String[] transitionNames = { "Ls-Ls", "Rs-Ls", "LR-Ls", "N-Ls", "Ls-Rs", "Rs-Rs", "LR-Rs", "N-Rs", "Ls-LR",
 				"Rs-LR", "LR-LR", "N-LR", "Ls-N", "Rs-N", "LR-N", "N-N" };
 
 		int transitionIndex = 0;
 		for (int fromState = 0; fromState < 4; fromState++) {
 			for (int toState = 0; toState < 4; toState++) {
-				XLSResults transRow = new XLSResults("cage" + cageID + "_" + transitionNames[transitionIndex],
+				Results transRow = new Results("cage" + cageID + "_" + transitionNames[transitionIndex],
 						rowL.getNflies(), cageID, xlsExportOptions.exportType);
 				transRow.initValuesOutArray(dimension, null);
 				transRow.setStimulus(rowL.getStimulus());
@@ -526,10 +540,10 @@ public class XLSResultsFromCapillaries extends XLSResultsArray {
 		return rows;
 	}
 
-	public XLSResults getNextRowIfSameCage(int irow) {
-		XLSResults rowL = resultsList.get(irow);
+	public Results getNextRowIfSameCage(int irow) {
+		Results rowL = resultsList.get(irow);
 		int cellL = getCageFromKymoFileName(rowL.getName());
-		XLSResults rowR = null;
+		Results rowR = null;
 		if (irow + 1 < resultsList.size()) {
 			rowR = resultsList.get(irow + 1);
 			int cellR = getCageFromKymoFileName(rowR.getName());

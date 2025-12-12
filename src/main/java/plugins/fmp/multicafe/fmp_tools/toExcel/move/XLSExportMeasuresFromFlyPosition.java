@@ -12,7 +12,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.XLSResults;
+import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
@@ -137,7 +137,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 
 			pt.y = 0;
 			pt = writeExperimentFlyPositionInfos(sheet, pt, exp, charSeries, cage, xlsExportType);
-			XLSResults xlsResults = getXLSResultsDataValuesFromFlyPositionMeasures(exp, cage, flyPositions, options);
+			Results xlsResults = getXLSResultsDataValuesFromFlyPositionMeasures(exp, cage, flyPositions, options);
 			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
 			writeXLSResult(sheet, pt, xlsResults);
 			pt.x++;
@@ -154,12 +154,12 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @param xlsExportOptions The export options
 	 * @return The XLS results
 	 */
-	public XLSResults getXLSResultsDataValuesFromFlyPositionMeasures(Experiment exp, Cage cage,
+	public Results getXLSResultsDataValuesFromFlyPositionMeasures(Experiment exp, Cage cage,
 			FlyPositions flyPositions, XLSExportOptions xlsExportOptions) {
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
 
 		// Create XLSResults with cage properties
-		XLSResults xlsResults = new XLSResults("Cage_" + cage.getProperties().getCageID(),
+		Results xlsResults = new Results("Cage_" + cage.getProperties().getCageID(),
 				cage.getProperties().getCageNFlies(), cage.getProperties().getCageID(), 0, xlsExportOptions.exportType);
 		xlsResults.initValuesOutArray(nOutputFrames, Double.NaN);
 
