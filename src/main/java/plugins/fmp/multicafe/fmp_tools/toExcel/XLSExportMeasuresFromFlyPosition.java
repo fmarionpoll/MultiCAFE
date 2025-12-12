@@ -9,11 +9,11 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
+import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
@@ -56,25 +56,25 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 		int column = startColumn;
 
 		if (options.xyImage) {
-			column = getFlyPositionDataAndExport(exp, column, charSeries, EnumExport.XYIMAGE);
+			column = getFlyPositionDataAndExport(exp, column, charSeries, EnumResults.XYIMAGE);
 		}
 		if (options.xyCage) {
-			getFlyPositionDataAndExport(exp, column, charSeries, EnumExport.XYTOPCAGE);
+			getFlyPositionDataAndExport(exp, column, charSeries, EnumResults.XYTOPCAGE);
 		}
 		if (options.xyCapillaries) {
-			getFlyPositionDataAndExport(exp, column, charSeries, EnumExport.XYTIPCAPS);
+			getFlyPositionDataAndExport(exp, column, charSeries, EnumResults.XYTIPCAPS);
 		}
 		if (options.ellipseAxes) {
-			getFlyPositionDataAndExport(exp, column, charSeries, EnumExport.ELLIPSEAXES);
+			getFlyPositionDataAndExport(exp, column, charSeries, EnumResults.ELLIPSEAXES);
 		}
 		if (options.distance) {
-			getFlyPositionDataAndExport(exp, column, charSeries, EnumExport.DISTANCE);
+			getFlyPositionDataAndExport(exp, column, charSeries, EnumResults.DISTANCE);
 		}
 		if (options.alive) {
-			getFlyPositionDataAndExport(exp, column, charSeries, EnumExport.ISALIVE);
+			getFlyPositionDataAndExport(exp, column, charSeries, EnumResults.ISALIVE);
 		}
 		if (options.sleep) {
-			getFlyPositionDataAndExport(exp, column, charSeries, EnumExport.SLEEP);
+			getFlyPositionDataAndExport(exp, column, charSeries, EnumResults.SLEEP);
 		}
 
 		return column;
@@ -90,7 +90,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int getFlyPositionDataAndExport(Experiment exp, int col0, String charSeries, EnumExport exportType)
+	protected int getFlyPositionDataAndExport(Experiment exp, int col0, String charSeries, EnumResults exportType)
 			throws ExcelExportException {
 		try {
 			options.exportType = exportType;
@@ -120,7 +120,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @return The next available column
 	 */
 	protected int xlsExportExperimentFlyPositionDataToSheet(Experiment exp, SXSSFSheet sheet,
-			EnumExport xlsExportType, int col0, String charSeries) {
+			EnumResults xlsExportType, int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
@@ -218,7 +218,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @return The updated point
 	 */
 	protected Point writeExperimentFlyPositionInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries,
-			Cage cage, EnumExport xlsExportType) {
+			Cage cage, EnumResults xlsExportType) {
 		int x = pt.x;
 		int y = pt.y;
 		boolean transpose = options.transpose;

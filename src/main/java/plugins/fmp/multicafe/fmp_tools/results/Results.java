@@ -12,7 +12,6 @@ import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotProperties;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class Results {
 	private String name = null;
@@ -26,7 +25,7 @@ public class Results {
 	private int cageID = 0;
 	private int cagePosition = 0;
 	private Color color;
-	public EnumExport exportType = null;
+	public EnumResults exportType = null;
 	public ArrayList<Integer> dataInt = null;
 	
 	private ArrayList<Double> dataValues = null;
@@ -34,14 +33,14 @@ public class Results {
 	public double[] valuesOut = null;
 
 	
-	public Results(String name, int nflies, int cellID, EnumExport exportType) {
+	public Results(String name, int nflies, int cellID, EnumResults exportType) {
 		this.name = name;
 		this.nflies = nflies;
 		this.cageID = cellID;
 		this.exportType = exportType;
 	}
 
-	public Results(String name, int nflies, int cageID, int cagePos, EnumExport exportType) {
+	public Results(String name, int nflies, int cageID, int cagePos, EnumResults exportType) {
 		this.name = name;
 		this.nflies = nflies;
 		this.cageID = cageID;
@@ -165,7 +164,7 @@ public class Results {
 
 	public void getDataFromSpot(Spot spot, long binData, long binExcel, ResultsOptions xlsExportOptions) {
 		dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportOptions.exportType, binData, binExcel);
-		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumExport.AREA_FLYPRESENT) {
+		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumResults.AREA_FLYPRESENT) {
 			relativeToMaximum();
 		}
 	}
@@ -208,7 +207,7 @@ public class Results {
 			}
 		}
 
-		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumExport.AREA_FLYPRESENT) {
+		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumResults.AREA_FLYPRESENT) {
 			relativeToMaximum();
 		}
 	}
@@ -229,7 +228,7 @@ public class Results {
 		}
 
 		dataValues = new ArrayList<>();
-		EnumExport exportType = xlsExportOptions.exportType;
+		EnumResults exportType = xlsExportOptions.exportType;
 
 		switch (exportType) {
 		case XYIMAGE:
@@ -238,7 +237,7 @@ public class Results {
 			// Extract X or Y coordinate based on export type
 			for (FlyPosition pos : flyPositions.flyPositionList) {
 				Point2D center = pos.getCenterRectangle();
-				if (exportType == EnumExport.XYIMAGE || exportType == EnumExport.XYTOPCAGE) {
+				if (exportType == EnumResults.XYIMAGE || exportType == EnumResults.XYTOPCAGE) {
 					// For XYIMAGE and XYTOPCAGE, we might need to extract X or Y
 					// Defaulting to Y coordinate (vertical position)
 					dataValues.add(center.getY());
@@ -292,12 +291,12 @@ public class Results {
 		}
 
 		// Apply relative to T0 if needed (not applicable for boolean types)
-		if (xlsExportOptions.relativeToT0 && exportType != EnumExport.ISALIVE && exportType != EnumExport.SLEEP) {
+		if (xlsExportOptions.relativeToT0 && exportType != EnumResults.ISALIVE && exportType != EnumResults.SLEEP) {
 			relativeToMaximum();
 		}
 	}
 
-	public void transferDataValuesToValuesOut(double scalingFactorToPhysicalUnits, EnumExport xlsExport) {
+	public void transferDataValuesToValuesOut(double scalingFactorToPhysicalUnits, EnumResults xlsExport) {
 		if (valuesOutLength == 0 || dataValues == null || dataValues.size() < 1)
 			return;
 
@@ -448,12 +447,12 @@ public class Results {
 		return resultsFound;
 	}
 	
-	public void transferDataIntToValuesOut(double scalingFactorToPhysicalUnits, EnumExport xlsExport) {
+	public void transferDataIntToValuesOut(double scalingFactorToPhysicalUnits, EnumResults xlsExport) {
 		if (dimension == 0 || dataInt == null || dataInt.size() < 1)
 			return;
 
 		boolean removeZeros = false;
-		if (xlsExport == EnumExport.AMPLITUDEGULPS)
+		if (xlsExport == EnumResults.AMPLITUDEGULPS)
 			removeZeros = true;
 
 		int len = Math.min(dimension, dataInt.size());

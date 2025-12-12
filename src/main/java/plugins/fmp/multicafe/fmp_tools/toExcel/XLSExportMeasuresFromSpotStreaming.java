@@ -11,9 +11,9 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
 
@@ -86,9 +86,9 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 		int column = startColumn;
 
 		if (options.spotAreas) {
-			column = exportSpotDataChunked(exp, column, charSeries, EnumExport.AREA_SUM);
-			exportSpotDataChunked(exp, column, charSeries, EnumExport.AREA_FLYPRESENT);
-			exportSpotDataChunked(exp, column, charSeries, EnumExport.AREA_SUMCLEAN);
+			column = exportSpotDataChunked(exp, column, charSeries, EnumResults.AREA_SUM);
+			exportSpotDataChunked(exp, column, charSeries, EnumResults.AREA_FLYPRESENT);
+			exportSpotDataChunked(exp, column, charSeries, EnumResults.AREA_SUMCLEAN);
 		}
 
 		return column;
@@ -104,7 +104,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int exportSpotDataChunked(Experiment exp, int col0, String charSeries, EnumExport exportType)
+	protected int exportSpotDataChunked(Experiment exp, int col0, String charSeries, EnumResults exportType)
 			throws ExcelExportException {
 		try {
 			options.exportType = exportType;
@@ -138,7 +138,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * @param charSeries    The series identifier
 	 * @return The next available column
 	 */
-	protected int writeExperimentDataChunked(Experiment exp, SXSSFSheet sheet, EnumExport xlsExportType, int col0,
+	protected int writeExperimentDataChunked(Experiment exp, SXSSFSheet sheet, EnumResults xlsExportType, int col0,
 			String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
@@ -177,7 +177,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * @param xlsExportType                The export type
 	 */
 	protected void processSpotChunk(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
-			List<Spot> spotChunk, double scalingFactorToPhysicalUnits, EnumExport xlsExportType) {
+			List<Spot> spotChunk, double scalingFactorToPhysicalUnits, EnumResults xlsExportType) {
 
 		for (Spot spot : spotChunk) {
 			pt.y = 0;
@@ -209,7 +209,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * @param xlsExportType                The export type
 	 */
 	protected void writeSpotDataStreaming(SXSSFSheet sheet, Point pt, Spot spot, double scalingFactorToPhysicalUnits,
-			EnumExport xlsExportType) {
+			EnumResults xlsExportType) {
 
 		// Get data using streaming iterator
 		Iterator<Double> dataIterator = getSpotDataIterator(spot, xlsExportType);
@@ -219,7 +219,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 		}
 
 		// Apply relative to T0 if needed
-		if (options.relativeToT0 && xlsExportType != EnumExport.AREA_FLYPRESENT) {
+		if (options.relativeToT0 && xlsExportType != EnumResults.AREA_FLYPRESENT) {
 			dataIterator = applyRelativeToMaximumStreaming(dataIterator);
 		}
 
@@ -234,7 +234,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * @param xlsExportType The export type
 	 * @return The data iterator
 	 */
-	protected Iterator<Double> getSpotDataIterator(Spot spot, EnumExport xlsExportType) {
+	protected Iterator<Double> getSpotDataIterator(Spot spot, EnumResults xlsExportType) {
 		List<Double> dataList = spot.getMeasuresForExcelPass1(xlsExportType, getBinData(spot), getBinExcel());
 		return dataList != null ? dataList.iterator() : new java.util.ArrayList<Double>().iterator();
 	}

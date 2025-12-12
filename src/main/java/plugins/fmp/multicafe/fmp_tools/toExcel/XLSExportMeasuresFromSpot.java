@@ -9,10 +9,10 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
 
@@ -37,9 +37,9 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 		int column = startColumn;
 
 		if (options.spotAreas) {
-			column = getSpotDataAndExport(exp, column, charSeries, EnumExport.AREA_SUM);
-			getSpotDataAndExport(exp, column, charSeries, EnumExport.AREA_FLYPRESENT);
-			getSpotDataAndExport(exp, column, charSeries, EnumExport.AREA_SUMCLEAN);
+			column = getSpotDataAndExport(exp, column, charSeries, EnumResults.AREA_SUM);
+			getSpotDataAndExport(exp, column, charSeries, EnumResults.AREA_FLYPRESENT);
+			getSpotDataAndExport(exp, column, charSeries, EnumResults.AREA_SUMCLEAN);
 		}
 
 		return column;
@@ -55,7 +55,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int getSpotDataAndExport(Experiment exp, int col0, String charSeries, EnumExport exportType)
+	protected int getSpotDataAndExport(Experiment exp, int col0, String charSeries, EnumResults exportType)
 			throws ExcelExportException {
 		try {
 			options.exportType = exportType;
@@ -84,7 +84,7 @@ public class XLSExportMeasuresFromSpot extends XLSExport {
 	 * @param charSeries    The series identifier
 	 * @return The next available column
 	 */
-	protected int xlsExportExperimentSpotDataToSheet(Experiment exp, SXSSFSheet sheet, EnumExport xlsExportType,
+	protected int xlsExportExperimentSpotDataToSheet(Experiment exp, SXSSFSheet sheet, EnumResults xlsExportType,
 			int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);

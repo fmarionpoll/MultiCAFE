@@ -17,8 +17,8 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotMeasure;
+import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 /**
  * Utility class for creating and managing cage charts. This class provides
@@ -252,7 +252,7 @@ public class ChartCageBuild {
 		double[] camImages_time_min = exp.getSeqCamData().getTimeManager().getCamImagesTime_Minutes();
 		SpotMeasure spotMeasure = spot.getMeasurements(xlsExportOptions.exportType);
 		double divider = 1.;
-		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumExport.AREA_FLYPRESENT) {
+		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumResults.AREA_FLYPRESENT) {
 			divider = spotMeasure.getMaximumValue();
 		}
 

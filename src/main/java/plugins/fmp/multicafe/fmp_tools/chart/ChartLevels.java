@@ -33,11 +33,11 @@ import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class ChartLevels extends IcyFrame {
 	public JPanel mainChartPanel = null;
@@ -76,7 +76,7 @@ public class ChartLevels extends IcyFrame {
 		}
 	}
 
-	public void displayData(Experiment exp, EnumExport option, String title, boolean subtractEvaporation) {
+	public void displayData(Experiment exp, EnumResults option, String title, boolean subtractEvaporation) {
 		xyChartList.clear();
 		ymax = Double.NaN;
 		ymin = Double.NaN;
@@ -191,11 +191,11 @@ public class ChartLevels extends IcyFrame {
 			v.setPositionT(isel);
 	}
 
-	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumExport exportType, boolean subtractEvaporation) {
+	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumResults exportType, boolean subtractEvaporation) {
 		ResultsArray resultsArray1 = getDataAsResultsArray(exp, exportType, subtractEvaporation);
 		ResultsArray resultsArray2 = null;
-		if (exportType == EnumExport.TOPLEVEL)
-			resultsArray2 = getDataAsResultsArray(exp, EnumExport.BOTTOMLEVEL, subtractEvaporation);
+		if (exportType == EnumResults.TOPLEVEL)
+			resultsArray2 = getDataAsResultsArray(exp, EnumResults.BOTTOMLEVEL, subtractEvaporation);
 
 		XYSeriesCollection xyDataset = null;
 		int oldCage = -1;
@@ -216,7 +216,7 @@ public class ChartLevels extends IcyFrame {
 				XYSeries seriesXY = getXYSeries(results, results.getName().substring(4), exp, exportType);
 				seriesXY.setDescription("cage " + results.getCageID() + "_" + results.getNflies());
 				if (resultsArray2 != null)
-					appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow), exp, EnumExport.BOTTOMLEVEL);
+					appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow), exp, EnumResults.BOTTOMLEVEL);
 
 				xyDataset.addSeries(seriesXY);
 				updateGlobalMaxMin();
@@ -225,17 +225,17 @@ public class ChartLevels extends IcyFrame {
 		return xyList;
 	}
 
-	private ResultsArray getDataAsResultsArray(Experiment exp, EnumExport exportType, boolean subtractEvaporation) {
+	private ResultsArray getDataAsResultsArray(Experiment exp, EnumResults exportType, boolean subtractEvaporation) {
 		// Dispatch capillaries to cages first
 		exp.dispatchCapillariesToCages();
 
 		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (subtractEvaporation && exportType == EnumExport.TOPLEVEL) {
+		if (subtractEvaporation && exportType == EnumResults.TOPLEVEL) {
 			exp.getCages().computeEvaporationCorrection(exp);
 		}
 
 		// Compute L+R measures if needed (must be done after evaporation correction)
-		if (exportType == EnumExport.TOPLEVEL_LR) {
+		if (exportType == EnumResults.TOPLEVEL_LR) {
 			if (subtractEvaporation) {
 				exp.getCages().computeEvaporationCorrection(exp);
 			}
@@ -288,7 +288,7 @@ public class ChartLevels extends IcyFrame {
 		}
 	}
 
-	private XYSeries getXYSeries(Results results, String name, Experiment exp, EnumExport exportType) {
+	private XYSeries getXYSeries(Results results, String name, Experiment exp, EnumResults exportType) {
 		XYSeries seriesXY = new XYSeries(name, false);
 		if (results.getValuesOut() != null && results.getValuesOut().length > 0) {
 			xmax = results.getValuesOut().length;
@@ -311,7 +311,7 @@ public class ChartLevels extends IcyFrame {
 		return seriesXY;
 	}
 
-	private void appendDataToXYSeries(XYSeries seriesXY, Results results, Experiment exp, EnumExport exportType) {
+	private void appendDataToXYSeries(XYSeries seriesXY, Results results, Experiment exp, EnumResults exportType) {
 		if (results.getValuesOut() != null && results.getValuesOut().length > 0) {
 			seriesXY.add(Double.NaN, Double.NaN);
 			addPointsAndUpdateExtrema(seriesXY, results, 0, exp, exportType);
@@ -319,7 +319,7 @@ public class ChartLevels extends IcyFrame {
 	}
 
 	private void addPointsAndUpdateExtrema(XYSeries seriesXY, Results results, int startFrame, Experiment exp,
-			EnumExport exportType) {
+			EnumResults exportType) {
 
 		int x = 0;
 		int npoints = results.getValuesOut().length;

@@ -15,8 +15,8 @@ import icy.roi.ROI2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DWithMask;
+import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
@@ -332,7 +332,7 @@ public class Spot implements Comparable<Spot> {
 	 * @param exportOption the export option
 	 * @return the formatted cage position string
 	 */
-	public String getCagePosition(EnumExport exportOption) {
+	public String getCagePosition(EnumResults exportOption) {
 		Objects.requireNonNull(exportOption, "Export option cannot be null");
 
 		int cagePosition = properties.getCagePosition();
@@ -358,7 +358,7 @@ public class Spot implements Comparable<Spot> {
 	 * @return measurements
 	 */
 
-	public long isThereAnyMeasuresDone(EnumExport option) {
+	public long isThereAnyMeasuresDone(EnumResults option) {
 		switch (option) {
 		case AREA_SUM:
 			return measurements.getSumIn().getCount();
@@ -404,7 +404,7 @@ public class Spot implements Comparable<Spot> {
 	 * @param option the export option
 	 * @return the corresponding measurements
 	 */
-	public SpotMeasure getMeasurements(EnumExport option) {
+	public SpotMeasure getMeasurements(EnumResults option) {
 		Objects.requireNonNull(option, "Export option cannot be null");
 
 		switch (option) {
@@ -550,7 +550,7 @@ public class Spot implements Comparable<Spot> {
 	 * @param option the export option
 	 * @return true if measurements exist
 	 */
-	public boolean hasMeasurements(EnumExport option) {
+	public boolean hasMeasurements(EnumResults option) {
 		SpotMeasure measure = getMeasurements(option);
 		return measure != null && measure.getCount() > 0;
 	}
@@ -565,7 +565,7 @@ public class Spot implements Comparable<Spot> {
 	 * @param outputBinMs the output bin in milliseconds
 	 * @return the measures list
 	 */
-	public List<Double> getMeasuresForExcelPass1(EnumExport exportType, long seriesBinMs, long outputBinMs) {
+	public List<Double> getMeasuresForExcelPass1(EnumResults exportType, long seriesBinMs, long outputBinMs) {
 		SpotMeasure measure = getMeasurements(exportType);
 		if (measure == null) {
 			return new ArrayList<>();

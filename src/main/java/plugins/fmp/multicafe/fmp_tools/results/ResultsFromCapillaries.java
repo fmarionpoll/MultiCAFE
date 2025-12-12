@@ -13,7 +13,6 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
-import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 
 public class ResultsFromCapillaries extends ResultsArray {
 	/** Logger for this class */
@@ -60,7 +59,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 
 		// For TOPLEVEL_LR, read from CageCapillariesComputation instead of capillary
-		if (xlsExportOptions.exportType == EnumExport.TOPLEVEL_LR) {
+		if (xlsExportOptions.exportType == EnumResults.TOPLEVEL_LR) {
 			getLRDataFromCage(exp, capillary, results, binData, binExcel, subtractT0);
 		} else {
 			results.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, subtractT0);
@@ -100,7 +99,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		if (cageComp == null) {
 			// No computation available, fall back to raw
 			ResultsOptions fallbackOptions = new ResultsOptions();
-			fallbackOptions.exportType = EnumExport.TOPRAW;
+			fallbackOptions.exportType = EnumResults.TOPRAW;
 			xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 			return;
 		}
@@ -132,7 +131,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 			if (binData <= 0 || binExcel <= 0) {
 				// Invalid bin sizes, fall back to raw
 				ResultsOptions fallbackOptions = new ResultsOptions();
-				fallbackOptions.exportType = EnumExport.TOPRAW;
+				fallbackOptions.exportType = EnumResults.TOPRAW;
 				xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 				return;
 			}
@@ -175,7 +174,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 
 		// Fallback to raw if computation failed
 		ResultsOptions fallbackOptions = new ResultsOptions();
-		fallbackOptions.exportType = EnumExport.TOPRAW;
+		fallbackOptions.exportType = EnumResults.TOPRAW;
 		xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 	}
 
@@ -260,18 +259,18 @@ public class ResultsFromCapillaries extends ResultsArray {
 		System.err.println(error);
 	}
 
-	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumExport exportType,
+	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumResults exportType,
 			boolean correctEvaporation) {
 		// Dispatch capillaries to cages first
 		exp.dispatchCapillariesToCages();
 
 		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (correctEvaporation && exportType == EnumExport.TOPLEVEL) {
+		if (correctEvaporation && exportType == EnumResults.TOPLEVEL) {
 			exp.getCages().computeEvaporationCorrection(exp);
 		}
 
 		// Compute L+R measures if needed (must be done after evaporation correction)
-		if (exportType == EnumExport.TOPLEVEL_LR) {
+		if (exportType == EnumResults.TOPLEVEL_LR) {
 			if (correctEvaporation) {
 				exp.getCages().computeEvaporationCorrection(exp);
 			}
@@ -469,7 +468,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 
 	// ---------------------------------------------------
 
-	public void getResults1(Experiment expi, EnumExport exportType, int nOutputFrames, long kymoBinCol_Ms,
+	public void getResults1(Experiment expi, EnumResults exportType, int nOutputFrames, long kymoBinCol_Ms,
 			ResultsOptions xlsExportOptions) {
 		xlsExportOptions.exportType = exportType;
 		buildDataForPass1(expi, nOutputFrames, kymoBinCol_Ms, xlsExportOptions, false);
@@ -478,7 +477,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		buildDataForPass2(xlsExportOptions);
 	}
 
-	public void getResults_T0(Experiment expi, EnumExport exportType, int nOutputFrames, long kymoBinCol_Ms,
+	public void getResults_T0(Experiment expi, EnumResults exportType, int nOutputFrames, long kymoBinCol_Ms,
 			ResultsOptions xlsExportOptions) {
 		xlsExportOptions.exportType = exportType;
 		buildDataForPass1(expi, nOutputFrames, kymoBinCol_Ms, xlsExportOptions, xlsExportOptions.subtractT0);
