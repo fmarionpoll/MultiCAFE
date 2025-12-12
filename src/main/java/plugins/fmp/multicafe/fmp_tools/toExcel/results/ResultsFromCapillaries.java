@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.fmp_tools.toExcel.data;
+package plugins.fmp.multicafe.fmp_tools.toExcel.results;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	 * @param subtractT0       Whether to subtract T0 value
 	 * @return The XLS results
 	 */
-	static public Results getDataValuesFromCapillaryMeasures(Experiment exp, Capillary capillary,
+	static public Results getResultsFromCapillaryMeasures(Experiment exp, Capillary capillary,
 			XLSExportOptions xlsExportOptions, boolean subtractT0) {
 		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
 				xlsExportOptions.exportType);
@@ -309,7 +309,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 			capOptions.exportType = exportType;
 
 			try {
-				Results xlsResults = getDataValuesFromCapillaryMeasures(exp, capillary, capOptions, false);
+				Results xlsResults = getResultsFromCapillaryMeasures(exp, capillary, capOptions, false);
 				if (xlsResults != null) {
 					xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
 					resultsArray.addRow(xlsResults);

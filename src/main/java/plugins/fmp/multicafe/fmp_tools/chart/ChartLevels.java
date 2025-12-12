@@ -34,10 +34,10 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.ResultsArray;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.ResultsFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
+import plugins.fmp.multicafe.fmp_tools.toExcel.results.Results;
+import plugins.fmp.multicafe.fmp_tools.toExcel.results.ResultsArray;
+import plugins.fmp.multicafe.fmp_tools.toExcel.results.ResultsFromCapillaries;
 
 public class ChartLevels extends IcyFrame {
 	public JPanel mainChartPanel = null;
@@ -261,7 +261,7 @@ public class ChartLevels extends IcyFrame {
 			capOptions.correctEvaporation = options.correctEvaporation;
 			capOptions.exportType = exportType;
 
-			Results results = ResultsFromCapillaries.getDataValuesFromCapillaryMeasures(exp, capillary, capOptions,
+			Results results = ResultsFromCapillaries.getResultsFromCapillaryMeasures(exp, capillary, capOptions,
 					capOptions.correctEvaporation);
 			if (results != null) {
 				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);

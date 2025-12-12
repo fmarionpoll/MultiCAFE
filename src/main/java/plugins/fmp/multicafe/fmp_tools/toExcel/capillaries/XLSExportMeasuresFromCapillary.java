@@ -12,12 +12,12 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.XLSExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.ResultsFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumExport;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException;
+import plugins.fmp.multicafe.fmp_tools.toExcel.results.Results;
+import plugins.fmp.multicafe.fmp_tools.toExcel.results.ResultsFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
 
 /**
@@ -195,7 +195,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 				capOptions.correctEvaporation = options.correctEvaporation;
 				capOptions.exportType = xlsExportType; // Use the parameter, not the field
 
-				Results xlsResults = ResultsFromCapillaries.getDataValuesFromCapillaryMeasures(exp, capillary,
+				Results xlsResults = ResultsFromCapillaries.getResultsFromCapillaryMeasures(exp, capillary,
 						capOptions, subtractT0);
 				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
 				writeXLSResult(sheet, pt, xlsResults);

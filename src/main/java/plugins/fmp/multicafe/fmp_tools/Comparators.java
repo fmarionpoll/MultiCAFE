@@ -10,7 +10,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPosition;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_tools.toExcel.data.Results;
+import plugins.fmp.multicafe.fmp_tools.toExcel.results.Results;
 
 public class Comparators {
 	/** Logger for this class */

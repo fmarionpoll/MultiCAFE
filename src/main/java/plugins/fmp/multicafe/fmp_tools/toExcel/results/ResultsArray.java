@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.fmp_tools.toExcel.data;
+package plugins.fmp.multicafe.fmp_tools.toExcel.results;
 
 import java.util.ArrayList;
 import java.util.Collections;
