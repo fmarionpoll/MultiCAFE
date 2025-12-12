@@ -231,10 +231,10 @@ public class Capillary implements Comparable<Capillary> {
 		return Integer.valueOf(stringNumber);
 	}
 
-	public String getSideDescriptor(EnumResults xlsExportOption) {
+	public String getSideDescriptor(EnumResults resultType) {
 		String value = null;
 		capSide = getCapillarySide();
-		switch (xlsExportOption) {
+		switch (resultType) {
 		case DISTANCE:
 			value = capSide + "(DIST)";
 			break;
@@ -294,9 +294,9 @@ public class Capillary implements Comparable<Capillary> {
 
 	// -----------------------------------------
 
-	public boolean isThereAnyMeasuresDone(EnumResults option) {
+	public boolean isThereAnyMeasuresDone(EnumResults resultType) {
 		boolean yes = false;
-		switch (option) {
+		switch (resultType) {
 		case DERIVEDVALUES:
 			yes = (ptsDerivative.isThereAnyMeasuresDone());
 			break;
@@ -314,10 +314,10 @@ public class Capillary implements Comparable<Capillary> {
 		return yes;
 	}
 
-	public ArrayList<Integer> getCapillaryMeasuresForXLSPass1(EnumResults option, long seriesBinMs,
+	public ArrayList<Integer> getCapillaryMeasuresForXLSPass1(EnumResults resultType, long seriesBinMs,
 			long outputBinMs) {
 		ArrayList<Integer> datai = null;
-		switch (option) {
+		switch (resultType) {
 		case DERIVEDVALUES:
 			datai = ptsDerivative.getMeasures(seriesBinMs, outputBinMs);
 			break;
@@ -332,7 +332,7 @@ public class Capillary implements Comparable<Capillary> {
 		case CROSSCORREL:
 		case CROSSCORREL_LR:
 			if (ptsGulps != null)
-				datai = ptsGulps.getMeasuresFromGulps(option, ptsTop.getNPoints(), seriesBinMs, outputBinMs);
+				datai = ptsGulps.getMeasuresFromGulps(resultType, ptsTop.getNPoints(), seriesBinMs, outputBinMs);
 			break;
 		case BOTTOMLEVEL:
 			datai = ptsBottom.getMeasures(seriesBinMs, outputBinMs);
@@ -440,9 +440,9 @@ public class Capillary implements Comparable<Capillary> {
 		ptsGulps.addNewGulpFromPoints(gulpPoints);
 	}
 
-	public int getLastMeasure(EnumResults option) {
+	public int getLastMeasure(EnumResults resultType) {
 		int lastMeasure = 0;
-		switch (option) {
+		switch (resultType) {
 		case DERIVEDVALUES:
 			lastMeasure = ptsDerivative.getLastMeasure();
 			break;
@@ -463,9 +463,9 @@ public class Capillary implements Comparable<Capillary> {
 		return lastMeasure;
 	}
 
-	public int getLastDeltaMeasure(EnumResults option) {
+	public int getLastDeltaMeasure(EnumResults resultType) {
 		int lastMeasure = 0;
-		switch (option) {
+		switch (resultType) {
 		case DERIVEDVALUES:
 			lastMeasure = ptsDerivative.getLastDeltaMeasure();
 			break;
@@ -486,9 +486,9 @@ public class Capillary implements Comparable<Capillary> {
 		return lastMeasure;
 	}
 
-	public int getT0Measure(EnumResults option) {
+	public int getT0Measure(EnumResults resultType) {
 		int t0Measure = 0;
-		switch (option) {
+		switch (resultType) {
 		case DERIVEDVALUES:
 			t0Measure = ptsDerivative.getT0Measure();
 			break;

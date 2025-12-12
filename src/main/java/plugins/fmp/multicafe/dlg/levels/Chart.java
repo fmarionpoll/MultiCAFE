@@ -236,13 +236,13 @@ public class Chart extends JPanel implements SequenceListener {
 			closeChart(plotSumgulps);
 	}
 
-	private ChartLevelsFrame plotToChart(Experiment exp, String title, EnumResults option, ChartLevelsFrame iChart,
+	private ChartLevelsFrame plotToChart(Experiment exp, String title, EnumResults resultType, ChartLevelsFrame iChart,
 			Rectangle rectv) {
 		if (iChart != null && iChart.getMainChartFrame() != null)
 			iChart.getMainChartFrame().dispose();
 		iChart = new ChartLevelsFrame();
 		iChart.createChartPanel(parent0, title, rectv);
-		iChart.displayData(exp, option, title, correctEvaporationCheckbox.isSelected());
+		iChart.displayData(exp, resultType, title, correctEvaporationCheckbox.isSelected());
 		if (iChart.getMainChartFrame() != null) {
 			iChart.getMainChartFrame().toFront();
 			iChart.getMainChartFrame().requestFocus();
@@ -263,11 +263,11 @@ public class Chart extends JPanel implements SequenceListener {
 		chart = null;
 	}
 
-	private boolean isThereAnyDataToDisplay(Experiment exp, EnumResults option) {
+	private boolean isThereAnyDataToDisplay(Experiment exp, EnumResults resultType) {
 		boolean flag = false;
 		Capillaries capillaries = exp.getCapillaries();
 		for (Capillary cap : capillaries.getList()) {
-			flag = cap.isThereAnyMeasuresDone(option);
+			flag = cap.isThereAnyMeasuresDone(resultType);
 			if (flag)
 				break;
 		}

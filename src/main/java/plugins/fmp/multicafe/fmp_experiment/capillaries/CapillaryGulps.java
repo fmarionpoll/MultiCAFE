@@ -93,10 +93,10 @@ public class CapillaryGulps {
 		return data_out;
 	}
 
-	public ArrayList<Integer> getMeasuresFromGulps(EnumResults option, int npoints, long seriesBinMs,
+	public ArrayList<Integer> getMeasuresFromGulps(EnumResults resultType, int npoints, long seriesBinMs,
 			long outputBinMs) {
 		ArrayList<Integer> data_in = null;
-		switch (option) {
+		switch (resultType) {
 		case SUMGULPS:
 		case SUMGULPS_LR:
 			data_in = getCumSumFromGulps(npoints);

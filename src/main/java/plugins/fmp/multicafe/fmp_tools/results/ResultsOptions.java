@@ -70,7 +70,7 @@ public class ResultsOptions {
 	// internal parameters
 	public boolean trim_alive = false;
 	public boolean compensateEvaporation = false;
-	public EnumResults exportType;
+	public EnumResults resultType;
 
 	public void copy(ResultsOptions xlsExportOptions) {
 		this.xyImage = xlsExportOptions.xyImage;
@@ -121,6 +121,6 @@ public class ResultsOptions {
 
 		this.trim_alive = xlsExportOptions.trim_alive;
 		this.compensateEvaporation = xlsExportOptions.compensateEvaporation;
-		this.exportType = xlsExportOptions.exportType;
+		this.resultType = xlsExportOptions.resultType;
 	}
 }

@@ -172,14 +172,14 @@ public class ChartFlyPositions extends IcyFrame {
 	 * Displays position data for a list of cages.
 	 * 
 	 * @param cageList the list of cages to display data for
-	 * @param option   the type of data to display
+	 * @param resultType   the type of data to display
 	 * @throws IllegalArgumentException if cageList is null
 	 */
-	public void displayData(List<Cage> cageList, EnumResults option) {
+	public void displayData(List<Cage> cageList, EnumResults resultType) {
 		if (cageList == null) {
 			throw new IllegalArgumentException("Cage list cannot be null");
 		}
-		if (option == null) {
+		if (resultType == null) {
 			throw new IllegalArgumentException("Export option cannot be null");
 		}
 
@@ -196,7 +196,7 @@ public class ChartFlyPositions extends IcyFrame {
 			}
 
 			if (cage.flyPositions != null && cage.flyPositions.flyPositionList.size() > 0) {
-				ChartData chartData = getDataSet(cage, option);
+				ChartData chartData = getDataSet(cage, resultType);
 				XYSeriesCollection xyDataset = chartData.getXYDataset();
 				yMaxMin = chartData.getYMaxMin();
 
@@ -262,11 +262,11 @@ public class ChartFlyPositions extends IcyFrame {
 	 * Adds data points to an XY series based on the export option.
 	 * 
 	 * @param cage     the cage containing the data
-	 * @param option   the type of data to extract
+	 * @param resultType   the type of data to extract
 	 * @param seriesXY the series to add points to
 	 * @return MaxMinDouble containing the Y-axis range
 	 */
-	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumResults option, XYSeries seriesXY) {
+	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumResults resultType, XYSeries seriesXY) {
 		if (cage == null || seriesXY == null) {
 			LOGGER.warning("Cannot add points: cage or series is null");
 			return new MaxMinDouble(0.0, 1.0);
@@ -282,7 +282,7 @@ public class ChartFlyPositions extends IcyFrame {
 		MaxMinDouble yMaxMin = null;
 
 		if (itmax > 0) {
-			switch (option) {
+			switch (resultType) {
 			case DISTANCE:
 				yMaxMin = processDistanceData(results, seriesXY, itmax, cage);
 				break;
@@ -420,10 +420,10 @@ public class ChartFlyPositions extends IcyFrame {
 	 * Gets the dataset for a specific cage and export option.
 	 * 
 	 * @param cage   the cage to get data for
-	 * @param option the export option
+	 * @param resultType the export option
 	 * @return ChartData containing the dataset and axis information
 	 */
-	private ChartData getDataSet(Cage cage, EnumResults option) {
+	private ChartData getDataSet(Cage cage, EnumResults resultType) {
 		if (cage == null) {
 			LOGGER.warning("Cannot get dataset: cage is null");
 			return new ChartData();
@@ -434,7 +434,7 @@ public class ChartFlyPositions extends IcyFrame {
 		XYSeries seriesXY = new XYSeries(name);
 		seriesXY.setDescription(name);
 
-		MaxMinDouble yMaxMin = addPointsToXYSeries(cage, option, seriesXY);
+		MaxMinDouble yMaxMin = addPointsToXYSeries(cage, resultType, seriesXY);
 		xyDataset.addSeries(seriesXY);
 
 		return new ChartData(new MaxMinDouble(globalXMax, 0), yMaxMin, xyDataset);

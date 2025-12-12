@@ -46,13 +46,13 @@ public class ChartPositions extends IcyFrame {
 		pt = new Point(rectv.x + deltapt.x, rectv.y + deltapt.y);
 	}
 
-	public void displayData(List<Cage> cageList, EnumResults option) {
+	public void displayData(List<Cage> cageList, EnumResults resultType) {
 		List<XYSeriesCollection> xyDataSetList = new ArrayList<XYSeriesCollection>();
 		MaxMinDouble yMaxMin = new MaxMinDouble();
 		int count = 0;
 		for (Cage cage : cageList) {
 			if (cage.getFlyPositions() != null && cage.getFlyPositions().getFlyPositionList().size() > 0) {
-				ChartData chartData = getDataSet(cage, option);
+				ChartData chartData = getDataSet(cage, resultType);
 				XYSeriesCollection xyDataset = chartData.getXYDataset();
 				yMaxMin = chartData.getYMaxMin();
 				if (count != 0)
@@ -92,12 +92,12 @@ public class ChartPositions extends IcyFrame {
 		mainChartFrame.setVisible(true);
 	}
 
-	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumResults option, XYSeries seriesXY) {
+	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumResults resultType, XYSeries seriesXY) {
 		FlyPositions results = cage.getFlyPositions();
 		int itmax = results.getFlyPositionList().size();
 		MaxMinDouble yMaxMin = null;
 		if (itmax > 0) {
-			switch (option) {
+			switch (resultType) {
 			case DISTANCE:
 				double previousY = results.getFlyPositionList().get(0).getX()
 						+ results.getFlyPositionList().get(0).getH() / 2;
@@ -154,12 +154,12 @@ public class ChartPositions extends IcyFrame {
 			globalXMax = indexT;
 	}
 
-	private ChartData getDataSet(Cage cage, EnumResults option) {
+	private ChartData getDataSet(Cage cage, EnumResults resultType) {
 		XYSeriesCollection xyDataset = new XYSeriesCollection();
 		String name = cage.getCageRoi2D().getName();
 		XYSeries seriesXY = new XYSeries(name);
 		seriesXY.setDescription(name);
-		MaxMinDouble yMaxMin = addPointsToXYSeries(cage, option, seriesXY);
+		MaxMinDouble yMaxMin = addPointsToXYSeries(cage, resultType, seriesXY);
 		xyDataset.addSeries(seriesXY);
 		return new ChartData(new MaxMinDouble(globalXMax, 0), yMaxMin, xyDataset);
 	}

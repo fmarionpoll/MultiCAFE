@@ -163,8 +163,8 @@ public class Results {
 	}
 
 	public void getDataFromSpot(Spot spot, long binData, long binExcel, ResultsOptions xlsExportOptions) {
-		dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportOptions.exportType, binData, binExcel);
-		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumResults.AREA_FLYPRESENT) {
+		dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportOptions.resultType, binData, binExcel);
+		if (xlsExportOptions.relativeToT0 && xlsExportOptions.resultType != EnumResults.AREA_FLYPRESENT) {
 			relativeToMaximum();
 		}
 	}
@@ -183,7 +183,7 @@ public class Results {
 	 */
 	public void getDataFromCapillary(Capillary capillary, long binData, long binExcel,
 			ResultsOptions xlsExportOptions, boolean subtractT0) {
-		ArrayList<Integer> intData = capillary.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, binData,
+		ArrayList<Integer> intData = capillary.getCapillaryMeasuresForXLSPass1(xlsExportOptions.resultType, binData,
 				binExcel);
 
 		if (intData == null || intData.isEmpty()) {
@@ -207,7 +207,7 @@ public class Results {
 			}
 		}
 
-		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumResults.AREA_FLYPRESENT) {
+		if (xlsExportOptions.relativeToT0 && xlsExportOptions.resultType != EnumResults.AREA_FLYPRESENT) {
 			relativeToMaximum();
 		}
 	}
@@ -218,26 +218,26 @@ public class Results {
 	 * @param flyPositions     The fly positions to get data from
 	 * @param binData          The bin duration for the data
 	 * @param binExcel         The bin duration for Excel output
-	 * @param xlsExportOptions The export options
+	 * @param resultsOptions The export options
 	 */
 	public void getDataFromFlyPositions(FlyPositions flyPositions, long binData, long binExcel,
-			ResultsOptions xlsExportOptions) {
+			ResultsOptions resultsOptions) {
 		if (flyPositions == null || flyPositions.flyPositionList == null || flyPositions.flyPositionList.isEmpty()) {
 			dataValues = new ArrayList<>();
 			return;
 		}
 
 		dataValues = new ArrayList<>();
-		EnumResults exportType = xlsExportOptions.exportType;
+		EnumResults resultType = resultsOptions.resultType;
 
-		switch (exportType) {
+		switch (resultType) {
 		case XYIMAGE:
 		case XYTOPCAGE:
 		case XYTIPCAPS:
 			// Extract X or Y coordinate based on export type
 			for (FlyPosition pos : flyPositions.flyPositionList) {
 				Point2D center = pos.getCenterRectangle();
-				if (exportType == EnumResults.XYIMAGE || exportType == EnumResults.XYTOPCAGE) {
+				if (resultType == EnumResults.XYIMAGE || resultType == EnumResults.XYTOPCAGE) {
 					// For XYIMAGE and XYTOPCAGE, we might need to extract X or Y
 					// Defaulting to Y coordinate (vertical position)
 					dataValues.add(center.getY());
@@ -291,12 +291,12 @@ public class Results {
 		}
 
 		// Apply relative to T0 if needed (not applicable for boolean types)
-		if (xlsExportOptions.relativeToT0 && exportType != EnumResults.ISALIVE && exportType != EnumResults.SLEEP) {
+		if (resultsOptions.relativeToT0 && resultType != EnumResults.ISALIVE && resultType != EnumResults.SLEEP) {
 			relativeToMaximum();
 		}
 	}
 
-	public void transferDataValuesToValuesOut(double scalingFactorToPhysicalUnits, EnumResults xlsExport) {
+	public void transferDataValuesToValuesOut(double scalingFactorToPhysicalUnits, EnumResults resultType) {
 		if (valuesOutLength == 0 || dataValues == null || dataValues.size() < 1)
 			return;
 
@@ -447,12 +447,12 @@ public class Results {
 		return resultsFound;
 	}
 	
-	public void transferDataIntToValuesOut(double scalingFactorToPhysicalUnits, EnumResults xlsExport) {
+	public void transferDataIntToValuesOut(double scalingFactorToPhysicalUnits, EnumResults resultType) {
 		if (dimension == 0 || dataInt == null || dataInt.size() < 1)
 			return;
 
 		boolean removeZeros = false;
-		if (xlsExport == EnumResults.AMPLITUDEGULPS)
+		if (resultType == EnumResults.AMPLITUDEGULPS)
 			removeZeros = true;
 
 		int len = Math.min(dimension, dataInt.size());

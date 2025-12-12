@@ -41,7 +41,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	static public Results getResultsFromCapillaryMeasures(Experiment exp, Capillary capillary,
 			ResultsOptions xlsExportOptions, boolean subtractT0) {
 		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
-				xlsExportOptions.exportType);
+				xlsExportOptions.resultType);
 
 		results.setStimulus(capillary.capStimulus);
 		results.setConcentration(capillary.capConcentration);
@@ -59,7 +59,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 
 		// For TOPLEVEL_LR, read from CageCapillariesComputation instead of capillary
-		if (xlsExportOptions.exportType == EnumResults.TOPLEVEL_LR) {
+		if (xlsExportOptions.resultType == EnumResults.TOPLEVEL_LR) {
 			getLRDataFromCage(exp, capillary, results, binData, binExcel, subtractT0);
 		} else {
 			results.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, subtractT0);
@@ -99,7 +99,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		if (cageComp == null) {
 			// No computation available, fall back to raw
 			ResultsOptions fallbackOptions = new ResultsOptions();
-			fallbackOptions.exportType = EnumResults.TOPRAW;
+			fallbackOptions.resultType = EnumResults.TOPRAW;
 			xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 			return;
 		}
@@ -131,7 +131,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 			if (binData <= 0 || binExcel <= 0) {
 				// Invalid bin sizes, fall back to raw
 				ResultsOptions fallbackOptions = new ResultsOptions();
-				fallbackOptions.exportType = EnumResults.TOPRAW;
+				fallbackOptions.resultType = EnumResults.TOPRAW;
 				xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 				return;
 			}
@@ -174,7 +174,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 
 		// Fallback to raw if computation failed
 		ResultsOptions fallbackOptions = new ResultsOptions();
-		fallbackOptions.exportType = EnumResults.TOPRAW;
+		fallbackOptions.resultType = EnumResults.TOPRAW;
 		xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 	}
 
@@ -259,18 +259,18 @@ public class ResultsFromCapillaries extends ResultsArray {
 		System.err.println(error);
 	}
 
-	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumResults exportType,
+	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumResults resultType,
 			boolean correctEvaporation) {
 		// Dispatch capillaries to cages first
 		exp.dispatchCapillariesToCages();
 
 		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (correctEvaporation && exportType == EnumResults.TOPLEVEL) {
+		if (correctEvaporation && resultType == EnumResults.TOPLEVEL) {
 			exp.getCages().computeEvaporationCorrection(exp);
 		}
 
 		// Compute L+R measures if needed (must be done after evaporation correction)
-		if (exportType == EnumResults.TOPLEVEL_LR) {
+		if (resultType == EnumResults.TOPLEVEL_LR) {
 			if (correctEvaporation) {
 				exp.getCages().computeEvaporationCorrection(exp);
 			}
@@ -278,7 +278,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 
 		ResultsArray resultsArray = new ResultsArray();
-		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(exportType);
+		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
 
 		ResultsOptions options = new ResultsOptions();
 		long kymoBin_ms = exp.getKymoBin_ms();
@@ -304,12 +304,12 @@ public class ResultsFromCapillaries extends ResultsArray {
 			capOptions.buildExcelStepMs = options.buildExcelStepMs;
 			capOptions.relativeToT0 = options.relativeToT0;
 			capOptions.correctEvaporation = options.correctEvaporation;
-			capOptions.exportType = exportType;
+			capOptions.resultType = resultType;
 
 			try {
 				Results xlsResults = getResultsFromCapillaryMeasures(exp, capillary, capOptions, false);
 				if (xlsResults != null) {
-					xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, exportType);
+					xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 					resultsArray.addRow(xlsResults);
 				}
 			} catch (Exception e) {
@@ -468,18 +468,18 @@ public class ResultsFromCapillaries extends ResultsArray {
 
 	// ---------------------------------------------------
 
-	public void getResults1(Experiment expi, EnumResults exportType, int nOutputFrames, long kymoBinCol_Ms,
+	public void getResults1(Experiment expi, EnumResults resultType, int nOutputFrames, long kymoBinCol_Ms,
 			ResultsOptions xlsExportOptions) {
-		xlsExportOptions.exportType = exportType;
+		xlsExportOptions.resultType = resultType;
 		buildDataForPass1(expi, nOutputFrames, kymoBinCol_Ms, xlsExportOptions, false);
 		if (xlsExportOptions.compensateEvaporation)
 			subtractEvaporation();
 		buildDataForPass2(xlsExportOptions);
 	}
 
-	public void getResults_T0(Experiment expi, EnumResults exportType, int nOutputFrames, long kymoBinCol_Ms,
+	public void getResults_T0(Experiment expi, EnumResults resultType, int nOutputFrames, long kymoBinCol_Ms,
 			ResultsOptions xlsExportOptions) {
-		xlsExportOptions.exportType = exportType;
+		xlsExportOptions.resultType = resultType;
 		buildDataForPass1(expi, nOutputFrames, kymoBinCol_Ms, xlsExportOptions, xlsExportOptions.subtractT0);
 		if (xlsExportOptions.compensateEvaporation)
 			subtractEvaporation();
@@ -489,17 +489,17 @@ public class ResultsFromCapillaries extends ResultsArray {
 	private void buildDataForPass1(Experiment expi, int nOutputFrames, long kymoBinCol_Ms,
 			ResultsOptions xlsExportOptions, boolean subtractT0) {
 		Capillaries caps = expi.getCapillaries();
-		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
+		double scalingFactorToPhysicalUnits = caps.getScalingFactorToPhysicalUnits(xlsExportOptions.resultType);
 		for (Capillary cap : caps.getList()) {
 			checkIfSameStimulusAndConcentration(cap);
 			Results results = new Results(cap.getRoiName(), cap.capNFlies, cap.getCageID(),
-					xlsExportOptions.exportType);
+					xlsExportOptions.resultType);
 			results.initValuesOutArray(nOutputFrames, null);
-			results.dataInt = cap.getCapillaryMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
+			results.dataInt = cap.getCapillaryMeasuresForXLSPass1(xlsExportOptions.resultType, kymoBinCol_Ms,
 					xlsExportOptions.buildExcelStepMs);
 			if (subtractT0)
 				results.subtractT0();
-			results.transferDataIntToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
+			results.transferDataIntToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.resultType);
 			addRow(results);
 		}
 	}
@@ -515,27 +515,27 @@ public class ResultsFromCapillaries extends ResultsArray {
 		sameLR &= conc.equals(cap.capConcentration);
 	}
 
-	public void buildDataForPass2(ResultsOptions xlsExportOptions) {
-		switch (xlsExportOptions.exportType) {
+	public void buildDataForPass2(ResultsOptions resultsOptions) {
+		switch (resultsOptions.resultType) {
 		case TOPLEVEL_LR:
 		case TOPLEVELDELTA_LR:
 		case SUMGULPS_LR:
-			buildLR(xlsExportOptions.lrPIThreshold);
+			buildLR(resultsOptions.lrPIThreshold);
 			break;
 		case AUTOCORREL:
-			buildAutocorrel(xlsExportOptions);
+			buildAutocorrel(resultsOptions);
 			break;
 		case AUTOCORREL_LR:
-			buildAutocorrelLR(xlsExportOptions);
+			buildAutocorrelLR(resultsOptions);
 			break;
 		case CROSSCORREL:
-			buildCrosscorrel(xlsExportOptions);
+			buildCrosscorrel(resultsOptions);
 			break;
 		case CROSSCORREL_LR:
-			buildCrosscorrelLR(xlsExportOptions);
+			buildCrosscorrelLR(resultsOptions);
 			break;
 		case MARKOV_CHAIN:
-			buildMarkovChain(xlsExportOptions);
+			buildMarkovChain(resultsOptions);
 			break;
 		default:
 			break;
@@ -553,10 +553,10 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 	}
 
-	private void buildAutocorrel(ResultsOptions xlsExportOptions) {
+	private void buildAutocorrel(ResultsOptions resultsOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			Results rowL = getRow(irow);
-			correl(rowL, rowL, rowL, xlsExportOptions.nBinsCorrelation);
+			correl(rowL, rowL, rowL, resultsOptions.nBinsCorrelation);
 		}
 	}
 
@@ -580,7 +580,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 	}
 
-	private void buildCrosscorrelLR(ResultsOptions xlsExportOptions) {
+	private void buildCrosscorrelLR(ResultsOptions resultsOptions) {
 		for (int irow = 0; irow < resultsList.size(); irow++) {
 			Results rowL = getRow(irow);
 			Results rowR = getNextRowIfSameCage(irow);
@@ -591,8 +591,8 @@ public class ResultsFromCapillaries extends ResultsArray {
 				rowLR.initValuesOutArray(rowL.dimension, 0.);
 				combineIntervals(rowL, rowR, rowLR);
 
-				correl(rowL, rowLR, rowL, xlsExportOptions.nBinsCorrelation);
-				correl(rowR, rowLR, rowR, xlsExportOptions.nBinsCorrelation);
+				correl(rowL, rowLR, rowL, resultsOptions.nBinsCorrelation);
+				correl(rowR, rowLR, rowR, resultsOptions.nBinsCorrelation);
 			}
 		}
 	}
@@ -730,7 +730,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 
 		for (int s = 0; s < 4; s++) {
 			Results stateRow = new Results("cage" + cageID + "_" + stateNames[s], rowL.getNflies(), cageID,
-					xlsExportOptions.exportType);
+					xlsExportOptions.resultType);
 			stateRow.initValuesOutArray(dimension, null);
 			stateRow.setStimulus(rowL.getStimulus());
 			stateRow.setConcentration(rowL.getConcentration());
@@ -753,7 +753,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		for (int fromState = 0; fromState < 4; fromState++) {
 			for (int toState = 0; toState < 4; toState++) {
 				Results transRow = new Results("cage" + cageID + "_" + transitionNames[transitionIndex],
-						rowL.getNflies(), cageID, xlsExportOptions.exportType);
+						rowL.getNflies(), cageID, xlsExportOptions.resultType);
 				transRow.initValuesOutArray(dimension, null);
 				transRow.setStimulus(rowL.getStimulus());
 				transRow.setConcentration(rowL.getConcentration());

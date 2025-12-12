@@ -294,9 +294,9 @@ public class Capillaries {
 		return getKymoIntervalsFromCapillaries().get(selectedItem)[0];
 	}
 
-	public double getScalingFactorToPhysicalUnits(EnumResults xlsoption) {
+	public double getScalingFactorToPhysicalUnits(EnumResults resultType) {
 		double scalingFactorToPhysicalUnits;
-		switch (xlsoption) {
+		switch (resultType) {
 		case NBGULPS:
 		case TTOGULP:
 		case TTOGULP_LR:

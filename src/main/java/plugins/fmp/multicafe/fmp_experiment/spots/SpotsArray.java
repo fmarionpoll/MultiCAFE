@@ -488,7 +488,7 @@ public class SpotsArray {
 		});
 	}
 
-	public double getScalingFactorToPhysicalUnits(EnumResults xlsOption) {
+	public double getScalingFactorToPhysicalUnits(EnumResults resultType) {
 		// Implementation would depend on specific scaling logic
 		return 1.0;
 	}

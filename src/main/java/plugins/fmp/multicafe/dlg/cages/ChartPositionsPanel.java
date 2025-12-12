@@ -126,14 +126,14 @@ public class ChartPositionsPanel extends JPanel implements SequenceListener {
 	}
 
 	private ChartPositions plotYToChart(String title, ChartPositions iChart, Rectangle rectv, Point ptRelative,
-			Experiment exp, EnumResults option) {
+			Experiment exp, EnumResults resultType) {
 		if (iChart != null)
 			iChart.mainChartFrame.dispose();
 
 		iChart = new ChartPositions();
 		iChart.createPanel(title);
 		iChart.setLocationRelativeToRectangle(rectv, ptRelative);
-		iChart.displayData(exp.getCages().getCageList(), option);
+		iChart.displayData(exp.getCages().getCageList(), resultType);
 		iChart.mainChartFrame.toFront();
 		iChart.mainChartFrame.requestFocus();
 		return iChart;

@@ -249,19 +249,19 @@ public abstract class XLSExport {
 	/**
 	 * Gets a sheet from the workbook, creating it if necessary.
 	 * 
-	 * @param title     The sheet title
-	 * @param xlsExport The export type
+	 * @param title      The sheet title
+	 * @param resultType The export type
 	 * @return The sheet instance
 	 * @throws ExcelResourceException If sheet creation fails
 	 */
-	protected SXSSFSheet getSheet(String title, EnumResults xlsExport) throws ExcelResourceException {
+	protected SXSSFSheet getSheet(String title, EnumResults resultType) throws ExcelResourceException {
 		SXSSFWorkbook workbook = resourceManager.getWorkbook();
 		SXSSFSheet sheet = workbook.getSheet(title);
 
 		if (sheet == null) {
 			sheet = workbook.createSheet(title);
 			writeTopRowDescriptors(sheet);
-			writeTopRowTimeIntervals(sheet, getDescriptorRowCount(), xlsExport);
+			writeTopRowTimeIntervals(sheet, getDescriptorRowCount(), resultType);
 		}
 
 		return sheet;
@@ -290,11 +290,11 @@ public abstract class XLSExport {
 	/**
 	 * Writes the time interval headers to the sheet.
 	 * 
-	 * @param sheet     The sheet to write to
-	 * @param row       The starting row
-	 * @param xlsExport The export type
+	 * @param sheet      The sheet to write to
+	 * @param row        The starting row
+	 * @param resultType The export type
 	 */
-	protected void writeTopRowTimeIntervals(SXSSFSheet sheet, int row, EnumResults xlsExport) {
+	protected void writeTopRowTimeIntervals(SXSSFSheet sheet, int row, EnumResults resultType) {
 		boolean transpose = options.transpose;
 		Point pt = new Point(0, row);
 
@@ -337,23 +337,23 @@ public abstract class XLSExport {
 	/**
 	 * Writes experiment spot information to the sheet.
 	 * 
-	 * @param sheet         The sheet to write to
-	 * @param pt            The starting point
-	 * @param exp           The experiment
-	 * @param charSeries    The series identifier
-	 * @param cage          The cage
-	 * @param spot          The spot
-	 * @param xlsExportType The export type
+	 * @param sheet      The sheet to write to
+	 * @param pt         The starting point
+	 * @param exp        The experiment
+	 * @param charSeries The series identifier
+	 * @param cage       The cage
+	 * @param spot       The spot
+	 * @param resultType The export type
 	 * @return The updated point
 	 */
 	protected Point writeExperimentSpotInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
-			Spot spot, EnumResults xlsExportType) {
+			Spot spot, EnumResults resultType) {
 		boolean transpose = options.transpose;
 
 		writeFileInformation(sheet, pt, transpose, exp);
 		writeExperimentProperties(sheet, pt, transpose, exp, null);
 		writeCageProperties(sheet, pt, transpose, cage);
-		writeSpotProperties(sheet, pt, transpose, spot, cage, charSeries, xlsExportType);
+		writeSpotProperties(sheet, pt, transpose, spot, cage, charSeries, resultType);
 
 		pt.y = pt.y + EnumXLSColumnHeader.DUM4.getValue() + 1;
 		return pt;
@@ -431,7 +431,7 @@ public abstract class XLSExport {
 	 * Writes spot properties to the sheet.
 	 */
 	private void writeSpotProperties(SXSSFSheet sheet, Point pt, boolean transpose, Spot spot, Cage cage,
-			String charSeries, EnumResults xlsExportType) {
+			String charSeries, EnumResults resultType) {
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_VOLUME, transpose,
 				spot.getProperties().getSpotVolume());
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_PIXELS, transpose,

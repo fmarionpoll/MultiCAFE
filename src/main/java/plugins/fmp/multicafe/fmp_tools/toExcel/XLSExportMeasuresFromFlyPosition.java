@@ -86,26 +86,26 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @param exp        The experiment to export
 	 * @param col0       The starting column
 	 * @param charSeries The series identifier
-	 * @param exportType The export type
+	 * @param resultType The export type
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int getFlyPositionDataAndExport(Experiment exp, int col0, String charSeries, EnumResults exportType)
+	protected int getFlyPositionDataAndExport(Experiment exp, int col0, String charSeries, EnumResults resultType)
 			throws ExcelExportException {
 		try {
-			options.exportType = exportType;
-			SXSSFSheet sheet = getSheet(exportType.toString(), exportType);
-			int colmax = xlsExportExperimentFlyPositionDataToSheet(exp, sheet, exportType, col0, charSeries);
+			options.resultType = resultType;
+			SXSSFSheet sheet = getSheet(resultType.toString(), resultType);
+			int colmax = xlsExportExperimentFlyPositionDataToSheet(exp, sheet, resultType, col0, charSeries);
 
 			if (options.onlyalive) {
-				sheet = getSheet(exportType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, exportType);
-				xlsExportExperimentFlyPositionDataToSheet(exp, sheet, exportType, col0, charSeries);
+				sheet = getSheet(resultType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, resultType);
+				xlsExportExperimentFlyPositionDataToSheet(exp, sheet, resultType, col0, charSeries);
 			}
 
 			return colmax;
 		} catch (ExcelResourceException e) {
 			throw new ExcelExportException("Failed to export fly position data", "get_fly_position_data_and_export",
-					exportType.toString(), e);
+					resultType.toString(), e);
 		}
 	}
 
@@ -114,13 +114,13 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * 
 	 * @param exp           The experiment to export
 	 * @param sheet         The sheet to write to
-	 * @param xlsExportType The export type
+	 * @param resultType The export type
 	 * @param col0          The starting column
 	 * @param charSeries    The series identifier
 	 * @return The next available column
 	 */
 	protected int xlsExportExperimentFlyPositionDataToSheet(Experiment exp, SXSSFSheet sheet,
-			EnumResults xlsExportType, int col0, String charSeries) {
+			EnumResults resultType, int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
@@ -135,9 +135,9 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 			}
 
 			pt.y = 0;
-			pt = writeExperimentFlyPositionInfos(sheet, pt, exp, charSeries, cage, xlsExportType);
+			pt = writeExperimentFlyPositionInfos(sheet, pt, exp, charSeries, cage, resultType);
 			Results xlsResults = getXLSResultsDataValuesFromFlyPositionMeasures(exp, cage, flyPositions, options);
-			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
+			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 			writeXLSResult(sheet, pt, xlsResults);
 			pt.x++;
 		}
@@ -159,7 +159,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 
 		// Create XLSResults with cage properties
 		Results xlsResults = new Results("Cage_" + cage.getProperties().getCageID(),
-				cage.getProperties().getCageNFlies(), cage.getProperties().getCageID(), 0, xlsExportOptions.exportType);
+				cage.getProperties().getCageNFlies(), cage.getProperties().getCageID(), 0, xlsExportOptions.resultType);
 		xlsResults.initValuesOutArray(nOutputFrames, Double.NaN);
 
 		// Get bin durations
@@ -214,11 +214,11 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @param exp           The experiment
 	 * @param charSeries    The series identifier
 	 * @param cage          The cage
-	 * @param xlsExportType The export type
+	 * @param resultType The export type
 	 * @return The updated point
 	 */
 	protected Point writeExperimentFlyPositionInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries,
-			Cage cage, EnumResults xlsExportType) {
+			Cage cage, EnumResults resultType) {
 		int x = pt.x;
 		int y = pt.y;
 		boolean transpose = options.transpose;

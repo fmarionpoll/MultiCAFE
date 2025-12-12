@@ -100,52 +100,52 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * @param exp        The experiment to export
 	 * @param col0       The starting column
 	 * @param charSeries The series identifier
-	 * @param exportType The export type
+	 * @param resultType The export type
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int exportSpotDataChunked(Experiment exp, int col0, String charSeries, EnumResults exportType)
+	protected int exportSpotDataChunked(Experiment exp, int col0, String charSeries, EnumResults resultType)
 			throws ExcelExportException {
 		try {
-			options.exportType = exportType;
-			SXSSFSheet sheet = getSheet(exportType.toString(), exportType);
+			options.resultType = resultType;
+			SXSSFSheet sheet = getSheet(resultType.toString(), resultType);
 
 			// Calculate total spots for progress tracking
 			totalSpots.set(calculateTotalSpots(exp));
 			processedSpots.set(0);
 
-			int colmax = writeExperimentDataChunked(exp, sheet, exportType, col0, charSeries);
+			int colmax = writeExperimentDataChunked(exp, sheet, resultType, col0, charSeries);
 
 			if (options.onlyalive) {
-				sheet = getSheet(exportType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, exportType);
-				writeExperimentDataChunked(exp, sheet, exportType, col0, charSeries);
+				sheet = getSheet(resultType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, resultType);
+				writeExperimentDataChunked(exp, sheet, resultType, col0, charSeries);
 			}
 
 			return colmax;
 		} catch (ExcelResourceException e) {
 			throw new ExcelExportException("Failed to export spot data", "export_spot_data_chunked",
-					exportType.toString(), e);
+					resultType.toString(), e);
 		}
 	}
 
 	/**
 	 * Writes experiment data using chunked processing.
 	 * 
-	 * @param exp           The experiment to export
-	 * @param sheet         The sheet to write to
-	 * @param xlsExportType The export type
-	 * @param col0          The starting column
-	 * @param charSeries    The series identifier
+	 * @param exp        The experiment to export
+	 * @param sheet      The sheet to write to
+	 * @param resultType The export type
+	 * @param col0       The starting column
+	 * @param charSeries The series identifier
 	 * @return The next available column
 	 */
-	protected int writeExperimentDataChunked(Experiment exp, SXSSFSheet sheet, EnumResults xlsExportType, int col0,
+	protected int writeExperimentDataChunked(Experiment exp, SXSSFSheet sheet, EnumResults resultType, int col0,
 			String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
 		// Process cages in chunks
 		for (Cage cage : exp.getCages().cagesList) {
-			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
+			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(resultType);
 			cage.updateSpotsStimulus_i();
 
 			// Process spots in chunks
@@ -154,8 +154,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 				int endIndex = Math.min(i + CHUNK_SIZE, spots.size());
 				List<Spot> spotChunk = spots.subList(i, endIndex);
 
-				processSpotChunk(sheet, pt, exp, charSeries, cage, spotChunk, scalingFactorToPhysicalUnits,
-						xlsExportType);
+				processSpotChunk(sheet, pt, exp, charSeries, cage, spotChunk, scalingFactorToPhysicalUnits, resultType);
 
 				// Force garbage collection after each chunk
 				System.gc();
@@ -174,17 +173,17 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * @param cage                         The cage
 	 * @param spotChunk                    The chunk of spots to process
 	 * @param scalingFactorToPhysicalUnits The scaling factor
-	 * @param xlsExportType                The export type
+	 * @param resultType                   The export type
 	 */
 	protected void processSpotChunk(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
-			List<Spot> spotChunk, double scalingFactorToPhysicalUnits, EnumResults xlsExportType) {
+			List<Spot> spotChunk, double scalingFactorToPhysicalUnits, EnumResults resultType) {
 
 		for (Spot spot : spotChunk) {
 			pt.y = 0;
-			pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
+			pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, resultType);
 
 			// Process spot data using streaming
-			writeSpotDataStreaming(sheet, pt, spot, scalingFactorToPhysicalUnits, xlsExportType);
+			writeSpotDataStreaming(sheet, pt, spot, scalingFactorToPhysicalUnits, resultType);
 
 			pt.x++;
 			processedSpots.incrementAndGet();
@@ -206,20 +205,20 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	 * @param pt                           The current position
 	 * @param spot                         The spot to process
 	 * @param scalingFactorToPhysicalUnits The scaling factor
-	 * @param xlsExportType                The export type
+	 * @param resultType                   The export type
 	 */
 	protected void writeSpotDataStreaming(SXSSFSheet sheet, Point pt, Spot spot, double scalingFactorToPhysicalUnits,
-			EnumResults xlsExportType) {
+			EnumResults resultType) {
 
 		// Get data using streaming iterator
-		Iterator<Double> dataIterator = getSpotDataIterator(spot, xlsExportType);
+		Iterator<Double> dataIterator = getSpotDataIterator(spot, resultType);
 
 		if (!dataIterator.hasNext()) {
 			return;
 		}
 
 		// Apply relative to T0 if needed
-		if (options.relativeToT0 && xlsExportType != EnumResults.AREA_FLYPRESENT) {
+		if (options.relativeToT0 && resultType != EnumResults.AREA_FLYPRESENT) {
 			dataIterator = applyRelativeToMaximumStreaming(dataIterator);
 		}
 
@@ -230,12 +229,12 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
 	/**
 	 * Gets a streaming iterator for spot data.
 	 * 
-	 * @param spot          The spot
-	 * @param xlsExportType The export type
+	 * @param spot       The spot
+	 * @param resultType The export type
 	 * @return The data iterator
 	 */
-	protected Iterator<Double> getSpotDataIterator(Spot spot, EnumResults xlsExportType) {
-		List<Double> dataList = spot.getMeasuresForExcelPass1(xlsExportType, getBinData(spot), getBinExcel());
+	protected Iterator<Double> getSpotDataIterator(Spot spot, EnumResults resultType) {
+		List<Double> dataList = spot.getMeasuresForExcelPass1(resultType, getBinData(spot), getBinExcel());
 		return dataList != null ? dataList.iterator() : new java.util.ArrayList<Double>().iterator();
 	}
 

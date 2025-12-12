@@ -23,7 +23,7 @@ public class FlyPositions {
 	public ArrayList<FlyPosition> flyPositionList = new ArrayList<FlyPosition>();
 
 	public String name = null;
-	public EnumResults exportType = null;
+	public EnumResults resultType = null;
 	public int binsize = 1;
 	public Point2D origin = new Point2D.Double(0, 0);
 	public double pixelsize = 1.;
@@ -39,9 +39,9 @@ public class FlyPositions {
 	public FlyPositions() {
 	}
 
-	public FlyPositions(String name, EnumResults exportType, int nFrames, int binsize) {
+	public FlyPositions(String name, EnumResults resultType, int nFrames, int binsize) {
 		this.name = name;
-		this.exportType = exportType;
+		this.resultType = resultType;
 		this.binsize = binsize;
 		flyPositionList = new ArrayList<FlyPosition>(nFrames);
 		for (int i = 0; i < nFrames; i++)
@@ -101,7 +101,7 @@ public class FlyPositions {
 		flyPositionList = new ArrayList<FlyPosition>(xySeriesFrom.flyPositionList.size());
 		flyPositionList.addAll(flyPositionList);
 		name = xySeriesFrom.name;
-		exportType = xySeriesFrom.exportType;
+		resultType = xySeriesFrom.resultType;
 		binsize = xySeriesFrom.binsize;
 	}
 
@@ -112,7 +112,7 @@ public class FlyPositions {
 		xySeriesTo.flyPositionList = new ArrayList<FlyPosition>(flyPositionList.size());
 		xySeriesTo.flyPositionList.addAll(flyPositionList);
 		xySeriesTo.name = name;
-		xySeriesTo.exportType = exportType;
+		xySeriesTo.resultType = resultType;
 		xySeriesTo.binsize = binsize;
 	}
 
@@ -514,12 +514,12 @@ public class FlyPositions {
 		this.name = name;
 	}
 
-	public EnumResults getExportType() {
-		return exportType;
+	public EnumResults getResultType() {
+		return resultType;
 	}
 
-	public void setExportType(EnumResults exportType) {
-		this.exportType = exportType;
+	public void setResultType(EnumResults resultType) {
+		this.resultType = resultType;
 	}
 
 	public int getBinsize() {

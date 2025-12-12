@@ -5,6 +5,7 @@ import java.awt.Point;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
@@ -95,51 +96,51 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * @param exp        The experiment to export
 	 * @param col0       The starting column
 	 * @param charSeries The series identifier
-	 * @param exportType The export type
+	 * @param resultType The export type
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int getGulpDataAndExport(Experiment exp, int col0, String charSeries, EnumResults exportType)
+	protected int getGulpDataAndExport(Experiment exp, int col0, String charSeries, EnumResults resultType)
 			throws ExcelExportException {
 		try {
-			options.exportType = exportType;
-			SXSSFSheet sheet = getSheet(exportType.toString(), exportType);
-			int colmax = xlsExportExperimentGulpDataToSheet(exp, sheet, exportType, col0, charSeries);
+			options.resultType = resultType;
+			SXSSFSheet sheet = getSheet(resultType.toString(), resultType);
+			int colmax = xlsExportExperimentGulpDataToSheet(exp, sheet, resultType, col0, charSeries);
 
 			if (options.onlyalive) {
-				sheet = getSheet(exportType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, exportType);
-				xlsExportExperimentGulpDataToSheet(exp, sheet, exportType, col0, charSeries);
+				sheet = getSheet(resultType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, resultType);
+				xlsExportExperimentGulpDataToSheet(exp, sheet, resultType, col0, charSeries);
 			}
 
 			return colmax;
 		} catch (ExcelResourceException e) {
 			throw new ExcelExportException("Failed to export gulp data", "get_gulp_data_and_export",
-					exportType.toString(), e);
+					resultType.toString(), e);
 		}
 	}
 
 	/**
 	 * Exports gulp data to a specific sheet.
 	 * 
-	 * @param exp           The experiment to export
-	 * @param sheet         The sheet to write to
-	 * @param xlsExportType The export type
-	 * @param col0          The starting column
-	 * @param charSeries    The series identifier
+	 * @param exp        The experiment to export
+	 * @param sheet      The sheet to write to
+	 * @param resultType The export type
+	 * @param col0       The starting column
+	 * @param charSeries The series identifier
 	 * @return The next available column
 	 */
-	protected int xlsExportExperimentGulpDataToSheet(Experiment exp, SXSSFSheet sheet, EnumResults xlsExportType,
-			int col0, String charSeries) {
+	protected int xlsExportExperimentGulpDataToSheet(Experiment exp, SXSSFSheet sheet, EnumResults resultType, int col0,
+			String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
-		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(xlsExportType);
+		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
 
 		for (Capillary capillary : exp.getCapillaries().getList()) {
 			pt.y = 0;
-			pt = writeExperimentGulpInfos(sheet, pt, exp, charSeries, capillary, xlsExportType);
+			pt = writeExperimentGulpInfos(sheet, pt, exp, charSeries, capillary, resultType);
 			Results xlsResults = getXLSResultsDataValuesFromGulpMeasures(exp, capillary, options);
-			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
+			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 			writeXLSResult(sheet, pt, xlsResults);
 			pt.x++;
 		}
@@ -160,7 +161,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 
 		// Create XLSResults with capillary properties
 		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
-				xlsExportOptions.exportType);
+				xlsExportOptions.resultType);
 		results.setStimulus(capillary.capStimulus);
 		results.setConcentration(capillary.capConcentration);
 		results.initValuesOutArray(nOutputFrames, Double.NaN);
@@ -217,16 +218,16 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	/**
 	 * Writes experiment gulp information to the sheet.
 	 * 
-	 * @param sheet         The sheet to write to
-	 * @param pt            The starting point
-	 * @param exp           The experiment
-	 * @param charSeries    The series identifier
-	 * @param capillary     The capillary
-	 * @param xlsExportType The export type
+	 * @param sheet      The sheet to write to
+	 * @param pt         The starting point
+	 * @param exp        The experiment
+	 * @param charSeries The series identifier
+	 * @param capillary  The capillary
+	 * @param resultType The export type
 	 * @return The updated point
 	 */
 	protected Point writeExperimentGulpInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries,
-			Capillary capillary, EnumResults xlsExportType) {
+			Capillary capillary, EnumResults resultType) {
 		int x = pt.x;
 		int y = pt.y;
 		boolean transpose = options.transpose;
@@ -238,7 +239,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		writeExperimentPropertiesForGulp(sheet, x, y, transpose, exp, charSeries);
 
 		// Write capillary properties (same as capillary export)
-		writeCapillaryProperties(sheet, x, y, transpose, capillary, charSeries, xlsExportType);
+		writeCapillaryProperties(sheet, x, y, transpose, capillary, charSeries, resultType);
 
 		pt.y = y + getDescriptorRowCount();
 		return pt;
@@ -269,7 +270,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 */
 	private void writeExperimentPropertiesForGulp(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp,
 			String charSeries) {
-		plugins.fmp.multicafe.fmp_experiment.ExperimentProperties props = exp.getProperties();
+		ExperimentProperties props = exp.getProperties();
 
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_BOXID);
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_EXPT);
@@ -286,9 +287,9 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * Writes capillary properties to the sheet.
 	 */
 	private void writeCapillaryProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Capillary capillary,
-			String charSeries, EnumResults xlsExportType) {
+			String charSeries, EnumResults resultType) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP.getValue(), transpose,
-				capillary.getSideDescriptor(xlsExportType));
+				capillary.getSideDescriptor(resultType));
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_INDEX.getValue(), transpose,
 				charSeries + "_" + capillary.getLast2ofCapillaryName());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, capillary.capVolume);

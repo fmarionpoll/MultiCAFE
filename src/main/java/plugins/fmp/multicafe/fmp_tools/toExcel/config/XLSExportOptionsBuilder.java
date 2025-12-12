@@ -69,7 +69,7 @@ public class XLSExportOptionsBuilder {
 	// Internal processing options
 	private boolean trim_alive = DefaultOptions.TRIM_ALIVE;
 	private boolean compensateEvaporation = DefaultOptions.COMPENSATE_EVAPORATION;
-	private EnumResults exportType = null;
+	private EnumResults resultType = null;
 
 	/**
 	 * Creates a new builder with default values.
@@ -132,7 +132,7 @@ public class XLSExportOptionsBuilder {
 
 		this.trim_alive = existing.trim_alive;
 		this.compensateEvaporation = existing.compensateEvaporation;
-		this.exportType = existing.exportType;
+		this.resultType = existing.resultType;
 	}
 
 	// Fluent interface methods
@@ -215,8 +215,8 @@ public class XLSExportOptionsBuilder {
 		return this;
 	}
 
-	public XLSExportOptionsBuilder withExportType(EnumResults exportType) {
-		this.exportType = exportType;
+	public XLSExportOptionsBuilder withExportType(EnumResults resultType) {
+		this.resultType = resultType;
 		return this;
 	}
 
@@ -328,7 +328,7 @@ public class XLSExportOptionsBuilder {
 
 		options.trim_alive = this.trim_alive;
 		options.compensateEvaporation = this.compensateEvaporation;
-		options.exportType = this.exportType;
+		options.resultType = this.resultType;
 
 		return options;
 	}

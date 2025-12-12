@@ -86,26 +86,26 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 	 * @param exp        The experiment to export
 	 * @param col0       The starting column
 	 * @param charSeries The series identifier
-	 * @param exportType The export type
+	 * @param resultType The export type
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int exportSpotDataStreaming(Experiment exp, int col0, String charSeries, EnumResults exportType)
+	protected int exportSpotDataStreaming(Experiment exp, int col0, String charSeries, EnumResults resultType)
 			throws ExcelExportException {
 		try {
-			options.exportType = exportType;
-			SXSSFSheet sheet = getSheet(exportType.toString(), exportType);
-			int colmax = writeExperimentDataToSheetStreaming(exp, sheet, exportType, col0, charSeries);
+			options.resultType = resultType;
+			SXSSFSheet sheet = getSheet(resultType.toString(), resultType);
+			int colmax = writeExperimentDataToSheetStreaming(exp, sheet, resultType, col0, charSeries);
 
 			if (options.onlyalive) {
-				sheet = getSheet(exportType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, exportType);
-				writeExperimentDataToSheetStreaming(exp, sheet, exportType, col0, charSeries);
+				sheet = getSheet(resultType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, resultType);
+				writeExperimentDataToSheetStreaming(exp, sheet, resultType, col0, charSeries);
 			}
 
 			return colmax;
 		} catch (ExcelResourceException e) {
 			throw new ExcelExportException("Failed to export spot data", "export_spot_data_streaming",
-					exportType.toString(), e);
+					resultType.toString(), e);
 		}
 	}
 
@@ -114,26 +114,26 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 	 * 
 	 * @param exp           The experiment to export
 	 * @param sheet         The sheet to write to
-	 * @param xlsExportType The export type
+	 * @param resultType The export type
 	 * @param col0          The starting column
 	 * @param charSeries    The series identifier
 	 * @return The next available column
 	 */
-	protected int writeExperimentDataToSheetStreaming(Experiment exp, SXSSFSheet sheet, EnumResults xlsExportType,
+	protected int writeExperimentDataToSheetStreaming(Experiment exp, SXSSFSheet sheet, EnumResults resultType,
 			int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
 		for (Cage cage : exp.getCages().cagesList) {
-			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
+			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(resultType);
 			cage.updateSpotsStimulus_i();
 
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				pt.y = 0;
-				pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
+				pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, resultType);
 
 				// Process spot data directly without intermediate XLSResults
-				writeSpotDataDirectly(sheet, pt, spot, scalingFactorToPhysicalUnits, xlsExportType);
+				writeSpotDataDirectly(sheet, pt, spot, scalingFactorToPhysicalUnits, resultType);
 
 				pt.x++;
 				processedSpots++;
@@ -154,20 +154,20 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 	 * @param pt                           The current position
 	 * @param spot                         The spot to process
 	 * @param scalingFactorToPhysicalUnits The scaling factor
-	 * @param xlsExportType                The export type
+	 * @param resultType                The export type
 	 */
 	protected void writeSpotDataDirectly(SXSSFSheet sheet, Point pt, Spot spot, double scalingFactorToPhysicalUnits,
-			EnumResults xlsExportType) {
+			EnumResults resultType) {
 
 		// Get data directly from spot using streaming approach
-		List<Double> dataList = spot.getMeasuresForExcelPass1(xlsExportType, getBinData(spot), getBinExcel());
+		List<Double> dataList = spot.getMeasuresForExcelPass1(resultType, getBinData(spot), getBinExcel());
 
 		if (dataList == null || dataList.isEmpty()) {
 			return;
 		}
 
 		// Apply relative to T0 if needed
-		if (options.relativeToT0 && xlsExportType != EnumResults.AREA_FLYPRESENT) {
+		if (options.relativeToT0 && resultType != EnumResults.AREA_FLYPRESENT) {
 			dataList = applyRelativeToMaximum(dataList);
 		}
 

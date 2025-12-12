@@ -136,27 +136,27 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 * @param exp        The experiment to export
 	 * @param col0       The starting column
 	 * @param charSeries The series identifier
-	 * @param exportType The export type
+	 * @param resultType The export type
 	 * @param subtractT0 Whether to subtract T0 value
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int getCapillaryDataAndExport(Experiment exp, int col0, String charSeries, EnumResults exportType,
+	protected int getCapillaryDataAndExport(Experiment exp, int col0, String charSeries, EnumResults resultType,
 			boolean subtractT0) throws ExcelExportException {
 		try {
-			options.exportType = exportType;
-			SXSSFSheet sheet = getSheet(exportType.toString(), exportType);
-			int colmax = xlsExportExperimentCapillaryDataToSheet(exp, sheet, exportType, col0, charSeries, subtractT0);
+			options.resultType = resultType;
+			SXSSFSheet sheet = getSheet(resultType.toString(), resultType);
+			int colmax = xlsExportExperimentCapillaryDataToSheet(exp, sheet, resultType, col0, charSeries, subtractT0);
 
 			if (options.onlyalive) {
-				sheet = getSheet(exportType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, exportType);
-				xlsExportExperimentCapillaryDataToSheet(exp, sheet, exportType, col0, charSeries, subtractT0);
+				sheet = getSheet(resultType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, resultType);
+				xlsExportExperimentCapillaryDataToSheet(exp, sheet, resultType, col0, charSeries, subtractT0);
 			}
 
 			return colmax;
 		} catch (ExcelResourceException e) {
 			throw new ExcelExportException("Failed to export capillary data", "get_capillary_data_and_export",
-					exportType.toString(), e);
+					resultType.toString(), e);
 		}
 	}
 
@@ -165,18 +165,18 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 * 
 	 * @param exp           The experiment to export
 	 * @param sheet         The sheet to write to
-	 * @param xlsExportType The export type
+	 * @param resultType The export type
 	 * @param col0          The starting column
 	 * @param charSeries    The series identifier
 	 * @param subtractT0    Whether to subtract T0 value
 	 * @return The next available column
 	 */
-	protected int xlsExportExperimentCapillaryDataToSheet(Experiment exp, SXSSFSheet sheet, EnumResults xlsExportType,
+	protected int xlsExportExperimentCapillaryDataToSheet(Experiment exp, SXSSFSheet sheet, EnumResults resultType,
 			int col0, String charSeries, boolean subtractT0) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
-		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(xlsExportType);
+		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
 
 		// update cage structures from capillaries so that we can do operations within a
 		// cage more easily (not yet implemented)
@@ -185,18 +185,18 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 
 			for (Capillary capillary : cage.getCapillaries().getList()) {
 				pt.y = 0;
-				pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, cage, capillary, xlsExportType);
+				pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, cage, capillary, resultType);
 
 				// Create a copy of options with the correct exportType for this specific export
 				ResultsOptions capOptions = new ResultsOptions();
 				capOptions.buildExcelStepMs = options.buildExcelStepMs;
 				capOptions.relativeToT0 = options.relativeToT0;
 				capOptions.correctEvaporation = options.correctEvaporation;
-				capOptions.exportType = xlsExportType; // Use the parameter, not the field
+				capOptions.resultType = resultType; // Use the parameter, not the field
 
 				Results xlsResults = ResultsFromCapillaries.getResultsFromCapillaryMeasures(exp, capillary,
 						capOptions, subtractT0);
-				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
+				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 				writeXLSResult(sheet, pt, xlsResults);
 				pt.x++;
 			}
@@ -212,27 +212,27 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 * @param exp           The experiment
 	 * @param charSeries    The series identifier
 	 * @param capillary     The capillary
-	 * @param xlsExportType The export type
+	 * @param resultType The export type
 	 * @return The updated point
 	 */
 	protected Point writeExperimentCapillaryInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries,
-			Cage cage, Capillary capillary, EnumResults xlsExportType) {
+			Cage cage, Capillary capillary, EnumResults resultType) {
 
 		boolean transpose = options.transpose;
 
 		writeFileInformation(sheet, pt, transpose, exp);
 		writeExperimentProperties(sheet, pt, transpose, exp, charSeries);
 		writeCageProperties(sheet, pt, transpose, cage);
-		writeCapillaryProperties(sheet, pt, transpose, capillary, charSeries, xlsExportType);
+		writeCapillaryProperties(sheet, pt, transpose, capillary, charSeries, resultType);
 
 		pt.y += getDescriptorRowCount();
 		return pt;
 	}
 
 	private void writeCapillaryProperties(SXSSFSheet sheet, Point pt, boolean transpose, Capillary capillary,
-			String charSeries, EnumResults xlsExportType) {
+			String charSeries, EnumResults resultType) {
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP, transpose,
-				capillary.getSideDescriptor(xlsExportType));
+				capillary.getSideDescriptor(resultType));
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_INDEX, transpose,
 				charSeries + "_" + capillary.getLast2ofCapillaryName());
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_VOLUME, transpose, capillary.capVolume);
@@ -240,7 +240,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_STIM, transpose, capillary.capStimulus);
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_CONC, transpose, capillary.capConcentration);
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAP_NFLIES, transpose, capillary.capNFlies);
-		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.DUM4, transpose, xlsExportType.toString());
+		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.DUM4, transpose, resultType.toString());
 	}
 
 }

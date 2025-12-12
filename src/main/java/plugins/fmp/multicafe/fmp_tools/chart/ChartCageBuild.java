@@ -244,15 +244,15 @@ public class ChartCageBuild {
 	}
 
 	private static XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot,
-			ResultsOptions xlsExportOptions) {
+			ResultsOptions resultOptions) {
 		XYSeries seriesXY = new XYSeries(spot.getName(), false);
 
 		if (exp.getSeqCamData().getTimeManager().getCamImagesTime_Ms() == null)
 			exp.getSeqCamData().build_MsTimesArray_From_FileNamesList();
 		double[] camImages_time_min = exp.getSeqCamData().getTimeManager().getCamImagesTime_Minutes();
-		SpotMeasure spotMeasure = spot.getMeasurements(xlsExportOptions.exportType);
+		SpotMeasure spotMeasure = spot.getMeasurements(resultOptions.resultType);
 		double divider = 1.;
-		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumResults.AREA_FLYPRESENT) {
+		if (resultOptions.relativeToT0 && resultOptions.resultType != EnumResults.AREA_FLYPRESENT) {
 			divider = spotMeasure.getMaximumValue();
 		}
 

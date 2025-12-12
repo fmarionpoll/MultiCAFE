@@ -329,15 +329,15 @@ public class Spot implements Comparable<Spot> {
 	/**
 	 * Gets the cage position string for Excel export.
 	 * 
-	 * @param exportOption the export option
+	 * @param resultType the export option
 	 * @return the formatted cage position string
 	 */
-	public String getCagePosition(EnumResults exportOption) {
-		Objects.requireNonNull(exportOption, "Export option cannot be null");
+	public String getCagePosition(EnumResults resultType) {
+		Objects.requireNonNull(resultType, "Export option cannot be null");
 
 		int cagePosition = properties.getCagePosition();
 
-		switch (exportOption) {
+		switch (resultType) {
 		case DISTANCE:
 		case ISALIVE:
 			return cagePosition + "(T=B)";
@@ -358,8 +358,8 @@ public class Spot implements Comparable<Spot> {
 	 * @return measurements
 	 */
 
-	public long isThereAnyMeasuresDone(EnumResults option) {
-		switch (option) {
+	public long isThereAnyMeasuresDone(EnumResults resultType) {
+		switch (resultType) {
 		case AREA_SUM:
 			return measurements.getSumIn().getCount();
 		case AREA_SUMCLEAN:
@@ -401,13 +401,13 @@ public class Spot implements Comparable<Spot> {
 	/**
 	 * Gets measurements for a specific export option.
 	 * 
-	 * @param option the export option
+	 * @param resultType the export option
 	 * @return the corresponding measurements
 	 */
-	public SpotMeasure getMeasurements(EnumResults option) {
-		Objects.requireNonNull(option, "Export option cannot be null");
+	public SpotMeasure getMeasurements(EnumResults resultType) {
+		Objects.requireNonNull(resultType, "Export option cannot be null");
 
-		switch (option) {
+		switch (resultType) {
 		case AREA_SUM:
 			return measurements.getSumIn();
 		case AREA_SUMCLEAN:
@@ -547,11 +547,11 @@ public class Spot implements Comparable<Spot> {
 	/**
 	 * Checks if there are any measurements done for the specified option.
 	 * 
-	 * @param option the export option
+	 * @param resultType the export option
 	 * @return true if measurements exist
 	 */
-	public boolean hasMeasurements(EnumResults option) {
-		SpotMeasure measure = getMeasurements(option);
+	public boolean hasMeasurements(EnumResults resultType) {
+		SpotMeasure measure = getMeasurements(resultType);
 		return measure != null && measure.getCount() > 0;
 	}
 
@@ -565,8 +565,8 @@ public class Spot implements Comparable<Spot> {
 	 * @param outputBinMs the output bin in milliseconds
 	 * @return the measures list
 	 */
-	public List<Double> getMeasuresForExcelPass1(EnumResults exportType, long seriesBinMs, long outputBinMs) {
-		SpotMeasure measure = getMeasurements(exportType);
+	public List<Double> getMeasuresForExcelPass1(EnumResults resultType, long seriesBinMs, long outputBinMs) {
+		SpotMeasure measure = getMeasurements(resultType);
 		if (measure == null) {
 			return new ArrayList<>();
 		}
