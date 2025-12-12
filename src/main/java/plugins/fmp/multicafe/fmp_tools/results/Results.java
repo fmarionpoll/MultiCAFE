@@ -162,9 +162,9 @@ public class Results {
 		nflies = 0;
 	}
 
-	public void getDataFromSpot(Spot spot, long binData, long binExcel, ResultsOptions xlsExportOptions) {
-		dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportOptions.resultType, binData, binExcel);
-		if (xlsExportOptions.relativeToT0 && xlsExportOptions.resultType != EnumResults.AREA_FLYPRESENT) {
+	public void getDataFromSpot(Spot spot, long binData, long binExcel, ResultsOptions resultsOptions) {
+		dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(resultsOptions.resultType, binData, binExcel);
+		if (resultsOptions.relativeToT0 && resultsOptions.resultType != EnumResults.AREA_FLYPRESENT) {
 			relativeToMaximum();
 		}
 	}
@@ -177,13 +177,13 @@ public class Results {
 	 * @param capillary        The capillary to get data from
 	 * @param binData          The bin duration for the data
 	 * @param binExcel         The bin duration for Excel output
-	 * @param xlsExportOptions The export options
+	 * @param resultsOptions The export options
 	 * @param subtractT0       Whether to subtract T0 value (for TOPLEVEL, TOPRAW,
 	 *                         etc.)
 	 */
 	public void getDataFromCapillary(Capillary capillary, long binData, long binExcel,
-			ResultsOptions xlsExportOptions, boolean subtractT0) {
-		ArrayList<Integer> intData = capillary.getCapillaryMeasuresForXLSPass1(xlsExportOptions.resultType, binData,
+			ResultsOptions resultsOptions, boolean subtractT0) {
+		ArrayList<Integer> intData = capillary.getCapillaryMeasuresForXLSPass1(resultsOptions.resultType, binData,
 				binExcel);
 
 		if (intData == null || intData.isEmpty()) {
@@ -207,7 +207,7 @@ public class Results {
 			}
 		}
 
-		if (xlsExportOptions.relativeToT0 && xlsExportOptions.resultType != EnumResults.AREA_FLYPRESENT) {
+		if (resultsOptions.relativeToT0 && resultsOptions.resultType != EnumResults.AREA_FLYPRESENT) {
 			relativeToMaximum();
 		}
 	}

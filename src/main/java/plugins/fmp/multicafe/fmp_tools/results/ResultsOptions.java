@@ -72,55 +72,55 @@ public class ResultsOptions {
 	public boolean compensateEvaporation = false;
 	public EnumResults resultType;
 
-	public void copy(ResultsOptions xlsExportOptions) {
-		this.xyImage = xlsExportOptions.xyImage;
-		this.xyCage = xlsExportOptions.xyCage;
-		this.ellipseAxes = xlsExportOptions.ellipseAxes;
+	public void copy(ResultsOptions resultsOptions) {
+		this.xyImage = resultsOptions.xyImage;
+		this.xyCage = resultsOptions.xyCage;
+		this.ellipseAxes = resultsOptions.ellipseAxes;
 
-		this.distance = xlsExportOptions.distance;
-		this.alive = xlsExportOptions.alive;
-		this.sleep = xlsExportOptions.sleep;
-		this.sleepThreshold = xlsExportOptions.sleepThreshold;
+		this.distance = resultsOptions.distance;
+		this.alive = resultsOptions.alive;
+		this.sleep = resultsOptions.sleep;
+		this.sleepThreshold = resultsOptions.sleepThreshold;
 
-		this.spotAreas = xlsExportOptions.spotAreas;
-		this.sum = xlsExportOptions.sum;
-		this.sum2 = xlsExportOptions.sum2;
-		this.nPixels = xlsExportOptions.nPixels;
+		this.spotAreas = resultsOptions.spotAreas;
+		this.sum = resultsOptions.sum;
+		this.sum2 = resultsOptions.sum2;
+		this.nPixels = resultsOptions.nPixels;
 
-		this.autocorrelation = xlsExportOptions.autocorrelation;
-		this.crosscorrelation = xlsExportOptions.crosscorrelation;
-		this.crosscorrelationLR = xlsExportOptions.crosscorrelationLR;
-		this.nBinsCorrelation = xlsExportOptions.nBinsCorrelation;
+		this.autocorrelation = resultsOptions.autocorrelation;
+		this.crosscorrelation = resultsOptions.crosscorrelation;
+		this.crosscorrelationLR = resultsOptions.crosscorrelationLR;
+		this.nBinsCorrelation = resultsOptions.nBinsCorrelation;
 
-		this.sumPerCage = xlsExportOptions.sumPerCage;
-		this.subtractT0 = xlsExportOptions.subtractT0;
-		this.relativeToT0 = xlsExportOptions.relativeToT0;
-		this.relativeToMedianT0 = xlsExportOptions.relativeToMedianT0;
-		this.medianT0FromNPoints = xlsExportOptions.medianT0FromNPoints;
-		this.onlyalive = xlsExportOptions.onlyalive;
+		this.sumPerCage = resultsOptions.sumPerCage;
+		this.subtractT0 = resultsOptions.subtractT0;
+		this.relativeToT0 = resultsOptions.relativeToT0;
+		this.relativeToMedianT0 = resultsOptions.relativeToMedianT0;
+		this.medianT0FromNPoints = resultsOptions.medianT0FromNPoints;
+		this.onlyalive = resultsOptions.onlyalive;
 
-		this.transpose = xlsExportOptions.transpose;
-		this.duplicateSeries = xlsExportOptions.duplicateSeries;
-		this.buildExcelStepMs = xlsExportOptions.buildExcelStepMs;
-		this.buildExcelUnitMs = xlsExportOptions.buildExcelUnitMs;
-		this.fixedIntervals = xlsExportOptions.fixedIntervals;
-		this.startAll_Ms = xlsExportOptions.startAll_Ms;
-		this.endAll_Ms = xlsExportOptions.endAll_Ms;
-		this.exportAllFiles = xlsExportOptions.exportAllFiles;
-		this.absoluteTime = xlsExportOptions.absoluteTime;
-		this.collateSeries = xlsExportOptions.collateSeries;
-		this.padIntervals = xlsExportOptions.padIntervals;
+		this.transpose = resultsOptions.transpose;
+		this.duplicateSeries = resultsOptions.duplicateSeries;
+		this.buildExcelStepMs = resultsOptions.buildExcelStepMs;
+		this.buildExcelUnitMs = resultsOptions.buildExcelUnitMs;
+		this.fixedIntervals = resultsOptions.fixedIntervals;
+		this.startAll_Ms = resultsOptions.startAll_Ms;
+		this.endAll_Ms = resultsOptions.endAll_Ms;
+		this.exportAllFiles = resultsOptions.exportAllFiles;
+		this.absoluteTime = resultsOptions.absoluteTime;
+		this.collateSeries = resultsOptions.collateSeries;
+		this.padIntervals = resultsOptions.padIntervals;
 
-		this.experimentIndexFirst = xlsExportOptions.experimentIndexFirst;
-		this.experimentIndexLast = xlsExportOptions.experimentIndexLast;
-		this.cageIndexFirst = xlsExportOptions.cageIndexFirst;
-		this.cageIndexLast = xlsExportOptions.cageIndexLast;
-		this.seriesIndexFirst = xlsExportOptions.seriesIndexFirst;
-		this.seriesIndexLast = xlsExportOptions.seriesIndexLast;
-		this.expList = xlsExportOptions.expList;
+		this.experimentIndexFirst = resultsOptions.experimentIndexFirst;
+		this.experimentIndexLast = resultsOptions.experimentIndexLast;
+		this.cageIndexFirst = resultsOptions.cageIndexFirst;
+		this.cageIndexLast = resultsOptions.cageIndexLast;
+		this.seriesIndexFirst = resultsOptions.seriesIndexFirst;
+		this.seriesIndexLast = resultsOptions.seriesIndexLast;
+		this.expList = resultsOptions.expList;
 
-		this.trim_alive = xlsExportOptions.trim_alive;
-		this.compensateEvaporation = xlsExportOptions.compensateEvaporation;
-		this.resultType = xlsExportOptions.resultType;
+		this.trim_alive = resultsOptions.trim_alive;
+		this.compensateEvaporation = resultsOptions.compensateEvaporation;
+		this.resultType = resultsOptions.resultType;
 	}
 }

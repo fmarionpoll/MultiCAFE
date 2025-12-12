@@ -277,60 +277,60 @@ public class XLSExportOptionsBuilder {
 	 * @return A new XLSExportOptions instance
 	 */
 	public ResultsOptions build() {
-		ResultsOptions options = new ResultsOptions();
+		ResultsOptions resultsOptions = new ResultsOptions();
 
 		// Copy all configured values
-		options.xyImage = this.xyImage;
-		options.xyCage = this.xyCage;
-		options.ellipseAxes = this.ellipseAxes;
+		resultsOptions.xyImage = this.xyImage;
+		resultsOptions.xyCage = this.xyCage;
+		resultsOptions.ellipseAxes = this.ellipseAxes;
 
-		options.distance = this.distance;
-		options.alive = this.alive;
-		options.sleep = this.sleep;
-		options.sleepThreshold = this.sleepThreshold;
+		resultsOptions.distance = this.distance;
+		resultsOptions.alive = this.alive;
+		resultsOptions.sleep = this.sleep;
+		resultsOptions.sleepThreshold = this.sleepThreshold;
 
-		options.spotAreas = this.spotAreas;
-		options.sum = this.sum;
-		options.sum2 = this.sum2;
-		options.nPixels = this.nPixels;
+		resultsOptions.spotAreas = this.spotAreas;
+		resultsOptions.sum = this.sum;
+		resultsOptions.sum2 = this.sum2;
+		resultsOptions.nPixels = this.nPixels;
 
-		options.autocorrelation = this.autocorrelation;
-		options.crosscorrelation = this.crosscorrelation;
-		options.crosscorrelationLR = this.crosscorrelationLR;
-		options.nBinsCorrelation = this.nBinsCorrelation;
+		resultsOptions.autocorrelation = this.autocorrelation;
+		resultsOptions.crosscorrelation = this.crosscorrelation;
+		resultsOptions.crosscorrelationLR = this.crosscorrelationLR;
+		resultsOptions.nBinsCorrelation = this.nBinsCorrelation;
 
-		options.sumPerCage = this.sumPerCage;
-		options.subtractT0 = this.subtractT0;
-		options.relativeToT0 = this.relativeToT0;
-		options.relativeToMedianT0 = this.relativeToMedianT0;
-		options.medianT0FromNPoints = this.medianT0FromNPoints;
-		options.onlyalive = this.onlyalive;
+		resultsOptions.sumPerCage = this.sumPerCage;
+		resultsOptions.subtractT0 = this.subtractT0;
+		resultsOptions.relativeToT0 = this.relativeToT0;
+		resultsOptions.relativeToMedianT0 = this.relativeToMedianT0;
+		resultsOptions.medianT0FromNPoints = this.medianT0FromNPoints;
+		resultsOptions.onlyalive = this.onlyalive;
 
-		options.transpose = this.transpose;
-		options.duplicateSeries = this.duplicateSeries;
-		options.buildExcelStepMs = this.buildExcelStepMs;
-		options.buildExcelUnitMs = this.buildExcelUnitMs;
-		options.fixedIntervals = this.fixedIntervals;
-		options.startAll_Ms = this.startAll_Ms;
-		options.endAll_Ms = this.endAll_Ms;
-		options.exportAllFiles = this.exportAllFiles;
-		options.absoluteTime = this.absoluteTime;
-		options.collateSeries = this.collateSeries;
-		options.padIntervals = this.padIntervals;
+		resultsOptions.transpose = this.transpose;
+		resultsOptions.duplicateSeries = this.duplicateSeries;
+		resultsOptions.buildExcelStepMs = this.buildExcelStepMs;
+		resultsOptions.buildExcelUnitMs = this.buildExcelUnitMs;
+		resultsOptions.fixedIntervals = this.fixedIntervals;
+		resultsOptions.startAll_Ms = this.startAll_Ms;
+		resultsOptions.endAll_Ms = this.endAll_Ms;
+		resultsOptions.exportAllFiles = this.exportAllFiles;
+		resultsOptions.absoluteTime = this.absoluteTime;
+		resultsOptions.collateSeries = this.collateSeries;
+		resultsOptions.padIntervals = this.padIntervals;
 
-		options.experimentIndexFirst = this.experimentIndexFirst;
-		options.experimentIndexLast = this.experimentIndexLast;
-		options.cageIndexFirst = this.cageIndexFirst;
-		options.cageIndexLast = this.cageIndexLast;
-		options.seriesIndexFirst = this.seriesIndexFirst;
-		options.seriesIndexLast = this.seriesIndexLast;
-		options.expList = this.expList;
+		resultsOptions.experimentIndexFirst = this.experimentIndexFirst;
+		resultsOptions.experimentIndexLast = this.experimentIndexLast;
+		resultsOptions.cageIndexFirst = this.cageIndexFirst;
+		resultsOptions.cageIndexLast = this.cageIndexLast;
+		resultsOptions.seriesIndexFirst = this.seriesIndexFirst;
+		resultsOptions.seriesIndexLast = this.seriesIndexLast;
+		resultsOptions.expList = this.expList;
 
-		options.trim_alive = this.trim_alive;
-		options.compensateEvaporation = this.compensateEvaporation;
-		options.resultType = this.resultType;
+		resultsOptions.trim_alive = this.trim_alive;
+		resultsOptions.compensateEvaporation = this.compensateEvaporation;
+		resultsOptions.resultType = this.resultType;
 
-		return options;
+		return resultsOptions;
 	}
 
 	/**

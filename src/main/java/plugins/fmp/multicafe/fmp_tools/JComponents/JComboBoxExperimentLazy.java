@@ -161,24 +161,24 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		return null;
 	}
 
-	public Experiment get_MsTime_of_StartAndEnd_AllExperiments(ResultsOptions options) {
+	public Experiment get_MsTime_of_StartAndEnd_AllExperiments(ResultsOptions resultsOptions) {
 		Experiment expAll = new Experiment();
 		Experiment exp0 = getItemAt(0);
-		if (options.fixedIntervals) {
-			expAll.getSeqCamData().getTimeManager().setFirstImageMs(options.startAll_Ms);
-			expAll.getSeqCamData().setLastImageMs(options.endAll_Ms);
+		if (resultsOptions.fixedIntervals) {
+			expAll.getSeqCamData().getTimeManager().setFirstImageMs(resultsOptions.startAll_Ms);
+			expAll.getSeqCamData().setLastImageMs(resultsOptions.endAll_Ms);
 		} else {
-			if (options.absoluteTime) {
-				Experiment expFirst = exp0.getFirstChainedExperiment(options.collateSeries);
+			if (resultsOptions.absoluteTime) {
+				Experiment expFirst = exp0.getFirstChainedExperiment(resultsOptions.collateSeries);
 				expAll.setFileTimeImageFirst(expFirst.firstImage_FileTime);
-				Experiment expLast = exp0.getLastChainedExperiment(options.collateSeries);
+				Experiment expLast = exp0.getLastChainedExperiment(resultsOptions.collateSeries);
 				expAll.setFileTimeImageLast(expLast.lastImage_FileTime);
 				for (int i = 0; i < getItemCount(); i++) {
 					Experiment exp = getItemAt(i);
-					expFirst = exp.getFirstChainedExperiment(options.collateSeries);
+					expFirst = exp.getFirstChainedExperiment(resultsOptions.collateSeries);
 					if (expAll.firstImage_FileTime.compareTo(expFirst.firstImage_FileTime) > 0)
 						expAll.setFileTimeImageFirst(expFirst.firstImage_FileTime);
-					expLast = exp.getLastChainedExperiment(options.collateSeries);
+					expLast = exp.getLastChainedExperiment(resultsOptions.collateSeries);
 					if (expAll.lastImage_FileTime.compareTo(expLast.lastImage_FileTime) < 0)
 						expAll.setFileTimeImageLast(expLast.lastImage_FileTime);
 				}
@@ -193,13 +193,13 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 
 				for (int i = 0; i < getItemCount(); i++) {
 					Experiment exp = getItemAt(i);
-					Experiment expFirst = exp.getFirstChainedExperiment(options.collateSeries);
+					Experiment expFirst = exp.getFirstChainedExperiment(resultsOptions.collateSeries);
 					firstOffset_Ms = expFirst.getSeqCamData().getTimeManager().getBinFirst_ms()
 							+ expFirst.getSeqCamData().getFirstImageMs();
 					exp.chainImageFirst_ms = expFirst.getSeqCamData().getFirstImageMs()
 							+ expFirst.getSeqCamData().getTimeManager().getBinFirst_ms();
 
-					Experiment expLast = exp.getLastChainedExperiment(options.collateSeries);
+					Experiment expLast = exp.getLastChainedExperiment(resultsOptions.collateSeries);
 					if (expLast.getSeqCamData().getTimeManager().getBinLast_ms() <= 0) {
 						expLast.getSeqCamData().getTimeManager().setBinLast_ms(
 								expLast.getSeqCamData().getLastImageMs() - expLast.getSeqCamData().getFirstImageMs());

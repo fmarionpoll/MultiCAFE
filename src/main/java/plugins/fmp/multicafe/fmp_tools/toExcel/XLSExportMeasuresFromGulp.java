@@ -152,27 +152,27 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * 
 	 * @param exp              The experiment
 	 * @param capillary        The capillary
-	 * @param xlsExportOptions The export options
+	 * @param resultsOptions The export options
 	 * @return The XLS results
 	 */
 	public Results getXLSResultsDataValuesFromGulpMeasures(Experiment exp, Capillary capillary,
-			ResultsOptions xlsExportOptions) {
-		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
+			ResultsOptions resultsOptions) {
+		int nOutputFrames = getNOutputFrames(exp, resultsOptions);
 
 		// Create XLSResults with capillary properties
 		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
-				xlsExportOptions.resultType);
+				resultsOptions.resultType);
 		results.setStimulus(capillary.capStimulus);
 		results.setConcentration(capillary.capConcentration);
 		results.initValuesOutArray(nOutputFrames, Double.NaN);
 
 		// Get bin durations
 		long binData = exp.getKymoBin_ms();
-		long binExcel = xlsExportOptions.buildExcelStepMs;
+		long binExcel = resultsOptions.buildExcelStepMs;
 
 		// Get data from capillary (gulps are extracted via
 		// getCapillaryMeasuresForXLSPass1)
-		results.getDataFromCapillary(capillary, binData, binExcel, xlsExportOptions, false);
+		results.getDataFromCapillary(capillary, binData, binExcel, resultsOptions, false);
 
 		return results;
 	}
@@ -181,10 +181,10 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * Gets the number of output frames for the experiment.
 	 * 
 	 * @param exp     The experiment
-	 * @param options The export options
+	 * @param resultsOptions The export options
 	 * @return The number of output frames
 	 */
-	protected int getNOutputFrames(Experiment exp, ResultsOptions options) {
+	protected int getNOutputFrames(Experiment exp, ResultsOptions resultsOptions) {
 		// For gulps, use kymograph timing (same as capillaries)
 		long kymoFirst_ms = exp.getKymoFirst_ms();
 		long kymoLast_ms = exp.getKymoLast_ms();
@@ -204,7 +204,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		}
 
 		long durationMs = kymoLast_ms - kymoFirst_ms;
-		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
+		int nOutputFrames = (int) (durationMs / resultsOptions.buildExcelStepMs + 1);
 
 		if (nOutputFrames <= 1) {
 			handleExportError(exp, -1);

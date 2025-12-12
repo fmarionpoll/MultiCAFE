@@ -54,7 +54,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	 * @throws ExcelExportException If export fails
 	 */
 	@Override
-	protected int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
+	protected int exportExperimentData(Experiment exp, ResultsOptions resultsOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
 		int maxColumn = startColumn;
 
@@ -188,14 +188,14 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 				pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, cage, capillary, resultType);
 
 				// Create a copy of options with the correct exportType for this specific export
-				ResultsOptions capOptions = new ResultsOptions();
-				capOptions.buildExcelStepMs = options.buildExcelStepMs;
-				capOptions.relativeToT0 = options.relativeToT0;
-				capOptions.correctEvaporation = options.correctEvaporation;
-				capOptions.resultType = resultType; // Use the parameter, not the field
+				ResultsOptions resultsOptions = new ResultsOptions();
+				resultsOptions.buildExcelStepMs = options.buildExcelStepMs;
+				resultsOptions.relativeToT0 = options.relativeToT0;
+				resultsOptions.correctEvaporation = options.correctEvaporation;
+				resultsOptions.resultType = resultType; // Use the parameter, not the field
 
 				Results xlsResults = ResultsFromCapillaries.getResultsFromCapillaryMeasures(exp, capillary,
-						capOptions, subtractT0);
+						resultsOptions, subtractT0);
 				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 				writeXLSResult(sheet, pt, xlsResults);
 				pt.x++;

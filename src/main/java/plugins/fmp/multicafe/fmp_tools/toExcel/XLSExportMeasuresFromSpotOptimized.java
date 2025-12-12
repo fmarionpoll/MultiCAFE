@@ -67,7 +67,7 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 	 * @throws ExcelExportException If export fails
 	 */
 	@Override
-	protected int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
+	protected int exportExperimentData(Experiment exp, ResultsOptions resultsOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
 		int column = startColumn;
 
@@ -300,10 +300,10 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 	 * @param exp The experiment
 	 * @return The number of output frames
 	 */
-	protected int getNOutputFrames(Experiment exp, ResultsOptions options) {
+	protected int getNOutputFrames(Experiment exp, ResultsOptions resultsOptions) {
 		TimeManager timeManager = exp.getSeqCamData().getTimeManager();
 		long durationMs = timeManager.getBinLast_ms() - timeManager.getBinFirst_ms();
-		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
+		int nOutputFrames = (int) (durationMs / resultsOptions.buildExcelStepMs + 1);
 
 		if (nOutputFrames <= 1) {
 			long binLastMs = timeManager.getBinFirst_ms()
@@ -314,7 +314,7 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
 				handleExportError(exp, -1);
 			}
 
-			nOutputFrames = (int) ((binLastMs - timeManager.getBinFirst_ms()) / options.buildExcelStepMs + 1);
+			nOutputFrames = (int) ((binLastMs - timeManager.getBinFirst_ms()) / resultsOptions.buildExcelStepMs + 1);
 
 			if (nOutputFrames <= 1) {
 				nOutputFrames = exp.getSeqCamData().getImageLoader().getNTotalFrames();

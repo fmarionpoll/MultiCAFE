@@ -36,11 +36,11 @@ public class XLSExportFactory {
      * Creates the most appropriate XLSExport implementation based on dataset characteristics.
      * 
      * @param experimentCount The number of experiments to export
-     * @param options The export options
+     * @param resultsOptions The export options
      * @return The appropriate XLSExport implementation
      * @throws ExcelExportException If no suitable implementation can be created
      */
-    public static XLSExport createExporter(int experimentCount, ResultsOptions options) 
+    public static XLSExport createExporter(int experimentCount, ResultsOptions resultsOptions) 
             throws ExcelExportException {
         
         // Estimate memory requirements
@@ -62,15 +62,15 @@ public class XLSExportFactory {
      * Creates the most appropriate XLSExport implementation with automatic memory monitoring.
      * 
      * @param experimentCount The number of experiments to export
-     * @param options The export options
+     * @param resultsOptions The export options
      * @param enableMemoryMonitoring Whether to enable memory monitoring
      * @return The appropriate XLSExport implementation
      * @throws ExcelExportException If no suitable implementation can be created
      */
-    public static XLSExport createExporter(int experimentCount, ResultsOptions options, 
+    public static XLSExport createExporter(int experimentCount, ResultsOptions resultsOptions, 
             boolean enableMemoryMonitoring) throws ExcelExportException {
         
-        XLSExport exporter = createExporter(experimentCount, options);
+        XLSExport exporter = createExporter(experimentCount, resultsOptions);
         
         if (enableMemoryMonitoring && exporter instanceof XLSExportMeasuresFromSpotStreaming) {
             ((XLSExportMeasuresFromSpotStreaming) exporter).setMemoryMonitoringEnabled(true);
@@ -181,14 +181,14 @@ public class XLSExportFactory {
      * Creates an exporter with custom memory thresholds.
      * 
      * @param experimentCount The number of experiments
-     * @param options The export options
+     * @param resultsOptions The export options
      * @param smallDatasetThreshold Custom small dataset threshold
      * @param mediumDatasetThreshold Custom medium dataset threshold
      * @param memoryUsageThreshold Custom memory usage threshold
      * @return The appropriate XLSExport implementation
      * @throws ExcelExportException If no suitable implementation can be created
      */
-    public static XLSExport createExporterWithCustomThresholds(int experimentCount, ResultsOptions options,
+    public static XLSExport createExporterWithCustomThresholds(int experimentCount, ResultsOptions resultsOptions,
             int smallDatasetThreshold, int mediumDatasetThreshold, double memoryUsageThreshold) 
             throws ExcelExportException {
         

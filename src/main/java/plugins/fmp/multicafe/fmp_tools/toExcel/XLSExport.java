@@ -55,14 +55,14 @@ public abstract class XLSExport {
 	 * not be overridden by subclasses.
 	 * 
 	 * @param filename The target Excel file path
-	 * @param options  The export options
+	 * @param resultsOptions  The export options
 	 * @throws ExcelExportException If export fails
 	 */
-	public final void exportToFile(String filename, ResultsOptions options) throws ExcelExportException {
+	public final void exportToFile(String filename, ResultsOptions resultsOptions) throws ExcelExportException {
 		System.out.println("XLSExportBase:exportToFile() - " + ExcelExportConstants.EXPORT_START_MESSAGE);
 
-		this.options = options;
-		this.expList = options.expList;
+		this.options = resultsOptions;
+		this.expList = resultsOptions.expList;
 
 		try (ExcelResourceManager resourceManager = new ExcelResourceManager(filename)) {
 			this.resourceManager = resourceManager;
@@ -232,7 +232,7 @@ public abstract class XLSExport {
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected abstract int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
+	protected abstract int exportExperimentData(Experiment exp, ResultsOptions resultsOptions, int startColumn,
 			String charSeries) throws ExcelExportException;
 
 	/**

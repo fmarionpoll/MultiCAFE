@@ -202,7 +202,7 @@ public class ChartCageBuild {
 	 * @return XYSeriesCollection containing the cage's data
 	 */
 	static XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage,
-			ResultsOptions xlsExportOptions) {
+			ResultsOptions resultsOptions) {
 		if (cage == null || cage.spotsArray == null || cage.spotsArray.getSpotsCount() < 1) {
 			LOGGER.warning("Cannot get spot data: spot array is empty or cage is null");
 			return new XYSeriesCollection();
@@ -215,7 +215,7 @@ public class ChartCageBuild {
 				xySeriesCollection = new XYSeriesCollection();
 			}
 
-			XYSeries seriesXY = createXYSeriesFromSpotMeasure(exp, spot, xlsExportOptions);
+			XYSeries seriesXY = createXYSeriesFromSpotMeasure(exp, spot, resultsOptions);
 			if (seriesXY != null) {
 				seriesXY.setDescription(buildSeriesDescriptionFromCageAndSpot(cage, spot));
 				xySeriesCollection.addSeries(seriesXY);

@@ -28,11 +28,11 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.utils.XLSUtils;
 public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	ArrayList<EnumXLS_QueryColumnHeader> headers = new ArrayList<EnumXLS_QueryColumnHeader>();
 
-	public void exportQToFile(String filename, ResultsOptions options) throws ExcelExportException {
+	public void exportQToFile(String filename, ResultsOptions resultsOptions) throws ExcelExportException {
 		System.out.println("XLSExportBase:exportQToFile() - " + ExcelExportConstants.EXPORT_START_MESSAGE);
 
-		this.options = options;
-		this.expList = options.expList;
+		this.options = resultsOptions;
+		this.expList = resultsOptions.expList;
 
 		try (ExcelResourceManager resourceManager = new ExcelResourceManager(filename)) {
 			this.resourceManager = resourceManager;
@@ -137,20 +137,20 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	}
 
 	@Override
-	protected int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
+	protected int exportExperimentData(Experiment exp, ResultsOptions resultsOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
-		int column = getCageDataAndExport(exp, startColumn, charSeries, xlsExportOptions, EnumResults.AREA_SUMCLEAN);
-		column = getCageDataAndExport(exp, startColumn, charSeries, xlsExportOptions, EnumResults.AREA_SUM);
+		int column = getCageDataAndExport(exp, startColumn, charSeries, resultsOptions, EnumResults.AREA_SUMCLEAN);
+		column = getCageDataAndExport(exp, startColumn, charSeries, resultsOptions, EnumResults.AREA_SUM);
 		return column;
 	}
 
-	protected int getCageDataAndExport(Experiment exp, int col0, String charSeries, ResultsOptions xlsExportOptions,
+	protected int getCageDataAndExport(Experiment exp, int col0, String charSeries, ResultsOptions resultsOptions,
 			EnumResults resultType) throws ExcelDataException {
 		options.resultType = resultType;
 		int colmax = 0;
 		try {
 			SXSSFSheet sheet = xlsGetQSheet(resultType.toString(), resultType);
-			colmax = xlsExportExperimentCageDataToSheet(sheet, exp, xlsExportOptions, resultType, col0, charSeries);
+			colmax = xlsExportExperimentCageDataToSheet(sheet, exp, resultsOptions, resultType, col0, charSeries);
 		} catch (Exception e) {
 			throw new ExcelDataException("Failed to get access to sheet or to export", "getCageDataAndExport",
 					"experiment_export", e);
@@ -183,7 +183,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		return pt.y;
 	}
 
-	int xlsExportExperimentCageDataToSheet(SXSSFSheet sheet, Experiment exp, ResultsOptions xlsExportOptions,
+	int xlsExportExperimentCageDataToSheet(SXSSFSheet sheet, Experiment exp, ResultsOptions resultsOptions,
 			EnumResults resultType, int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		String stim1 = exp.getProperties().getField_stim1();
@@ -196,36 +196,36 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 			if (cage.spotsArray.getSpotsList().size() == 0)
 				continue;
 
-			if (xlsExportOptions.onlyalive && cage.getProperties().getCageNFlies() < 1)
+			if (resultsOptions.onlyalive && cage.getProperties().getCageNFlies() < 1)
 				continue;
 
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(resultType);
 
 			Spot spot1 = cage.combineSpotsWithSameStimConc(stim1, conc1);
-			Results xlsStim1 = getResultForCage(exp, cage, spot1, scalingFactorToPhysicalUnits, xlsExportOptions,
+			Results xlsStim1 = getResultForCage(exp, cage, spot1, scalingFactorToPhysicalUnits, resultsOptions,
 					resultType);
 			if (spot1 != null)
 				cage.getProperties().setCountSpotsStim1(spot1.getProperties().getCountAggregatedSpots());
 
 			Spot spot2 = cage.combineSpotsWithSameStimConc(stim2, conc2);
-			Results xlsStim2 = getResultForCage(exp, cage, spot2, scalingFactorToPhysicalUnits, xlsExportOptions,
+			Results xlsStim2 = getResultForCage(exp, cage, spot2, scalingFactorToPhysicalUnits, resultsOptions,
 					resultType);
 			if (spot2 != null)
 				cage.getProperties().setCountSpotsStim2(spot2.getProperties().getCountAggregatedSpots());
 
 			Spot spotSUM = cage.createSpotSUM(spot1, spot2);
-			Results xlsSUM = getResultForCage(exp, cage, spotSUM, scalingFactorToPhysicalUnits, xlsExportOptions,
+			Results xlsSUM = getResultForCage(exp, cage, spotSUM, scalingFactorToPhysicalUnits, resultsOptions,
 					resultType);
 
 			Spot spotPI = cage.createSpotPI(spot1, spot2);
-			Results xlsPI = getResultForCage(exp, cage, spotPI, scalingFactorToPhysicalUnits, xlsExportOptions,
+			Results xlsPI = getResultForCage(exp, cage, spotPI, scalingFactorToPhysicalUnits, resultsOptions,
 					resultType);
 
 			int tStart = 0;
 			int tEnd = 0;
-			if (xlsExportOptions.fixedIntervals) {
-				tStart = (int) xlsExportOptions.startAll_Ms / xlsExportOptions.buildExcelStepMs;
-				tEnd = (int) xlsExportOptions.endAll_Ms / xlsExportOptions.buildExcelStepMs;
+			if (resultsOptions.fixedIntervals) {
+				tStart = (int) resultsOptions.startAll_Ms / resultsOptions.buildExcelStepMs;
+				tEnd = (int) resultsOptions.endAll_Ms / resultsOptions.buildExcelStepMs;
 			} else {
 				if (xlsStim1 != null)
 					tEnd = xlsStim1.getValuesOutLength() - 1;
@@ -245,11 +245,11 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		return pt.x;
 	}
 
-	Results getResultForCage(Experiment exp, Cage cage, Spot spot, double scaling, ResultsOptions xlsExportOptions,
+	Results getResultForCage(Experiment exp, Cage cage, Spot spot, double scaling, ResultsOptions resultsOptions,
 			EnumResults resultType) {
 		Results xlsResults = null;
 		if (spot != null) {
-			xlsResults = getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot, xlsExportOptions);
+			xlsResults = getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot, resultsOptions);
 			xlsResults.transferDataValuesToValuesOut(scaling, resultType);
 		}
 		return xlsResults;

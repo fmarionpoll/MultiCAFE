@@ -51,7 +51,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @throws ExcelExportException If export fails
 	 */
 	@Override
-	protected int exportExperimentData(Experiment exp, ResultsOptions xlsExportOptions, int startColumn,
+	protected int exportExperimentData(Experiment exp, ResultsOptions resultsOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
 		int column = startColumn;
 
@@ -150,24 +150,24 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @param exp              The experiment
 	 * @param cage             The cage
 	 * @param flyPositions     The fly positions
-	 * @param xlsExportOptions The export options
+	 * @param resultsOptions The export options
 	 * @return The XLS results
 	 */
 	public Results getXLSResultsDataValuesFromFlyPositionMeasures(Experiment exp, Cage cage,
-			FlyPositions flyPositions, ResultsOptions xlsExportOptions) {
-		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
+			FlyPositions flyPositions, ResultsOptions resultsOptions) {
+		int nOutputFrames = getNOutputFrames(exp, resultsOptions);
 
 		// Create XLSResults with cage properties
 		Results xlsResults = new Results("Cage_" + cage.getProperties().getCageID(),
-				cage.getProperties().getCageNFlies(), cage.getProperties().getCageID(), 0, xlsExportOptions.resultType);
+				cage.getProperties().getCageNFlies(), cage.getProperties().getCageID(), 0, resultsOptions.resultType);
 		xlsResults.initValuesOutArray(nOutputFrames, Double.NaN);
 
 		// Get bin durations
 		long binData = exp.getSeqCamData().getTimeManager().getBinDurationMs();
-		long binExcel = xlsExportOptions.buildExcelStepMs;
+		long binExcel = resultsOptions.buildExcelStepMs;
 
 		// Get data from fly positions
-		xlsResults.getDataFromFlyPositions(flyPositions, binData, binExcel, xlsExportOptions);
+		xlsResults.getDataFromFlyPositions(flyPositions, binData, binExcel, resultsOptions);
 
 		return xlsResults;
 	}
@@ -176,15 +176,15 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * Gets the number of output frames for the experiment.
 	 * 
 	 * @param exp     The experiment
-	 * @param options The export options
+	 * @param resultsOptions The export options
 	 * @return The number of output frames
 	 */
-	protected int getNOutputFrames(Experiment exp, ResultsOptions options) {
+	protected int getNOutputFrames(Experiment exp, ResultsOptions resultsOptions) {
 		// For fly positions, use camera sequence timing
 		TimeManager timeManager = exp.getSeqCamData().getTimeManager();
 		ImageLoader imgLoader = exp.getSeqCamData().getImageLoader();
 		long durationMs = timeManager.getBinLast_ms() - timeManager.getBinFirst_ms();
-		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
+		int nOutputFrames = (int) (durationMs / resultsOptions.buildExcelStepMs + 1);
 
 		if (nOutputFrames <= 1) {
 			long binLastMs = timeManager.getBinFirst_ms()
@@ -195,7 +195,7 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 				handleExportError(exp, -1);
 			}
 
-			nOutputFrames = (int) ((binLastMs - timeManager.getBinFirst_ms()) / options.buildExcelStepMs + 1);
+			nOutputFrames = (int) ((binLastMs - timeManager.getBinFirst_ms()) / resultsOptions.buildExcelStepMs + 1);
 
 			if (nOutputFrames <= 1) {
 				nOutputFrames = imgLoader.getNTotalFrames();

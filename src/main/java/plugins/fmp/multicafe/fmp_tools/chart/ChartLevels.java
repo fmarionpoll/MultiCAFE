@@ -242,27 +242,27 @@ public class ChartLevels extends IcyFrame {
 			exp.getCages().computeLRMeasures(exp, 0.0); // Use default threshold of 0.0 for display
 		}
 
-		ResultsOptions options = new ResultsOptions();
+		ResultsOptions resultsOptions = new ResultsOptions();
 		long kymoBin_ms = exp.getKymoBin_ms();
 		if (kymoBin_ms <= 0) {
 			kymoBin_ms = 60000;
 		}
-		options.buildExcelStepMs = (int) kymoBin_ms;
-		options.relativeToT0 = false;
-		options.correctEvaporation = subtractEvaporation;
+		resultsOptions.buildExcelStepMs = (int) kymoBin_ms;
+		resultsOptions.relativeToT0 = false;
+		resultsOptions.correctEvaporation = subtractEvaporation;
 
 		ResultsArray resultsArray = new ResultsArray();
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
 
 		for (Capillary capillary : exp.getCapillaries().getList()) {
-			ResultsOptions capOptions = new ResultsOptions();
-			capOptions.buildExcelStepMs = options.buildExcelStepMs;
-			capOptions.relativeToT0 = options.relativeToT0;
-			capOptions.correctEvaporation = options.correctEvaporation;
-			capOptions.resultType = resultType;
+			ResultsOptions capResultsOptions = new ResultsOptions();
+			capResultsOptions.buildExcelStepMs = resultsOptions.buildExcelStepMs;
+			capResultsOptions.relativeToT0 = resultsOptions.relativeToT0;
+			capResultsOptions.correctEvaporation = resultsOptions.correctEvaporation;
+			capResultsOptions.resultType = resultType;
 
-			Results results = ResultsFromCapillaries.getResultsFromCapillaryMeasures(exp, capillary, capOptions,
-					capOptions.correctEvaporation);
+			Results results = ResultsFromCapillaries.getResultsFromCapillaryMeasures(exp, capillary, capResultsOptions,
+					capResultsOptions.correctEvaporation);
 			if (results != null) {
 				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 				resultsArray.addRow(results);

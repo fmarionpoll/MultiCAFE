@@ -138,17 +138,17 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Creates the main chart panel and frame.
 	 * 
-	 * @param title            the title for the chart window
-	 * @param exp              the experiment containing the data
-	 * @param xlsExportOptions the export options for data processing
-	 * @param parent0          the parent MultiSPOTS96 instance
+	 * @param title          the title for the chart window
+	 * @param exp            the experiment containing the data
+	 * @param resultsOptions the export options for data processing
+	 * @param parent0        the parent MultiSPOTS96 instance
 	 * @throws IllegalArgumentException if any required parameter is null
 	 */
-	public void createMainChartPanel(String title, Experiment exp, ResultsOptions xlsExportOptions) {
+	public void createMainChartPanel(String title, Experiment exp, ResultsOptions resultsOptions) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
-		if (xlsExportOptions == null) {
+		if (resultsOptions == null) {
 			throw new IllegalArgumentException("Export options cannot be null");
 		}
 		if (title == null || title.trim().isEmpty()) {
@@ -159,7 +159,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		this.experiment = exp;
 
 		mainChartPanel = new JPanel();
-		boolean flag = (xlsExportOptions.cageIndexFirst == xlsExportOptions.cageIndexLast);
+		boolean flag = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast);
 		nPanelsAlongX = flag ? 1 : exp.getCages().nCagesAlongX;
 		nPanelsAlongY = flag ? 1 : exp.getCages().nCagesAlongY;
 
@@ -177,20 +177,20 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Sets up the Y-axis for a chart.
 	 * 
-	 * @param title            the axis title
-	 * @param row              the row index
-	 * @param col              the column index
-	 * @param xlsExportOptions the export options
+	 * @param title          the axis title
+	 * @param row            the row index
+	 * @param col            the column index
+	 * @param resultsOptions the export options
 	 * @return configured NumberAxis
 	 */
-	private NumberAxis setYaxis(String label, int row, int col, ResultsOptions xlsExportOptions) {
+	private NumberAxis setYaxis(String label, int row, int col, ResultsOptions resultsOptions) {
 		NumberAxis yAxis = new NumberAxis();
 		row = row * experiment.getCages().nRowsPerCage;
 		col = col * experiment.getCages().nColumnsPerCage;
 		String yLegend = label + " " + String.valueOf((char) (row + 'A')) + Integer.toString(col);
 		yAxis.setLabel(yLegend);
 
-		if (xlsExportOptions.relativeToT0 || xlsExportOptions.relativeToMedianT0) {
+		if (resultsOptions.relativeToT0 || resultsOptions.relativeToMedianT0) {
 			yAxis.setAutoRange(false);
 			yAxis.setRange(RELATIVE_Y_MIN, RELATIVE_Y_MAX);
 		} else {
@@ -204,11 +204,11 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Sets up the X-axis for a chart.
 	 * 
-	 * @param title            the axis title
-	 * @param xlsExportOptions the export options
+	 * @param title          the axis title
+	 * @param resultsOptions the export options
 	 * @return configured NumberAxis
 	 */
-	private NumberAxis setXaxis(String label, ResultsOptions xlsExportOptions) {
+	private NumberAxis setXaxis(String label, ResultsOptions resultsOptions) {
 		NumberAxis xAxis = new NumberAxis();
 		xAxis.setLabel(label);
 		xAxis.setAutoRange(true);
@@ -219,21 +219,21 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Displays spot data for the experiment.
 	 * 
-	 * @param exp              the experiment containing the data
-	 * @param xlsExportOptions the export options for data processing
-	 * @throws IllegalArgumentException if exp or xlsExportOptions is null
+	 * @param exp            the experiment containing the data
+	 * @param resultsOptions the export options for data processing
+	 * @throws IllegalArgumentException if exp or resultsOptions is null
 	 */
-	public void displayData(Experiment exp, ResultsOptions xlsExportOptions) {
+	public void displayData(Experiment exp, ResultsOptions resultsOptions) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
-		if (xlsExportOptions == null) {
+		if (resultsOptions == null) {
 			throw new IllegalArgumentException("Export options cannot be null");
 		}
 
 		this.experiment = exp;
-		createChartPanelArray(xlsExportOptions);
-		arrangePanelsInDisplay(xlsExportOptions);
+		createChartPanelArray(resultsOptions);
+		arrangePanelsInDisplay(resultsOptions);
 		displayChartFrame();
 
 //		LOGGER.info("Displayed spot charts for experiment");
@@ -242,13 +242,13 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Creates chart panels for all cages in the experiment.
 	 * 
-	 * @param xlsExportOptions the export options
+	 * @param resultsOptions the export options
 	 */
-	private void createChartPanelArray(ResultsOptions xlsExportOptions) {
+	private void createChartPanelArray(ResultsOptions resultsOptions) {
 		int indexCage = 0;
 		for (int row = 0; row < experiment.getCages().nCagesAlongY; row++) {
 			for (int col = 0; col < experiment.getCages().nCagesAlongX; col++, indexCage++) {
-				if (indexCage < xlsExportOptions.cageIndexFirst || indexCage > xlsExportOptions.cageIndexLast)
+				if (indexCage < resultsOptions.cageIndexFirst || indexCage > resultsOptions.cageIndexLast)
 					continue;
 
 				Cage cage = experiment.getCages().getCageFromRowColCoordinates(row, col);
@@ -257,7 +257,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 					continue;
 				}
 
-				ChartPanel chartPanel = createChartPanelForCage(cage, row, col, xlsExportOptions);
+				ChartPanel chartPanel = createChartPanelForCage(cage, row, col, resultsOptions);
 				chartPanelArray[row][col] = new ChartCagePair(chartPanel, cage);
 			}
 		}
@@ -274,10 +274,10 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param xlsResultsArray2 the secondary data array
 	 * @param row              the row index
 	 * @param col              the column index
-	 * @param xlsExportOptions the export options
+	 * @param resultsOptions   the export options
 	 * @return configured ChartPanel
 	 */
-	private ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, ResultsOptions xlsExportOptions) {
+	private ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, ResultsOptions resultsOptions) {
 
 		if (cage.spotsArray.getSpotsCount() < 1) {
 //			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
@@ -297,10 +297,10 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		ChartCageBuild.initMaxMin();
 		XYSeriesCollection xyDataSetList = ChartCageBuild.getSpotDataDirectlyFromOneCage(experiment, cage,
-				xlsExportOptions);
+				resultsOptions);
 
-		NumberAxis xAxis = setXaxis("", xlsExportOptions);
-		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
+		NumberAxis xAxis = setXaxis("", resultsOptions);
+		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, resultsOptions);
 		XYPlot xyPlot = ChartCageBuild.buildXYPlot(xyDataSetList, xAxis, yAxis);
 
 		JFreeChart chart = new JFreeChart(null, // title - the chart title (null permitted).
@@ -321,7 +321,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 				false, // zoom options not added to the popup menu
 				true); // tooltips enabled for the chart
 
-		chartCagePanel.addChartMouseListener(new SpotChartMouseListener(experiment, xlsExportOptions));
+		chartCagePanel.addChartMouseListener(new SpotChartMouseListener(experiment, resultsOptions));
 		chartCagePanel.subscribeToCagePropertiesUpdates(cage);
 		return chartCagePanel;
 	}
@@ -329,11 +329,11 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Arranges panels in the display based on export options.
 	 * 
-	 * @param xlsExportOptions the export options
+	 * @param resultsOptions the export options
 	 */
-	private void arrangePanelsInDisplay(ResultsOptions xlsExportOptions) {
-		if (xlsExportOptions.cageIndexFirst == xlsExportOptions.cageIndexLast) {
-			int indexCage = xlsExportOptions.cageIndexFirst;
+	private void arrangePanelsInDisplay(ResultsOptions resultsOptions) {
+		if (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast) {
+			int indexCage = resultsOptions.cageIndexFirst;
 			int row = indexCage / experiment.getCages().nCagesAlongX;
 			int col = indexCage % experiment.getCages().nCagesAlongX;
 
@@ -543,11 +543,11 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Selects the time position for a spot.
 	 * 
-	 * @param exp              the experiment
-	 * @param xlsExportOptions the export options
-	 * @param spot             the spot to select time for
+	 * @param exp            the experiment
+	 * @param resultsOptions the export options
+	 * @param spot           the spot to select time for
 	 */
-	private void selectT(Experiment exp, ResultsOptions xlsExportOptions, Spot spot) {
+	private void selectT(Experiment exp, ResultsOptions resultsOptions, Spot spot) {
 		if (exp == null || spot == null) {
 			LOGGER.warning("Cannot select time: experiment or spot is null");
 			return;
@@ -555,7 +555,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
 		if (v != null && spot.getSpotCamDataT() > 0) {
-			int frameIndex = (int) (spot.getSpotCamDataT() * xlsExportOptions.buildExcelStepMs
+			int frameIndex = (int) (spot.getSpotCamDataT() * resultsOptions.buildExcelStepMs
 					/ exp.getSeqCamData().getTimeManager().getBinDurationMs());
 			v.setPositionT(frameIndex);
 		}
@@ -584,18 +584,18 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Handles the selection of a clicked spot.
 	 * 
-	 * @param exp              the experiment
-	 * @param xlsExportOptions the export options
-	 * @param clickedSpot      the clicked spot
+	 * @param exp            the experiment
+	 * @param resultsOptions the export options
+	 * @param clickedSpot    the clicked spot
 	 */
-	private void chartSelectClickedSpot(Experiment exp, ResultsOptions xlsExportOptions, Spot clickedSpot) {
+	private void chartSelectClickedSpot(Experiment exp, ResultsOptions resultsOptions, Spot clickedSpot) {
 		if (clickedSpot == null) {
 			LOGGER.warning("Clicked spot is null");
 			return;
 		}
 
 		chartSelectSpot(exp, clickedSpot);
-		selectT(exp, xlsExportOptions, clickedSpot);
+		selectT(exp, resultsOptions, clickedSpot);
 		chartSelectKymograph(exp, clickedSpot);
 
 		ROI2D roi = clickedSpot.getRoi();
@@ -681,17 +681,17 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 */
 	private class SpotChartMouseListener implements ChartMouseListener {
 		private final Experiment experiment;
-		private final ResultsOptions xlsOptions;
+		private final ResultsOptions resultsOptions;
 
 		/**
 		 * Creates a new mouse listener.
 		 * 
-		 * @param exp     the experiment
-		 * @param options the export options
+		 * @param exp            the experiment
+		 * @param resultsOptions the export options
 		 */
-		public SpotChartMouseListener(Experiment exp, ResultsOptions options) {
+		public SpotChartMouseListener(Experiment exp, ResultsOptions resultsOptions) {
 			this.experiment = exp;
-			this.xlsOptions = options;
+			this.resultsOptions = resultsOptions;
 		}
 
 		@Override
