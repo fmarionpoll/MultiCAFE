@@ -602,6 +602,8 @@ public class ChartLevelsFrame extends IcyFrame {
 		resultsOptions.buildExcelStepMs = (int) kymoBin_ms;
 		resultsOptions.correctEvaporation = correctEvaporation;
 		resultsOptions.lrPIThreshold = 0.0;
+		resultsOptions.relativeToT0 = false;
+		resultsOptions.subtractT0 = false;
 		
 		return xlsResultsFromCaps.getMeasuresFromAllCapillaries(exp, resultType, resultsOptions);
 	}

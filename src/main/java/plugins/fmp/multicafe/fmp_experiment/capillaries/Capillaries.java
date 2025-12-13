@@ -145,9 +145,11 @@ public class Capillaries {
 	}
 
 	public Capillary getCapillaryFromRoiName(String name) {
+		if (name == null)
+			return null;
 		Capillary capFound = null;
 		for (Capillary cap : getList()) {
-			if (cap.getRoiName().equals(name)) {
+			if (cap.getRoiName() != null && cap.getRoiName().equals(name)) {
 				capFound = cap;
 				break;
 			}
