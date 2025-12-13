@@ -38,6 +38,11 @@ import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
+import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
+import plugins.fmp.multicafe.fmp_tools.results.Results;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
 public class Experiment {
@@ -1523,6 +1528,8 @@ public class Experiment {
 		return flag;
 	}
 
+	// ---------------------------------------------------------
+
 	public void dispatchCapillariesToCages() {
 		for (Cage cage : cages.getCageList()) {
 			cage.clearCapillaryList();
@@ -1541,6 +1548,56 @@ public class Experiment {
 			cage.addCapillaryIfUnique(cap);
 		}
 	}
+
+	public void getCapillaryMeasures(EnumResults resultType, boolean subtractEvaporation) {
+		dispatchCapillariesToCages();
+
+		// Compute evaporation correction if needed (for TOPLEVEL exports)
+		if (subtractEvaporation && resultType == EnumResults.TOPLEVEL) {
+			getCages().computeEvaporationCorrection(this);
+		}
+
+		// Compute L+R measures if needed (must be done after evaporation correction)
+		if (resultType == EnumResults.TOPLEVEL_LR) {
+			if (subtractEvaporation) {
+				getCages().computeEvaporationCorrection(this);
+			}
+			getCages().computeLRMeasures(this, 0.0); // Use default threshold of 0.0 for display
+		}
+	}
+
+	public ResultsArray transformDataScalingForOutput(EnumResults resultType, boolean subtractEvaporation) {
+		ResultsOptions resultsOptions = new ResultsOptions();
+		long kymoBin_ms = getKymoBin_ms();
+		if (kymoBin_ms <= 0) {
+			kymoBin_ms = 60000;
+		}
+		resultsOptions.buildExcelStepMs = (int) kymoBin_ms;
+		resultsOptions.relativeToT0 = false;
+		resultsOptions.correctEvaporation = subtractEvaporation;
+
+		ResultsArray resultsArray = new ResultsArray();
+		double scalingFactorToPhysicalUnits = getCapillaries().getScalingFactorToPhysicalUnits(resultType);
+
+		for (Capillary capillary : getCapillaries().getList()) {
+			ResultsOptions capResultsOptions = new ResultsOptions();
+			capResultsOptions.buildExcelStepMs = resultsOptions.buildExcelStepMs;
+			capResultsOptions.relativeToT0 = resultsOptions.relativeToT0;
+			capResultsOptions.correctEvaporation = resultsOptions.correctEvaporation;
+			capResultsOptions.resultType = resultType;
+
+			Results results = ResultsFromCapillaries.getResultsFromCapillaryMeasures(this, capillary, capResultsOptions,
+					capResultsOptions.correctEvaporation);
+			if (results != null) {
+				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
+				resultsArray.addRow(results);
+			}
+		}
+
+		return resultsArray;
+	}
+
+	// ---------------------------------------------------------
 
 	public boolean loadKymographs() {
 		if (getSeqKymos() == null)

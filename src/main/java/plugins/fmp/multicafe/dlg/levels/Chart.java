@@ -45,7 +45,7 @@ public class Chart extends JPanel implements SequenceListener {
 	private JCheckBox limitsCheckbox = new JCheckBox("top/bottom", true);
 	private JCheckBox derivativeCheckbox = new JCheckBox("derivative", false);
 	private JCheckBox consumptionCheckbox = new JCheckBox("sumGulps", false);
-	private JCheckBox deltaCheckbox = new JCheckBox("delta (Vt - Vt-1)", false);
+	private JCheckBox sumPICheckbox = new JCheckBox("SUM/PI", false);
 	private JCheckBox correctEvaporationCheckbox = new JCheckBox("correct evaporation", false);
 	private JButton displayResultsButton = new JButton("Display results");
 	private JButton axisOptionsButton = new JButton("Axis options");
@@ -70,7 +70,7 @@ public class Chart extends JPanel implements SequenceListener {
 		panel.add(limitsCheckbox);
 		panel.add(derivativeCheckbox);
 		panel.add(consumptionCheckbox);
-		panel.add(deltaCheckbox);
+		panel.add(sumPICheckbox);
 		add(panel);
 
 		JPanel panel1 = new JPanel(layout);
@@ -101,7 +101,7 @@ public class Chart extends JPanel implements SequenceListener {
 					displayGraphsPanels(exp);
 			}
 		});
-		
+
 		limitsCheckbox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -111,7 +111,7 @@ public class Chart extends JPanel implements SequenceListener {
 				}
 			}
 		});
-		
+
 		consumptionCheckbox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -131,7 +131,17 @@ public class Chart extends JPanel implements SequenceListener {
 				}
 			}
 		});
-		
+
+		sumPICheckbox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+				if (exp != null) {
+					displayGraphsPanels(exp);
+				}
+			}
+		});
+
 		correctEvaporationCheckbox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -202,11 +212,13 @@ public class Chart extends JPanel implements SequenceListener {
 		} else if (plotTopAndBottom != null)
 			closeChart(plotTopAndBottom);
 
-		if (deltaCheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumResults.TOPLEVELDELTA)) {
+		if (sumPICheckbox.isSelected() && isThereAnyDataToDisplay(exp, EnumResults.TOPLEVELDELTA)) {
 			// Use saved global position if available, otherwise use initial position
 			Rectangle savedPos = globalChartDeltaBounds;
 			Rectangle pos = (savedPos != null) ? savedPos : rectv;
-			plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumResults.TOPLEVELDELTA, plotDelta, pos);
+			// plotDelta = plotToChart(exp, "top delta t -(t-1)", EnumResults.TOPLEVELDELTA,
+			// plotDelta, pos);
+			plotDelta = plotToChart(exp, "toplevel SUM and PI", EnumResults.TOPLEVEL_LR, plotDelta, pos);
 			if (savedPos == null) {
 				rectv.translate(dx, dy);
 			}

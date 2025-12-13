@@ -32,12 +32,9 @@ import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
-import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
-import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 public class ChartLevels extends IcyFrame {
 	public JPanel mainChartPanel = null;
@@ -81,7 +78,7 @@ public class ChartLevels extends IcyFrame {
 		ymax = Double.NaN;
 		ymin = Double.NaN;
 		flagMaxMinSet = false;
-		List<XYSeriesCollection> xyDataSetList = getDataArrays(exp, option, subtractEvaporation);
+		List<XYSeriesCollection> xyDataSetList = getXYSeriesCollectionList(exp, option, subtractEvaporation);
 
 		final NumberAxis yAxis = new NumberAxis("volume (µl)");
 		yAxis.setAutoRangeIncludesZero(false);
@@ -191,11 +188,16 @@ public class ChartLevels extends IcyFrame {
 			v.setPositionT(isel);
 	}
 
-	private List<XYSeriesCollection> getDataArrays(Experiment exp, EnumResults resultType, boolean subtractEvaporation) {
-		ResultsArray resultsArray1 = getDataAsResultsArray(exp, resultType, subtractEvaporation);
+	private List<XYSeriesCollection> getXYSeriesCollectionList(Experiment exp, EnumResults resultType,
+			boolean subtractEvaporation) {
+
+		exp.getCapillaryMeasures(resultType, subtractEvaporation);
+		ResultsArray resultsArray1 = exp.transformDataScalingForOutput(resultType, subtractEvaporation);
 		ResultsArray resultsArray2 = null;
-		if (resultType == EnumResults.TOPLEVEL)
-			resultsArray2 = getDataAsResultsArray(exp, EnumResults.BOTTOMLEVEL, subtractEvaporation);
+		if (resultType == EnumResults.TOPLEVEL) {
+			exp.getCapillaryMeasures(EnumResults.BOTTOMLEVEL, subtractEvaporation);
+			resultsArray2 = exp.transformDataScalingForOutput(EnumResults.BOTTOMLEVEL, subtractEvaporation);
+		}
 
 		XYSeriesCollection xyDataset = null;
 		int oldCage = -1;
@@ -223,53 +225,6 @@ public class ChartLevels extends IcyFrame {
 			}
 		}
 		return xyList;
-	}
-
-	private ResultsArray getDataAsResultsArray(Experiment exp, EnumResults resultType, boolean subtractEvaporation) {
-		// Dispatch capillaries to cages first
-		exp.dispatchCapillariesToCages();
-
-		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (subtractEvaporation && resultType == EnumResults.TOPLEVEL) {
-			exp.getCages().computeEvaporationCorrection(exp);
-		}
-
-		// Compute L+R measures if needed (must be done after evaporation correction)
-		if (resultType == EnumResults.TOPLEVEL_LR) {
-			if (subtractEvaporation) {
-				exp.getCages().computeEvaporationCorrection(exp);
-			}
-			exp.getCages().computeLRMeasures(exp, 0.0); // Use default threshold of 0.0 for display
-		}
-
-		ResultsOptions resultsOptions = new ResultsOptions();
-		long kymoBin_ms = exp.getKymoBin_ms();
-		if (kymoBin_ms <= 0) {
-			kymoBin_ms = 60000;
-		}
-		resultsOptions.buildExcelStepMs = (int) kymoBin_ms;
-		resultsOptions.relativeToT0 = false;
-		resultsOptions.correctEvaporation = subtractEvaporation;
-
-		ResultsArray resultsArray = new ResultsArray();
-		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
-
-		for (Capillary capillary : exp.getCapillaries().getList()) {
-			ResultsOptions capResultsOptions = new ResultsOptions();
-			capResultsOptions.buildExcelStepMs = resultsOptions.buildExcelStepMs;
-			capResultsOptions.relativeToT0 = resultsOptions.relativeToT0;
-			capResultsOptions.correctEvaporation = resultsOptions.correctEvaporation;
-			capResultsOptions.resultType = resultType;
-
-			Results results = ResultsFromCapillaries.getResultsFromCapillaryMeasures(exp, capillary, capResultsOptions,
-					capResultsOptions.correctEvaporation);
-			if (results != null) {
-				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
-				resultsArray.addRow(results);
-			}
-		}
-
-		return resultsArray;
 	}
 
 	private void updateGlobalMaxMin() {
