@@ -25,8 +25,8 @@ import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.workinprogress_gpu.MCSpots_;
 
 public class MultiCAFE extends PluginActionable {
-	public IcyFrame mainFrame = new IcyFrame("MultiCAFE December 10, 2025", true, true, true, true);
-	// public ExperimentsJComboBox expListCombo = new ExperimentsJComboBox();
+	public IcyFrame mainFrame = new IcyFrame("MultiCAFE December 13, 2025", true, true, true, true);
+
 	public JComboBoxExperimentLazy expListComboLazy = new JComboBoxExperimentLazy();
 	public DescriptorIndex descriptorIndex = new DescriptorIndex();
 
