@@ -11,6 +11,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
@@ -176,30 +177,26 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
-		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
+		ResultsOptions resultsOptions = new ResultsOptions();
+		resultsOptions.copy(options);
+		resultsOptions.resultType = resultType;
+		resultsOptions.subtractT0 = subtractT0;
 
-		// update cage structures from capillaries so that we can do operations within a
-		// cage more easily (not yet implemented)
-		exp.dispatchCapillariesToCages();
-		for (Cage cage : exp.getCages().getCageList()) {
+		ResultsFromCapillaries xlsResultsFromCaps = new ResultsFromCapillaries(exp.getCapillaries().getList().size());
+		ResultsArray resultsArray = xlsResultsFromCaps.getMeasuresFromAllCapillaries(exp, resultType, resultsOptions);
 
-			for (Capillary capillary : cage.getCapillaries().getList()) {
-				pt.y = 0;
-				pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, cage, capillary, resultType);
+		for (Results xlsResults : resultsArray.getList()) {
+			String name = xlsResults.getName();
+			Capillary capillary = exp.getCapillaries().getCapillaryFromRoiName(name);
+			if (capillary == null)
+				continue;
 
-				// Create a copy of options with the correct exportType for this specific export
-				ResultsOptions resultsOptions = new ResultsOptions();
-				resultsOptions.buildExcelStepMs = options.buildExcelStepMs;
-				resultsOptions.relativeToT0 = options.relativeToT0;
-				resultsOptions.correctEvaporation = options.correctEvaporation;
-				resultsOptions.resultType = resultType; // Use the parameter, not the field
+			Cage cage = exp.getCages().getCageFromID(capillary.getCageID());
 
-				Results xlsResults = ResultsFromCapillaries.getResultsFromCapillaryMeasures(exp, capillary,
-						resultsOptions, subtractT0);
-				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
-				writeXLSResult(sheet, pt, xlsResults);
-				pt.x++;
-			}
+			pt.y = 0;
+			pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, cage, capillary, resultType);
+			writeXLSResult(sheet, pt, xlsResults);
+			pt.x++;
 		}
 		return pt.x;
 	}

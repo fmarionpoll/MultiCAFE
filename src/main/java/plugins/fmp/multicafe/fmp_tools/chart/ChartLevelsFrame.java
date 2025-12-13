@@ -42,6 +42,8 @@ import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
 
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
+
 /**
  * Enhanced chart display class for capillary level data visualization. This
  * class creates and manages charts displaying capillary measurements over time,
@@ -591,7 +593,17 @@ public class ChartLevelsFrame extends IcyFrame {
 		// Note: Computations are now handled inside getMeasuresFromAllCapillaries
 		// to ensure consistency between chart display and Excel export
 		ResultsFromCapillaries xlsResultsFromCaps = new ResultsFromCapillaries(exp.getCapillaries().getList().size());
-		return xlsResultsFromCaps.getMeasuresFromAllCapillaries(exp, resultType, correctEvaporation);
+		
+		ResultsOptions resultsOptions = new ResultsOptions();
+		long kymoBin_ms = exp.getKymoBin_ms();
+		if (kymoBin_ms <= 0) {
+			kymoBin_ms = 60000;
+		}
+		resultsOptions.buildExcelStepMs = (int) kymoBin_ms;
+		resultsOptions.correctEvaporation = correctEvaporation;
+		resultsOptions.lrPIThreshold = 0.0;
+		
+		return xlsResultsFromCaps.getMeasuresFromAllCapillaries(exp, resultType, resultsOptions);
 	}
 
 	/**

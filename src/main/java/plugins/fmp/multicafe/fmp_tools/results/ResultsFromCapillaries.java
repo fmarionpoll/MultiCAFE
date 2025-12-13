@@ -260,35 +260,31 @@ public class ResultsFromCapillaries extends ResultsArray {
 	}
 
 	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumResults resultType,
-			boolean correctEvaporation) {
+			ResultsOptions resultsOptions) {
 		// Dispatch capillaries to cages first
 		exp.dispatchCapillariesToCages();
 
 		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (correctEvaporation && resultType == EnumResults.TOPLEVEL) {
+		if (resultsOptions.correctEvaporation && resultType == EnumResults.TOPLEVEL) {
 			exp.getCages().computeEvaporationCorrection(exp);
 		}
 
 		// Compute L+R measures if needed (must be done after evaporation correction)
 		if (resultType == EnumResults.TOPLEVEL_LR) {
-			if (correctEvaporation) {
+			if (resultsOptions.correctEvaporation) {
 				exp.getCages().computeEvaporationCorrection(exp);
 			}
-			exp.getCages().computeLRMeasures(exp, 0.0); // Use default threshold of 0.0 for chart/display
+			exp.getCages().computeLRMeasures(exp, resultsOptions.lrPIThreshold); 
 		}
 
 		ResultsArray resultsArray = new ResultsArray();
 		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
 
-		ResultsOptions options = new ResultsOptions();
 		long kymoBin_ms = exp.getKymoBin_ms();
 		if (kymoBin_ms <= 0) {
 			kymoBin_ms = 60000;
 		}
-		options.buildExcelStepMs = (int) kymoBin_ms;
-		options.relativeToT0 = false;
-		options.correctEvaporation = correctEvaporation;
-
+		
 		List<Capillary> capillaries = exp.getCapillaries().getList();
 		if (capillaries == null) {
 			LOGGER.warning("Capillaries list is null");
@@ -300,14 +296,15 @@ public class ResultsFromCapillaries extends ResultsArray {
 				continue;
 			}
 
-			ResultsOptions resultsOptions = new ResultsOptions();
-			resultsOptions.buildExcelStepMs = options.buildExcelStepMs;
-			resultsOptions.relativeToT0 = options.relativeToT0;
-			resultsOptions.correctEvaporation = options.correctEvaporation;
-			resultsOptions.resultType = resultType;
+			ResultsOptions options = new ResultsOptions();
+			options.buildExcelStepMs = resultsOptions.buildExcelStepMs;
+			options.relativeToT0 = resultsOptions.relativeToT0;
+			options.correctEvaporation = resultsOptions.correctEvaporation;
+			options.subtractT0 = resultsOptions.subtractT0;
+			options.resultType = resultType;
 
 			try {
-				Results xlsResults = getResultsFromCapillaryMeasures(exp, capillary, resultsOptions, false);
+				Results xlsResults = getResultsFromCapillaryMeasures(exp, capillary, options, resultsOptions.subtractT0);
 				if (xlsResults != null) {
 					xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 					resultsArray.addRow(xlsResults);
