@@ -8,14 +8,16 @@ import java.util.Map;
 
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
+import plugins.fmp.multicafe.fmp_tools.Level2D;
 
 /**
- * Handles cage-level capillary measure computations for a specific Cage instance.
- * Handles computations such as L+R aggregation (SUM, PI) that operate on capillaries within a single cage.
+ * Handles cage-level capillary measure computations for a specific Cage
+ * instance. Handles computations such as L+R aggregation (SUM, PI) that operate
+ * on capillaries within a single cage.
  * 
- * Supports different numbers of capillaries per cage (2, 4, 8, etc.):
- * - For 2 capillaries: standard L+R with SUM and PI
- * - For 4+ capillaries: aggregates by grouping (e.g., L1+L2, R1+R2, then combined)
+ * Supports different numbers of capillaries per cage (2, 4, 8, etc.): - For 2
+ * capillaries: standard L+R with SUM and PI - For 4+ capillaries: aggregates by
+ * grouping (e.g., L1+L2, R1+R2, then combined)
  * 
  * This class works with Cage instances to provide computation functionality
  * while storing computed results in transient fields.
@@ -24,13 +26,13 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
  * @version 2.3.3
  */
 public class CageCapillariesComputation {
-	
+
 	private final Cage cage;
-	
+
 	// Volatile computed measures stored at cage level
 	// Key format: "SUM", "PI", "SUM_L", "SUM_R", etc.
 	private transient Map<String, CapillaryMeasure> computedMeasures = new HashMap<>();
-	
+
 	/**
 	 * Creates a new CageCapillariesComputation for the given cage.
 	 * 
@@ -42,7 +44,7 @@ public class CageCapillariesComputation {
 		}
 		this.cage = cage;
 	}
-	
+
 	/**
 	 * Gets the associated cage.
 	 * 
@@ -51,12 +53,12 @@ public class CageCapillariesComputation {
 	public Cage getCage() {
 		return cage;
 	}
-	
+
 	/**
-	 * Computes L+R measures (SUM and PI) for capillaries within the associated cage.
-	 * Handles different numbers of capillaries:
-	 * - 2 capillaries: standard L+R (SUM = |L|+|R|, PI = (L-R)/SUM)
-	 * - 4+ capillaries: groups into Left and Right sets, then computes aggregated SUM and PI
+	 * Computes L+R measures (SUM and PI) for capillaries within the associated
+	 * cage. Handles different numbers of capillaries: - 2 capillaries: standard L+R
+	 * (SUM = |L|+|R|, PI = (L-R)/SUM) - 4+ capillaries: groups into Left and Right
+	 * sets, then computes aggregated SUM and PI
 	 * 
 	 * Note: This should be called AFTER evaporation correction if needed.
 	 * 
@@ -66,11 +68,11 @@ public class CageCapillariesComputation {
 		List<Capillary> caps = cage.getCapillaries().getList();
 		if (caps.size() < 2)
 			return;
-		
+
 		// Group capillaries by side (L or R)
 		List<Capillary> leftCaps = new ArrayList<>();
 		List<Capillary> rightCaps = new ArrayList<>();
-		
+
 		for (Capillary cap : caps) {
 			String side = getCapillarySide(cap);
 			if (side.contains("L") || side.contains("1")) {
@@ -79,30 +81,30 @@ public class CageCapillariesComputation {
 				rightCaps.add(cap);
 			}
 		}
-		
+
 		// If no clear L/R grouping, use first half as left, second half as right
 		if (leftCaps.isEmpty() && rightCaps.isEmpty() && caps.size() >= 2) {
 			int mid = caps.size() / 2;
 			leftCaps = caps.subList(0, mid);
 			rightCaps = caps.subList(mid, caps.size());
 		}
-		
+
 		if (leftCaps.isEmpty() || rightCaps.isEmpty())
 			return;
-		
+
 		// Compute aggregated measures for left and right groups
 		CapillaryMeasure aggregatedLeft = aggregateMeasures(leftCaps);
 		CapillaryMeasure aggregatedRight = aggregateMeasures(rightCaps);
-		
-		if (aggregatedLeft == null || aggregatedRight == null ||
-			aggregatedLeft.polylineLevel == null || aggregatedRight.polylineLevel == null ||
-			aggregatedLeft.polylineLevel.npoints == 0 || aggregatedRight.polylineLevel.npoints == 0)
+
+		if (aggregatedLeft == null || aggregatedRight == null || aggregatedLeft.polylineLevel == null
+				|| aggregatedRight.polylineLevel == null || aggregatedLeft.polylineLevel.npoints == 0
+				|| aggregatedRight.polylineLevel.npoints == 0)
 			return;
-		
+
 		// Compute SUM and PI from aggregated left and right
 		computeSumAndPI(aggregatedLeft, aggregatedRight, threshold);
 	}
-	
+
 	/**
 	 * Clears all computed measures for the associated cage.
 	 */
@@ -115,7 +117,7 @@ public class CageCapillariesComputation {
 			cap.clearComputedMeasures();
 		}
 	}
-	
+
 	/**
 	 * Gets a computed measure by key.
 	 * 
@@ -125,18 +127,18 @@ public class CageCapillariesComputation {
 	public CapillaryMeasure getComputedMeasure(String key) {
 		return computedMeasures != null ? computedMeasures.get(key) : null;
 	}
-	
+
 	// --------------------------------------------------------
 	// Helper methods
-	
+
 	/**
-	 * Aggregates measures from multiple capillaries by summing them.
-	 * Uses evaporation-corrected measures if available, otherwise raw measures.
+	 * Aggregates measures from multiple capillaries by summing them. Uses
+	 * evaporation-corrected measures if available, otherwise raw measures.
 	 */
 	private CapillaryMeasure aggregateMeasures(List<Capillary> capillaries) {
 		if (capillaries == null || capillaries.isEmpty())
 			return null;
-		
+
 		// Find maximum dimension
 		int maxPoints = 0;
 		for (Capillary cap : capillaries) {
@@ -147,93 +149,86 @@ public class CageCapillariesComputation {
 					maxPoints = npoints;
 			}
 		}
-		
+
 		if (maxPoints == 0)
 			return null;
-		
+
 		// Sum values from all capillaries
 		double[] sumY = new double[maxPoints];
 		for (int i = 0; i < maxPoints; i++) {
 			sumY[i] = 0.0;
 		}
-		
+
 		for (Capillary cap : capillaries) {
 			CapillaryMeasure measure = (cap.ptsTopCorrected != null) ? cap.ptsTopCorrected : cap.ptsTop;
 			if (measure == null || measure.polylineLevel == null || measure.polylineLevel.npoints == 0)
 				continue;
-			
+
 			int npoints = Math.min(measure.polylineLevel.npoints, maxPoints);
 			for (int i = 0; i < npoints; i++) {
 				sumY[i] += Math.abs(measure.polylineLevel.ypoints[i]);
 			}
 		}
-		
+
 		// Create aggregated measure
 		double[] xpoints = new double[maxPoints];
 		for (int i = 0; i < maxPoints; i++) {
 			xpoints[i] = i;
 		}
-		
-		plugins.fmp.multicafe.fmp_tools.Level2D aggregatedPolyline = 
-			new plugins.fmp.multicafe.fmp_tools.Level2D(xpoints, sumY, maxPoints);
-		
+
+		Level2D aggregatedPolyline = new Level2D(xpoints, sumY, maxPoints);
+
 		CapillaryMeasure aggregated = new CapillaryMeasure("aggregated", -1, new ArrayList<Point2D>());
 		aggregated.polylineLevel = aggregatedPolyline;
-		
+
 		return aggregated;
 	}
-	
+
 	/**
-	 * Computes SUM and PI from left and right aggregated measures.
-	 * SUM = |L| + |R|
+	 * Computes SUM and PI from left and right aggregated measures. SUM = |L| + |R|
 	 * PI = (L-R)/SUM (if SUM >= threshold)
 	 */
-	private void computeSumAndPI(
-			CapillaryMeasure aggregatedLeft,
-			CapillaryMeasure aggregatedRight,
-			double threshold) {
-		
-		plugins.fmp.multicafe.fmp_tools.Level2D polylineL = aggregatedLeft.polylineLevel;
-		plugins.fmp.multicafe.fmp_tools.Level2D polylineR = aggregatedRight.polylineLevel;
+	private void computeSumAndPI(CapillaryMeasure aggregatedLeft, CapillaryMeasure aggregatedRight, double threshold) {
+
+		Level2D polylineL = aggregatedLeft.polylineLevel;
+		Level2D polylineR = aggregatedRight.polylineLevel;
 		if (polylineL == null || polylineR == null)
 			return;
-		
+
 		int npoints = Math.min(polylineL.npoints, polylineR.npoints);
 		double[] sumY = new double[npoints];
 		double[] piY = new double[npoints];
 		double[] xpoints = new double[npoints];
-		
+
 		for (int i = 0; i < npoints; i++) {
 			xpoints[i] = i;
 			double valL = polylineL.ypoints[i];
 			double valR = polylineR.ypoints[i];
 			double sum = Math.abs(valL) + Math.abs(valR);
-			
+
 			sumY[i] = sum;
-			
+
 			if (sum > 0.0 && sum >= threshold) {
 				piY[i] = (valL - valR) / sum;
 			} else {
 				piY[i] = 0.0;
 			}
 		}
-		
+
 		// Store SUM and PI in computed measures map
-		plugins.fmp.multicafe.fmp_tools.Level2D sumPolyline = 
-			new plugins.fmp.multicafe.fmp_tools.Level2D(xpoints, sumY, npoints);
-		plugins.fmp.multicafe.fmp_tools.Level2D piPolyline = 
-			new plugins.fmp.multicafe.fmp_tools.Level2D(xpoints, piY, npoints);
-		
+		Level2D sumPolyline = new Level2D(xpoints, sumY, npoints);
+		Level2D piPolyline = new Level2D(xpoints, piY, npoints);
+
 		String cageName = cage.prop.getStrCageNumber();
 		CapillaryMeasure sumMeasure = new CapillaryMeasure(cageName + "_SUM", -1, new ArrayList<Point2D>());
 		sumMeasure.polylineLevel = sumPolyline;
 		computedMeasures.put("SUM", sumMeasure);
-		
+
 		CapillaryMeasure piMeasure = new CapillaryMeasure(cageName + "_PI", -1, new ArrayList<Point2D>());
 		piMeasure.polylineLevel = piPolyline;
 		computedMeasures.put("PI", piMeasure);
 	}
-	
+
 	private String getCapillarySide(Capillary cap) {
 		if (cap.capSide != null && !cap.capSide.equals("."))
 			return cap.capSide;
@@ -248,7 +243,7 @@ public class CageCapillariesComputation {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Gets the SUM measure for the associated cage (L+R aggregation).
 	 * 
@@ -257,7 +252,7 @@ public class CageCapillariesComputation {
 	public CapillaryMeasure getSumMeasure() {
 		return getComputedMeasure("SUM");
 	}
-	
+
 	/**
 	 * Gets the PI measure for the associated cage ((L-R)/(L+R) preference index).
 	 * 
@@ -267,4 +262,3 @@ public class CageCapillariesComputation {
 		return getComputedMeasure("PI");
 	}
 }
-

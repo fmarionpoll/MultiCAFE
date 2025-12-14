@@ -1557,11 +1557,8 @@ public class Experiment {
 			getCages().computeEvaporationCorrection(this);
 		}
 
-		// Compute L+R measures if needed (must be done after evaporation correction)
+		// Compute L+R measures if needed
 		if (resultType == EnumResults.TOPLEVEL_LR) {
-			if (subtractEvaporation) {
-				getCages().computeEvaporationCorrection(this);
-			}
 			getCages().computeLRMeasures(this, 0.0); // Use default threshold of 0.0 for display
 		}
 	}

@@ -176,7 +176,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		resultsOptions.nbGulps = false;
 
 		resultsOptions.topLevel = tabLevels.topLevelCheckBox.isSelected();
-		resultsOptions.topLevelDelta = tabLevels.topLevelDeltaCheckBox.isSelected();
+//		resultsOptions.topLevelDelta = tabLevels.topLevelDeltaCheckBox.isSelected();
 		resultsOptions.bottomLevel = tabLevels.bottomLevelCheckBox.isSelected();
 		resultsOptions.sumGulps = false;
 		resultsOptions.lrPI = tabLevels.lrPICheckBox.isSelected();

@@ -193,6 +193,7 @@ public class ChartLevels extends IcyFrame {
 
 		exp.getCapillaryMeasures(resultType, subtractEvaporation);
 		ResultsArray resultsArray1 = exp.transformDataScalingForOutput(resultType, subtractEvaporation);
+
 		ResultsArray resultsArray2 = null;
 		if (resultType == EnumResults.TOPLEVEL) {
 			exp.getCapillaryMeasures(EnumResults.BOTTOMLEVEL, subtractEvaporation);

@@ -57,70 +57,73 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	@Override
 	protected int exportExperimentData(Experiment exp, ResultsOptions resultsOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
-		int maxColumn = startColumn;
+		int column = startColumn;
 
 		// Dispatch capillaries to cages for computation
 		exp.dispatchCapillariesToCages();
 
-		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (options.correctEvaporation && (options.topLevel || (options.lrPI && options.topLevel))) {
-			exp.getCages().computeEvaporationCorrection(exp);
-		}
-
-		// Compute L+R measures if needed (must be done after evaporation correction)
-		if (options.lrPI && options.topLevel) {
-			exp.getCages().computeLRMeasures(exp, options.lrPIThreshold);
-		}
-
 		if (options.topLevel) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.TOPRAW.toString()), charSeries,
+			column = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.TOPRAW.toString()), charSeries,
 					EnumResults.TOPRAW, false);
-			updateSheetColumn(EnumResults.TOPRAW.toString(), col);
-			if (col > maxColumn)
-				maxColumn = col;
-			col = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.TOPLEVEL.toString()), charSeries,
+
+			column = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.TOPLEVEL.toString()), charSeries,
 					EnumResults.TOPLEVEL, true);
-			updateSheetColumn(EnumResults.TOPLEVEL.toString(), col);
-			if (col > maxColumn)
-				maxColumn = col;
 		}
+
 		if (options.lrPI && options.topLevel) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.TOPLEVEL_LR.toString()), charSeries,
+			column = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.TOPLEVEL_LR.toString()), charSeries,
 					EnumResults.TOPLEVEL_LR, true);
-			updateSheetColumn(EnumResults.TOPLEVEL_LR.toString(), col);
-			if (col > maxColumn)
-				maxColumn = col;
 		}
-		if (options.topLevelDelta) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.TOPLEVELDELTA.toString()), charSeries,
-					EnumResults.TOPLEVELDELTA, true);
-			updateSheetColumn(EnumResults.TOPLEVELDELTA.toString(), col);
-			if (col > maxColumn)
-				maxColumn = col;
-		}
-		if (options.lrPI && options.topLevelDelta) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.TOPLEVELDELTA_LR.toString()), charSeries,
-					EnumResults.TOPLEVELDELTA_LR, true);
-			updateSheetColumn(EnumResults.TOPLEVELDELTA_LR.toString(), col);
-			if (col > maxColumn)
-				maxColumn = col;
-		}
+
 		if (options.bottomLevel) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.BOTTOMLEVEL.toString()), charSeries,
+			column = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.BOTTOMLEVEL.toString()), charSeries,
 					EnumResults.BOTTOMLEVEL, false);
-			updateSheetColumn(EnumResults.BOTTOMLEVEL.toString(), col);
-			if (col > maxColumn)
-				maxColumn = col;
 		}
 		if (options.derivative) {
-			int col = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.DERIVEDVALUES.toString()), charSeries,
+			column = getCapillaryDataAndExport(exp, getSheetColumn(EnumResults.DERIVEDVALUES.toString()), charSeries,
 					EnumResults.DERIVEDVALUES, false);
-			updateSheetColumn(EnumResults.DERIVEDVALUES.toString(), col);
-			if (col > maxColumn)
-				maxColumn = col;
 		}
 
-		return maxColumn;
+		return column;
+	}
+
+	protected int getCapDataAndExport(Experiment exp, int col0, String charSeries, EnumResults resultType)
+			throws ExcelExportException {
+		try {
+			options.resultType = resultType;
+			SXSSFSheet sheet = getSheet(resultType.toString(), resultType);
+			int colmax = xlsExportExperimentCapDataToSheet(exp, sheet, resultType, col0, charSeries);
+			if (options.onlyalive) {
+				sheet = getSheet(resultType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, resultType);
+				xlsExportExperimentcapDataToSheet(exp, sheet, resultType, col0, charSeries);
+			}
+
+			return colmax;
+		} catch (ExcelResourceException e) {
+			throw new ExcelExportException("Failed to export spot data", "get_spot_data_and_export",
+					resultType.toString(), e);
+		}
+	}
+
+	protected int xlsExportExperimentCapDataToSheet(Experiment exp, SXSSFSheet sheet, EnumResults resultType, int col0,
+			String charSeries) {
+		Point pt = new Point(col0, 0);
+		pt = writeExperimentSeparator(sheet, pt);
+
+		for (Cage cage : exp.getCages().cagesList) {
+			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(resultType);
+			cage.updateSpotsStimulus_i();
+
+			for (Capillary cap : cage.getCapillaries().getList()) {
+				pt.y = 0;
+				pt = writeExperimentCapInfos(sheet, pt, exp, charSeries, cage, cap, resultType);
+				Results results = getResultsDataValuesFromCapMeasures(exp, cage, cap, options);
+				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
+				writeXLSResult(sheet, pt, results);
+				pt.x++;
+			}
+		}
+		return pt.x;
 	}
 
 	private int getSheetColumn(String sheetName) {
@@ -164,12 +167,12 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	/**
 	 * Exports capillary data to a specific sheet.
 	 * 
-	 * @param exp           The experiment to export
-	 * @param sheet         The sheet to write to
+	 * @param exp        The experiment to export
+	 * @param sheet      The sheet to write to
 	 * @param resultType The export type
-	 * @param col0          The starting column
-	 * @param charSeries    The series identifier
-	 * @param subtractT0    Whether to subtract T0 value
+	 * @param col0       The starting column
+	 * @param charSeries The series identifier
+	 * @param subtractT0 Whether to subtract T0 value
 	 * @return The next available column
 	 */
 	protected int xlsExportExperimentCapillaryDataToSheet(Experiment exp, SXSSFSheet sheet, EnumResults resultType,
@@ -204,11 +207,11 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	/**
 	 * Writes experiment capillary information to the sheet.
 	 * 
-	 * @param sheet         The sheet to write to
-	 * @param pt            The starting point
-	 * @param exp           The experiment
-	 * @param charSeries    The series identifier
-	 * @param capillary     The capillary
+	 * @param sheet      The sheet to write to
+	 * @param pt         The starting point
+	 * @param exp        The experiment
+	 * @param charSeries The series identifier
+	 * @param capillary  The capillary
 	 * @param resultType The export type
 	 * @return The updated point
 	 */

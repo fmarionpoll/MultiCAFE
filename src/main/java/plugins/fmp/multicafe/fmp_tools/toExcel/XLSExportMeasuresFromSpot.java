@@ -96,9 +96,9 @@ public class XLSExportMeasuresFromSpot extends XLSExportSpots {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				pt.y = 0;
 				pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, resultType);
-				Results xlsResults = getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot, options);
-				xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
-				writeXLSResult(sheet, pt, xlsResults);
+				Results results = getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot, options);
+				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
+				writeXLSResult(sheet, pt, results);
 				pt.x++;
 			}
 		}

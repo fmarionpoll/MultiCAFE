@@ -22,7 +22,7 @@ public class Levels extends JPanel {
 	JButton exportToXLSButton2 = new JButton("save XLS");
 
 	JCheckBox topLevelCheckBox = new JCheckBox("top", true);
-	JCheckBox topLevelDeltaCheckBox = new JCheckBox("delta top", false);
+	// JCheckBox topLevelDeltaCheckBox = new JCheckBox("delta top", false);
 	JCheckBox bottomLevelCheckBox = new JCheckBox("bottom", false);
 	JCheckBox subtractEvaporationCheckBox = new JCheckBox("subtract evaporation", true);
 	JCheckBox lrPICheckBox = new JCheckBox("L+R & pref index", true);
@@ -37,7 +37,7 @@ public class Levels extends JPanel {
 		flowLayout0.setVgap(0);
 		JPanel panel0 = new JPanel(flowLayout0);
 		panel0.add(topLevelCheckBox);
-		panel0.add(topLevelDeltaCheckBox);
+//		panel0.add(topLevelDeltaCheckBox);
 		panel0.add(bottomLevelCheckBox);
 		panel0.add(subtractEvaporationCheckBox);
 		add(panel0);
