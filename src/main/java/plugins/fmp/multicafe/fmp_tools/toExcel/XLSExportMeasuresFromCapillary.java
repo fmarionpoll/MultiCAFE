@@ -187,16 +187,11 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 
 		for (Results xlsResults : resultsArray.getList()) {
 			String name = xlsResults.getName();
-			if (name == null)
-				continue;
-			
 			Capillary capillary = exp.getCapillaries().getCapillaryFromRoiName(name);
 			if (capillary == null)
 				continue;
 
 			Cage cage = exp.getCages().getCageFromID(capillary.getCageID());
-			if (cage == null)
-				continue;
 
 			pt.y = 0;
 			pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, cage, capillary, resultType);

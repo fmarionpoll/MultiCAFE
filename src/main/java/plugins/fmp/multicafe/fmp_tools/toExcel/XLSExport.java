@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.CellReference;
@@ -13,9 +14,9 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
+import plugins.fmp.multicafe.fmp_experiment.LazyExperiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
-import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
@@ -54,8 +55,8 @@ public abstract class XLSExport {
 	 * Template method that defines the overall export algorithm. This method should
 	 * not be overridden by subclasses.
 	 * 
-	 * @param filename The target Excel file path
-	 * @param resultsOptions  The export options
+	 * @param filename       The target Excel file path
+	 * @param resultsOptions The export options
 	 * @throws ExcelExportException If export fails
 	 */
 	public final void exportToFile(String filename, ResultsOptions resultsOptions) throws ExcelExportException {
@@ -146,55 +147,26 @@ public abstract class XLSExport {
 
 			for (int index = options.experimentIndexFirst; index <= options.experimentIndexLast; index++) {
 				Experiment exp = expList.getItemAt(index);
-
-				// Ensure experiment is fully loaded (for LazyExperiment, this triggers
-				// loadIfNeeded)
-				// and experiment properties are loaded from XML
-				// This is critical for EXP_STIM1, EXP_CONC1, EXP_STIM2, EXP_CONC2 fields
-				if (exp instanceof plugins.fmp.multicafe.fmp_experiment.LazyExperiment) {
-					((plugins.fmp.multicafe.fmp_experiment.LazyExperiment) exp).loadIfNeeded();
+				if (exp instanceof LazyExperiment) {
+					((LazyExperiment) exp).loadIfNeeded();
 				}
+
 				// Ensure properties are loaded (reload to ensure they're up to date)
 				exp.load_MS96_experiment();
-
 				exp.load_MS96_spotsMeasures();
 
 				// Ensure bin directory is set before loading capillaries
 				// This is critical for finding the CapillariesMeasures.csv file
-				if (exp.getBinSubDirectory() == null) {
-					// First, try to use shared bin directory from experiment list
-					if (expList.expListBinSubDirectory != null) {
-						exp.setBinSubDirectory(expList.expListBinSubDirectory);
-					} else {
-						// Auto-detect bin directory by finding subdirectories with TIFF files
-						java.util.List<String> binDirs = Directories
-								.getSortedListOfSubDirectoriesWithTIFF(exp.getResultsDirectory());
-						if (binDirs != null && !binDirs.isEmpty()) {
-							// Find first directory containing "bin" (case-insensitive)
-							for (String dir : binDirs) {
-								if (dir.toLowerCase().contains("bin")) {
-									exp.setBinSubDirectory(dir);
-									break;
-								}
-							}
-							// If no "bin" directory found, use the first one
-							if (exp.getBinSubDirectory() == null) {
-								exp.setBinSubDirectory(binDirs.get(0));
-							}
-						}
-					}
-				}
-
+				ensureBinDirectoryIsDefined(exp);
 				exp.loadCapillaries();
 				exp.loadCageMeasures();
-				if (shouldSkipExperiment(exp)) {
+				if (shouldSkipChainedExperiment(exp)) {
 					continue;
 				}
-				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
 
+				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
 				String seriesIdentifier = CellReference.convertNumToColString(iSeries);
 				column = exportExperimentData(exp, options, column, seriesIdentifier);
-
 				iSeries++;
 				progress.incPosition();
 			}
@@ -211,6 +183,31 @@ public abstract class XLSExport {
 		}
 	}
 
+	protected void ensureBinDirectoryIsDefined(Experiment exp) {
+		if (exp.getBinSubDirectory() == null) {
+			// First, try to use shared bin directory from experiment list
+			if (expList.expListBinSubDirectory != null) {
+				exp.setBinSubDirectory(expList.expListBinSubDirectory);
+			} else {
+				// Auto-detect bin directory by finding subdirectories with TIFF files
+				List<String> binDirs = Directories.getSortedListOfSubDirectoriesWithTIFF(exp.getResultsDirectory());
+				if (binDirs != null && !binDirs.isEmpty()) {
+					// Find first directory containing "bin" (case-insensitive)
+					for (String dir : binDirs) {
+						if (dir.toLowerCase().contains("bin")) {
+							exp.setBinSubDirectory(dir);
+							break;
+						}
+					}
+					// If no "bin" directory found, use the first one
+					if (exp.getBinSubDirectory() == null) {
+						exp.setBinSubDirectory(binDirs.get(0));
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Determines whether to skip an experiment during export. Default
 	 * implementation skips chained experiments.
@@ -218,7 +215,7 @@ public abstract class XLSExport {
 	 * @param exp The experiment to check
 	 * @return true if the experiment should be skipped
 	 */
-	protected boolean shouldSkipExperiment(Experiment exp) {
+	protected boolean shouldSkipChainedExperiment(Experiment exp) {
 		return exp.chainToPreviousExperiment != null;
 	}
 
@@ -335,31 +332,6 @@ public abstract class XLSExport {
 	}
 
 	/**
-	 * Writes experiment spot information to the sheet.
-	 * 
-	 * @param sheet      The sheet to write to
-	 * @param pt         The starting point
-	 * @param exp        The experiment
-	 * @param charSeries The series identifier
-	 * @param cage       The cage
-	 * @param spot       The spot
-	 * @param resultType The export type
-	 * @return The updated point
-	 */
-	protected Point writeExperimentSpotInfos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
-			Spot spot, EnumResults resultType) {
-		boolean transpose = options.transpose;
-
-		writeFileInformation(sheet, pt, transpose, exp);
-		writeExperimentProperties(sheet, pt, transpose, exp, null);
-		writeCageProperties(sheet, pt, transpose, cage);
-		writeSpotProperties(sheet, pt, transpose, spot, cage, charSeries, resultType);
-
-		pt.y = pt.y + EnumXLSColumnHeader.DUM4.getValue() + 1;
-		return pt;
-	}
-
-	/**
 	 * Writes basic file information to the sheet.
 	 */
 	protected void writeFileInformation(SXSSFSheet sheet, Point pt, boolean transpose, Experiment exp) {
@@ -425,32 +397,6 @@ public abstract class XLSExport {
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAGE_SEX, transpose, props.getFlySex());
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAGE_AGE, transpose, props.getFlyAge());
 		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.CAGE_COMMENT, transpose, props.getComment());
-	}
-
-	/**
-	 * Writes spot properties to the sheet.
-	 */
-	private void writeSpotProperties(SXSSFSheet sheet, Point pt, boolean transpose, Spot spot, Cage cage,
-			String charSeries, EnumResults resultType) {
-		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_VOLUME, transpose,
-				spot.getProperties().getSpotVolume());
-		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_PIXELS, transpose,
-				spot.getProperties().getSpotNPixels());
-
-		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_STIM, transpose,
-				spot.getProperties().getStimulus());
-		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_CONC, transpose,
-				spot.getProperties().getConcentration());
-
-		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_CAGEROW, transpose,
-				spot.getProperties().getCageRow());
-		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_CAGECOL, transpose,
-				spot.getProperties().getCageColumn());
-
-		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.SPOT_NFLIES, transpose,
-				cage.getProperties().getCageNFlies());
-
-		XLSUtils.setValueAtColumn(sheet, pt, EnumXLSColumnHeader.DUM4, transpose, spot.getProperties().getStimulusI());
 	}
 
 	/**

@@ -37,7 +37,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException
  * @author MultiSPOTS96
  * @version 2.3.3
  */
-public class XLSExportMeasuresFromSpotOptimized extends XLSExport {
+public class XLSExportMeasuresFromSpotOptimized extends XLSExportSpots {
 
 	// Reusable buffers to minimize object creation
 //	private final SpotDataBuffer spotDataBuffer;

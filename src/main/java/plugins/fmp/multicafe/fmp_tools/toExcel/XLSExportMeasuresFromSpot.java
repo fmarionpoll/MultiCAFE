@@ -20,7 +20,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException
  * Excel export implementation for spot measurements. Uses the Template Method
  * pattern for structured export operations.
  */
-public class XLSExportMeasuresFromSpot extends XLSExport {
+public class XLSExportMeasuresFromSpot extends XLSExportSpots {
 
 	/**
 	 * Exports spot data for a single experiment.

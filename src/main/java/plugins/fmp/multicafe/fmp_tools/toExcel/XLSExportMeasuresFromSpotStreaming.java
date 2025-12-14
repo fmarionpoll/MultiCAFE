@@ -44,7 +44,7 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.exceptions.ExcelResourceException
  * @author MultiSPOTS96
  * @version 2.3.3
  */
-public class XLSExportMeasuresFromSpotStreaming extends XLSExport {
+public class XLSExportMeasuresFromSpotStreaming extends XLSExportSpots {
 
 	// Memory management constants
 	private static final int CHUNK_SIZE = 512; // Process 512 spots at a time
