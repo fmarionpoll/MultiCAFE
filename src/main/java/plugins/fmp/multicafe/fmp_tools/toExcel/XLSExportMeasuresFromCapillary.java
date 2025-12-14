@@ -95,7 +95,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 			int colmax = xlsExportExperimentCapDataToSheet(exp, sheet, resultType, col0, charSeries);
 			if (options.onlyalive) {
 				sheet = getSheet(resultType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, resultType);
-				xlsExportExperimentcapDataToSheet(exp, sheet, resultType, col0, charSeries);
+				xlsExportExperimentCapDataToSheet(exp, sheet, resultType, col0, charSeries);
 			}
 
 			return colmax;
