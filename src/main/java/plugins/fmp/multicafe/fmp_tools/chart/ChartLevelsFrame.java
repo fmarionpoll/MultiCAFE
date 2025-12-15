@@ -190,10 +190,10 @@ public class ChartLevelsFrame extends IcyFrame {
 	 * @param exp                 the experiment containing the data
 	 * @param resultType          the export type option
 	 * @param title               the chart title
-	 * @param correcttEvaporation whether to subtract evaporation
+	 * @param correctEvaporation whether to subtract evaporation
 	 * @throws IllegalArgumentException if exp or option is null
 	 */
-	public void displayData(Experiment exp, EnumResults resultType, String title, boolean correcttEvaporation) {
+	public void displayData(Experiment exp, EnumResults resultType, String title, boolean correctEvaporation) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
@@ -210,7 +210,7 @@ public class ChartLevelsFrame extends IcyFrame {
 		ymin = Double.NaN;
 		flagMaxMinSet = false;
 
-		List<XYSeriesCollection> xyDataSetList = getDataArrays(exp, resultType, correcttEvaporation);
+		List<XYSeriesCollection> xyDataSetList = getDataArrays(exp, resultType, correctEvaporation);
 
 		if (xyDataSetList == null || xyDataSetList.isEmpty()) {
 			LOGGER.warning("No data to display for option: " + resultType);

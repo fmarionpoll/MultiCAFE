@@ -161,7 +161,6 @@ public class Chart extends JPanel implements SequenceListener {
 						graphOptions.close();
 					}
 					graphOptions = new AxisOptions();
-//					graphOptions.initialize(parent0, chartCageArray); // TODO
 					graphOptions.requestFocus();
 				}
 			}
