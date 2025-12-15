@@ -1613,17 +1613,14 @@ public class Experiment {
 	}
 
 	public void getCapillaryMeasures(EnumResults resultType, boolean subtractEvaporation) {
-		dispatchCapillariesToCages();
+		ResultsOptions resultsOptions = new ResultsOptions();
+		resultsOptions.resultType = resultType;
+		resultsOptions.correctEvaporation = subtractEvaporation;
+		prepareComputations(resultsOptions);
+	}
 
-		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (subtractEvaporation && resultType == EnumResults.TOPLEVEL) {
-			getCages().computeEvaporationCorrection(this);
-		}
-
-		// Compute L+R measures if needed
-		if (resultType == EnumResults.TOPLEVEL_LR) {
-			getCages().computeLRMeasures(this, 0.0); // Use default threshold of 0.0 for display
-		}
+	public void prepareComputations(ResultsOptions resultsOptions) {
+		getCages().prepareComputations(this, resultsOptions);
 	}
 
 	public ResultsArray transformDataScalingForOutput(EnumResults resultType, boolean subtractEvaporation) {

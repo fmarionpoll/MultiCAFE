@@ -118,6 +118,8 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 		resultsOptions.correctEvaporation = resultType == EnumResults.TOPLEVEL ? true : false;
 		resultsOptions.resultType = resultType;
 
+		exp.prepareComputations(resultsOptions);
+
 		ResultsArrayFromCapillaries resultsFromCapillaries = new ResultsArrayFromCapillaries(0);
 		ResultsArray resultsArray = resultsFromCapillaries.getMeasuresFromAllCapillaries(exp, resultsOptions);
 

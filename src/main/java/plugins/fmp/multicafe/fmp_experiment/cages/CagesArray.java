@@ -34,6 +34,8 @@ import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
 import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
+import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
@@ -1255,6 +1257,31 @@ public class CagesArray {
 	 * 
 	 * @param exp The experiment containing all capillaries
 	 */
+	/**
+	 * Prepares computations for capillary measures based on the provided options.
+	 * This includes dispatching capillaries to cages, computing evaporation correction,
+	 * and computing L+R measures.
+	 * 
+	 * @param exp            The experiment
+	 * @param resultsOptions The options defining which computations to perform
+	 */
+	public void prepareComputations(Experiment exp, ResultsOptions resultsOptions) {
+		exp.dispatchCapillariesToCages();
+
+		// Compute evaporation correction if needed (for TOPLEVEL exports)
+		if (resultsOptions.correctEvaporation && resultsOptions.resultType == EnumResults.TOPLEVEL) {
+			computeEvaporationCorrection(exp);
+		}
+
+		// Compute L+R measures if needed (must be done after evaporation correction)
+		if (resultsOptions.resultType == EnumResults.TOPLEVEL_LR) {
+			if (resultsOptions.correctEvaporation) {
+				computeEvaporationCorrection(exp);
+			}
+			computeLRMeasures(exp, resultsOptions.lrPIThreshold);
+		}
+	}
+
 	public void computeEvaporationCorrection(Experiment exp) {
 		CagesArrayCapillariesComputation computation = new CagesArrayCapillariesComputation(this);
 		computation.computeEvaporationCorrection(exp);

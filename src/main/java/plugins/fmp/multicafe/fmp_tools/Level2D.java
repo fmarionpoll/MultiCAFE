@@ -104,4 +104,11 @@ public class Level2D extends Polyline2D {
 		}
 		return new Level2D(nxpoints, nypoints, imageSize);
 	}
+
+	public void offsetToStartWithZeroAmplitude() {
+		double value0 = ypoints[0];
+		for (int i = 0; i < npoints; i++) {
+			ypoints[i] -= value0;
+		}
+	}
 }

@@ -187,9 +187,9 @@ public class ChartLevelsFrame extends IcyFrame {
 	/**
 	 * Displays capillary level data for the experiment.
 	 * 
-	 * @param exp                 the experiment containing the data
-	 * @param resultType          the export type option
-	 * @param title               the chart title
+	 * @param exp                the experiment containing the data
+	 * @param resultType         the export type option
+	 * @param title              the chart title
 	 * @param correctEvaporation whether to subtract evaporation
 	 * @throws IllegalArgumentException if exp or option is null
 	 */
@@ -522,7 +522,7 @@ public class ChartLevelsFrame extends IcyFrame {
 
 			if (xyDataset != null) {
 				try {
-					String name = results.getCageID() + "_" + results.getCapSide();
+					String name = results.getCapSide();
 					XYSeries seriesXY = getXYSeries(results, name, exp, resultType);
 					seriesXY.setDescription("cage " + results.getCageID() + "_" + results.getNflies());
 
@@ -596,8 +596,9 @@ public class ChartLevelsFrame extends IcyFrame {
 		resultsOptions.subtractT0 = false;
 		resultsOptions.resultType = resultType;
 
-		// Note: Computations are now handled inside getMeasuresFromAllCapillaries
-		// to ensure consistency between chart display and Excel export
+		// Perform computations (evaporation correction, L+R measures)
+		exp.prepareComputations(resultsOptions);
+
 		ResultsArrayFromCapillaries resultsFromCaps = new ResultsArrayFromCapillaries(
 				exp.getCapillaries().getList().size());
 		return resultsFromCaps.getMeasuresFromAllCapillaries(exp, resultsOptions);

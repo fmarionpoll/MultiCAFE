@@ -141,21 +141,8 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 
 	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, ResultsOptions resultsOptions) {
 
-		// Dispatch capillaries to cages first
-		exp.dispatchCapillariesToCages();
-
-		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (resultsOptions.correctEvaporation && resultsOptions.resultType == EnumResults.TOPLEVEL) {
-			exp.getCages().computeEvaporationCorrection(exp);
-		}
-
-		// Compute L+R measures if needed (must be done after evaporation correction)
-		if (resultsOptions.resultType == EnumResults.TOPLEVEL_LR) {
-			if (resultsOptions.correctEvaporation) {
-				exp.getCages().computeEvaporationCorrection(exp);
-			}
-			exp.getCages().computeLRMeasures(exp, resultsOptions.lrPIThreshold);
-		}
+		// Note: computations (dispatch to cages, evaporation correction, L+R measures)
+		// should be performed before calling this method via exp.prepareComputations(resultsOptions)
 
 		double scalingFactorToPhysicalUnits = exp.getCapillaries()
 				.getScalingFactorToPhysicalUnits(resultsOptions.resultType);
@@ -187,6 +174,7 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 		return resultsArray;
 	}
 
+	@Deprecated
 	public void compensateEvaporation(ResultsArray resultsArray) {
 		int dimension = 0;
 		for (Results result : resultsArray.getList()) {
@@ -202,6 +190,7 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 		subtractEvaporationLocal(resultsArray);
 	}
 
+	@Deprecated
 	private void computeEvaporationFromResultsWithZeroFlies(ResultsArray resultsArray, int dimension) {
 		evapL = new Results("L", 0, 0, null);
 		evapR = new Results("R", 0, 0, null);
@@ -221,6 +210,7 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 		evapR.averageEvaporation();
 	}
 
+	@Deprecated
 	private void subtractEvaporationLocal(ResultsArray resultsArray) {
 		for (Results result : resultsArray.getList()) {
 			String side = result.getName().substring(result.getName().length() - 1);
@@ -233,6 +223,7 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 
 	// ---------------------------------
 
+	@Deprecated
 	public void subtractEvaporation() {
 		int dimension = 0;
 		for (Results result : resultsList) {
@@ -248,6 +239,7 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 		subtractEvaporationLocal();
 	}
 
+	@Deprecated
 	private void computeEvaporationFromResultsWithZeroFlies(int dimension) {
 		evapL = new Results("L", 0, 0, null);
 		evapR = new Results("R", 0, 0, null);
@@ -267,6 +259,7 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 		evapR.averageEvaporation();
 	}
 
+	@Deprecated
 	private void subtractEvaporationLocal() {
 		for (Results result : resultsList) {
 			String side = result.getName().substring(result.getName().length() - 1);

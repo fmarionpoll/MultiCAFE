@@ -70,6 +70,8 @@ public class CagesArrayCapillariesComputation {
 		// Compute average evaporation for L and R sides
 		Level2D avgEvapL = computeAverageMeasure(zeroFliesCapillariesL);
 		Level2D avgEvapR = computeAverageMeasure(zeroFliesCapillariesR);
+		avgEvapL.offsetToStartWithZeroAmplitude();
+		avgEvapR.offsetToStartWithZeroAmplitude();
 
 		// Apply evaporation correction to all capillaries
 		for (Cage cage : cagesArray.getCageList()) {
@@ -197,9 +199,11 @@ public class CagesArrayCapillariesComputation {
 
 		Level2D correctedPolyline = new Level2D(xpoints, correctedY, npoints);
 
-		CapillaryMeasure corrected = new CapillaryMeasure(original.capName + "_corrected", -1, new ArrayList<Point2D>());
+		CapillaryMeasure corrected = new CapillaryMeasure(original.capName + "_corrected", -1,
+				new ArrayList<Point2D>());
 		corrected.polylineLevel = correctedPolyline;
 
 		return corrected;
 	}
+
 }
