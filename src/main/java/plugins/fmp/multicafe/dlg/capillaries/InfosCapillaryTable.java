@@ -223,24 +223,24 @@ public class InfosCapillaryTable extends JPanel {
 	private void storeCapillaryValues(Capillary sourceCapillary, Capillary destinationCapillary) {
 		destinationCapillary.capNFlies = sourceCapillary.capNFlies;
 		destinationCapillary.capVolume = sourceCapillary.capVolume;
-		destinationCapillary.capStimulus = sourceCapillary.capStimulus;
+		destinationCapillary.setStimulus(sourceCapillary.getStimulus());
 		destinationCapillary.capConcentration = sourceCapillary.capConcentration;
-		destinationCapillary.capSide = sourceCapillary.capSide;
+		destinationCapillary.setSide(sourceCapillary.getSide());
 	}
 
 	private void switchCapillaryValue(Capillary sourceCapillary, Capillary destinationCapillary, int columnIndex) {
 		switch (columnIndex) {
 		case 2:
-			destinationCapillary.capNFlies = sourceCapillary.capNFlies;
+			destinationCapillary.setNFlies(sourceCapillary.getNFlies());
 			break;
 		case 3:
-			destinationCapillary.capVolume = sourceCapillary.capVolume;
+			destinationCapillary.setVolume(sourceCapillary.getVolume());
 			break;
 		case 4:
-			destinationCapillary.capStimulus = sourceCapillary.capStimulus;
+			destinationCapillary.setStimulus(sourceCapillary.getStimulus());
 			break;
 		case 5:
-			destinationCapillary.capConcentration = sourceCapillary.capConcentration;
+			destinationCapillary.setConcentration(sourceCapillary.getConcentration());
 			break;
 		default:
 			break;
@@ -263,10 +263,10 @@ public class InfosCapillaryTable extends JPanel {
 					continue;
 				capFrom.valid = true;
 				capTo.setCageID(capFrom.getCageID());
-				capTo.capNFlies = capFrom.capNFlies;
-				capTo.capVolume = capFrom.capVolume;
-				capTo.capStimulus = capFrom.capStimulus;
-				capTo.capConcentration = capFrom.capConcentration;
+				capTo.setNFlies(capFrom.getNFlies());
+				capTo.setVolume(capFrom.getVolume());
+				capTo.setStimulus(capFrom.getStimulus());
+				capTo.setConcentration(capFrom.getConcentration());
 			}
 		}
 	}
@@ -317,16 +317,16 @@ public class InfosCapillaryTable extends JPanel {
 			}
 			switch (columnIndex) {
 			case 2:
-				cap.capNFlies = cap0.capNFlies;
+				cap.setNFlies(cap0.getNFlies());
 				break;
 			case 3:
-				cap.capVolume = cap0.capVolume;
+				cap.setVolume(cap0.getVolume());
 				break;
 			case 4:
-				cap.capStimulus = cap0.capStimulus;
+				cap.setStimulus(cap0.getStimulus());
 				break;
 			case 5:
-				cap.capConcentration = cap0.capConcentration;
+				cap.setConcentration(cap0.getConcentration());
 				break;
 			default:
 				break;
@@ -346,16 +346,16 @@ public class InfosCapillaryTable extends JPanel {
 				continue;
 			switch (columnIndex) {
 			case 2:
-				cap.capNFlies = cap0.capNFlies;
+				cap.setNFlies(cap0.getNFlies());
 				break;
 			case 3:
-				cap.capVolume = cap0.capVolume;
+				cap.setVolume(cap0.getVolume());
 				break;
 			case 4:
-				cap.capStimulus = cap0.capStimulus;
+				cap.setStimulus(cap0.getStimulus());
 				break;
 			case 5:
-				cap.capConcentration = cap0.capConcentration;
+				cap.setConcentration(cap0.getConcentration());
 				break;
 			default:
 				break;
@@ -395,16 +395,16 @@ public class InfosCapillaryTable extends JPanel {
 
 			switch (columnIndex) {
 			case 2:
-				cap.capNFlies = cap0.capNFlies;
+				cap.setNFlies(cap0.getNFlies());
 				break;
 			case 3:
-				cap.capVolume = cap0.capVolume;
+				cap.setVolume(cap0.getVolume());
 				break;
 			case 4:
-				cap.capStimulus = cap0.capStimulus;
+				cap.setStimulus(cap0.getStimulus());
 				break;
 			case 5:
-				cap.capConcentration = cap0.capConcentration;
+				cap.setConcentration(cap0.getConcentration());
 				break;
 			default:
 				break;

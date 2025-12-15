@@ -36,8 +36,8 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 		boolean subtractT0 = resultsOptions.subtractT0;
 		ResultsCapillaries results = new ResultsCapillaries(capillary.getKymographName(), capillary.capNFlies,
 				capillary.getCageID(), 0, resultsOptions.resultType);
-		results.setStimulus(capillary.capStimulus);
-		results.setConcentration(capillary.capConcentration);
+		results.setStimulus(capillary.getStimulus());
+		results.setConcentration(capillary.getConcentration());
 		results.setCapSide(capillary.getCageID() + "_" + capillary.getCapillarySide());
 
 		// Get bin durations

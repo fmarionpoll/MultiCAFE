@@ -66,13 +66,13 @@ public class CapillaryTableModel extends AbstractTableModel {
 			case 1:
 				return cap.getCageID();
 			case 2:
-				return cap.capNFlies;
+				return cap.getNFlies();
 			case 3:
-				return cap.capVolume;
+				return cap.getVolume();
 			case 4:
-				return cap.capStimulus;
+				return cap.getStimulus();
 			case 5:
-				return cap.capConcentration;
+				return cap.getConcentration();
 			}
 		}
 		return null;
@@ -100,16 +100,16 @@ public class CapillaryTableModel extends AbstractTableModel {
 				cap.setCageID((int) aValue);
 				break;
 			case 2:
-				cap.capNFlies = (int) aValue;
+				cap.setNFlies((int) aValue);
 				break;
 			case 3:
-				cap.capVolume = (double) aValue;
+				cap.setVolume((double) aValue);
 				break;
 			case 4:
-				cap.capStimulus = aValue.toString();
+				cap.setStimulus(aValue.toString());
 				break;
 			case 5:
-				cap.capConcentration = aValue.toString();
+				cap.setConcentration(aValue.toString());
 				break;
 			}
 		}

@@ -31,7 +31,7 @@ public class CageCapillariesComputation {
 
 	// Volatile computed measures stored at cage level
 	// Key format: "SUM", "PI", "SUM_L", "SUM_R", etc.
-	private transient Map<String, CapillaryMeasure> computedMeasures = new HashMap<>();
+	// private transient Map<String, CapillaryMeasure> computedMeasures = new HashMap<>(); // Deprecated
 
 	/**
 	 * Creates a new CageCapillariesComputation for the given cage.
@@ -110,7 +110,7 @@ public class CageCapillariesComputation {
 	 */
 	public void clearComputedMeasures() {
 		if (computedMeasures != null) {
-			computedMeasures.clear();
+			cage.measures.clear();
 		}
 		// Also clear individual capillary computed measures
 		for (Capillary cap : cage.getCapillaries().getList()) {
@@ -125,7 +125,10 @@ public class CageCapillariesComputation {
 	 * @return The computed measure, or null if not found
 	 */
 	public CapillaryMeasure getComputedMeasure(String key) {
-		return computedMeasures != null ? computedMeasures.get(key) : null;
+		// return computedMeasures != null ? computedMeasures.get(key) : null;
+		if (key.equals("SUM")) return cage.measures.sum;
+		if (key.equals("PI")) return cage.measures.pi;
+		return null;
 	}
 
 	// --------------------------------------------------------
@@ -142,7 +145,7 @@ public class CageCapillariesComputation {
 		// Find maximum dimension
 		int maxPoints = 0;
 		for (Capillary cap : capillaries) {
-			CapillaryMeasure measure = (cap.ptsTopCorrected != null) ? cap.ptsTopCorrected : cap.ptsTop;
+			CapillaryMeasure measure = (cap.getTopCorrected() != null) ? cap.getTopCorrected() : cap.getTopLevel();
 			if (measure != null && measure.polylineLevel != null) {
 				int npoints = measure.polylineLevel.npoints;
 				if (npoints > maxPoints)
@@ -160,7 +163,7 @@ public class CageCapillariesComputation {
 		}
 
 		for (Capillary cap : capillaries) {
-			CapillaryMeasure measure = (cap.ptsTopCorrected != null) ? cap.ptsTopCorrected : cap.ptsTop;
+			CapillaryMeasure measure = (cap.getTopCorrected() != null) ? cap.getTopCorrected() : cap.getTopLevel();
 			if (measure == null || measure.polylineLevel == null || measure.polylineLevel.npoints == 0)
 				continue;
 
@@ -222,16 +225,18 @@ public class CageCapillariesComputation {
 		String cageName = cage.prop.getStrCageNumber();
 		CapillaryMeasure sumMeasure = new CapillaryMeasure(cageName + "_SUM", -1, new ArrayList<Point2D>());
 		sumMeasure.polylineLevel = sumPolyline;
-		computedMeasures.put("SUM", sumMeasure);
+		cage.measures.sum = sumMeasure;
+		// computedMeasures.put("SUM", sumMeasure);
 
 		CapillaryMeasure piMeasure = new CapillaryMeasure(cageName + "_PI", -1, new ArrayList<Point2D>());
 		piMeasure.polylineLevel = piPolyline;
-		computedMeasures.put("PI", piMeasure);
+		cage.measures.pi = piMeasure;
+		// computedMeasures.put("PI", piMeasure);
 	}
 
 	private String getCapillarySide(Capillary cap) {
-		if (cap.capSide != null && !cap.capSide.equals("."))
-			return cap.capSide;
+		if (cap.getSide() != null && !cap.getSide().equals("."))
+			return cap.getSide();
 		// Try to get from name
 		String name = cap.getRoiName();
 		if (name != null) {
@@ -250,7 +255,7 @@ public class CageCapillariesComputation {
 	 * @return The SUM measure, or null if not computed
 	 */
 	public CapillaryMeasure getSumMeasure() {
-		return getComputedMeasure("SUM");
+		return cage.measures.sum;
 	}
 
 	/**
@@ -259,6 +264,6 @@ public class CageCapillariesComputation {
 	 * @return The PI measure, or null if not computed
 	 */
 	public CapillaryMeasure getPIMeasure() {
-		return getComputedMeasure("PI");
+		return cage.measures.pi;
 	}
 }

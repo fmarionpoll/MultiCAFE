@@ -162,8 +162,8 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		// Create XLSResults with capillary properties
 		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
 				resultsOptions.resultType);
-		results.setStimulus(capillary.capStimulus);
-		results.setConcentration(capillary.capConcentration);
+		results.setStimulus(capillary.getStimulus());
+		results.setConcentration(capillary.getConcentration());
 		results.initValuesOutArray(nOutputFrames, Double.NaN);
 
 		// Get bin durations
@@ -292,11 +292,11 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 				capillary.getSideDescriptor(resultType));
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_INDEX.getValue(), transpose,
 				charSeries + "_" + capillary.getLast2ofCapillaryName());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, capillary.capVolume);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, capillary.capPixels);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, capillary.capStimulus);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, capillary.capConcentration);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, capillary.capNFlies);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, capillary.getVolume());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, capillary.getPixels());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, capillary.getStimulus());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, capillary.getConcentration());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, capillary.getNFlies());
 	}
 
 	/**

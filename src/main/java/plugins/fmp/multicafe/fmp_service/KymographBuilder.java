@@ -136,7 +136,7 @@ public class KymographBuilder {
 		for (int chan = 0; chan < sizeC; chan++) {
 			int[] sourceImageChannel = Array1DUtil.arrayToIntArray(sourceImage.getDataXY(chan),
 					sourceImage.isSignedDataType());
-			int[] capImageChannel = cap.cap_Integer.get(chan);
+			int[] capImageChannel = cap.getCapInteger().get(chan);
 
 			int cnt = 0;
 			int sourceImageWidth = sourceImage.getWidth();
@@ -179,7 +179,7 @@ public class KymographBuilder {
 
 	private void export_One_CapillaryIntegerArray_to_Kymograph(Sequence seqKymo, int icap, Capillary cap, int sizeC) {
 		IcyBufferedImage cap_Image = cap.cap_Image;
-		ArrayList<int[]> cap_Integer = cap.cap_Integer;
+		ArrayList<int[]> cap_Integer = cap.getCapInteger();
 		boolean isSignedDataType = cap_Image.isSignedDataType();
 		for (int chan = 0; chan < sizeC; chan++) {
 			int[] tabValues = cap_Integer.get(chan);
@@ -188,7 +188,7 @@ public class KymographBuilder {
 			cap_Image.setDataXY(chan, destArray);
 		}
 		seqKymo.setImage(icap, 0, cap_Image);
-		cap.cap_Integer = null;
+		cap.setCapInteger(null);
 		cap.cap_Image = null;
 	}
 
@@ -237,11 +237,11 @@ public class KymographBuilder {
 		for (int i = 0; i < nbcapillaries; i++) {
 			Capillary cap = exp.getCapillaries().getList().get(i);
 			cap.cap_Image = new IcyBufferedImage(imageWidth, imageHeight, numC, dataType);
-			cap.cap_Integer = new ArrayList<int[]>(numC);
+			cap.setCapInteger(new ArrayList<int[]>(numC));
 
 			for (int chan = 0; chan < numC; chan++) {
 				int[] tabValues = new int[len];
-				cap.cap_Integer.add(tabValues);
+				cap.getCapInteger().add(tabValues);
 			}
 		}
 	}

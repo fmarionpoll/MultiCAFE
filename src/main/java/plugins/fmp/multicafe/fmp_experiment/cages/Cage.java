@@ -37,6 +37,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public int kymographIndex = -1;
 	public BooleanMask2D cageMask2D = null;
 	public CageProperties prop = new CageProperties();
+	public CageMeasures measures = new CageMeasures();
 
 	public FlyPositions flyPositions = new FlyPositions();
 	public SpotsArray spotsArray = new SpotsArray();
@@ -127,6 +128,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public void clearMeasures() {
 		flyPositions.clear();
+		measures.clear();
 	}
 
 	public Point2D getCenterTopCage() {
@@ -315,6 +317,9 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 				// Keep cage loaded even if spots descriptors are missing
 				// Spots arrays are optional (not present in MultiCAFE experiments)
 			}
+			
+			// Load cage measures
+			measures.loadFromXml(xmlVal);
 
 			// Memory monitoring after loading
 //			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
@@ -367,6 +372,9 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 				System.err.println("ERROR: Failed to save spots array for cage " + index);
 				return false;
 			}
+			
+			// Save cage measures
+			measures.saveToXml(xmlVal);
 
 			// Memory monitoring after saving
 //			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
