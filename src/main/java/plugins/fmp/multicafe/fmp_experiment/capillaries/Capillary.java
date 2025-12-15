@@ -30,6 +30,7 @@ public class Capillary implements Comparable<Capillary> {
 
 	public ArrayList<int[]> cap_Integer = null;
 
+	private CapillaryProperties prop = new CapillaryProperties();
 	public String capStimulus = new String("..");
 	public String capConcentration = new String("..");
 	public String capSide = ".";
@@ -54,7 +55,8 @@ public class Capillary implements Comparable<Capillary> {
 	// Volatile computed measures (not persisted, computed on-demand)
 	// Evaporation-corrected toplevel measure
 	public transient CapillaryMeasure ptsTopCorrected = null;
-	// Note: L+R measures (SUM, PI) are now stored at the Cage level in CageCapillariesComputation
+	// Note: L+R measures (SUM, PI) are now stored at the Cage level in
+	// CageCapillariesComputation
 	// These are set during computation and cleared when raw measures change
 
 	public boolean valid = true;
@@ -130,12 +132,13 @@ public class Capillary implements Comparable<Capillary> {
 		ptsTop.copy(cap.ptsTop);
 		ptsBottom.copy(cap.ptsBottom);
 		ptsDerivative.copy(cap.ptsDerivative);
-		// Note: transient computed measures are NOT copied (they are computed on-demand)
+		// Note: transient computed measures are NOT copied (they are computed
+		// on-demand)
 	}
 
 	/**
-	 * Clears computed measures (evaporation-corrected, L+R, etc.).
-	 * Should be called when raw measures change.
+	 * Clears computed measures (evaporation-corrected, L+R, etc.). Should be called
+	 * when raw measures change.
 	 */
 	public void clearComputedMeasures() {
 		ptsTopCorrected = null;
@@ -339,15 +342,18 @@ public class Capillary implements Comparable<Capillary> {
 			break;
 		case TOPLEVEL:
 			// Use evaporation-corrected measure if available, otherwise raw
-			if (ptsTopCorrected != null && ptsTopCorrected.polylineLevel != null && ptsTopCorrected.polylineLevel.npoints > 0) {
+			if (ptsTopCorrected != null && ptsTopCorrected.polylineLevel != null
+					&& ptsTopCorrected.polylineLevel.npoints > 0) {
 				datai = ptsTopCorrected.getMeasures(seriesBinMs, outputBinMs);
 			} else {
 				datai = ptsTop.getMeasures(seriesBinMs, outputBinMs);
 			}
 			break;
 		case TOPLEVEL_LR:
-			// Note: L+R measures are now stored at the Cage level in CageCapillariesComputation.
-			// This method cannot access them directly. The export code should handle TOPLEVEL_LR
+			// Note: L+R measures are now stored at the Cage level in
+			// CageCapillariesComputation.
+			// This method cannot access them directly. The export code should handle
+			// TOPLEVEL_LR
 			// differently by reading from CageCapillariesComputation.
 			// Fallback to raw for now (should not be reached in normal flow)
 			datai = ptsTop.getMeasures(seriesBinMs, outputBinMs);

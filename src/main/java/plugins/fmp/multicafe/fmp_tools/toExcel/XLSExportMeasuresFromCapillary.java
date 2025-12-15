@@ -116,7 +116,7 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 
 			for (Capillary cap : cage.getCapillaries().getList()) {
 				pt.y = 0;
-				pt = writeExperimentCapInfos(sheet, pt, exp, charSeries, cage, cap, resultType);
+				pt = writeExperimentCapillaryInfos(sheet, pt, exp, charSeries, cage, cap, resultType);
 				Results results = getResultsDataValuesFromCapMeasures(exp, cage, cap, options);
 				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 				writeXLSResult(sheet, pt, results);
@@ -124,6 +124,32 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 			}
 		}
 		return pt.x;
+	}
+
+	/**
+	 * Gets the results for a spot.
+	 * 
+	 * @param exp           The experiment
+	 * @param cage          The cage
+	 * @param spot          The spot
+	 * @param xlsExportType The export type
+	 * @return The XLS results
+	 */
+	public Results getResultsDataValuesFromCapMeasures(Experiment exp, Cage cage, Capillary cap,
+			ResultsOptions xlsExportOptions) {
+		/*
+		 * 1) get n input frames for signal between timefirst and time last; locate
+		 * binfirst and bin last in the array of long in seqcamdata 2) given excelBinms,
+		 * calculate n output bins
+		 */
+		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
+
+		Results results = new Results(cage.getProperties(), cap, nOutputFrames);
+
+		long binData = exp.getSeqCamData().getTimeManager().getBinDurationMs();
+		long binExcel = xlsExportOptions.buildExcelStepMs;
+		results.getDataFromCapillary(cap, binData, binExcel, xlsExportOptions);
+		return results;
 	}
 
 	private int getSheetColumn(String sheetName) {

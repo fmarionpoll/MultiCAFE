@@ -96,7 +96,7 @@ public class XLSExportMeasuresFromSpot extends XLSExportSpots {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				pt.y = 0;
 				pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, resultType);
-				Results results = getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot, options);
+				Results results = getResultsDataValuesFromSpotMeasures(exp, cage, spot, options);
 				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 				writeXLSResult(sheet, pt, results);
 				pt.x++;
@@ -114,7 +114,7 @@ public class XLSExportMeasuresFromSpot extends XLSExportSpots {
 	 * @param xlsExportType The export type
 	 * @return The XLS results
 	 */
-	public Results getXLSResultsDataValuesFromSpotMeasures(Experiment exp, Cage cage, Spot spot,
+	public Results getResultsDataValuesFromSpotMeasures(Experiment exp, Cage cage, Spot spot,
 			ResultsOptions xlsExportOptions) {
 		/*
 		 * 1) get n input frames for signal between timefirst and time last; locate
@@ -123,12 +123,12 @@ public class XLSExportMeasuresFromSpot extends XLSExportSpots {
 		 */
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
 
-		Results xlsResults = new Results(cage.getProperties(), spot.getProperties(), nOutputFrames);
+		Results results = new Results(cage.getProperties(), spot.getProperties(), nOutputFrames);
 
 		long binData = exp.getSeqCamData().getTimeManager().getBinDurationMs();
 		long binExcel = xlsExportOptions.buildExcelStepMs;
-		xlsResults.getDataFromSpot(spot, binData, binExcel, xlsExportOptions);
-		return xlsResults;
+		results.getDataFromSpot(spot, binData, binExcel, xlsExportOptions);
+		return results;
 	}
 
 	/**

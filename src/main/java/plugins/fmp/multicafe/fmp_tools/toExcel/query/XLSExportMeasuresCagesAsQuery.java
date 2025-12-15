@@ -249,7 +249,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 			EnumResults resultType) {
 		Results xlsResults = null;
 		if (spot != null) {
-			xlsResults = getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot, resultsOptions);
+			xlsResults = getResultsDataValuesFromSpotMeasures(exp, cage, spot, resultsOptions);
 			xlsResults.transferDataValuesToValuesOut(scaling, resultType);
 		}
 		return xlsResults;

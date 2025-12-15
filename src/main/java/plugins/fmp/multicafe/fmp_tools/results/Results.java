@@ -55,7 +55,7 @@ public class Results {
 		this.cagePosition = spotProperties.getCagePosition();
 		this.stimulus = spotProperties.getStimulus();
 		this.concentration = spotProperties.getConcentration();
-		initValuesArray(nFrames);
+		initValuesOutArray(nFrames);
 	}
 
 	// ---------------------------
@@ -143,13 +143,13 @@ public class Results {
 		Arrays.fill(valuesOut, val);
 	}
 
-	private void initValuesArray(int dimension) {
+	private void initValuesOutArray(int dimension) {
 		this.valuesOutLength = dimension;
 		valuesOut = new double[dimension];
 		Arrays.fill(valuesOut, Double.NaN);
 	}
 
-	void clearValues(int fromindex) {
+	void clearValuesOut(int fromindex) {
 		int toindex = valuesOut.length;
 		if (fromindex > 0 && fromindex < toindex) {
 			Arrays.fill(valuesOut, fromindex, toindex, Double.NaN);
