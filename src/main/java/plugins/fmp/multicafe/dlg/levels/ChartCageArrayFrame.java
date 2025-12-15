@@ -1,4 +1,4 @@
-package plugins.fmp.multicafe.fmp_tools.chart;
+package plugins.fmp.multicafe.dlg.levels;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -31,6 +31,9 @@ import icy.roi.ROI2D;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartCageBuild;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePair;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePanel;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
@@ -296,7 +299,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		}
 
 		ChartCageBuild.initMaxMin();
-		XYSeriesCollection xyDataSetList = ChartCageBuild.getSpotDataDirectlyFromOneCage(experiment, cage,
+		XYSeriesCollection xyDataSetList = ChartCageBuild.getCapillaryDataDirectlyFromOneCage(experiment, cage,
 				resultsOptions);
 
 		NumberAxis xAxis = setXaxis("", resultsOptions);

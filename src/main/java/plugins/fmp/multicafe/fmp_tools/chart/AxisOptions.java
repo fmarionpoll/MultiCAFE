@@ -20,6 +20,7 @@ import org.jfree.data.Range;
 
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.MultiCAFE;
+import plugins.fmp.multicafe.dlg.levels.ChartCageArrayFrame;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 
 public class AxisOptions extends JPanel {

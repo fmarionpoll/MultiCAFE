@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.w3c.dom.Node;
 
@@ -936,6 +937,12 @@ public class Capillary implements Comparable<Capillary> {
 		default:
 			break;
 		}
+	}
+
+	public CapillaryMeasure getMeasurements(EnumResults resultType) {
+		Objects.requireNonNull(resultType, "Export option cannot be null");
+
+		return null;
 	}
 
 }

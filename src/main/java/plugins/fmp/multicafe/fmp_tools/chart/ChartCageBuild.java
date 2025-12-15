@@ -15,6 +15,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotMeasure;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
@@ -201,8 +203,7 @@ public class ChartCageBuild {
 	 * @param options    list of options
 	 * @return XYSeriesCollection containing the cage's data
 	 */
-	static XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage,
-			ResultsOptions resultsOptions) {
+	static XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage, ResultsOptions resultsOptions) {
 		if (cage == null || cage.spotsArray == null || cage.spotsArray.getSpotsCount() < 1) {
 			LOGGER.warning("Cannot get spot data: spot array is empty or cage is null");
 			return new XYSeriesCollection();
@@ -216,6 +217,41 @@ public class ChartCageBuild {
 			}
 
 			XYSeries seriesXY = createXYSeriesFromSpotMeasure(exp, spot, resultsOptions);
+			if (seriesXY != null) {
+				seriesXY.setDescription(buildSeriesDescriptionFromCageAndSpot(cage, spot));
+				xySeriesCollection.addSeries(seriesXY);
+				updateGlobalMaxMin();
+			}
+		}
+
+		// LOGGER.fine("Extracted " + seriesCount + " series for cage ID: " +
+		// cage.getProperties().getCageID());
+		return xySeriesCollection;
+	}
+
+	/**
+	 * Extracts spot data from one cage in the results array.
+	 * 
+	 * @param experiment the stack of images and assoc items
+	 * @param cage       the cage to get data for
+	 * @param options    list of options
+	 * @return XYSeriesCollection containing the cage's data
+	 */
+	static XYSeriesCollection getCapillaryDataDirectlyFromOneCage(Experiment exp, Cage cage,
+			ResultsOptions resultsOptions) {
+		if (cage == null || cage.getCapillaries() == null || cage.getCapillaries().getList().size() < 1) {
+			LOGGER.warning("Cannot get capillary data: capillaries array is empty or cage is null");
+			return new XYSeriesCollection();
+		}
+
+		XYSeriesCollection xySeriesCollection = null;
+
+		for (Capillary cap : cage.getCapillaries().getList()) {
+			if (xySeriesCollection == null) {
+				xySeriesCollection = new XYSeriesCollection();
+			}
+
+			XYSeries seriesXY = createXYSeriesFromCapillaryMeasure(exp, cap, resultsOptions);
 			if (seriesXY != null) {
 				seriesXY.setDescription(buildSeriesDescriptionFromCageAndSpot(cage, spot));
 				xySeriesCollection.addSeries(seriesXY);
@@ -243,8 +279,7 @@ public class ChartCageBuild {
 				+ color.getBlue();
 	}
 
-	private static XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot,
-			ResultsOptions resultOptions) {
+	private static XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot, ResultsOptions resultOptions) {
 		XYSeries seriesXY = new XYSeries(spot.getName(), false);
 
 		if (exp.getSeqCamData().getTimeManager().getCamImagesTime_Ms() == null)
@@ -261,6 +296,33 @@ public class ChartCageBuild {
 		for (int j = 0; j < npoints; j++) {
 			double x = camImages_time_min[j];
 			double y = spotMeasure.getValueAt(j) / divider;
+			seriesXY.add(x, y);
+
+			if (ymax < y) {
+				ymax = y;
+			}
+			if (ymin > y) {
+				ymin = y;
+			}
+			x++;
+		}
+		return seriesXY;
+	}
+
+	private static XYSeries createXYSeriesFromCapillaryMeasure(Experiment exp, Capillary cap,
+			ResultsOptions resultOptions) {
+		XYSeries seriesXY = new XYSeries(cap.getCageID() + "_" + cap.getCapillarySide(), false);
+
+		if (exp.getSeqCamData().getTimeManager().getCamImagesTime_Ms() == null)
+			exp.getSeqCamData().build_MsTimesArray_From_FileNamesList();
+		double[] camImages_time_min = exp.getSeqCamData().getTimeManager().getCamImagesTime_Minutes();
+		CapillaryMeasure capMeasure = cap.getMeasurements(resultOptions.resultType);
+
+		int npoints = capMeasure.getCount();
+
+		for (int j = 0; j < npoints; j++) {
+			double x = camImages_time_min[j];
+			double y = capMeasure.getValueAt(j) / divider;
 			seriesXY.add(x, y);
 
 			if (ymax < y) {
