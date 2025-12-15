@@ -167,7 +167,7 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExportSpots {
 		}
 
 		// Apply relative to T0 if needed
-		if (options.relativeToT0 && resultType != EnumResults.AREA_FLYPRESENT) {
+		if (options.relativeToMaximum && resultType != EnumResults.AREA_FLYPRESENT) {
 			dataList = applyRelativeToMaximum(dataList);
 		}
 

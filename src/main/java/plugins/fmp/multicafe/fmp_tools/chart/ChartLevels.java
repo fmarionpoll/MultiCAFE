@@ -216,7 +216,8 @@ public class ChartLevels extends IcyFrame {
 			}
 
 			if (xyDataset != null) {
-				XYSeries seriesXY = getXYSeries(results, results.getName().substring(4), exp, resultType);
+				String name = results.getName().substring(4);
+				XYSeries seriesXY = getXYSeries(results, name, exp, resultType);
 				seriesXY.setDescription("cage " + results.getCageID() + "_" + results.getNflies());
 				if (resultsArray2 != null)
 					appendDataToXYSeries(seriesXY, resultsArray2.getRow(iRow), exp, EnumResults.BOTTOMLEVEL);

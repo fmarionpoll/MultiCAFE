@@ -41,7 +41,7 @@ import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
-import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsArrayFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
@@ -1340,6 +1340,69 @@ public class Experiment {
 		binDirectory = bin;
 	}
 
+	/**
+	 * Gets the number of output frames for the experiment.
+	 * 
+	 * @param exp     The experiment
+	 * @param options The export options
+	 * @return The number of output frames
+	 */
+	public int getNOutputFrames(ResultsOptions options) {
+		// For capillaries, use kymograph timing
+		long kymoFirst_ms = getKymoFirst_ms();
+		long kymoLast_ms = getKymoLast_ms();
+		long kymoBin_ms = getKymoBin_ms();
+
+		// If buildExcelStepMs equals kymoBin_ms, we want 1:1 mapping - use actual frame
+		// count
+		if (kymoBin_ms > 0 && options.buildExcelStepMs == kymoBin_ms && getSeqKymos() != null) {
+			ImageLoader imgLoader = getSeqKymos().getImageLoader();
+			if (imgLoader != null) {
+				int nFrames = imgLoader.getNTotalFrames();
+				if (nFrames > 0) {
+					return nFrames;
+				}
+			}
+		}
+
+		if (kymoLast_ms <= kymoFirst_ms) {
+			// Try to get from kymograph sequence
+			if (getSeqKymos() != null) {
+				ImageLoader imgLoader = getSeqKymos().getImageLoader();
+				if (imgLoader != null) {
+					if (kymoBin_ms > 0) {
+						kymoLast_ms = kymoFirst_ms + imgLoader.getNTotalFrames() * kymoBin_ms;
+						setKymoLast_ms(kymoLast_ms);
+					}
+				}
+			}
+		}
+
+		long durationMs = kymoLast_ms - kymoFirst_ms;
+		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
+
+		if (nOutputFrames <= 1) {
+			handleError(-1);
+			// Fallback to a reasonable default
+			nOutputFrames = 1000;
+		}
+
+		return nOutputFrames;
+	}
+
+	/**
+	 * Handles export errors by logging them.
+	 * 
+	 * @param exp           The experiment
+	 * @param nOutputFrames The number of output frames
+	 */
+	protected void handleError(int nOutputFrames) {
+		String error = String.format(
+				"Experiment:GNOutputFrames Error() ERROR in %s\n nOutputFrames=%d kymoFirstCol_Ms=%d kymoLastCol_Ms=%d",
+				getExperimentDirectory(), nOutputFrames, getKymoFirst_ms(), getKymoLast_ms());
+		System.err.println(error);
+	}
+
 	// ------------------------------
 
 	public boolean loadMCCapillaries_Only() {
@@ -1570,15 +1633,16 @@ public class Experiment {
 			kymoBin_ms = 60000;
 		}
 		resultsOptions.buildExcelStepMs = (int) kymoBin_ms;
-		resultsOptions.relativeToT0 = false;
+		resultsOptions.relativeToMaximum = false;
 		resultsOptions.correctEvaporation = subtractEvaporation;
 		resultsOptions.resultType = resultType;
 
 		ResultsArray resultsArray = new ResultsArray();
 		double scalingFactorToPhysicalUnits = getCapillaries().getScalingFactorToPhysicalUnits(resultType);
 
+		ResultsArrayFromCapillaries collectResults = new ResultsArrayFromCapillaries(getCapillaries().getList().size());
 		for (Capillary capillary : getCapillaries().getList()) {
-			Results results = ResultsFromCapillaries.getCapillaryMeasure(this, capillary, resultsOptions);
+			Results results = collectResults.getCapillaryMeasure(this, capillary, resultsOptions);
 			if (results != null) {
 				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 				resultsArray.addRow(results);

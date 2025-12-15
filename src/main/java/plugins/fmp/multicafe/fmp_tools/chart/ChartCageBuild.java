@@ -252,7 +252,7 @@ public class ChartCageBuild {
 		double[] camImages_time_min = exp.getSeqCamData().getTimeManager().getCamImagesTime_Minutes();
 		SpotMeasure spotMeasure = spot.getMeasurements(resultOptions.resultType);
 		double divider = 1.;
-		if (resultOptions.relativeToT0 && resultOptions.resultType != EnumResults.AREA_FLYPRESENT) {
+		if (resultOptions.relativeToMaximum && resultOptions.resultType != EnumResults.AREA_FLYPRESENT) {
 			divider = spotMeasure.getMaximumValue();
 		}
 

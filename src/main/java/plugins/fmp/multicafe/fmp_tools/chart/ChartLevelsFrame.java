@@ -40,7 +40,7 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
-import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsArrayFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
@@ -597,13 +597,13 @@ public class ChartLevelsFrame extends IcyFrame {
 		resultsOptions.buildExcelStepMs = (int) kymoBin_ms;
 		resultsOptions.correctEvaporation = correctEvaporation;
 		resultsOptions.lrPIThreshold = 0.0;
-		resultsOptions.relativeToT0 = false;
+		resultsOptions.relativeToMaximum = false;
 		resultsOptions.subtractT0 = false;
 		resultsOptions.resultType = resultType;
 
 		// Note: Computations are now handled inside getMeasuresFromAllCapillaries
 		// to ensure consistency between chart display and Excel export
-		ResultsFromCapillaries resultsFromCaps = new ResultsFromCapillaries(exp.getCapillaries().getList().size());
+		ResultsArrayFromCapillaries resultsFromCaps = new ResultsArrayFromCapillaries(exp.getCapillaries().getList().size());
 		return resultsFromCaps.getMeasuresFromAllCapillaries(exp, resultsOptions);
 	}
 

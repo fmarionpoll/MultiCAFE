@@ -39,7 +39,7 @@ public class ResultsOptions {
 
 	public boolean sumPerCage = true;
 	public boolean subtractT0 = true;
-	public boolean relativeToT0 = true;
+	public boolean relativeToMaximum = false;
 	public boolean relativeToMedianT0 = false;
 	public int medianT0FromNPoints = 5;
 	public boolean onlyalive = true;
@@ -94,7 +94,7 @@ public class ResultsOptions {
 
 		this.sumPerCage = resultsOptions.sumPerCage;
 		this.subtractT0 = resultsOptions.subtractT0;
-		this.relativeToT0 = resultsOptions.relativeToT0;
+		this.relativeToMaximum = resultsOptions.relativeToMaximum;
 		this.relativeToMedianT0 = resultsOptions.relativeToMedianT0;
 		this.medianT0FromNPoints = resultsOptions.medianT0FromNPoints;
 		this.onlyalive = resultsOptions.onlyalive;

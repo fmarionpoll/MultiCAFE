@@ -30,7 +30,6 @@ public class Capillary implements Comparable<Capillary> {
 
 	public ArrayList<int[]> cap_Integer = null;
 
-	private CapillaryProperties prop = new CapillaryProperties();
 	public String capStimulus = new String("..");
 	public String capConcentration = new String("..");
 	public String capSide = ".";

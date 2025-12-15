@@ -37,7 +37,7 @@ public class XLSExportOptionsBuilder {
 	// Processing options
 	private boolean sumPerCage = DefaultOptions.SUM_PER_CAGE;
 	private boolean subtractT0 = DefaultOptions.SUBTRACT_T0;
-	private boolean relativeToT0 = DefaultOptions.RELATIVE_TO_T0;
+	private boolean relativeToMaximum = DefaultOptions.RELATIVE_TO_T0;
 	private boolean relativeToMedianT0 = DefaultOptions.RELATIVE_TO_MEDIAN_T0;
 	private int medianT0FromNPoints = ExcelExportConstants.DEFAULT_MEDIAN_T0_POINTS;
 	private boolean onlyalive = DefaultOptions.ONLY_ALIVE;
@@ -105,7 +105,7 @@ public class XLSExportOptionsBuilder {
 
 		this.sumPerCage = existing.sumPerCage;
 		this.subtractT0 = existing.subtractT0;
-		this.relativeToT0 = existing.relativeToT0;
+		this.relativeToMaximum = existing.relativeToMaximum;
 		this.relativeToMedianT0 = existing.relativeToMedianT0;
 		this.medianT0FromNPoints = existing.medianT0FromNPoints;
 		this.onlyalive = existing.onlyalive;
@@ -241,8 +241,8 @@ public class XLSExportOptionsBuilder {
 		return this;
 	}
 
-	public XLSExportOptionsBuilder withRelativeToT0(boolean relativeToT0) {
-		this.relativeToT0 = relativeToT0;
+	public XLSExportOptionsBuilder withRelativeToMaximum(boolean relativeToMax) {
+		this.relativeToMaximum = relativeToMax;
 		return this;
 	}
 
@@ -301,7 +301,7 @@ public class XLSExportOptionsBuilder {
 
 		resultsOptions.sumPerCage = this.sumPerCage;
 		resultsOptions.subtractT0 = this.subtractT0;
-		resultsOptions.relativeToT0 = this.relativeToT0;
+		resultsOptions.relativeToMaximum = this.relativeToMaximum;
 		resultsOptions.relativeToMedianT0 = this.relativeToMedianT0;
 		resultsOptions.medianT0FromNPoints = this.medianT0FromNPoints;
 		resultsOptions.onlyalive = this.onlyalive;

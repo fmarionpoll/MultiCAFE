@@ -1,6 +1,8 @@
 package plugins.fmp.multicafe.fmp_tools.toExcel;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 
@@ -9,7 +11,8 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
-import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsArrayFromCapillaries;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
@@ -52,33 +55,33 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 	protected int exportExperimentData(Experiment exp, ResultsOptions resultsOptions, int startColumn,
 			String charSeries) throws ExcelExportException {
 
-		int colmax = 0;
-		int col = 0;
-
-		// Dispatch capillaries to cages for computation
-		exp.dispatchCapillariesToCages();
+		List<EnumResults> resultsToExport = new ArrayList<EnumResults>();
 
 		if (options.topLevel) {
-			col = getCapDataAndExport(exp, startColumn, charSeries, EnumResults.TOPRAW);
-			getCapDataAndExport(exp, startColumn, charSeries, EnumResults.TOPLEVEL);
-			colmax = col > colmax ? col : colmax;
+			resultsToExport.add(EnumResults.TOPRAW);
+			resultsToExport.add(EnumResults.TOPLEVEL);
 		}
 
-		if (options.lrPI && options.topLevel) {
-			col = getCapDataAndExport(exp, startColumn, charSeries, EnumResults.TOPLEVEL_LR);
-			colmax = col > colmax ? col : colmax;
+		if (options.lrPI) {
+			resultsToExport.add(EnumResults.TOPLEVEL_LR);
 		}
 
 		if (options.bottomLevel) {
-			col = getCapDataAndExport(exp, startColumn, charSeries, EnumResults.BOTTOMLEVEL);
-			colmax = col > colmax ? col : colmax;
+			resultsToExport.add(EnumResults.BOTTOMLEVEL);
 		}
 		if (options.derivative) {
-			col = getCapDataAndExport(exp, startColumn, charSeries, EnumResults.DERIVEDVALUES);
-			colmax = col > colmax ? col : colmax;
+			resultsToExport.add(EnumResults.DERIVEDVALUES);
 		}
 
-		return col;
+		int colmax = 0;
+		exp.dispatchCapillariesToCages();
+		for (EnumResults resultType : resultsToExport) {
+			int col = getCapDataAndExport(exp, startColumn, charSeries, resultType);
+			if (col > colmax)
+				colmax = col;
+		}
+
+		return colmax;
 	}
 
 	protected int getCapDataAndExport(Experiment exp, int col0, String charSeries, EnumResults resultType)
@@ -110,23 +113,24 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 			kymoBin_ms = 60000;
 		}
 		resultsOptions.buildExcelStepMs = (int) kymoBin_ms;
-		resultsOptions.relativeToT0 = true;
+		resultsOptions.relativeToMaximum = false;
+		resultsOptions.subtractT0 = false;
 		resultsOptions.correctEvaporation = resultType == EnumResults.TOPLEVEL ? true : false;
 		resultsOptions.resultType = resultType;
-		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
 
-		for (Cage cage : exp.getCages().cagesList) {
-			for (Capillary cap : cage.getCapillaries().getList()) {
+		ResultsArrayFromCapillaries resultsFromCapillaries = new ResultsArrayFromCapillaries(0);
+		ResultsArray resultsArray = resultsFromCapillaries.getMeasuresFromAllCapillaries(exp, resultsOptions);
 
-				Results results = ResultsFromCapillaries.getCapillaryMeasure(exp, cap, resultsOptions);
-				if (results != null)
-					results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
+		for (Results results : resultsArray.getList()) {
 
-				pt.y = 0;
-				pt = writeExperimentCapInfos(sheet, pt, exp, charSeries, cage, cap, resultType);
-				writeXLSResult(sheet, pt, results);
-				pt.x++;
-			}
+			String capName = results.getName();
+			Capillary cap = exp.getCapillaries().getCapillaryFromKymographName(capName);
+			Cage cage = exp.getCages().getCageFromID(cap.getCageID());
+
+			pt.y = 0;
+			pt = writeExperimentCapInfos(sheet, pt, exp, charSeries, cage, cap, resultType);
+			writeXLSResult(sheet, pt, results);
+			pt.x++;
 		}
 		return pt.x;
 	}

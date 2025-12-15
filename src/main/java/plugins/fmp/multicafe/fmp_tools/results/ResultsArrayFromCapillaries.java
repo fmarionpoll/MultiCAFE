@@ -8,15 +8,13 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_experiment.cages.CageCapillariesComputation;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 
-public class ResultsFromCapillaries extends ResultsArray {
+public class ResultsArrayFromCapillaries extends ResultsArray {
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ResultsFromCapillaries.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ResultsArrayFromCapillaries.class.getName());
 	Results evapL = null;
 	Results evapR = null;
 	boolean sameLR = true;
@@ -25,7 +23,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	double lowestPiAllowed = -1.2;
 	double highestPiAllowed = 1.2;
 
-	public ResultsFromCapillaries(int size) {
+	public ResultsArrayFromCapillaries(int size) {
 		resultsList = new ArrayList<Results>(size);
 	}
 
@@ -38,13 +36,13 @@ public class ResultsFromCapillaries extends ResultsArray {
 	 * @param subtractT0     Whether to subtract T0 value
 	 * @return The XLS results
 	 */
-	static public Results getCapillaryMeasure(Experiment exp, Capillary capillary, ResultsOptions resultsOptions) {
-		boolean subtractT0 = resultsOptions.relativeToT0;
-		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
-				resultsOptions.resultType);
-
+	public Results getCapillaryMeasure(Experiment exp, Capillary capillary, ResultsOptions resultsOptions) {
+		boolean subtractT0 = resultsOptions.subtractT0;
+		ResultsCapillaries results = new ResultsCapillaries(capillary.getKymographName(), capillary.capNFlies,
+				capillary.getCageID(), 0, resultsOptions.resultType);
 		results.setStimulus(capillary.capStimulus);
 		results.setConcentration(capillary.capConcentration);
+		results.setCapSide(capillary.capSide);
 
 		// Get bin durations
 		long binData = exp.getKymoBin_ms();
@@ -60,7 +58,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 
 		// For TOPLEVEL_LR, read from CageCapillariesComputation instead of capillary
 		if (resultsOptions.resultType == EnumResults.TOPLEVEL_LR) {
-			getLRDataFromCage(exp, capillary, results, binData, binExcel, subtractT0);
+			results.getLRDataFromCage(exp, capillary, binData, binExcel, subtractT0);
 		} else {
 			results.getDataFromCapillary(capillary, binData, binExcel, resultsOptions, subtractT0);
 		}
@@ -71,129 +69,11 @@ public class ResultsFromCapillaries extends ResultsArray {
 			results.initValuesOutArray(actualSize, Double.NaN);
 		} else {
 			// Fallback to calculated size if no data
-			int nOutputFrames = getNOutputFrames(exp, resultsOptions);
+			int nOutputFrames = exp.getNOutputFrames(resultsOptions);
 			results.initValuesOutArray(nOutputFrames, Double.NaN);
 		}
 
 		return results;
-	}
-
-	/**
-	 * Gets L+R data (SUM or PI) from CageCapillariesComputation for TOPLEVEL_LR
-	 * export. For L capillaries: exports SUM measure For R capillaries: exports PI
-	 * measure
-	 * 
-	 * @param exp        The experiment
-	 * @param capillary  The capillary
-	 * @param results    The XLS results to populate
-	 * @param binData    The bin duration for the data
-	 * @param binExcel   The bin duration for Excel output
-	 * @param subtractT0 Whether to subtract T0 value
-	 */
-	private static void getLRDataFromCage(Experiment exp, Capillary capillary, Results results, long binData,
-			long binExcel, boolean subtractT0) {
-
-		int cageID = capillary.getCageID();
-		CageCapillariesComputation cageComp = exp.getCages().getCageComputation(cageID);
-
-		if (cageComp == null) {
-			// No computation available, fall back to raw
-			ResultsOptions fallbackOptions = new ResultsOptions();
-			fallbackOptions.resultType = EnumResults.TOPRAW;
-			results.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
-			return;
-		}
-
-		// Determine which measure to use based on capillary side
-		String side = getCapillarySide(capillary);
-		CapillaryMeasure measure = null;
-
-		if (side != null && (side.contains("L") || side.contains("1"))) {
-			// L capillary: use SUM
-			measure = cageComp.getSumMeasure();
-		} else if (side != null && (side.contains("R") || side.contains("2"))) {
-			// R capillary: use PI
-			measure = cageComp.getPIMeasure();
-		} else {
-			// Side unclear, try first capillary as L, second as R
-			List<Capillary> caps = exp.getCages().getCageList().stream().filter(c -> c.getCageID() == cageID)
-					.findFirst().map(c -> c.getCapillaries().getList()).orElse(java.util.Collections.emptyList());
-
-			if (!caps.isEmpty() && caps.get(0) == capillary) {
-				measure = cageComp.getSumMeasure();
-			} else if (caps.size() >= 2 && caps.get(1) == capillary) {
-				measure = cageComp.getPIMeasure();
-			}
-		}
-
-		if (measure != null && measure.polylineLevel != null && measure.polylineLevel.npoints > 0) {
-			// Get measures by binning polyline data (similar to getMeasures implementation)
-			if (binData <= 0 || binExcel <= 0) {
-				// Invalid bin sizes, fall back to raw
-				ResultsOptions fallbackOptions = new ResultsOptions();
-				fallbackOptions.resultType = EnumResults.TOPRAW;
-				results.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
-				return;
-			}
-			plugins.fmp.multicafe.fmp_tools.Level2D polyline = measure.polylineLevel;
-			long maxMs = (polyline.npoints - 1) * binData;
-			int nOutputFrames = (int) (maxMs / binExcel) + 1;
-
-			java.util.ArrayList<Integer> intData = new ArrayList<>(nOutputFrames);
-			for (int i = 0; i < nOutputFrames; i++) {
-				long timeMs = i * binExcel;
-				int index = (int) (timeMs / binData);
-				if (index >= 0 && index < polyline.npoints) {
-					intData.add((int) polyline.ypoints[index]);
-				} else {
-					intData.add(0);
-				}
-			}
-
-			if (intData != null && !intData.isEmpty()) {
-				// Convert Integer to Double
-				java.util.ArrayList<Double> dataValues = new ArrayList<>(intData.size());
-				int t0Value = 0;
-
-				if (subtractT0 && intData.size() > 0) {
-					t0Value = intData.get(0);
-				}
-
-				for (Integer intValue : intData) {
-					if (subtractT0) {
-						dataValues.add((double) (intValue - t0Value));
-					} else {
-						dataValues.add(intValue.doubleValue());
-					}
-				}
-
-				results.setDataValues(dataValues);
-				return;
-			}
-		}
-
-		// Fallback to raw if computation failed
-		ResultsOptions fallbackOptions = new ResultsOptions();
-		fallbackOptions.resultType = EnumResults.TOPRAW;
-		results.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
-	}
-
-	/**
-	 * Helper method to determine capillary side from capSide or name.
-	 */
-	private static String getCapillarySide(Capillary cap) {
-		if (cap.capSide != null && !cap.capSide.equals("."))
-			return cap.capSide;
-		// Try to get from name
-		String name = cap.getRoiName();
-		if (name != null) {
-			name = name.toUpperCase();
-			if (name.contains("L") || name.contains("1"))
-				return "L";
-			if (name.contains("R") || name.contains("2"))
-				return "R";
-		}
-		return "";
 	}
 
 	/**
@@ -203,7 +83,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	 * @param options The export options
 	 * @return The number of output frames
 	 */
-	protected static int getNOutputFrames(Experiment exp, ResultsOptions options) {
+	protected int getNOutputFrames(Experiment exp, ResultsOptions options) {
 		// For capillaries, use kymograph timing
 		long kymoFirst_ms = exp.getKymoFirst_ms();
 		long kymoLast_ms = exp.getKymoLast_ms();
@@ -252,7 +132,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 	 * @param exp           The experiment
 	 * @param nOutputFrames The number of output frames
 	 */
-	protected static void handleExportError(Experiment exp, int nOutputFrames) {
+	protected void handleExportError(Experiment exp, int nOutputFrames) {
 		String error = String.format(
 				"ResultsFromCapillaries:ExportError() ERROR in %s\n nOutputFrames=%d kymoFirstCol_Ms=%d kymoLastCol_Ms=%d",
 				exp.getExperimentDirectory(), nOutputFrames, exp.getKymoFirst_ms(), exp.getKymoLast_ms());
@@ -303,12 +183,6 @@ public class ResultsFromCapillaries extends ResultsArray {
 				LOGGER.warning("Error processing capillary: " + e.getMessage());
 			}
 		}
-
-		// Note: Evaporation compensation is now handled by
-		// CagesArray.computeEvaporationCorrection()
-		// which should be called before this method. The old compensateEvaporation()
-		// method
-		// has been deprecated in favor of the new computation-based approach.
 
 		return resultsArray;
 	}

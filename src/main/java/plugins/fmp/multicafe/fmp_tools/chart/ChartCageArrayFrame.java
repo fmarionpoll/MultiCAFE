@@ -190,7 +190,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		String yLegend = label + " " + String.valueOf((char) (row + 'A')) + Integer.toString(col);
 		yAxis.setLabel(yLegend);
 
-		if (resultsOptions.relativeToT0 || resultsOptions.relativeToMedianT0) {
+		if (resultsOptions.relativeToMaximum || resultsOptions.relativeToMedianT0) {
 			yAxis.setAutoRange(false);
 			yAxis.setRange(RELATIVE_Y_MIN, RELATIVE_Y_MAX);
 		} else {

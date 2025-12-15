@@ -24,6 +24,7 @@ public class Results {
 	private int nflies = 1;
 	private int cageID = 0;
 	private int cagePosition = 0;
+	private String capSide = "..";
 	private Color color;
 	public EnumResults exportType = null;
 	public ArrayList<Integer> dataInt = null;
@@ -105,6 +106,14 @@ public class Results {
 		this.cagePosition = cagePosition;
 	}
 
+	public String getCapSide() {
+		return this.capSide;
+	}
+
+	public void setCapSide(String capSide) {
+		this.capSide = capSide;
+	}
+
 	public Color getColor() {
 		return this.color;
 	}
@@ -162,7 +171,7 @@ public class Results {
 
 	public void getDataFromSpot(Spot spot, long binData, long binExcel, ResultsOptions resultsOptions) {
 		dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(resultsOptions.resultType, binData, binExcel);
-		if (resultsOptions.relativeToT0 && resultsOptions.resultType != EnumResults.AREA_FLYPRESENT) {
+		if (resultsOptions.relativeToMaximum && resultsOptions.resultType != EnumResults.AREA_FLYPRESENT) {
 			relativeToMaximum();
 		}
 	}
@@ -205,7 +214,7 @@ public class Results {
 			}
 		}
 
-		if (resultsOptions.relativeToT0 && resultsOptions.resultType != EnumResults.AREA_FLYPRESENT) {
+		if (resultsOptions.relativeToMaximum && resultsOptions.resultType != EnumResults.AREA_FLYPRESENT) {
 			relativeToMaximum();
 		}
 	}
@@ -289,7 +298,7 @@ public class Results {
 		}
 
 		// Apply relative to T0 if needed (not applicable for boolean types)
-		if (resultsOptions.relativeToT0 && resultType != EnumResults.ISALIVE && resultType != EnumResults.SLEEP) {
+		if (resultsOptions.relativeToMaximum && resultType != EnumResults.ISALIVE && resultType != EnumResults.SLEEP) {
 			relativeToMaximum();
 		}
 	}

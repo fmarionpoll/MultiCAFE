@@ -159,4 +159,5 @@ public class ExperimentTimeManager {
 	public void setKymoBin_ms(long kymoBin_ms) {
 		this.kymoBin_ms = kymoBin_ms;
 	}
+
 }
