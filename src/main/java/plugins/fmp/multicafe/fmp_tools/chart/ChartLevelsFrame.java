@@ -522,13 +522,8 @@ public class ChartLevelsFrame extends IcyFrame {
 
 			if (xyDataset != null) {
 				try {
-					String name = results.getName();
-					if (name == null || name.length() < 4) {
-						LOGGER.warning("Invalid name format: " + name);
-						continue;
-					}
-
-					XYSeries seriesXY = getXYSeries(results, name.substring(4), exp, resultType);
+					String name = results.getCageID() + "_" + results.getCapSide();
+					XYSeries seriesXY = getXYSeries(results, name, exp, resultType);
 					seriesXY.setDescription("cage " + results.getCageID() + "_" + results.getNflies());
 
 					if (resultsArray2 != null && iRow < resultsArray2.size()) {
@@ -603,7 +598,8 @@ public class ChartLevelsFrame extends IcyFrame {
 
 		// Note: Computations are now handled inside getMeasuresFromAllCapillaries
 		// to ensure consistency between chart display and Excel export
-		ResultsArrayFromCapillaries resultsFromCaps = new ResultsArrayFromCapillaries(exp.getCapillaries().getList().size());
+		ResultsArrayFromCapillaries resultsFromCaps = new ResultsArrayFromCapillaries(
+				exp.getCapillaries().getList().size());
 		return resultsFromCaps.getMeasuresFromAllCapillaries(exp, resultsOptions);
 	}
 

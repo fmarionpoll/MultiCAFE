@@ -42,7 +42,7 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 				capillary.getCageID(), 0, resultsOptions.resultType);
 		results.setStimulus(capillary.capStimulus);
 		results.setConcentration(capillary.capConcentration);
-		results.setCapSide(capillary.capSide);
+		results.setCapSide(capillary.getCageID() + "_" + capillary.getCapillarySide());
 
 		// Get bin durations
 		long binData = exp.getKymoBin_ms();
