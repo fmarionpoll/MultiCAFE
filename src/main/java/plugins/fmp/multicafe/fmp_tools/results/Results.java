@@ -27,12 +27,10 @@ public class Results {
 	private Color color;
 	public EnumResults exportType = null;
 	public ArrayList<Integer> dataInt = null;
-	
 	private ArrayList<Double> dataValues = null;
 	private int valuesOutLength = 0;
 	public double[] valuesOut = null;
 
-	
 	public Results(String name, int nflies, int cellID, EnumResults exportType) {
 		this.name = name;
 		this.nflies = nflies;
@@ -174,15 +172,15 @@ public class Results {
 	 * Capillary.getCapillaryMeasuresForXLSPass1() returns ArrayList<Integer>, so we
 	 * convert to ArrayList<Double>.
 	 * 
-	 * @param capillary        The capillary to get data from
-	 * @param binData          The bin duration for the data
-	 * @param binExcel         The bin duration for Excel output
+	 * @param capillary      The capillary to get data from
+	 * @param binData        The bin duration for the data
+	 * @param binExcel       The bin duration for Excel output
 	 * @param resultsOptions The export options
-	 * @param subtractT0       Whether to subtract T0 value (for TOPLEVEL, TOPRAW,
-	 *                         etc.)
+	 * @param subtractT0     Whether to subtract T0 value (for TOPLEVEL, TOPRAW,
+	 *                       etc.)
 	 */
-	public void getDataFromCapillary(Capillary capillary, long binData, long binExcel,
-			ResultsOptions resultsOptions, boolean subtractT0) {
+	public void getDataFromCapillary(Capillary capillary, long binData, long binExcel, ResultsOptions resultsOptions,
+			boolean subtractT0) {
 		ArrayList<Integer> intData = capillary.getCapillaryMeasuresForXLSPass1(resultsOptions.resultType, binData,
 				binExcel);
 
@@ -215,9 +213,9 @@ public class Results {
 	/**
 	 * Gets data from fly positions and converts it to dataValues.
 	 * 
-	 * @param flyPositions     The fly positions to get data from
-	 * @param binData          The bin duration for the data
-	 * @param binExcel         The bin duration for Excel output
+	 * @param flyPositions   The fly positions to get data from
+	 * @param binData        The bin duration for the data
+	 * @param binExcel       The bin duration for Excel output
 	 * @param resultsOptions The export options
 	 */
 	public void getDataFromFlyPositions(FlyPositions flyPositions, long binData, long binExcel,
@@ -366,7 +364,7 @@ public class Results {
 		}
 		return true;
 	}
-	
+
 	// ------------------------------
 
 	public void addDataToValOutEvap(Results result) {
@@ -446,7 +444,7 @@ public class Results {
 		}
 		return resultsFound;
 	}
-	
+
 	public void transferDataIntToValuesOut(double scalingFactorToPhysicalUnits, EnumResults resultType) {
 		if (dimension == 0 || dataInt == null || dataInt.size() < 1)
 			return;
@@ -466,7 +464,7 @@ public class Results {
 				valuesOut[i] = dataInt.get(i) * scalingFactorToPhysicalUnits;
 		}
 	}
-	
+
 	public List<Integer> subtractT0() {
 		if (dataInt == null || dataInt.size() < 1)
 			return null;
@@ -477,6 +475,5 @@ public class Results {
 		}
 		return dataInt;
 	}
-
 
 }

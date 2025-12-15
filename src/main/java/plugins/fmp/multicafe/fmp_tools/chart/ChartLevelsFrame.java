@@ -41,7 +41,6 @@ import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsFromCapillaries;
-
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
@@ -505,14 +504,14 @@ public class ChartLevelsFrame extends IcyFrame {
 		}
 
 		for (int iRow = 0; iRow < resultsArray1.size(); iRow++) {
-			Results xlsResults = resultsArray1.getRow(iRow);
-			if (xlsResults == null) {
+			Results results = resultsArray1.getRow(iRow);
+			if (results == null) {
 				continue;
 			}
 
-			if (oldCage != xlsResults.getCageID()) {
+			if (oldCage != results.getCageID()) {
 				xyDataset = new XYSeriesCollection();
-				oldCage = xlsResults.getCageID();
+				oldCage = results.getCageID();
 				xyList.add(xyDataset);
 
 				Capillary capillary = findCapillaryByCageID(exp, oldCage);
@@ -523,14 +522,14 @@ public class ChartLevelsFrame extends IcyFrame {
 
 			if (xyDataset != null) {
 				try {
-					String name = xlsResults.getName();
+					String name = results.getName();
 					if (name == null || name.length() < 4) {
 						LOGGER.warning("Invalid name format: " + name);
 						continue;
 					}
 
-					XYSeries seriesXY = getXYSeries(xlsResults, name.substring(4), exp, resultType);
-					seriesXY.setDescription("cage " + xlsResults.getCageID() + "_" + xlsResults.getNflies());
+					XYSeries seriesXY = getXYSeries(results, name.substring(4), exp, resultType);
+					seriesXY.setDescription("cage " + results.getCageID() + "_" + results.getNflies());
 
 					if (resultsArray2 != null && iRow < resultsArray2.size()) {
 						Results bottomResults = resultsArray2.getRow(iRow);
@@ -590,10 +589,6 @@ public class ChartLevelsFrame extends IcyFrame {
 			return new ResultsArray();
 		}
 
-		// Note: Computations are now handled inside getMeasuresFromAllCapillaries
-		// to ensure consistency between chart display and Excel export
-		ResultsFromCapillaries xlsResultsFromCaps = new ResultsFromCapillaries(exp.getCapillaries().getList().size());
-		
 		ResultsOptions resultsOptions = new ResultsOptions();
 		long kymoBin_ms = exp.getKymoBin_ms();
 		if (kymoBin_ms <= 0) {
@@ -604,8 +599,12 @@ public class ChartLevelsFrame extends IcyFrame {
 		resultsOptions.lrPIThreshold = 0.0;
 		resultsOptions.relativeToT0 = false;
 		resultsOptions.subtractT0 = false;
-		
-		return xlsResultsFromCaps.getMeasuresFromAllCapillaries(exp, resultType, resultsOptions);
+		resultsOptions.resultType = resultType;
+
+		// Note: Computations are now handled inside getMeasuresFromAllCapillaries
+		// to ensure consistency between chart display and Excel export
+		ResultsFromCapillaries resultsFromCaps = new ResultsFromCapillaries(exp.getCapillaries().getList().size());
+		return resultsFromCaps.getMeasuresFromAllCapillaries(exp, resultsOptions);
 	}
 
 	/**

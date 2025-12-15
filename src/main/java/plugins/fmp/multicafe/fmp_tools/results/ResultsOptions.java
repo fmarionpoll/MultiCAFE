@@ -70,7 +70,7 @@ public class ResultsOptions {
 	// internal parameters
 	public boolean trim_alive = false;
 	public boolean compensateEvaporation = false;
-	public EnumResults resultType;
+	public EnumResults resultType = null;
 
 	public void copy(ResultsOptions resultsOptions) {
 		this.xyImage = resultsOptions.xyImage;

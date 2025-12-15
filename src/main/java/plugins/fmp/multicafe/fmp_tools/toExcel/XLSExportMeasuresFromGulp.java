@@ -139,9 +139,9 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		for (Capillary capillary : exp.getCapillaries().getList()) {
 			pt.y = 0;
 			pt = writeExperimentGulpInfos(sheet, pt, exp, charSeries, capillary, resultType);
-			Results xlsResults = getXLSResultsDataValuesFromGulpMeasures(exp, capillary, options);
-			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
-			writeXLSResult(sheet, pt, xlsResults);
+			Results results = getResultsDataValuesFromGulpMeasures(exp, capillary, options);
+			results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
+			writeXLSResult(sheet, pt, results);
 			pt.x++;
 		}
 		return pt.x;
@@ -155,7 +155,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * @param resultsOptions The export options
 	 * @return The XLS results
 	 */
-	public Results getXLSResultsDataValuesFromGulpMeasures(Experiment exp, Capillary capillary,
+	public Results getResultsDataValuesFromGulpMeasures(Experiment exp, Capillary capillary,
 			ResultsOptions resultsOptions) {
 		int nOutputFrames = getNOutputFrames(exp, resultsOptions);
 

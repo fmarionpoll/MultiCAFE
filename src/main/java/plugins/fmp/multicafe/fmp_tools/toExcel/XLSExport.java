@@ -417,12 +417,12 @@ public abstract class XLSExport {
 	 * 
 	 * @param sheet     The sheet to write to
 	 * @param pt        The starting point
-	 * @param xlsResult The results to write
+	 * @param result The results to write
 	 */
-	protected void writeXLSResult(SXSSFSheet sheet, Point pt, Results xlsResult) {
+	protected void writeXLSResult(SXSSFSheet sheet, Point pt, Results result) {
 		boolean transpose = options.transpose;
 
-		if (xlsResult.getValuesOutLength() < 1) {
+		if (result.getValuesOutLength() < 1) {
 			return;
 		}
 
@@ -431,11 +431,11 @@ public abstract class XLSExport {
 
 			int i_from = (int) ((coltime - expAll.getSeqCamData().getFirstImageMs()) / options.buildExcelStepMs);
 
-			if (i_from >= xlsResult.getValuesOutLength()) {
+			if (i_from >= result.getValuesOutLength()) {
 				break;
 			}
 
-			double value = xlsResult.getValuesOut()[i_from];
+			double value = result.getValuesOut()[i_from];
 
 			if (!Double.isNaN(value)) {
 				XLSUtils.setValue(sheet, pt, transpose, value);

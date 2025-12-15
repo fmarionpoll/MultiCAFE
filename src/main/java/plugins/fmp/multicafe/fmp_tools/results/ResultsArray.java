@@ -35,7 +35,7 @@ public class ResultsArray {
 	}
 
 	public void sortRowsByName() {
-		Collections.sort(resultsList, new Comparators.XLSResults_Name());
+		Collections.sort(resultsList, new Comparators.Results_Name());
 	}
 
 	public void subtractDeltaT(int i, int j) {

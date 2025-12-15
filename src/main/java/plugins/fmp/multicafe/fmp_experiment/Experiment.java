@@ -1572,19 +1572,13 @@ public class Experiment {
 		resultsOptions.buildExcelStepMs = (int) kymoBin_ms;
 		resultsOptions.relativeToT0 = false;
 		resultsOptions.correctEvaporation = subtractEvaporation;
+		resultsOptions.resultType = resultType;
 
 		ResultsArray resultsArray = new ResultsArray();
 		double scalingFactorToPhysicalUnits = getCapillaries().getScalingFactorToPhysicalUnits(resultType);
 
 		for (Capillary capillary : getCapillaries().getList()) {
-			ResultsOptions capResultsOptions = new ResultsOptions();
-			capResultsOptions.buildExcelStepMs = resultsOptions.buildExcelStepMs;
-			capResultsOptions.relativeToT0 = resultsOptions.relativeToT0;
-			capResultsOptions.correctEvaporation = resultsOptions.correctEvaporation;
-			capResultsOptions.resultType = resultType;
-
-			Results results = ResultsFromCapillaries.getResultsFromCapillaryMeasures(this, capillary, capResultsOptions,
-					capResultsOptions.correctEvaporation);
+			Results results = ResultsFromCapillaries.getCapillaryMeasure(this, capillary, resultsOptions);
 			if (results != null) {
 				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
 				resultsArray.addRow(results);

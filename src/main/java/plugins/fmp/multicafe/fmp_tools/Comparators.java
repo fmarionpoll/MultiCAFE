@@ -146,7 +146,7 @@ public class Comparators {
 	 * Comparator for XLSResults objects based on their names. Handles null values
 	 * by treating them as greater than non-null values.
 	 */
-	public static class XLSResults_Name implements Comparator<Results> {
+	public static class Results_Name implements Comparator<Results> {
 		@Override
 		public int compare(Results o1, Results o2) {
 			if (o1 == null && o2 == null) {

@@ -136,9 +136,9 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 
 			pt.y = 0;
 			pt = writeExperimentFlyPositionInfos(sheet, pt, exp, charSeries, cage, resultType);
-			Results xlsResults = getXLSResultsDataValuesFromFlyPositionMeasures(exp, cage, flyPositions, options);
-			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
-			writeXLSResult(sheet, pt, xlsResults);
+			Results results = getResultsDataValuesFromFlyPositionMeasures(exp, cage, flyPositions, options);
+			results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
+			writeXLSResult(sheet, pt, results);
 			pt.x++;
 		}
 		return pt.x;
@@ -153,23 +153,23 @@ public class XLSExportMeasuresFromFlyPosition extends XLSExport {
 	 * @param resultsOptions The export options
 	 * @return The XLS results
 	 */
-	public Results getXLSResultsDataValuesFromFlyPositionMeasures(Experiment exp, Cage cage,
+	public Results getResultsDataValuesFromFlyPositionMeasures(Experiment exp, Cage cage,
 			FlyPositions flyPositions, ResultsOptions resultsOptions) {
 		int nOutputFrames = getNOutputFrames(exp, resultsOptions);
 
 		// Create XLSResults with cage properties
-		Results xlsResults = new Results("Cage_" + cage.getProperties().getCageID(),
+		Results results = new Results("Cage_" + cage.getProperties().getCageID(),
 				cage.getProperties().getCageNFlies(), cage.getProperties().getCageID(), 0, resultsOptions.resultType);
-		xlsResults.initValuesOutArray(nOutputFrames, Double.NaN);
+		results.initValuesOutArray(nOutputFrames, Double.NaN);
 
 		// Get bin durations
 		long binData = exp.getSeqCamData().getTimeManager().getBinDurationMs();
 		long binExcel = resultsOptions.buildExcelStepMs;
 
 		// Get data from fly positions
-		xlsResults.getDataFromFlyPositions(flyPositions, binData, binExcel, resultsOptions);
+		results.getDataFromFlyPositions(flyPositions, binData, binExcel, resultsOptions);
 
-		return xlsResults;
+		return results;
 	}
 
 	/**

@@ -38,8 +38,8 @@ public class ResultsFromCapillaries extends ResultsArray {
 	 * @param subtractT0     Whether to subtract T0 value
 	 * @return The XLS results
 	 */
-	static public Results getResultsFromCapillaryMeasures(Experiment exp, Capillary capillary,
-			ResultsOptions resultsOptions, boolean subtractT0) {
+	static public Results getCapillaryMeasure(Experiment exp, Capillary capillary, ResultsOptions resultsOptions) {
+		boolean subtractT0 = resultsOptions.relativeToT0;
 		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
 				resultsOptions.resultType);
 
@@ -85,12 +85,12 @@ public class ResultsFromCapillaries extends ResultsArray {
 	 * 
 	 * @param exp        The experiment
 	 * @param capillary  The capillary
-	 * @param xlsResults The XLS results to populate
+	 * @param results    The XLS results to populate
 	 * @param binData    The bin duration for the data
 	 * @param binExcel   The bin duration for Excel output
 	 * @param subtractT0 Whether to subtract T0 value
 	 */
-	private static void getLRDataFromCage(Experiment exp, Capillary capillary, Results xlsResults, long binData,
+	private static void getLRDataFromCage(Experiment exp, Capillary capillary, Results results, long binData,
 			long binExcel, boolean subtractT0) {
 
 		int cageID = capillary.getCageID();
@@ -100,7 +100,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 			// No computation available, fall back to raw
 			ResultsOptions fallbackOptions = new ResultsOptions();
 			fallbackOptions.resultType = EnumResults.TOPRAW;
-			xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+			results.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 			return;
 		}
 
@@ -132,7 +132,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 				// Invalid bin sizes, fall back to raw
 				ResultsOptions fallbackOptions = new ResultsOptions();
 				fallbackOptions.resultType = EnumResults.TOPRAW;
-				xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+				results.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 				return;
 			}
 			plugins.fmp.multicafe.fmp_tools.Level2D polyline = measure.polylineLevel;
@@ -167,7 +167,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 					}
 				}
 
-				xlsResults.setDataValues(dataValues);
+				results.setDataValues(dataValues);
 				return;
 			}
 		}
@@ -175,7 +175,7 @@ public class ResultsFromCapillaries extends ResultsArray {
 		// Fallback to raw if computation failed
 		ResultsOptions fallbackOptions = new ResultsOptions();
 		fallbackOptions.resultType = EnumResults.TOPRAW;
-		xlsResults.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+		results.getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
 	}
 
 	/**
@@ -254,37 +254,38 @@ public class ResultsFromCapillaries extends ResultsArray {
 	 */
 	protected static void handleExportError(Experiment exp, int nOutputFrames) {
 		String error = String.format(
-				"XLSExport:ExportError() ERROR in %s\n nOutputFrames=%d kymoFirstCol_Ms=%d kymoLastCol_Ms=%d",
+				"ResultsFromCapillaries:ExportError() ERROR in %s\n nOutputFrames=%d kymoFirstCol_Ms=%d kymoLastCol_Ms=%d",
 				exp.getExperimentDirectory(), nOutputFrames, exp.getKymoFirst_ms(), exp.getKymoLast_ms());
 		System.err.println(error);
 	}
 
-	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, EnumResults resultType,
-			ResultsOptions resultsOptions) {
+	public ResultsArray getMeasuresFromAllCapillaries(Experiment exp, ResultsOptions resultsOptions) {
+
 		// Dispatch capillaries to cages first
 		exp.dispatchCapillariesToCages();
 
 		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (resultsOptions.correctEvaporation && resultType == EnumResults.TOPLEVEL) {
+		if (resultsOptions.correctEvaporation && resultsOptions.resultType == EnumResults.TOPLEVEL) {
 			exp.getCages().computeEvaporationCorrection(exp);
 		}
 
 		// Compute L+R measures if needed (must be done after evaporation correction)
-		if (resultType == EnumResults.TOPLEVEL_LR) {
+		if (resultsOptions.resultType == EnumResults.TOPLEVEL_LR) {
 			if (resultsOptions.correctEvaporation) {
 				exp.getCages().computeEvaporationCorrection(exp);
 			}
-			exp.getCages().computeLRMeasures(exp, resultsOptions.lrPIThreshold); 
+			exp.getCages().computeLRMeasures(exp, resultsOptions.lrPIThreshold);
 		}
 
-		ResultsArray resultsArray = new ResultsArray();
-		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
+		double scalingFactorToPhysicalUnits = exp.getCapillaries()
+				.getScalingFactorToPhysicalUnits(resultsOptions.resultType);
 
 		long kymoBin_ms = exp.getKymoBin_ms();
 		if (kymoBin_ms <= 0) {
 			kymoBin_ms = 60000;
 		}
-		
+
+		ResultsArray resultsArray = new ResultsArray();
 		List<Capillary> capillaries = exp.getCapillaries().getList();
 		if (capillaries == null) {
 			LOGGER.warning("Capillaries list is null");
@@ -292,22 +293,11 @@ public class ResultsFromCapillaries extends ResultsArray {
 		}
 
 		for (Capillary capillary : capillaries) {
-			if (capillary == null) {
-				continue;
-			}
-
-			ResultsOptions options = new ResultsOptions();
-			options.buildExcelStepMs = resultsOptions.buildExcelStepMs;
-			options.relativeToT0 = resultsOptions.relativeToT0;
-			options.correctEvaporation = resultsOptions.correctEvaporation;
-			options.subtractT0 = resultsOptions.subtractT0;
-			options.resultType = resultType;
-
 			try {
-				Results xlsResults = getResultsFromCapillaryMeasures(exp, capillary, options, resultsOptions.subtractT0);
-				if (xlsResults != null) {
-					xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
-					resultsArray.addRow(xlsResults);
+				Results results = getCapillaryMeasure(exp, capillary, resultsOptions);
+				if (results != null) {
+					results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultsOptions.resultType);
+					resultsArray.addRow(results);
 				}
 			} catch (Exception e) {
 				LOGGER.warning("Error processing capillary: " + e.getMessage());
