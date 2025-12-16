@@ -42,9 +42,9 @@ public class Chart extends JPanel implements SequenceListener {
 	private MultiCAFE parent0 = null;
 
 	// Global window positions - shared across all experiments
-//	private static Rectangle globalChartTopBottomBounds = null;
+	private static Rectangle globalChartTopBottomBounds = null;
 	private static Rectangle globalChartDeltaBounds = null;
-//	private static Rectangle globalChartDerivativeBounds = null;
+	private static Rectangle globalChartDerivativeBounds = null;
 	private static Rectangle globalChartSumGulpsBounds = null;
 
 	private EnumResults[] measures = new EnumResults[] { //
@@ -239,9 +239,8 @@ public class Chart extends JPanel implements SequenceListener {
 			last = first;
 		}
 
-		ResultsOptions options = ResultsOptionsBuilder.forChart().withBuildExcelStepMs(60000)
-				.withRelativeToT0(relativeToCheckbox.isSelected()).withExportType(exportType).withCageRange(first, last)
-				.build();
+		ResultsOptions options = ResultsOptionsBuilder.forChart().withBuildExcelStepMs(60000) // .withRelativeToT0(true)
+				.withExportType(exportType).withCageRange(first, last).build();
 
 		iChart = new ChartCageArrayFrame();
 		iChart.createMainChartPanel("Capillary level measures", exp, options);

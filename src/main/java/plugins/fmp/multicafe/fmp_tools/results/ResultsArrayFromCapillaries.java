@@ -34,8 +34,8 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 	 */
 	public Results getCapillaryMeasure(Experiment exp, Capillary capillary, ResultsOptions resultsOptions) {
 		boolean subtractT0 = resultsOptions.subtractT0;
-		ResultsCapillaries results = new ResultsCapillaries(capillary.getKymographName(), capillary.capNFlies,
-				capillary.getCageID(), 0, resultsOptions.resultType);
+		ResultsCapillaries results = new ResultsCapillaries(capillary.getKymographName(),
+				capillary.getProperties().nFlies, capillary.getCageID(), 0, resultsOptions.resultType);
 		results.setStimulus(capillary.getStimulus());
 		results.setConcentration(capillary.getConcentration());
 		results.setCapSide(capillary.getCageID() + "_" + capillary.getCapillarySide());

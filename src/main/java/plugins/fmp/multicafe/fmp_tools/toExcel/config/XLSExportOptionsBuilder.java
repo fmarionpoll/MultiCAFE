@@ -3,6 +3,7 @@ package plugins.fmp.multicafe.fmp_tools.toExcel.config;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptionsBuilder;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants.DefaultOptions;
 
 /**
@@ -350,6 +351,11 @@ public class XLSExportOptionsBuilder {
 	 */
 	public static XLSExportOptionsBuilder forChart() {
 		return new XLSExportOptionsBuilder().withTranspose(false).withCollateSeries(false).withAlive(false);
+	}
+
+	public ResultsOptionsBuilder withRelativeToT0(boolean b) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	// Additional fluent interface methods can be added as needed

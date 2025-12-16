@@ -2,9 +2,7 @@ package plugins.fmp.multicafe.fmp_experiment.cages;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
@@ -31,7 +29,8 @@ public class CageCapillariesComputation {
 
 	// Volatile computed measures stored at cage level
 	// Key format: "SUM", "PI", "SUM_L", "SUM_R", etc.
-	// private transient Map<String, CapillaryMeasure> computedMeasures = new HashMap<>(); // Deprecated
+	// private transient Map<String, CapillaryMeasure> computedMeasures = new
+	// HashMap<>(); // Deprecated
 
 	/**
 	 * Creates a new CageCapillariesComputation for the given cage.
@@ -109,7 +108,7 @@ public class CageCapillariesComputation {
 	 * Clears all computed measures for the associated cage.
 	 */
 	public void clearComputedMeasures() {
-		if (computedMeasures != null) {
+		if (cage.measures != null) {
 			cage.measures.clear();
 		}
 		// Also clear individual capillary computed measures
@@ -126,8 +125,10 @@ public class CageCapillariesComputation {
 	 */
 	public CapillaryMeasure getComputedMeasure(String key) {
 		// return computedMeasures != null ? computedMeasures.get(key) : null;
-		if (key.equals("SUM")) return cage.measures.sum;
-		if (key.equals("PI")) return cage.measures.pi;
+		if (key.equals("SUM"))
+			return cage.measures.sum;
+		if (key.equals("PI"))
+			return cage.measures.pi;
 		return null;
 	}
 

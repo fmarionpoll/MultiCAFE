@@ -31,7 +31,7 @@ public class CapillaryMeasure {
 
 	// -------------------------
 
-	CapillaryMeasure(String capName) {
+	public CapillaryMeasure(String capName) {
 		this.capName = capName;
 	}
 
@@ -67,10 +67,15 @@ public class CapillaryMeasure {
 		}
 	}
 
-	int getNPoints() {
+	public int getNPoints() {
 		if (polylineLevel == null)
 			return 0;
 		return polylineLevel.npoints;
+	}
+
+	public double getValueAt(int j) {
+		// TODO Auto-generated method stub
+		return polylineLevel.ypoints[j];
 	}
 
 	int restoreNPoints() {

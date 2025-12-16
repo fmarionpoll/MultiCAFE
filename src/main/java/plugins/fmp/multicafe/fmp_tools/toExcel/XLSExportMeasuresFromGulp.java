@@ -150,8 +150,8 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	/**
 	 * Gets the results for a gulp.
 	 * 
-	 * @param exp              The experiment
-	 * @param capillary        The capillary
+	 * @param exp            The experiment
+	 * @param capillary      The capillary
 	 * @param resultsOptions The export options
 	 * @return The XLS results
 	 */
@@ -160,8 +160,8 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		int nOutputFrames = getNOutputFrames(exp, resultsOptions);
 
 		// Create XLSResults with capillary properties
-		Results results = new Results(capillary.getRoiName(), capillary.capNFlies, capillary.getCageID(), 0,
-				resultsOptions.resultType);
+		Results results = new Results(capillary.getRoiName(), capillary.getProperties().nFlies, capillary.getCageID(),
+				0, resultsOptions.resultType);
 		results.setStimulus(capillary.getStimulus());
 		results.setConcentration(capillary.getConcentration());
 		results.initValuesOutArray(nOutputFrames, Double.NaN);
@@ -180,7 +180,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	/**
 	 * Gets the number of output frames for the experiment.
 	 * 
-	 * @param exp     The experiment
+	 * @param exp            The experiment
 	 * @param resultsOptions The export options
 	 * @return The number of output frames
 	 */
@@ -295,7 +295,8 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, capillary.getVolume());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, capillary.getPixels());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, capillary.getStimulus());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, capillary.getConcentration());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose,
+				capillary.getConcentration());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_NFLIES.getValue(), transpose, capillary.getNFlies());
 	}
 

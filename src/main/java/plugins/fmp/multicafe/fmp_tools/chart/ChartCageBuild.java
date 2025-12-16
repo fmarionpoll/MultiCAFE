@@ -17,6 +17,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryProperties;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotMeasure;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
@@ -237,7 +238,7 @@ public class ChartCageBuild {
 	 * @param options    list of options
 	 * @return XYSeriesCollection containing the cage's data
 	 */
-	static XYSeriesCollection getCapillaryDataDirectlyFromOneCage(Experiment exp, Cage cage,
+	public static XYSeriesCollection getCapillaryDataDirectlyFromOneCage(Experiment exp, Cage cage,
 			ResultsOptions resultsOptions) {
 		if (cage == null || cage.getCapillaries() == null || cage.getCapillaries().getList().size() < 1) {
 			LOGGER.warning("Cannot get capillary data: capillaries array is empty or cage is null");
@@ -253,7 +254,7 @@ public class ChartCageBuild {
 
 			XYSeries seriesXY = createXYSeriesFromCapillaryMeasure(exp, cap, resultsOptions);
 			if (seriesXY != null) {
-				seriesXY.setDescription(buildSeriesDescriptionFromCageAndSpot(cage, spot));
+				seriesXY.setDescription(buildSeriesDescriptionFromCageAndCapillary(cage, cap));
 				xySeriesCollection.addSeries(seriesXY);
 				updateGlobalMaxMin();
 			}
@@ -277,6 +278,12 @@ public class ChartCageBuild {
 		return "ID:" + cageProp.getCageID() + ":Pos:" + cageProp.getCagePosition() + ":nflies:"
 				+ cageProp.getCageNFlies() + ":R:" + color.getRed() + ":G:" + color.getGreen() + ":B:"
 				+ color.getBlue();
+	}
+
+	private static String buildSeriesDescriptionFromCageAndCapillary(Cage cage, Capillary cap) {
+		CageProperties cageProp = cage.getProperties();
+		CapillaryProperties capProp = cap.getProperties();
+		return cageProp.getCageID() + "_" + capProp.side;
 	}
 
 	private static XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot, ResultsOptions resultOptions) {
@@ -318,11 +325,11 @@ public class ChartCageBuild {
 		double[] camImages_time_min = exp.getSeqCamData().getTimeManager().getCamImagesTime_Minutes();
 		CapillaryMeasure capMeasure = cap.getMeasurements(resultOptions.resultType);
 
-		int npoints = capMeasure.getCount();
+		int npoints = capMeasure.getNPoints();
 
 		for (int j = 0; j < npoints; j++) {
 			double x = camImages_time_min[j];
-			double y = capMeasure.getValueAt(j) / divider;
+			double y = capMeasure.getValueAt(j);
 			seriesXY.add(x, y);
 
 			if (ymax < y) {
