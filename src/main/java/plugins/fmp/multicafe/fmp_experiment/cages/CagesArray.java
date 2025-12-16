@@ -1268,6 +1268,8 @@ public class CagesArray {
 	public void prepareComputations(Experiment exp, ResultsOptions resultsOptions) {
 		exp.dispatchCapillariesToCages();
 
+		clearComputedMeasures();
+
 		// Compute evaporation correction if needed (for TOPLEVEL exports)
 		if (resultsOptions.correctEvaporation && resultsOptions.resultType == EnumResults.TOPLEVEL) {
 			computeEvaporationCorrection(exp);

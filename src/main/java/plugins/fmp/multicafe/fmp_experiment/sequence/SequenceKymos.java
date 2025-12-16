@@ -183,9 +183,10 @@ public class SequenceKymos extends SequenceCamData {
 				}
 
 				try {
-					if (roi.getName() != null && roi.getName().contains("level") || roi.getName().contains("gulp")) {
+					if (roi.getName() != null && (roi.getName().contains("level") || roi.getName().contains("gulp"))) {
 						ROI2DUtilities.interpolateMissingPointsAlongXAxis((ROI2DPolyLine) roi, sequenceWidth);
 						processed++;
+						continue;
 					} else if (roi.getName() != null && roi.getName().contains("derivative")) {
 						// Skip derivative ROIs
 						continue;
