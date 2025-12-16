@@ -38,7 +38,7 @@ public class Chart extends JPanel implements SequenceListener {
 	private ChartLevelsFrame plotDelta = null;
 	private ChartLevelsFrame plotDerivative = null;
 	private ChartLevelsFrame plotSumgulps = null;
-	private plugins.fmp.multicafe.dlg.levels.ChartCageArrayFrame chartCageArrayFrame = null;
+	private ChartCageArrayFrame chartCageArrayFrame = null;
 
 	private MultiCAFE parent0 = null;
 
@@ -54,7 +54,7 @@ public class Chart extends JPanel implements SequenceListener {
 			EnumResults.DERIVEDVALUES, //
 			EnumResults.TOPLEVEL_LR //
 	};
-	private JComboBox<EnumResults> exportTypeComboBox = new JComboBox<EnumResults>(measures);
+	private JComboBox<EnumResults> resultTypeComboBox = new JComboBox<EnumResults>(measures);
 
 //	private JCheckBox limitsCheckbox = new JCheckBox("top/bottom", false);
 //	private JCheckBox derivativeCheckbox = new JCheckBox("derivative", false);
@@ -67,11 +67,6 @@ public class Chart extends JPanel implements SequenceListener {
 	private JRadioButton displaySelectedButton = new JRadioButton("cage selected");
 
 	private AxisOptions graphOptions = null;
-//	private EnumXLSExport[] measures = new EnumXLSExport[] { //
-//			EnumXLSExport.AREA_SUM, //
-//			EnumXLSExport.AREA_SUMCLEAN // ,
-//			// EnumXLSExportType.AREA_DIFF
-//	};
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		setLayout(capLayout);
@@ -81,7 +76,7 @@ public class Chart extends JPanel implements SequenceListener {
 		layout.setVgap(0);
 
 		JPanel panel = new JPanel(layout);
-		panel.add(exportTypeComboBox);
+		panel.add(resultTypeComboBox);
 
 //		panel.add(limitsCheckbox);
 //		panel.add(derivativeCheckbox);
@@ -105,13 +100,13 @@ public class Chart extends JPanel implements SequenceListener {
 		group1.add(displaySelectedButton);
 		displayAllButton.setSelected(true);
 
-		exportTypeComboBox.setSelectedIndex(1);
+		resultTypeComboBox.setSelectedIndex(1);
 		defineActionListeners();
 	}
 
 	private void defineActionListeners() {
 
-		exportTypeComboBox.addActionListener(new ActionListener() {
+		resultTypeComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
@@ -126,7 +121,7 @@ public class Chart extends JPanel implements SequenceListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
-					displayChartPanels(exp);
+					// displayChartPanels(exp);
 					displayGraphsPanels(exp);
 				}
 			}
@@ -218,13 +213,13 @@ public class Chart extends JPanel implements SequenceListener {
 
 	public void displayChartPanels(Experiment exp) {
 		exp.getSeqCamData().getSequence().removeListener(this);
-		EnumResults exportType = (EnumResults) exportTypeComboBox.getSelectedItem();
+		EnumResults exportType = (EnumResults) resultTypeComboBox.getSelectedItem();
 		if (isThereAnyDataToDisplay(exp, exportType))
 			chartCageArrayFrame = plotSpotMeasuresToChart(exp, exportType, chartCageArrayFrame);
 		exp.getSeqCamData().getSequence().addListener(this);
 	}
 
-	private ChartCageArrayFrame plotSpotMeasuresToChart(Experiment exp, EnumResults exportType,
+	private ChartCageArrayFrame plotSpotMeasuresToChart(Experiment exp, EnumResults resultType,
 			ChartCageArrayFrame iChart) {
 		if (iChart != null)
 			iChart.getMainChartFrame().dispose();
@@ -246,7 +241,7 @@ public class Chart extends JPanel implements SequenceListener {
 		ResultsOptions options = ResultsOptionsBuilder.forChart() //
 				.withBuildExcelStepMs(60000) //
 				.withSubtractT0(true) //
-				.withExportType(exportType) //
+				.withResultType(resultType) //
 				.withCageRange(first, last) //
 				.build();
 

@@ -220,8 +220,8 @@ public class ResultsOptionsBuilder {
 		return this;
 	}
 
-	public ResultsOptionsBuilder withExportType(EnumResults exportType) {
-		this.resultType = exportType;
+	public ResultsOptionsBuilder withResultType(EnumResults resultType) {
+		this.resultType = resultType;
 		return this;
 	}
 
