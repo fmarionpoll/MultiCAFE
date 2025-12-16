@@ -210,6 +210,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		isProcessing = true;
 		processingCount.set(0);
 		experimentMetadataList.clear();
+		long startTime = System.nanoTime();
 
 		ProgressFrame progressFrame = new ProgressFrame("Processing Experiment Metadata");
 		progressFrame.setMessage("Scanning " + selectedNames.size() + " experiment directories...");
@@ -225,6 +226,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			protected void done() {
 				isProcessing = false;
 				progressFrame.close();
+				long endTime = System.nanoTime();
+				System.out.println("LoadExperiment: processSelectedFilesMetadataOnly took " + (endTime - startTime) / 1e6 + " ms");
 				SwingUtilities.invokeLater(() -> {
 					updateBrowseInterface();
 				});
@@ -353,6 +356,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	}
 
 	boolean openSelecteExperiment(Experiment exp) {
+		long startTime = System.nanoTime();
 		ProgressFrame progressFrame = new ProgressFrame("Load Experiment Data");
 
 		try {
@@ -440,6 +444,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);
 			progressFrame.close();
 
+			long endTime = System.nanoTime();
+			System.out.println("LoadExperiment: openSelecteExperiment took " + (endTime - startTime) / 1e6 + " ms");
 			return flag;
 		} catch (Exception e) {
 			LOGGER.severe("Error opening experiment: "
@@ -447,6 +453,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			LOGGER.severe("Exception details: " + e.toString());
 			e.printStackTrace();
 			progressFrame.close();
+			long endTime = System.nanoTime();
+			System.out.println("LoadExperiment: openSelecteExperiment failed, took " + (endTime - startTime) / 1e6 + " ms");
 			return false;
 		}
 	}
