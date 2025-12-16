@@ -20,6 +20,9 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.LegendItemSource;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
@@ -27,6 +30,7 @@ import org.jfree.chart.plot.CombinedRangeXYPlot;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -236,6 +240,13 @@ public class ChartLevelsFrame extends IcyFrame {
 		final CombinedRangeXYPlot combinedXYPlot = new CombinedRangeXYPlot(yAxis);
 		Paint[] color = ChartColor.createDefaultPaintArray();
 
+		// Create a dummy dataset for the legend
+		XYSeriesCollection legendDataset = new XYSeriesCollection();
+		XYSeries seriesL = new XYSeries("L");
+		XYSeries seriesR = new XYSeries("R");
+		legendDataset.addSeries(seriesL);
+		legendDataset.addSeries(seriesR);
+		
 		int subplotIndex = 0;
 		for (XYSeriesCollection xySeriesCollection : xyDataSetList) {
 			if (xySeriesCollection == null || xySeriesCollection.getSeriesCount() == 0) {
@@ -275,7 +286,19 @@ public class ChartLevelsFrame extends IcyFrame {
 			}
 		}
 
-		JFreeChart chart = new JFreeChart(title, null, combinedXYPlot, true);
+		JFreeChart chart = new JFreeChart(title, null, combinedXYPlot, false);
+		LegendItemCollection legendItems = new LegendItemCollection();
+		legendItems.add(new LegendItem("L", color[0]));
+		legendItems.add(new LegendItem("R", color[1]));
+		
+		LegendTitle legend = new LegendTitle(new LegendItemSource() {
+			@Override
+			public LegendItemCollection getLegendItems() {
+				return legendItems;
+			}
+		});
+		chart.addLegend(legend);
+		
 		chart.setID("capillaryLevels:" + resultType.toString());
 
 		final ChartPanel panel = new ChartPanel(chart, DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, MIN_CHART_WIDTH,
