@@ -15,7 +15,6 @@ import icy.type.geom.Polyline2D;
 import icy.util.StringUtil;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
-import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 public class CapillaryGulps {
@@ -238,16 +237,6 @@ public class CapillaryGulps {
 	}
 
 	public void transferROIsToMeasures(List<ROI> listRois) {
-		// First check if we have the "dots" display (ROI2DArea)
-		for (ROI roi : listRois) {
-			if (roi instanceof ROI2DArea && roi.getName().contains("gulps")) {
-				// If we find the dots display, we DO NOT rebuild gulps from ROIs
-				// because ROI2DArea loses the amplitude information.
-				// We keep the existing gulps data.
-				return;
-			}
-		}
-
 		ArrayList<ROI2D> rois = new ArrayList<ROI2D>();
 		for (ROI roi : listRois) {
 			String roiname = roi.getName();
