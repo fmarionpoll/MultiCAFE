@@ -780,7 +780,7 @@ public class CagesArray {
 			int cagenb = cage.getCageID();
 			for (Capillary cap : capList) {
 				if (cap.getCageID() == cagenb) {
-					cage.setCageNFlies(cap.capNFlies);
+					cage.setCageNFlies(cap.getProperties().nFlies);
 					break;
 				}
 			}
@@ -793,7 +793,7 @@ public class CagesArray {
 			for (Capillary cap : capList) {
 				if (cap.getCageID() != cageIndex)
 					continue;
-				cap.capNFlies = cage.getCageNFlies();
+				cap.getProperties().nFlies = cage.getCageNFlies();
 			}
 		}
 	}
@@ -1259,8 +1259,8 @@ public class CagesArray {
 	 */
 	/**
 	 * Prepares computations for capillary measures based on the provided options.
-	 * This includes dispatching capillaries to cages, computing evaporation correction,
-	 * and computing L+R measures.
+	 * This includes dispatching capillaries to cages, computing evaporation
+	 * correction, and computing L+R measures.
 	 * 
 	 * @param exp            The experiment
 	 * @param resultsOptions The options defining which computations to perform

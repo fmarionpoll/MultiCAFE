@@ -1599,7 +1599,7 @@ public class Experiment {
 		}
 
 		for (Capillary cap : capillaries.getList()) {
-			int nflies = cap.capNFlies;
+			int nflies = cap.getProperties().nFlies;
 			int cageID = cap.getCageID();
 			Cage cage = cages.getCageFromID(cageID);
 			if (cage == null) {
