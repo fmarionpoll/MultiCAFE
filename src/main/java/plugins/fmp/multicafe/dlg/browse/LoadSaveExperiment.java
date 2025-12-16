@@ -133,17 +133,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				handleOpenButton();
 			}
 		});
-//		openButton.addActionListener(new ActionListener() {
-//		@Override
-//		public void actionPerformed(ActionEvent arg0) {
-//			ExperimentDirectories eDAF = new ExperimentDirectories();
-//			if (eDAF.getDirectoriesFromDialog(parent0.expListComboLazy, null, false)) {
-//				int item = addExperimentFrom3NamesAnd2Lists(eDAF);
-//				parent0.paneExperiment.tabInfos.initInfosCombos();
-//				parent0.expListComboLazy.setSelectedIndex(item);
-//			}
-//		}
-//	});
 
 		searchButton.addActionListener(new ActionListener() {
 			@Override
@@ -151,14 +140,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				handleSearchButton();
 			}
 		});
-//		searchButton.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent arg0) {
-//				selectedNames = new ArrayList<String>();
-//				dialogSelect = new SelectFiles1();
-//				dialogSelect.initialize(parent0);
-//			}
-//		});
 
 		closeButton.addActionListener(new ActionListener() {
 			@Override
@@ -166,15 +147,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				handleCloseButton();
 			}
 		});
-//		closeButton.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(final ActionEvent e) {
-//				closeAllExperiments();
-//				parent0.paneExperiment.tabsPane.setSelectedIndex(0);
-//				parent0.expListComboLazy.removeAllItems();
-//				parent0.expListComboLazy.updateUI();
-//			}
-//		});
 
 		previousButton.addActionListener(new ActionListener() {
 			@Override
@@ -182,13 +154,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				handlePreviousButton();
 			}
 		});
-//		previousButton.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(final ActionEvent e) {
-//				parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() - 1);
-//				updateBrowseInterface();
-//			}
-//		});
 
 		nextButton.addActionListener(new ActionListener() {
 			@Override
@@ -196,13 +161,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				handleNextButton();
 			}
 		});
-//		nextButton.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(final ActionEvent e) {
-//				parent0.expListComboLazy.setSelectedIndex(parent0.expListComboLazy.getSelectedIndex() + 1);
-//				updateBrowseInterface();
-//			}
-//		});
 
 		parent0.expListComboLazy.addActionListener(new ActionListener() {
 			@Override
@@ -396,21 +354,28 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 	boolean openSelecteExperiment(Experiment exp) {
 		ProgressFrame progressFrame = new ProgressFrame("Load Experiment Data");
+		long startTime = System.nanoTime();
+		System.out.println("LoadSaveExperiment:openSelecteExperiment() START");
 
 		try {
+			boolean isLazy = exp instanceof LazyExperiment;
 			// If it's a LazyExperiment, load the data first
-			if (exp instanceof LazyExperiment) {
+			if (isLazy) {
 				progressFrame.setMessage("Loading experiment data...");
 				((LazyExperiment) exp).loadIfNeeded();
+			} else {
+				exp.xmlLoad_MCExperiment();
 			}
-
-			exp.xmlLoad_MCExperiment();
+			long step0Time = System.nanoTime();
+			System.out.println("LoadSaveExperiment:openSelecteExperiment() Step 0 (load MCExperiment): " + (step0Time - startTime) / 1000000 + " ms");
 
 			boolean flag = true;
 			progressFrame.setMessage("Load image");
 
 			// Step 1: Load seqCamData images
-			exp.getSeqCamData().loadImages();
+			if (!isLazy) {
+				exp.getSeqCamData().loadImages();
+			}
 			parent0.paneExperiment.updateViewerForSequenceCam(exp);
 
 			if (exp.getSeqCamData() == null) {
@@ -424,12 +389,17 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			if (exp.getSeqCamData().getSequence() != null)
 				exp.getSeqCamData().getSequence().addListener(this);
 
+			long step1Time = System.nanoTime();
+			System.out.println("LoadSaveExperiment:openSelecteExperiment() Step 1 (load seqCamData): " + (step1Time - step0Time) / 1000000 + " ms");
+
 			// Step 1 (continued): Check if MCcapillaries.xml exists and load capillaries +
 			// display on seqCamData
 			progressFrame.setMessage("Load capillaries");
 			if (exp.loadCamDataCapillaries()) {
 				// Capillaries loaded and displayed on seqCamData images
 			}
+			long step1bTime = System.nanoTime();
+			System.out.println("LoadSaveExperiment:openSelecteExperiment() Step 1b (load capillaries): " + (step1bTime - step1Time) / 1000000 + " ms");
 
 			// Step 2: Identify and select bin directory (bin_60, bin_xx)
 			progressFrame.setMessage("Select bin directory");
@@ -438,6 +408,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				exp.setBinSubDirectory(selectedBinDir);
 				parent0.expListComboLazy.expListBinSubDirectory = selectedBinDir;
 			}
+			long step2Time = System.nanoTime();
+			System.out.println("LoadSaveExperiment:openSelecteExperiment() Step 2 (select bin): " + (step2Time - step1bTime) / 1000000 + " ms");
 
 			// Step 3: Load kymographs from selected bin directory and display in another
 			// window
@@ -449,6 +421,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					parent0.paneKymos.tabDisplay.displayUpdateOnSwingThread();
 				}
 			}
+			long step3Time = System.nanoTime();
+			System.out.println("LoadSaveExperiment:openSelecteExperiment() Step 3 (load kymos): " + (step3Time - step2Time) / 1000000 + " ms");
 
 			// Step 4: Load CapillaryMeasures.csv from bin directory and display measures
 			progressFrame.setMessage("Load capillary measures");
@@ -457,19 +431,23 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				String binFullDir = exp.getKymosBinFullDirectory();
 				if (binFullDir != null) {
 					exp.loadCapillaries();
-					if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
-						exp.getSeqKymos().transferCapillariesMeasuresToKymos(exp.getCapillaries());
-					}
 				}
 			}
+			long step4Time = System.nanoTime();
+			System.out.println("LoadSaveExperiment:openSelecteExperiment() Step 4 (load capillary measures): " + (step4Time - step3Time) / 1000000 + " ms");
 
 			// Step 5: If kymographs are present, transfer measures to kymographs
 			if (kymosLoaded && exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
 				exp.getSeqKymos().transferCapillariesMeasuresToKymos(exp.getCapillaries());
 			}
+			long step5Time = System.nanoTime();
+			System.out.println("LoadSaveExperiment:openSelecteExperiment() Step 5 (transfer measures to kymos): " + (step5Time - step4Time) / 1000000 + " ms");
 
 			if (parent0.paneExperiment.tabOptions.graphsCheckBox.isSelected())
 				parent0.paneLevels.tabGraphs.displayGraphsPanels(exp);
+			
+			long step6Time = System.nanoTime();
+			System.out.println("LoadSaveExperiment:openSelecteExperiment() Step 6 (display graphs): " + (step6Time - step5Time) / 1000000 + " ms");
 
 			exp.loadCageMeasures();
 			exp.updateROIsAt(0);
@@ -481,6 +459,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 			parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);
 			progressFrame.close();
+			
+			long endTime = System.nanoTime();
+			System.out.println("LoadSaveExperiment:openSelecteExperiment() Step 7 (update dialogs): " + (endTime - step6Time) / 1000000 + " ms");
+			System.out.println("LoadSaveExperiment:openSelecteExperiment() TOTAL TIME: " + (endTime - startTime) / 1000000 + " ms");
 
 			return flag;
 		} catch (Exception e) {

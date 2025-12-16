@@ -18,6 +18,7 @@ import plugins.fmp.multicafe.fmp_tools.Level2D;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.AlongT;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
+import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
@@ -625,33 +626,24 @@ public class Capillary implements Comparable<Capillary> {
 	}
 
 	private void getROIsFromCapillaryGulps(CapillaryGulps capGulps, List<ROI2D> listrois) {
-		int ngulps = capGulps.gulps.size();
-		if (ngulps == 0)
+		if (capGulps.gulps.size() == 0)
 			return;
 
-		ArrayList<ROI2D> rois = new ArrayList<ROI2D>(ngulps);
-		if (capGulps.gulps.size() > 0)
-			for (Polyline2D gulpLine : capGulps.gulps) {
-				ROI2D roi = getROIfromGulp(gulpLine);
-				if (roi != null)
-					rois.add(roi);
+		ROI2DArea roiDots = new ROI2DArea();
+		for (Polyline2D gulpLine : capGulps.gulps) {
+			if (gulpLine.npoints > 0) {
+				roiDots.addPoint((int) gulpLine.xpoints[0], (int) gulpLine.ypoints[0]);
 			}
-
-		listrois.addAll(rois);
+		}
+		if (roiDots.getBounds().isEmpty())
+			return;
+		
+		roiDots.setName(metadata.kymographPrefix + "_gulps");
+		roiDots.setColor(Color.red);
+		roiDots.setT(kymographIndex);
+		listrois.add(roiDots);
 	}
 
-	private ROI2D getROIfromGulp(Polyline2D gulpLine) {
-		if (gulpLine.npoints == 0)
-			return null;
-		ROI2DPolyLine roi = new ROI2DPolyLine(gulpLine);
-		int startAt = (int) gulpLine.xpoints[0];
-		String name = metadata.kymographPrefix + "_gulp_at_" + String.format("%07d", startAt);
-		roi.setName(name);
-		roi.setColor(Color.red);
-		roi.setStroke(1);
-		roi.setT(kymographIndex);
-		return roi;
-	}
 
 	public void transferROIsToMeasures(List<ROI> listRois) {
 		measurements.ptsTop.transferROIsToMeasures(listRois);
