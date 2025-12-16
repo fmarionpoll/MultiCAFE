@@ -3,7 +3,6 @@ package plugins.fmp.multicafe.fmp_tools.results;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants.DefaultOptions;
-import plugins.fmp.multicafe.fmp_tools.toExcel.config.XLSExportOptionsBuilder;
 
 public class ResultsOptionsBuilder {
 
@@ -33,7 +32,7 @@ public class ResultsOptionsBuilder {
 	// Processing options
 	private boolean sumPerCage = DefaultOptions.SUM_PER_CAGE;
 	private boolean subtractT0 = DefaultOptions.SUBTRACT_T0;
-	private boolean relativeToT0 = DefaultOptions.RELATIVE_TO_T0;
+	private boolean divideWithT0 = DefaultOptions.DIVIDE_T0;
 	private boolean relativeToMedianT0 = DefaultOptions.RELATIVE_TO_MEDIAN_T0;
 	private int medianT0FromNPoints = ExcelExportConstants.DEFAULT_MEDIAN_T0_POINTS;
 	private boolean onlyalive = DefaultOptions.ONLY_ALIVE;
@@ -101,7 +100,7 @@ public class ResultsOptionsBuilder {
 
 		this.sumPerCage = existing.sumPerCage;
 		this.subtractT0 = existing.subtractT0;
-		this.relativeToT0 = existing.subtractT0;
+		this.divideWithT0 = existing.divideWithT0;
 		this.relativeToMedianT0 = existing.relativeToMedianT0;
 		this.medianT0FromNPoints = existing.medianT0FromNPoints;
 		this.onlyalive = existing.onlyalive;
@@ -173,6 +172,16 @@ public class ResultsOptionsBuilder {
 //		return this;
 //	}
 
+	public ResultsOptionsBuilder withSubtractT0(boolean b) {
+		this.subtractT0 = b;
+		return null;
+	}
+
+	public ResultsOptionsBuilder withDivideT0(boolean b) {
+		this.divideWithT0 = b;
+		return null;
+	}
+
 	public ResultsOptionsBuilder withSpotAreas(boolean spotAreas) {
 		this.spotAreas = spotAreas;
 		return this;
@@ -237,11 +246,6 @@ public class ResultsOptionsBuilder {
 		return this;
 	}
 
-	public ResultsOptionsBuilder withRelativeToT0(boolean relativeToT0) {
-		this.relativeToT0 = relativeToT0;
-		return this;
-	}
-
 	public ResultsOptionsBuilder withPadIntervals(boolean padIntervals) {
 		this.padIntervals = padIntervals;
 		return this;
@@ -272,8 +276,8 @@ public class ResultsOptionsBuilder {
 	 * 
 	 * @return A new XLSExportOptions instance
 	 */
-	public ResultsOptionsBuilder build() {
-		ResultsOptionsBuilder options = new ResultsOptionsBuilder();
+	public ResultsOptions build() {
+		ResultsOptions options = new ResultsOptions();
 
 		// Copy all configured values
 		options.xyImage = this.xyImage;
@@ -297,7 +301,7 @@ public class ResultsOptionsBuilder {
 
 		options.sumPerCage = this.sumPerCage;
 		options.subtractT0 = this.subtractT0;
-		options.subtractT0 = this.relativeToT0;
+		options.divideWithT0 = this.divideWithT0;
 		options.relativeToMedianT0 = this.relativeToMedianT0;
 		options.medianT0FromNPoints = this.medianT0FromNPoints;
 		options.onlyalive = this.onlyalive;
@@ -334,8 +338,8 @@ public class ResultsOptionsBuilder {
 	 * 
 	 * @return A pre-configured builder
 	 */
-	public static XLSExportOptionsBuilder forSpotAreas() {
-		return new XLSExportOptionsBuilder().withSpotAreas(true).withCollateSeries(false).withPadIntervals(false)
+	public static ResultsOptionsBuilder forSpotAreas() {
+		return new ResultsOptionsBuilder().withSpotAreas(true).withCollateSeries(false).withPadIntervals(false)
 				.withAbsoluteTime(false).withOnlyAlive(false);
 	}
 
@@ -344,8 +348,8 @@ public class ResultsOptionsBuilder {
 	 * 
 	 * @return A pre-configured builder
 	 */
-	public static XLSExportOptionsBuilder forChart() {
-		return new XLSExportOptionsBuilder().withTranspose(false).withCollateSeries(false).withAlive(false);
+	public static ResultsOptionsBuilder forChart() {
+		return new ResultsOptionsBuilder().withTranspose(false).withCollateSeries(false).withAlive(false);
 	}
 
 	// Additional fluent interface methods can be added as needed

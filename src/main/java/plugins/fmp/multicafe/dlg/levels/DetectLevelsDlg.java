@@ -297,7 +297,7 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 	}
 
 	void setDialogFromOptions(Capillary cap) {
-		BuildSeriesOptions options = cap.limitsOptions;
+		BuildSeriesOptions options = cap.getProperties().limitsOptions;
 
 		pass1CheckBox.setSelected(options.pass1);
 		pass2CheckBox.setSelected(options.pass2);
@@ -320,7 +320,7 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 	}
 
 	void setOptionsFromDialog(Capillary cap) {
-		BuildSeriesOptions capOptions = cap.limitsOptions;
+		BuildSeriesOptions capOptions = cap.getProperties().limitsOptions;
 		capOptions.pass1 = pass1CheckBox.isSelected();
 		capOptions.pass2 = pass2CheckBox.isSelected();
 		capOptions.transform01 = (ImageTransformEnums) transformPass1ComboBox.getSelectedItem();

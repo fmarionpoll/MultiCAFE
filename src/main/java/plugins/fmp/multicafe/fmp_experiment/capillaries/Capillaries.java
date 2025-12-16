@@ -133,7 +133,7 @@ public class Capillaries {
 			return;
 		String name = cap.getRoiName();
 		String letter = name.substring(name.length() - 1);
-		cap.capSide = letter;
+		cap.getProperties().side = letter;
 		if (letter.equals("R")) {
 			String nameL = name.substring(0, name.length() - 1) + "L";
 			Capillary cap0 = getCapillaryFromRoiName(nameL);
@@ -181,7 +181,7 @@ public class Capillaries {
 		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", seq);
 		Collections.sort(listROISCap, new Comparators.ROI2D_Name());
 		for (Capillary cap : getList()) {
-			cap.valid = false;
+			cap.getProperties().valid = false;
 			String capName = Capillary.replace_LR_with_12(cap.getRoiName());
 			Iterator<ROI2D> iterator = listROISCap.iterator();
 			while (iterator.hasNext()) {
@@ -189,9 +189,9 @@ public class Capillaries {
 				String roiName = Capillary.replace_LR_with_12(roi.getName());
 				if (roiName.equals(capName)) {
 					cap.setRoi((ROI2DShape) roi);
-					cap.valid = true;
+					cap.getProperties().valid = true;
 				}
-				if (cap.valid) {
+				if (cap.getProperties().valid) {
 					iterator.remove();
 					break;
 				}
@@ -200,7 +200,7 @@ public class Capillaries {
 		Iterator<Capillary> iterator = getList().iterator();
 		while (iterator.hasNext()) {
 			Capillary cap = iterator.next();
-			if (!cap.valid)
+			if (!cap.getProperties().valid)
 				iterator.remove();
 		}
 		if (listROISCap.size() > 0) {
@@ -225,9 +225,9 @@ public class Capillaries {
 		int capArraySize = getList().size();
 		for (int i = 0; i < capArraySize; i++) {
 			Capillary cap = getList().get(i);
-			cap.capNFlies = nflies;
+			cap.getProperties().nFlies = nflies;
 			if (optionZeroFlyFirstLastCapillary && (i <= 1 || i >= capArraySize - 2))
-				cap.capNFlies = 0;
+				cap.getProperties().nFlies = 0;
 			cap.setCageID(i / 2);
 		}
 	}
@@ -236,15 +236,15 @@ public class Capillaries {
 		int capArraySize = getList().size();
 		for (int i = 0; i < capArraySize; i++) {
 			Capillary cap = getList().get(i);
-			cap.capNFlies = 1;
+			cap.getProperties().nFlies = 1;
 			if (i <= 1) {
-				cap.capNFlies = 0;
+				cap.getProperties().nFlies = 0;
 				cap.setCageID(0);
 			} else if (i >= capArraySize - 2) {
-				cap.capNFlies = 0;
+				cap.getProperties().nFlies = 0;
 				cap.setCageID(5);
 			} else {
-				cap.capNFlies = nflies;
+				cap.getProperties().nFlies = nflies;
 				cap.setCageID(1 + (i - 2) / 4);
 			}
 		}

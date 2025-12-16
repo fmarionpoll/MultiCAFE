@@ -50,8 +50,8 @@ public class CagesArrayCapillariesComputation {
 
 		for (Cage cage : cagesArray.getCageList()) {
 			for (Capillary cap : cage.getCapillaries().getList()) {
-				if (cap.capNFlies == 0 && cap.ptsTop != null && cap.ptsTop.polylineLevel != null
-						&& cap.ptsTop.polylineLevel.npoints > 0) {
+				if (cap.getProperties().nFlies == 0 && cap.getTopLevel() != null
+						&& cap.getTopLevel().polylineLevel != null && cap.getTopLevel().polylineLevel.npoints > 0) {
 					// Determine side from capSide or capillary name
 					String side = getCapillarySide(cap);
 					if (side.contains("L") || side.contains("1")) {
@@ -76,7 +76,8 @@ public class CagesArrayCapillariesComputation {
 		// Apply evaporation correction to all capillaries
 		for (Cage cage : cagesArray.getCageList()) {
 			for (Capillary cap : cage.getCapillaries().getList()) {
-				if (cap.ptsTop == null || cap.ptsTop.polylineLevel == null || cap.ptsTop.polylineLevel.npoints == 0)
+				if (cap.getTopLevel() == null || cap.getTopLevel().polylineLevel == null
+						|| cap.getTopLevel().polylineLevel.npoints == 0)
 					continue;
 
 				String side = getCapillarySide(cap);
@@ -91,7 +92,7 @@ public class CagesArrayCapillariesComputation {
 
 				if (avgEvap != null) {
 					// Create corrected measure by subtracting evaporation
-					cap.ptsTopCorrected = subtractEvaporation(cap.ptsTop, avgEvap);
+					cap.setTopCorrected(subtractEvaporation(cap.getTopLevel(), avgEvap));
 				}
 			}
 		}
@@ -112,8 +113,8 @@ public class CagesArrayCapillariesComputation {
 	// Helper methods for capillary computation
 
 	private String getCapillarySide(Capillary cap) {
-		if (cap.capSide != null && !cap.capSide.equals("."))
-			return cap.capSide;
+		if (cap.getProperties().side != null && !cap.getProperties().side.equals("."))
+			return cap.getProperties().side;
 		// Try to get from name
 		String name = cap.getRoiName();
 		if (name != null) {
@@ -133,8 +134,8 @@ public class CagesArrayCapillariesComputation {
 		// Find maximum dimension
 		int maxPoints = 0;
 		for (Capillary cap : capillaries) {
-			if (cap.ptsTop != null && cap.ptsTop.polylineLevel != null) {
-				int npoints = cap.ptsTop.polylineLevel.npoints;
+			if (cap.getTopLevel() != null && cap.getTopLevel().polylineLevel != null) {
+				int npoints = cap.getTopLevel().polylineLevel.npoints;
 				if (npoints > maxPoints)
 					maxPoints = npoints;
 			}
@@ -152,9 +153,10 @@ public class CagesArrayCapillariesComputation {
 		}
 
 		for (Capillary cap : capillaries) {
-			if (cap.ptsTop == null || cap.ptsTop.polylineLevel == null || cap.ptsTop.polylineLevel.npoints == 0)
+			if (cap.getTopLevel() == null || cap.getTopLevel().polylineLevel == null
+					|| cap.getTopLevel().polylineLevel.npoints == 0)
 				continue;
-			Level2D polyline = cap.ptsTop.polylineLevel;
+			Level2D polyline = cap.getTopLevel().polylineLevel;
 			if (polyline == null)
 				continue;
 

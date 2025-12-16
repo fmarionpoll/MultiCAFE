@@ -19,6 +19,7 @@ import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CageString;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
@@ -114,8 +115,9 @@ public class Chart extends JPanel implements SequenceListener {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-				if (exp != null)
+				if (exp != null) {
 					displayChartPanels(exp);
+				}
 			}
 		});
 
@@ -123,8 +125,10 @@ public class Chart extends JPanel implements SequenceListener {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-				if (exp != null)
+				if (exp != null) {
+					displayChartPanels(exp);
 					displayGraphsPanels(exp);
+				}
 			}
 		});
 
@@ -228,7 +232,7 @@ public class Chart extends JPanel implements SequenceListener {
 		int first = 0;
 		int last = exp.getCages().getCageList().size() - 1;
 		if (!displayAllButton.isSelected()) {
-			plugins.fmp.multicafe.fmp_experiment.cages.Cage cageFound = exp.getCages().findFirstCageWithSelectedSpot();
+			Cage cageFound = exp.getCages().findFirstCageWithSelectedSpot();
 			if (cageFound == null)
 				cageFound = exp.getCages().findFirstSelectedCage();
 			if (cageFound == null)
@@ -239,8 +243,12 @@ public class Chart extends JPanel implements SequenceListener {
 			last = first;
 		}
 
-		ResultsOptions options = ResultsOptionsBuilder.forChart().withBuildExcelStepMs(60000) // .withRelativeToT0(true)
-				.withExportType(exportType).withCageRange(first, last).build();
+		ResultsOptions options = ResultsOptionsBuilder.forChart() //
+				.withBuildExcelStepMs(60000) //
+				.withSubtractT0(true) //
+				.withExportType(exportType) //
+				.withCageRange(first, last) //
+				.build();
 
 		iChart = new ChartCageArrayFrame();
 		iChart.createMainChartPanel("Capillary level measures", exp, options);

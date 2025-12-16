@@ -77,7 +77,8 @@ public final class ExcelExportConstants {
 		public static final boolean CROSSCORRELATION_LR = false;
 		public static final boolean SUM_PER_CAGE = true;
 		public static final boolean SUBTRACT_T0 = true;
-		public static final boolean RELATIVE_TO_T0 = true;
+		public static final boolean DIVIDE_T0 = false;
+		public static final boolean RELATIVE_TO_MAX = true;
 		public static final boolean RELATIVE_TO_MEDIAN_T0 = false;
 		public static final boolean ONLY_ALIVE = true;
 		public static final boolean TRANSPOSE = false;

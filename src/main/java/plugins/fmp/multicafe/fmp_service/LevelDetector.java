@@ -70,13 +70,11 @@ public class LevelDetector {
 				continue;
 
 			capi.kymographIndex = tKymo;
-			if (capi.ptsDerivative != null)
-				capi.ptsDerivative.clear();
-			if (capi.ptsGulps != null && capi.ptsGulps.gulps != null)
-				capi.ptsGulps.gulps.clear();
-			if (capi.limitsOptions != null)
-				capi.limitsOptions.copyFrom(options);
-			
+			capi.resetDerivative();
+			capi.resetGulps();
+			if (capi.getGulpsOptions() != null)
+				capi.getGulpsOptions().copyFrom(options);
+
 			String fileName = seqKymos.getFileNameFromImageList(capi.kymographIndex);
 			if (fileName == null) {
 				Logger.warn("LevelDetector:detectLevels - File name is null for tKymo=" + tKymo);
@@ -84,7 +82,8 @@ public class LevelDetector {
 			}
 			final IcyBufferedImage rawImage = loader.imageIORead(fileName);
 			if (rawImage == null) {
-				Logger.warn("LevelDetector:detectLevels - Failed to load image for tKymo=" + tKymo + ", file=" + fileName);
+				Logger.warn(
+						"LevelDetector:detectLevels - Failed to load image for tKymo=" + tKymo + ", file=" + fileName);
 				continue;
 			}
 
@@ -105,28 +104,29 @@ public class LevelDetector {
 					int columnFirst = (int) searchRect.getX();
 					int columnLast = (int) (searchRect.getWidth() + columnFirst);
 					if (options.analyzePartOnly) {
-						if (capi.ptsTop != null && capi.ptsTop.polylineLevel != null && capi.ptsTop.limit != null)
-							capi.ptsTop.polylineLevel.insertYPoints(capi.ptsTop.limit, columnFirst, columnLast);
-						if (capi.ptsBottom != null && capi.ptsBottom.limit != null && capi.ptsBottom.polylineLevel != null)
-							capi.ptsBottom.polylineLevel.insertYPoints(capi.ptsBottom.limit, columnFirst, columnLast);
+						if (capi.getTopLevel() != null && capi.getTopLevel().polylineLevel != null && capi.getTopLevel().limit != null)
+							capi.getTopLevel().polylineLevel.insertYPoints(capi.getTopLevel().limit, columnFirst, columnLast);
+						if (capi.getBottomLevel() != null && capi.getBottomLevel().limit != null
+								&& capi.getBottomLevel().polylineLevel != null)
+							capi.getBottomLevel().polylineLevel.insertYPoints(capi.getBottomLevel().limit, columnFirst, columnLast);
 					} else {
-						if (capi.ptsTop != null) {
+						if (capi.getTopLevel() != null) {
 							String topLevelName = capi.getLast2ofCapillaryName();
 							if (topLevelName != null)
-								capi.ptsTop.setPolylineLevelFromTempData(topLevelName + "_toplevel",
+								capi.getTopLevel().setPolylineLevelFromTempData(topLevelName + "_toplevel",
 										capi.kymographIndex, columnFirst, columnLast);
 						}
-						if (capi.ptsBottom != null && capi.ptsBottom.limit != null) {
+						if (capi.getBottomLevel() != null && capi.getBottomLevel().limit != null) {
 							String bottomLevelName = capi.getLast2ofCapillaryName();
 							if (bottomLevelName != null)
-								capi.ptsBottom.setPolylineLevelFromTempData(bottomLevelName + "_bottomlevel",
+								capi.getBottomLevel().setPolylineLevelFromTempData(bottomLevelName + "_bottomlevel",
 										capi.kymographIndex, columnFirst, columnLast);
 						}
 					}
-					if (capi.ptsTop != null)
-						capi.ptsTop.limit = null;
-					if (capi.ptsBottom != null)
-						capi.ptsBottom.limit = null;
+					if (capi.getTopLevel() != null)
+						capi.getTopLevel().limit = null;
+					if (capi.getBottomLevel() != null)
+						capi.getBottomLevel().limit = null;
 				}
 			}));
 		}
@@ -144,7 +144,8 @@ public class LevelDetector {
 			} catch (ExecutionException e) {
 				Throwable cause = e.getCause();
 				if (cause != null) {
-					Logger.error("LevelDetector:waitFuturesCompletion - Execution exception: " + cause.getClass().getSimpleName() + " - " + cause.getMessage(), cause);
+					Logger.error("LevelDetector:waitFuturesCompletion - Execution exception: "
+							+ cause.getClass().getSimpleName() + " - " + cause.getMessage(), cause);
 				} else {
 					Logger.error("LevelDetector:waitFuturesCompletion - Execution exception", e);
 				}
@@ -168,8 +169,8 @@ public class LevelDetector {
 		int columnLast = (int) (searchRect.getWidth() + columnFirst);
 
 		int n_measures = columnLast - columnFirst + 1;
-		capi.ptsTop.limit = new int[n_measures];
-		capi.ptsBottom.limit = new int[n_measures];
+		capi.getTopLevel().limit = new int[n_measures];
+		capi.getBottomLevel().limit = new int[n_measures];
 
 		if (options.runBackwards)
 			for (int ix = columnLast; ix >= columnFirst; ix--)
@@ -190,15 +191,15 @@ public class LevelDetector {
 				searchRect);
 		if (iyBottom <= iyTop)
 			iyTop = topSearchFrom;
-		capi.ptsTop.limit[ix - istart] = iyTop;
-		capi.ptsBottom.limit[ix - istart] = iyBottom;
+		capi.getTopLevel().limit[ix - istart] = iyTop;
+		capi.getBottomLevel().limit[ix - istart] = iyBottom;
 		return iyTop;
 	}
 
 	private void detectPass2(IcyBufferedImage rawImage, ImageTransformInterface transformPass2, Capillary capi,
 			int imageWidth, int imageHeight, Rectangle searchRect, int jitter, BuildSeriesOptions options) {
-		if (capi.ptsTop.limit == null)
-			capi.ptsTop.setTempDataFromPolylineLevel();
+		if (capi.getTopLevel().limit == null)
+			capi.getTopLevel().setTempDataFromPolylineLevel();
 
 		ImageTransformOptions transformOptions = new ImageTransformOptions();
 		IcyBufferedImage transformedImage2 = transformPass2.getTransformedImage(rawImage, transformOptions);
@@ -210,18 +211,18 @@ public class LevelDetector {
 		switch (options.transform02) {
 		case COLORDISTANCE_L1_Y:
 		case COLORDISTANCE_L2_Y:
-			findBestPosition(capi.ptsTop.limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
+			findBestPosition(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
 					5);
 			break;
 
 		case SUBTRACT_1RSTCOL:
 		case L1DIST_TO_1RSTCOL:
-			detectThresholdUp(capi.ptsTop.limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
+			detectThresholdUp(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
 					20, options.detectLevel2Threshold);
 			break;
 
 		case DERICHE:
-			findBestPosition(capi.ptsTop.limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
+			findBestPosition(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
 					5);
 			break;
 

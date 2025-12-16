@@ -46,8 +46,8 @@ public class GulpDetector {
 				@Override
 				public void run() {
 					if (options.buildDerivative)
-						capi.ptsDerivative = new CapillaryMeasure(capi.getLast2ofCapillaryName() + "_derivative",
-								capi.kymographIndex, getDerivativeProfile(seqAnalyzed, capi, jitter));
+						capi.setDerivative(new CapillaryMeasure(capi.getLast2ofCapillaryName() + "_derivative",
+								capi.kymographIndex, getDerivativeProfile(seqAnalyzed, capi, jitter)));
 
 					if (options.buildGulps) {
 						capi.initGulps();
@@ -79,7 +79,7 @@ public class GulpDetector {
 	}
 
 	private List<Point2D> getDerivativeProfile(Sequence seq, Capillary cap, int jitter) {
-		Polyline2D polyline = cap.ptsTop.polylineLevel;
+		Polyline2D polyline = cap.getTopLevel().polylineLevel;
 		if (polyline == null)
 			return null;
 

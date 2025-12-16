@@ -14,6 +14,7 @@ import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.type.geom.Polyline2D;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
+import plugins.fmp.multicafe.fmp_tools.Level2D;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.AlongT;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
@@ -21,39 +22,42 @@ import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 public class Capillary implements Comparable<Capillary> {
-	
+
 	// === CORE FIELDS ===
 	public int kymographIndex = -1;
 	public String version = null;
 	public String filenameTIFF = null;
 	public IcyBufferedImage cap_Image = null;
-	
+
 	// === PROPERTIES ===
 	private final CapillaryProperties properties;
 
 	// === MEASUREMENTS ===
 	private final CapillaryMeasurements measurements;
-	
+
 	// === METADATA ===
 	private final CapillaryMetadata metadata;
-	
+
 	// === PUBLIC FIELDS (Deprecated/Moved logic) ===
-	// These are now delegated to properties but kept for backward compatibility (where not private)
-	// Actually, the plan says to update external references, but we can temporarily keep them or just remove them.
+	// These are now delegated to properties but kept for backward compatibility
+	// (where not private)
+	// Actually, the plan says to update external references, but we can temporarily
+	// keep them or just remove them.
 	// Since I'm refactoring, I will remove the fields and add accessors.
-	// WAIT. The user prompt asked "Update all external code to use getters" -> So I should REMOVE these fields.
-	
+	// WAIT. The user prompt asked "Update all external code to use getters" -> So I
+	// should REMOVE these fields.
+
 	public final String ID_TOPLEVEL = "toplevel";
 	public final String ID_BOTTOMLEVEL = "bottomlevel";
 	public final String ID_DERIVATIVE = "derivative";
-	
+
 	// === CONSTRUCTORS ===
 
 	public Capillary(ROI2D roiCapillary) {
 		this.properties = new CapillaryProperties();
 		this.measurements = new CapillaryMeasurements();
 		this.metadata = new CapillaryMetadata();
-		
+
 		this.metadata.roiCap = roiCapillary;
 		this.metadata.kymographName = replace_LR_with_12(roiCapillary.getName());
 	}
@@ -62,7 +66,7 @@ public class Capillary implements Comparable<Capillary> {
 		this.properties = new CapillaryProperties();
 		this.measurements = new CapillaryMeasurements();
 		this.metadata = new CapillaryMetadata();
-		
+
 		this.metadata.kymographName = replace_LR_with_12(name);
 	}
 
@@ -71,57 +75,157 @@ public class Capillary implements Comparable<Capillary> {
 		this.measurements = new CapillaryMeasurements();
 		this.metadata = new CapillaryMetadata();
 	}
-	
+
 	// === ACCESSORS ===
-	
+
 	public CapillaryProperties getProperties() {
 		return properties;
 	}
-	
+
 	// Delegate getters for properties
-	public String getStimulus() { return properties.getStimulus(); }
-	public String getConcentration() { return properties.getConcentration(); }
-	public String getSide() { return properties.getSide(); }
-	public int getNFlies() { return properties.getNFlies(); }
-	public int getCageID() { return properties.getCageID(); }
-	public double getVolume() { return properties.getVolume(); }
-	public int getPixels() { return properties.getPixels(); }
-	public boolean isDescriptionOK() { return properties.isDescriptionOK(); }
-	public int getVersionInfos() { return properties.getVersionInfos(); }
-	public BuildSeriesOptions getLimitsOptions() { return properties.getLimitsOptions(); }
-	
-	public void setStimulus(String s) { properties.setStimulus(s); }
-	public void setConcentration(String s) { properties.setConcentration(s); }
-	public void setSide(String s) { properties.setSide(s); }
-	public void setNFlies(int n) { properties.setNFlies(n); }
-	public void setCageID(int n) { properties.setCageID(n); }
-	public void setVolume(double v) { properties.setVolume(v); }
-	public void setPixels(int p) { properties.setPixels(p); }
-	public void setDescriptionOK(boolean b) { properties.setDescriptionOK(b); }
-	public void setVersionInfos(int v) { properties.setVersionInfos(v); }
-	
+	public String getStimulus() {
+		return properties.getStimulus();
+	}
+
+	public String getConcentration() {
+		return properties.getConcentration();
+	}
+
+	public String getSide() {
+		return properties.getSide();
+	}
+
+	public int getNFlies() {
+		return properties.getNFlies();
+	}
+
+	public int getCageID() {
+		return properties.getCageID();
+	}
+
+	public double getVolume() {
+		return properties.getVolume();
+	}
+
+	public int getPixels() {
+		return properties.getPixels();
+	}
+
+	public boolean isDescriptionOK() {
+		return properties.isDescriptionOK();
+	}
+
+	public int getVersionInfos() {
+		return properties.getVersionInfos();
+	}
+
+	public BuildSeriesOptions getLimitsOptions() {
+		return properties.getLimitsOptions();
+	}
+
+	public void setStimulus(String s) {
+		properties.setStimulus(s);
+	}
+
+	public void setConcentration(String s) {
+		properties.setConcentration(s);
+	}
+
+	public void setSide(String s) {
+		properties.setSide(s);
+	}
+
+	public void setNFlies(int n) {
+		properties.setNFlies(n);
+	}
+
+	public void setCageID(int n) {
+		properties.setCageID(n);
+	}
+
+	public void setVolume(double v) {
+		properties.setVolume(v);
+	}
+
+	public void setPixels(int p) {
+		properties.setPixels(p);
+	}
+
+	public void setDescriptionOK(boolean b) {
+		properties.setDescriptionOK(b);
+	}
+
+	public void setVersionInfos(int v) {
+		properties.setVersionInfos(v);
+	}
+
 	// Delegate getters for measurements
-	public CapillaryMeasure getTopLevel() { return measurements.ptsTop; }
-	public CapillaryMeasure getBottomLevel() { return measurements.ptsBottom; }
-	public CapillaryMeasure getDerivative() { return measurements.ptsDerivative; }
-	public CapillaryGulps getGulps() { return measurements.ptsGulps; }
-	public CapillaryMeasure getTopCorrected() { return measurements.ptsTopCorrected; }
-	public void setTopCorrected(CapillaryMeasure m) { measurements.ptsTopCorrected = m; }
-	
+	public CapillaryMeasure getTopLevel() {
+		return measurements.ptsTop;
+	}
+
+	public CapillaryMeasure getBottomLevel() {
+		return measurements.ptsBottom;
+	}
+
+	public CapillaryMeasure getDerivative() {
+		return measurements.ptsDerivative;
+	}
+
+	public void setDerivative(CapillaryMeasure derivative) {
+		measurements.ptsDerivative = derivative;
+	}
+
+	public CapillaryGulps getGulps() {
+		return measurements.ptsGulps;
+	}
+
+	public CapillaryMeasure getTopCorrected() {
+		return measurements.ptsTopCorrected;
+	}
+
+	public void setTopCorrected(CapillaryMeasure m) {
+		measurements.ptsTopCorrected = m;
+	}
+
 	// Delegate getters for metadata
-	public ROI2D getRoi() { return metadata.roiCap; }
-	public void setRoi(ROI2D roi) { metadata.roiCap = roi; }
-	public List<AlongT> getRoisForKymo() { 
+	public ROI2D getRoi() {
+		return metadata.roiCap;
+	}
+
+	public void setRoi(ROI2D roi) {
+		metadata.roiCap = roi;
+	}
+
+	public List<AlongT> getRoisForKymo() {
 		if (metadata.roisForKymo.size() < 1)
 			initROI2DForKymoList();
-		return metadata.roisForKymo; 
+		return metadata.roisForKymo;
 	}
-	public String getKymographName() { return metadata.kymographName; }
-	public void setKymographName(String name) { metadata.kymographName = name; }
-	public String getRoiNamePrefix() { return metadata.kymographPrefix; }
-	public void setKymographPrefix(String prefix) { metadata.kymographPrefix = prefix; } // Added setter for import
-	public ArrayList<int[]> getCapInteger() { return metadata.cap_Integer; }
-	public void setCapInteger(ArrayList<int[]> list) { metadata.cap_Integer = list; }
+
+	public String getKymographName() {
+		return metadata.kymographName;
+	}
+
+	public void setKymographName(String name) {
+		metadata.kymographName = name;
+	}
+
+	public String getRoiNamePrefix() {
+		return metadata.kymographPrefix;
+	}
+
+	public void setKymographPrefix(String prefix) {
+		metadata.kymographPrefix = prefix;
+	} // Added setter for import
+
+	public ArrayList<int[]> getCapInteger() {
+		return metadata.cap_Integer;
+	}
+
+	public void setCapInteger(ArrayList<int[]> list) {
+		metadata.cap_Integer = list;
+	}
 
 	@Override
 	public int compareTo(Capillary o) {
@@ -148,8 +252,9 @@ public class Capillary implements Comparable<Capillary> {
 	 * when raw measures change.
 	 */
 	public void clearComputedMeasures() {
-		// measurements.ptsTopCorrected = null; 
-		// Now persistent, so maybe we want to clear its data instead of nulling the reference?
+		// measurements.ptsTopCorrected = null;
+		// Now persistent, so maybe we want to clear its data instead of nulling the
+		// reference?
 		// For now, keeping it cleared but object exists.
 		if (measurements.ptsTopCorrected != null) {
 			measurements.ptsTopCorrected.clear();
@@ -222,7 +327,7 @@ public class Capillary implements Comparable<Capillary> {
 		String value = null;
 		properties.setSide(getCapillarySide());
 		String side = properties.getSide();
-		
+
 		switch (resultType) {
 		case DISTANCE:
 			value = side + "(DIST)";
@@ -321,7 +426,8 @@ public class Capillary implements Comparable<Capillary> {
 		case CROSSCORREL:
 		case CROSSCORREL_LR:
 			if (measurements.ptsGulps != null)
-				datai = measurements.ptsGulps.getMeasuresFromGulps(resultType, measurements.ptsTop.getNPoints(), seriesBinMs, outputBinMs);
+				datai = measurements.ptsGulps.getMeasuresFromGulps(resultType, measurements.ptsTop.getNPoints(),
+						seriesBinMs, outputBinMs);
 			break;
 		case BOTTOMLEVEL:
 			datai = measurements.ptsBottom.getMeasures(seriesBinMs, outputBinMs);
@@ -393,7 +499,8 @@ public class Capillary implements Comparable<Capillary> {
 			lastPixel = (int) properties.limitsOptions.searchArea.getWidth() + firstPixel;
 
 		}
-		int threshold = (int) ((properties.limitsOptions.detectGulpsThreshold_uL / properties.getVolume()) * properties.getPixels());
+		int threshold = (int) ((properties.limitsOptions.detectGulpsThreshold_uL / properties.getVolume())
+				* properties.getPixels());
 		ArrayList<Point2D> gulpPoints = new ArrayList<Point2D>();
 		int indexLastDetected = -1;
 
@@ -409,10 +516,12 @@ public class Capillary implements Comparable<Capillary> {
 	private int addPointMatchingThreshold(int indexPixel, ArrayList<Point2D> gulpPoints, int indexLastDetected) {
 		if (indexLastDetected > 0 && indexPixel > indexLastDetected) {
 			if (gulpPoints.size() == 1)
-				gulpPoints.add(new Point2D.Double(indexLastDetected, measurements.ptsTop.polylineLevel.ypoints[indexLastDetected]));
+				gulpPoints.add(new Point2D.Double(indexLastDetected,
+						measurements.ptsTop.polylineLevel.ypoints[indexLastDetected]));
 			addNewGulp(gulpPoints);
 			gulpPoints.clear();
-			gulpPoints.add(new Point2D.Double(indexPixel - 1, measurements.ptsTop.polylineLevel.ypoints[indexPixel - 1]));
+			gulpPoints
+					.add(new Point2D.Double(indexPixel - 1, measurements.ptsTop.polylineLevel.ypoints[indexPixel - 1]));
 		}
 		gulpPoints.add(new Point2D.Double(indexPixel, measurements.ptsTop.polylineLevel.ypoints[indexPixel]));
 		return indexPixel;
@@ -719,11 +828,75 @@ public class Capillary implements Comparable<Capillary> {
 		CapillaryPersistence.csvImportCapillaryData(this, measureType, data, x, y);
 	}
 
+	// -----------------------------------------------------------------------------
+
 	public CapillaryMeasure getMeasurements(EnumResults resultType) {
 		Objects.requireNonNull(resultType, "Export option cannot be null");
-		return null;
+		CapillaryMeasure measure = null;
+		switch (resultType) {
+		case DERIVEDVALUES:
+			measure = measurements.ptsDerivative;
+			break;
+		case SUMGULPS:
+		case SUMGULPS_LR:
+		case NBGULPS:
+		case AMPLITUDEGULPS:
+		case TTOGULP:
+		case TTOGULP_LR:
+		case AUTOCORREL:
+		case AUTOCORREL_LR:
+		case CROSSCORREL:
+		case CROSSCORREL_LR:
+			if (measurements.ptsGulps != null) {
+				// Create a temporary CapillaryMeasure from gulps data
+				// For now, we default to SUMGULPS-like behavior (cumulative sum)
+				// or we could throw an exception if the caller expects a specific type of data
+				// that isn't a simple level.
+				// However, the plan is to return a computed measure.
+
+				// We need to know the dimensions (npoints)
+				int npoints = measurements.ptsTop.getNPoints();
+				ArrayList<Integer> data = measurements.ptsGulps.getMeasuresFromGulps(resultType, npoints, 1, 1);
+				// Note: seriesBinMs=1, outputBinMs=1 implies we want the raw data in the same
+				// resolution as the image/kymo
+
+				if (data != null) {
+					measure = new CapillaryMeasure(resultType.toString());
+					double[] x = new double[data.size()];
+					double[] y = new double[data.size()];
+					for (int i = 0; i < data.size(); i++) {
+						x[i] = i;
+						y[i] = data.get(i);
+					}
+					measure.polylineLevel = new Level2D(x, y, data.size());
+				}
+			}
+			break;
+		case BOTTOMLEVEL:
+			measure = measurements.ptsBottom;
+			break;
+		case TOPLEVEL:
+		case TOPLEVEL_LR:
+		case TOPRAW:
+		case TOPLEVELDELTA:
+		case TOPLEVELDELTA_LR:
+		default:
+			measure = measurements.ptsTop;
+			break;
+		}
+		return measure;
 	}
-	
+
+	public void resetDerivative() {
+		if (measurements.ptsDerivative != null)
+			measurements.ptsDerivative.clear();
+	}
+
+	public void resetGulps() {
+		if (measurements.ptsGulps != null && measurements.ptsGulps.gulps != null)
+			measurements.ptsGulps.gulps.clear();
+	}
+
 	// === INNER CLASSES ===
 
 	private static class CapillaryMeasurements {
@@ -732,7 +905,7 @@ public class Capillary implements Comparable<Capillary> {
 		public CapillaryMeasure ptsDerivative = new CapillaryMeasure("derivative");
 		public CapillaryGulps ptsGulps = new CapillaryGulps();
 		public CapillaryMeasure ptsTopCorrected = new CapillaryMeasure("toplevel_corrected");
-		
+
 		void copyFrom(CapillaryMeasurements source) {
 			ptsGulps.copy(source.ptsGulps);
 			ptsTop.copy(source.ptsTop);
@@ -740,7 +913,7 @@ public class Capillary implements Comparable<Capillary> {
 			ptsDerivative.copy(source.ptsDerivative);
 			ptsTopCorrected.copy(source.ptsTopCorrected);
 		}
-		
+
 		void cropMeasuresToNPoints(int npoints) {
 			if (ptsTop.polylineLevel != null)
 				ptsTop.cropToNPoints(npoints);
@@ -749,7 +922,7 @@ public class Capillary implements Comparable<Capillary> {
 			if (ptsDerivative.polylineLevel != null)
 				ptsDerivative.cropToNPoints(npoints);
 		}
-		
+
 		void restoreClippedMeasures() {
 			if (ptsTop.polylineLevel != null)
 				ptsTop.restoreNPoints();
@@ -758,7 +931,7 @@ public class Capillary implements Comparable<Capillary> {
 			if (ptsDerivative.polylineLevel != null)
 				ptsDerivative.restoreNPoints();
 		}
-		
+
 		void adjustToImageWidth(int imageWidth) {
 			ptsTop.adjustToImageWidth(imageWidth);
 			ptsBottom.adjustToImageWidth(imageWidth);
@@ -773,7 +946,7 @@ public class Capillary implements Comparable<Capillary> {
 			ptsGulps.gulps.clear();
 		}
 	}
-	
+
 	private static class CapillaryMetadata {
 		public ROI2D roiCap = null;
 		public ArrayList<AlongT> roisForKymo = new ArrayList<AlongT>();

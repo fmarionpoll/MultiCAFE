@@ -119,8 +119,8 @@ public class ResultsCapillaries extends Results {
 	 * Helper method to determine capillary side from capSide or name.
 	 */
 	private String getCapillarySide(Capillary cap) {
-		if (cap.capSide != null && !cap.capSide.equals("."))
-			return cap.capSide;
+		if (cap.getProperties().side != null && !cap.getProperties().side.equals("."))
+			return cap.getProperties().side;
 		// Try to get from name
 		String name = cap.getRoiName();
 		if (name != null) {

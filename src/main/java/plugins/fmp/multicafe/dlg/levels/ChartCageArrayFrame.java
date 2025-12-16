@@ -141,17 +141,17 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Creates the main chart panel and frame.
 	 * 
-	 * @param title          the title for the chart window
-	 * @param exp            the experiment containing the data
-	 * @param resultsOptions the export options for data processing
-	 * @param parent0        the parent MultiSPOTS96 instance
+	 * @param title   the title for the chart window
+	 * @param exp     the experiment containing the data
+	 * @param options the export options for data processing
+	 * @param parent0 the parent MultiSPOTS96 instance
 	 * @throws IllegalArgumentException if any required parameter is null
 	 */
-	public void createMainChartPanel(String title, Experiment exp, ResultsOptions resultsOptions) {
+	public void createMainChartPanel(String title, Experiment exp, ResultsOptions options) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
-		if (resultsOptions == null) {
+		if (options == null) {
 			throw new IllegalArgumentException("Export options cannot be null");
 		}
 		if (title == null || title.trim().isEmpty()) {
@@ -162,7 +162,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		this.experiment = exp;
 
 		mainChartPanel = new JPanel();
-		boolean flag = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast);
+		boolean flag = (options.cageIndexFirst == options.cageIndexLast);
 		nPanelsAlongX = flag ? 1 : exp.getCages().nCagesAlongX;
 		nPanelsAlongY = flag ? 1 : exp.getCages().nCagesAlongY;
 

@@ -103,9 +103,9 @@ public class EditLevels extends JPanel {
 		int lastX = findLastXLeftOfRoi(cap, roiRef);
 		cap.cropMeasuresToNPoints(lastX + 1);
 
-		seqKymos.updateROIFromCapillaryMeasure(cap, cap.ptsTop);
-		seqKymos.updateROIFromCapillaryMeasure(cap, cap.ptsBottom);
-		seqKymos.updateROIFromCapillaryMeasure(cap, cap.ptsDerivative);
+		seqKymos.updateROIFromCapillaryMeasure(cap, cap.getTopLevel());
+		seqKymos.updateROIFromCapillaryMeasure(cap, cap.getBottomLevel());
+		seqKymos.updateROIFromCapillaryMeasure(cap, cap.getDerivative());
 	}
 
 	int findLastXLeftOfRoi(Capillary cap, ROI2D roiRef) {
@@ -113,7 +113,7 @@ public class EditLevels extends JPanel {
 		Rectangle2D rectRef = roiRef.getBounds2D();
 		double xleft = rectRef.getX();
 
-		Polyline2D polyline = cap.ptsTop.polylineLevel;
+		Polyline2D polyline = cap.getTopLevel().polylineLevel;
 		for (int i = 0; i < polyline.npoints; i++) {
 			if (polyline.xpoints[i] < xleft)
 				continue;
@@ -129,9 +129,9 @@ public class EditLevels extends JPanel {
 		Capillary cap = exp.getCapillaries().getList().get(t);
 		cap.restoreClippedMeasures();
 
-		seqKymos.updateROIFromCapillaryMeasure(cap, cap.ptsTop);
-		seqKymos.updateROIFromCapillaryMeasure(cap, cap.ptsBottom);
-		seqKymos.updateROIFromCapillaryMeasure(cap, cap.ptsDerivative);
+		seqKymos.updateROIFromCapillaryMeasure(cap, cap.getTopLevel());
+		seqKymos.updateROIFromCapillaryMeasure(cap, cap.getBottomLevel());
+		seqKymos.updateROIFromCapillaryMeasure(cap, cap.getDerivative());
 	}
 
 	List<ROI> selectGulpsWithinRoi(ROI2D roiReference, Sequence seq, int t) {
@@ -179,11 +179,11 @@ public class EditLevels extends JPanel {
 				seqKymos.getSequence().roiChanged(lroi);
 		} else {
 			if (optionSelected.contains("top"))
-				removeAndUpdate(seqKymos, cap, cap.ptsTop, roi);
+				removeAndUpdate(seqKymos, cap, cap.getTopLevel(), roi);
 			if (optionSelected.contains("bottom"))
-				removeAndUpdate(seqKymos, cap, cap.ptsBottom, roi);
+				removeAndUpdate(seqKymos, cap, cap.getBottomLevel(), roi);
 			if (optionSelected.contains("deriv"))
-				removeAndUpdate(seqKymos, cap, cap.ptsDerivative, roi);
+				removeAndUpdate(seqKymos, cap, cap.getDerivative(), roi);
 		}
 	}
 

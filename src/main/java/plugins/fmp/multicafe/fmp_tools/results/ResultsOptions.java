@@ -39,6 +39,7 @@ public class ResultsOptions {
 
 	public boolean sumPerCage = true;
 	public boolean subtractT0 = true;
+	public boolean divideWithT0 = false;
 	public boolean relativeToMaximum = false;
 	public boolean relativeToMedianT0 = false;
 	public int medianT0FromNPoints = 5;

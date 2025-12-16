@@ -3,7 +3,6 @@ package plugins.fmp.multicafe.fmp_tools.toExcel.config;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
-import plugins.fmp.multicafe.fmp_tools.results.ResultsOptionsBuilder;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants.DefaultOptions;
 
 /**
@@ -38,7 +37,8 @@ public class XLSExportOptionsBuilder {
 	// Processing options
 	private boolean sumPerCage = DefaultOptions.SUM_PER_CAGE;
 	private boolean subtractT0 = DefaultOptions.SUBTRACT_T0;
-	private boolean relativeToMaximum = DefaultOptions.RELATIVE_TO_T0;
+	private boolean divideWithT0 = DefaultOptions.DIVIDE_T0;
+	private boolean relativeToMaximum = DefaultOptions.RELATIVE_TO_MAX;
 	private boolean relativeToMedianT0 = DefaultOptions.RELATIVE_TO_MEDIAN_T0;
 	private int medianT0FromNPoints = ExcelExportConstants.DEFAULT_MEDIAN_T0_POINTS;
 	private boolean onlyalive = DefaultOptions.ONLY_ALIVE;
@@ -106,7 +106,7 @@ public class XLSExportOptionsBuilder {
 
 		this.sumPerCage = existing.sumPerCage;
 		this.subtractT0 = existing.subtractT0;
-		this.relativeToMaximum = existing.relativeToMaximum;
+		this.divideWithT0 = existing.divideWithT0;
 		this.relativeToMedianT0 = existing.relativeToMedianT0;
 		this.medianT0FromNPoints = existing.medianT0FromNPoints;
 		this.onlyalive = existing.onlyalive;
@@ -177,6 +177,16 @@ public class XLSExportOptionsBuilder {
 //		this.topLevel = topLevel;
 //		return this;
 //	}
+
+	public XLSExportOptionsBuilder withSubtractT0(boolean b) {
+		this.subtractT0 = b;
+		return null;
+	}
+
+	public XLSExportOptionsBuilder withDivivdeWithT0(boolean b) {
+		this.divideWithT0 = b;
+		return null;
+	}
 
 	public XLSExportOptionsBuilder withSpotAreas(boolean spotAreas) {
 		this.spotAreas = spotAreas;
@@ -302,6 +312,7 @@ public class XLSExportOptionsBuilder {
 
 		resultsOptions.sumPerCage = this.sumPerCage;
 		resultsOptions.subtractT0 = this.subtractT0;
+		resultsOptions.divideWithT0 = this.divideWithT0;
 		resultsOptions.relativeToMaximum = this.relativeToMaximum;
 		resultsOptions.relativeToMedianT0 = this.relativeToMedianT0;
 		resultsOptions.medianT0FromNPoints = this.medianT0FromNPoints;
@@ -351,11 +362,6 @@ public class XLSExportOptionsBuilder {
 	 */
 	public static XLSExportOptionsBuilder forChart() {
 		return new XLSExportOptionsBuilder().withTranspose(false).withCollateSeries(false).withAlive(false);
-	}
-
-	public ResultsOptionsBuilder withRelativeToT0(boolean b) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	// Additional fluent interface methods can be added as needed
