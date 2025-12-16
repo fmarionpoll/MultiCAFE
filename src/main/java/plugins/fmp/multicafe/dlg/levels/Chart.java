@@ -19,10 +19,14 @@ import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.cages.CageString;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartLevelsFrame;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptionsBuilder;
 
 public class Chart extends JPanel implements SequenceListener {
 	/**
@@ -32,7 +36,7 @@ public class Chart extends JPanel implements SequenceListener {
 
 	private ChartLevelsFrame activeChart = null;
 	private EnumResults currentResultType = null;
-
+	private ChartCageArrayFrame chartCageArrayFrame = null;
 	private MultiCAFE parent0 = null;
 
 	// Global window positions - shared across all experiments
@@ -93,7 +97,7 @@ public class Chart extends JPanel implements SequenceListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
-					displayGraphsPanels(exp);
+					displayChartPanels(exp); // displayGraphsPanels(exp);
 				}
 			}
 		});
@@ -103,7 +107,7 @@ public class Chart extends JPanel implements SequenceListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
-					displayGraphsPanels(exp);
+					displayChartPanels(exp); // displayGraphsPanels(exp);
 				}
 			}
 		});
@@ -113,7 +117,7 @@ public class Chart extends JPanel implements SequenceListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
-					displayGraphsPanels(exp);
+					displayChartPanels(exp); // displayGraphsPanels(exp);
 				}
 			}
 		});
@@ -132,6 +136,52 @@ public class Chart extends JPanel implements SequenceListener {
 			}
 		});
 	}
+
+	// ------------------------------------------------ OPTION 2
+
+	public void displayChartPanels(Experiment exp) {
+		exp.getSeqCamData().getSequence().removeListener(this);
+		EnumResults exportType = (EnumResults) resultTypeComboBox.getSelectedItem();
+		if (isThereAnyDataToDisplay(exp, exportType))
+			chartCageArrayFrame = plotCapillaryMeasuresToChart(exp, exportType, chartCageArrayFrame);
+		exp.getSeqCamData().getSequence().addListener(this);
+	}
+
+	private ChartCageArrayFrame plotCapillaryMeasuresToChart(Experiment exp, EnumResults resultType,
+			ChartCageArrayFrame iChart) {
+		if (iChart != null)
+			iChart.getMainChartFrame().dispose();
+
+		int first = 0;
+		int last = exp.getCages().getCageList().size() - 1;
+		if (!displayAllButton.isSelected()) {
+			Cage cageFound = exp.getCages().findFirstCageWithSelectedSpot();
+			if (cageFound == null)
+				cageFound = exp.getCages().findFirstSelectedCage();
+			if (cageFound == null)
+				return null;
+			exp.getSeqCamData().centerDisplayOnRoi(cageFound.getRoi());
+			String cageNumber = CageString.getCageNumberFromCageRoiName(cageFound.getRoi().getName());
+			first = Integer.parseInt(cageNumber);
+			last = first;
+		}
+
+		ResultsOptions options = ResultsOptionsBuilder.forChart() //
+				.withBuildExcelStepMs(60000) //
+				.withSubtractT0(true) //
+				.withResultType(resultType) //
+				.withCageRange(first, last) //
+				.build();
+
+		iChart = new ChartCageArrayFrame();
+		iChart.createMainChartPanel("Capillary level measures", exp, options);
+		iChart.setChartSpotUpperLeftLocation(getInitialUpperLeftPosition(exp));
+		iChart.displayData(exp, options);
+		iChart.getMainChartFrame().toFront();
+		iChart.getMainChartFrame().requestFocus();
+		return iChart;
+	}
+	// ------------------------------------------------
 
 	private Rectangle getInitialUpperLeftPosition(Experiment exp) {
 		Rectangle rectv = new Rectangle(50, 500, 10, 10);
@@ -152,45 +202,49 @@ public class Chart extends JPanel implements SequenceListener {
 		return rectv;
 	}
 
-	public void displayGraphsPanels(Experiment exp) {
-		if (exp == null)
-			return;
+	// ------------------------------------------------ OPTION 1
 
-		if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null)
-			exp.getSeqKymos().getSequence().addListener(this);
+//	public void displayGraphsPanels(Experiment exp) {
+//		if (exp == null)
+//			return;
+//
+//		if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null)
+//			exp.getSeqKymos().getSequence().addListener(this);
+//
+//		EnumResults selectedOption = (EnumResults) resultTypeComboBox.getSelectedItem();
+//
+//		if (activeChart != null && currentResultType != null) {
+//			if (activeChart.getMainChartFrame() != null)
+//				globalChartBounds = activeChart.getMainChartFrame().getBounds();
+//			activeChart.getMainChartFrame().dispose();
+//			activeChart = null;
+//		}
+//
+//		if (isThereAnyDataToDisplay(exp, selectedOption)) {
+//			Rectangle rectv = getInitialUpperLeftPosition(exp);
+//			Rectangle pos = (globalChartBounds != null) ? globalChartBounds : rectv;
+//
+//			String title = selectedOption.toTitle();
+//			if (selectedOption == EnumResults.TOPLEVEL && !correctEvaporationCheckbox.isSelected()) {
+//				title = EnumResults.TOPRAW.toTitle();
+//			}
+//			activeChart = plotToChart(exp, title, selectedOption, pos);
+//			currentResultType = selectedOption;
+//		}
+//	}
+//
+//	private ChartLevelsFrame plotToChart(Experiment exp, String title, EnumResults resultType, Rectangle rectv) {
+//		ChartLevelsFrame iChart = new ChartLevelsFrame();
+//		iChart.createChartPanel(parent0, "Capillary levels measurement", rectv);
+//		iChart.displayData(exp, resultType, title, correctEvaporationCheckbox.isSelected());
+//		if (iChart.getMainChartFrame() != null) {
+//			iChart.getMainChartFrame().toFront();
+//			iChart.getMainChartFrame().requestFocus();
+//		}
+//		return iChart;
+//	}
 
-		EnumResults selectedOption = (EnumResults) resultTypeComboBox.getSelectedItem();
-
-		if (activeChart != null && currentResultType != null) {
-			if (activeChart.getMainChartFrame() != null)
-				globalChartBounds = activeChart.getMainChartFrame().getBounds();
-			activeChart.getMainChartFrame().dispose();
-			activeChart = null;
-		}
-
-		if (isThereAnyDataToDisplay(exp, selectedOption)) {
-			Rectangle rectv = getInitialUpperLeftPosition(exp);
-			Rectangle pos = (globalChartBounds != null) ? globalChartBounds : rectv;
-
-			String title = selectedOption.toTitle();
-			if (selectedOption == EnumResults.TOPLEVEL && !correctEvaporationCheckbox.isSelected()) {
-				title = EnumResults.TOPRAW.toTitle();
-			}
-			activeChart = plotToChart(exp, title, selectedOption, pos);
-			currentResultType = selectedOption;
-		}
-	}
-
-	private ChartLevelsFrame plotToChart(Experiment exp, String title, EnumResults resultType, Rectangle rectv) {
-		ChartLevelsFrame iChart = new ChartLevelsFrame();
-		iChart.createChartPanel(parent0, "Capillary levels measurement", rectv);
-		iChart.displayData(exp, resultType, title, correctEvaporationCheckbox.isSelected());
-		if (iChart.getMainChartFrame() != null) {
-			iChart.getMainChartFrame().toFront();
-			iChart.getMainChartFrame().requestFocus();
-		}
-		return iChart;
-	}
+	// ------------------------------------------------
 
 	public void closeAllCharts() {
 		if (activeChart != null) {

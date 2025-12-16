@@ -227,7 +227,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				isProcessing = false;
 				progressFrame.close();
 				long endTime = System.nanoTime();
-				System.out.println("LoadExperiment: processSelectedFilesMetadataOnly took " + (endTime - startTime) / 1e6 + " ms");
+				System.out.println(
+						"LoadExperiment: processSelectedFilesMetadataOnly took " + (endTime - startTime) / 1e6 + " ms");
 				SwingUtilities.invokeLater(() -> {
 					updateBrowseInterface();
 				});
@@ -431,7 +432,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			}
 
 			if (parent0.paneExperiment.tabOptions.graphsCheckBox.isSelected())
-				parent0.paneLevels.tabGraphs.displayGraphsPanels(exp);
+				parent0.paneLevels.tabGraphs.displayChartPanels(exp); // displayGraphsPanels(exp);
 
 			exp.loadCageMeasures();
 			exp.updateROIsAt(0);
@@ -454,7 +455,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			e.printStackTrace();
 			progressFrame.close();
 			long endTime = System.nanoTime();
-			System.out.println("LoadExperiment: openSelecteExperiment failed, took " + (endTime - startTime) / 1e6 + " ms");
+			System.out.println(
+					"LoadExperiment: openSelecteExperiment failed, took " + (endTime - startTime) / 1e6 + " ms");
 			return false;
 		}
 	}
