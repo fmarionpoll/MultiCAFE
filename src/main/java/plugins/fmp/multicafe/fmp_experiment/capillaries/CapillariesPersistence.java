@@ -214,6 +214,7 @@ public class CapillariesPersistence {
 		BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
 		String row;
 		String sep = csvSep;
+		boolean seenGulpsFlat = false;
 		while ((row = csvReader.readLine()) != null) {
 			if (row.charAt(0) == '#')
 				sep = String.valueOf(row.charAt(1));
@@ -248,8 +249,16 @@ public class CapillariesPersistence {
 							row.contains("xi"));
 					break;
 				case "GULPS":
-				case "GULPS_FLAT":
 				case "GULPS_CORRECTED":
+					// Prefer dense format if present; skip legacy sections to avoid overwriting.
+					if (seenGulpsFlat) {
+						csvSkipSection(csvReader, sep);
+						break;
+					}
+					csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep, true);
+					break;
+				case "GULPS_FLAT":
+					seenGulpsFlat = true;
 					csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep, true);
 					break;
 				default:
@@ -259,6 +268,19 @@ public class CapillariesPersistence {
 		}
 		csvReader.close();
 		return true;
+	}
+
+	/**
+	 * Skip a measures section until the next header line (a line starting with '#').
+	 * The header line itself is consumed (consistent with other csvLoad_* methods).
+	 */
+	private void csvSkipSection(BufferedReader csvReader, String sep) throws IOException {
+		String row;
+		while ((row = csvReader.readLine()) != null) {
+			String[] data = row.split(sep);
+			if (data.length > 0 && "#".equals(data[0]))
+				return;
+		}
 	}
 
 	private String csvLoad_Capillaries_Description(Capillaries capillaries, BufferedReader csvReader, String sep) {
