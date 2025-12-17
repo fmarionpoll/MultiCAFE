@@ -86,7 +86,7 @@ public class Chart extends JPanel implements SequenceListener {
 		group1.add(displaySelectedButton);
 		displayAllButton.setSelected(true);
 
-		resultTypeComboBox.setSelectedIndex(1);
+		resultTypeComboBox.setSelectedIndex(0);
 		defineActionListeners();
 	}
 

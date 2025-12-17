@@ -1270,16 +1270,15 @@ public class CagesArray {
 
 		clearComputedMeasures();
 
-		// Compute evaporation correction if needed (for TOPLEVEL exports)
-		if (resultsOptions.correctEvaporation && resultsOptions.resultType == EnumResults.TOPLEVEL) {
+		// TOPLEVEL is defined as evaporation-corrected and displayed as (t - t0).
+		// TOPRAW is handled as (t - t0) at display/export level without evaporation.
+		if (resultsOptions.resultType == EnumResults.TOPLEVEL) {
 			computeEvaporationCorrection(exp);
 		}
 
 		// Compute L+R measures if needed (must be done after evaporation correction)
 		if (resultsOptions.resultType == EnumResults.TOPLEVEL_LR) {
-			if (resultsOptions.correctEvaporation) {
-				computeEvaporationCorrection(exp);
-			}
+			computeEvaporationCorrection(exp);
 			computeLRMeasures(exp, resultsOptions.lrPIThreshold);
 		}
 	}

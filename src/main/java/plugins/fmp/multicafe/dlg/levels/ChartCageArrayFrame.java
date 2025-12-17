@@ -274,6 +274,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 		}
 
 		this.experiment = exp;
+		// Ensure derived measures (evaporation-corrected TOPLEVEL, LR SUM/PI, etc.) are computed
+		// before we build the datasets used for plotting.
+		exp.getCages().prepareComputations(exp, resultsOptions);
 		createChartPanelArray(resultsOptions);
 		arrangePanelsInDisplay(resultsOptions);
 		displayChartFrame();
