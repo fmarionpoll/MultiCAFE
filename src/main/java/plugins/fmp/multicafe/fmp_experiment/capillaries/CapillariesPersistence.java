@@ -248,6 +248,7 @@ public class CapillariesPersistence {
 							row.contains("xi"));
 					break;
 				case "GULPS":
+				case "GULPS_CORRECTED":
 					csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep, true);
 					break;
 				default:

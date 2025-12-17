@@ -20,11 +20,11 @@ public class CapillaryPersistence {
 	private static final String ID_INDEXIMAGE = "indexImageMC";
 	private static final String ID_NAME = "nameMC";
 	private static final String ID_NAMETIFF = "filenameTIFF";
-	
+
 	private static final String ID_INTERVALS = "INTERVALS";
 	private static final String ID_NINTERVALS = "nintervals";
 	private static final String ID_INTERVAL = "interval_";
-	
+
 	private static final String ID_TOPLEVEL = "toplevel";
 	private static final String ID_BOTTOMLEVEL = "bottomlevel";
 	private static final String ID_DERIVATIVE = "derivative";
@@ -32,8 +32,9 @@ public class CapillaryPersistence {
 
 	/**
 	 * Loads capillary configuration from XML (Meta).
+	 * 
 	 * @param node The XML node to load from.
-	 * @param cap The capillary to populate.
+	 * @param cap  The capillary to populate.
 	 * @return true if successful.
 	 */
 	public static boolean xmlLoadCapillary(Node node, Capillary cap) {
@@ -44,13 +45,13 @@ public class CapillaryPersistence {
 			cap.kymographIndex = XMLUtil.getElementIntValue(nodeMeta, ID_INDEXIMAGE, cap.kymographIndex);
 			cap.setKymographName(XMLUtil.getElementValue(nodeMeta, ID_NAME, cap.getKymographName()));
 			cap.filenameTIFF = XMLUtil.getElementValue(nodeMeta, ID_NAMETIFF, cap.filenameTIFF);
-			
+
 			// Load properties
 			cap.getProperties().loadFromXml(nodeMeta);
 
 			// Load ROI
 			cap.setRoi(ROI2DUtilities.loadFromXML_ROI(nodeMeta));
-			
+
 			// Load Intervals
 			xmlLoadIntervals(node, cap);
 		}
@@ -62,17 +63,18 @@ public class CapillaryPersistence {
 		final Node nodeMeta2 = XMLUtil.getElement(node, ID_INTERVALS);
 		if (nodeMeta2 == null)
 			return false;
-		
+
 		int nitems = XMLUtil.getElementIntValue(nodeMeta2, ID_NINTERVALS, 0);
 		if (nitems > 0) {
 			for (int i = 0; i < nitems; i++) {
 				Node node_i = XMLUtil.setElement(nodeMeta2, ID_INTERVAL + i);
 				// Depending on how Capillary exposes internal ROI list logic
-				// We need to add to cap.roisForKymo. 
+				// We need to add to cap.roisForKymo.
 				// Since we are moving logic out, we might need access methods.
-				// For now assuming we can add via a getter that returns the list or specific add method.
+				// For now assuming we can add via a getter that returns the list or specific
+				// add method.
 				// Checking Capillary structure plan: it will have delegating methods.
-				
+
 				// Re-implementing logic:
 				plugins.fmp.multicafe.fmp_tools.ROI2D.AlongT roiInterval = new plugins.fmp.multicafe.fmp_tools.ROI2D.AlongT();
 				roiInterval.loadFromXML(node_i);
@@ -90,19 +92,19 @@ public class CapillaryPersistence {
 		final Node nodeMeta = XMLUtil.setElement(node, ID_META);
 		if (nodeMeta == null)
 			return false;
-		
+
 		if (cap.version == null)
 			cap.version = ID_VERSIONNUM;
-			
+
 		XMLUtil.setElementValue(nodeMeta, ID_VERSION, cap.version);
 		XMLUtil.setElementIntValue(nodeMeta, ID_INDEXIMAGE, cap.kymographIndex);
 		XMLUtil.setElementValue(nodeMeta, ID_NAME, cap.getKymographName());
-		
+
 		if (cap.filenameTIFF != null) {
 			String filename = Paths.get(cap.filenameTIFF).getFileName().toString();
 			XMLUtil.setElementValue(nodeMeta, ID_NAMETIFF, filename);
 		}
-		
+
 		// Save properties
 		cap.getProperties().saveToXml(nodeMeta);
 
@@ -115,7 +117,7 @@ public class CapillaryPersistence {
 		final Node nodeMeta2 = XMLUtil.setElement(node, ID_INTERVALS);
 		if (nodeMeta2 == null)
 			return false;
-		
+
 		List<plugins.fmp.multicafe.fmp_tools.ROI2D.AlongT> rois = cap.getRoisForKymo();
 		int nitems = rois.size();
 		XMLUtil.setElementIntValue(nodeMeta2, ID_NINTERVALS, nitems);
@@ -139,7 +141,7 @@ public class CapillaryPersistence {
 	}
 
 	// === CSV EXPORT/IMPORT ===
-	
+
 	public static String csvExportCapillarySubSectionHeader(String sep) {
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("#" + sep + "CAPILLARIES" + sep + "describe each capillary\n");
@@ -154,19 +156,11 @@ public class CapillaryPersistence {
 		StringBuffer sbf = new StringBuffer();
 		// Access properties via getter
 		CapillaryProperties props = cap.getProperties();
-		
-		List<String> row = Arrays.asList(
-				cap.getRoiNamePrefix(), 
-				Integer.toString(cap.kymographIndex), 
-				cap.getKymographName(), 
-				cap.filenameTIFF,
-				Integer.toString(props.getCageID()), 
-				Integer.toString(props.getNFlies()), 
-				Double.toString(props.getVolume()),
-				Integer.toString(props.getPixels()), 
-				props.getStimulus(), 
-				props.getConcentration(), 
-				props.getSide());
+
+		List<String> row = Arrays.asList(cap.getRoiNamePrefix(), Integer.toString(cap.kymographIndex),
+				cap.getKymographName(), cap.filenameTIFF, Integer.toString(props.getCageID()),
+				Integer.toString(props.getNFlies()), Double.toString(props.getVolume()),
+				Integer.toString(props.getPixels()), props.getStimulus(), props.getConcentration(), props.getSide());
 		sbf.append(String.join(sep, row));
 		sbf.append("\n");
 		return sbf.toString();
@@ -191,7 +185,7 @@ public class CapillaryPersistence {
 			sbf.append("#" + sep + "TOPDERIVATIVE" + sep + explanation1);
 			break;
 		case GULPS:
-			sbf.append("#" + sep + "GULPS" + sep + explanation2);
+			sbf.append("#" + sep + "GULPS_FLAT" + sep + explanation2);
 			break;
 		default:
 			sbf.append("#" + sep + "UNDEFINED------------\n");
@@ -211,8 +205,6 @@ public class CapillaryPersistence {
 		case TOPLEVEL:
 			if (cap.getTopCorrected() != null && cap.getTopCorrected().isThereAnyMeasuresDone())
 				cap.getTopCorrected().cvsExportYDataToRow(sbf, sep);
-			else
-				cap.getTopLevel().cvsExportYDataToRow(sbf, sep);
 			break;
 		case BOTTOMLEVEL:
 			cap.getBottomLevel().cvsExportYDataToRow(sbf, sep);
@@ -221,7 +213,7 @@ public class CapillaryPersistence {
 			cap.getDerivative().cvsExportYDataToRow(sbf, sep);
 			break;
 		case GULPS:
-			cap.getGulps().csvExportDataToRow(sbf, sep);
+			cap.getGulps().csvExportDataFlatToRow(sbf, sep);
 			break;
 		default:
 			break;
@@ -256,7 +248,8 @@ public class CapillaryPersistence {
 		props.setSide(data[i]);
 	}
 
-	public static void csvImportCapillaryData(Capillary cap, EnumCapillaryMeasures measureType, String[] data, boolean x, boolean y) {
+	public static void csvImportCapillaryData(Capillary cap, EnumCapillaryMeasures measureType, String[] data,
+			boolean x, boolean y) {
 		switch (measureType) {
 		case TOPRAW:
 			if (x && y)
@@ -290,4 +283,3 @@ public class CapillaryPersistence {
 		}
 	}
 }
-

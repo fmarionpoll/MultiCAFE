@@ -296,6 +296,17 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param resultsOptions the export options
 	 */
 	private void createChartPanelArray(ResultsOptions resultsOptions) {
+		// Update grid dimensions based on current experiment state
+		boolean flag = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast);
+		nPanelsAlongX = flag ? 1 : experiment.getCages().nCagesAlongX;
+		nPanelsAlongY = flag ? 1 : experiment.getCages().nCagesAlongY;
+		
+		// update layout
+		mainChartPanel.setLayout(new GridLayout(nPanelsAlongY, nPanelsAlongX));
+		
+		// Reset array to ensure no stale panels from previous experiments/views
+		chartPanelArray = new ChartCagePair[nPanelsAlongY][nPanelsAlongX];
+
 		int indexCage = 0;
 		ChartCageBuild.initMaxMin();
 		Map<Cage, XYSeriesCollection> datasets = new HashMap<Cage, XYSeriesCollection>();
@@ -327,7 +338,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 				XYSeriesCollection xyDataSetList = datasets.get(cage);
 				ChartPanel chartPanel = createChartPanelForCage(cage, row, col, resultsOptions, xyDataSetList);
-				chartPanelArray[row][col] = new ChartCagePair(chartPanel, cage);
+				int arrayRow = flag ? 0 : row;
+				int arrayCol = flag ? 0 : col;
+				chartPanelArray[arrayRow][arrayCol] = new ChartCagePair(chartPanel, cage);
 			}
 		}
 	}

@@ -14,6 +14,7 @@ import icy.roi.ROI2D;
 import icy.type.geom.Polyline2D;
 import icy.util.StringUtil;
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.fmp_tools.Level2D;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
@@ -169,29 +170,65 @@ public class CapillaryGulps {
 
 	// -------------------------------
 
+	@Deprecated
 	public boolean csvExportDataToRow(StringBuffer sbf, String sep) {
-		int ngulps = 0;
-		if (gulps != null)
-			ngulps = gulps.size();
-		sbf.append(Integer.toString(ngulps) + sep);
-		if (ngulps > 0) {
-			for (int indexgulp = 0; indexgulp < gulps.size(); indexgulp++)
-				csvExportOneGulp(sbf, indexgulp, sep);
+		// This method is deprecated or should not be used if we want consistent
+		// lengths.
+		// However, for backward compatibility or self-contained export, we keep it but
+		// it calculates npoints itself.
+		int npoints = 0;
+		if (gulps != null) {
+			for (Polyline2D gulp : gulps) {
+				if (gulp.npoints > 0) {
+					for (int i = 0; i < gulp.npoints; i++) {
+						if (gulp.xpoints[i] > npoints)
+							npoints = (int) gulp.xpoints[i];
+					}
+				}
+			}
+		}
+		npoints++;
+		return csvExportDataToRow(sbf, sep, npoints);
+	}
+
+	public boolean csvExportDataFlatToRow(StringBuffer sbf, String sep) {
+		Level2D polylineLevel = transferGulpsToLevel2D();
+
+		int npoints = 0;
+		if (polylineLevel != null && polylineLevel.npoints > 0)
+			npoints = polylineLevel.npoints;
+
+		sbf.append(Integer.toString(npoints) + sep);
+		if (npoints > 0) {
+			for (int i = 0; i < polylineLevel.npoints; i++) {
+				sbf.append(StringUtil.toString((double) polylineLevel.ypoints[i]));
+				sbf.append(sep);
+			}
 		}
 		return true;
 	}
 
-	private void csvExportOneGulp(StringBuffer sbf, int indexgulp, String sep) {
-		sbf.append("g" + indexgulp + sep);
-		Polyline2D gulp = gulps.get(indexgulp);
-		sbf.append(StringUtil.toString((int) gulp.npoints));
-		sbf.append(sep);
-		for (int i = 0; i < gulp.npoints; i++) {
-			sbf.append(StringUtil.toString((int) gulp.xpoints[i]));
-			sbf.append(sep);
-			sbf.append(StringUtil.toString((int) gulp.ypoints[i]));
-			sbf.append(sep);
+	private Level2D transferGulpsToLevel2D() {
+		Level2D polylineLevel = new Level2D();
+		for (int i = ) {
+			public ArrayList<Polyline2D> gulps = new ArrayList<Polyline2D>();
 		}
+		return polylineLevel;
+	}
+
+	public boolean csvExportDataToRow(StringBuffer sbf, String sep, int npoints) {
+		// Get the amplitude array (dense format: one value per bin)
+		ArrayList<Integer> amplitudeGulps = getAmplitudeGulpsFromROIsArray(npoints);
+
+		// Export: npoints, val0, val1, ... valN
+		sbf.append(Integer.toString(npoints) + sep);
+		if (amplitudeGulps != null) {
+			for (int i = 0; i < npoints; i++) {
+				sbf.append(Integer.toString(amplitudeGulps.get(i)));
+				sbf.append(sep);
+			}
+		}
+		return true;
 	}
 
 	public void csvImportDataFromRow(String[] data, int startAt) {
@@ -199,26 +236,45 @@ public class CapillaryGulps {
 			return;
 
 		gulps.clear();
-		int ngulps = Integer.valueOf(data[startAt]);
-		if (ngulps > 0) {
-			int offset = startAt + 1;
+		int firstValue = (int) Double.parseDouble(data[startAt]);
+		int offset = startAt + 1;
+
+		// Check for legacy sparse format: "ngulps", "g0", ...
+		if (offset < data.length && data[offset].trim().startsWith("g")) {
+			int ngulps = firstValue;
 			for (int i = 0; i < ngulps; i++) {
 				offset = csvImportOneGulp(data, offset);
+			}
+		} else {
+			// New dense format: "npoints", val0, val1, ...
+			int npoints = firstValue;
+			for (int i = 0; i < npoints; i++) {
+				if (offset >= data.length)
+					break;
+				int val = (int) Double.parseDouble(data[offset]);
+				offset++;
+				if (val != 0) {
+					// Reconstruct a vertical gulp event
+					int[] x = new int[] { i, i };
+					int[] y = new int[] { 0, val };
+					Polyline2D gulpLine = new Polyline2D(x, y, 2);
+					gulps.add(gulpLine);
+				}
 			}
 		}
 	}
 
 	private int csvImportOneGulp(String[] data, int offset) {
 		offset++;
-		int npoints = Integer.valueOf(data[offset]);
+		int npoints = (int) Double.parseDouble(data[offset]);
 		offset++;
 
 		int[] x = new int[npoints];
 		int[] y = new int[npoints];
 		for (int i = 0; i < npoints; i++) {
-			x[i] = Integer.valueOf(data[offset]);
+			x[i] = (int) Double.parseDouble(data[offset]);
 			offset++;
-			y[i] = Integer.valueOf(data[offset]);
+			y[i] = (int) Double.parseDouble(data[offset]);
 			offset++;
 		}
 		Polyline2D gulpLine = new Polyline2D(x, y, npoints);
@@ -283,7 +339,7 @@ public class CapillaryGulps {
 					rois.add((ROI2DArea) roi);
 			}
 		}
-		buildGulpsFromROIs(rois);
+		// buildGulpsFromROIs(rois);
 	}
 
 	ArrayList<Integer> getCumSumFromGulps(int npoints) {
@@ -293,6 +349,9 @@ public class CapillaryGulps {
 
 		for (Polyline2D gulpLine : gulps) {
 			int width = (int) gulpLine.xpoints[gulpLine.npoints - 1] - (int) gulpLine.xpoints[0] + 1;
+
+			if (width < 1)
+				continue;
 
 			List<Point2D> pts = interpolateMissingPointsAlongXAxis(gulpLine, width);
 			if (pts == null || pts.size() < 1)
@@ -320,14 +379,26 @@ public class CapillaryGulps {
 	}
 
 	private List<Point2D> interpolateMissingPointsAlongXAxis(Polyline2D polyline, int nintervals) {
-		if (nintervals <= 1)
+		if (nintervals < 1)
 			return null;
-		// interpolate points so that each x step has a value
-		// assume that points are ordered along x
 
 		int roiLine_npoints = polyline.npoints;
-		if (roiLine_npoints > nintervals)
-			roiLine_npoints = nintervals;
+		// If vertical line (nintervals=1) or single point, just return the points if we
+		// have them
+		if (nintervals == 1) {
+			List<Point2D> pts = new ArrayList<Point2D>();
+			if (roiLine_npoints > 0) {
+				pts.add(new Point2D.Double(polyline.xpoints[0], polyline.ypoints[0]));
+				if (roiLine_npoints > 1) {
+					pts.add(new Point2D.Double(polyline.xpoints[roiLine_npoints - 1],
+							polyline.ypoints[roiLine_npoints - 1]));
+				}
+			}
+			return pts;
+		}
+
+		// interpolate points so that each x step has a value
+		// assume that points are ordered along x
 
 		List<Point2D> pts = new ArrayList<Point2D>(roiLine_npoints);
 		double ylast = polyline.ypoints[roiLine_npoints - 1];
