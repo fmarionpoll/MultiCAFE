@@ -47,7 +47,8 @@ public class Chart extends JPanel implements SequenceListener {
 			EnumResults.BOTTOMLEVEL, //
 			EnumResults.DERIVEDVALUES, //
 			EnumResults.TOPLEVEL_LR, //
-			EnumResults.SUMGULPS };
+			EnumResults.SUMGULPS, //
+			EnumResults.SUMGULPS_LR };
 	private JComboBox<EnumResults> resultTypeComboBox = new JComboBox<EnumResults>(measures);
 
 	// private JCheckBox correctEvaporationCheckbox = new JCheckBox("correct

@@ -47,6 +47,8 @@ import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCageBuild;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePair;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePanel;
+import plugins.fmp.multicafe.fmp_tools.chart.builders.CageCapillarySeriesBuilder;
+import plugins.fmp.multicafe.fmp_tools.chart.plot.CageChartPlotFactory;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
@@ -294,14 +296,14 @@ public class ChartCageArrayFrame extends IcyFrame {
 		ChartCageBuild.initMaxMin();
 		Map<Cage, XYSeriesCollection> datasets = new HashMap<Cage, XYSeriesCollection>();
 
+		CageCapillarySeriesBuilder builder = new CageCapillarySeriesBuilder();
 		for (int row = 0; row < experiment.getCages().nCagesAlongY; row++) {
 			for (int col = 0; col < experiment.getCages().nCagesAlongX; col++, indexCage++) {
 				if (indexCage < resultsOptions.cageIndexFirst || indexCage > resultsOptions.cageIndexLast)
 					continue;
 				Cage cage = experiment.getCages().getCageFromRowColCoordinates(row, col);
 				if (cage != null) {
-					XYSeriesCollection xyDataSetList = ChartCageBuild.getCapillaryDataDirectlyFromOneCage(experiment,
-							cage, resultsOptions);
+					XYSeriesCollection xyDataSetList = builder.build(experiment, cage, resultsOptions);
 					datasets.put(cage, xyDataSetList);
 				}
 			}
@@ -357,7 +359,6 @@ public class ChartCageArrayFrame extends IcyFrame {
 			return chartPanel;
 		}
 
-		String roiName = (cage.getRoi() != null) ? cage.getRoi().getName() : "CAGe " + cage.getCageID();
 		NumberAxis xAxis = setXaxis("time", resultsOptions);
 		NumberAxis yAxis = setYaxis("", row, col, resultsOptions);
 
@@ -372,7 +373,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 			}
 		}
 
-		XYPlot xyPlot = ChartCageBuild.buildXYPlot(xyDataSetList, xAxis, yAxis);
+		XYPlot xyPlot = CageChartPlotFactory.buildXYPlot(xyDataSetList, xAxis, yAxis);
 
 		JFreeChart chart = new JFreeChart(null, // title - the chart title (null permitted).
 				null, // titleFont - the font for displaying the chart title (null permitted)
