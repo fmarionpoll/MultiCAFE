@@ -228,6 +228,14 @@ public class CapillariesPersistence {
 					csvLoad_Capillaries_Description(capillaries, csvReader, sep);
 					break;
 				case "TOPLEVEL":
+					csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPRAW, sep,
+							row.contains("xi"));
+					break;
+				case "TOPRAW":
+					csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPRAW, sep,
+							row.contains("xi"));
+					break;
+				case "TOPLEVEL_CORRECTED":
 					csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPLEVEL, sep,
 							row.contains("xi"));
 					break;
@@ -333,6 +341,7 @@ public class CapillariesPersistence {
 
 			csvSave_DescriptionSection(capillaries, csvWriter);
 
+			csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.TOPRAW);
 			csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.TOPLEVEL);
 			csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.BOTTOMLEVEL);
 			csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.TOPDERIVATIVE);

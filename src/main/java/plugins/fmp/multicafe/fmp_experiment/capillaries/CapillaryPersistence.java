@@ -182,7 +182,7 @@ public class CapillaryPersistence {
 			sbf.append("#" + sep + "TOPRAW" + sep + explanation1);
 			break;
 		case TOPLEVEL:
-			sbf.append("#" + sep + "TOPLEVEL" + sep + explanation1);
+			sbf.append("#" + sep + "TOPLEVEL_CORRECTED" + sep + explanation1);
 			break;
 		case BOTTOMLEVEL:
 			sbf.append("#" + sep + "BOTTOMLEVEL" + sep + explanation1);
