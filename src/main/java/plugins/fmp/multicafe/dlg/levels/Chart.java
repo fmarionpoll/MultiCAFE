@@ -255,6 +255,12 @@ public class Chart extends JPanel implements SequenceListener {
 			}
 			activeChart = null;
 		}
+		if (chartCageArrayFrame != null) {
+			if (chartCageArrayFrame.getMainChartFrame() != null) {
+				chartCageArrayFrame.getMainChartFrame().dispose();
+			}
+			chartCageArrayFrame = null;
+		}
 	}
 
 	private boolean isThereAnyDataToDisplay(Experiment exp, EnumResults resultType) {
