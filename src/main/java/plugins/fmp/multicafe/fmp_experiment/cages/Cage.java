@@ -317,7 +317,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 				// Keep cage loaded even if spots descriptors are missing
 				// Spots arrays are optional (not present in MultiCAFE experiments)
 			}
-			
+
 			// Load cage measures
 			measures.loadFromXml(xmlVal);
 
@@ -372,7 +372,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 				System.err.println("ERROR: Failed to save spots array for cage " + index);
 				return false;
 			}
-			
+
 			// Save cage measures
 			measures.saveToXml(xmlVal);
 
@@ -462,11 +462,10 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		row.add(prop.getFlyStrain());
 		row.add(prop.getFlySex());
 
-		int npoints = 0;
 		if (cageROI2D != null) {
 			Polygon2D polygon = ((ROI2DPolygon) cageROI2D).getPolygon2D();
 			row.add(Integer.toString(polygon.npoints));
-			for (int i = 0; i < npoints; i++) {
+			for (int i = 0; i < polygon.npoints; i++) {
 				row.add(Integer.toString((int) polygon.xpoints[i]));
 				row.add(Integer.toString((int) polygon.ypoints[i]));
 			}

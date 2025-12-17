@@ -74,9 +74,6 @@ public class LoadSaveCage extends JPanel {
 		ProgressFrame progress = new ProgressFrame("load fly positions");
 
 		boolean flag = exp.loadCageMeasures();
-		if (flag) {
-			exp.updateROIsAt(0);
-		}
 		progress.close();
 		return flag;
 	}

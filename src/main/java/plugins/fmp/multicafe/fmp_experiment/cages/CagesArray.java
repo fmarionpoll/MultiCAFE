@@ -10,8 +10,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -612,12 +615,12 @@ public class CagesArray {
 
 	private void addMissingCages(List<ROI2D> roiList) {
 		for (ROI2D roi : roiList) {
-			boolean found = false;
 			if (roi.getName() == null)
-				break;
+				continue;
+			boolean found = false;
 			for (Cage cage : cagesList) {
 				if (cage.getRoi() == null)
-					break;
+					continue;
 				if (roi.getName().equals(cage.getRoi().getName())) {
 					found = true;
 					break;
@@ -749,8 +752,11 @@ public class CagesArray {
 		seqCamData.processROIs(ROIOperation.removeROIs("cage"));
 
 		List<ROI2D> cageROIList = new ArrayList<ROI2D>(cagesList.size());
-		for (Cage cage : cagesList)
-			cageROIList.add(cage.getRoi());
+		for (Cage cage : cagesList) {
+			ROI2D roi = cage.getRoi();
+			if (roi != null)
+				cageROIList.add(roi);
+		}
 		Sequence sequence = seqCamData.getSequence();
 		if (sequence != null)
 			sequence.addROIs(cageROIList, true);
@@ -760,7 +766,42 @@ public class CagesArray {
 		// Use modern ROI finding API
 		List<ROI2D> roiList = seqCamData.findROIs("cage");
 		Collections.sort(roiList, new Comparators.ROI2D_Name());
-		addMissingCages(roiList);
+		
+		// Build a map of ROI names to ROIs for efficient lookup
+		Map<String, ROI2D> roiMap = new HashMap<>();
+		for (ROI2D roi : roiList) {
+			if (roi.getName() != null) {
+				roiMap.put(roi.getName(), roi);
+			}
+		}
+		
+		// Update ROI references for existing cages that match by ROI name
+		// Also identify which ROIs already have matching cages
+		Set<String> matchedRoiNames = new HashSet<>();
+		for (Cage cage : cagesList) {
+			ROI2D cageRoi = cage.getRoi();
+			if (cageRoi != null && cageRoi.getName() != null) {
+				String roiName = cageRoi.getName();
+				ROI2D matchingRoi = roiMap.get(roiName);
+				if (matchingRoi != null) {
+					// Update the ROI reference to match the one from sequence
+					cage.setRoi((ROI2DShape) matchingRoi);
+					matchedRoiNames.add(roiName);
+				}
+			}
+		}
+		
+		// Add new cages for ROIs that don't have matching cages yet
+		for (ROI2D roi : roiList) {
+			if (roi.getName() != null && !matchedRoiNames.contains(roi.getName())) {
+				Cage cage = new Cage();
+				cage.setRoi((ROI2DShape) roi);
+				cagesList.add(cage);
+				matchedRoiNames.add(roi.getName());
+			}
+		}
+		
+		// Remove orphan cages (cages whose ROIs are not in the sequence)
 		removeOrphanCages(roiList);
 		Collections.sort(cagesList, new Comparators.Cage_Name());
 	}
