@@ -3,6 +3,10 @@ package plugins.fmp.multicafe.fmp_tools.chart;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.jfree.chart.ChartColor;
@@ -143,9 +147,54 @@ public class ChartCageBuild {
 
 //		//LOGGER.fine("Building XY plot with " + xySeriesCollection.getSeriesCount() + " series");
 
+		if (isLRData(xySeriesCollection)) {
+			return buildXYPlotLR(xySeriesCollection, xAxis, yAxis);
+		}
+
 		XYLineAndShapeRenderer subPlotRenderer = getSubPlotRenderer(xySeriesCollection);
 		XYPlot xyPlot = new XYPlot(xySeriesCollection, xAxis, yAxis, subPlotRenderer);
 		updatePlotBackgroundAccordingToNFlies(xySeriesCollection, xyPlot);
+
+		return xyPlot;
+	}
+
+	private static boolean isLRData(XYSeriesCollection xySeriesCollection) {
+		for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
+			String key = (String) xySeriesCollection.getSeriesKey(i);
+			if (key.endsWith("_PI") || key.endsWith("_Sum"))
+				return true;
+		}
+		return false;
+	}
+
+	private static XYPlot buildXYPlotLR(XYSeriesCollection xySeriesCollection, NumberAxis xAxis, NumberAxis yAxis) {
+		XYSeriesCollection sumCollection = new XYSeriesCollection();
+		XYSeriesCollection piCollection = new XYSeriesCollection();
+
+		for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
+			XYSeries series = xySeriesCollection.getSeries(i);
+			String key = (String) series.getKey();
+			if (key.endsWith("_PI")) {
+				piCollection.addSeries(series);
+			} else {
+				sumCollection.addSeries(series);
+			}
+		}
+
+		XYLineAndShapeRenderer sumRenderer = getSubPlotRenderer(sumCollection);
+		XYPlot xyPlot = new XYPlot(sumCollection, xAxis, yAxis, sumRenderer);
+
+		XYLineAndShapeRenderer piRenderer = getSubPlotRenderer(piCollection);
+		NumberAxis yAxisPI = new NumberAxis("PI");
+		yAxisPI.setAutoRange(false);
+		yAxisPI.setRange(-1.0, 1.0);
+
+		xyPlot.setDataset(1, piCollection);
+		xyPlot.setRenderer(1, piRenderer);
+		xyPlot.setRangeAxis(1, yAxisPI);
+		xyPlot.mapDatasetToRangeAxis(1, 1);
+
+		updatePlotBackgroundAccordingToNFlies(sumCollection, xyPlot);
 
 		return xyPlot;
 	}
@@ -297,61 +346,112 @@ public class ChartCageBuild {
 		if (parts == null || parts.getSeriesCount() == 0)
 			return xySeriesCollection;
 
-		// Sum the series
-		XYSeries sumSeries = new XYSeries(cage.getCageID() + "_sum", false);
-		// Initialize with first series
-		XYSeries firstSeries = parts.getSeries(0);
-		for (int i = 0; i < firstSeries.getItemCount(); i++) {
-			sumSeries.add(firstSeries.getX(i), firstSeries.getY(i));
+		XYSeriesCollection sumAndPISeries = buildSumAndPISeries(cage, parts);
+		for (int i = 0; i < sumAndPISeries.getSeriesCount(); i++) {
+			xySeriesCollection.addSeries(sumAndPISeries.getSeries(i));
 		}
 
-		// Add subsequent series
-		for (int s = 1; s < parts.getSeriesCount(); s++) {
-			XYSeries nextSeries = parts.getSeries(s);
-			for (int i = 0; i < nextSeries.getItemCount(); i++) {
-				// Assuming X values match; if not, we might need a more robust alignment, but
-				// for capillaries in same experiment, time frames should match.
-				// However, length might differ if data is missing.
-				Number x = nextSeries.getX(i);
-				Number y = nextSeries.getY(i);
-				
-				// Find matching X in sumSeries (optimization: assume sorted and aligned)
-				// For now, simpler approach: update Y for matching X
-				int index = sumSeries.indexOf(x);
-				if (index >= 0) {
-					double oldY = sumSeries.getY(index).doubleValue();
-					sumSeries.update(x, oldY + y.doubleValue());
-				} else {
-					sumSeries.add(x, y);
-				}
-			}
-		}
-		
-		// Sort by X (time) just in case
-		// sumSeries is auto-sorted if autoSort is true (default is true for new XYSeries(name)) 
-		// but we passed false in constructor.
-		// However, we added points in order from firstSeries.
-		
-		sumSeries.setDescription(buildSeriesDescriptionFromCageAndCapillary(cage, cage.getCapillaries().getList().get(0), 0)); 
-		// Use description from first capillary but maybe color should be different?
-		// For L+R, usually we want a specific color or just reuse the palette logic.
-		// Let's leave it for now.
-
-		xySeriesCollection.addSeries(sumSeries);
-		
 		// Update global min/max
-		for(int i=0; i<sumSeries.getItemCount(); i++) {
-			double y = sumSeries.getY(i).doubleValue();
-			double x = sumSeries.getX(i).doubleValue();
-			if (y > ymax) ymax = y;
-			if (y < ymin) ymin = y;
-			if (x > xmax) xmax = x;
+		for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
+			XYSeries series = xySeriesCollection.getSeries(i);
+			for (int j = 0; j < series.getItemCount(); j++) {
+				double y = series.getY(j).doubleValue();
+				double x = series.getX(j).doubleValue();
+				if (!Double.isNaN(y)) {
+					if (Double.isNaN(ymax) || y > ymax)
+						ymax = y;
+					if (Double.isNaN(ymin) || y < ymin)
+						ymin = y;
+				}
+				if (x > xmax)
+					xmax = x;
+			}
 		}
 		updateGlobalMaxMin();
 
 		return xySeriesCollection;
 	}
 
+	static XYSeriesCollection buildSumAndPISeries(Cage cage, XYSeriesCollection parts) {
+		XYSeriesCollection result = new XYSeriesCollection();
+		if (parts.getSeriesCount() == 0)
+			return result;
+
+		List<XYSeries> listL = new ArrayList<>();
+		List<XYSeries> listR = new ArrayList<>();
+
+		for (int i = 0; i < parts.getSeriesCount(); i++) {
+			XYSeries series = parts.getSeries(i);
+			String key = (String) series.getKey();
+			if (key.endsWith("L") || key.endsWith("1")) {
+				listL.add(series);
+			} else if (key.endsWith("R") || key.endsWith("2")) {
+				listR.add(series);
+			}
+		}
+
+		SortedSet<Double> allX = new TreeSet<>();
+		for (int i = 0; i < parts.getSeriesCount(); i++) {
+			XYSeries series = parts.getSeries(i);
+			for (int j = 0; j < series.getItemCount(); j++) {
+				allX.add(series.getX(j).doubleValue());
+			}
+		}
+
+		XYSeries seriesSum = new XYSeries(cage.getCageID() + "_Sum", false);
+		XYSeries seriesPI = new XYSeries(cage.getCageID() + "_PI", false);
+
+		seriesSum.setDescription(buildSeriesDescription(cage, "L"));
+		seriesPI.setDescription(buildSeriesDescription(cage, "R"));
+
+		for (Double x : allX) {
+			double sumL = 0;
+			double sumR = 0;
+			boolean hasL = false;
+			boolean hasR = false;
+
+			for (XYSeries s : listL) {
+				int idx = s.indexOf(x);
+				if (idx >= 0) {
+					sumL += s.getY(idx).doubleValue();
+					hasL = true;
+				}
+			}
+			for (XYSeries s : listR) {
+				int idx = s.indexOf(x);
+				if (idx >= 0) {
+					sumR += s.getY(idx).doubleValue();
+					hasR = true;
+				}
+			}
+
+			if (hasL || hasR) {
+				double sum = sumL + sumR;
+				double pi = (sum != 0) ? (sumL - sumR) / sum : 0;
+
+				seriesSum.add(x.doubleValue(), sum);
+				seriesPI.add(x.doubleValue(), pi);
+			}
+		}
+
+		result.addSeries(seriesSum);
+		result.addSeries(seriesPI);
+
+		return result;
+	}
+
+	private static String buildSeriesDescription(Cage cage, String side) {
+		CageProperties cageProp = cage.getProperties();
+		Color color = Color.BLACK;
+		if (side.contains("L") || side.contains("1"))
+			color = Color.BLUE;
+		else if (side.contains("R") || side.contains("2"))
+			color = Color.RED;
+
+		return "ID:" + cageProp.getCageID() + ":Pos:" + cageProp.getCagePosition() + ":nflies:"
+				+ cageProp.getCageNFlies() + ":R:" + color.getRed() + ":G:" + color.getGreen() + ":B:"
+				+ color.getBlue();
+	}
 
 	/**
 	 * Builds a description string for a series.

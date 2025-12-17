@@ -32,8 +32,8 @@ public class AxisOptions extends JPanel {
 	private JSpinner upperXSpinner = new JSpinner(new SpinnerNumberModel(120., 0., 255., 1.));
 	private JSpinner lowerYSpinner = new JSpinner(new SpinnerNumberModel(0., 0., 255., 1.));
 	private JSpinner upperYSpinner = new JSpinner(new SpinnerNumberModel(80., 0., 255., 1.));
-	private JButton setYaxis = new JButton("set Y axis values");
-	private JButton setXaxis = new JButton("set X axis values");
+	private JButton setYaxisButton = new JButton("set Y axis values");
+	private JButton setXaxisButton = new JButton("set X axis values");
 
 	public void initialize(MultiCAFE parent0, ChartCageArrayFrame chartSpots) {
 		this.parent0 = parent0;
@@ -46,14 +46,14 @@ public class AxisOptions extends JPanel {
 		panel1.add(new JLabel("x axis values:"));
 		panel1.add(lowerXSpinner);
 		panel1.add(upperXSpinner);
-		panel1.add(setXaxis);
+		panel1.add(setXaxisButton);
 		topPanel.add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(new JLabel("y axis values:"));
 		panel2.add(lowerYSpinner);
 		panel2.add(upperYSpinner);
-		panel2.add(setYaxis);
+		panel2.add(setYaxisButton);
 		topPanel.add(panel2);
 
 		dialogFrame = new IcyFrame("Chart options", true, true);
@@ -78,7 +78,7 @@ public class AxisOptions extends JPanel {
 	}
 
 	private void defineActionListeners() {
-		setXaxis.addActionListener(new ActionListener() {
+		setXaxisButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
@@ -88,7 +88,7 @@ public class AxisOptions extends JPanel {
 			}
 		});
 
-		setYaxis.addActionListener(new ActionListener() {
+		setYaxisButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();

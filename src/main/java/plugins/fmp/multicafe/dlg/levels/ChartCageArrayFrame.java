@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -33,10 +32,10 @@ import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.chart.ui.RectangleEdge;
 
 import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
@@ -184,7 +183,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		String finalTitle = title + ": " + options.resultType.toString();
 		mainChartFrame = GuiUtil.generateTitleFrame(finalTitle, new JPanel(),
 				new Dimension(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT), true, true, true, true);
-		
+
 		mainChartFrame.setLayout(new BorderLayout());
 		JScrollPane scrollPane = new JScrollPane(mainChartPanel);
 		mainChartFrame.add(scrollPane, BorderLayout.CENTER);
@@ -192,6 +191,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		if (ChartCageBuild.isLRType(options.resultType)) {
 			bottomPanel.add(new LegendItem("Sum", Color.BLUE));
+			bottomPanel.add(new LegendItem("PI", Color.RED));
 		} else {
 			bottomPanel.add(new LegendItem("L", Color.BLUE));
 			bottomPanel.add(new LegendItem("R", Color.RED));
@@ -228,7 +228,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		NumberAxis yAxis = new NumberAxis();
 		row = row * experiment.getCages().nRowsPerCage;
 		col = col * experiment.getCages().nColumnsPerCage;
-		String yLegend = label + " " + String.valueOf((char) (row + 'A')) + Integer.toString(col) + " "
+		String yLegend = label // + " " + String.valueOf((char) (row + 'A')) + Integer.toString(col) + " "
 				+ resultsOptions.resultType.toUnit();
 		yAxis.setLabel(yLegend);
 
@@ -354,9 +354,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 			return chartPanel;
 		}
 
-		NumberAxis xAxis = setXaxis("", resultsOptions);
-		String roiName = (cage.getRoi() != null) ? cage.getRoi().getName() : "Cage " + cage.getCageID();
-		NumberAxis yAxis = setYaxis(roiName, row, col, resultsOptions);
+		String roiName = (cage.getRoi() != null) ? cage.getRoi().getName() : "CAGe " + cage.getCageID();
+		NumberAxis xAxis = setXaxis("time", resultsOptions);
+		NumberAxis yAxis = setYaxis("", row, col, resultsOptions);
 
 		if (!resultsOptions.relativeToMaximum && !resultsOptions.relativeToMedianT0) {
 			if (ChartCageBuild.isGlobalMaxMinSet()) {
