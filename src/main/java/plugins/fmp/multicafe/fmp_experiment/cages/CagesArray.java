@@ -1344,4 +1344,41 @@ public class CagesArray {
 			cageComputations.clear();
 		}
 	}
+
+	public void checkAndCorrectCagePositions() {
+		if (cagesList.size() == 0)
+			return;
+
+		boolean allInvalid = true;
+		for (Cage cage : cagesList) {
+			if (cage.getProperties().getArrayColumn() != -1 || cage.getProperties().getArrayRow() != -1) {
+				allInvalid = false;
+				break;
+			}
+		}
+
+		if (allInvalid) {
+			Collections.sort(cagesList, new java.util.Comparator<Cage>() {
+				@Override
+				public int compare(Cage c1, Cage c2) {
+					return Integer.compare(c1.getCageID(), c2.getCageID());
+				}
+			});
+
+			if (cagesList.size() == 10)
+				nCagesAlongX = 5;
+
+			if (nCagesAlongX > 0) {
+				for (int i = 0; i < cagesList.size(); i++) {
+					Cage cage = cagesList.get(i);
+					int col = i % nCagesAlongX;
+					int row = i / nCagesAlongX;
+
+					cage.getProperties().setArrayColumn(col);
+					cage.getProperties().setArrayRow(row);
+				}
+				nCagesAlongY = (cagesList.size() + nCagesAlongX - 1) / nCagesAlongX;
+			}
+		}
+	}
 }

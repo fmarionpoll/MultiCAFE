@@ -1,13 +1,25 @@
 package plugins.fmp.multicafe.dlg.levels;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -20,9 +32,11 @@ import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.chart.ui.RectangleEdge;
 
 import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
@@ -167,10 +181,34 @@ public class ChartCageArrayFrame extends IcyFrame {
 		nPanelsAlongY = flag ? 1 : exp.getCages().nCagesAlongY;
 
 		mainChartPanel.setLayout(new GridLayout(nPanelsAlongY, nPanelsAlongX));
-		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(),
+		String finalTitle = title + ": " + options.resultType.toString();
+		mainChartFrame = GuiUtil.generateTitleFrame(finalTitle, new JPanel(),
 				new Dimension(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT), true, true, true, true);
+		
+		mainChartFrame.setLayout(new BorderLayout());
 		JScrollPane scrollPane = new JScrollPane(mainChartPanel);
-		mainChartFrame.add(scrollPane);
+		mainChartFrame.add(scrollPane, BorderLayout.CENTER);
+
+		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		if (ChartCageBuild.isLRType(options.resultType)) {
+			bottomPanel.add(new LegendItem("Sum", Color.BLUE));
+		} else {
+			bottomPanel.add(new LegendItem("L", Color.BLUE));
+			bottomPanel.add(new LegendItem("R", Color.RED));
+		}
+		mainChartFrame.add(bottomPanel, BorderLayout.SOUTH);
+
+		mainChartFrame.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				savePreferences();
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				savePreferences();
+			}
+		});
 
 		chartPanelArray = new ChartCagePair[nPanelsAlongY][nPanelsAlongX];
 
@@ -190,7 +228,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 		NumberAxis yAxis = new NumberAxis();
 		row = row * experiment.getCages().nRowsPerCage;
 		col = col * experiment.getCages().nColumnsPerCage;
-		String yLegend = label + " " + String.valueOf((char) (row + 'A')) + Integer.toString(col);
+		String yLegend = label + " " + String.valueOf((char) (row + 'A')) + Integer.toString(col) + " "
+				+ resultsOptions.resultType.toUnit();
 		yAxis.setLabel(yLegend);
 
 		if (resultsOptions.relativeToMaximum || resultsOptions.relativeToMedianT0) {
@@ -249,6 +288,23 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 */
 	private void createChartPanelArray(ResultsOptions resultsOptions) {
 		int indexCage = 0;
+		ChartCageBuild.initMaxMin();
+		Map<Cage, XYSeriesCollection> datasets = new HashMap<Cage, XYSeriesCollection>();
+
+		for (int row = 0; row < experiment.getCages().nCagesAlongY; row++) {
+			for (int col = 0; col < experiment.getCages().nCagesAlongX; col++, indexCage++) {
+				if (indexCage < resultsOptions.cageIndexFirst || indexCage > resultsOptions.cageIndexLast)
+					continue;
+				Cage cage = experiment.getCages().getCageFromRowColCoordinates(row, col);
+				if (cage != null) {
+					XYSeriesCollection xyDataSetList = ChartCageBuild.getCapillaryDataDirectlyFromOneCage(experiment,
+							cage, resultsOptions);
+					datasets.put(cage, xyDataSetList);
+				}
+			}
+		}
+
+		indexCage = 0;
 		for (int row = 0; row < experiment.getCages().nCagesAlongY; row++) {
 			for (int col = 0; col < experiment.getCages().nCagesAlongX; col++, indexCage++) {
 				if (indexCage < resultsOptions.cageIndexFirst || indexCage > resultsOptions.cageIndexLast)
@@ -260,12 +316,11 @@ public class ChartCageArrayFrame extends IcyFrame {
 					continue;
 				}
 
-				ChartPanel chartPanel = createChartPanelForCage(cage, row, col, resultsOptions);
+				XYSeriesCollection xyDataSetList = datasets.get(cage);
+				ChartPanel chartPanel = createChartPanelForCage(cage, row, col, resultsOptions, xyDataSetList);
 				chartPanelArray[row][col] = new ChartCagePair(chartPanel, cage);
 			}
 		}
-
-//		LOGGER.info("Created " + createdCharts + " in " + indexCage + " chart panels");
 	}
 
 	/**
@@ -280,10 +335,11 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param resultsOptions   the export options
 	 * @return configured ChartPanel
 	 */
-	private ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, ResultsOptions resultsOptions) {
+	private ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, ResultsOptions resultsOptions,
+			XYSeriesCollection xyDataSetList) {
 
-		if (cage.spotsArray.getSpotsCount() < 1) {
-//			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
+		if (cage.getCapillaries().getList().size() < 1) {
+//			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no capillaries");
 			ChartCagePanel chartPanel = new ChartCagePanel(null, // jfreechart
 					DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, // preferred width, height of the panel
 					MIN_CHART_WIDTH, MIN_CHART_HEIGHT, // minimal drawing width, drawing height
@@ -298,18 +354,32 @@ public class ChartCageArrayFrame extends IcyFrame {
 			return chartPanel;
 		}
 
-		ChartCageBuild.initMaxMin();
-		XYSeriesCollection xyDataSetList = ChartCageBuild.getCapillaryDataDirectlyFromOneCage(experiment, cage,
-				resultsOptions);
-
 		NumberAxis xAxis = setXaxis("", resultsOptions);
-		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, resultsOptions);
+		String roiName = (cage.getRoi() != null) ? cage.getRoi().getName() : "Cage " + cage.getCageID();
+		NumberAxis yAxis = setYaxis(roiName, row, col, resultsOptions);
+
+		if (!resultsOptions.relativeToMaximum && !resultsOptions.relativeToMedianT0) {
+			if (ChartCageBuild.isGlobalMaxMinSet()) {
+				double min = ChartCageBuild.getGlobalYMin();
+				double max = ChartCageBuild.getGlobalYMax();
+				double range = max - min;
+				if (range == 0)
+					range = 1.0;
+				yAxis.setRange(min - range * 0.05, max + range * 0.05);
+			}
+		}
+
 		XYPlot xyPlot = ChartCageBuild.buildXYPlot(xyDataSetList, xAxis, yAxis);
 
 		JFreeChart chart = new JFreeChart(null, // title - the chart title (null permitted).
 				null, // titleFont - the font for displaying the chart title (null permitted)
 				xyPlot, // plot - controller of the visual representation of the data
 				false); // createLegend - legend not created for the chart
+
+		TextTitle title = new TextTitle("Cage " + cage.getProperties().getCageID(),
+				new Font("SansSerif", Font.PLAIN, 12));
+		title.setPosition(RectangleEdge.BOTTOM);
+		chart.addSubtitle(title);
 
 		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 
@@ -327,6 +397,27 @@ public class ChartCageArrayFrame extends IcyFrame {
 		chartCagePanel.addChartMouseListener(new SpotChartMouseListener(experiment, resultsOptions));
 		chartCagePanel.subscribeToCagePropertiesUpdates(cage);
 		return chartCagePanel;
+	}
+
+	private class LegendItem extends JComponent {
+		private static final long serialVersionUID = 1L;
+		private String text;
+		private Color color;
+
+		public LegendItem(String text, Color color) {
+			this.text = text;
+			this.color = color;
+			setPreferredSize(new Dimension(100, 20));
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.setColor(color);
+			g.drawLine(0, 10, 20, 10);
+			g.setColor(Color.BLACK);
+			g.drawString(text, 25, 15);
+		}
 	}
 
 	/**
@@ -374,10 +465,28 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 */
 	private void displayChartFrame() {
 		mainChartFrame.pack();
-		mainChartFrame.setLocation(graphLocation);
+		loadPreferences();
 		mainChartFrame.addToDesktopPane();
 		mainChartFrame.setVisible(true);
 //		LOGGER.fine("Displayed chart frame at location: " + graphLocation);
+	}
+
+	private void loadPreferences() {
+		Preferences prefs = Preferences.userNodeForPackage(ChartCageArrayFrame.class);
+		int x = prefs.getInt("window_x", graphLocation.x);
+		int y = prefs.getInt("window_y", graphLocation.y);
+		int w = prefs.getInt("window_w", DEFAULT_FRAME_WIDTH);
+		int h = prefs.getInt("window_h", DEFAULT_FRAME_HEIGHT);
+		mainChartFrame.setBounds(new Rectangle(x, y, w, h));
+	}
+
+	private void savePreferences() {
+		Preferences prefs = Preferences.userNodeForPackage(ChartCageArrayFrame.class);
+		Rectangle r = mainChartFrame.getBounds();
+		prefs.putInt("window_x", r.x);
+		prefs.putInt("window_y", r.y);
+		prefs.putInt("window_w", r.width);
+		prefs.putInt("window_h", r.height);
 	}
 
 	/**
@@ -386,7 +495,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param rectv the reference rectangle
 	 * @throws IllegalArgumentException if rectv is null
 	 */
-	public void setChartSpotUpperLeftLocation(Rectangle rectv) {
+	public void setChartUpperLeftLocation(Rectangle rectv) {
 		if (rectv == null) {
 			throw new IllegalArgumentException("Reference rectangle cannot be null");
 		}

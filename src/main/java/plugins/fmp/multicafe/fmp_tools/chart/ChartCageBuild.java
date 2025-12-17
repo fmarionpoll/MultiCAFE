@@ -17,7 +17,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
-import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryProperties;
+//import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryProperties;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotMeasure;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
@@ -110,8 +110,8 @@ public class ChartCageBuild {
 	 * called before processing new data to reset the global extrema tracking.
 	 */
 	static public void initMaxMin() {
-		ymax = 0;
-		ymin = 0;
+		ymax = Double.NaN;
+		ymin = Double.NaN;
 		xmax = 0;
 		flagMaxMinSet = false;
 		globalYMax = 0;
@@ -241,12 +241,16 @@ public class ChartCageBuild {
 	public static XYSeriesCollection getCapillaryDataDirectlyFromOneCage(Experiment exp, Cage cage,
 			ResultsOptions resultsOptions) {
 		if (cage == null || cage.getCapillaries() == null || cage.getCapillaries().getList().size() < 1) {
-			LOGGER.warning("Cannot get capillary data: capillaries array is empty or cage is null");
+//			LOGGER.warning("Cannot get capillary data: capillaries array is empty or cage is null");
 			return new XYSeriesCollection();
 		}
 
-		XYSeriesCollection xySeriesCollection = null;
+		if (isLRType(resultsOptions.resultType)) {
+			return getLRDataFromOneCage(exp, cage, resultsOptions);
+		}
 
+		XYSeriesCollection xySeriesCollection = null;
+		int i = 0;
 		for (Capillary cap : cage.getCapillaries().getList()) {
 			if (xySeriesCollection == null) {
 				xySeriesCollection = new XYSeriesCollection();
@@ -254,16 +258,100 @@ public class ChartCageBuild {
 
 			XYSeries seriesXY = createXYSeriesFromCapillaryMeasure(exp, cap, resultsOptions);
 			if (seriesXY != null) {
-				seriesXY.setDescription(buildSeriesDescriptionFromCageAndCapillary(cage, cap));
+				seriesXY.setDescription(buildSeriesDescriptionFromCageAndCapillary(cage, cap, i));
 				xySeriesCollection.addSeries(seriesXY);
 				updateGlobalMaxMin();
 			}
+			i++;
 		}
-
-		// LOGGER.fine("Extracted " + seriesCount + " series for cage ID: " +
-		// cage.getProperties().getCageID());
 		return xySeriesCollection;
 	}
+
+	public static boolean isLRType(EnumResults resultType) {
+		return resultType == EnumResults.TOPLEVEL_LR || resultType == EnumResults.TOPLEVELDELTA_LR
+				|| resultType == EnumResults.SUMGULPS_LR;
+	}
+
+	private static EnumResults getBaseType(EnumResults resultType) {
+		switch (resultType) {
+		case TOPLEVEL_LR:
+			return EnumResults.TOPLEVEL;
+		case TOPLEVELDELTA_LR:
+			return EnumResults.TOPLEVELDELTA;
+		case SUMGULPS_LR:
+			return EnumResults.SUMGULPS;
+		default:
+			return resultType;
+		}
+	}
+
+	private static XYSeriesCollection getLRDataFromOneCage(Experiment exp, Cage cage, ResultsOptions resultsOptions) {
+		XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+		EnumResults baseType = getBaseType(resultsOptions.resultType);
+
+		ResultsOptions baseOptions = new ResultsOptions();
+		baseOptions.copy(resultsOptions);
+		baseOptions.resultType = baseType;
+
+		XYSeriesCollection parts = getCapillaryDataDirectlyFromOneCage(exp, cage, baseOptions);
+		if (parts == null || parts.getSeriesCount() == 0)
+			return xySeriesCollection;
+
+		// Sum the series
+		XYSeries sumSeries = new XYSeries(cage.getCageID() + "_sum", false);
+		// Initialize with first series
+		XYSeries firstSeries = parts.getSeries(0);
+		for (int i = 0; i < firstSeries.getItemCount(); i++) {
+			sumSeries.add(firstSeries.getX(i), firstSeries.getY(i));
+		}
+
+		// Add subsequent series
+		for (int s = 1; s < parts.getSeriesCount(); s++) {
+			XYSeries nextSeries = parts.getSeries(s);
+			for (int i = 0; i < nextSeries.getItemCount(); i++) {
+				// Assuming X values match; if not, we might need a more robust alignment, but
+				// for capillaries in same experiment, time frames should match.
+				// However, length might differ if data is missing.
+				Number x = nextSeries.getX(i);
+				Number y = nextSeries.getY(i);
+				
+				// Find matching X in sumSeries (optimization: assume sorted and aligned)
+				// For now, simpler approach: update Y for matching X
+				int index = sumSeries.indexOf(x);
+				if (index >= 0) {
+					double oldY = sumSeries.getY(index).doubleValue();
+					sumSeries.update(x, oldY + y.doubleValue());
+				} else {
+					sumSeries.add(x, y);
+				}
+			}
+		}
+		
+		// Sort by X (time) just in case
+		// sumSeries is auto-sorted if autoSort is true (default is true for new XYSeries(name)) 
+		// but we passed false in constructor.
+		// However, we added points in order from firstSeries.
+		
+		sumSeries.setDescription(buildSeriesDescriptionFromCageAndCapillary(cage, cage.getCapillaries().getList().get(0), 0)); 
+		// Use description from first capillary but maybe color should be different?
+		// For L+R, usually we want a specific color or just reuse the palette logic.
+		// Let's leave it for now.
+
+		xySeriesCollection.addSeries(sumSeries);
+		
+		// Update global min/max
+		for(int i=0; i<sumSeries.getItemCount(); i++) {
+			double y = sumSeries.getY(i).doubleValue();
+			double x = sumSeries.getX(i).doubleValue();
+			if (y > ymax) ymax = y;
+			if (y < ymin) ymin = y;
+			if (x > xmax) xmax = x;
+		}
+		updateGlobalMaxMin();
+
+		return xySeriesCollection;
+	}
+
 
 	/**
 	 * Builds a description string for a series.
@@ -280,10 +368,24 @@ public class ChartCageBuild {
 				+ color.getBlue();
 	}
 
-	private static String buildSeriesDescriptionFromCageAndCapillary(Cage cage, Capillary cap) {
+	private static String buildSeriesDescriptionFromCageAndCapillary(Cage cage, Capillary cap, int i) {
 		CageProperties cageProp = cage.getProperties();
-		CapillaryProperties capProp = cap.getProperties();
-		return cageProp.getCageID() + "_" + capProp.side;
+		String side = cap.getCapillarySide();
+		Color[] palette = { Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK,
+				Color.LIGHT_GRAY };
+		Color color = palette[i % palette.length];
+
+		if (side.contains("L") || side.contains("1"))
+			color = Color.BLUE;
+		else if (side.contains("R") || side.contains("2"))
+			color = Color.RED;
+
+//		if (cap.getRoi() != null)
+//			color = cap.getRoi().getColor();
+
+		return "ID:" + cageProp.getCageID() + ":Pos:" + cageProp.getCagePosition() + ":nflies:"
+				+ cageProp.getCageNFlies() + ":R:" + color.getRed() + ":G:" + color.getGreen() + ":B:"
+				+ color.getBlue();
 	}
 
 	private static XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot, ResultsOptions resultOptions) {
@@ -305,10 +407,10 @@ public class ChartCageBuild {
 			double y = spotMeasure.getValueAt(j) / divider;
 			seriesXY.add(x, y);
 
-			if (ymax < y) {
+			if (Double.isNaN(ymax) || ymax < y) {
 				ymax = y;
 			}
-			if (ymin > y) {
+			if (Double.isNaN(ymin) || ymin > y) {
 				ymin = y;
 			}
 			x++;
@@ -325,20 +427,30 @@ public class ChartCageBuild {
 		double[] camImages_time_min = exp.getSeqCamData().getTimeManager().getCamImagesTime_Minutes();
 		CapillaryMeasure capMeasure = cap.getMeasurements(resultOptions.resultType);
 
+		if (capMeasure == null)
+			return null;
+
 		int npoints = capMeasure.getNPoints();
+		if (npoints > camImages_time_min.length)
+			npoints = camImages_time_min.length;
+
+		double scalingFactor = 1.0;
+		if (resultOptions.resultType.toUnit().equals("volume (ul)")) {
+			if (cap.getPixels() > 0)
+				scalingFactor = cap.getVolume() / cap.getPixels();
+		}
 
 		for (int j = 0; j < npoints; j++) {
 			double x = camImages_time_min[j];
-			double y = capMeasure.getValueAt(j);
+			double y = capMeasure.getValueAt(j) * scalingFactor;
 			seriesXY.add(x, y);
 
-			if (ymax < y) {
+			if (Double.isNaN(ymax) || ymax < y) {
 				ymax = y;
 			}
-			if (ymin > y) {
+			if (Double.isNaN(ymin) || ymin > y) {
 				ymin = y;
 			}
-			x++;
 		}
 		return seriesXY;
 	}
@@ -356,11 +468,11 @@ public class ChartCageBuild {
 //					"Set initial global extrema: Y[" + globalYMin + ", " + globalYMax + "], X[0, " + globalXMax + "]");
 		} else {
 //			boolean updated = false;
-			if (globalYMax < ymax) {
+			if (Double.isNaN(globalYMax) || globalYMax < ymax) {
 				globalYMax = ymax;
 //				updated = true;
 			}
-			if (globalYMin > ymin) {
+			if (Double.isNaN(globalYMin) || globalYMin > ymin) {
 				globalYMin = ymin;
 //				updated = true;
 			}
@@ -425,7 +537,7 @@ public class ChartCageBuild {
 	 * 
 	 * @return the global Y maximum
 	 */
-	public double getGlobalYMax() {
+	public static double getGlobalYMax() {
 		return globalYMax;
 	}
 
@@ -434,7 +546,7 @@ public class ChartCageBuild {
 	 * 
 	 * @return the global Y minimum
 	 */
-	public double getGlobalYMin() {
+	public static double getGlobalYMin() {
 		return globalYMin;
 	}
 
@@ -443,7 +555,7 @@ public class ChartCageBuild {
 	 * 
 	 * @return the global X maximum
 	 */
-	public double getGlobalXMax() {
+	public static double getGlobalXMax() {
 		return globalXMax;
 	}
 
@@ -452,7 +564,7 @@ public class ChartCageBuild {
 	 * 
 	 * @return true if global extrema are set, false otherwise
 	 */
-	public boolean isGlobalMaxMinSet() {
+	public static boolean isGlobalMaxMinSet() {
 		return flagMaxMinSet;
 	}
 

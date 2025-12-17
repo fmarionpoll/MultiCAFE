@@ -1610,6 +1610,10 @@ public class Experiment {
 			}
 			cage.addCapillaryIfUnique(cap);
 		}
+		
+		if (cages.getCageList().size() > 0) {
+			cages.checkAndCorrectCagePositions();
+		}
 	}
 
 	public void getCapillaryMeasures(EnumResults resultType, boolean subtractEvaporation) {

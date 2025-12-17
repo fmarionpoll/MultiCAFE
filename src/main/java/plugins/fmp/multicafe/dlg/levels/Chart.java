@@ -141,6 +141,7 @@ public class Chart extends JPanel implements SequenceListener {
 
 	public void displayChartPanels(Experiment exp) {
 		exp.getSeqCamData().getSequence().removeListener(this);
+		exp.dispatchCapillariesToCages();
 		EnumResults exportType = (EnumResults) resultTypeComboBox.getSelectedItem();
 		if (isThereAnyDataToDisplay(exp, exportType))
 			chartCageArrayFrame = plotCapillaryMeasuresToChart(exp, exportType, chartCageArrayFrame);
@@ -175,7 +176,7 @@ public class Chart extends JPanel implements SequenceListener {
 
 		iChart = new ChartCageArrayFrame();
 		iChart.createMainChartPanel("Capillary level measures", exp, options);
-		iChart.setChartSpotUpperLeftLocation(getInitialUpperLeftPosition(exp));
+		iChart.setChartUpperLeftLocation(getInitialUpperLeftPosition(exp));
 		iChart.displayData(exp, options);
 		iChart.getMainChartFrame().toFront();
 		iChart.getMainChartFrame().requestFocus();

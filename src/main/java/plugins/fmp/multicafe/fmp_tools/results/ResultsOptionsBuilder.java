@@ -174,12 +174,12 @@ public class ResultsOptionsBuilder {
 
 	public ResultsOptionsBuilder withSubtractT0(boolean b) {
 		this.subtractT0 = b;
-		return null;
+		return this;
 	}
 
 	public ResultsOptionsBuilder withDivideT0(boolean b) {
 		this.divideWithT0 = b;
-		return null;
+		return this;
 	}
 
 	public ResultsOptionsBuilder withSpotAreas(boolean spotAreas) {
@@ -268,7 +268,7 @@ public class ResultsOptionsBuilder {
 
 	public ResultsOptionsBuilder withBuildExcelUnitMs(int buildExcelUnitMs) {
 		this.buildExcelUnitMs = buildExcelUnitMs;
-		return null;
+		return this;
 	}
 
 	/**
