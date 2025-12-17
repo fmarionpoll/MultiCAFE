@@ -10,11 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,7 +30,6 @@ import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotString;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
-import plugins.fmp.multicafe.fmp_service.GulpDetector;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
 import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
@@ -389,17 +385,17 @@ public class CagesArray {
 	}
 
 	private boolean csvSaveMeasuresSection(FileWriter csvWriter, EnumCageMeasures measuresType) {
-		try {
-//			csvWriter.append("#" + csvSep + "DESCRIPTION" + csvSep + "Cages data\n");
+//		try {
+//			csvWriter.append("#" + csvSep + "MEASURE" + csvSep + "Cages data\n");
 //			csvWriter.append("n cages=" + csvSep + Integer.toString(cagesList.size()) + "\n");
 //			if (cagesList.size() > 0) {
 //				for (Cage cage : cagesList)
 //					csvWriter.append(cage.csvExportCageDescription(csvSep));
 //			}
-			csvWriter.append("#" + csvSep + "#\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//			csvWriter.append("#" + csvSep + "#\n");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		return true;
 	}
 
@@ -473,14 +469,6 @@ public class CagesArray {
 	}
 
 	public boolean xmlWriteCagesToFileNoQuestion(String tempname) {
-		// Memory monitoring before saving
-//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		// System.out.println("=== XML SAVING: CagesArray ===");
-		// System.out.println("Saving file: " + tempname);
-		// System.out.println("Memory before saving: " + (startMemory / 1024 / 1024) + "
-		// MB");
-		// System.out.println("Cages to save: " + cagesList.size());
-
 		try {
 			final Document doc = XMLUtil.createDocument(true);
 			if (doc == null) {
@@ -494,16 +482,6 @@ public class CagesArray {
 			if (success) {
 				success = XMLUtil.saveDocument(doc, tempname);
 			}
-
-			// Memory monitoring after saving
-//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-//			long memoryIncrease = endMemory - startMemory;
-			// System.out.println("Memory after saving: " + (endMemory / 1024 / 1024) + "
-			// MB");
-			// System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + "
-			// MB");
-			// System.out.println("Save success: " + success);
-			// System.out.println("=== XML SAVING COMPLETE ===");
 
 			return success;
 
@@ -613,29 +591,45 @@ public class CagesArray {
 		return flag;
 	}
 
-	private void addMissingCages(List<ROI2D> roiList) {
-		for (ROI2D roi : roiList) {
-			if (roi.getName() == null)
-				continue;
-			boolean found = false;
-			for (Cage cage : cagesList) {
-				if (cage.getRoi() == null)
-					continue;
-				if (roi.getName().equals(cage.getRoi().getName())) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				Cage cage = new Cage();
-				cage.setRoi((ROI2DShape) roi);
-				cagesList.add(cage);
-			}
-		}
-	}
+//	private void addMissingCages(List<ROI2D> roiList) {
+//		for (ROI2D roi : roiList) {
+//			if (roi.getName() == null)
+//				continue;
+//			boolean found = false;
+//			for (Cage cage : cagesList) {
+//				if (cage.getRoi() == null)
+//					continue;
+//				if (roi.getName().equals(cage.getRoi().getName())) {
+//					found = true;
+//					break;
+//				}
+//			}
+//			if (!found) {
+//				Cage cage = new Cage();
+//				cage.setRoi((ROI2DShape) roi);
+//				cagesList.add(cage);
+//			}
+//		}
+//	}
 
 	private void removeOrphanCages(List<ROI2D> roiList) {
 		// remove cages with names not in the list
+		// BUT: if roiList is empty, preserve cages that already have valid ROIs set
+		// (this prevents clearing all cages when sequence is being closed)
+		if (roiList.isEmpty()) {
+			// Don't remove cages that already have valid ROIs - preserve them for saving
+			Iterator<Cage> iterator = cagesList.iterator();
+			while (iterator.hasNext()) {
+				Cage cage = iterator.next();
+				// Only remove cages that have null ROIs when roiList is empty
+				if (cage.getRoi() == null) {
+					iterator.remove();
+				}
+			}
+			return;
+		}
+		
+		// Normal case: remove cages whose ROIs are not in the sequence
 		Iterator<Cage> iterator = cagesList.iterator();
 		while (iterator.hasNext()) {
 			Cage cage = iterator.next();
@@ -643,7 +637,7 @@ public class CagesArray {
 			if (cage.getRoi() != null) {
 				String cageRoiName = cage.getRoi().getName();
 				for (ROI2D roi : roiList) {
-					if (roi.getName().equals(cageRoiName)) {
+					if (roi.getName() != null && roi.getName().equals(cageRoiName)) {
 						found = true;
 						break;
 					}
@@ -766,44 +760,30 @@ public class CagesArray {
 		// Use modern ROI finding API
 		List<ROI2D> roiList = seqCamData.findROIs("cage");
 		Collections.sort(roiList, new Comparators.ROI2D_Name());
-		
-		// Build a map of ROI names to ROIs for efficient lookup
-		Map<String, ROI2D> roiMap = new HashMap<>();
+		addMissingCages(roiList);
+		removeOrphanCages(roiList);
+		Collections.sort(cagesList, new Comparators.Cage_Name());
+	}
+	
+	private void addMissingCages(List<ROI2D> roiList) {
 		for (ROI2D roi : roiList) {
-			if (roi.getName() != null) {
-				roiMap.put(roi.getName(), roi);
-			}
-		}
-		
-		// Update ROI references for existing cages that match by ROI name
-		// Also identify which ROIs already have matching cages
-		Set<String> matchedRoiNames = new HashSet<>();
-		for (Cage cage : cagesList) {
-			ROI2D cageRoi = cage.getRoi();
-			if (cageRoi != null && cageRoi.getName() != null) {
-				String roiName = cageRoi.getName();
-				ROI2D matchingRoi = roiMap.get(roiName);
-				if (matchingRoi != null) {
-					// Update the ROI reference to match the one from sequence
-					cage.setRoi((ROI2DShape) matchingRoi);
-					matchedRoiNames.add(roiName);
+			if (roi.getName() == null)
+				continue;
+			boolean found = false;
+			for (Cage cage : cagesList) {
+				if (cage.getRoi() == null)
+					continue;
+				if (roi.getName().equals(cage.getRoi().getName())) {
+					found = true;
+					break;
 				}
 			}
-		}
-		
-		// Add new cages for ROIs that don't have matching cages yet
-		for (ROI2D roi : roiList) {
-			if (roi.getName() != null && !matchedRoiNames.contains(roi.getName())) {
+			if (!found) {
 				Cage cage = new Cage();
 				cage.setRoi((ROI2DShape) roi);
 				cagesList.add(cage);
-				matchedRoiNames.add(roi.getName());
 			}
 		}
-		
-		// Remove orphan cages (cages whose ROIs are not in the sequence)
-		removeOrphanCages(roiList);
-		Collections.sort(cagesList, new Comparators.Cage_Name());
 	}
 
 	public void removeAllRoiDetFromSequence(SequenceCamData seqCamData) {
@@ -1314,40 +1294,28 @@ public class CagesArray {
 
 		// Ensure gulps/derivatives exist when charting gulp-based outputs.
 		// NOTE: We do NOT auto-detect gulps here anymore.
-		// Detection relies on thresholds that the user must adapt via the detection dialog.
-		// If data is missing, charts will show "(no data)", prompting the user to run detection.
+		// Detection relies on thresholds that the user must adapt via the detection
+		// dialog.
+		// If data is missing, charts will show "(no data)", prompting the user to run
+		// detection.
 		/*
-		if (isGulpBased(resultsOptions.resultType)) {
-			// Check if any capillary is missing gulps
-			boolean missingGulps = false;
-			BuildSeriesOptions options = null;
-			for (Cage cage : cagesList) {
-				for (Capillary cap : cage.getCapillaries().getList()) {
-					if (!cap.isThereAnyMeasuresDone(EnumResults.SUMGULPS)) {
-						missingGulps = true;
-					}
-					if (options == null && cap.getGulpsOptions() != null) {
-						options = cap.getGulpsOptions();
-					}
-				}
-			}
-
-			if (missingGulps) {
-				try {
-					if (options == null)
-						options = new BuildSeriesOptions();
-					options.buildDerivative = true;
-					options.buildGulps = true;
-					options.detectAllGulps = true; // Force detection on all kymos for charting
-					options.detectAllKymos = true;
-					new GulpDetector().detectGulps(exp, options);
-				} catch (Exception e) {
-					// Keep charting resilient: if detection cannot run (missing kymos etc.), caller may show empty plots.
-					System.err.println("CagesArray.prepareComputations: failed to detect gulps: " + e.getMessage());
-				}
-			}
-		}
-		*/
+		 * if (isGulpBased(resultsOptions.resultType)) { // Check if any capillary is
+		 * missing gulps boolean missingGulps = false; BuildSeriesOptions options =
+		 * null; for (Cage cage : cagesList) { for (Capillary cap :
+		 * cage.getCapillaries().getList()) { if
+		 * (!cap.isThereAnyMeasuresDone(EnumResults.SUMGULPS)) { missingGulps = true; }
+		 * if (options == null && cap.getGulpsOptions() != null) { options =
+		 * cap.getGulpsOptions(); } } }
+		 * 
+		 * if (missingGulps) { try { if (options == null) options = new
+		 * BuildSeriesOptions(); options.buildDerivative = true; options.buildGulps =
+		 * true; options.detectAllGulps = true; // Force detection on all kymos for
+		 * charting options.detectAllKymos = true; new GulpDetector().detectGulps(exp,
+		 * options); } catch (Exception e) { // Keep charting resilient: if detection
+		 * cannot run (missing kymos etc.), caller may show empty plots.
+		 * System.err.println("CagesArray.prepareComputations: failed to detect gulps: "
+		 * + e.getMessage()); } } }
+		 */
 
 		// TOPLEVEL is defined as evaporation-corrected and displayed as (t - t0).
 		// TOPRAW is handled as (t - t0) at display/export level without evaporation.
@@ -1362,25 +1330,25 @@ public class CagesArray {
 		}
 	}
 
-	private static boolean isGulpBased(EnumResults resultType) {
-		if (resultType == null)
-			return false;
-		switch (resultType) {
-		case SUMGULPS:
-		case SUMGULPS_LR:
-		case NBGULPS:
-		case AMPLITUDEGULPS:
-		case TTOGULP:
-		case TTOGULP_LR:
-		case AUTOCORREL:
-		case AUTOCORREL_LR:
-		case CROSSCORREL:
-		case CROSSCORREL_LR:
-			return true;
-		default:
-			return false;
-		}
-	}
+//	private static boolean isGulpBased(EnumResults resultType) {
+//		if (resultType == null)
+//			return false;
+//		switch (resultType) {
+//		case SUMGULPS:
+//		case SUMGULPS_LR:
+//		case NBGULPS:
+//		case AMPLITUDEGULPS:
+//		case TTOGULP:
+//		case TTOGULP_LR:
+//		case AUTOCORREL:
+//		case AUTOCORREL_LR:
+//		case CROSSCORREL:
+//		case CROSSCORREL_LR:
+//			return true;
+//		default:
+//			return false;
+//		}
+//	}
 
 	public void computeEvaporationCorrection(Experiment exp) {
 		CagesArrayCapillariesComputation computation = new CagesArrayCapillariesComputation(this);
