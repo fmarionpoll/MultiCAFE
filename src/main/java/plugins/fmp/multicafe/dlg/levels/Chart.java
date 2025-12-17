@@ -34,7 +34,6 @@ public class Chart extends JPanel implements SequenceListener {
 	private static final long serialVersionUID = -7079184380174992501L;
 
 	private ChartLevelsFrame activeChart = null;
-	private EnumResults currentResultType = null;
 	private ChartCageArrayFrame chartCageArrayFrame = null;
 	private MultiCAFE parent0 = null;
 

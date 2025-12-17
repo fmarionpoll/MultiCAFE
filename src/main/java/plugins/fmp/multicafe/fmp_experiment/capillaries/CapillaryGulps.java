@@ -26,7 +26,8 @@ public class CapillaryGulps {
 	 * <ul>
 	 * <li>0: no feeding detected</li>
 	 * <li>&gt;0: feeding amount during this bin</li>
-	 * <li>&lt;0: negative event (kept in raw series; excluded from counting metrics)</li>
+	 * <li>&lt;0: negative event (kept in raw series; excluded from counting
+	 * metrics)</li>
 	 * </ul>
 	 */
 	private Level2D gulpAmplitude = new Level2D();
@@ -266,10 +267,10 @@ public class CapillaryGulps {
 		// Fallback to legacy conversion if needed (should be rare)
 		int npoints = 0;
 		if (gulps != null) {
-			for (Polyline2D gulp : gulps) {
-				if (gulp.npoints > 0) {
-					for (int i = 0; i < gulp.npoints; i++)
-						npoints = Math.max(npoints, (int) gulp.xpoints[i]);
+			for (Polyline2D gulpPolyline : gulps) {
+				if (gulpPolyline.npoints > 0) {
+					for (int i = 0; i < gulpPolyline.npoints; i++)
+						npoints = Math.max(npoints, (int) gulpPolyline.xpoints[i]);
 				}
 			}
 		}
@@ -355,8 +356,8 @@ public class CapillaryGulps {
 		gulps = new ArrayList<Polyline2D>(rois.size());
 		for (ROI2D roi : rois) {
 			if (roi instanceof ROI2DPolyLine) {
-				Polyline2D gulpLine = ((ROI2DPolyLine) roi).getPolyline2D();
-				gulps.add(gulpLine);
+				Polyline2D gulpPolyline = ((ROI2DPolyLine) roi).getPolyline2D();
+				gulps.add(gulpPolyline);
 			} else if (roi instanceof ROI2DArea) {
 				// Handle ROI2DArea (compacted gulps)
 				// An ROI2DArea is a mask. We can extract points but they are unordered.
