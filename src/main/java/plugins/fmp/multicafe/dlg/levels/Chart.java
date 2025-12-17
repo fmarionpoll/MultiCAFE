@@ -45,8 +45,8 @@ public class Chart extends JPanel implements SequenceListener {
 			EnumResults.TOPRAW, //
 			EnumResults.TOPLEVEL, //
 			EnumResults.BOTTOMLEVEL, //
-			EnumResults.DERIVEDVALUES, //
 			EnumResults.TOPLEVEL_LR, //
+			EnumResults.DERIVEDVALUES, //
 			EnumResults.SUMGULPS, //
 			EnumResults.SUMGULPS_LR };
 	private JComboBox<EnumResults> resultTypeComboBox = new JComboBox<EnumResults>(measures);

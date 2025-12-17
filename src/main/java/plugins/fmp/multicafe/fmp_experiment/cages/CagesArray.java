@@ -30,6 +30,7 @@ import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotString;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
+import plugins.fmp.multicafe.fmp_service.GulpDetector;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
 import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
@@ -1270,6 +1271,43 @@ public class CagesArray {
 
 		clearComputedMeasures();
 
+		// Ensure gulps/derivatives exist when charting gulp-based outputs.
+		// NOTE: We do NOT auto-detect gulps here anymore.
+		// Detection relies on thresholds that the user must adapt via the detection dialog.
+		// If data is missing, charts will show "(no data)", prompting the user to run detection.
+		/*
+		if (isGulpBased(resultsOptions.resultType)) {
+			// Check if any capillary is missing gulps
+			boolean missingGulps = false;
+			BuildSeriesOptions options = null;
+			for (Cage cage : cagesList) {
+				for (Capillary cap : cage.getCapillaries().getList()) {
+					if (!cap.isThereAnyMeasuresDone(EnumResults.SUMGULPS)) {
+						missingGulps = true;
+					}
+					if (options == null && cap.getGulpsOptions() != null) {
+						options = cap.getGulpsOptions();
+					}
+				}
+			}
+
+			if (missingGulps) {
+				try {
+					if (options == null)
+						options = new BuildSeriesOptions();
+					options.buildDerivative = true;
+					options.buildGulps = true;
+					options.detectAllGulps = true; // Force detection on all kymos for charting
+					options.detectAllKymos = true;
+					new GulpDetector().detectGulps(exp, options);
+				} catch (Exception e) {
+					// Keep charting resilient: if detection cannot run (missing kymos etc.), caller may show empty plots.
+					System.err.println("CagesArray.prepareComputations: failed to detect gulps: " + e.getMessage());
+				}
+			}
+		}
+		*/
+
 		// TOPLEVEL is defined as evaporation-corrected and displayed as (t - t0).
 		// TOPRAW is handled as (t - t0) at display/export level without evaporation.
 		if (resultsOptions.resultType == EnumResults.TOPLEVEL) {
@@ -1280,6 +1318,26 @@ public class CagesArray {
 		if (resultsOptions.resultType == EnumResults.TOPLEVEL_LR) {
 			computeEvaporationCorrection(exp);
 			computeLRMeasures(exp, resultsOptions.lrPIThreshold);
+		}
+	}
+
+	private static boolean isGulpBased(EnumResults resultType) {
+		if (resultType == null)
+			return false;
+		switch (resultType) {
+		case SUMGULPS:
+		case SUMGULPS_LR:
+		case NBGULPS:
+		case AMPLITUDEGULPS:
+		case TTOGULP:
+		case TTOGULP_LR:
+		case AUTOCORREL:
+		case AUTOCORREL_LR:
+		case CROSSCORREL:
+		case CROSSCORREL_LR:
+			return true;
+		default:
+			return false;
 		}
 	}
 

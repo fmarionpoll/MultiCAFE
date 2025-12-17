@@ -21,7 +21,7 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
 public class GulpDetector {
 
 	public void detectGulps(Experiment exp, BuildSeriesOptions options) {
-		int jitter = 5;
+		int jitter = options.jitter;
 		int firstKymo = 0;
 		int lastKymo = exp.getSeqKymos().getSequence().getSizeT() - 1;
 		if (!options.detectAllGulps) {

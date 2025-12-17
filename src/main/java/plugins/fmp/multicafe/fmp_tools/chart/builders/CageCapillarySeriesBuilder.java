@@ -125,14 +125,14 @@ public class CageCapillarySeriesBuilder implements CageSeriesBuilder {
 			for (XYSeries s : listL) {
 				int idx = s.indexOf(x);
 				if (idx >= 0) {
-					sumL += s.getY(idx).doubleValue();
+					sumL += Math.abs(s.getY(idx).doubleValue());
 					hasL = true;
 				}
 			}
 			for (XYSeries s : listR) {
 				int idx = s.indexOf(x);
 				if (idx >= 0) {
-					sumR += s.getY(idx).doubleValue();
+					sumR += Math.abs(s.getY(idx).doubleValue());
 					hasR = true;
 				}
 			}

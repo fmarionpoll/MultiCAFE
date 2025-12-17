@@ -276,6 +276,10 @@ public class ChartCageArrayFrame extends IcyFrame {
 		}
 
 		this.experiment = exp;
+		// Clear any previously displayed charts so empty datasets never leave stale charts on screen.
+		if (mainChartPanel != null) {
+			mainChartPanel.removeAll();
+		}
 		// Ensure derived measures (evaporation-corrected TOPLEVEL, LR SUM/PI, etc.) are computed
 		// before we build the datasets used for plotting.
 		exp.getCages().prepareComputations(exp, resultsOptions);
@@ -342,6 +346,26 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 */
 	private ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, ResultsOptions resultsOptions,
 			XYSeriesCollection xyDataSetList) {
+
+		// If requested result isn't available, show an explicit placeholder rather than leaving stale charts visible.
+		if (xyDataSetList == null || xyDataSetList.getSeriesCount() == 0) {
+			NumberAxis xAxis = setXaxis("time", resultsOptions);
+			NumberAxis yAxis = setYaxis("", row, col, resultsOptions);
+			XYPlot xyPlot = CageChartPlotFactory.buildXYPlot(new XYSeriesCollection(), xAxis, yAxis);
+			JFreeChart chart = new JFreeChart(null, null, xyPlot, false);
+
+			TextTitle title = new TextTitle("Cage " + cage.getProperties().getCageID() + " (no data)",
+					new Font("SansSerif", Font.PLAIN, 12));
+			title.setPosition(RectangleEdge.BOTTOM);
+			chart.addSubtitle(title);
+			chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
+
+			ChartCagePanel chartCagePanel = new ChartCagePanel(chart, DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT,
+					MIN_CHART_WIDTH, MIN_CHART_HEIGHT, MAX_CHART_WIDTH, MAX_CHART_HEIGHT, true, true, true, true,
+					false, true);
+			chartCagePanel.subscribeToCagePropertiesUpdates(cage);
+			return chartCagePanel;
+		}
 
 		if (cage.getCapillaries().getList().size() < 1) {
 //			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no capillaries");
@@ -430,6 +454,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param resultsOptions the export options
 	 */
 	private void arrangePanelsInDisplay(ResultsOptions resultsOptions) {
+		// Ensure we never keep previously displayed panels when the new dataset is empty.
+		mainChartPanel.removeAll();
 		if (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast) {
 			int indexCage = resultsOptions.cageIndexFirst;
 			int row = indexCage / experiment.getCages().nCagesAlongX;
@@ -462,6 +488,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 				}
 			}
 		}
+
+		mainChartPanel.revalidate();
+		mainChartPanel.repaint();
 	}
 
 	/**
@@ -514,6 +543,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param e the chart mouse event
 	 * @return the selected spot or null if not found
 	 */
+	@SuppressWarnings("unused")
 	private Spot getSpotFromClickedChart(ChartMouseEvent e) {
 		if (e == null) {
 			LOGGER.warning("Chart mouse event is null");
@@ -704,6 +734,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param resultsOptions the export options
 	 * @param clickedSpot    the clicked spot
 	 */
+	@SuppressWarnings("unused")
 	private void chartSelectClickedSpot(Experiment exp, ResultsOptions resultsOptions, Spot clickedSpot) {
 		if (clickedSpot == null) {
 			LOGGER.warning("Clicked spot is null");
@@ -796,7 +827,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * Inner class for handling chart mouse events.
 	 */
 	private class SpotChartMouseListener implements ChartMouseListener {
+		@SuppressWarnings("unused")
 		private final Experiment experiment;
+		@SuppressWarnings("unused")
 		private final ResultsOptions resultsOptions;
 
 		/**

@@ -178,6 +178,9 @@ public class CapillaryPersistence {
 		String explanation2 = "columns=" + sep + "name" + sep + "index" + sep + " n_gulps(i)" + sep + " ..." + sep
 				+ " gulp_i" + sep + " .npts(j)" + sep + "." + sep + "(xij" + sep + "yij))\n";
 		switch (measureType) {
+		case TOPRAW:
+			sbf.append("#" + sep + "TOPRAW" + sep + explanation1);
+			break;
 		case TOPLEVEL:
 			sbf.append("#" + sep + "TOPLEVEL" + sep + explanation1);
 			break;
@@ -202,8 +205,14 @@ public class CapillaryPersistence {
 		sbf.append(cap.getRoiNamePrefix() + sep + cap.kymographIndex + sep);
 
 		switch (measureType) {
-		case TOPLEVEL:
+		case TOPRAW:
 			cap.getTopLevel().cvsExportYDataToRow(sbf, sep);
+			break;
+		case TOPLEVEL:
+			if (cap.getTopCorrected() != null && cap.getTopCorrected().isThereAnyMeasuresDone())
+				cap.getTopCorrected().cvsExportYDataToRow(sbf, sep);
+			else
+				cap.getTopLevel().cvsExportYDataToRow(sbf, sep);
 			break;
 		case BOTTOMLEVEL:
 			cap.getBottomLevel().cvsExportYDataToRow(sbf, sep);
@@ -249,11 +258,17 @@ public class CapillaryPersistence {
 
 	public static void csvImportCapillaryData(Capillary cap, EnumCapillaryMeasures measureType, String[] data, boolean x, boolean y) {
 		switch (measureType) {
-		case TOPLEVEL:
+		case TOPRAW:
 			if (x && y)
 				cap.getTopLevel().csvImportXYDataFromRow(data, 2);
 			else if (!x && y)
 				cap.getTopLevel().csvImportYDataFromRow(data, 2);
+			break;
+		case TOPLEVEL:
+			if (x && y)
+				cap.getTopCorrected().csvImportXYDataFromRow(data, 2);
+			else if (!x && y)
+				cap.getTopCorrected().csvImportYDataFromRow(data, 2);
 			break;
 		case BOTTOMLEVEL:
 			if (x && y)

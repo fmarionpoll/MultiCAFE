@@ -15,6 +15,7 @@ import icy.type.geom.Polyline2D;
 import icy.util.StringUtil;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
+import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 public class CapillaryGulps {
@@ -138,10 +139,10 @@ public class CapillaryGulps {
 
 		int size = datai.size();
 		ArrayList<Integer> data_out = new ArrayList<Integer>(Collections.nCopies(size, 0));
-		
+
 		boolean foundGulp = false;
 		int distanceToNextGulp = 0;
-		
+
 		for (int index = size - 1; index >= 0; index--) {
 			if (datai.get(index) == 1) {
 				distanceToNextGulp = 0;
@@ -231,8 +232,42 @@ public class CapillaryGulps {
 	public void buildGulpsFromROIs(ArrayList<ROI2D> rois) {
 		gulps = new ArrayList<Polyline2D>(rois.size());
 		for (ROI2D roi : rois) {
-			Polyline2D gulpLine = ((ROI2DPolyLine) roi).getPolyline2D();
-			gulps.add(gulpLine);
+			if (roi instanceof ROI2DPolyLine) {
+				Polyline2D gulpLine = ((ROI2DPolyLine) roi).getPolyline2D();
+				gulps.add(gulpLine);
+			} else if (roi instanceof ROI2DArea) {
+				// Handle ROI2DArea (compacted gulps)
+				// An ROI2DArea is a mask. We can extract points but they are unordered.
+				// However, gulps are "events" at specific times. If we assume gulps are single
+				// points
+				// or vertical segments on the kymo, we can reconstruct them.
+				// Or, maybe we just need the points to compute measures.
+				// The methods below (getCumSum, etc.) iterate over 'gulps' (Polylines).
+				// If we convert the Area into a set of 1-point Polylines or reconstruct
+				// segments, it might work.
+
+				// Let's try to extract points from the Area and create Polylines.
+				// Since we don't know the connectivity, we can treat each point as a tiny gulp
+				// or group them by X?
+				// Grouping by X (time) seems safest for kymographs.
+
+				Rectangle rect = roi.getBounds();
+				if (rect.isEmpty())
+					continue;
+
+				// Iterate over the bounding box and check containment
+				for (int x = rect.x; x < rect.x + rect.width; x++) {
+					ArrayList<Point2D> pts = new ArrayList<>();
+					for (int y = rect.y; y < rect.y + rect.height; y++) {
+						if (roi.contains(x, y)) {
+							pts.add(new Point2D.Double(x, y));
+						}
+					}
+					if (!pts.isEmpty()) {
+						addNewGulpFromPoints(pts);
+					}
+				}
+			}
 		}
 	}
 
@@ -243,6 +278,9 @@ public class CapillaryGulps {
 			if (roi instanceof ROI2DPolyLine) {
 				if (roiname.contains("gulp"))
 					rois.add((ROI2DPolyLine) roi);
+			} else if (roi instanceof ROI2DArea) {
+				if (roiname.contains("gulp"))
+					rois.add((ROI2DArea) roi);
 			}
 		}
 		buildGulpsFromROIs(rois);
