@@ -336,7 +336,8 @@ public class CapillaryMeasure {
 	}
 
 	public boolean csvImportYDataFromRow(String[] data, int startAt) {
-		if (data.length < startAt)
+		int len = data.length;
+		if (len <= startAt)
 			return false;
 
 		int npoints = Integer.valueOf(data[startAt]);
