@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -51,7 +50,8 @@ public class Chart extends JPanel implements SequenceListener {
 			EnumResults.SUMGULPS };
 	private JComboBox<EnumResults> resultTypeComboBox = new JComboBox<EnumResults>(measures);
 
-	private JCheckBox correctEvaporationCheckbox = new JCheckBox("correct evaporation", false);
+	// private JCheckBox correctEvaporationCheckbox = new JCheckBox("correct
+	// evaporation", false);
 	private JButton displayResultsButton = new JButton("Display results");
 	private JButton axisOptionsButton = new JButton("Axis options");
 	private JRadioButton displayAllButton = new JRadioButton("all cages");
@@ -71,7 +71,7 @@ public class Chart extends JPanel implements SequenceListener {
 		add(panel);
 
 		JPanel panel1 = new JPanel(layout);
-		panel1.add(correctEvaporationCheckbox);
+//		panel1.add(correctEvaporationCheckbox);
 		panel1.add(displayAllButton);
 		panel1.add(displaySelectedButton);
 		add(panel1);
@@ -112,15 +112,15 @@ public class Chart extends JPanel implements SequenceListener {
 			}
 		});
 
-		correctEvaporationCheckbox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-				if (exp != null) {
-					displayChartPanels(exp); // displayGraphsPanels(exp);
-				}
-			}
-		});
+//		correctEvaporationCheckbox.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(final ActionEvent e) {
+//				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+//				if (exp != null) {
+//					displayChartPanels(exp); // displayGraphsPanels(exp);
+//				}
+//			}
+//		});
 
 		axisOptionsButton.addActionListener(new ActionListener() {
 			@Override

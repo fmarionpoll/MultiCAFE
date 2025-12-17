@@ -185,7 +185,8 @@ public class ChartCageBuild {
 		XYPlot xyPlot = new XYPlot(sumCollection, xAxis, yAxis, sumRenderer);
 
 		XYLineAndShapeRenderer piRenderer = getSubPlotRenderer(piCollection);
-		NumberAxis yAxisPI = new NumberAxis("PI");
+		// Right Y-axis: PI. Keep consistent scaling across all charts and remove its title.
+		NumberAxis yAxisPI = new NumberAxis("");
 		yAxisPI.setAutoRange(false);
 		yAxisPI.setRange(-1.0, 1.0);
 
