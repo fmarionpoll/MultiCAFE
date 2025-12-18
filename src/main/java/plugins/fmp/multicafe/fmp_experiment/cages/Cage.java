@@ -706,31 +706,31 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			i++;
 		}
 
-		// Parse sex
+		// Parse sex (may be labeled as "sect" in legacy format)
 		if (i < data.length) {
 			prop.setFlySex(data[i]);
 			i++;
 		}
 
-		// Parse ROI name
+		// Parse ROI name (if present in legacy CAGES section format)
 		String cageROI_name = "";
 		if (i < data.length) {
 			cageROI_name = data[i];
 			i++;
 		}
 
-		// Parse npoints
+		// Parse npoints (if present in legacy CAGES section format)
 		int npoints = 0;
 		if (i < data.length) {
 			try {
 				npoints = Integer.valueOf(data[i]);
 				i++;
 			} catch (NumberFormatException e) {
-				System.err.println("Cage:csvImport_CAGE_Header() Invalid npoints: " + data[i]);
+				// npoints not present or invalid - that's OK, ROI might be loaded from XML
 			}
 		}
 
-		// Parse polygon vertices (x, y pairs)
+		// Parse polygon vertices (x, y pairs) if present in legacy CAGES section format
 		if (npoints > 0 && i + (npoints * 2) <= data.length) {
 			double[] x = new double[npoints];
 			double[] y = new double[npoints];

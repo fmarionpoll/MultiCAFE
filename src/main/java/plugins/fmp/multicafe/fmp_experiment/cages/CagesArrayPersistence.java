@@ -37,81 +37,91 @@ public class CagesArrayPersistence {
 	private final String csvSep = ";";
 
 	public boolean load_Cages(CagesArray cages, String directory) {
-		boolean flag = false;
+		boolean csvLoadSuccess = false;
 		int cagesBeforeCSV = cages.cagesList.size();
 		System.out.println("CagesArrayPersistence:load_Cages() START - directory: " + directory + ", cages before: "
 				+ cagesBeforeCSV);
+
+		// Priority 1: Try to load from CSV first (fast, efficient, preferred format)
 		try {
-			// Load bulk data from CSV (fast, efficient)
-			flag = csvLoadCagesMeasures(cages, directory);
+			csvLoadSuccess = csvLoadCagesMeasures(cages, directory);
 			int cagesAfterCSV = cages.cagesList.size();
 			int cagesWithFliesAfterCSV = 0;
+			int cagesWithFlyPositions = 0;
 			for (Cage cage : cages.cagesList) {
 				if (cage.getProperties().getCageNFlies() > 0) {
 					cagesWithFliesAfterCSV++;
 				}
+				if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
+						&& !cage.flyPositions.flyPositionList.isEmpty()) {
+					cagesWithFlyPositions++;
+				}
 			}
 			System.out.println(String.format(
-					"CagesArrayPersistence:load_Cages() After CSV load: %d cages (was %d), %d with nFlies > 0",
-					cagesAfterCSV, cagesBeforeCSV, cagesWithFliesAfterCSV));
+					"CagesArrayPersistence:load_Cages() After CSV load: %d cages (was %d), %d with nFlies > 0, %d with fly positions",
+					cagesAfterCSV, cagesBeforeCSV, cagesWithFliesAfterCSV, cagesWithFlyPositions));
 			Logger.info(String.format(
-					"CagesArrayPersistence:load_Cages() After CSV load: %d cages (was %d), %d with nFlies > 0",
-					cagesAfterCSV, cagesBeforeCSV, cagesWithFliesAfterCSV));
+					"CagesArrayPersistence:load_Cages() After CSV load: %d cages (was %d), %d with nFlies > 0, %d with fly positions",
+					cagesAfterCSV, cagesBeforeCSV, cagesWithFliesAfterCSV, cagesWithFlyPositions));
 		} catch (Exception e) {
 			System.out.println("CagesArrayPersistence:load_Cages() Failed to load cages from CSV: " + directory + " - "
 					+ e.getMessage());
 			Logger.error("CagesArrayPersistence:load_Cages() Failed to load cages from CSV: " + directory, e);
+			csvLoadSuccess = false;
 		}
 
-		// If CSV load failed, try full XML load (legacy format)
-		if (!flag) {
-			System.out.println("CagesArrayPersistence:load_Cages() CSV load failed, falling back to full XML load");
-			Logger.warn("CagesArrayPersistence:load_Cages() CSV load failed, falling back to full XML load");
-			String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
-			flag = xmlReadCagesFromFileNoQuestion(cages, tempName);
-			int cagesAfterXML = cages.cagesList.size();
-			int cagesWithFliesAfterXML = 0;
-			for (Cage cage : cages.cagesList) {
-				if (cage.getProperties().getCageNFlies() > 0) {
-					cagesWithFliesAfterXML++;
-				}
-			}
+		// If CSV load succeeded, skip XML entirely to preserve CSV data
+		if (csvLoadSuccess) {
 			System.out.println(
-					String.format("CagesArrayPersistence:load_Cages() After XML load: %d cages, %d with nFlies > 0",
-							cagesAfterXML, cagesWithFliesAfterXML));
-			Logger.info(String.format("CagesArrayPersistence:load_Cages() After XML load: %d cages, %d with nFlies > 0",
-					cagesAfterXML, cagesWithFliesAfterXML));
-		} else {
-			// CSV load succeeded, now load ROIs from XML
+					"CagesArrayPersistence:load_Cages() CSV load succeeded - skipping XML load to preserve CSV data");
+			Logger.info(
+					"CagesArrayPersistence:load_Cages() CSV load succeeded - skipping XML load to preserve CSV data");
+
+			// Optionally load ROIs from XML if CSV doesn't have them (but don't overwrite
+			// cage data)
 			String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
-			int cagesWithFliesBeforeROI = 0;
+			int cagesWithROIsBefore = 0;
 			for (Cage cage : cages.cagesList) {
-				if (cage.getProperties().getCageNFlies() > 0) {
-					cagesWithFliesBeforeROI++;
+				if (cage.getRoi() != null) {
+					cagesWithROIsBefore++;
 				}
 			}
-			System.out.println("CagesArrayPersistence:load_Cages() Before ROI-only XML load: " + cagesWithFliesBeforeROI
-					+ " cages with nFlies > 0");
-			xmlLoadCagesROIsOnly(cages, tempName);
-			int cagesWithFliesAfterROI = 0;
-			for (Cage cage : cages.cagesList) {
-				if (cage.getProperties().getCageNFlies() > 0) {
-					cagesWithFliesAfterROI++;
-				}
+
+			// Only load ROIs if cages don't have them yet
+			if (cagesWithROIsBefore < cages.cagesList.size()) {
+				System.out.println("CagesArrayPersistence:load_Cages() Loading ROIs from XML (CSV data preserved)");
+				xmlLoadCagesROIsOnly(cages, tempName);
+			} else {
+				System.out
+						.println("CagesArrayPersistence:load_Cages() All cages already have ROIs - skipping ROI load");
 			}
-			System.out.println("CagesArrayPersistence:load_Cages() After ROI-only XML load: " + cagesWithFliesAfterROI
-					+ " cages with nFlies > 0");
-			if (cagesWithFliesBeforeROI != cagesWithFliesAfterROI) {
-				System.out.println(String.format(
-						"CagesArrayPersistence:load_Cages() WARNING: nFlies count changed after ROI load: %d -> %d",
-						cagesWithFliesBeforeROI, cagesWithFliesAfterROI));
-				Logger.warn(String.format(
-						"CagesArrayPersistence:load_Cages() WARNING: nFlies count changed after ROI load: %d -> %d",
-						cagesWithFliesBeforeROI, cagesWithFliesAfterROI));
+
+			System.out.println("CagesArrayPersistence:load_Cages() END - final cages: " + cages.cagesList.size());
+			return true;
+		}
+
+		// Priority 2: CSV load failed, fall back to full XML load (legacy format)
+		System.out.println(
+				"CagesArrayPersistence:load_Cages() CSV load failed or no CSV file found, falling back to full XML load");
+		Logger.warn(
+				"CagesArrayPersistence:load_Cages() CSV load failed or no CSV file found, falling back to full XML load");
+		String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
+		boolean xmlLoadSuccess = xmlReadCagesFromFileNoQuestion(cages, tempName);
+		int cagesAfterXML = cages.cagesList.size();
+		int cagesWithFliesAfterXML = 0;
+		for (Cage cage : cages.cagesList) {
+			if (cage.getProperties().getCageNFlies() > 0) {
+				cagesWithFliesAfterXML++;
 			}
 		}
+		System.out.println(
+				String.format("CagesArrayPersistence:load_Cages() After XML load: %d cages, %d with nFlies > 0",
+						cagesAfterXML, cagesWithFliesAfterXML));
+		Logger.info(String.format("CagesArrayPersistence:load_Cages() After XML load: %d cages, %d with nFlies > 0",
+				cagesAfterXML, cagesWithFliesAfterXML));
+
 		System.out.println("CagesArrayPersistence:load_Cages() END - final cages: " + cages.cagesList.size());
-		return flag;
+		return xmlLoadSuccess;
 	}
 
 	public boolean save_Cages(CagesArray cages, String directory) {
@@ -366,21 +376,18 @@ public class CagesArrayPersistence {
 					if (data.length > 1) {
 //						System.out.println("CagesArrayPersistence:csvLoadCagesMeasures() Found section: " + data[1]);
 						switch (data[1]) {
+						case "DIMENSION":
+							// Legacy format: DIMENSION section with n_cages parameter
+							csvLoad_DIMENSION(cages, csvReader, sep);
+							break;
 						case "DESCRIPTION":
 							descriptionCount++;
 							csvLoad_DESCRIPTION(cages, csvReader, sep);
 							break;
 						case "CAGE":
+						case "CAGES":
 							cageCount++;
-//							System.out.println("CagesArrayPersistence:csvLoadCagesMeasures() CAGE section found but skipped (redundant - DESCRIPTION section already loaded properties)");
-							// Skip CAGE section - DESCRIPTION section already contains all necessary data
-							// Just skip to the next section marker
-							String skipRow;
-							while ((skipRow = csvReader.readLine()) != null) {
-								String[] skipData = skipRow.split(sep);
-								if (skipData.length > 0 && skipData[0].equals("#"))
-									break;
-							}
+							csvLoad_CAGE(cages, csvReader, sep);
 							break;
 						case "POSITION":
 							positionCount++;
@@ -419,6 +426,39 @@ public class CagesArrayPersistence {
 		return descriptionCount > 0 || cageCount > 0 || positionCount > 0;
 	}
 
+	private void csvLoad_DIMENSION(CagesArray cages, BufferedReader csvReader, String sep) {
+		String row;
+		try {
+			while ((row = csvReader.readLine()) != null) {
+				String[] data = row.split(sep);
+				if (data.length > 0 && data[0].equals("#"))
+					break;
+
+				if (data.length > 0) {
+					String test = data[0].substring(0, Math.min(data[0].length(), 7));
+					if (test.equals("n cages") || test.equals("n cells")) {
+						if (data.length > 1) {
+							try {
+								int ncages = Integer.valueOf(data[1]);
+								if (ncages >= cages.cagesList.size()) {
+									cages.cagesList.ensureCapacity(ncages);
+								} else {
+									cages.cagesList.subList(ncages, cages.cagesList.size()).clear();
+								}
+							} catch (NumberFormatException e) {
+								Logger.warn(
+										"CagesArrayPersistence:csvLoad_DIMENSION() Invalid n_cages value: " + data[1]);
+							}
+						}
+						break; // Found n_cages parameter, done with DIMENSION section
+					}
+				}
+			}
+		} catch (IOException e) {
+			Logger.error("CagesArrayPersistence:csvLoad_DIMENSION() Error: " + e.getMessage(), e);
+		}
+	}
+
 	private void csvLoad_DESCRIPTION(CagesArray cages, BufferedReader csvReader, String sep) {
 		String row;
 		int cagesLoaded = 0;
@@ -441,60 +481,7 @@ public class CagesArrayPersistence {
 							}
 						}
 					} else {
-						// This is a cage description row: cageID, cageName, nFlies, age, comment,
-						// strain, sex, npoints, coordinates...
-						// Format: 0 cage000 0 5 .. .. ..
-						try {
-							int cageID = Integer.valueOf(data[0]);
-							Cage cage = cages.getCageFromID(cageID);
-							if (cage == null) {
-								cage = new Cage();
-								cages.cagesList.add(cage);
-							}
-
-							// Parse nFlies from column 2 (index 2)
-							if (data.length > 2) {
-								int nFliesBefore = cage.getProperties().getCageNFlies();
-								try {
-									int nFlies = Integer.valueOf(data[2]);
-									cage.getProperties().setCageNFlies(nFlies);
-									cagesLoaded++;
-									if (nFlies > 0) {
-										cagesWithFlies++;
-									}
-//									System.out.println(String.format("CagesArrayPersistence:csvLoad_DESCRIPTION() Cage %d: nFlies %d -> %d (from CSV data[2]='%s')", 
-//										cageID, nFliesBefore, nFlies, data[2]));
-
-									// Also set other properties if available
-									if (data.length > 1) {
-										cage.getProperties().setStrCageNumber(data[1]);
-									}
-									if (data.length > 3) {
-										try {
-											int age = Integer.valueOf(data[3]);
-											cage.getProperties().setFlyAge(age);
-										} catch (NumberFormatException e) {
-											// Age not a number, skip
-										}
-									}
-									if (data.length > 4) {
-										cage.getProperties().setComment(data[4]);
-									}
-									if (data.length > 5) {
-										cage.getProperties().setFlyStrain(data[5]);
-									}
-									if (data.length > 6) {
-										cage.getProperties().setFlySex(data[6]);
-									}
-								} catch (NumberFormatException e) {
-									System.out.println(
-											"CagesArrayPersistence:csvLoad_DESCRIPTION() Invalid nFlies value for cage "
-													+ cageID + ": " + data[2]);
-								}
-							}
-						} catch (NumberFormatException e) {
-							// Not a cage row (probably header or other data), skip
-						}
+						System.out.println("skipped row with unknown format for DIMENSION section");
 					}
 				}
 			}
@@ -508,48 +495,48 @@ public class CagesArrayPersistence {
 
 	private void csvLoad_CAGE(CagesArray cages, BufferedReader csvReader, String sep) {
 		String row;
-		int cagesLoaded = 0;
-		int cagesWithFlies = 0;
+//		int cagesLoaded = 0;
+//		int cagesWithFlies = 0;
 		try {
+			// Skip header line (cageID, nFlies, age, Comment, strain, sect, ROIname,
+			// npoints, x1, y1, ...)
 			row = csvReader.readLine();
+			if (row == null) {
+				return;
+			}
+
+			// Read cage data rows
 			while ((row = csvReader.readLine()) != null) {
 				String[] data = row.split(sep);
 				if (data.length > 0 && data[0].equals("#"))
 					break;
 
 				if (data.length > 0) {
-					int cageID = 0;
-					try {
-						cageID = Integer.valueOf(data[0]);
-					} catch (NumberFormatException e) {
-						Logger.warn("CagesArrayPersistence:csvLoad_CAGE() Invalid integer input: " + data[0]);
-						continue;
-					}
-					Cage cage = cages.getCageFromID(cageID);
-					if (cage == null) {
-						cage = new Cage();
-						cages.cagesList.add(cage);
-					}
-					int nFliesBefore = cage.getProperties().getCageNFlies();
+					Cage cage = getCagefromID(cages, data[0]);
 					cage.csvImport_CAGE_Header(data);
-					int nFliesAfter = cage.getProperties().getCageNFlies();
-					cagesLoaded++;
-					if (nFliesAfter > 0) {
-						cagesWithFlies++;
-					}
-//					System.out.println(String.format("CagesArrayPersistence:csvLoad_CAGE() Cage %d: nFlies %d -> %d (CSV row: %s)", 
-//						cageID, nFliesBefore, nFliesAfter, row));
-					if (data.length > 1) {
-						System.out.println(String.format("  -> data[0]=%s, data[1]=%s (nFlies field)", data[0],
-								data.length > 1 ? data[1] : "N/A"));
-					}
+//					cagesLoaded++;
+//					cagesWithFlies += cage.getProperties().getCageNFlies();
 				}
 			}
-//			System.out.println(String.format("CagesArrayPersistence:csvLoad_CAGE() Loaded %d cages from CSV, %d with nFlies > 0", 
-//				cagesLoaded, cagesWithFlies));
 		} catch (IOException e) {
 			Logger.error("CagesArrayPersistence:csvLoad_CAGE() Error: " + e.getMessage(), e);
 		}
+	}
+
+	private Cage getCagefromID(CagesArray cages, String data) {
+		int cageID = 0;
+		try {
+			cageID = Integer.valueOf(data);
+		} catch (NumberFormatException e) {
+			Logger.warn("CagesArrayPersistence:csvLoad_CAGE() Invalid integer input: " + data);
+			cageID = -1;
+		}
+		Cage cage = cages.getCageFromID(cageID);
+		if (cage == null) {
+			cage = new Cage();
+			cages.cagesList.add(cage);
+		}
+		return cage;
 	}
 
 	private void csvLoad_Measures(CagesArray cages, BufferedReader csvReader, EnumCageMeasures measureType,
@@ -594,7 +581,7 @@ public class CagesArrayPersistence {
 	private boolean csvSaveCagesMeasures(CagesArray cages, String directory) {
 		try {
 			FileWriter csvWriter = new FileWriter(directory + File.separator + "CagesMeasures.csv");
-			csvSaveDescriptionSection(cages, csvWriter);
+			csvSaveDESCRIPTIONSection(cages, csvWriter);
 			csvSaveCAGESection(cages, csvWriter);
 			csvSaveMeasuresSection(cages, csvWriter, EnumCageMeasures.POSITION);
 			csvWriter.flush();
@@ -606,14 +593,10 @@ public class CagesArrayPersistence {
 		return true;
 	}
 
-	private boolean csvSaveDescriptionSection(CagesArray cages, FileWriter csvWriter) {
+	private boolean csvSaveDESCRIPTIONSection(CagesArray cages, FileWriter csvWriter) {
 		try {
 			csvWriter.append("#" + csvSep + "DESCRIPTION" + csvSep + "Cages data\n");
 			csvWriter.append("n cages=" + csvSep + Integer.toString(cages.cagesList.size()) + "\n");
-			if (cages.cagesList.size() > 0)
-				for (Cage cage : cages.cagesList)
-					csvWriter.append(cage.csvExportCageDescription(csvSep));
-
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {
 			Logger.error("CagesArrayPersistence:csvSaveDescriptionSection() Error: " + e.getMessage(), e);
@@ -623,14 +606,41 @@ public class CagesArrayPersistence {
 
 	private boolean csvSaveCAGESection(CagesArray cages, FileWriter csvWriter) {
 		try {
+			// Legacy format: CAGE section with header line and ROI data
 			csvWriter.append("#" + csvSep + "CAGE" + csvSep + "Cage properties\n");
-			csvWriter.append("cageID" + csvSep + "nFlies" + csvSep + "age" + csvSep + "comment" + csvSep + "strain"
-					+ csvSep + "sex" + "\n");
+			// Header: cageID, nFlies, age, Comment, strain, sect, ROIname, npoints, x1, y1,
+			// x2, y2, ...
+			csvWriter.append("cageID" + csvSep + "nFlies" + csvSep + "age" + csvSep + "Comment" + csvSep + "strain"
+					+ csvSep + "sect" + csvSep + "ROIname" + csvSep + "npoints\n");
+
 			for (Cage cage : cages.cagesList) {
-				csvWriter.append(String.format("%d%s%d%s%d%s%s%s%s%s%s\n", cage.getProperties().getCageID(), csvSep,
+				// Legacy format: cageID, nFlies, age, Comment, strain, sect, ROIname, npoints,
+				// x1, y1, x2, y2, ...
+				csvWriter.append(String.format("%d%s%d%s%d%s%s%s%s%s%s%s", cage.getProperties().getCageID(), csvSep,
 						cage.getProperties().getCageNFlies(), csvSep, cage.getProperties().getFlyAge(), csvSep,
-						cage.getProperties().getComment(), csvSep, cage.getProperties().getFlyStrain(), csvSep,
-						cage.getProperties().getFlySex()));
+						cage.getProperties().getComment() != null ? cage.getProperties().getComment() : "", csvSep,
+						cage.getProperties().getFlyStrain() != null ? cage.getProperties().getFlyStrain() : "", csvSep,
+						cage.getProperties().getFlySex() != null ? cage.getProperties().getFlySex() : "", csvSep));
+
+				// Add ROI name
+				String roiName = (cage.getRoi() != null && cage.getRoi().getName() != null) ? cage.getRoi().getName()
+						: "cage" + String.format("%03d", cage.getProperties().getCageID());
+				csvWriter.append(roiName + csvSep);
+
+				// Add ROI polygon points if available
+				if (cage.getRoi() != null && cage.getRoi() instanceof plugins.kernel.roi.roi2d.ROI2DPolygon) {
+					plugins.kernel.roi.roi2d.ROI2DPolygon polyRoi = (plugins.kernel.roi.roi2d.ROI2DPolygon) cage
+							.getRoi();
+					icy.type.geom.Polygon2D polygon = polyRoi.getPolygon2D();
+					csvWriter.append(Integer.toString(polygon.npoints));
+					for (int i = 0; i < polygon.npoints; i++) {
+						csvWriter.append(csvSep + Integer.toString((int) polygon.xpoints[i]));
+						csvWriter.append(csvSep + Integer.toString((int) polygon.ypoints[i]));
+					}
+				} else {
+					csvWriter.append("0");
+				}
+				csvWriter.append("\n");
 			}
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {
@@ -712,11 +722,11 @@ public class CagesArrayPersistence {
 					return false;
 				}
 
-				boolean flag = false;
+				boolean csvLoadSuccess = false;
 				try {
-					// Load bulk data from CSV (fast, efficient)
+					// Priority 1: Load bulk data from CSV (fast, efficient, preferred format)
 					// This now uses a temporary CagesArray to avoid corrupting data if cancelled
-					flag = csvLoadCagesMeasures(cages, directory);
+					csvLoadSuccess = csvLoadCagesMeasures(cages, directory);
 				} catch (Exception e) {
 					// Check if cancelled during load
 					if (isCancelled()) {
@@ -724,6 +734,7 @@ public class CagesArrayPersistence {
 					}
 					Logger.error("CagesArrayPersistence:loadCagesAsync() Failed to load cages from CSV: " + directory,
 							e);
+					csvLoadSuccess = false;
 				}
 
 				// Check if cancelled after CSV load
@@ -731,17 +742,26 @@ public class CagesArrayPersistence {
 					return false;
 				}
 
-				// If CSV load failed, try full XML load (legacy format)
-				if (!flag) {
+				// If CSV load succeeded, skip XML entirely to preserve CSV data
+				if (csvLoadSuccess) {
+					// Optionally load ROIs from XML if cages don't have them yet
 					String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
-					flag = xmlReadCagesFromFileNoQuestion(cages, tempName);
-				} else {
-					// CSV load succeeded, now load ROIs from XML
-					String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
-					xmlLoadCagesROIsOnly(cages, tempName);
+					int cagesWithROIs = 0;
+					for (Cage cage : cages.cagesList) {
+						if (cage.getRoi() != null) {
+							cagesWithROIs++;
+						}
+					}
+					// Only load ROIs if cages don't have them yet
+					if (cagesWithROIs < cages.cagesList.size()) {
+						xmlLoadCagesROIsOnly(cages, tempName);
+					}
+					return true;
 				}
 
-				return flag;
+				// Priority 2: CSV load failed, fall back to full XML load (legacy format)
+				String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
+				return xmlReadCagesFromFileNoQuestion(cages, tempName);
 			}
 
 			@Override

@@ -1,12 +1,14 @@
 package plugins.fmp.multicafe.fmp_experiment;
 
 import java.io.File;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
 /**
@@ -62,24 +64,44 @@ public class LazyExperiment extends Experiment {
 				ExperimentDirectories expDirectories = new ExperimentDirectories();
 				if (expDirectories.getDirectoriesFromExptPath(metadata.getBinDirectory(),
 						metadata.getCameraDirectory())) {
-				Experiment fullExp = new Experiment(expDirectories);
-				// Copy essential public properties from the fully loaded experiment
-				setSeqCamData(fullExp.getSeqCamData());
-				setCages(fullExp.getCages());
-				this.firstImage_FileTime = fullExp.firstImage_FileTime;
-				this.lastImage_FileTime = fullExp.lastImage_FileTime;
-				this.col = fullExp.col;
-				this.chainToPreviousExperiment = fullExp.chainToPreviousExperiment;
-				this.chainToNextExperiment = fullExp.chainToNextExperiment;
-				this.chainImageFirst_ms = fullExp.chainImageFirst_ms;
-				this.experimentID = fullExp.experimentID;
-				// Copy experiment properties (EXP_STIM1, EXP_CONC1, EXP_STIM2, EXP_CONC2, etc.)
-				// Always use properties from the fully loaded experiment to ensure correctness
-				getProperties().copyFieldsFrom(fullExp.getProperties());
-				this.isLoaded = true;
+					
+					// Set up directories using public methods
+					setResultsDirectory(expDirectories.getResultsDirectory());
+					setImagesDirectory(expDirectories.getCameraImagesDirectory());
+					
+					// Load XML metadata only (no images, no cages)
+					// xmlLoad_MCExperiment() loads from resultsDirectory + MCexperiment.xml
+					if (!xmlLoad_MCExperiment()) {
+						LOGGER.warning("Failed to load experiment XML for " + metadata.getCameraDirectory());
+						return;
+					}
+					
+					// Set up ImageLoader with directory and file names only (NO sequence loading)
+					ImageLoader imgLoader = getSeqCamData().getImageLoader();
+					imgLoader.setImagesDirectory(expDirectories.getCameraImagesDirectory());
+					List<String> imagesList = ExperimentDirectories.getImagesListFromPathV2(
+							imgLoader.getImagesDirectory(), "jpg");
+					// Use setImagesList instead of loadImageList to avoid loading the sequence
+					getSeqCamData().setImagesList(imagesList);
+					
+					// Calculate file intervals if needed (lightweight operation)
+					if (expDirectories.cameraImagesList.size() > 1) {
+						getFileIntervalsFromSeqCamData();
+					}
+					
+					// Initialize cages array (empty, will be loaded when needed)
+					// Don't load cages here - they will be loaded when experiment is opened
+					
+					// Copy cached properties to parent's prop object
+					if (cachedExperimentProperties != null) {
+						getProperties().copyFieldsFrom(cachedExperimentProperties);
+					}
+					
+					this.isLoaded = true;
 				}
 			} catch (Exception e) {
 				LOGGER.warning("Error loading experiment " + metadata.getCameraDirectory() + ": " + e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}

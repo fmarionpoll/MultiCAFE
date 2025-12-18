@@ -405,10 +405,13 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				return false;
 			}
 			
-			// If it's a LazyExperiment, load the data first
+			// If it's a LazyExperiment, load the metadata first (without images)
 			if (exp instanceof LazyExperiment) {
-				progressFrame.setMessage("Loading experiment data...");
+				progressFrame.setMessage("Loading experiment metadata...");
 				((LazyExperiment) exp).loadIfNeeded();
+			} else {
+				// For non-lazy experiments, load XML metadata
+				exp.xmlLoad_MCExperiment();
 			}
 
 			// Check again after lazy load
@@ -420,8 +423,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				progressFrame.close();
 				return false;
 			}
-
-			exp.xmlLoad_MCExperiment();
 
 			boolean flag = true;
 			progressFrame.setMessage("Load image");
