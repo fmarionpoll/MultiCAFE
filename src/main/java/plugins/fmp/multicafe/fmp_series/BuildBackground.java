@@ -8,6 +8,7 @@ import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
@@ -28,6 +29,7 @@ public class BuildBackground extends BuildSeries {
 	private ViewerFMP dataViewer = null;
 	private ViewerFMP referenceViewer = null;
 	private DetectFlyTools flyDetectionTools = new DetectFlyTools();
+	private boolean saveSuccessful = false;
 
 	// Constants
 	private static final int MINIMUM_PIXELS_CHANGED_THRESHOLD = 10;
@@ -108,13 +110,18 @@ public class BuildBackground extends BuildSeries {
 
 	/**
 	 * Loads experiment data with proper error handling.
+	 * For background building, cages are optional - we can build background even if cages don't exist yet.
 	 */
 	private ProcessingResult<Void> loadExperimentData(Experiment experiment) {
 		try {
-			boolean loadSuccess = loadSeqCamDataAndCages(experiment);
-			if (!loadSuccess) {
-				return ProcessingResult.failure("Failed to load DrosoTrack data");
+			experiment.getSeqCamData().attachSequence(experiment.getSeqCamData().getImageLoader()
+					.initSequenceFromFirstImage(experiment.getSeqCamData().getImagesList(true)));
+			
+			boolean cagesLoaded = experiment.load_MS96_cages();
+			if (!cagesLoaded) {
+				Logger.warn("Cages not loaded for background building - this is optional and background building will continue");
 			}
+			
 			return ProcessingResult.success();
 		} catch (Exception e) {
 			return ProcessingResult.failure("Error loading experiment data", e);
@@ -123,9 +130,15 @@ public class BuildBackground extends BuildSeries {
 
 	/**
 	 * Validates bounds for cages with proper error handling.
+	 * For background building, this is optional if cages don't exist yet.
 	 */
 	private ProcessingResult<Void> validateBoundsForCages(Experiment experiment) {
 		try {
+			if (experiment.getCages() == null || experiment.getCages().cagesList == null || experiment.getCages().cagesList.size() == 0) {
+				Logger.warn("No cages found for background building - skipping bounds validation");
+				return ProcessingResult.success();
+			}
+			
 			boolean boundsValid = checkBoundsForCages(experiment);
 			if (!boundsValid) {
 				return ProcessingResult.failure("Invalid bounds for cages");
@@ -247,25 +260,38 @@ public class BuildBackground extends BuildSeries {
 			// Load initial background image
 			ProcessingResult<IcyBufferedImage> initialBackgroundResult = loadInitialBackgroundImage(experiment);
 			if (initialBackgroundResult.isFailure()) {
-				return ProcessingResult
-						.failure("Failed to load initial background: " + initialBackgroundResult.getErrorMessage());
+				String errorMsg = "Failed to load initial background: " + initialBackgroundResult.getErrorMessage();
+				Logger.error(errorMsg);
+				return ProcessingResult.failure(errorMsg);
 			}
 
-			transformOptions.backgroundImage = initialBackgroundResult.getData().orElse(null);
+			IcyBufferedImage initialImage = initialBackgroundResult.getData().orElse(null);
+			if (initialImage == null) {
+				String errorMsg = "Initial background image is null after loading";
+				Logger.error(errorMsg);
+				return ProcessingResult.failure(errorMsg);
+			}
+
+			transformOptions.backgroundImage = initialImage;
 
 			// Calculate frame range
 			FrameRange frameRange = calculateFrameRange(experiment);
+			Logger.info("Processing background frames from " + frameRange.getFirst() + " to " + frameRange.getLast());
 
 			// Process frames
 			ProcessingResult<Void> processResult = processFramesForBackground(experiment, transformOptions, frameRange);
 			if (processResult.isFailure()) {
+				Logger.error("Frame processing failed: " + processResult.getErrorMessage());
 				return processResult;
 			}
 
+			Logger.info("Background image building completed successfully");
 			return ProcessingResult.success();
 
 		} catch (Exception e) {
-			return ProcessingResult.failure("Error building background images", e);
+			String errorMsg = "Error building background images: " + e.getMessage();
+			Logger.error(errorMsg, e);
+			return ProcessingResult.failure(errorMsg, e);
 		}
 	}
 
@@ -273,24 +299,46 @@ public class BuildBackground extends BuildSeries {
 	 * Loads the initial background image.
 	 */
 	private ProcessingResult<IcyBufferedImage> loadInitialBackgroundImage(Experiment experiment) {
-		String filename = experiment.getSeqCamData().getFileNameFromImageList(options.backgroundFirst);
-		return imageProcessor.loadImage(filename);
+		try {
+			if (options.backgroundFirst < 0) {
+				return ProcessingResult.failure("Background first frame index is negative: " + options.backgroundFirst);
+			}
+			
+			String filename = experiment.getSeqCamData().getFileNameFromImageList(options.backgroundFirst);
+			if (filename == null || filename.isEmpty()) {
+				return ProcessingResult.failure("Cannot get filename for frame index: " + options.backgroundFirst);
+			}
+			
+			Logger.info("Loading initial background image from: " + filename);
+			ProcessingResult<IcyBufferedImage> result = imageProcessor.loadImage(filename);
+			
+			if (result.isFailure()) {
+				Logger.error("Failed to load initial background image from: " + filename + " - " + result.getErrorMessage());
+			}
+			
+			return result;
+		} catch (Exception e) {
+			Logger.error("Exception loading initial background image", e);
+			return ProcessingResult.failure("Exception loading initial background image: " + e.getMessage(), e);
+		}
 	}
 
 	/**
 	 * Calculates the frame range for background processing.
 	 */
 	private FrameRange calculateFrameRange(Experiment experiment) {
-		long firstMs = experiment.getCages().detectFirst_Ms
-				+ (options.backgroundFirst * experiment.getSeqCamData().getTimeManager().getBinImage_ms());
-		int firstFrame = (int) ((firstMs - experiment.getCages().detectFirst_Ms)
-				/ experiment.getSeqCamData().getTimeManager().getBinImage_ms());
-
+		int firstFrame = options.backgroundFirst;
 		int lastFrame = options.backgroundFirst + options.backgroundNFrames;
 		int totalFrames = experiment.getSeqCamData().getImageLoader().getNTotalFrames();
 
+		if (firstFrame < 0) {
+			firstFrame = 0;
+		}
 		if (lastFrame > totalFrames) {
 			lastFrame = totalFrames;
+		}
+		if (lastFrame <= firstFrame) {
+			lastFrame = Math.min(firstFrame + 1, totalFrames);
 		}
 
 		return new FrameRange(firstFrame, lastFrame);
@@ -301,6 +349,14 @@ public class BuildBackground extends BuildSeries {
 	 */
 	private ProcessingResult<Void> processFramesForBackground(Experiment experiment,
 			ImageTransformOptions transformOptions, FrameRange frameRange) {
+		if (transformOptions.backgroundImage == null) {
+			return ProcessingResult.failure("Background image is null - cannot process frames");
+		}
+		
+		if (referenceSequence == null) {
+			return ProcessingResult.failure("Reference sequence is null - cannot update background");
+		}
+		
 		for (int frame = frameRange.getFirst() + 1; frame <= frameRange.getLast() && !stopFlag; frame++) {
 			// Update progress
 			progressReporter.updateProgress("Processing frame", frame, frameRange.getLast());
@@ -308,10 +364,17 @@ public class BuildBackground extends BuildSeries {
 			// Load current frame
 			ProcessingResult<IcyBufferedImage> imageResult = loadFrame(experiment, frame);
 			if (imageResult.isFailure()) {
-				return ProcessingResult.failure("Failed to load frame %d: %s", frame, imageResult.getErrorMessage());
+				String errorMsg = String.format("Failed to load frame %d: %s", frame, imageResult.getErrorMessage());
+				Logger.error(errorMsg);
+				return ProcessingResult.failure(errorMsg);
 			}
 
 			IcyBufferedImage currentImage = imageResult.getData().orElse(null);
+			if (currentImage == null) {
+				String errorMsg = "Loaded image is null for frame " + frame;
+				Logger.error(errorMsg);
+				return ProcessingResult.failure(errorMsg);
+			}
 
 			// Update data sequence
 			dataSequence.setImage(0, 0, currentImage);
@@ -321,8 +384,10 @@ public class BuildBackground extends BuildSeries {
 					.transformBackground(currentImage, transformOptions.backgroundImage, transformOptions);
 
 			if (transformResult.isFailure()) {
-				return ProcessingResult.failure("Background transformation failed at frame %d: %s", frame,
+				String errorMsg = String.format("Background transformation failed at frame %d: %s", frame,
 						transformResult.getErrorMessage());
+				Logger.error(errorMsg);
+				return ProcessingResult.failure(errorMsg);
 			}
 
 			// Update reference sequence
@@ -331,6 +396,7 @@ public class BuildBackground extends BuildSeries {
 			// Check convergence
 			ImageProcessor.BackgroundTransformResult result = transformResult.getData().orElse(null);
 			if (result != null && result.getPixelsChanged() < MINIMUM_PIXELS_CHANGED_THRESHOLD) {
+				Logger.info("Background converged at frame " + frame);
 				progressReporter.updateMessage("Background converged at frame %d", frame);
 				break;
 			}
@@ -352,12 +418,48 @@ public class BuildBackground extends BuildSeries {
 	 */
 	private ProcessingResult<Void> saveBackgroundResults(Experiment experiment) {
 		try {
+			if (referenceSequence == null || referenceSequence.getFirstImage() == null) {
+				String errorMsg = "Cannot save background: reference sequence or image is null";
+				Logger.error(errorMsg, null, true);
+				saveSuccessful = false;
+				return ProcessingResult.failure(errorMsg);
+			}
+			
 			experiment.getSeqCamData().setReferenceImage(IcyBufferedImageUtil.getCopy(referenceSequence.getFirstImage()));
-			experiment.saveReferenceImage(referenceSequence.getFirstImage());
+			
+			String savePath = experiment.getResultsDirectory() + java.io.File.separator + "referenceImage.jpg";
+			Logger.info("Saving background image to: " + savePath);
+			
+			boolean saveSuccess = experiment.saveReferenceImage(referenceSequence.getFirstImage());
+			if (!saveSuccess) {
+				String errorMsg = "Failed to save background image to: " + savePath + "\nPlease check file permissions and disk space.";
+				Logger.error(errorMsg, null, true);
+				saveSuccessful = false;
+				return ProcessingResult.failure(errorMsg);
+			}
+			
+			Logger.info("Background image saved successfully to: " + savePath);
+			saveSuccessful = true;
+			
+			java.io.File savedFile = new java.io.File(savePath);
+			if (!savedFile.exists()) {
+				Logger.warn("Background image file not found immediately after save - may need to wait for file system flush");
+			}
+			
 			return ProcessingResult.success();
 		} catch (Exception e) {
-			return ProcessingResult.failure("Failed to save background results", e);
+			String errorMsg = "Exception while saving background results: " + e.getMessage();
+			Logger.error(errorMsg, e, true);
+			saveSuccessful = false;
+			return ProcessingResult.failure(errorMsg, e);
 		}
+	}
+	
+	/**
+	 * Returns whether the background image was successfully saved.
+	 */
+	public boolean isSaveSuccessful() {
+		return saveSuccessful;
 	}
 
 	/**

@@ -22,6 +22,7 @@ import javax.swing.event.ChangeListener;
 
 import icy.gui.dialog.MessageDialog;
 import icy.gui.viewer.Viewer;
+import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
 import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
@@ -30,6 +31,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_series.BuildBackground;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.fmp_tools.overlay.OverlayThreshold;
 
@@ -175,17 +177,30 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 
 	private void updateOverlay(Experiment exp) {
 		SequenceCamData seqCamData = exp.getSeqCamData();
-		if (seqCamData == null)
+		if (seqCamData == null || seqCamData.getSequence() == null)
 			return;
+		
+		IcyBufferedImage referenceImage = seqCamData.getReferenceImage();
+		
+		if (referenceImage == null) {
+			int t = seqCamData.getCurrentFrame();
+			IcyBufferedImage currentImage = seqCamData.getSeqImage(t, 0);
+			if (currentImage == null) {
+				Logger.warn("Detect2Background: Cannot update overlay - no current image available at frame " + t);
+				return;
+			}
+			referenceImage = IcyBufferedImageUtil.getCopy(currentImage);
+			seqCamData.setReferenceImage(referenceImage);
+		}
+		
 		if (ov == null) {
 			ov = new OverlayThreshold(seqCamData.getSequence());
-			int t = exp.getSeqCamData().getCurrentFrame();
-			exp.getSeqCamData().setReferenceImage(IcyBufferedImageUtil.getCopy(exp.getSeqCamData().getSeqImage(t, 0)));
 		} else {
 			seqCamData.getSequence().removeOverlay(ov);
 			ov.setSequence(seqCamData.getSequence());
 		}
-		ov.setReferenceImage(exp.getSeqCamData().getReferenceImage());
+		
+		ov.setReferenceImage(referenceImage);
 		seqCamData.getSequence().addOverlay(ov);
 
 		boolean ifGreater = true;
@@ -257,7 +272,52 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 			startComputationButton.setText(detectString);
 			parent0.paneKymos.tabDisplay.selectKymographImage(parent0.paneKymos.tabDisplay.indexImagesCombo);
 			parent0.paneKymos.tabDisplay.indexImagesCombo = -1;
-			loadBackground();
+			
+			if (buildBackground != null && buildBackground.isSaveSuccessful()) {
+				loadBackgroundWithRetry();
+			} else {
+				Logger.warn("Background image was not saved successfully - skipping automatic load");
+			}
+		}
+	}
+	
+	private void loadBackgroundWithRetry() {
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+		if (exp == null)
+			return;
+		
+		String path = exp.getExperimentDirectory() + java.io.File.separator + "referenceImage.jpg";
+		java.io.File file = new java.io.File(path);
+		
+		int maxRetries = 5;
+		int retryDelayMs = 200;
+		boolean loaded = false;
+		
+		for (int i = 0; i < maxRetries; i++) {
+			if (file.exists()) {
+				loaded = new SequenceLoaderService().loadReferenceImage(exp);
+				if (loaded) {
+					Viewer v = new Viewer(exp.getSeqReference(), true);
+					Rectangle rectv = exp.getSeqCamData().getSequence().getFirstViewer().getBoundsInternal();
+					v.setBounds(rectv);
+					Logger.info("Background image loaded successfully after " + (i + 1) + " attempt(s)");
+					return;
+				}
+			}
+			
+			if (i < maxRetries - 1) {
+				try {
+					Thread.sleep(retryDelayMs);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					break;
+				}
+			}
+		}
+		
+		if (!loaded) {
+			Logger.warn("Failed to load background image after " + maxRetries + " attempts: " + path);
+			MessageDialog.showDialog("Reference file not found on disk after background creation.\nPath: " + path, MessageDialog.ERROR_MESSAGE);
 		}
 	}
 

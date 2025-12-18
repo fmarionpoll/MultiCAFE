@@ -40,10 +40,40 @@ public class SequenceLoaderService {
 	}
 
 	public boolean saveReferenceImage(Experiment exp) {
+		if (exp == null || exp.getSeqCamData() == null) {
+			Logger.warn("SequenceLoaderService:saveReferenceImage() experiment or seqCamData is null");
+			return false;
+		}
+		
+		IcyBufferedImage referenceImage = exp.getSeqCamData().getReferenceImage();
+		if (referenceImage == null) {
+			Logger.warn("SequenceLoaderService:saveReferenceImage() reference image is null");
+			return false;
+		}
+		
 		String path = exp.getExperimentDirectory() + File.separator + "referenceImage.jpg";
 		File outputfile = new File(path);
-		RenderedImage image = ImageUtil.toRGBImage(exp.getSeqCamData().getReferenceImage());
-		return ImageUtil.save(image, "jpg", outputfile);
+		File parentDir = outputfile.getParentFile();
+		
+		if (parentDir != null && !parentDir.exists()) {
+			Logger.info("SequenceLoaderService: Creating directory for reference image: " + parentDir.getPath());
+			if (!parentDir.mkdirs()) {
+				Logger.error("SequenceLoaderService: Failed to create directory for reference image: " + parentDir.getPath());
+				return false;
+			}
+		}
+		
+		Logger.info("SequenceLoaderService: Saving reference image to: " + path);
+		RenderedImage image = ImageUtil.toRGBImage(referenceImage);
+		boolean success = ImageUtil.save(image, "jpg", outputfile);
+		
+		if (!success) {
+			Logger.error("SequenceLoaderService: Failed to save reference image to: " + path);
+		} else {
+			Logger.info("SequenceLoaderService: Reference image saved successfully to: " + path);
+		}
+		
+		return success;
 	}
 
 	public boolean loadImages(SequenceCamData seqData) {

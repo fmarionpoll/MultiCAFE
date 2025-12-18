@@ -1088,9 +1088,34 @@ public class Experiment {
 	}
 
 	public boolean saveReferenceImage(IcyBufferedImage referenceImage) {
-		File outputfile = new File(getReferenceImageFullName());
+		if (referenceImage == null) {
+			Logger.error("Cannot save reference image: image is null");
+			return false;
+		}
+		
+		String fullPath = getReferenceImageFullName();
+		File outputfile = new File(fullPath);
+		File parentDir = outputfile.getParentFile();
+		
+		if (parentDir != null && !parentDir.exists()) {
+			Logger.info("Creating directory for reference image: " + parentDir.getPath());
+			if (!parentDir.mkdirs()) {
+				Logger.error("Failed to create directory for reference image: " + parentDir.getPath());
+				return false;
+			}
+		}
+		
+		Logger.info("Saving reference image to: " + fullPath);
 		RenderedImage image = ImageUtil.toRGBImage(referenceImage);
-		return ImageUtil.save(image, "jpg", outputfile);
+		boolean success = ImageUtil.save(image, "jpg", outputfile);
+		
+		if (!success) {
+			Logger.error("Failed to save reference image to: " + fullPath);
+		} else {
+			Logger.info("Reference image saved successfully to: " + fullPath);
+		}
+		
+		return success;
 	}
 
 	public void cleanPreviousDetectedFliesROIs() {
