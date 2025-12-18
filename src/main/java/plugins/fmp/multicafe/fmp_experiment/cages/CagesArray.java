@@ -2,25 +2,15 @@ package plugins.fmp.multicafe.fmp_experiment.cages;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
-import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ROIOperation;
@@ -31,8 +21,6 @@ import plugins.fmp.multicafe.fmp_experiment.spots.SpotString;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
-import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
-import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
@@ -48,6 +36,8 @@ public class CagesArray {
 	// This allows efficient access to computed L+R measures
 	private transient java.util.Map<Integer, CageCapillariesComputation> cageComputations = new java.util.HashMap<>();
 
+	private CagesPersistence persistence = new CagesPersistence();
+
 	public int nCagesAlongX = 6;
 	public int nCagesAlongY = 8;
 	public int nColumnsPerCage = 2;
@@ -62,15 +52,6 @@ public class CagesArray {
 
 	// ----------------------------
 
-	private final String ID_CAGES = "Cages";
-	private final String ID_NCAGES = "n_cages";
-
-	private final String ID_NCAGESALONGX = "N_cages_along_X";
-	private final String ID_NCAGESALONGY = "N_cages_along_Y";
-	private final String ID_NCOLUMNSPERCAGE = "N_columns_per_cage";
-	private final String ID_NROWSPERCAGE = "N_rows_per_cage";
-
-	private final String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	public final String ID_MS96_cages_XML = "MS96_cages.xml";
 	public final String ID_MS96_spotsMeasures_XML = "MS96_spotsMeasures.xml";
 	public final String ID_MS96_fliesPositions_XML = "MS96_fliesPositions.xml";
@@ -192,391 +173,27 @@ public class CagesArray {
 	// -------------
 
 	public boolean saveCagesMeasures(String directory) {
-		csvSaveCagesMeasures(directory);
-		String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
-		xmlWriteCagesToFileNoQuestion(tempName);
-		return true;
+		return persistence.save_Cages(this, directory);
 	}
 
 	public boolean loadCagesMeasures(String directory) {
-		boolean flag = false;
-		try {
-			flag = csvLoadCagesMeasures(directory);
-		} catch (Exception e) {
-			System.err.println("CagesArray:loadCagesMeasures() Failed to load cages from CSV: " + directory);
-			e.printStackTrace();
-		}
-
-		if (!flag) {
-			String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
-			flag = xmlReadCagesFromFileNoQuestion(tempName);
-		}
-		return flag;
+		return persistence.load_Cages(this, directory);
 	}
 
 	// -----------------------------------------------------
 
-	final String csvSep = ";";
-
-	private boolean csvLoadCagesMeasures(String directory) throws Exception {
-		String pathToCsv = directory + File.separator + "CagesMeasures.csv";
-		File csvFile = new File(pathToCsv);
-		if (!csvFile.isFile())
-			return false;
-
-		// Clear existing cages before loading
-		cagesList.clear();
-
-		BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
-		String row;
-		String sep = csvSep;
-		while ((row = csvReader.readLine()) != null) {
-			if (row.length() > 0 && row.charAt(0) == '#')
-				sep = String.valueOf(row.charAt(1));
-
-			String[] data = row.split(sep);
-			if (data.length > 0 && data[0].equals("#")) {
-				if (data.length > 1) {
-					switch (data[1]) {
-					case "DESCRIPTION":
-						csvLoad_DESCRIPTION(csvReader, sep);
-						break;
-					case "CAGE":
-						csvLoad_CAGE(csvReader, sep);
-						break;
-					case "POSITION":
-						csvLoad_Measures(csvReader, EnumCageMeasures.POSITION, sep);
-						break;
-					default:
-						break;
-					}
-				}
-			}
-		}
-		csvReader.close();
-		return cagesList.size() > 0;
-	}
-
-	private void csvLoad_DESCRIPTION(BufferedReader csvReader, String sep) {
-		String row;
-		try {
-			while ((row = csvReader.readLine()) != null) {
-				String[] data = row.split(sep);
-				if (data.length > 0 && data[0].equals("#"))
-					return;
-
-				if (data.length > 0) {
-					String test = data[0].substring(0, Math.min(data[0].length(), 7));
-					if (test.equals("n cages") || test.equals("n cells")) {
-						if (data.length > 1) {
-							int ncages = Integer.valueOf(data[1]);
-							if (ncages >= cagesList.size()) {
-								cagesList.ensureCapacity(ncages);
-							} else {
-								cagesList.subList(ncages, cagesList.size()).clear();
-							}
-						}
-					}
-				}
-			}
-		} catch (IOException e) {
-			System.err.println("CagesArray:csvLoad_DESCRIPTION() Error: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	private void csvLoad_CAGE(BufferedReader csvReader, String sep) {
-		String row;
-		try {
-			row = csvReader.readLine(); // Skip header row
-			while ((row = csvReader.readLine()) != null) {
-				String[] data = row.split(sep);
-				if (data.length > 0 && data[0].equals("#"))
-					return;
-
-				if (data.length > 0) {
-					int cageID = 0;
-					try {
-						cageID = Integer.valueOf(data[0]);
-					} catch (NumberFormatException e) {
-						System.err.println("CagesArray: Invalid integer input: " + data[0]);
-						continue;
-					}
-					Cage cage = getCageFromID(cageID);
-					if (cage == null) {
-						cage = new Cage();
-						cagesList.add(cage);
-					}
-					cage.csvImport_CAGE_Header(data);
-				}
-			}
-		} catch (IOException e) {
-			System.err.println("CagesArray:csvLoad_CAGE() Error: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	private void csvLoad_Measures(BufferedReader csvReader, EnumCageMeasures measureType, String sep) {
-		String row;
-		try {
-			row = csvReader.readLine(); // Header row
-			boolean complete = (row != null && row.contains("w(i)"));
-			boolean v0 = (row != null && row.contains("x(i)"));
-
-			while ((row = csvReader.readLine()) != null) {
-				String[] data = row.split(sep);
-				if (data.length > 0 && data[0].equals("#"))
-					return;
-
-				if (data.length > 0) {
-					int cageID = -1;
-					try {
-						cageID = Integer.valueOf(data[0]);
-					} catch (NumberFormatException e) {
-						System.err.println("CagesArray: Invalid integer input: " + data[0]);
-						continue;
-					}
-					Cage cage = getCageFromID(cageID);
-					if (cage == null) {
-						cage = new Cage();
-						cagesList.add(cage);
-						cage.prop.setCageID(cageID);
-					}
-					if (v0) {
-						cage.csvImport_MEASURE_Data_v0(measureType, data, complete);
-					} else {
-						cage.csvImport_MEASURE_Data_Parameters(data);
-					}
-				}
-			}
-		} catch (IOException e) {
-			System.err.println("CagesArray:csvLoad_Measures() Error: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	private boolean csvSaveCagesMeasures(String directory) {
-		try {
-			FileWriter csvWriter = new FileWriter(directory + File.separator + "CagesMeasures.csv");
-			csvSaveDescriptionSection(csvWriter);
-			csvSaveMeasuresSection(csvWriter, EnumCageMeasures.POSITION);
-			csvWriter.flush();
-			csvWriter.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
-
-	private boolean csvSaveDescriptionSection(FileWriter csvWriter) {
-		try {
-			csvWriter.append("#" + csvSep + "DESCRIPTION" + csvSep + "Cages data\n");
-			csvWriter.append("n cages=" + csvSep + Integer.toString(cagesList.size()) + "\n");
-			if (cagesList.size() > 0)
-				for (Cage cage : cagesList)
-					csvWriter.append(cage.csvExportCageDescription(csvSep));
-
-			csvWriter.append("#" + csvSep + "#\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
-
-	private boolean csvSaveMeasuresSection(FileWriter csvWriter, EnumCageMeasures measuresType) {
-//		try {
-//			csvWriter.append("#" + csvSep + "MEASURE" + csvSep + "Cages data\n");
-//			csvWriter.append("n cages=" + csvSep + Integer.toString(cagesList.size()) + "\n");
-//			if (cagesList.size() > 0) {
-//				for (Cage cage : cagesList)
-//					csvWriter.append(cage.csvExportCageDescription(csvSep));
-//			}
-//			csvWriter.append("#" + csvSep + "#\n");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		return true;
-	}
-
-	// ----------------------------------------------------
-
 	public boolean xmlReadCagesFromFile(Experiment exp) {
-		String[] filedummy = null;
-		String filename = exp.getResultsDirectory();
-		File file = new File(filename);
-		String directory = file.getParentFile().getAbsolutePath();
-		try {
-			filedummy = Dialog.selectFiles(directory, "xml");
-		} catch (FileDialogException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		boolean wasOk = false;
-		if (filedummy != null) {
-			for (int i = 0; i < filedummy.length; i++) {
-				String csFile = filedummy[i];
-				wasOk &= xmlReadCagesFromFileNoQuestion(csFile);
-			}
-		}
-		return wasOk;
+		return persistence.xmlReadCagesFromFile(this, exp);
 	}
 
 	public boolean xmlReadCagesFromFileNoQuestion(String tempname) {
-		if (tempname == null) {
-			return false;
-		}
-
-		File file = new File(tempname);
-		if (!file.exists()) {
-			return false;
-		}
-
-		// Memory monitoring before loading
-//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		// System.out.println("=== XML LOADING: CagesArray ===");
-		// System.out.println("Loading file: " + tempname);
-		// System.out.println("Memory before loading: " + (startMemory / 1024 / 1024) +
-		// " MB");
-
-		try {
-			final Document doc = XMLUtil.loadDocument(tempname);
-			if (doc == null) {
-				return false;
-			}
-
-			// Schema validation removed as requested
-
-			boolean success = xmlLoadCages(XMLUtil.getRootElement(doc));
-
-			// Memory monitoring after loading
-//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-//			long memoryIncrease = endMemory - startMemory;
-			// System.out.println("Memory after loading: " + (endMemory / 1024 / 1024) + "
-			// MB");
-			// System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + "
-			// MB");
-			// System.out.println("Loaded cages: " + cagesList.size());
-			// System.out.println("=== XML LOADING COMPLETE ===");
-
-			return success;
-
-		} catch (Exception e) {
-			System.err.println("ERROR during cages XML loading: " + e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
+		return persistence.xmlReadCagesFromFileNoQuestion(this, tempname);
 	}
 
 	public boolean xmlWriteCagesToFileNoQuestion(String tempname) {
-		try {
-			final Document doc = XMLUtil.createDocument(true);
-			if (doc == null) {
-				System.err.println("ERROR: Could not create XML document");
-				return false;
-			}
-
-			Node node = XMLUtil.getRootElement(doc);
-			boolean success = xmlSaveCages(node);
-
-			if (success) {
-				success = XMLUtil.saveDocument(doc, tempname);
-			}
-
-			return success;
-
-		} catch (Exception e) {
-			System.err.println("ERROR during cages XML saving: " + e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
+		return persistence.xmlWriteCagesToFileNoQuestion(this, tempname);
 	}
 
-	private boolean xmlSaveCages(Node node) {
-		try {
-			int index = 0;
-			Element xmlVal = XMLUtil.addElement(node, ID_CAGES);
-			int ncages = cagesList.size();
-			XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, ncages);
-			XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
-			XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
-			XMLUtil.setAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
-			XMLUtil.setAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
-
-			// System.out.println("Saving " + ncages + " cages with layout " + nCagesAlongX
-			// + "x" + nCagesAlongY);
-
-			for (Cage cage : cagesList) {
-				if (cage == null) {
-					System.err.println("WARNING: Null cage at index " + index);
-					continue;
-				}
-
-				boolean cageSuccess = cage.xmlSaveCage(xmlVal, index);
-				if (!cageSuccess) {
-					System.err.println("ERROR: Failed to save cage at index " + index);
-				}
-				index++;
-			}
-
-			return true;
-
-		} catch (Exception e) {
-			System.err.println("ERROR during xmlSaveCages: " + e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	private boolean xmlLoadCages(Node node) {
-		try {
-			cagesList.clear();
-			Element xmlVal = XMLUtil.getElement(node, ID_CAGES);
-			if (xmlVal == null) {
-				System.err.println("ERROR: Could not find Cages element in XML");
-				return false;
-			}
-
-			int ncages = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
-			if (ncages < 0) {
-				System.err.println("ERROR: Invalid number of cages: " + ncages);
-				return false;
-			}
-
-			nCagesAlongX = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
-			nCagesAlongY = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
-			nColumnsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
-			nRowsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
-
-			// System.out.println("Loading " + ncages + " cages with layout " + nCagesAlongX
-			// + "x" + nCagesAlongY);
-
-			int loadedCages = 0;
-			for (int index = 0; index < ncages; index++) {
-				try {
-					Cage cage = new Cage();
-					boolean cageSuccess = cage.xmlLoadCage(xmlVal, index);
-					if (cageSuccess) {
-						cagesList.add(cage);
-						loadedCages++;
-					} else {
-						System.err.println("WARNING: Failed to load cage at index " + index);
-					}
-				} catch (Exception e) {
-					System.err.println("ERROR loading cage at index " + index + ": " + e.getMessage());
-				}
-			}
-
-			// System.out.println("Successfully loaded " + loadedCages + " out of " + ncages
-			// + " cages");
-			return loadedCages > 0; // Return true if at least one cage was loaded
-
-		} catch (Exception e) {
-			System.err.println("ERROR during xmlLoadCages: " + e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
-	}
 
 	// --------------
 
