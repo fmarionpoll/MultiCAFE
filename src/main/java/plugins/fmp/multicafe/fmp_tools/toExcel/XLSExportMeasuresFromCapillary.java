@@ -144,10 +144,10 @@ public class XLSExportMeasuresFromCapillary extends XLSExport {
 
 				Results results = convertXYSeriesToResults(exp, cap, series, resultsOptions, resultType);
 				if (results != null) {
-					pt.y = 0;
-					pt = writeExperimentCapInfos(sheet, pt, exp, charSeries, cage, cap, resultType);
-					writeXLSResult(sheet, pt, results);
-					pt.x++;
+			pt.y = 0;
+			pt = writeExperimentCapInfos(sheet, pt, exp, charSeries, cage, cap, resultType);
+			writeXLSResult(sheet, pt, results);
+			pt.x++;
 				}
 			}
 		}
