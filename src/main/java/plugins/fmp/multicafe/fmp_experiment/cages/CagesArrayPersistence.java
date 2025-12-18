@@ -359,8 +359,15 @@ public class CagesArrayPersistence {
 							break;
 						case "CAGE":
 							cageCount++;
-							System.out.println("CagesArrayPersistence:csvLoadCagesMeasures() Processing CAGE section");
-							csvLoad_CAGE(cages, csvReader, sep);
+							System.out.println("CagesArrayPersistence:csvLoadCagesMeasures() CAGE section found but skipped (redundant - DESCRIPTION section already loaded properties)");
+							// Skip CAGE section - DESCRIPTION section already contains all necessary data
+							// Just skip to the next section marker
+							String skipRow;
+							while ((skipRow = csvReader.readLine()) != null) {
+								String[] skipData = skipRow.split(sep);
+								if (skipData.length > 0 && skipData[0].equals("#"))
+									break;
+							}
 							break;
 						case "POSITION":
 							positionCount++;
