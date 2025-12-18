@@ -73,8 +73,9 @@ public class Experiment {
 
 	private static String staticProgramContext = null;
 
-	// Flag to prevent saving while loading is in progress (race condition protection)
+	// Flags to prevent race conditions between loading and saving
 	private volatile boolean isLoading = false;
+	private volatile boolean isSaving = false;
 
 	// -----------------------------------------
 
@@ -252,6 +253,14 @@ public class Experiment {
 
 	public void setLoading(boolean loading) {
 		this.isLoading = loading;
+	}
+
+	public boolean isSaving() {
+		return isSaving;
+	}
+
+	public void setSaving(boolean saving) {
+		this.isSaving = saving;
 	}
 
 	public String toString() {

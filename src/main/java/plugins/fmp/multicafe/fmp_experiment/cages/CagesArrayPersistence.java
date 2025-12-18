@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
+
+import javax.swing.SwingWorker;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -278,36 +282,71 @@ public class CagesArrayPersistence {
 		if (!csvFile.isFile())
 			return false;
 
-		cages.cagesList.clear();
+		// Create a temporary CagesArray to load into, to avoid corrupting existing data if cancelled
+		CagesArray tempCages = new CagesArray();
+		tempCages.nCagesAlongX = cages.nCagesAlongX;
+		tempCages.nCagesAlongY = cages.nCagesAlongY;
+		tempCages.nColumnsPerCage = cages.nColumnsPerCage;
+		tempCages.nRowsPerCage = cages.nRowsPerCage;
 
 		BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
 		String row;
 		String sep = csvSep;
-		while ((row = csvReader.readLine()) != null) {
-			if (row.length() > 0 && row.charAt(0) == '#')
-				sep = String.valueOf(row.charAt(1));
+		try {
+			while ((row = csvReader.readLine()) != null) {
+				if (row.length() > 0 && row.charAt(0) == '#')
+					sep = String.valueOf(row.charAt(1));
 
-			String[] data = row.split(sep);
-			if (data.length > 0 && data[0].equals("#")) {
-				if (data.length > 1) {
-					switch (data[1]) {
-					case "DESCRIPTION":
-						csvLoad_DESCRIPTION(cages, csvReader, sep);
-						break;
-					case "CAGE":
-						csvLoad_CAGE(cages, csvReader, sep);
-						break;
-					case "POSITION":
-						csvLoad_Measures(cages, csvReader, EnumCageMeasures.POSITION, sep);
-						break;
-					default:
-						break;
+				String[] data = row.split(sep);
+				if (data.length > 0 && data[0].equals("#")) {
+					if (data.length > 1) {
+						switch (data[1]) {
+						case "DESCRIPTION":
+							csvLoad_DESCRIPTION(tempCages, csvReader, sep);
+							break;
+						case "CAGE":
+							csvLoad_CAGE(tempCages, csvReader, sep);
+							break;
+						case "POSITION":
+							csvLoad_Measures(tempCages, csvReader, EnumCageMeasures.POSITION, sep);
+							break;
+						default:
+							break;
+						}
 					}
 				}
 			}
+		} finally {
+			csvReader.close();
 		}
-		csvReader.close();
-		return cages.cagesList.size() > 0;
+		
+		// Only replace the cages list if we successfully loaded data
+		if (tempCages.cagesList.size() > 0) {
+			// Count cages with fly positions before replacing
+			int cagesWithFlyPositions = 0;
+			int totalFlyPositions = 0;
+			for (Cage cage : tempCages.cagesList) {
+				if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null 
+						&& !cage.flyPositions.flyPositionList.isEmpty()) {
+					cagesWithFlyPositions++;
+					totalFlyPositions += cage.flyPositions.flyPositionList.size();
+				}
+			}
+			
+			cages.cagesList.clear();
+			cages.cagesList.addAll(tempCages.cagesList);
+			cages.nCagesAlongX = tempCages.nCagesAlongX;
+			cages.nCagesAlongY = tempCages.nCagesAlongY;
+			cages.nColumnsPerCage = tempCages.nColumnsPerCage;
+			cages.nRowsPerCage = tempCages.nRowsPerCage;
+			
+			// Log cage and fly position counts
+			Logger.info(String.format("CagesArrayPersistence:csvLoadCagesMeasures() Loaded %d cages, %d with fly positions, %d total fly positions", 
+					tempCages.cagesList.size(), cagesWithFlyPositions, totalFlyPositions));
+			
+			return true;
+		}
+		return false;
 	}
 
 	private void csvLoad_DESCRIPTION(CagesArray cages, BufferedReader csvReader, String sep) {
@@ -487,5 +526,127 @@ public class CagesArrayPersistence {
 			break;
 		}
 		return sbf.toString();
+	}
+
+	/**
+	 * Asynchronously loads cage measures from CSV file.
+	 * 
+	 * @param cages     The CagesArray to populate
+	 * @param directory The directory containing CagesMeasures.csv
+	 * @param exp       The experiment being loaded (for validation)
+	 * @param onComplete Callback to execute on EDT when loading completes
+	 * @return SwingWorker that can be cancelled
+	 */
+	public SwingWorker<Boolean, Void> loadCagesAsync(CagesArray cages, String directory, Experiment exp,
+			Runnable onComplete) {
+		return new SwingWorker<Boolean, Void>() {
+			@Override
+			protected Boolean doInBackground() throws Exception {
+				// Check if cancelled before starting
+				if (isCancelled()) {
+					return false;
+				}
+
+				boolean flag = false;
+				try {
+					// Load bulk data from CSV (fast, efficient)
+					// This now uses a temporary CagesArray to avoid corrupting data if cancelled
+					flag = csvLoadCagesMeasures(cages, directory);
+				} catch (Exception e) {
+					// Check if cancelled during load
+					if (isCancelled()) {
+						return false;
+					}
+					Logger.error("CagesArrayPersistence:loadCagesAsync() Failed to load cages from CSV: " + directory,
+							e);
+				}
+
+				// Check if cancelled after CSV load
+				if (isCancelled()) {
+					return false;
+				}
+
+				// If CSV load failed, try full XML load (legacy format)
+				if (!flag) {
+					String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
+					flag = xmlReadCagesFromFileNoQuestion(cages, tempName);
+				} else {
+					// CSV load succeeded, now load ROIs from XML
+					String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
+					xmlLoadCagesROIsOnly(cages, tempName);
+				}
+
+				return flag;
+			}
+
+			@Override
+			protected void done() {
+				boolean wasCancelled = isCancelled();
+				Boolean result = null;
+				
+				try {
+					if (!wasCancelled) {
+						result = get();
+					}
+				} catch (java.util.concurrent.CancellationException e) {
+					// Cancellation is expected when user switches experiments - not an error
+					wasCancelled = true;
+				} catch (Exception e) {
+					Logger.error("CagesArrayPersistence:loadCagesAsync() Error in done(): " + e.getMessage(), e);
+				}
+				
+				// Only call onComplete if not cancelled and load was successful
+				// Pass the loadId to the callback so it can verify it's still the active load
+				if (!wasCancelled && result != null && result && onComplete != null) {
+					// onComplete is already on EDT (done() is called on EDT)
+					onComplete.run();
+				}
+				
+				// Clear loading flag if cancelled (onComplete callback will handle it if successful)
+				if (wasCancelled && exp != null) {
+					exp.setLoading(false);
+				}
+			}
+		};
+	}
+
+	/**
+	 * Asynchronously saves cage measures to CSV file.
+	 * 
+	 * @param cages     The CagesArray to save
+	 * @param directory The directory to save CagesMeasures.csv
+	 * @param exp       The experiment being saved (for validation)
+	 * @return CompletableFuture that completes when save is done
+	 */
+	public CompletableFuture<Boolean> saveCagesAsync(CagesArray cages, String directory, Experiment exp) {
+		return CompletableFuture.supplyAsync(new Supplier<Boolean>() {
+			@Override
+			public Boolean get() {
+				if (directory == null) {
+					Logger.warn("CagesArrayPersistence:saveCagesAsync() directory is null");
+					return false;
+				}
+
+				Path path = Paths.get(directory);
+				if (!Files.exists(path)) {
+					Logger.warn("CagesArrayPersistence:saveCagesAsync() directory does not exist: " + directory);
+					return false;
+				}
+
+				try {
+					// Save bulk data to CSV (fast, efficient)
+					csvSaveCagesMeasures(cages, directory);
+
+					// Save ROIs to XML (standard format for ROI serialization)
+					String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
+					xmlSaveCagesROIsOnly(cages, tempName);
+
+					return true;
+				} catch (Exception e) {
+					Logger.error("CagesArrayPersistence:saveCagesAsync() Error: " + e.getMessage(), e);
+					return false;
+				}
+			}
+		});
 	}
 }

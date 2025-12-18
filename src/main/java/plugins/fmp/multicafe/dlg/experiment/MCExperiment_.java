@@ -102,27 +102,48 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 			return;
 
 		final ViewerListener parent = this;
+		final int expIndex = parent0.expListComboLazy.getSelectedIndex();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				// Check if this experiment is still the selected one
+				Experiment currentlySelected = (Experiment) parent0.expListComboLazy.getSelectedItem();
+				if (currentlySelected != exp) {
+					System.err.println("MCExperiment_:updateViewerForSequenceCam [" + expIndex + "] - Experiment no longer selected, aborting viewer creation");
+					return;
+				}
+				
+				// Re-check sequence is still valid (may have changed during async execution)
+				Sequence currentSeq = exp.getSeqCamData() != null ? exp.getSeqCamData().getSequence() : null;
+				if (currentSeq == null) {
+					System.err.println("MCExperiment_:updateViewerForSequenceCam [" + expIndex + "] - Sequence became null before viewer creation");
+					return;
+				}
+
 				// Calculate position before any viewer operations to avoid flickering
 				Rectangle initialBounds = calculateCamDataViewerBounds(parent0.mainFrame);
 
-				ViewerFMP v = (ViewerFMP) seq.getFirstViewer();
+				ViewerFMP v = (ViewerFMP) currentSeq.getFirstViewer();
 				if (v == null) {
-					// Create viewer with visible=false to prevent flickering
-					v = new ViewerFMP(exp.getSeqCamData().getSequence(), false, true);
-					List<String> list = IcyCanvas.getCanvasPluginNames();
-					String pluginName = list.stream().filter(s -> s.contains("Canvas2DWithTransforms")).findFirst()
-							.orElse(null);
-					v.setCanvas(pluginName);
+					try {
+						// Create viewer with visible=false to prevent flickering
+						// currentSeq is already validated above
+						v = new ViewerFMP(currentSeq, false, true);
+						List<String> list = IcyCanvas.getCanvasPluginNames();
+						String pluginName = list.stream().filter(s -> s.contains("Canvas2DWithTransforms")).findFirst()
+								.orElse(null);
+						v.setCanvas(pluginName);
 
-					// Set position before making viewer visible
-					if (initialBounds != null) {
-						v.setBounds(initialBounds);
+						// Set position before making viewer visible
+						if (initialBounds != null) {
+							v.setBounds(initialBounds);
+						}
+
+						// Now make the viewer visible with the correct position already set
+						v.setVisible(true);
+					} catch (Exception e) {
+						System.err.println("MCExperiment_:updateViewerForSequenceCam [" + expIndex + "] - Failed to create viewer: " + e.getMessage());
+						return;
 					}
-
-					// Now make the viewer visible with the correct position already set
-					v.setVisible(true);
 				} else {
 					// Viewer already exists - reposition it immediately
 					if (initialBounds != null) {
@@ -138,13 +159,13 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 					}
 				}
 
-				if (v != null) {
-					v.toFront();
-					v.requestFocus();
-					v.addListener(parent);
+				v.toFront();
+				v.requestFocus();
+				v.addListener(parent);
+				if (exp.getSeqCamData() != null) {
 					v.setTitle(exp.getSeqCamData().getDecoratedImageName(0));
-					v.setRepeat(false);
 				}
+				v.setRepeat(false);
 			}
 		});
 	}

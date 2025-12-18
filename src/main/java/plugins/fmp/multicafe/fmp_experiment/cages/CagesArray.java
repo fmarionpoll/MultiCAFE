@@ -38,6 +38,10 @@ public class CagesArray {
 
 	private CagesArrayPersistence persistence = new CagesArrayPersistence();
 
+	public CagesArrayPersistence getPersistence() {
+		return persistence;
+	}
+
 	public int nCagesAlongX = 6;
 	public int nCagesAlongY = 8;
 	public int nColumnsPerCage = 2;
@@ -384,21 +388,45 @@ public class CagesArray {
 			return;
 
 		for (Cage cage : cagesList) {
-			CageProperties prop = cage.getProperties();
-			String strNumber = prop.getStrCageNumber();
+			// Try to match by cage ID first (more reliable)
+			int cageID = cage.getProperties().getCageID();
 			if (roiList.isEmpty())
 				return;
 
 			// Don't remove cages that already have valid ROIs - preserve them for saving
 			Iterator<ROI2D> iterator = roiList.iterator();
+			boolean matched = false;
 			while (iterator.hasNext()) {
 				ROI2D roi = iterator.next();
-				// test if roi with same cage nb
-				String roiNameClipped = roi.getName().substring(4);
-				if (roiNameClipped.equals(strNumber)) {
-					cage.setRoi(roi);
-					iterator.remove();
-					break;
+				// Try matching by cage ID from ROI name
+				String roiName = roi.getName();
+				if (roiName != null && roiName.length() > 4) {
+					try {
+						String roiNameClipped = roiName.substring(4);
+						int roiCageID = Integer.parseInt(roiNameClipped);
+						if (roiCageID == cageID) {
+							cage.setRoi(roi);
+							iterator.remove();
+							matched = true;
+							break;
+						}
+					} catch (NumberFormatException e) {
+						// Fall back to string matching
+					}
+				}
+				
+				// Fall back to string matching if ID matching failed
+				if (!matched) {
+					CageProperties prop = cage.getProperties();
+					String strNumber = prop.getStrCageNumber();
+					if (strNumber != null && roiName != null && roiName.length() > 4) {
+						String roiNameClipped = roiName.substring(4);
+						if (roiNameClipped.equals(strNumber)) {
+							cage.setRoi(roi);
+							iterator.remove();
+							break;
+						}
+					}
 				}
 			}
 
@@ -411,14 +439,29 @@ public class CagesArray {
 				continue;
 			boolean found = false;
 			for (Cage cage : cagesList) {
-				if (cage.getRoi() == null)
-					continue;
-				if (roi.getName().equals(cage.getRoi().getName())) {
+				// Check both by ROI name and by cage ID to avoid creating duplicates
+				if (cage.getRoi() != null && roi.getName().equals(cage.getRoi().getName())) {
 					found = true;
 					break;
 				}
+				// Also check by cage ID if ROI name doesn't match but IDs do
+				if (roi.getName().length() > 4) {
+					try {
+						String roiNameClipped = roi.getName().substring(4);
+						int roiCageID = Integer.parseInt(roiNameClipped);
+						if (cage.getProperties().getCageID() == roiCageID) {
+							// Match found by ID - update ROI but preserve fly positions
+							cage.setRoi((ROI2DShape) roi);
+							found = true;
+							break;
+						}
+					} catch (NumberFormatException e) {
+						// Not a numeric cage ID, continue
+					}
+				}
 			}
 			if (!found) {
+				// Only create new cage if no match found - this preserves fly positions from loaded cages
 				Cage cage = new Cage();
 				cage.setRoi((ROI2DShape) roi);
 				cagesList.add(cage);
