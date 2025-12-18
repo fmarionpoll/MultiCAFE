@@ -805,8 +805,7 @@ public class Experiment {
 	}
 
 	public boolean save_MS96_cages() {
-		String fileName = getXML_MS96_cages_Location(cages.ID_MS96_cages_XML);
-		return cages.xmlWriteCagesToFileNoQuestion(fileName);
+		return cages.save_Cages(getResultsDirectory());
 	}
 
 	// -------------------------------

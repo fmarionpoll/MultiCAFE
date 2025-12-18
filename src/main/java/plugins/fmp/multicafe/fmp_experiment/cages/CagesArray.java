@@ -190,10 +190,6 @@ public class CagesArray {
 		return persistence.xmlReadCagesFromFileNoQuestion(this, tempname);
 	}
 
-	public boolean xmlWriteCagesToFileNoQuestion(String tempname) {
-		return persistence.xmlWriteCagesToFileNoQuestion(this, tempname);
-	}
-
 
 	// --------------
 
