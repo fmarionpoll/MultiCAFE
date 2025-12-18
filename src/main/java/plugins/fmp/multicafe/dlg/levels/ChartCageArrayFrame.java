@@ -11,8 +11,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -22,33 +20,25 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.entity.ChartEntity;
-import org.jfree.chart.entity.XYItemEntity;
-import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.Range;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
-import icy.gui.viewer.Viewer;
-import icy.roi.ROI2D;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCageBuild;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePair;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePanel;
 import plugins.fmp.multicafe.fmp_tools.chart.builders.CageCapillarySeriesBuilder;
 import plugins.fmp.multicafe.fmp_tools.chart.plot.CageChartPlotFactory;
+import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
@@ -114,15 +104,6 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/** Default Y-axis range for relative data */
 	private static final double RELATIVE_Y_MAX = 1.2;
 
-	/** Chart ID delimiter */
-	private static final String CHART_ID_DELIMITER = ":";
-
-	/** Maximum description length for spot identification */
-	private static final int MAX_DESCRIPTION_LENGTH = 16;
-
-	/** Mouse button for left click */
-	private static final int LEFT_MOUSE_BUTTON = MouseEvent.BUTTON1;
-
 	/** Main chart panel containing all charts */
 	private JPanel mainChartPanel = null;
 
@@ -149,6 +130,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 	/** Current experiment */
 	private Experiment experiment = null;
+
+	/** Chart interaction handler */
+	private ChartInteractionHandler interactionHandler = null;
 
 //	/** Parent MultiCAFE/MultiSPOTS96 instance */
 //	private MultiCAFE parent = null;
@@ -276,13 +260,17 @@ public class ChartCageArrayFrame extends IcyFrame {
 		}
 
 		this.experiment = exp;
-		// Clear any previously displayed charts so empty datasets never leave stale charts on screen.
+		// Clear any previously displayed charts so empty datasets never leave stale
+		// charts on screen.
 		if (mainChartPanel != null) {
 			mainChartPanel.removeAll();
 		}
-		// Ensure derived measures (evaporation-corrected TOPLEVEL, LR SUM/PI, etc.) are computed
+		// Ensure derived measures (evaporation-corrected TOPLEVEL, LR SUM/PI, etc.) are
+		// computed
 		// before we build the datasets used for plotting.
 		exp.getCages().prepareComputations(exp, resultsOptions);
+		// Initialize appropriate interaction handler
+		interactionHandler = createInteractionHandler(exp, resultsOptions);
 		createChartPanelArray(resultsOptions);
 		arrangePanelsInDisplay(resultsOptions);
 		displayChartFrame();
@@ -300,10 +288,10 @@ public class ChartCageArrayFrame extends IcyFrame {
 		boolean flag = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast);
 		nPanelsAlongX = flag ? 1 : experiment.getCages().nCagesAlongX;
 		nPanelsAlongY = flag ? 1 : experiment.getCages().nCagesAlongY;
-		
+
 		// update layout
 		mainChartPanel.setLayout(new GridLayout(nPanelsAlongY, nPanelsAlongX));
-		
+
 		// Reset array to ensure no stale panels from previous experiments/views
 		chartPanelArray = new ChartCagePair[nPanelsAlongY][nPanelsAlongX];
 
@@ -360,7 +348,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 	private ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, ResultsOptions resultsOptions,
 			XYSeriesCollection xyDataSetList) {
 
-		// If requested result isn't available, show an explicit placeholder rather than leaving stale charts visible.
+		// If requested result isn't available, show an explicit placeholder rather than
+		// leaving stale charts visible.
 		if (xyDataSetList == null || xyDataSetList.getSeriesCount() == 0) {
 			NumberAxis xAxis = setXaxis("time", resultsOptions);
 			NumberAxis yAxis = setYaxis("", row, col, resultsOptions);
@@ -374,8 +363,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 			chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 
 			ChartCagePanel chartCagePanel = new ChartCagePanel(chart, DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT,
-					MIN_CHART_WIDTH, MIN_CHART_HEIGHT, MAX_CHART_WIDTH, MAX_CHART_HEIGHT, true, true, true, true,
-					false, true);
+					MIN_CHART_WIDTH, MIN_CHART_HEIGHT, MAX_CHART_WIDTH, MAX_CHART_HEIGHT, true, true, true, true, false,
+					true);
 			chartCagePanel.subscribeToCagePropertiesUpdates(cage);
 			return chartCagePanel;
 		}
@@ -435,7 +424,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 				false, // zoom options not added to the popup menu
 				true); // tooltips enabled for the chart
 
-		chartCagePanel.addChartMouseListener(new SpotChartMouseListener(experiment, resultsOptions));
+		if (interactionHandler != null) {
+			chartCagePanel.addChartMouseListener(interactionHandler.createMouseListener());
+		}
 		chartCagePanel.subscribeToCagePropertiesUpdates(cage);
 		return chartCagePanel;
 	}
@@ -467,7 +458,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param resultsOptions the export options
 	 */
 	private void arrangePanelsInDisplay(ResultsOptions resultsOptions) {
-		// Ensure we never keep previously displayed panels when the new dataset is empty.
+		// Ensure we never keep previously displayed panels when the new dataset is
+		// empty.
 		mainChartPanel.removeAll();
 		if (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast) {
 			int indexCage = resultsOptions.cageIndexFirst;
@@ -551,225 +543,40 @@ public class ChartCageArrayFrame extends IcyFrame {
 	}
 
 	/**
-	 * Gets the spot from a clicked chart.
-	 * 
-	 * @param e the chart mouse event
-	 * @return the selected spot or null if not found
-	 */
-	@SuppressWarnings("unused")
-	private Spot getSpotFromClickedChart(ChartMouseEvent e) {
-		if (e == null) {
-			LOGGER.warning("Chart mouse event is null");
-			return null;
-		}
-
-		final MouseEvent trigger = e.getTrigger();
-		if (trigger.getButton() != LEFT_MOUSE_BUTTON) {
-			return null;
-		}
-
-		JFreeChart chart = e.getChart();
-		if (chart == null || chart.getID() == null) {
-			LOGGER.warning("Chart or chart ID is null");
-			return null;
-		}
-
-		String[] chartID = chart.getID().split(CHART_ID_DELIMITER);
-		if (chartID.length < 4) {
-			LOGGER.warning("Invalid chart ID format: " + chart.getID());
-			return null;
-		}
-
-		try {
-			int row = Integer.parseInt(chartID[1]);
-			int col = Integer.parseInt(chartID[3]);
-
-			if (row < 0 || row >= chartPanelArray.length || col < 0 || col >= chartPanelArray[0].length) {
-				LOGGER.warning("Invalid chart coordinates: row=" + row + ", col=" + col);
-				return null;
-			}
-
-			Cage cage = chartPanelArray[row][col].getCage();
-			if (cage == null) {
-				LOGGER.warning("Clicked chart has no associated cage");
-				return null;
-			}
-
-			ChartPanel panel = chartPanelArray[row][col].getChartPanel();
-			if (panel == null) {
-				LOGGER.warning("Clicked chart has no associated panel");
-				return null;
-			}
-
-			PlotRenderingInfo plotInfo = panel.getChartRenderingInfo().getPlotInfo();
-			Point2D pointClicked = panel.translateScreenToJava2D(trigger.getPoint());
-
-			// Get chart
-			int subplotIndex = plotInfo.getSubplotIndex(pointClicked);
-			XYPlot xyPlot = (XYPlot) chart.getPlot();
-
-			// Get item in the chart
-			Spot spotFound = null;
-			String description = null;
-			ChartEntity chartEntity = e.getEntity();
-
-			if (chartEntity != null && chartEntity instanceof XYItemEntity) {
-				spotFound = getSpotFromXYItemEntity((XYItemEntity) chartEntity);
-			} else if (subplotIndex >= 0) {
-				XYDataset xyDataset = xyPlot.getDataset(0);
-				if (xyDataset != null && xyDataset.getSeriesCount() > 0) {
-					description = (String) xyDataset.getSeriesKey(0);
-					spotFound = experiment.getCages().getSpotFromROIName(description);
-				}
-			} else {
-				if (cage.spotsArray.getSpotsCount() > 0) {
-					spotFound = cage.spotsArray.getSpotsList().get(0);
-				}
-			}
-
-			if (spotFound == null) {
-				LOGGER.warning("Failed to find spot from clicked chart");
-				return null;
-			}
-
-			int index = experiment.getCages().getSpotGlobalPosition(spotFound);
-			spotFound.setSpotKymographT(index);
-			return spotFound;
-
-		} catch (NumberFormatException ex) {
-			LOGGER.warning("Could not parse chart coordinates: " + ex.getMessage());
-			return null;
-		}
-	}
-
-	/**
-	 * Gets the spot from an XY item entity.
-	 * 
-	 * @param xyItemEntity the XY item entity
-	 * @return the selected spot or null if not found
-	 */
-	private Spot getSpotFromXYItemEntity(XYItemEntity xyItemEntity) {
-		if (xyItemEntity == null) {
-			LOGGER.warning("XY item entity is null");
-			return null;
-		}
-
-		int seriesIndex = xyItemEntity.getSeriesIndex();
-		XYDataset xyDataset = xyItemEntity.getDataset();
-
-		if (xyDataset == null) {
-			LOGGER.warning("XY dataset is null");
-			return null;
-		}
-
-		String description = (String) xyDataset.getSeriesKey(seriesIndex);
-		if (description == null) {
-			LOGGER.warning("Series description is null");
-			return null;
-		}
-
-		description = description.substring(0, Math.min(description.length(), MAX_DESCRIPTION_LENGTH));
-
-		Spot spotFound = experiment.getCages().getSpotFromROIName(description);
-		if (spotFound == null) {
-			LOGGER.warning("Graph clicked but source not found - description (roiName)=" + description);
-			return null;
-		}
-
-		spotFound.setSpotCamDataT(xyItemEntity.getItem());
-		return spotFound;
-	}
-
-	/**
-	 * Selects a spot in the experiment.
-	 * 
-	 * @param exp  the experiment
-	 * @param spot the spot to select
-	 */
-	private void chartSelectSpot(Experiment exp, Spot spot) {
-		if (exp == null || spot == null) {
-			LOGGER.warning("Cannot select spot: experiment or spot is null");
-			return;
-		}
-
-		ROI2D roi = spot.getRoi();
-		if (roi != null) {
-			exp.getSeqCamData().getSequence().setFocusedROI(roi);
-			exp.getSeqCamData().centerDisplayOnRoi(roi);
-		}
-	}
-
-	/**
-	 * Selects the time position for a spot.
+	 * Creates the appropriate interaction handler based on the result type.
 	 * 
 	 * @param exp            the experiment
 	 * @param resultsOptions the export options
-	 * @param spot           the spot to select time for
+	 * @return the appropriate interaction handler
 	 */
-	private void selectT(Experiment exp, ResultsOptions resultsOptions, Spot spot) {
-		if (exp == null || spot == null) {
-			LOGGER.warning("Cannot select time: experiment or spot is null");
-			return;
-		}
-
-		Viewer v = exp.getSeqCamData().getSequence().getFirstViewer();
-		if (v != null && spot.getSpotCamDataT() > 0) {
-			int frameIndex = (int) (spot.getSpotCamDataT() * resultsOptions.buildExcelStepMs
-					/ exp.getSeqCamData().getTimeManager().getBinDurationMs());
-			v.setPositionT(frameIndex);
-		}
-	}
-
-	/**
-	 * Selects the kymograph for a spot.
-	 * 
-	 * @param exp  the experiment
-	 * @param spot the spot to select kymograph for
-	 */
-	private void chartSelectKymograph(Experiment exp, Spot spot) {
-		if (exp == null || spot == null) {
-			LOGGER.warning("Cannot select kymograph: experiment or spot is null");
-			return;
-		}
-
-//		if (exp.seqKymos != null && exp.seqKymos.getSequence() != null) {
-//			Viewer v = exp.seqKymos.getSequence().getFirstViewer();
-//			if (v != null) {
-//				v.setPositionT(spot.getSpotKymographT());
-//			}
-//		}
-	}
-
-	/**
-	 * Handles the selection of a clicked spot.
-	 * 
-	 * @param exp            the experiment
-	 * @param resultsOptions the export options
-	 * @param clickedSpot    the clicked spot
-	 */
-	@SuppressWarnings("unused")
-	private void chartSelectClickedSpot(Experiment exp, ResultsOptions resultsOptions, Spot clickedSpot) {
-		if (clickedSpot == null) {
-			LOGGER.warning("Clicked spot is null");
-			return;
-		}
-
-		chartSelectSpot(exp, clickedSpot);
-		selectT(exp, resultsOptions, clickedSpot);
-		chartSelectKymograph(exp, clickedSpot);
-
-		ROI2D roi = clickedSpot.getRoi();
-		if (roi != null) {
-			exp.getSeqCamData().getSequence().setSelectedROI(roi);
-		}
-
-		String spotName = clickedSpot.getRoi().getName();
-		Cage cage = exp.getCages().getCageFromSpotROIName(spotName);
-		if (cage != null) {
-			ROI2D cageRoi = cage.getRoi();
-			exp.getSeqCamData().centerDisplayOnRoi(cageRoi);
+	private ChartInteractionHandler createInteractionHandler(Experiment exp, ResultsOptions resultsOptions) {
+		if (isSpotResultType(resultsOptions.resultType)) {
+			return new SpotChartInteractionHandler(exp, resultsOptions, chartPanelArray);
 		} else {
-			LOGGER.warning("Could not find cage for spot: " + spotName);
+			// Default to capillary handler for capillary types and others
+			return new CapillaryChartInteractionHandler(exp, resultsOptions, chartPanelArray);
+		}
+	}
+
+	/**
+	 * Determines if a result type is for spot measurements.
+	 * 
+	 * @param resultType the result type to check
+	 * @return true if it's a spot type, false otherwise
+	 */
+	private boolean isSpotResultType(EnumResults resultType) {
+		if (resultType == null) {
+			return false;
+		}
+		switch (resultType) {
+		case AREA_SUM:
+		case AREA_SUMCLEAN:
+		case AREA_OUT:
+		case AREA_DIFF:
+		case AREA_FLYPRESENT:
+			return true;
+		default:
+			return false;
 		}
 	}
 
@@ -836,44 +643,4 @@ public class ChartCageArrayFrame extends IcyFrame {
 		yRange = range;
 	}
 
-	/**
-	 * Inner class for handling chart mouse events.
-	 */
-	private class SpotChartMouseListener implements ChartMouseListener {
-		@SuppressWarnings("unused")
-		private final Experiment experiment;
-		@SuppressWarnings("unused")
-		private final ResultsOptions resultsOptions;
-
-		/**
-		 * Creates a new mouse listener.
-		 * 
-		 * @param exp            the experiment
-		 * @param resultsOptions the export options
-		 */
-		public SpotChartMouseListener(Experiment exp, ResultsOptions resultsOptions) {
-			this.experiment = exp;
-			this.resultsOptions = resultsOptions;
-		}
-
-		@Override
-		public void chartMouseClicked(ChartMouseEvent e) {
-			// TODO
-			System.out.println("click on cage detected");
-//			Spot clickedSpot = getSpotFromClickedChart(e);
-//			if (clickedSpot != null) {
-//				chartSelectClickedSpot(experiment, xlsOptions, clickedSpot);
-//				Cage cage = experiment.cagesArray.getCageFromID(clickedSpot.getProperties().getCageID());
-//				if (cage != null && parent != null && parent.dlgSpots != null) {
-//					parent.dlgSpots.tabInfos.selectCage(cage);
-//					parent.dlgSpots.tabInfos.selectSpot(clickedSpot);
-//				}
-//			}
-		}
-
-		@Override
-		public void chartMouseMoved(ChartMouseEvent e) {
-			// No action needed for mouse movement
-		}
-	}
 }
