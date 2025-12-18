@@ -607,8 +607,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	// CSV Import methods
 
 	public void csvImport_CAGE_Header(String[] data) {
-		if (data == null || data.length < 8) {
-			System.err.println("Cage:csvImport_CAGE_Header() Invalid data array length");
+		if (data == null || data.length < 3) {
+			System.err.println("Cage:csvImport_CAGE_Header() Invalid data array length: " + (data == null ? "null" : data.length));
 			return;
 		}
 
