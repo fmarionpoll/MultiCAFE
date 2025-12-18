@@ -20,6 +20,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePair;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePanel;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
@@ -77,37 +78,61 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 		}
 
 		JFreeChart chart = e.getChart();
-		if (chart == null || chart.getID() == null) {
-			LOGGER.warning("Chart or chart ID is null");
+		if (chart == null) {
+			LOGGER.warning("Chart is null");
 			return null;
 		}
 
-		String[] chartID = chart.getID().split(CHART_ID_DELIMITER);
-		if (chartID.length < 4) {
-			LOGGER.warning("Invalid chart ID format: " + chart.getID());
+		// Get panel from event source
+		Object source = e.getTrigger().getSource();
+		ChartPanel panel = null;
+		Cage cage = null;
+
+		// Try to get cage directly from ChartCagePanel if available
+		if (source instanceof ChartCagePanel) {
+			panel = (ChartCagePanel) source;
+			cage = ((ChartCagePanel) panel).getCage();
+		} else if (source instanceof ChartPanel) {
+			panel = (ChartPanel) source;
+		} else {
+			LOGGER.warning("Event source is not a ChartPanel: " + source);
 			return null;
+		}
+
+		// Fall back to array lookup if cage not found directly
+		if (cage == null) {
+			if (chart.getID() == null) {
+				LOGGER.warning("Chart ID is null and cannot get cage from ChartCagePanel");
+				return null;
+			}
+
+			String[] chartID = chart.getID().split(CHART_ID_DELIMITER);
+			if (chartID.length < 4) {
+				LOGGER.warning("Invalid chart ID format: " + chart.getID());
+				return null;
+			}
+
+			try {
+				int row = Integer.parseInt(chartID[1]);
+				int col = Integer.parseInt(chartID[3]);
+
+				if (row < 0 || row >= chartPanelArray.length || col < 0 || col >= chartPanelArray[0].length) {
+					LOGGER.warning("Invalid chart coordinates: row=" + row + ", col=" + col);
+					return null;
+				}
+
+				cage = chartPanelArray[row][col].getCage();
+				if (cage == null) {
+					LOGGER.warning("Clicked chart has no associated cage");
+					return null;
+				}
+			} catch (NumberFormatException ex) {
+				LOGGER.warning("Could not parse chart coordinates: " + ex.getMessage());
+				return null;
+			}
 		}
 
 		try {
-			int row = Integer.parseInt(chartID[1]);
-			int col = Integer.parseInt(chartID[3]);
-
-			if (row < 0 || row >= chartPanelArray.length || col < 0 || col >= chartPanelArray[0].length) {
-				LOGGER.warning("Invalid chart coordinates: row=" + row + ", col=" + col);
-				return null;
-			}
-
-			Cage cage = chartPanelArray[row][col].getCage();
-			if (cage == null) {
-				LOGGER.warning("Clicked chart has no associated cage");
-				return null;
-			}
-
-			ChartPanel panel = chartPanelArray[row][col].getChartPanel();
-			if (panel == null) {
-				LOGGER.warning("Clicked chart has no associated panel");
-				return null;
-			}
 
 			PlotRenderingInfo plotInfo = panel.getChartRenderingInfo().getPlotInfo();
 			Point2D pointClicked = panel.translateScreenToJava2D(trigger.getPoint());
@@ -140,9 +165,8 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 			int index = experiment.getCages().getSpotGlobalPosition(spotFound);
 			spotFound.setSpotKymographT(index);
 			return spotFound;
-
-		} catch (NumberFormatException ex) {
-			LOGGER.warning("Could not parse chart coordinates: " + ex.getMessage());
+		} catch (Exception ex) {
+			LOGGER.warning("Error processing spot from clicked chart: " + ex.getMessage());
 			return null;
 		}
 	}

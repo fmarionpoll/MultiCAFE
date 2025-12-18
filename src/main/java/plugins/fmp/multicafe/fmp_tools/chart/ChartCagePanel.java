@@ -37,6 +37,15 @@ public class ChartCagePanel extends ChartPanel implements PropertyChangeListener
 		this.cageListened.getProperties().addPropertyChangeListener(this);
 	}
 
+	/**
+	 * Gets the cage associated with this chart panel.
+	 * 
+	 * @return the cage, or null if not set
+	 */
+	public Cage getCage() {
+		return cageListened;
+	}
+
 	@Override
 	public void close() throws Exception {
 		this.cageListened.getProperties().removePropertyChangeListener(this);

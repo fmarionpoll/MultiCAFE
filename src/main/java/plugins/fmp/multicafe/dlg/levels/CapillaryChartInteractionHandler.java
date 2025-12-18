@@ -24,6 +24,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePair;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePanel;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
@@ -37,31 +38,29 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 
 	private static final Logger LOGGER = Logger.getLogger(CapillaryChartInteractionHandler.class.getName());
 
-	private static final String CHART_ID_DELIMITER = ":";
 	private static final int LEFT_MOUSE_BUTTON = MouseEvent.BUTTON1;
 
 	private final Experiment experiment;
 	private final ResultsOptions resultsOptions;
-	private final ChartCagePair[][] chartPanelArray;
 
 	/**
 	 * Creates a new capillary chart interaction handler.
 	 * 
 	 * @param experiment      the experiment containing the data
 	 * @param resultsOptions   the export options
-	 * @param chartPanelArray  the array of chart panel pairs
+	 * @param chartPanelArray  the array of chart panel pairs (unused, kept for interface compatibility)
 	 */
 	public CapillaryChartInteractionHandler(Experiment experiment, ResultsOptions resultsOptions,
-			ChartCagePair[][] chartPanelArray) {
+			@SuppressWarnings("unused") ChartCagePair[][] chartPanelArray) {
 		this.experiment = experiment;
 		this.resultsOptions = resultsOptions;
-		this.chartPanelArray = chartPanelArray;
 	}
 
 	@Override
 	public ChartMouseListener createMouseListener() {
 		return new CapillaryChartMouseListener();
 	}
+
 
 	/**
 	 * Gets the capillary from a clicked chart.
@@ -81,60 +80,45 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 		}
 
 		JFreeChart chart = e.getChart();
-		if (chart == null || chart.getID() == null) {
-			LOGGER.warning("Chart or chart ID is null");
+		if (chart == null) {
+			LOGGER.warning("Chart is null");
 			return null;
 		}
 
-		String[] chartID = chart.getID().split(CHART_ID_DELIMITER);
-		if (chartID.length < 4) {
-			LOGGER.warning("Invalid chart ID format: " + chart.getID());
+		// Get panel from event source and extract cage directly from ChartCagePanel
+		Object source = e.getTrigger().getSource();
+		ChartPanel panel = null;
+		Cage cage = null;
+		if (source instanceof ChartCagePanel) {
+			panel = (ChartCagePanel) source;
+			cage = ((ChartCagePanel) panel).getCage();
+		} else if (source instanceof ChartPanel) {
+			panel = (ChartPanel) source;
+			LOGGER.warning("Event source is ChartPanel but not ChartCagePanel: " + source);
+			return null;
+		} else {
+			LOGGER.warning("Event source is not a ChartPanel: " + source);
 			return null;
 		}
 
-		try {
-			int row = Integer.parseInt(chartID[1]);
-			int col = Integer.parseInt(chartID[3]);
-
-			if (row < 0 || row >= chartPanelArray.length || col < 0 || col >= chartPanelArray[0].length) {
-				LOGGER.warning("Invalid chart coordinates: row=" + row + ", col=" + col);
-				return null;
-			}
-
-			Cage cage = chartPanelArray[row][col].getCage();
-			if (cage == null) {
-				LOGGER.warning("Clicked chart has no associated cage");
-				return null;
-			}
-
-			ChartPanel panel = chartPanelArray[row][col].getChartPanel();
-			if (panel == null) {
-				LOGGER.warning("Clicked chart has no associated panel");
-				return null;
-			}
-
-			XYPlot xyPlot = (XYPlot) chart.getPlot();
-			ChartEntity chartEntity = e.getEntity();
-
-			Capillary capillaryFound = null;
-
-			if (chartEntity != null && chartEntity instanceof XYItemEntity) {
-				capillaryFound = getCapillaryFromXYItemEntity((XYItemEntity) chartEntity, cage);
-			} else {
-				// Clicked on empty space - find closest curve
-				// Need to get the ChartPanel from the event source
-				Object source = e.getTrigger().getSource();
-				if (source instanceof ChartPanel) {
-					capillaryFound = findClosestCapillaryFromPoint(e, cage, xyPlot, (ChartPanel) source);
-				}
-			}
-
-			return capillaryFound;
-
-		} catch (NumberFormatException ex) {
-			LOGGER.warning("Could not parse chart coordinates: " + ex.getMessage());
+		if (cage == null) {
+			LOGGER.warning("Could not get cage from ChartCagePanel");
 			return null;
 		}
+
+		XYPlot xyPlot = (XYPlot) chart.getPlot();
+		ChartEntity chartEntity = e.getEntity();
+
+		Capillary capillaryFound = null;
+
+		if (chartEntity != null && chartEntity instanceof XYItemEntity) {
+			capillaryFound = getCapillaryFromXYItemEntity((XYItemEntity) chartEntity, cage);
+		} else {
+			// Clicked on empty space - find closest curve
+			capillaryFound = findClosestCapillaryFromPoint(e, cage, xyPlot, panel);
+		}
+
+		return capillaryFound;
 	}
 
 	/**
