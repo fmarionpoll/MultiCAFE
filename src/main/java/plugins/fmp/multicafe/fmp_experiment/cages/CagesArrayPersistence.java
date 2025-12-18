@@ -15,7 +15,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
 import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
 
-public class CagesPersistence {
+public class CagesArrayPersistence {
 
 	private final String ID_CAGES = "Cages";
 	private final String ID_NCAGES = "n_cages";

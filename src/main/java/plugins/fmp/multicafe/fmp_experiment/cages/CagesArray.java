@@ -36,7 +36,7 @@ public class CagesArray {
 	// This allows efficient access to computed L+R measures
 	private transient java.util.Map<Integer, CageCapillariesComputation> cageComputations = new java.util.HashMap<>();
 
-	private CagesPersistence persistence = new CagesPersistence();
+	private CagesArrayPersistence persistence = new CagesArrayPersistence();
 
 	public int nCagesAlongX = 6;
 	public int nCagesAlongY = 8;
