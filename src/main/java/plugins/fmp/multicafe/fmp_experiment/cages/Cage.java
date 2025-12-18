@@ -62,9 +62,25 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	@Override
 	public int compareTo(Cage o) {
-		if (o != null)
-			return (this.cageROI2D.getName()).compareTo(o.cageROI2D.getName());
-		return 1;
+		if (o == null)
+			return 1;
+		// Handle null ROIs by comparing cage IDs as fallback
+		if (this.cageROI2D == null && o.cageROI2D == null) {
+			return Integer.compare(this.prop.getCageID(), o.prop.getCageID());
+		}
+		if (this.cageROI2D == null)
+			return -1;
+		if (o.cageROI2D == null)
+			return 1;
+		String thisName = this.cageROI2D.getName();
+		String otherName = o.cageROI2D.getName();
+		if (thisName == null && otherName == null)
+			return 0;
+		if (thisName == null)
+			return -1;
+		if (otherName == null)
+			return 1;
+		return thisName.compareTo(otherName);
 	}
 
 	// ------------------------------------
@@ -121,7 +137,23 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public String getCageNumberFromRoiName() {
-		prop.setStrCageNumber(cageROI2D.getName().substring(cageROI2D.getName().length() - 3));
+		if (cageROI2D == null || cageROI2D.getName() == null) {
+			// Fallback to cage ID or existing strCageNumber if ROI is not available
+			String fallback = prop.getStrCageNumber();
+			if (fallback == null || fallback.isEmpty() || fallback.equals("0")) {
+				fallback = String.format("%03d", prop.getCageID());
+			}
+			prop.setStrCageNumber(fallback);
+			return prop.getStrCageNumber();
+		}
+		String roiName = cageROI2D.getName();
+		if (roiName.length() >= 3) {
+			prop.setStrCageNumber(roiName.substring(roiName.length() - 3));
+		} else {
+			// ROI name too short, use cage ID as fallback
+			String fallback = String.format("%03d", prop.getCageID());
+			prop.setStrCageNumber(fallback);
+		}
 		return prop.getStrCageNumber();
 	}
 
@@ -246,6 +278,10 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public ROI2DRectangle getRoiRectangleFromPositionAtT(int t) {
+		// Return null if cage ROI is not available (prevents NPE in getCageNumberFromRoiName)
+		if (cageROI2D == null) {
+			return null;
+		}
 		int nitems = flyPositions.flyPositionList.size();
 		if (nitems == 0 || t >= nitems)
 			return null;
@@ -259,6 +295,10 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public void transferRoisToPositions(List<ROI2D> detectedROIsList) {
+		// Skip if cage ROI is not available (prevents NPE in getCageNumberFromRoiName)
+		if (cageROI2D == null) {
+			return;
+		}
 		String filter = "detR" + getCageNumberFromRoiName();
 		for (ROI2D roi : detectedROIsList) {
 			String name = roi.getName();
@@ -266,7 +306,9 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 				continue;
 			Rectangle2D rect = ((ROI2DRectangle) roi).getRectangle();
 			int t = (int) roi.getT();
-			flyPositions.flyPositionList.get(t).rectPosition = rect;
+			if (t >= 0 && t < flyPositions.flyPositionList.size()) {
+				flyPositions.flyPositionList.get(t).rectPosition = rect;
+			}
 		}
 	}
 
@@ -454,7 +496,11 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = new ArrayList<String>();
 		row.add(prop.getStrCageNumber());
-		row.add(cageROI2D.getName());
+		// Handle null ROI name safely
+		String roiName = (cageROI2D != null && cageROI2D.getName() != null) 
+			? cageROI2D.getName() 
+			: "cage" + String.format("%03d", prop.getCageID());
+		row.add(roiName);
 		row.add(Integer.toString(prop.getCageNFlies()));
 		row.add(Integer.toString(prop.getFlyAge()));
 		row.add(prop.getComment());
