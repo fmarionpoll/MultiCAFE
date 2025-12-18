@@ -46,8 +46,8 @@ public class CageProperties {
 	private String flySex = "..";
 	private String flyStrain = "..";
 	private String strCageNumber = "0";
-	private int countSpotsStim1 = 1;
-	private int countSpotsStim2 = 1;
+	private int countStim1 = 1;
+	private int countStim2 = 1;
 
 	private final String ID_NFLIES = "nflies";
 	private final String ID_AGE = "age";
@@ -116,8 +116,8 @@ public class CageProperties {
 		flySex = propFrom.flySex;
 		strCageNumber = propFrom.strCageNumber;
 		flyStrain = propFrom.flyStrain;
-		countSpotsStim1 = propFrom.countSpotsStim1;
-		countSpotsStim2 = propFrom.countSpotsStim2;
+		countStim1 = propFrom.countStim1;
+		countStim2 = propFrom.countStim2;
 
 		// Fire PropertyChange events for all changed properties
 		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_INDEX, oldArrayIndex, arrayIndex);
@@ -161,8 +161,8 @@ public class CageProperties {
 		propTo.flySex = flySex;
 		propTo.strCageNumber = strCageNumber;
 		propTo.flyStrain = flyStrain;
-		propTo.countSpotsStim1 = countSpotsStim1;
-		propTo.countSpotsStim2 = countSpotsStim2;
+		propTo.countStim1 = countStim1;
+		propTo.countStim2 = countStim2;
 		
 
 		// Fire PropertyChange events for all changed properties
@@ -384,19 +384,19 @@ public class CageProperties {
 		propertyChangeSupport.firePropertyChange(PROPERTY_STR_CAGE_NUMBER, oldValue, this.strCageNumber);
 	}
 	
-	public int getCountSpotsStim1() {
-		return countSpotsStim1;
+	public int getCountStim1() {
+		return countStim1;
 	}
 	
-	public void setCountSpotsStim1(int countSpotsStim1) {
-		this.countSpotsStim1 = countSpotsStim1;
+	public void setCountStim1(int countSpotsStim1) {
+		this.countStim1 = countSpotsStim1;
 	}
 
-	public int getCountSpotsStim2() {
-		return countSpotsStim2;
+	public int getCountStim2() {
+		return countStim2;
 	}
 	
-	public void setCountSpotsStim2(int countSpotsStim2) {
-		this.countSpotsStim2 = countSpotsStim2;
+	public void setCountStim2(int countSpotsStim2) {
+		this.countStim2 = countSpotsStim2;
 	}
 }

@@ -100,8 +100,7 @@ public class BuildCagesAsArray extends JPanel {
 					createROIsFromSelectedPolygon(exp);
 					exp.getCages().cagesFromROIs(exp.getSeqCamData());
 					if (exp.getCapillaries().getList().size() > 0)
-						exp.getCages()
-								.transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getList());
+						exp.getCages().transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getList());
 				}
 			}
 		});
@@ -157,7 +156,7 @@ public class BuildCagesAsArray extends JPanel {
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSequence());
-		exp.getCages().getCageList().clear();
+//		exp.getCages().getCageList().clear();
 
 		// read values from text boxes
 		try {

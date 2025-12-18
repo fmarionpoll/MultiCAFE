@@ -42,7 +42,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 	 */
 	private static final long serialVersionUID = -121724000730795396L;
 	private JButton drawPolygon2DButton = new JButton("Draw Polygon2D");
-	private JButton createCellsButton = new JButton("Create cages");
+	private JButton createCagesButton = new JButton("Create cages");
 	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(60, 0, 10000, 1));
 	public JCheckBox overlayCheckBox = new JCheckBox("Overlay ", false);
 	private JButton deleteButton = new JButton("Cut points within selected polygon");
@@ -65,7 +65,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(drawPolygon2DButton);
-		panel1.add(createCellsButton);
+		panel1.add(createCagesButton);
 		add(panel1);
 
 		JLabel videochannel = new JLabel("detect from ");
@@ -97,7 +97,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 			}
 		});
 
-		createCellsButton.addActionListener(new ActionListener() {
+		createCagesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
@@ -180,7 +180,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
 		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSequence());
-		exp.getCages().getCageList().clear();
+//		exp.getCages().getCageList().clear();
 
 		int t = exp.getSeqCamData().getCurrentFrame();
 		IcyBufferedImage img0 = IcyBufferedImageUtil.convertToType(overlayThreshold.getTransformedImage(t),

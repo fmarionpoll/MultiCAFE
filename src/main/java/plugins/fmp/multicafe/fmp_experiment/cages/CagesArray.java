@@ -622,13 +622,13 @@ public class CagesArray {
 			while (iterator.hasNext()) {
 				Cage cage = iterator.next();
 				// Only remove cages that have null ROIs when roiList is empty
-				if (cage.getRoi() == null) {
+				if (cage.getRoi() == null && cage.getCapillaries().getList().size() < 1) {
 					iterator.remove();
 				}
 			}
 			return;
 		}
-		
+
 		// Normal case: remove cages whose ROIs are not in the sequence
 		Iterator<Cage> iterator = cagesList.iterator();
 		while (iterator.hasNext()) {
@@ -760,11 +760,38 @@ public class CagesArray {
 		// Use modern ROI finding API
 		List<ROI2D> roiList = seqCamData.findROIs("cage");
 		Collections.sort(roiList, new Comparators.ROI2D_Name());
+		transferROIsToCages(roiList);
 		addMissingCages(roiList);
 		removeOrphanCages(roiList);
 		Collections.sort(cagesList, new Comparators.Cage_Name());
 	}
-	
+
+	private void transferROIsToCages(List<ROI2D> roiList) {
+		if (cagesList.size() < 1)
+			return;
+
+		for (Cage cage : cagesList) {
+			CageProperties prop = cage.getProperties();
+			String strNumber = prop.getStrCageNumber();
+			if (roiList.isEmpty())
+				return;
+
+			// Don't remove cages that already have valid ROIs - preserve them for saving
+			Iterator<ROI2D> iterator = roiList.iterator();
+			while (iterator.hasNext()) {
+				ROI2D roi = iterator.next();
+				// test if roi with same cage nb
+				String roiNameClipped = roi.getName().substring(4);
+				if (roiNameClipped.equals(strNumber)) {
+					cage.setRoi(roi);
+					iterator.remove();
+					break;
+				}
+			}
+
+		}
+	}
+
 	private void addMissingCages(List<ROI2D> roiList) {
 		for (ROI2D roi : roiList) {
 			if (roi.getName() == null)

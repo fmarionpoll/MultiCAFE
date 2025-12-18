@@ -205,13 +205,13 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 			Results xlsStim1 = getResultForCage(exp, cage, spot1, scalingFactorToPhysicalUnits, resultsOptions,
 					resultType);
 			if (spot1 != null)
-				cage.getProperties().setCountSpotsStim1(spot1.getProperties().getCountAggregatedSpots());
+				cage.getProperties().setCountStim1(spot1.getProperties().getCountAggregatedSpots());
 
 			Spot spot2 = cage.combineSpotsWithSameStimConc(stim2, conc2);
 			Results xlsStim2 = getResultForCage(exp, cage, spot2, scalingFactorToPhysicalUnits, resultsOptions,
 					resultType);
 			if (spot2 != null)
-				cage.getProperties().setCountSpotsStim2(spot2.getProperties().getCountAggregatedSpots());
+				cage.getProperties().setCountStim2(spot2.getProperties().getCountAggregatedSpots());
 
 			Spot spotSUM = cage.createSpotSUM(spot1, spot2);
 			Results xlsSUM = getResultForCage(exp, cage, spotSUM, scalingFactorToPhysicalUnits, resultsOptions,
@@ -348,9 +348,9 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		case CAGE_AGE:
 			return cage.getProperties().getFlyAge();
 		case N_STIM1:
-			return cage.getProperties().getCountSpotsStim1();
+			return cage.getProperties().getCountStim1();
 		case N_STIM2:
-			return cage.getProperties().getCountSpotsStim2();
+			return cage.getProperties().getCountStim2();
 
 		default:
 			break;

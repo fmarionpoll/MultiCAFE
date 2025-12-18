@@ -42,7 +42,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public FlyPositions flyPositions = new FlyPositions();
 	public SpotsArray spotsArray = new SpotsArray();
 	private Capillaries capillaries = new Capillaries();
-//	private ArrayList<Capillary> capList = new ArrayList<Capillary>(2);
 	private final AtomicBoolean closed = new AtomicBoolean(false);
 
 	public boolean valid = false;
@@ -97,7 +96,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return prop.getCageID();
 	}
 
-	public void setRoi(ROI2DShape roi) {
+	public void setRoi(ROI2D roi) {
 		cageROI2D = roi;
 	}
 
