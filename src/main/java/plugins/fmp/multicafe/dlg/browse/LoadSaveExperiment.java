@@ -360,6 +360,9 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		long startTime = System.nanoTime();
 		ProgressFrame progressFrame = new ProgressFrame("Load Experiment Data");
 
+		// Set loading flag to prevent saving while loading
+		exp.setLoading(true);
+
 		try {
 			// If it's a LazyExperiment, load the data first
 			if (exp instanceof LazyExperiment) {
@@ -381,6 +384,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				LOGGER.severe(
 						"LoadSaveExperiments:openSelectedExperiment() Error: no jpg files found for this experiment\n");
 				progressFrame.close();
+				// Clear loading flag - loading failed early
+				exp.setLoading(false);
 				return flag;
 			}
 
@@ -445,6 +450,9 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);
 			progressFrame.close();
 
+			// Clear loading flag - loading completed successfully
+			exp.setLoading(false);
+
 			long endTime = System.nanoTime();
 			System.out.println("LoadExperiment: openSelecteExperiment took " + (endTime - startTime) / 1e6 + " ms");
 			return flag;
@@ -454,6 +462,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			LOGGER.severe("Exception details: " + e.toString());
 			e.printStackTrace();
 			progressFrame.close();
+
+			// Clear loading flag - loading failed but we're done trying
+			exp.setLoading(false);
+
 			long endTime = System.nanoTime();
 			System.out.println(
 					"LoadExperiment: openSelecteExperiment failed, took " + (endTime - startTime) / 1e6 + " ms");
@@ -619,6 +631,12 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 	public void closeViewsForCurrentExperiment(Experiment exp) {
 		if (exp != null) {
+			// Don't save if loading is still in progress (prevents race condition)
+			if (exp.isLoading()) {
+				LOGGER.warning("Skipping save for experiment - loading still in progress: " + exp.toString());
+				return;
+			}
+
 			if (exp.getSeqCamData() != null) {
 				exp.xmlSave_MCExperiment();
 				exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());

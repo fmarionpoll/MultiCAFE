@@ -73,6 +73,9 @@ public class Experiment {
 
 	private static String staticProgramContext = null;
 
+	// Flag to prevent saving while loading is in progress (race condition protection)
+	private volatile boolean isLoading = false;
+
 	// -----------------------------------------
 
 	public Sequence getSeqReference() {
@@ -241,6 +244,14 @@ public class Experiment {
 
 	public String getResultsDirectory() {
 		return resultsDirectory;
+	}
+
+	public boolean isLoading() {
+		return isLoading;
+	}
+
+	public void setLoading(boolean loading) {
+		this.isLoading = loading;
 	}
 
 	public String toString() {
@@ -1530,8 +1541,10 @@ public class Experiment {
 			moveCageMeasuresToExperimentDirectory(pathToMeasures);
 
 		boolean flag = cages.load_Cages(getResultsDirectory());
-		if (flag & seqCamData.getSequence() != null)
+		if (flag && seqCamData.getSequence() != null) {
 			cages.cagesToROIs(seqCamData);
+			cages.cagesFromROIs(seqCamData);
+		}
 		return flag;
 	}
 
