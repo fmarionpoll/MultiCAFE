@@ -41,7 +41,6 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 	private MultiCAFE parent0 = null;
 	private String detectString = "Detect...";
 	private JButton startComputationButton = new JButton(detectString);
-	private JSpinner nFliesPresentSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 255, 1));
 
 	JComboBox<ImageTransformEnums> transformComboBox = new JComboBox<>(
 			new ImageTransformEnums[] { ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB, ImageTransformEnums.B_RGB,
@@ -81,8 +80,6 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		panel1.add(startComputationButton);
 		panel1.add(cagesComboBox);
 		panel1.add(allCheckBox);
-		panel1.add(new JLabel("n flies "));
-		panel1.add(nFliesPresentSpinner);
 		add(panel1);
 
 		cagesComboBox.addPopupMenuListener(this);
@@ -209,7 +206,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		options.jitter = (int) jitterTextField.getValue();
 		options.videoChannel = 0; // colorChannelComboBox.getSelectedIndex();
 		options.transformop = (ImageTransformEnums) transformComboBox.getSelectedItem();
-		options.nFliesPresent = (int) nFliesPresentSpinner.getValue();
+		options.nFliesPresent = 1;
 
 		options.transformop = (ImageTransformEnums) backgroundComboBox.getSelectedItem();
 		options.threshold = (int) thresholdSpinner.getValue();

@@ -29,6 +29,8 @@ public abstract class FlyDetect extends BuildSeries {
 			return;
 		if (!checkBoundsForCages(exp))
 			return;
+		if (!checkCagesForFlyDetection(exp))
+			return;
 
 		runFlyDetect(exp);
 		exp.getCages().orderFlyPositions();
@@ -39,6 +41,39 @@ public abstract class FlyDetect extends BuildSeries {
 	}
 
 	protected abstract void runFlyDetect(Experiment exp);
+
+	protected boolean checkCagesForFlyDetection(Experiment exp) {
+		if (exp.getCages() == null || exp.getCages().cagesList == null || exp.getCages().cagesList.isEmpty()) {
+			Logger.error("FlyDetect:checkCagesForFlyDetection() No cages loaded for experiment: " + exp.getResultsDirectory());
+			return false;
+		}
+
+		int cagesWithFlies = 0;
+		int targetCageID = options.detectCage;
+		
+		for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : exp.getCages().cagesList) {
+			if (cage.getProperties().getCageNFlies() > 0) {
+				cagesWithFlies++;
+				if (targetCageID != -1 && cage.getProperties().getCageID() == targetCageID) {
+					Logger.info("FlyDetect:checkCagesForFlyDetection() Found target cage " + targetCageID + " with " + cage.getProperties().getCageNFlies() + " fly(ies)");
+					return true;
+				}
+			}
+		}
+
+		if (cagesWithFlies == 0) {
+			Logger.error("FlyDetect:checkCagesForFlyDetection() No cages with flies (nFlies > 0) found. All " + exp.getCages().cagesList.size() + " cages have nFlies = 0. Experiment: " + exp.getResultsDirectory());
+			return false;
+		}
+
+		if (targetCageID != -1) {
+			Logger.error("FlyDetect:checkCagesForFlyDetection() Target cage " + targetCageID + " not found or has nFlies = 0. Found " + cagesWithFlies + " cage(s) with flies, but not the target cage.");
+			return false;
+		}
+
+		Logger.info("FlyDetect:checkCagesForFlyDetection() Found " + cagesWithFlies + " cage(s) with flies out of " + exp.getCages().cagesList.size() + " total cages");
+		return true;
+	}
 
 	protected void findFliesInAllFrames(Experiment exp) {
 		ProgressFrame progressBar = new ProgressFrame("Detecting flies...");
