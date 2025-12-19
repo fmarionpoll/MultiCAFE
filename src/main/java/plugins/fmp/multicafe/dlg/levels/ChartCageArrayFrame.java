@@ -152,15 +152,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/** Bottom panel containing legend */
 	private JPanel bottomPanel = null;
 
-	/** Available measurement types */
-	private static final EnumResults[] MEASUREMENT_TYPES = new EnumResults[] { //
-			EnumResults.TOPRAW, //
-			EnumResults.TOPLEVEL, //
-			EnumResults.BOTTOMLEVEL, //
-			EnumResults.TOPLEVEL_LR, //
-			EnumResults.DERIVEDVALUES, //
-			EnumResults.SUMGULPS, //
-			EnumResults.SUMGULPS_LR };
+	/** Available measurement types - will be populated from parent combobox if available */
+	private EnumResults[] measurementTypes = null;
 
 //	/** Parent MultiCAFE/MultiSPOTS96 instance */
 //	private MultiCAFE parent = null;
@@ -209,7 +202,10 @@ public class ChartCageArrayFrame extends IcyFrame {
 		mainChartFrame.setLayout(new BorderLayout());
 
 		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		resultTypeComboBox = new JComboBox<EnumResults>(MEASUREMENT_TYPES);
+		
+		// Get measurement types from parent combobox if available, otherwise use default
+		EnumResults[] typesToUse = getMeasurementTypes();
+		resultTypeComboBox = new JComboBox<EnumResults>(typesToUse);
 		resultTypeComboBox.setSelectedItem(options.resultType);
 		resultTypeComboBox.addActionListener(new ActionListener() {
 			@Override
@@ -753,11 +749,43 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Sets the parent combobox reference for synchronization.
 	 * When the chart's combobox changes, it will update the parent combobox to keep them in sync.
+	 * Also extracts the measurement types from the parent combobox to keep the lists synchronized.
 	 * 
 	 * @param comboBox the parent combobox to synchronize with
 	 */
 	public void setParentComboBox(JComboBox<EnumResults> comboBox) {
 		this.parentComboBox = comboBox;
+		// Extract measurement types from parent combobox model
+		if (comboBox != null) {
+			javax.swing.ComboBoxModel<EnumResults> model = comboBox.getModel();
+			int size = model.getSize();
+			EnumResults[] types = new EnumResults[size];
+			for (int i = 0; i < size; i++) {
+				types[i] = model.getElementAt(i);
+			}
+			this.measurementTypes = types;
+		}
+	}
+
+	/**
+	 * Gets the measurement types to use for the combobox.
+	 * If a parent combobox is set, uses its items. Otherwise falls back to a default list.
+	 * 
+	 * @return array of measurement types
+	 */
+	private EnumResults[] getMeasurementTypes() {
+		if (measurementTypes != null && measurementTypes.length > 0) {
+			return measurementTypes;
+		}
+		// Fallback default list if parent combobox is not set
+		return new EnumResults[] { //
+				EnumResults.TOPRAW, //
+				EnumResults.TOPLEVEL, //
+				EnumResults.BOTTOMLEVEL, //
+				EnumResults.TOPLEVEL_LR, //
+				EnumResults.DERIVEDVALUES, //
+				EnumResults.SUMGULPS, //
+				EnumResults.SUMGULPS_LR };
 	}
 
 }
