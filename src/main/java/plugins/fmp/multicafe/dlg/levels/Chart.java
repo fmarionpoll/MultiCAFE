@@ -126,8 +126,10 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 					if (graphOptions != null) {
 						graphOptions.close();
 					}
-					graphOptions = new AxisOptions();
-					graphOptions.requestFocus();
+					if (chartCageArrayFrame != null) {
+						graphOptions = new AxisOptions();
+						graphOptions.initialize(parent0, chartCageArrayFrame);
+					}
 				}
 			}
 		});
