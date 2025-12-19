@@ -9,6 +9,8 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -134,6 +137,28 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/** Chart interaction handler */
 	private ChartInteractionHandler interactionHandler = null;
 
+	/** Current results options */
+	private ResultsOptions currentOptions = null;
+
+	/** Base title for the chart window */
+	private String baseTitle = null;
+
+	/** ComboBox for selecting measurement type */
+	private JComboBox<EnumResults> resultTypeComboBox = null;
+
+	/** Bottom panel containing legend */
+	private JPanel bottomPanel = null;
+
+	/** Available measurement types */
+	private static final EnumResults[] MEASUREMENT_TYPES = new EnumResults[] { //
+			EnumResults.TOPRAW, //
+			EnumResults.TOPLEVEL, //
+			EnumResults.BOTTOMLEVEL, //
+			EnumResults.TOPLEVEL_LR, //
+			EnumResults.DERIVEDVALUES, //
+			EnumResults.SUMGULPS, //
+			EnumResults.SUMGULPS_LR };
+
 //	/** Parent MultiCAFE/MultiSPOTS96 instance */
 //	private MultiCAFE parent = null;
 
@@ -158,6 +183,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 		}
 
 		this.experiment = exp;
+		this.currentOptions = options;
+		this.baseTitle = title;
 
 		mainChartPanel = new JPanel();
 		boolean flag = (options.cageIndexFirst == options.cageIndexLast);
@@ -166,21 +193,41 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		mainChartPanel.setLayout(new GridLayout(nPanelsAlongY, nPanelsAlongX));
 		String finalTitle = title + ": " + options.resultType.toString();
-		mainChartFrame = GuiUtil.generateTitleFrame(finalTitle, new JPanel(),
-				new Dimension(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT), true, true, true, true);
+		
+		// Reuse existing frame if it's still valid (has a parent or is visible), otherwise create a new one
+		if (mainChartFrame != null && (mainChartFrame.getParent() != null || mainChartFrame.isVisible())) {
+			mainChartFrame.setTitle(finalTitle);
+			mainChartFrame.removeAll();
+		} else {
+			mainChartFrame = GuiUtil.generateTitleFrame(finalTitle, new JPanel(),
+					new Dimension(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT), true, true, true, true);
+		}
 
 		mainChartFrame.setLayout(new BorderLayout());
+
+		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		resultTypeComboBox = new JComboBox<EnumResults>(MEASUREMENT_TYPES);
+		resultTypeComboBox.setSelectedItem(options.resultType);
+		resultTypeComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				EnumResults selectedType = (EnumResults) resultTypeComboBox.getSelectedItem();
+				if (selectedType != null && currentOptions != null) {
+					currentOptions.resultType = selectedType;
+					updateFrameTitle();
+					updateLegendPanel();
+					displayData(experiment, currentOptions);
+				}
+			}
+		});
+		topPanel.add(resultTypeComboBox);
+		mainChartFrame.add(topPanel, BorderLayout.NORTH);
+
 		JScrollPane scrollPane = new JScrollPane(mainChartPanel);
 		mainChartFrame.add(scrollPane, BorderLayout.CENTER);
 
-		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		if (ChartCageBuild.isLRType(options.resultType)) {
-			bottomPanel.add(new LegendItem("Sum", Color.BLUE));
-			bottomPanel.add(new LegendItem("PI", Color.RED));
-		} else {
-			bottomPanel.add(new LegendItem("L", Color.BLUE));
-			bottomPanel.add(new LegendItem("R", Color.RED));
-		}
+		bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		updateLegendPanel();
 		mainChartFrame.add(bottomPanel, BorderLayout.SOUTH);
 
 		mainChartFrame.addComponentListener(new ComponentAdapter() {
@@ -259,6 +306,11 @@ public class ChartCageArrayFrame extends IcyFrame {
 		}
 
 		this.experiment = exp;
+		this.currentOptions = resultsOptions;
+		
+		if (resultTypeComboBox != null && resultsOptions.resultType != null) {
+			resultTypeComboBox.setSelectedItem(resultsOptions.resultType);
+		}
 		// Clear any previously displayed charts so empty datasets never leave stale
 		// charts on screen.
 		if (mainChartPanel != null) {
@@ -500,9 +552,19 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * Displays the chart frame.
 	 */
 	private void displayChartFrame() {
+		if (mainChartFrame == null) {
+			LOGGER.warning("Cannot display chart frame: mainChartFrame is null");
+			return;
+		}
+		
 		mainChartFrame.pack();
 		loadPreferences();
-		mainChartFrame.addToDesktopPane();
+		
+		// Only add to desktop pane if not already added
+		if (mainChartFrame.getParent() == null) {
+			mainChartFrame.addToDesktopPane();
+		}
+		
 		mainChartFrame.setVisible(true);
 //		LOGGER.fine("Displayed chart frame at location: " + graphLocation);
 	}
@@ -538,6 +600,36 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		graphLocation = new Point(rectv.x, rectv.y);
 //		LOGGER.fine("Set chart location to: " + graphLocation);
+	}
+
+	/**
+	 * Updates the frame title to reflect the current measurement type.
+	 */
+	private void updateFrameTitle() {
+		if (mainChartFrame != null && baseTitle != null && currentOptions != null) {
+			String finalTitle = baseTitle + ": " + currentOptions.resultType.toString();
+			mainChartFrame.setTitle(finalTitle);
+		}
+	}
+
+	/**
+	 * Updates the legend panel based on the current result type.
+	 */
+	private void updateLegendPanel() {
+		if (bottomPanel == null || currentOptions == null) {
+			return;
+		}
+
+		bottomPanel.removeAll();
+		if (ChartCageBuild.isLRType(currentOptions.resultType)) {
+			bottomPanel.add(new LegendItem("Sum", Color.BLUE));
+			bottomPanel.add(new LegendItem("PI", Color.RED));
+		} else {
+			bottomPanel.add(new LegendItem("L", Color.BLUE));
+			bottomPanel.add(new LegendItem("R", Color.RED));
+		}
+		bottomPanel.revalidate();
+		bottomPanel.repaint();
 	}
 
 	/**

@@ -12,6 +12,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import icy.gui.frame.IcyFrame;
 import icy.gui.viewer.Viewer;
 import icy.gui.viewer.ViewerEvent;
 import icy.gui.viewer.ViewerEvent.ViewerEventType;
@@ -170,8 +171,14 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 
 	private ChartCageArrayFrame plotCapillaryMeasuresToChart(Experiment exp, EnumResults resultType,
 			ChartCageArrayFrame iChart) {
-		if (iChart != null)
-			iChart.getMainChartFrame().dispose();
+		// Properly dispose and clean up existing chart frame if it exists
+		if (iChart != null && iChart.getMainChartFrame() != null) {
+			IcyFrame oldFrame = iChart.getMainChartFrame();
+			if (oldFrame.getParent() != null || oldFrame.isVisible()) {
+				oldFrame.setVisible(false);
+				oldFrame.dispose();
+			}
+		}
 
 		int first = 0;
 		int last = exp.getCages().getCageList().size() - 1;
@@ -191,12 +198,16 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 				.withCageRange(first, last) //
 				.build();
 
+		// Always create a new ChartCageArrayFrame instance after disposing the old one
 		iChart = new ChartCageArrayFrame();
 		iChart.createMainChartPanel("Capillary level measures", exp, options);
 		iChart.setChartUpperLeftLocation(getInitialUpperLeftPosition(exp));
 		iChart.displayData(exp, options);
-		iChart.getMainChartFrame().toFront();
-		iChart.getMainChartFrame().requestFocus();
+		
+		if (iChart.getMainChartFrame() != null) {
+			iChart.getMainChartFrame().toFront();
+			iChart.getMainChartFrame().requestFocus();
+		}
 		return iChart;
 	}
 	// ------------------------------------------------
