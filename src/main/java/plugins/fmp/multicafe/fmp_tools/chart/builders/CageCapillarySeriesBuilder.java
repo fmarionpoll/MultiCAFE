@@ -178,7 +178,7 @@ public class CageCapillarySeriesBuilder implements CageSeriesBuilder {
 			exp.getSeqCamData().build_MsTimesArray_From_FileNamesList();
 		double[] camImages_time_min = exp.getSeqCamData().getTimeManager().getCamImagesTime_Minutes();
 
-		CapillaryMeasure capMeasure = cap.getMeasurements(options.resultType);
+		CapillaryMeasure capMeasure = cap.getMeasurements(options.resultType, exp, options);
 		if (capMeasure == null)
 			return null;
 

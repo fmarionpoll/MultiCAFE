@@ -37,7 +37,7 @@ public class ResultsCapillaries extends Results {
 			// No computation available, fall back to raw
 			ResultsOptions fallbackOptions = new ResultsOptions();
 			fallbackOptions.resultType = EnumResults.TOPRAW;
-			getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+			getDataFromCapillary(exp, capillary, binData, binExcel, fallbackOptions, subtractT0);
 			return;
 		}
 
@@ -69,7 +69,7 @@ public class ResultsCapillaries extends Results {
 				// Invalid bin sizes, fall back to raw
 				ResultsOptions fallbackOptions = new ResultsOptions();
 				fallbackOptions.resultType = EnumResults.TOPRAW;
-				getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+				getDataFromCapillary(exp, capillary, binData, binExcel, fallbackOptions, subtractT0);
 				return;
 			}
 			Level2D polyline = measure.polylineLevel;
@@ -112,7 +112,7 @@ public class ResultsCapillaries extends Results {
 		// Fallback to raw if computation failed
 		ResultsOptions fallbackOptions = new ResultsOptions();
 		fallbackOptions.resultType = EnumResults.TOPRAW;
-		getDataFromCapillary(capillary, binData, binExcel, fallbackOptions, subtractT0);
+		getDataFromCapillary(exp, capillary, binData, binExcel, fallbackOptions, subtractT0);
 	}
 
 	/**

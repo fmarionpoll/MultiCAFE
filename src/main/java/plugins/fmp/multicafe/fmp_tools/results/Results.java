@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPosition;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
@@ -177,10 +178,11 @@ public class Results {
 	}
 
 	/**
-	 * Gets data from a capillary and converts it to dataValues.
+	 * Gets data from a capillary and converts it to dataValues (with computation support).
 	 * Capillary.getCapillaryMeasuresForXLSPass1() returns ArrayList<Integer>, so we
 	 * convert to ArrayList<Double>.
 	 * 
+	 * @param exp            The experiment (required if computation is needed)
 	 * @param capillary      The capillary to get data from
 	 * @param binData        The bin duration for the data
 	 * @param binExcel       The bin duration for Excel output
@@ -188,10 +190,10 @@ public class Results {
 	 * @param subtractT0     Whether to subtract T0 value (for TOPLEVEL, TOPRAW,
 	 *                       etc.)
 	 */
-	public void getDataFromCapillary(Capillary capillary, long binData, long binExcel, ResultsOptions resultsOptions,
-			boolean subtractT0) {
+	public void getDataFromCapillary(Experiment exp, Capillary capillary, long binData, long binExcel,
+			ResultsOptions resultsOptions, boolean subtractT0) {
 		ArrayList<Integer> intData = capillary.getCapillaryMeasuresForXLSPass1(resultsOptions.resultType, binData,
-				binExcel);
+				binExcel, exp, resultsOptions);
 
 		if (intData == null || intData.isEmpty()) {
 			dataValues = new ArrayList<>();

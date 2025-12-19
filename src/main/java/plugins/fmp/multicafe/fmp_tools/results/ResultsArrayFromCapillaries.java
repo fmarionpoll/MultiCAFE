@@ -56,7 +56,7 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 		if (resultsOptions.resultType == EnumResults.TOPLEVEL_LR) {
 			results.getLRDataFromCage(exp, capillary, binData, binExcel, subtractT0);
 		} else {
-			results.getDataFromCapillary(capillary, binData, binExcel, resultsOptions, subtractT0);
+			results.getDataFromCapillary(exp, capillary, binData, binExcel, resultsOptions, subtractT0);
 		}
 
 		// Initialize valuesOut array with the actual size of dataValues

@@ -140,13 +140,9 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
-		// Check if this gulp type is supported by the chart builder
-		if (isSupportedByChartBuilder(resultType)) {
-			return xlsExportExperimentGulpDataToSheetUsingBuilder(exp, sheet, resultType, col0, charSeries);
-		} else {
-			// Fall back to original approach for unsupported types
-			return xlsExportExperimentGulpDataToSheetLegacy(exp, sheet, resultType, col0, charSeries);
-		}
+		// All gulp measures now use the unified computation path via getCapillaryMeasuresForXLSPass1
+		// which supports both computed and direct-access measures
+		return xlsExportExperimentGulpDataToSheetUsingBuilder(exp, sheet, resultType, col0, charSeries);
 	}
 
 	/**
@@ -276,7 +272,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 
 		// Get data from capillary (gulps are extracted via
 		// getCapillaryMeasuresForXLSPass1)
-		results.getDataFromCapillary(capillary, binData, binExcel, resultsOptions, false);
+		results.getDataFromCapillary(exp, capillary, binData, binExcel, resultsOptions, false);
 
 		return results;
 	}
