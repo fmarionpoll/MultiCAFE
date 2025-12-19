@@ -8,7 +8,7 @@
 - Specific interaction handlers
 
 However, similar chart display needs exist for:
-1. **Fly positions** (`ChartFlyPositions`, `ChartPositions`) - horizontal layout
+1. **Fly positions** (`ChartPositions`) - horizontal layout (uses `CageFlyPositionSeriesBuilder`)
 2. **Spot measurements** - could use same grid layout
 3. **Capillary levels** (current) - grid layout
 
@@ -149,15 +149,20 @@ public class CageFlyPositionSeriesBuilder implements CageSeriesBuilder {
 2. Create `ChartUIControlsFactory` interface and implementations
 3. Refactor `CageChartArrayFrame` to use strategies
 
-### Phase 3: Migrate Existing Code
-1. Update `dlg.levels.ChartCageArrayFrame` to use generic base
-2. Create `CageFlyPositionSeriesBuilder`
-3. Migrate `ChartFlyPositions` to use `CageChartArrayFrame` with horizontal layout
-4. Create spot chart display using `CageChartArrayFrame`
+### Phase 3: Migrate Existing Code ✅ COMPLETE
+1. ✅ Update `dlg.levels.ChartCageArrayFrame` to use generic base
+2. ✅ Create `CageFlyPositionSeriesBuilder`
+3. ✅ Migrate `ChartPositions` to use builder (partial - uses builder, maintains API)
+4. ✅ Create spot chart display using `CageChartArrayFrame` (automatic builder selection)
 
-### Phase 4: Cleanup
-1. Remove old `ChartFlyPositions` and `ChartPositions` classes
-2. Consolidate all chart display through generic framework
+### Phase 4: Cleanup ✅ COMPLETE
+1. ✅ Remove old `ChartFlyPositions` class (dead code - ~491 lines removed)
+2. ✅ Verify `ChartPositions` uses builder pattern (already migrated in Phase 3)
+3. ✅ Update documentation
+
+**Note**: `ChartPositions` is kept for backward compatibility with `ChartPositionsPanel`. 
+It uses `CageFlyPositionSeriesBuilder` for data building. Full migration to the generic 
+framework would require extending `CageChartArrayFrame` to support `List<Cage>` mode.
 
 ## Benefits
 
@@ -200,4 +205,5 @@ dlg.cages/
 2. **Interaction Handlers**: May need to be more generic or stay dialog-specific
 3. **Layout Differences**: Fly positions use horizontal, others use grid - strategy handles this
 4. **UI Controls**: Different dialogs need different controls - factory pattern handles this
+
 
