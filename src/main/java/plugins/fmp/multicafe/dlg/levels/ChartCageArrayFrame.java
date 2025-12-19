@@ -461,17 +461,16 @@ public class ChartCageArrayFrame extends IcyFrame {
 		// empty.
 		mainChartPanel.removeAll();
 		if (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast) {
-			int indexCage = resultsOptions.cageIndexFirst;
-			int row = indexCage / experiment.getCages().nCagesAlongX;
-			int col = indexCage % experiment.getCages().nCagesAlongX;
-
-			if (row >= 0 && row < chartPanelArray.length && col >= 0 && col < chartPanelArray[0].length) {
-				ChartCagePair pair = chartPanelArray[row][col];
+			// When displaying a single cage, the array is 1x1 and the panel is always at [0][0]
+			if (chartPanelArray != null && chartPanelArray.length > 0 && chartPanelArray[0].length > 0) {
+				ChartCagePair pair = chartPanelArray[0][0];
 				if (pair != null && pair.getChartPanel() != null) {
 					mainChartPanel.add(pair.getChartPanel());
 				} else {
 					mainChartPanel.add(new JPanel());
 				}
+			} else {
+				mainChartPanel.add(new JPanel());
 			}
 		} else {
 			for (int row = 0; row < nPanelsAlongY; row++) {

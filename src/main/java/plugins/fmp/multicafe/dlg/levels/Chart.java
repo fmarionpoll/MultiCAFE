@@ -178,12 +178,6 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 			if (cageFound == null)
 				return null;
 			exp.getSeqCamData().centerDisplayOnRoi(cageFound.getRoi());
-//			int row = cageFound.getProperties().getArrayRow();
-//			int col = cageFound.getProperties().getArrayColumn();
-//			if (row < 0 || col < 0)
-//				return null;
-//			first = row * exp.getCages().nCagesAlongX + col;
-//			last = first;
 			first = cageFound.getProperties().getCageID();
 			last = first;
 		}
