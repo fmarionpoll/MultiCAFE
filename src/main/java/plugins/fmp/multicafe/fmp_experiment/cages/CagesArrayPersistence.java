@@ -406,18 +406,18 @@ public class CagesArrayPersistence {
 			csvReader.close();
 		}
 
-		// Count cages with fly positions after loading
-		int cagesWithFlyPositions = 0;
-		int totalFlyPositions = 0;
-		for (Cage cage : cages.cagesList) {
-			if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
-					&& !cage.flyPositions.flyPositionList.isEmpty()) {
-				cagesWithFlyPositions++;
-				totalFlyPositions += cage.flyPositions.flyPositionList.size();
-			}
-		}
-
-		// Log cage and fly position counts
+//		// Count cages with fly positions after loading
+//		int cagesWithFlyPositions = 0;
+//		int totalFlyPositions = 0;
+//		for (Cage cage : cages.cagesList) {
+//			if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
+//					&& !cage.flyPositions.flyPositionList.isEmpty()) {
+//				cagesWithFlyPositions++;
+//				totalFlyPositions += cage.flyPositions.flyPositionList.size();
+//			}
+//		}
+//
+//		 //Log cage and fly position counts
 //		System.out.println(String.format("CagesArrayPersistence:csvLoadCagesMeasures() Final: %d cages, %d with fly positions, %d total fly positions", 
 //				cages.cagesList.size(), cagesWithFlyPositions, totalFlyPositions));
 //		Logger.info(String.format("CagesArrayPersistence:csvLoadCagesMeasures() Loaded %d cages, %d with fly positions, %d total fly positions", 
@@ -461,8 +461,8 @@ public class CagesArrayPersistence {
 
 	private void csvLoad_DESCRIPTION(CagesArray cages, BufferedReader csvReader, String sep) {
 		String row;
-		int cagesLoaded = 0;
-		int cagesWithFlies = 0;
+//		int cagesLoaded = 0;
+//		int cagesWithFlies = 0;
 		try {
 			while ((row = csvReader.readLine()) != null) {
 				String[] data = row.split(sep);

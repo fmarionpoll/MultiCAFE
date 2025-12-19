@@ -13,13 +13,16 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import icy.gui.viewer.Viewer;
+import icy.gui.viewer.ViewerEvent;
+import icy.gui.viewer.ViewerEvent.ViewerEventType;
+import icy.gui.viewer.ViewerListener;
+import icy.sequence.DimensionId;
 import icy.sequence.Sequence;
 import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.cages.CageString;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartLevelsFrame;
@@ -27,7 +30,7 @@ import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptionsBuilder;
 
-public class Chart extends JPanel implements SequenceListener {
+public class Chart extends JPanel implements SequenceListener, ViewerListener {
 	/**
 	 * 
 	 */
@@ -39,6 +42,10 @@ public class Chart extends JPanel implements SequenceListener {
 
 	// Global window positions - shared across all experiments
 	private static Rectangle globalChartBounds = null;
+
+	// Listener references for dynamic updates
+	private Viewer kymographViewer = null;
+	private Experiment currentExperiment = null;
 
 	private EnumResults[] measures = new EnumResults[] { //
 			EnumResults.TOPRAW, //
@@ -71,7 +78,6 @@ public class Chart extends JPanel implements SequenceListener {
 		add(panel);
 
 		JPanel panel1 = new JPanel(layout);
-//		panel1.add(correctEvaporationCheckbox);
 		panel1.add(displayAllButton);
 		panel1.add(displaySelectedButton);
 		add(panel1);
@@ -112,16 +118,6 @@ public class Chart extends JPanel implements SequenceListener {
 			}
 		});
 
-//		correctEvaporationCheckbox.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(final ActionEvent e) {
-//				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-//				if (exp != null) {
-//					displayChartPanels(exp); // displayGraphsPanels(exp);
-//				}
-//			}
-//		});
-
 		axisOptionsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -132,6 +128,28 @@ public class Chart extends JPanel implements SequenceListener {
 					}
 					graphOptions = new AxisOptions();
 					graphOptions.requestFocus();
+				}
+			}
+		});
+
+		displayAllButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+				if (exp != null) {
+					removeSelectionListeners(exp);
+					displayChartPanels(exp);
+				}
+			}
+		});
+
+		displaySelectedButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+				if (exp != null) {
+					displayChartPanels(exp);
+					addSelectionListeners(exp);
 				}
 			}
 		});
@@ -156,14 +174,17 @@ public class Chart extends JPanel implements SequenceListener {
 		int first = 0;
 		int last = exp.getCages().getCageList().size() - 1;
 		if (!displayAllButton.isSelected()) {
-			Cage cageFound = exp.getCages().findFirstCageWithSelectedSpot();
-			if (cageFound == null)
-				cageFound = exp.getCages().findFirstSelectedCage();
+			Cage cageFound = findSelectedCage(exp);
 			if (cageFound == null)
 				return null;
 			exp.getSeqCamData().centerDisplayOnRoi(cageFound.getRoi());
-			String cageNumber = CageString.getCageNumberFromCageRoiName(cageFound.getRoi().getName());
-			first = Integer.parseInt(cageNumber);
+//			int row = cageFound.getProperties().getArrayRow();
+//			int col = cageFound.getProperties().getArrayColumn();
+//			if (row < 0 || col < 0)
+//				return null;
+//			first = row * exp.getCages().nCagesAlongX + col;
+//			last = first;
+			first = cageFound.getProperties().getCageID();
 			last = first;
 		}
 
@@ -203,51 +224,12 @@ public class Chart extends JPanel implements SequenceListener {
 		return rectv;
 	}
 
-	// ------------------------------------------------ OPTION 1
-
-//	public void displayGraphsPanels(Experiment exp) {
-//		if (exp == null)
-//			return;
-//
-//		if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null)
-//			exp.getSeqKymos().getSequence().addListener(this);
-//
-//		EnumResults selectedOption = (EnumResults) resultTypeComboBox.getSelectedItem();
-//
-//		if (activeChart != null && currentResultType != null) {
-//			if (activeChart.getMainChartFrame() != null)
-//				globalChartBounds = activeChart.getMainChartFrame().getBounds();
-//			activeChart.getMainChartFrame().dispose();
-//			activeChart = null;
-//		}
-//
-//		if (isThereAnyDataToDisplay(exp, selectedOption)) {
-//			Rectangle rectv = getInitialUpperLeftPosition(exp);
-//			Rectangle pos = (globalChartBounds != null) ? globalChartBounds : rectv;
-//
-//			String title = selectedOption.toTitle();
-//			if (selectedOption == EnumResults.TOPLEVEL && !correctEvaporationCheckbox.isSelected()) {
-//				title = EnumResults.TOPRAW.toTitle();
-//			}
-//			activeChart = plotToChart(exp, title, selectedOption, pos);
-//			currentResultType = selectedOption;
-//		}
-//	}
-//
-//	private ChartLevelsFrame plotToChart(Experiment exp, String title, EnumResults resultType, Rectangle rectv) {
-//		ChartLevelsFrame iChart = new ChartLevelsFrame();
-//		iChart.createChartPanel(parent0, "Capillary levels measurement", rectv);
-//		iChart.displayData(exp, resultType, title, correctEvaporationCheckbox.isSelected());
-//		if (iChart.getMainChartFrame() != null) {
-//			iChart.getMainChartFrame().toFront();
-//			iChart.getMainChartFrame().requestFocus();
-//		}
-//		return iChart;
-//	}
-
 	// ------------------------------------------------
 
 	public void closeAllCharts() {
+		if (currentExperiment != null) {
+			removeSelectionListeners(currentExperiment);
+		}
 		if (activeChart != null) {
 			if (activeChart.getMainChartFrame() != null) {
 				globalChartBounds = activeChart.getMainChartFrame().getBounds();
@@ -274,8 +256,64 @@ public class Chart extends JPanel implements SequenceListener {
 		return flag;
 	}
 
+	private Capillary findCapillaryFromKymographT(Experiment exp, int t) {
+		if (exp == null || exp.getCapillaries() == null)
+			return null;
+		for (Capillary cap : exp.getCapillaries().getList()) {
+			if (cap.kymographIndex == t) {
+				return cap;
+			}
+		}
+		return null;
+	}
+
+//	private Capillary findCapillaryFromSelectedRoi(Experiment exp, ROI2D roi) {
+//		if (exp == null || exp.getCapillaries() == null || roi == null)
+//			return null;
+//		for (Capillary cap : exp.getCapillaries().getList()) {
+//			ROI2D capRoi = cap.getRoi();
+//			if (capRoi != null) {
+//				if (capRoi == roi || capRoi.getName().equals(roi.getName())) {
+//					return cap;
+//				}
+//			}
+//		}
+//		return null;
+//	}
+
+	private Cage findSelectedCage(Experiment exp) {
+		if (exp == null)
+			return null;
+
+		Cage cageFound = null;
+
+		if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
+			Viewer v = exp.getSeqKymos().getSequence().getFirstViewer();
+			if (v != null) {
+				int t = v.getPositionT();
+				Capillary cap = findCapillaryFromKymographT(exp, t);
+				if (cap != null) {
+					int cageID = cap.getCageID();
+					cageFound = exp.getCages().getCageFromID(cageID);
+					if (cageFound != null)
+						return cageFound;
+				}
+			}
+		}
+
+		cageFound = exp.getCages().findFirstCageWithSelectedCapillary();
+		if (cageFound != null)
+			return cageFound;
+
+		cageFound = exp.getCages().findFirstSelectedCage();
+		return cageFound;
+	}
+
 	@Override
 	public void sequenceChanged(SequenceEvent sequenceEvent) {
+		if (displaySelectedButton.isSelected() && currentExperiment != null) {
+			displayChartPanels(currentExperiment);
+		}
 	}
 
 	@Override
@@ -292,6 +330,49 @@ public class Chart extends JPanel implements SequenceListener {
 	private void saveChartPositions() {
 		if (activeChart != null && activeChart.getMainChartFrame() != null) {
 			globalChartBounds = activeChart.getMainChartFrame().getBounds();
+		}
+	}
+
+	private void addSelectionListeners(Experiment exp) {
+		if (exp == null)
+			return;
+
+		currentExperiment = exp;
+
+		if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
+			kymographViewer = exp.getSeqKymos().getSequence().getFirstViewer();
+			if (kymographViewer != null) {
+				kymographViewer.addListener(this);
+			}
+		}
+	}
+
+	private void removeSelectionListeners(Experiment exp) {
+		if (kymographViewer != null) {
+			kymographViewer.removeListener(this);
+			kymographViewer = null;
+		}
+		currentExperiment = null;
+	}
+
+	@Override
+	public void viewerChanged(ViewerEvent event) {
+		if (displaySelectedButton.isSelected() && event.getType() == ViewerEventType.POSITION_CHANGED
+				&& event.getDim() == DimensionId.T) {
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+			if (exp != null && exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
+				Viewer v = event.getSource();
+				if (v == exp.getSeqKymos().getSequence().getFirstViewer()) {
+					displayChartPanels(exp);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void viewerClosed(Viewer viewer) {
+		if (viewer == kymographViewer) {
+			kymographViewer = null;
 		}
 	}
 }

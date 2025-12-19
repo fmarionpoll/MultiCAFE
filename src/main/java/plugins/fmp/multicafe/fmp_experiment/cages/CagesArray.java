@@ -12,6 +12,7 @@ import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ROIOperation;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
@@ -312,6 +313,21 @@ public class CagesArray {
 			}
 		}
 		return cageFound;
+	}
+
+	public Cage findFirstCageWithSelectedCapillary() {
+		for (Cage cage : cagesList) {
+			Capillaries capillaries = cage.getCapillaries();
+			if (capillaries != null) {
+				for (Capillary cap : capillaries.getList()) {
+					ROI2D roi = cap.getRoi();
+					if (roi != null && roi.isSelected()) {
+						return cage;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	public Cage getCageFromNumber(int number) {

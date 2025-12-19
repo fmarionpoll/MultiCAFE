@@ -157,7 +157,6 @@ public class ChartCageArrayFrame extends IcyFrame {
 			throw new IllegalArgumentException("Title cannot be null or empty");
 		}
 
-//		this.parent = parent0;
 		this.experiment = exp;
 
 		mainChartPanel = new JPanel();
