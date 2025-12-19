@@ -201,6 +201,7 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 		// Always create a new ChartCageArrayFrame instance after disposing the old one
 		iChart = new ChartCageArrayFrame();
 		iChart.createMainChartPanel("Capillary level measures", exp, options);
+		iChart.setParentComboBox(resultTypeComboBox);
 		iChart.setChartUpperLeftLocation(getInitialUpperLeftPosition(exp));
 		iChart.displayData(exp, options);
 		

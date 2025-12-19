@@ -146,6 +146,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/** ComboBox for selecting measurement type */
 	private JComboBox<EnumResults> resultTypeComboBox = null;
 
+	/** Reference to parent combobox in Chart.java for synchronization */
+	private JComboBox<EnumResults> parentComboBox = null;
+
 	/** Bottom panel containing legend */
 	private JPanel bottomPanel = null;
 
@@ -217,6 +220,20 @@ public class ChartCageArrayFrame extends IcyFrame {
 					updateFrameTitle();
 					updateLegendPanel();
 					displayData(experiment, currentOptions);
+					
+					// Synchronize with parent combobox if it exists
+					if (parentComboBox != null && parentComboBox.getSelectedItem() != selectedType) {
+						// Temporarily remove action listeners to avoid recursive updates
+						ActionListener[] listeners = parentComboBox.getActionListeners();
+						for (ActionListener listener : listeners) {
+							parentComboBox.removeActionListener(listener);
+						}
+						parentComboBox.setSelectedItem(selectedType);
+						// Re-add the listeners
+						for (ActionListener listener : listeners) {
+							parentComboBox.addActionListener(listener);
+						}
+					}
 				}
 			}
 		});
@@ -731,6 +748,16 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 	public void setYRange(Range range) {
 		yRange = range;
+	}
+
+	/**
+	 * Sets the parent combobox reference for synchronization.
+	 * When the chart's combobox changes, it will update the parent combobox to keep them in sync.
+	 * 
+	 * @param comboBox the parent combobox to synchronize with
+	 */
+	public void setParentComboBox(JComboBox<EnumResults> comboBox) {
+		this.parentComboBox = comboBox;
 	}
 
 }
