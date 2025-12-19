@@ -29,7 +29,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import plugins.fmp.multicafe.dlg.levels.ChartInteractionHandler;
-import plugins.fmp.multicafe.fmp_tools.chart.ChartInteractionHandlerFactory;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_tools.chart.builders.CageSeriesBuilder;

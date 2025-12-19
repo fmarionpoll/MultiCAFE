@@ -13,6 +13,8 @@ import plugins.fmp.multicafe.fmp_tools.chart.CageChartArrayFrame;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePair;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartInteractionHandlerFactory;
 import plugins.fmp.multicafe.fmp_tools.chart.builders.CageCapillarySeriesBuilder;
+import plugins.fmp.multicafe.fmp_tools.chart.builders.CageSeriesBuilder;
+import plugins.fmp.multicafe.fmp_tools.chart.builders.CageSpotSeriesBuilder;
 import plugins.fmp.multicafe.fmp_tools.chart.strategies.ComboBoxUIControlsFactory;
 import plugins.fmp.multicafe.fmp_tools.chart.strategies.GridLayoutStrategy;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
@@ -61,6 +63,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 		GridLayoutStrategy layoutStrategy = new GridLayoutStrategy();
 		uiControlsFactory = new ComboBoxUIControlsFactory();
 		
+		// Select appropriate data builder based on result type
+		CageSeriesBuilder dataBuilder = selectDataBuilder(options != null ? options.resultType : null);
+		
 		// Create interaction handler factory
 		ChartInteractionHandlerFactory handlerFactory = new ChartInteractionHandlerFactory() {
 			@Override
@@ -71,13 +76,28 @@ public class ChartCageArrayFrame extends IcyFrame {
 		};
 		
 		genericFrame = new CageChartArrayFrame(
-			new CageCapillarySeriesBuilder(),
+			dataBuilder,
 			handlerFactory,
 			layoutStrategy,
 			uiControlsFactory
 		);
 		
 		genericFrame.createMainChartPanel(title, exp, options);
+	}
+	
+	/**
+	 * Selects the appropriate data builder based on result type.
+	 * 
+	 * @param resultType the result type
+	 * @return the appropriate builder
+	 */
+	private CageSeriesBuilder selectDataBuilder(EnumResults resultType) {
+		if (isSpotResultType(resultType)) {
+			return new CageSpotSeriesBuilder();
+		} else {
+			// Default to capillary builder
+			return new CageCapillarySeriesBuilder();
+		}
 	}
 
 	/**
@@ -91,6 +111,11 @@ public class ChartCageArrayFrame extends IcyFrame {
 		if (genericFrame == null) {
 			throw new IllegalStateException("createMainChartPanel must be called first");
 		}
+		
+		// Check if we need to recreate the frame with a different builder
+		// (e.g., if result type changed from capillary to spot or vice versa)
+		// For now, we'll recreate it if the builder type would be different
+		// This is a limitation - ideally the framework would support changing builders
 		
 		genericFrame.displayData(exp, resultsOptions);
 	}

@@ -20,3 +20,4 @@ public interface ChartInteractionHandlerFactory {
 	ChartInteractionHandler createHandler(Experiment exp, ResultsOptions options, ChartCagePair[][] chartArray);
 }
 
+

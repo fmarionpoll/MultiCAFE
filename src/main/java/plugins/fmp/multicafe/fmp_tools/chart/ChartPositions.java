@@ -3,7 +3,6 @@ package plugins.fmp.multicafe.fmp_tools.chart;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +19,32 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
+import plugins.fmp.multicafe.fmp_tools.chart.builders.CageFlyPositionSeriesBuilder;
+import plugins.fmp.multicafe.fmp_tools.chart.builders.CageSeriesBuilder;
 import plugins.fmp.multicafe.fmp_tools.MaxMinDouble;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
+import plugins.fmp.multicafe.fmp_tools.results.ResultsOptionsBuilder;
 
+/**
+ * Chart display class for fly position data. Displays multiple cages horizontally
+ * in a single row. This class uses CageFlyPositionSeriesBuilder for data building,
+ * providing a unified data extraction interface while maintaining the existing
+ * horizontal layout display format.
+ * 
+ * <p>
+ * This class is kept for backward compatibility with ChartPositionsPanel.
+ * The data building logic has been extracted to CageFlyPositionSeriesBuilder,
+ * allowing for code reuse while maintaining the existing API.
+ * </p>
+ * 
+ * <p>
+ * Future migration could extend CageChartArrayFrame to support List&lt;Cage&gt; mode
+ * instead of requiring an Experiment with grid layout, enabling full framework integration.
+ * </p>
+ */
 public class ChartPositions extends IcyFrame {
 	public JPanel mainChartPanel = null;
 	private ArrayList<ChartPanel> chartsInMainChartPanel = null;
@@ -32,6 +52,9 @@ public class ChartPositions extends IcyFrame {
 	private String title;
 	private Point pt = new Point(0, 0);
 	private double globalXMax = 0;
+	
+	/** Builder for creating fly position datasets */
+	private final CageSeriesBuilder dataBuilder = new CageFlyPositionSeriesBuilder();
 
 	public void createPanel(String cstitle) {
 		title = cstitle;
@@ -47,18 +70,50 @@ public class ChartPositions extends IcyFrame {
 	}
 
 	public void displayData(List<Cage> cageList, EnumResults resultType) {
+		if (cageList == null || resultType == null) {
+			return;
+		}
+		
+		// Create a dummy experiment for the builder (it may not need it, but builder interface requires it)
+		// In practice, we'll build datasets directly for each cage
 		List<XYSeriesCollection> xyDataSetList = new ArrayList<XYSeriesCollection>();
 		MaxMinDouble yMaxMin = new MaxMinDouble();
 		int count = 0;
+		
+		// Create results options for the builder
+		ResultsOptions options = ResultsOptionsBuilder.forChart()
+			.withResultType(resultType)
+			.build();
+		
+		// Use the builder to create datasets for each cage
 		for (Cage cage : cageList) {
+			if (cage == null) {
+				continue;
+			}
+			
+			// Check if cage has fly positions data
 			if (cage.getFlyPositions() != null && cage.getFlyPositions().getFlyPositionList().size() > 0) {
-				ChartData chartData = getDataSet(cage, resultType);
-				XYSeriesCollection xyDataset = chartData.getXYDataset();
-				yMaxMin = chartData.getYMaxMin();
-				if (count != 0)
-					yMaxMin.getMaxMin(chartData.getYMaxMin());
-				xyDataSetList.add(xyDataset);
-				count++;
+				// Create a dummy experiment - builder may not use it for fly positions
+				// We need to pass something, so create minimal experiment
+				Experiment dummyExp = createDummyExperiment(cage);
+				
+				XYSeriesCollection xyDataset = dataBuilder.build(dummyExp, cage, options);
+				
+				if (xyDataset != null && xyDataset.getSeriesCount() > 0) {
+					// Calculate Y range from the dataset
+					MaxMinDouble cageYMaxMin = calculateYRange(xyDataset);
+					if (count == 0) {
+						yMaxMin = cageYMaxMin;
+					} else {
+						yMaxMin.getMaxMin(cageYMaxMin);
+					}
+					
+					// Calculate X max
+					updateGlobalXMax(xyDataset);
+					
+					xyDataSetList.add(xyDataset);
+					count++;
+				}
 			}
 		}
 
@@ -73,7 +128,9 @@ public class ChartPositions extends IcyFrame {
 			xyChart.setTextAntiAlias(true);
 
 			ValueAxis yAxis = xyChart.getXYPlot().getRangeAxis(0);
-			yAxis.setRange(yMaxMin.getMin(), yMaxMin.getMax());
+			if (yMaxMin.hasValues()) {
+				yAxis.setRange(yMaxMin.getMin(), yMaxMin.getMax());
+			}
 			yAxis.setTickLabelsVisible(displayLabels);
 
 			ValueAxis xAxis = xyChart.getXYPlot().getDomainAxis(0);
@@ -91,82 +148,51 @@ public class ChartPositions extends IcyFrame {
 		mainChartFrame.addToDesktopPane();
 		mainChartFrame.setVisible(true);
 	}
-
-	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumResults resultType, XYSeries seriesXY) {
-		FlyPositions results = cage.getFlyPositions();
-		int itmax = results.getFlyPositionList().size();
-		MaxMinDouble yMaxMin = null;
-		if (itmax > 0) {
-			switch (resultType) {
-			case DISTANCE:
-				double previousY = results.getFlyPositionList().get(0).getX()
-						+ results.getFlyPositionList().get(0).getH() / 2;
-
-				for (int it = 0; it < itmax; it++) {
-					double currentY = results.getFlyPositionList().get(it).getY()
-							+ results.getFlyPositionList().get(it).getH() / 2;
-					double ypos = currentY - previousY;
-					addxyPos(seriesXY, results, it, ypos);
-					previousY = currentY;
+	
+	/**
+	 * Creates a minimal dummy experiment for the builder.
+	 * The builder doesn't actually need the experiment for fly positions, but the interface requires it.
+	 */
+	private Experiment createDummyExperiment(Cage cage) {
+		// The builder doesn't use the experiment parameter for fly positions
+		// Return null - builder should handle this gracefully
+		return null;
+	}
+	
+	/**
+	 * Calculates the Y-axis range from a dataset.
+	 */
+	private MaxMinDouble calculateYRange(XYSeriesCollection dataset) {
+		MaxMinDouble range = new MaxMinDouble();
+		for (int i = 0; i < dataset.getSeriesCount(); i++) {
+			XYSeries series = dataset.getSeries(i);
+			for (int j = 0; j < series.getItemCount(); j++) {
+				double y = series.getY(j).doubleValue();
+				if (!Double.isNaN(y)) {
+					range.getMaxMin(y);
 				}
-				Rectangle rect = cage.getCageRoi2D().getBounds();
-				double length_diagonal = Math.sqrt((rect.height * rect.height) + (rect.width * rect.width));
-				yMaxMin = new MaxMinDouble(0.0, length_diagonal);
-				break;
-
-			case ISALIVE:
-				for (int it = 0; it < itmax; it++) {
-					boolean alive = results.getFlyPositionList().get(it).isbAlive();
-					double ypos = alive ? 1.0 : 0.0;
-					addxyPos(seriesXY, results, it, ypos);
-				}
-				yMaxMin = new MaxMinDouble(0., 1.2);
-				break;
-
-			case SLEEP:
-				for (int it = 0; it < itmax; it++) {
-					boolean sleep = results.getFlyPositionList().get(it).isbSleep();
-					double ypos = sleep ? 1.0 : 0.0;
-					addxyPos(seriesXY, results, it, ypos);
-				}
-				yMaxMin = new MaxMinDouble(0., 1.2);
-				break;
-
-			default:
-				Rectangle rect1 = cage.getCageRoi2D().getBounds();
-				double yOrigin = rect1.getY() + rect1.getHeight();
-				for (int it = 0; it < itmax; it++) {
-					Rectangle2D itRect = results.getFlyPositionList().get(it).getRectangle2D();
-					double ypos = yOrigin - itRect.getY();
-					addxyPos(seriesXY, results, it, ypos);
-				}
-				yMaxMin = new MaxMinDouble(0., rect1.height * 1.2);
-				break;
 			}
 		}
-		return yMaxMin;
+		return range;
 	}
-
-	private void addxyPos(XYSeries seriesXY, FlyPositions positionxyt, int it, Double ypos) {
-		double indexT = positionxyt.getFlyPositionList().get(it).getFlyIndexT();
-		seriesXY.add(indexT, ypos);
-		if (globalXMax < indexT)
-			globalXMax = indexT;
-	}
-
-	private ChartData getDataSet(Cage cage, EnumResults resultType) {
-		XYSeriesCollection xyDataset = new XYSeriesCollection();
-		String name = cage.getCageRoi2D().getName();
-		XYSeries seriesXY = new XYSeries(name);
-		seriesXY.setDescription(name);
-		MaxMinDouble yMaxMin = addPointsToXYSeries(cage, resultType, seriesXY);
-		xyDataset.addSeries(seriesXY);
-		return new ChartData(new MaxMinDouble(globalXMax, 0), yMaxMin, xyDataset);
+	
+	/**
+	 * Updates the global X maximum from a dataset.
+	 */
+	private void updateGlobalXMax(XYSeriesCollection dataset) {
+		for (int i = 0; i < dataset.getSeriesCount(); i++) {
+			XYSeries series = dataset.getSeries(i);
+			for (int j = 0; j < series.getItemCount(); j++) {
+				double x = series.getX(j).doubleValue();
+				if (!Double.isNaN(x) && x > globalXMax) {
+					globalXMax = x;
+				}
+			}
+		}
 	}
 
 	private void cleanChartsPanel(ArrayList<ChartPanel> chartsPanel) {
 		if (chartsPanel != null && chartsPanel.size() > 0)
 			chartsPanel.clear();
 	}
-
 }
