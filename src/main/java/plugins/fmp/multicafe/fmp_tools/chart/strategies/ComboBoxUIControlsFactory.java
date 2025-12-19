@@ -6,27 +6,44 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCageBuild;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
- * UI controls factory that provides a combobox for selecting result types
- * and a legend panel at the bottom. This is used for the levels dialog.
+ * UI controls factory that provides a combobox for selecting result types and a
+ * legend panel at the bottom. This is used for the levels dialog.
  */
 public class ComboBoxUIControlsFactory implements ChartUIControlsFactory {
-	
+
 	private JComboBox<EnumResults> resultTypeComboBox;
 	private JComboBox<EnumResults> parentComboBox;
 	private JPanel bottomPanel;
 	private EnumResults[] measurementTypes;
-	
+	private Experiment currentExperiment;
+
+	/**
+	 * Sets the current experiment for legend generation.
+	 * 
+	 * @param experiment the experiment
+	 */
+	public void setExperiment(Experiment experiment) {
+		this.currentExperiment = experiment;
+	}
+
 	/**
 	 * Sets the parent combobox for synchronization.
 	 * 
@@ -44,7 +61,7 @@ public class ComboBoxUIControlsFactory implements ChartUIControlsFactory {
 			this.measurementTypes = types;
 		}
 	}
-	
+
 	/**
 	 * Sets the available measurement types.
 	 * 
@@ -53,24 +70,24 @@ public class ComboBoxUIControlsFactory implements ChartUIControlsFactory {
 	public void setMeasurementTypes(EnumResults[] types) {
 		this.measurementTypes = types;
 	}
-	
+
 	@Override
 	public JPanel createTopPanel(ResultsOptions currentOptions, ActionListener changeListener) {
 		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		
+
 		EnumResults[] typesToUse = getMeasurementTypes();
 		resultTypeComboBox = new JComboBox<EnumResults>(typesToUse);
 		if (currentOptions != null && currentOptions.resultType != null) {
 			resultTypeComboBox.setSelectedItem(currentOptions.resultType);
 		}
-		
+
 		resultTypeComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				EnumResults selectedType = (EnumResults) resultTypeComboBox.getSelectedItem();
 				if (selectedType != null && currentOptions != null) {
 					currentOptions.resultType = selectedType;
-					
+
 					// Synchronize with parent combobox if it exists
 					if (parentComboBox != null && parentComboBox.getSelectedItem() != selectedType) {
 						ActionListener[] listeners = parentComboBox.getActionListeners();
@@ -82,7 +99,7 @@ public class ComboBoxUIControlsFactory implements ChartUIControlsFactory {
 							parentComboBox.addActionListener(listener);
 						}
 					}
-					
+
 					// Notify the change listener
 					if (changeListener != null) {
 						changeListener.actionPerformed(e);
@@ -90,59 +107,148 @@ public class ComboBoxUIControlsFactory implements ChartUIControlsFactory {
 				}
 			}
 		});
-		
+
 		topPanel.add(resultTypeComboBox);
 		return topPanel;
 	}
-	
+
 	@Override
-	public JPanel createBottomPanel(ResultsOptions currentOptions) {
+	public JPanel createBottomPanel(ResultsOptions currentOptions, Experiment experiment) {
+		this.currentExperiment = experiment;
 		bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		updateBottomPanel(currentOptions);
+		updateBottomPanel(currentOptions, experiment);
 		return bottomPanel;
 	}
-	
+
 	@Override
 	public void updateControls(EnumResults newResultType, ResultsOptions currentOptions) {
 		if (resultTypeComboBox != null && newResultType != null) {
 			resultTypeComboBox.setSelectedItem(newResultType);
 		}
-		updateBottomPanel(currentOptions);
+		updateBottomPanel(currentOptions, currentExperiment);
 	}
-	
-	private void updateBottomPanel(ResultsOptions currentOptions) {
+
+	private void updateBottomPanel(ResultsOptions currentOptions, Experiment experiment) {
 		if (bottomPanel == null || currentOptions == null) {
 			return;
 		}
-		
+
 		bottomPanel.removeAll();
+
 		if (ChartCageBuild.isLRType(currentOptions.resultType)) {
+			// For LR types, show Sum and PI
 			bottomPanel.add(new LegendItem("Sum", Color.BLUE));
 			bottomPanel.add(new LegendItem("PI", Color.RED));
 		} else {
-			bottomPanel.add(new LegendItem("L", Color.BLUE));
-			bottomPanel.add(new LegendItem("R", Color.RED));
+			// For non-LR types, show dynamic legend based on capillaries
+			createDynamicCapillaryLegend(experiment);
 		}
+
 		bottomPanel.revalidate();
 		bottomPanel.repaint();
 	}
-	
+
+	/**
+	 * Creates a dynamic legend based on the maximum number of capillaries per cage
+	 * and their properties (position, stimulus, concentration).
+	 */
+	private void createDynamicCapillaryLegend(Experiment experiment) {
+		if (experiment == null || experiment.getCapillaries() == null) {
+			// Fallback to default L/R if no experiment data
+			bottomPanel.add(new LegendItem("L", Color.BLUE));
+			bottomPanel.add(new LegendItem("R", Color.RED));
+			return;
+		}
+
+		// Calculate maximum number of capillaries per cage
+		Map<Integer, Integer> capillariesPerCage = new HashMap<>();
+		for (Capillary cap : experiment.getCapillaries().getList()) {
+			int cageID = cap.getCageID();
+			capillariesPerCage.put(cageID, capillariesPerCage.getOrDefault(cageID, 0) + 1);
+		}
+
+		int maxCapillariesPerCage = 0;
+		for (int count : capillariesPerCage.values()) {
+			if (count > maxCapillariesPerCage) {
+				maxCapillariesPerCage = count;
+			}
+		}
+
+		// If no capillaries found, use default
+		if (maxCapillariesPerCage == 0) {
+			bottomPanel.add(new LegendItem("L", Color.BLUE));
+			bottomPanel.add(new LegendItem("R", Color.RED));
+			return;
+		}
+
+		// Get capillaries from the first cage that has the maximum number
+		// This ensures we show all possible capillary types
+		List<Capillary> referenceCapillaries = new ArrayList<>();
+		for (Cage cage : experiment.getCages().getCageList()) {
+			if (cage.getCapillaries() != null) {
+				List<Capillary> cageCaps = cage.getCapillaries().getList();
+				if (cageCaps.size() == maxCapillariesPerCage) {
+					referenceCapillaries = cageCaps;
+					break;
+				}
+			}
+		}
+
+		// If we didn't find a cage with max capillaries, get from any cage
+		if (referenceCapillaries.isEmpty()) {
+			for (Cage cage : experiment.getCages().getCageList()) {
+				if (cage.getCapillaries() != null && !cage.getCapillaries().getList().isEmpty()) {
+					referenceCapillaries = cage.getCapillaries().getList();
+					break;
+				}
+			}
+		}
+
+		// Create legend items for up to maxCapillariesPerCage
+		// Use colors that cycle through a palette
+		Color[] colors = { Color.BLUE, Color.RED, Color.GREEN, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.PINK,
+				Color.YELLOW, Color.GRAY, Color.DARK_GRAY };
+
+		for (int i = 0; i < maxCapillariesPerCage && i < referenceCapillaries.size(); i++) {
+			Capillary cap = referenceCapillaries.get(i);
+			String position = cap.getSide();
+			if (position == null || position.isEmpty() || position.equals(".")) {
+				position = String.valueOf(i + 1); // Fallback to index if no side
+			}
+
+			String stimulus = cap.getStimulus();
+			if (stimulus == null || stimulus.isEmpty()) {
+				stimulus = "?";
+			} else {
+				// Clip to first 3 characters
+				stimulus = stimulus.length() > 3 ? stimulus.substring(0, 3) : stimulus;
+			}
+
+			String concentration = cap.getConcentration();
+			if (concentration == null || concentration.isEmpty()) {
+				concentration = "?";
+			} else {
+				// Clip to first 3 characters
+				concentration = concentration.length() > 5 ? concentration.substring(0, 5) : concentration;
+			}
+
+			// Combine stimulus and concentration: stimulus_concentration
+			String stimulusWithConcentration = stimulus + "_" + concentration;
+			String label = position + "_" + stimulusWithConcentration;
+			Color color = colors[i % colors.length];
+			bottomPanel.add(new LegendItem(label, color));
+		}
+	}
+
 	private EnumResults[] getMeasurementTypes() {
 		if (measurementTypes != null && measurementTypes.length > 0) {
 			return measurementTypes;
 		}
 		// Fallback default list
-		return new EnumResults[] { 
-			EnumResults.TOPRAW,
-			EnumResults.TOPLEVEL,
-			EnumResults.BOTTOMLEVEL,
-			EnumResults.TOPLEVEL_LR,
-			EnumResults.DERIVEDVALUES,
-			EnumResults.SUMGULPS,
-			EnumResults.SUMGULPS_LR
-		};
+		return new EnumResults[] { EnumResults.TOPRAW, EnumResults.TOPLEVEL, EnumResults.BOTTOMLEVEL,
+				EnumResults.TOPLEVEL_LR, EnumResults.DERIVEDVALUES, EnumResults.SUMGULPS, EnumResults.SUMGULPS_LR };
 	}
-	
+
 	/**
 	 * Gets the result type combobox for external access.
 	 * 
@@ -151,7 +257,7 @@ public class ComboBoxUIControlsFactory implements ChartUIControlsFactory {
 	public JComboBox<EnumResults> getResultTypeComboBox() {
 		return resultTypeComboBox;
 	}
-	
+
 	/**
 	 * Simple legend item component.
 	 */
@@ -176,4 +282,3 @@ public class ComboBoxUIControlsFactory implements ChartUIControlsFactory {
 		}
 	}
 }
-

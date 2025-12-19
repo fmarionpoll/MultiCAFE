@@ -9,7 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -35,6 +37,7 @@ import plugins.fmp.multicafe.fmp_tools.chart.builders.CageSeriesBuilder;
 import plugins.fmp.multicafe.fmp_tools.chart.plot.CageChartPlotFactory;
 import plugins.fmp.multicafe.fmp_tools.chart.strategies.ChartLayoutStrategy;
 import plugins.fmp.multicafe.fmp_tools.chart.strategies.ChartUIControlsFactory;
+import plugins.fmp.multicafe.fmp_tools.chart.strategies.ComboBoxUIControlsFactory;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
@@ -231,7 +234,7 @@ public class CageChartArrayFrame extends IcyFrame {
 		mainChartFrame.add(scrollPane, BorderLayout.CENTER);
 
 		// Create bottom panel (legend, etc.)
-		JPanel bottomPanel = uiControlsFactory.createBottomPanel(options);
+		JPanel bottomPanel = uiControlsFactory.createBottomPanel(options, exp);
 		if (bottomPanel != null) {
 			mainChartFrame.add(bottomPanel, BorderLayout.SOUTH);
 		}
@@ -313,6 +316,11 @@ public class CageChartArrayFrame extends IcyFrame {
 		this.experiment = exp;
 		this.currentOptions = resultsOptions;
 
+		// Update experiment reference in factory if it supports it
+		if (uiControlsFactory instanceof ComboBoxUIControlsFactory) {
+			((ComboBoxUIControlsFactory) uiControlsFactory).setExperiment(exp);
+		}
+
 		// Update UI controls
 		uiControlsFactory.updateControls(resultsOptions.resultType, resultsOptions);
 		
@@ -342,8 +350,26 @@ public class CageChartArrayFrame extends IcyFrame {
 	protected void createChartPanelArray(ResultsOptions resultsOptions) {
 		// Update grid dimensions based on current experiment state
 		boolean flag = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast);
-		nPanelsAlongX = flag ? 1 : experiment.getCages().nCagesAlongX;
-		nPanelsAlongY = flag ? 1 : experiment.getCages().nCagesAlongY;
+		
+		// Calculate actual grid dimensions based on existing cages
+		// This handles cases where experiments have fewer cages than the configured grid
+		List<Cage> availableCages = new ArrayList<>();
+		for (Cage cage : experiment.getCages().getCageList()) {
+			int cageID = cage.getProperties().getCageID();
+			if (cageID >= resultsOptions.cageIndexFirst && cageID <= resultsOptions.cageIndexLast) {
+				availableCages.add(cage);
+			}
+		}
+		
+		if (flag || availableCages.isEmpty()) {
+			// Single cage mode or no cages
+			nPanelsAlongX = 1;
+			nPanelsAlongY = 1;
+		} else {
+			// Use configured grid dimensions, but only iterate over existing cages
+			nPanelsAlongX = experiment.getCages().nCagesAlongX;
+			nPanelsAlongY = experiment.getCages().nCagesAlongY;
+		}
 
 		// Set layout using strategy
 		layoutStrategy.setLayoutOnPanel(mainChartPanel, nPanelsAlongX, nPanelsAlongY);
@@ -356,40 +382,52 @@ public class CageChartArrayFrame extends IcyFrame {
 			interactionHandler = interactionHandlerFactory.createHandler(experiment, resultsOptions, chartPanelArray);
 		}
 
-		int indexCage = 0;
 		ChartCageBuild.initMaxMin();
 		Map<Cage, XYSeriesCollection> datasets = new HashMap<Cage, XYSeriesCollection>();
 
-		// Build datasets for all cages
-		for (int row = 0; row < experiment.getCages().nCagesAlongY; row++) {
-			for (int col = 0; col < experiment.getCages().nCagesAlongX; col++, indexCage++) {
-				if (indexCage < resultsOptions.cageIndexFirst || indexCage > resultsOptions.cageIndexLast)
-					continue;
-				Cage cage = experiment.getCages().getCageFromRowColCoordinates(row, col);
-				if (cage != null) {
-					XYSeriesCollection xyDataSetList = dataBuilder.build(experiment, cage, resultsOptions);
-					datasets.put(cage, xyDataSetList);
-				}
-			}
+		// Build datasets for all available cages (only iterate over existing cages)
+		for (Cage cage : availableCages) {
+			XYSeriesCollection xyDataSetList = dataBuilder.build(experiment, cage, resultsOptions);
+			datasets.put(cage, xyDataSetList);
 		}
 
-		// Create chart panels
-		indexCage = 0;
-		for (int row = 0; row < experiment.getCages().nCagesAlongY; row++) {
-			for (int col = 0; col < experiment.getCages().nCagesAlongX; col++, indexCage++) {
-				if (indexCage < resultsOptions.cageIndexFirst || indexCage > resultsOptions.cageIndexLast)
-					continue;
-
-				Cage cage = experiment.getCages().getCageFromRowColCoordinates(row, col);
-				if (cage == null) {
-					LOGGER.warning("No cage found at row " + row + ", col " + col);
-					continue;
+		// Create chart panels - iterate over existing cages only
+		for (Cage cage : availableCages) {
+			XYSeriesCollection xyDataSetList = datasets.get(cage);
+			if (xyDataSetList == null) {
+				continue;
+			}
+			
+			// Get row/col coordinates from cage properties if available
+			int row = cage.getProperties().getArrayRow();
+			int col = cage.getProperties().getArrayColumn();
+			
+			// If array position not set, calculate from cage ID
+			if (row < 0 || col < 0) {
+				int cageID = cage.getProperties().getCageID();
+				row = cageID / experiment.getCages().nCagesAlongX;
+				col = cageID % experiment.getCages().nCagesAlongX;
+			}
+			
+			// Ensure row/col are within grid bounds
+			if (row >= nPanelsAlongY || col >= nPanelsAlongX) {
+				// Use compact layout if position is out of bounds
+				int index = availableCages.indexOf(cage);
+				row = index / nPanelsAlongX;
+				col = index % nPanelsAlongX;
+				// Adjust grid if needed
+				if (row >= nPanelsAlongY) {
+					nPanelsAlongY = row + 1;
+					chartPanelArray = new ChartCagePair[nPanelsAlongY][nPanelsAlongX];
 				}
-
-				XYSeriesCollection xyDataSetList = datasets.get(cage);
-				ChartPanel chartPanel = createChartPanelForCage(cage, row, col, resultsOptions, xyDataSetList);
-				int arrayRow = flag ? 0 : row;
-				int arrayCol = flag ? 0 : col;
+			}
+			
+			ChartPanel chartPanel = createChartPanelForCage(cage, row, col, resultsOptions, xyDataSetList);
+			int arrayRow = flag ? 0 : row;
+			int arrayCol = flag ? 0 : col;
+			
+			// Ensure array indices are within bounds
+			if (arrayRow >= 0 && arrayRow < nPanelsAlongY && arrayCol >= 0 && arrayCol < nPanelsAlongX) {
 				chartPanelArray[arrayRow][arrayCol] = new ChartCagePair(chartPanel, cage);
 			}
 		}

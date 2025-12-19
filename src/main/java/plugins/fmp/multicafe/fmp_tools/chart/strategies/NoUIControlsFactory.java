@@ -19,7 +19,7 @@ public class NoUIControlsFactory implements ChartUIControlsFactory {
 	}
 
 	@Override
-	public JPanel createBottomPanel(ResultsOptions currentOptions) {
+	public JPanel createBottomPanel(ResultsOptions currentOptions, plugins.fmp.multicafe.fmp_experiment.Experiment experiment) {
 		return null;
 	}
 

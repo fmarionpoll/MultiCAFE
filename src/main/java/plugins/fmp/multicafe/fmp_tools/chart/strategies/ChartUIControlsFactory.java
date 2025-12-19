@@ -26,9 +26,10 @@ public interface ChartUIControlsFactory {
 	 * Creates a bottom panel (typically for legends or additional info).
 	 * 
 	 * @param currentOptions the current results options
+	 * @param experiment the experiment (can be null if not needed)
 	 * @return the bottom panel, or null if no bottom panel needed
 	 */
-	JPanel createBottomPanel(ResultsOptions currentOptions);
+	JPanel createBottomPanel(ResultsOptions currentOptions, plugins.fmp.multicafe.fmp_experiment.Experiment experiment);
 	
 	/**
 	 * Updates the UI controls when the result type changes.
