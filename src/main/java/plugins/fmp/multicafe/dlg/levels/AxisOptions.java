@@ -122,15 +122,19 @@ public class AxisOptions extends JPanel {
 	}
 
 	private void collectValuesFromAllCharts() {
-		int nrows = chartCageArrayFrame.chartPanelArray.length;
-		int ncolumns = chartCageArrayFrame.chartPanelArray[0].length;
+		ChartCagePair[][] chartPanelArray = chartCageArrayFrame.getChartCagePairArray();
+		if (chartPanelArray == null || chartPanelArray.length == 0 || chartPanelArray[0].length == 0) {
+			return;
+		}
+		int nrows = chartPanelArray.length;
+		int ncolumns = chartPanelArray[0].length;
 		chartCageArrayFrame.setXRange(null);
 		chartCageArrayFrame.setYRange(null);
 
 		// Collect X-axis ranges
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartCagePair chartPair = chartCageArrayFrame.chartPanelArray[row][column];
+				ChartCagePair chartPair = chartPanelArray[row][column];
 				if (chartPair == null)
 					continue;
 				ChartPanel chartPanel = chartPair.getChartPanel();
@@ -155,7 +159,7 @@ public class AxisOptions extends JPanel {
 
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartCagePair chartPair = chartCageArrayFrame.chartPanelArray[row][column];
+				ChartCagePair chartPair = chartPanelArray[row][column];
 				if (chartPair == null)
 					continue;
 				ChartPanel chartPanel = chartPair.getChartPanel();
@@ -192,14 +196,18 @@ public class AxisOptions extends JPanel {
 	}
 
 	private void updateXAxis() {
-		int nrows = chartCageArrayFrame.chartPanelArray.length;
-		int ncolumns = chartCageArrayFrame.chartPanelArray[0].length;
+		ChartCagePair[][] chartPanelArray = chartCageArrayFrame.getChartCagePairArray();
+		if (chartPanelArray == null || chartPanelArray.length == 0 || chartPanelArray[0].length == 0) {
+			return;
+		}
+		int nrows = chartPanelArray.length;
+		int ncolumns = chartPanelArray[0].length;
 
 		double upper = (double) upperXSpinner.getValue();
 		double lower = (double) lowerXSpinner.getValue();
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartCagePair chartPair = chartCageArrayFrame.chartPanelArray[row][column];
+				ChartCagePair chartPair = chartPanelArray[row][column];
 				if (chartPair == null)
 					continue;
 				ChartPanel chartPanel = chartPair.getChartPanel();
@@ -218,15 +226,19 @@ public class AxisOptions extends JPanel {
 			return;
 		}
 
-		int nrows = chartCageArrayFrame.chartPanelArray.length;
-		int ncolumns = chartCageArrayFrame.chartPanelArray[0].length;
+		ChartCagePair[][] chartPanelArray = chartCageArrayFrame.getChartCagePairArray();
+		if (chartPanelArray == null || chartPanelArray.length == 0 || chartPanelArray[0].length == 0) {
+			return;
+		}
+		int nrows = chartPanelArray.length;
+		int ncolumns = chartPanelArray[0].length;
 
 		double upper = (double) upperYSpinners.get(axisIndex).getValue();
 		double lower = (double) lowerYSpinners.get(axisIndex).getValue();
 
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartCagePair chartPair = chartCageArrayFrame.chartPanelArray[row][column];
+				ChartCagePair chartPair = chartPanelArray[row][column];
 				if (chartPair == null)
 					continue;
 				ChartPanel chartPanel = chartPair.getChartPanel();
@@ -256,12 +268,16 @@ public class AxisOptions extends JPanel {
 	 */
 	private int detectMaxYAxisCount() {
 		int maxCount = 1; // Default to at least 1 axis
-		int nrows = chartCageArrayFrame.chartPanelArray.length;
-		int ncolumns = chartCageArrayFrame.chartPanelArray[0].length;
+		ChartCagePair[][] chartPanelArray = chartCageArrayFrame.getChartCagePairArray();
+		if (chartPanelArray == null || chartPanelArray.length == 0 || chartPanelArray[0].length == 0) {
+			return maxCount;
+		}
+		int nrows = chartPanelArray.length;
+		int ncolumns = chartPanelArray[0].length;
 
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartCagePair chartPair = chartCageArrayFrame.chartPanelArray[row][column];
+				ChartCagePair chartPair = chartPanelArray[row][column];
 				if (chartPair == null)
 					continue;
 				ChartPanel chartPanel = chartPair.getChartPanel();
@@ -315,12 +331,16 @@ public class AxisOptions extends JPanel {
 	 */
 	private String getAxisLabel(int axisIndex) {
 		// Check a sample chart to determine axis purpose
-		int nrows = chartCageArrayFrame.chartPanelArray.length;
-		int ncolumns = chartCageArrayFrame.chartPanelArray[0].length;
+		ChartCagePair[][] chartPanelArray = chartCageArrayFrame.getChartCagePairArray();
+		if (chartPanelArray == null || chartPanelArray.length == 0 || chartPanelArray[0].length == 0) {
+			return "Y axis " + (axisIndex + 1);
+		}
+		int nrows = chartPanelArray.length;
+		int ncolumns = chartPanelArray[0].length;
 
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartCagePair chartPair = chartCageArrayFrame.chartPanelArray[row][column];
+				ChartCagePair chartPair = chartPanelArray[row][column];
 				if (chartPair == null)
 					continue;
 				ChartPanel chartPanel = chartPair.getChartPanel();

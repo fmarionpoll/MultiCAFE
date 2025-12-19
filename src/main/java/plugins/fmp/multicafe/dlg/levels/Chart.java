@@ -26,7 +26,6 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
-import plugins.fmp.multicafe.fmp_tools.chart.ChartLevelsFrame;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptionsBuilder;
@@ -37,12 +36,8 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 	 */
 	private static final long serialVersionUID = -7079184380174992501L;
 
-	private ChartLevelsFrame activeChart = null;
 	private ChartCageArrayFrame chartCageArrayFrame = null;
 	private MultiCAFE parent0 = null;
-
-	// Global window positions - shared across all experiments
-	private static Rectangle globalChartBounds = null;
 
 	// Listener references for dynamic updates
 	private Viewer kymographViewer = null;
@@ -210,7 +205,7 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 		iChart.createMainChartPanel("Capillary level measures", exp, options);
 		iChart.setChartUpperLeftLocation(getInitialUpperLeftPosition(exp));
 		iChart.displayData(exp, options);
-		
+
 		if (iChart.getMainChartFrame() != null) {
 			iChart.getMainChartFrame().toFront();
 			iChart.getMainChartFrame().requestFocus();
@@ -244,13 +239,7 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 		if (currentExperiment != null) {
 			removeSelectionListeners(currentExperiment);
 		}
-		if (activeChart != null) {
-			if (activeChart.getMainChartFrame() != null) {
-				globalChartBounds = activeChart.getMainChartFrame().getBounds();
-				activeChart.getMainChartFrame().dispose();
-			}
-			activeChart = null;
-		}
+
 		if (chartCageArrayFrame != null) {
 			if (chartCageArrayFrame.getMainChartFrame() != null) {
 				chartCageArrayFrame.getMainChartFrame().dispose();
@@ -342,9 +331,6 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 	}
 
 	private void saveChartPositions() {
-		if (activeChart != null && activeChart.getMainChartFrame() != null) {
-			globalChartBounds = activeChart.getMainChartFrame().getBounds();
-		}
 	}
 
 	private void addSelectionListeners(Experiment exp) {
