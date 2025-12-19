@@ -421,7 +421,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		// If requested result isn't available, show an explicit placeholder rather than
 		// leaving stale charts visible.
 		if (xyDataSetList == null || xyDataSetList.getSeriesCount() == 0) {
-			NumberAxis xAxis = setXaxis("time", resultsOptions);
+			NumberAxis xAxis = setXaxis("", resultsOptions); // time - removed to gain place
 			NumberAxis yAxis = setYaxis("", row, col, resultsOptions);
 			XYPlot xyPlot = CageChartPlotFactory.buildXYPlot(new XYSeriesCollection(), xAxis, yAxis);
 			JFreeChart chart = new JFreeChart(null, null, xyPlot, false);
@@ -455,7 +455,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 			return chartPanel;
 		}
 
-		NumberAxis xAxis = setXaxis("time", resultsOptions);
+		NumberAxis xAxis = setXaxis("", resultsOptions); // time - removed to gain place
 		NumberAxis yAxis = setYaxis("", row, col, resultsOptions);
 
 		if (!resultsOptions.relativeToMaximum && !resultsOptions.relativeToMedianT0) {

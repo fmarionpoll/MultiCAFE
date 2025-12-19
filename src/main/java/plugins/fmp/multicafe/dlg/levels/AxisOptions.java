@@ -21,6 +21,7 @@ import org.jfree.data.Range;
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePair;
 
 public class AxisOptions extends JPanel {
 	/**
@@ -30,10 +31,10 @@ public class AxisOptions extends JPanel {
 	IcyFrame dialogFrame = null;
 	private MultiCAFE parent0 = null;
 	private ChartCageArrayFrame chartCageArrayFrame = null;
-	private JSpinner lowerXSpinner = new JSpinner(new SpinnerNumberModel(0., 0., 255., 1.));
-	private JSpinner upperXSpinner = new JSpinner(new SpinnerNumberModel(120., 0., 255., 1.));
-	private JSpinner lowerYSpinner = new JSpinner(new SpinnerNumberModel(0., 0., 255., 1.));
-	private JSpinner upperYSpinner = new JSpinner(new SpinnerNumberModel(80., 0., 255., 1.));
+	private JSpinner lowerXSpinner = new JSpinner(new SpinnerNumberModel(0., -255., 255., 1.));
+	private JSpinner upperXSpinner = new JSpinner(new SpinnerNumberModel(120., -255., 255., 1.));
+	private JSpinner lowerYSpinner = new JSpinner(new SpinnerNumberModel(0., -255., 255., 1.));
+	private JSpinner upperYSpinner = new JSpinner(new SpinnerNumberModel(80., -255., 255., 1.));
 	private JButton setYaxis = new JButton("set Y axis values");
 	private JButton setXaxis = new JButton("set X axis values");
 
@@ -113,7 +114,10 @@ public class AxisOptions extends JPanel {
 
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartPanel chartPanel = chartCageArrayFrame.chartPanelArray[row][column].getChartPanel();
+				ChartCagePair chartPair = chartCageArrayFrame.chartPanelArray[row][column];
+				if (chartPair == null)
+					continue;
+				ChartPanel chartPanel = chartPair.getChartPanel();
 				if (chartPanel == null)
 					continue;
 				XYPlot plot = (XYPlot) chartPanel.getChart().getPlot();
