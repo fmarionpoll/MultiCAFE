@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -152,7 +153,10 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/** Bottom panel containing legend */
 	private JPanel bottomPanel = null;
 
-	/** Available measurement types - will be populated from parent combobox if available */
+	/**
+	 * Available measurement types - will be populated from parent combobox if
+	 * available
+	 */
 	private EnumResults[] measurementTypes = null;
 
 //	/** Parent MultiCAFE/MultiSPOTS96 instance */
@@ -189,8 +193,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		mainChartPanel.setLayout(new GridLayout(nPanelsAlongY, nPanelsAlongX));
 		String finalTitle = title + ": " + options.resultType.toString();
-		
-		// Reuse existing frame if it's still valid (has a parent or is visible), otherwise create a new one
+
+		// Reuse existing frame if it's still valid (has a parent or is visible),
+		// otherwise create a new one
 		if (mainChartFrame != null && (mainChartFrame.getParent() != null || mainChartFrame.isVisible())) {
 			mainChartFrame.setTitle(finalTitle);
 			mainChartFrame.removeAll();
@@ -202,8 +207,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 		mainChartFrame.setLayout(new BorderLayout());
 
 		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		
-		// Get measurement types from parent combobox if available, otherwise use default
+
+		// Get measurement types from parent combobox if available, otherwise use
+		// default
 		EnumResults[] typesToUse = getMeasurementTypes();
 		resultTypeComboBox = new JComboBox<EnumResults>(typesToUse);
 		resultTypeComboBox.setSelectedItem(options.resultType);
@@ -216,7 +222,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 					updateFrameTitle();
 					updateLegendPanel();
 					displayData(experiment, currentOptions);
-					
+
 					// Synchronize with parent combobox if it exists
 					if (parentComboBox != null && parentComboBox.getSelectedItem() != selectedType) {
 						// Temporarily remove action listeners to avoid recursive updates
@@ -320,7 +326,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		this.experiment = exp;
 		this.currentOptions = resultsOptions;
-		
+
 		if (resultTypeComboBox != null && resultsOptions.resultType != null) {
 			resultTypeComboBox.setSelectedItem(resultsOptions.resultType);
 		}
@@ -526,7 +532,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 		// empty.
 		mainChartPanel.removeAll();
 		if (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast) {
-			// When displaying a single cage, the array is 1x1 and the panel is always at [0][0]
+			// When displaying a single cage, the array is 1x1 and the panel is always at
+			// [0][0]
 			if (chartPanelArray != null && chartPanelArray.length > 0 && chartPanelArray[0].length > 0) {
 				ChartCagePair pair = chartPanelArray[0][0];
 				if (pair != null && pair.getChartPanel() != null) {
@@ -569,15 +576,15 @@ public class ChartCageArrayFrame extends IcyFrame {
 			LOGGER.warning("Cannot display chart frame: mainChartFrame is null");
 			return;
 		}
-		
+
 		mainChartFrame.pack();
 		loadPreferences();
-		
+
 		// Only add to desktop pane if not already added
 		if (mainChartFrame.getParent() == null) {
 			mainChartFrame.addToDesktopPane();
 		}
-		
+
 		mainChartFrame.setVisible(true);
 //		LOGGER.fine("Displayed chart frame at location: " + graphLocation);
 	}
@@ -747,9 +754,10 @@ public class ChartCageArrayFrame extends IcyFrame {
 	}
 
 	/**
-	 * Sets the parent combobox reference for synchronization.
-	 * When the chart's combobox changes, it will update the parent combobox to keep them in sync.
-	 * Also extracts the measurement types from the parent combobox to keep the lists synchronized.
+	 * Sets the parent combobox reference for synchronization. When the chart's
+	 * combobox changes, it will update the parent combobox to keep them in sync.
+	 * Also extracts the measurement types from the parent combobox to keep the
+	 * lists synchronized.
 	 * 
 	 * @param comboBox the parent combobox to synchronize with
 	 */
@@ -757,7 +765,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		this.parentComboBox = comboBox;
 		// Extract measurement types from parent combobox model
 		if (comboBox != null) {
-			javax.swing.ComboBoxModel<EnumResults> model = comboBox.getModel();
+			ComboBoxModel<EnumResults> model = comboBox.getModel();
 			int size = model.getSize();
 			EnumResults[] types = new EnumResults[size];
 			for (int i = 0; i < size; i++) {
@@ -768,8 +776,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 	}
 
 	/**
-	 * Gets the measurement types to use for the combobox.
-	 * If a parent combobox is set, uses its items. Otherwise falls back to a default list.
+	 * Gets the measurement types to use for the combobox. If a parent combobox is
+	 * set, uses its items. Otherwise falls back to a default list.
 	 * 
 	 * @return array of measurement types
 	 */
