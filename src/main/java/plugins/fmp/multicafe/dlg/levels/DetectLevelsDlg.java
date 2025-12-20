@@ -168,6 +168,12 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 				updateOverlayThreshold();
 			}
 		});
+
+		jitter2Spinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				updateOverlayThreshold();
+			}
+		});
 	}
 
 	private void defineActionListeners() {
@@ -483,14 +489,53 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 			ifGreater = (direction1ComboBox.getSelectedIndex() == 0);
 			threshold = (int) threshold1Spinner.getValue();
 			transform = (ImageTransformEnums) transformPass1ComboBox.getSelectedItem();
+			overlayThreshold.setThresholdSingle(threshold, transform, ifGreater);
 		} else if (transformPass2DisplayButton.isSelected()) {
 			ifGreater = (direction2ComboBox.getSelectedIndex() == 0);
 			threshold = (int) threshold2Spinner.getValue();
 			transform = (ImageTransformEnums) transformPass2ComboBox.getSelectedItem();
+			int jitter2 = (int) jitter2Spinner.getValue();
+			
+			int[] initialLevels = getInitialLevelPositions();
+			if (initialLevels != null && jitter2 > 0) {
+				overlayThreshold.setThresholdSingleWithJitter(threshold, transform, ifGreater, jitter2, initialLevels);
+			} else {
+				overlayThreshold.setThresholdSingle(threshold, transform, ifGreater);
+			}
 		} else
 			return;
-		overlayThreshold.setThresholdSingle(threshold, transform, ifGreater);
 		overlayThreshold.painterChanged();
+	}
+	
+	private int[] getInitialLevelPositions() {
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+		if (exp == null || exp.getSeqKymos() == null)
+			return null;
+		
+		int currentKymoIndex = exp.getSeqKymos().getSequence().getFirstViewer().getPositionT();
+		if (currentKymoIndex < 0 || exp.getCapillaries() == null || exp.getCapillaries().getList() == null)
+			return null;
+		
+		if (currentKymoIndex >= exp.getCapillaries().getList().size())
+			return null;
+		
+		Capillary cap = exp.getCapillaries().getList().get(currentKymoIndex);
+		if (cap == null || cap.getTopLevel() == null)
+			return null;
+		
+		if (cap.getTopLevel().polylineLevel == null || cap.getTopLevel().polylineLevel.npoints == 0) {
+			if (cap.getTopLevel().limit != null && cap.getTopLevel().limit.length > 0) {
+				return cap.getTopLevel().limit;
+			}
+			return null;
+		}
+		
+		int npoints = cap.getTopLevel().polylineLevel.npoints;
+		int[] levels = new int[npoints];
+		for (int i = 0; i < npoints; i++) {
+			levels[i] = (int) cap.getTopLevel().polylineLevel.ypoints[i];
+		}
+		return levels;
 	}
 
 	void removeOverlay(Experiment exp) {

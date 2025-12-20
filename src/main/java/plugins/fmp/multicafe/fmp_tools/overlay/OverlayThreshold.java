@@ -21,7 +21,12 @@ import icy.sequence.SequenceEvent.SequenceEventType;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
+import plugins.fmp.multicafe.fmp_service.LevelDetector;
 import icy.sequence.SequenceListener;
+import icy.type.collection.array.Array1DUtil;
+import java.awt.geom.Point2D;
+import java.util.List;
+import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 /**
  * Threshold overlay that applies image transformations and thresholding operations
@@ -73,6 +78,18 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
     
     /** Reference to the sequence being processed */
     private Sequence localSequence;
+    
+    /** Jitter mode parameters */
+    private boolean useJitterMode = false;
+    private int jitterValue = 0;
+    private int[] initialLevels = null;
+    private boolean jitterDirectionUp = true;
+    
+    /** Detection ROI for visualization */
+    private ROI2DPolyLine detectionROI = null;
+    
+    /** LevelDetector instance for calling detection methods */
+    private final LevelDetector levelDetector = new LevelDetector();
 
     /**
      * Creates a new threshold overlay with default settings.
@@ -179,6 +196,37 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
         imageTransformOptions.transformOption = transformOp;
         imageTransformFunction = transformOp.getFunction();
         imageThresholdFunction = ImageTransformEnums.THRESHOLD_SINGLE.getFunction();
+        useJitterMode = false;
+        removeDetectionROI();
+    }
+    
+    /**
+     * Sets threshold with jitter-based detection simulation.
+     * This method simulates the actual detection logic used in LevelDetector,
+     * showing what the detection result would be.
+     * 
+     * @param threshold the threshold value
+     * @param transformOp the transformation operation to apply
+     * @param directionUp true if values greater than threshold should be selected
+     * @param jitter the vertical jitter (search range) in pixels
+     * @param initialLevels array of initial level positions (one per column), or null
+     * @throws IllegalArgumentException if transformOp is null
+     */
+    public void setThresholdSingleWithJitter(int threshold, ImageTransformEnums transformOp, boolean directionUp, 
+            int jitter, int[] initialLevels) {
+        if (transformOp == null) {
+            throw new IllegalArgumentException("Transform operation cannot be null");
+        }
+        
+        imageTransformOptions.setSingleThreshold(threshold, directionUp);
+        imageTransformOptions.transformOption = transformOp;
+        imageTransformFunction = transformOp.getFunction();
+        imageThresholdFunction = ImageTransformEnums.THRESHOLD_SINGLE.getFunction();
+        
+        useJitterMode = (jitter > 0 && initialLevels != null);
+        this.jitterValue = jitter;
+        this.initialLevels = initialLevels;
+        this.jitterDirectionUp = directionUp;
     }
 
     /**
@@ -276,10 +324,20 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
         
         try {
             int timePosition = canvas.getPositionT();
-            IcyBufferedImage thresholdedImage = getTransformedImage(timePosition);
             
-            if (thresholdedImage != null) {
-                renderOverlay(graphics, thresholdedImage);
+            if (useJitterMode && initialLevels != null) {
+                IcyBufferedImage rawImage = sequence.getImage(timePosition, 0);
+                if (rawImage != null) {
+                    IcyBufferedImage transformedImage = imageTransformFunction.getTransformedImage(rawImage, imageTransformOptions);
+                    if (transformedImage != null) {
+                        drawDetectionPath(graphics, rawImage, transformedImage);
+                    }
+                }
+            } else {
+                IcyBufferedImage thresholdedImage = getTransformedImage(timePosition);
+                if (thresholdedImage != null) {
+                    renderOverlay(graphics, thresholdedImage);
+                }
             }
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error painting overlay", e);
@@ -341,6 +399,134 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
         if (sequence != null) {
             sequence.removeListener(this);
         }
+        removeDetectionROI();
         remove();
+    }
+    
+    /**
+     * Draws the detection path using the same logic as LevelDetector.
+     * 
+     * @param graphics the graphics context
+     * @param rawImage the raw input image
+     * @param transformedImage the transformed image
+     */
+    private void drawDetectionPath(Graphics2D graphics, IcyBufferedImage rawImage, IcyBufferedImage transformedImage) {
+        if (initialLevels == null || initialLevels.length == 0) {
+            return;
+        }
+        
+        try {
+            Object transformedArray = transformedImage.getDataXY(0);
+            int[] transformed1DArray = Array1DUtil.arrayToIntArray(transformedArray, transformedImage.isSignedDataType());
+            int imageWidth = transformedImage.getSizeX();
+            int imageHeight = transformedImage.getSizeY();
+            int threshold = imageTransformOptions.simplethreshold;
+            
+            int pathLength = Math.min(initialLevels.length, imageWidth);
+            int[] detectedPath = new int[pathLength];
+            System.arraycopy(initialLevels, 0, detectedPath, 0, pathLength);
+            
+            ImageTransformEnums transformOp = imageTransformOptions.transformOption;
+            boolean useFindBestPosition = shouldUseFindBestPosition(transformOp);
+            
+            int firstColumn = 0;
+            int lastColumn = pathLength - 1;
+            
+            if (useFindBestPosition) {
+                levelDetector.findBestPosition(detectedPath, firstColumn, lastColumn, transformed1DArray, 
+                        imageWidth, imageHeight, jitterValue, threshold, jitterDirectionUp);
+            } else {
+                levelDetector.detectThresholdUp(detectedPath, firstColumn, lastColumn, transformed1DArray, 
+                        imageWidth, imageHeight, jitterValue, threshold, jitterDirectionUp);
+            }
+            
+            createDetectionROI(detectedPath);
+            
+            graphics.setColor(new Color(0, 255, 0, (int)(opacity * 255)));
+            graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+            
+            for (int ix = 0; ix < detectedPath.length - 1; ix++) {
+                int y1 = detectedPath[ix];
+                int y2 = detectedPath[ix + 1];
+                if (y1 >= 0 && y1 < imageHeight && y2 >= 0 && y2 < imageHeight && ix < imageWidth) {
+                    graphics.drawLine(ix, y1, ix + 1, y2);
+                }
+            }
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error drawing detection path", e);
+        }
+    }
+    
+    /**
+     * Determines if the transform should use findBestPosition or detectThresholdUp.
+     * 
+     * @param transformOp the transform operation
+     * @return true if findBestPosition should be used, false for detectThresholdUp
+     */
+    private boolean shouldUseFindBestPosition(ImageTransformEnums transformOp) {
+        switch (transformOp) {
+        case DERICHE:
+        case DERICHE_COLOR:
+        case COLORDISTANCE_L1_Y:
+        case COLORDISTANCE_L2_Y:
+        case YDIFFN:
+        case YDIFFN2:
+        case MINUSHORIZAVG:
+            return true;
+        case SUBTRACT_1RSTCOL:
+        case L1DIST_TO_1RSTCOL:
+            return false;
+        default:
+            return true;
+        }
+    }
+    
+    /**
+     * Creates or updates the detection ROI from the detected path.
+     * 
+     * @param detectedPath array of Y coordinates for each column
+     */
+    private void createDetectionROI(int[] detectedPath) {
+        if (localSequence == null || detectedPath == null || detectedPath.length == 0) {
+            return;
+        }
+        
+        try {
+            removeDetectionROI();
+            
+            List<Point2D> points = new ArrayList<Point2D>();
+            for (int ix = 0; ix < detectedPath.length; ix++) {
+                points.add(new Point2D.Double(ix, detectedPath[ix]));
+            }
+            
+            if (points.size() < 2) {
+                return;
+            }
+            
+            detectionROI = new ROI2DPolyLine(points);
+            detectionROI.setName("detection_path_pass2");
+            detectionROI.setColor(Color.RED);
+            detectionROI.setReadOnly(false);
+            
+            localSequence.addROI(detectionROI);
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error creating detection ROI", e);
+        }
+    }
+    
+    /**
+     * Removes the detection ROI from the sequence.
+     */
+    private void removeDetectionROI() {
+        if (detectionROI != null && localSequence != null) {
+            try {
+                localSequence.removeROI(detectionROI);
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Error removing detection ROI", e);
+            }
+            detectionROI = null;
+        }
     }
 }

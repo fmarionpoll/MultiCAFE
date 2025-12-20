@@ -212,18 +212,18 @@ public class LevelDetector {
 		case COLORDISTANCE_L1_Y:
 		case COLORDISTANCE_L2_Y:
 			findBestPosition(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
-					5, options.detectLevel2Threshold, options.directionUp2);
+					options.jitter2, options.detectLevel2Threshold, options.directionUp2);
 			break;
 
 		case SUBTRACT_1RSTCOL:
 		case L1DIST_TO_1RSTCOL:
 			detectThresholdUp(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
-					20, options.detectLevel2Threshold);
+					options.jitter2, options.detectLevel2Threshold, options.directionUp2);
 			break;
 
 		case DERICHE:
 			findBestPosition(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
-					5, options.detectLevel2Threshold, options.directionUp2);
+					options.jitter2, options.detectLevel2Threshold, options.directionUp2);
 			break;
 
 		default:
@@ -231,7 +231,7 @@ public class LevelDetector {
 		}
 	}
 
-	private void findBestPosition(int[] limits, int firstColumn, int lastColumn, int[] transformed1DArray2,
+	public void findBestPosition(int[] limits, int firstColumn, int lastColumn, int[] transformed1DArray2,
 			int imageWidth, int imageHeight, int delta, int threshold, boolean directionUp) {
 		for (int ix = firstColumn; ix <= lastColumn; ix++) {
 			int iy = limits[ix];
@@ -265,8 +265,8 @@ public class LevelDetector {
 		}
 	}
 
-	private void detectThresholdUp(int[] limits, int firstColumn, int lastColumn, int[] transformed1DArray2,
-			int imageWidth, int imageHeight, int delta, int threshold) {
+	public void detectThresholdUp(int[] limits, int firstColumn, int lastColumn, int[] transformed1DArray2,
+			int imageWidth, int imageHeight, int delta, int threshold, boolean directionUp) {
 		for (int ix = firstColumn; ix <= lastColumn; ix++) {
 			int iy = limits[ix];
 			int iyVal = iy;
@@ -275,7 +275,13 @@ public class LevelDetector {
 					continue;
 
 				int val = transformed1DArray2[ix + irow * imageWidth];
-				if (val > threshold) {
+				boolean meetsThreshold;
+				if (directionUp)
+					meetsThreshold = val > threshold;
+				else
+					meetsThreshold = val < threshold;
+				
+				if (meetsThreshold) {
 					iyVal = irow;
 					break;
 				}
