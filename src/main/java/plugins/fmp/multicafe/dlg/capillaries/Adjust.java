@@ -1,6 +1,8 @@
 package plugins.fmp.multicafe.dlg.capillaries;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -14,9 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 
-import icy.gui.util.GuiUtil;
 import icy.image.IcyBufferedImage;
 import icy.roi.ROI2D;
 import icy.type.collection.array.Array1DUtil;
@@ -35,6 +35,10 @@ public class Adjust extends JPanel {
 
 	JSpinner jitterJSpinner = new JSpinner(new SpinnerNumberModel(10, 0, 500, 1));
 	private JButton adjustButton = new JButton("Align");
+	private JButton elongateButton = new JButton("+");
+	private JButton shortenButton = new JButton("-");
+	private static final int ELONGATION_STEP = 1;
+	private static final int MIN_LENGTH_PIXELS = 2;
 	private MultiCAFE parent0 = null;
 	private Line2D refLineUpper = null;
 	private Line2D refLineLower = null;
@@ -43,10 +47,25 @@ public class Adjust extends JPanel {
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		setLayout(capLayout);
-		add(GuiUtil.besidesPanel(new JLabel(" "), new JLabel("jitter ", SwingConstants.RIGHT), jitterJSpinner,
-				adjustButton));
-
 		this.parent0 = parent0;
+
+		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEFT);
+		layoutLeft.setVgap(0);
+
+		JPanel panel01 = new JPanel(layoutLeft);
+		panel01.add(new JLabel("jitter "));
+		panel01.add(jitterJSpinner);
+		panel01.add(adjustButton);
+		add(panel01);
+
+		JPanel panel02 = new JPanel(layoutLeft);
+		elongateButton.setPreferredSize(new Dimension(30, 20));
+		shortenButton.setPreferredSize(new Dimension(30, 20));
+		panel02.add(new JLabel("Change size of capillaries"));
+		panel02.add(elongateButton);
+		panel02.add(shortenButton);
+		add(panel02);
+
 		defineActionListeners();
 	}
 
@@ -59,6 +78,83 @@ public class Adjust extends JPanel {
 					roisCenterLinestoAllCapillaries();
 			}
 		});
+
+		elongateButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				elongateCapillaries(ELONGATION_STEP);
+			}
+		});
+
+		shortenButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				elongateCapillaries(-ELONGATION_STEP);
+			}
+		});
+	}
+
+	// -------------------------------------------------------
+	private void elongateCapillaries(int deltaY) {
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
+		if (exp == null)
+			return;
+		SequenceCamData seqCamData = exp.getSeqCamData();
+		if (seqCamData == null)
+			return;
+
+		List<ROI2D> capillaryRois = ROI2DUtilities.getROIs2DContainingString("line", seqCamData.getSequence());
+		if (capillaryRois == null || capillaryRois.isEmpty())
+			return;
+
+		for (ROI2D roi : capillaryRois) {
+			if (roi instanceof ROI2DLine) {
+				ROI2DLine lineRoi = (ROI2DLine) roi;
+				Line2D currentLine = lineRoi.getLine();
+
+				double x1 = currentLine.getX1();
+				double y1 = currentLine.getY1();
+				double x2 = currentLine.getX2();
+				double y2 = currentLine.getY2();
+
+				double yTop = Math.min(y1, y2);
+				double yBottom = Math.max(y1, y2);
+
+				double deltaYHalf = deltaY / 2.0;
+				double newYTop = yTop - deltaYHalf;
+				double newYBottom = yBottom + deltaYHalf;
+				double newLength = newYBottom - newYTop;
+
+				if (newLength < MIN_LENGTH_PIXELS) {
+					continue;
+				}
+
+				Line2DPlus linePlus = new Line2DPlus();
+				linePlus.setLine(currentLine);
+
+				double newXTop, newXBottom;
+
+				if (Math.abs(x1 - x2) < 1e-10) {
+					newXTop = x1;
+					newXBottom = x2;
+				} else {
+					newXTop = linePlus.getXfromY(newYTop);
+					newXBottom = linePlus.getXfromY(newYBottom);
+				}
+
+				Point2D newP1, newP2;
+				if (y1 < y2) {
+					newP1 = new Point2D.Double(newXTop, newYTop);
+					newP2 = new Point2D.Double(newXBottom, newYBottom);
+				} else {
+					newP1 = new Point2D.Double(newXBottom, newYBottom);
+					newP2 = new Point2D.Double(newXTop, newYTop);
+				}
+
+				Line2D newLine = new Line2D.Double(newP1, newP2);
+				lineRoi.setLine(newLine);
+			}
+		}
 	}
 
 	// -------------------------------------------------------

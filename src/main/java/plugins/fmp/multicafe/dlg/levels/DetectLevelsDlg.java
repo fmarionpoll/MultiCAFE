@@ -90,9 +90,9 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 		this.parent0 = parent0;
 
 		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEFT);
+		layoutLeft.setVgap(0);
 
 		JPanel panel0 = new JPanel(layoutLeft);
-		((FlowLayout) panel0.getLayout()).setVgap(0);
 		panel0.add(detectButton);
 		panel0.add(allSeriesCheckBox);
 		panel0.add(allKymosCheckBox);
@@ -495,7 +495,7 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 			threshold = (int) threshold2Spinner.getValue();
 			transform = (ImageTransformEnums) transformPass2ComboBox.getSelectedItem();
 			int jitter2 = (int) jitter2Spinner.getValue();
-			
+
 			int[] initialLevels = getInitialLevelPositions();
 			if (initialLevels != null && jitter2 > 0) {
 				overlayThreshold.setThresholdSingleWithJitter(threshold, transform, ifGreater, jitter2, initialLevels);
@@ -506,30 +506,30 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 			return;
 		overlayThreshold.painterChanged();
 	}
-	
+
 	private int[] getInitialLevelPositions() {
 		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null || exp.getSeqKymos() == null)
 			return null;
-		
+
 		int currentKymoIndex = exp.getSeqKymos().getSequence().getFirstViewer().getPositionT();
 		if (currentKymoIndex < 0 || exp.getCapillaries() == null || exp.getCapillaries().getList() == null)
 			return null;
-		
+
 		if (currentKymoIndex >= exp.getCapillaries().getList().size())
 			return null;
-		
+
 		Capillary cap = exp.getCapillaries().getList().get(currentKymoIndex);
 		if (cap == null || cap.getTopLevel() == null)
 			return null;
-		
+
 		if (cap.getTopLevel().polylineLevel == null || cap.getTopLevel().polylineLevel.npoints == 0) {
 			if (cap.getTopLevel().limit != null && cap.getTopLevel().limit.length > 0) {
 				return cap.getTopLevel().limit;
 			}
 			return null;
 		}
-		
+
 		int npoints = cap.getTopLevel().polylineLevel.npoints;
 		int[] levels = new int[npoints];
 		for (int i = 0; i < npoints; i++) {
