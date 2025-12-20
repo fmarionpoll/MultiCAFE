@@ -104,11 +104,14 @@ public class LevelDetector {
 					int columnFirst = (int) searchRect.getX();
 					int columnLast = (int) (searchRect.getWidth() + columnFirst);
 					if (options.analyzePartOnly) {
-						if (capi.getTopLevel() != null && capi.getTopLevel().polylineLevel != null && capi.getTopLevel().limit != null)
-							capi.getTopLevel().polylineLevel.insertYPoints(capi.getTopLevel().limit, columnFirst, columnLast);
+						if (capi.getTopLevel() != null && capi.getTopLevel().polylineLevel != null
+								&& capi.getTopLevel().limit != null)
+							capi.getTopLevel().polylineLevel.insertYPoints(capi.getTopLevel().limit, columnFirst,
+									columnLast);
 						if (capi.getBottomLevel() != null && capi.getBottomLevel().limit != null
 								&& capi.getBottomLevel().polylineLevel != null)
-							capi.getBottomLevel().polylineLevel.insertYPoints(capi.getBottomLevel().limit, columnFirst, columnLast);
+							capi.getBottomLevel().polylineLevel.insertYPoints(capi.getBottomLevel().limit, columnFirst,
+									columnLast);
 					} else {
 						if (capi.getTopLevel() != null) {
 							String topLevelName = capi.getLast2ofCapillaryName();
@@ -211,19 +214,19 @@ public class LevelDetector {
 		switch (options.transform02) {
 		case COLORDISTANCE_L1_Y:
 		case COLORDISTANCE_L2_Y:
-			findBestPosition(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
-					options.jitter2, options.detectLevel2Threshold, options.directionUp2);
+			findBestPosition(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth,
+					imageHeight, options.jitter2, options.detectLevel2Threshold, options.directionUp2);
 			break;
 
 		case SUBTRACT_1RSTCOL:
 		case L1DIST_TO_1RSTCOL:
-			detectThresholdUp(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
-					options.jitter2, options.detectLevel2Threshold, options.directionUp2);
+			detectThresholdUp(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth,
+					imageHeight, options.jitter2, options.detectLevel2Threshold, options.directionUp2);
 			break;
 
 		case DERICHE:
-			findBestPosition(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
-					options.jitter2, options.detectLevel2Threshold, options.directionUp2);
+			findBestPosition(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth,
+					imageHeight, options.jitter2, options.detectLevel2Threshold, options.directionUp2);
 			break;
 
 		default:
@@ -234,11 +237,12 @@ public class LevelDetector {
 	public void findBestPosition(int[] limits, int firstColumn, int lastColumn, int[] transformed1DArray2,
 			int imageWidth, int imageHeight, int delta, int threshold, boolean directionUp) {
 		for (int ix = firstColumn; ix <= lastColumn; ix++) {
-			int iy = limits[ix];
+			int limitIndex = ix - firstColumn;
+			int iy = limits[limitIndex];
 			int maxVal = Integer.MIN_VALUE;
 			int iyVal = iy;
 			boolean foundCandidate = false;
-			
+
 			for (int irow = iy + delta; irow > iy - delta; irow--) {
 				if (irow < 0 || irow >= imageHeight)
 					continue;
@@ -249,7 +253,7 @@ public class LevelDetector {
 					meetsThreshold = val > threshold;
 				else
 					meetsThreshold = val < threshold;
-				
+
 				if (meetsThreshold) {
 					if (!foundCandidate || val > maxVal) {
 						maxVal = val;
@@ -258,9 +262,9 @@ public class LevelDetector {
 					}
 				}
 			}
-			
+
 			if (foundCandidate) {
-				limits[ix] = iyVal;
+				limits[limitIndex] = iyVal;
 			}
 		}
 	}
@@ -268,7 +272,8 @@ public class LevelDetector {
 	public void detectThresholdUp(int[] limits, int firstColumn, int lastColumn, int[] transformed1DArray2,
 			int imageWidth, int imageHeight, int delta, int threshold, boolean directionUp) {
 		for (int ix = firstColumn; ix <= lastColumn; ix++) {
-			int iy = limits[ix];
+			int limitIndex = ix - firstColumn;
+			int iy = limits[limitIndex];
 			int iyVal = iy;
 			for (int irow = iy + delta; irow > iy - delta; irow--) {
 				if (irow < 0 || irow >= imageHeight)
@@ -280,13 +285,13 @@ public class LevelDetector {
 					meetsThreshold = val > threshold;
 				else
 					meetsThreshold = val < threshold;
-				
+
 				if (meetsThreshold) {
 					iyVal = irow;
 					break;
 				}
 			}
-			limits[ix] = iyVal;
+			limits[limitIndex] = iyVal;
 		}
 	}
 
