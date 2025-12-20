@@ -18,6 +18,18 @@ public class Line2DPlus extends Line2D.Double {
 		return x;
 	}
 
+	public double getYfromX(double x) {
+		double y = 0d;
+		if (getX1() == getX2())
+			y = getY1();
+		else {
+			double slope = (getY1() - getY2()) / (getX1() - getX2());
+			double intercept = getY1() - getX1() * slope;
+			y = slope * x + intercept;
+		}
+		return y;
+	}
+
 	public Point2D.Double getIntersection(Line2D line) {
 		double x1 = getX1();
 		double x2 = getX2();

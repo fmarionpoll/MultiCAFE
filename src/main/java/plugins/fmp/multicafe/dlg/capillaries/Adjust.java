@@ -62,8 +62,8 @@ public class Adjust extends JPanel {
 		elongateButton.setPreferredSize(new Dimension(30, 20));
 		shortenButton.setPreferredSize(new Dimension(30, 20));
 		panel02.add(new JLabel("Change size of capillaries"));
-		panel02.add(elongateButton);
 		panel02.add(shortenButton);
+		panel02.add(elongateButton);
 		add(panel02);
 
 		defineActionListeners();
@@ -82,20 +82,20 @@ public class Adjust extends JPanel {
 		elongateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				elongateCapillaries(ELONGATION_STEP);
+				changeCapillariesLength(ELONGATION_STEP);
 			}
 		});
 
 		shortenButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				elongateCapillaries(-ELONGATION_STEP);
+				changeCapillariesLength(-ELONGATION_STEP);
 			}
 		});
 	}
 
 	// -------------------------------------------------------
-	private void elongateCapillaries(int deltaY) {
+	private void changeCapillariesLength(int deltaY) {
 		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
@@ -107,6 +107,11 @@ public class Adjust extends JPanel {
 		if (capillaryRois == null || capillaryRois.isEmpty())
 			return;
 
+		elongateCapillaries(deltaY, capillaryRois);
+		clampCapillariesToImageBounds(seqCamData, capillaryRois);
+	}
+
+	private void elongateCapillaries(int deltaY, List<ROI2D> capillaryRois) {
 		for (ROI2D roi : capillaryRois) {
 			if (roi instanceof ROI2DLine) {
 				ROI2DLine lineRoi = (ROI2DLine) roi;
@@ -153,6 +158,90 @@ public class Adjust extends JPanel {
 
 				Line2D newLine = new Line2D.Double(newP1, newP2);
 				lineRoi.setLine(newLine);
+			}
+		}
+	}
+
+	private void clampCapillariesToImageBounds(SequenceCamData seqCamData, List<ROI2D> capillaryRois) {
+		if (seqCamData == null || seqCamData.getSequence() == null)
+			return;
+
+		int imageWidth = seqCamData.getSequence().getWidth();
+		int imageHeight = seqCamData.getSequence().getHeight();
+
+		for (ROI2D roi : capillaryRois) {
+			if (roi instanceof ROI2DLine) {
+				ROI2DLine lineRoi = (ROI2DLine) roi;
+				Line2D currentLine = lineRoi.getLine();
+
+				double x1 = currentLine.getX1();
+				double y1 = currentLine.getY1();
+				double x2 = currentLine.getX2();
+				double y2 = currentLine.getY2();
+
+				double yTop = Math.min(y1, y2);
+				double yBottom = Math.max(y1, y2);
+				double xTop = (y1 < y2) ? x1 : x2;
+				double xBottom = (y1 < y2) ? x2 : x1;
+
+				Line2DPlus linePlus = new Line2DPlus();
+				linePlus.setLine(currentLine);
+
+				boolean topChanged = false;
+				boolean bottomChanged = false;
+				boolean isVertical = Math.abs(x1 - x2) < 1e-10;
+
+				if (xTop < 0 && !isVertical) {
+					xTop = 0;
+					yTop = linePlus.getYfromX(xTop);
+					topChanged = true;
+				}
+				if (yTop < 0) {
+					yTop = 0;
+					if (!isVertical) {
+						xTop = linePlus.getXfromY(yTop);
+					}
+					topChanged = true;
+				}
+
+				if (xBottom < 0 && !isVertical) {
+					xBottom = 0;
+					yBottom = linePlus.getYfromX(xBottom);
+					bottomChanged = true;
+				}
+				if (yBottom < 0) {
+					yBottom = 0;
+					if (!isVertical) {
+						xBottom = linePlus.getXfromY(yBottom);
+					}
+					bottomChanged = true;
+				}
+				if (xBottom >= imageWidth && !isVertical) {
+					xBottom = imageWidth - 1;
+					yBottom = linePlus.getYfromX(xBottom);
+					bottomChanged = true;
+				}
+				if (yBottom >= imageHeight) {
+					yBottom = imageHeight - 1;
+					if (!isVertical) {
+						xBottom = linePlus.getXfromY(yBottom);
+					}
+					bottomChanged = true;
+				}
+
+				if (topChanged || bottomChanged) {
+					Point2D newP1, newP2;
+					if (y1 < y2) {
+						newP1 = new Point2D.Double(xTop, yTop);
+						newP2 = new Point2D.Double(xBottom, yBottom);
+					} else {
+						newP1 = new Point2D.Double(xBottom, yBottom);
+						newP2 = new Point2D.Double(xTop, yTop);
+					}
+
+					Line2D clampedLine = new Line2D.Double(newP1, newP2);
+					lineRoi.setLine(clampedLine);
+				}
 			}
 		}
 	}

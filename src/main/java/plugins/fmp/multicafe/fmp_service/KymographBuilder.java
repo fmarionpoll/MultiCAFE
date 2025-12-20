@@ -71,7 +71,7 @@ public class KymographBuilder {
 		waitFuturesCompletion(processor, tasks);
 
 		int sizeC = exp.getSeqCamData().getSequence().getSizeC();
-		exportCapillaryIntegerArrays_to_Kymograph(exp, seqKymos.getSequence(), sizeC);
+		exportCapillaryMeasures_to_Kymograph(exp, seqKymos.getSequence(), sizeC);
 		return true;
 	}
 
@@ -151,7 +151,7 @@ public class KymographBuilder {
 		}
 	}
 
-	private void exportCapillaryIntegerArrays_to_Kymograph(Experiment exp, Sequence seqKymo, final int sizeC) {
+	private void exportCapillaryMeasures_to_Kymograph(Experiment exp, final Sequence seqKymo, final int sizeC) {
 		seqKymo.beginUpdate();
 
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
@@ -161,14 +161,14 @@ public class KymographBuilder {
 		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(nbcapillaries);
 		tasks.clear();
 
-		for (int icap = 0; icap < nbcapillaries; icap++) {
-			final Capillary cap = exp.getCapillaries().getList().get(icap);
-			final int indexCap = icap;
+		for (int iicap = 0; iicap < nbcapillaries; iicap++) {
+			final Capillary cap = exp.getCapillaries().getList().get(iicap);
+			final int icap = iicap;
 
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					export_One_CapillaryIntegerArray_to_Kymograph(seqKymo, indexCap, cap, sizeC);
+					export_One_CapillaryMeasure_to_Kymograph(seqKymo, icap, cap, sizeC);
 				}
 			}));
 		}
@@ -177,7 +177,8 @@ public class KymographBuilder {
 		seqKymo.endUpdate();
 	}
 
-	private void export_One_CapillaryIntegerArray_to_Kymograph(Sequence seqKymo, int icap, Capillary cap, int sizeC) {
+	private void export_One_CapillaryMeasure_to_Kymograph(final Sequence seqKymo, final int icap, Capillary cap,
+			final int sizeC) {
 		IcyBufferedImage cap_Image = cap.cap_Image;
 		ArrayList<int[]> cap_Integer = cap.getCapInteger();
 		boolean isSignedDataType = cap_Image.isSignedDataType();
