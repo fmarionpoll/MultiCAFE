@@ -62,6 +62,7 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 	private JComboBox<ImageTransformEnums> transformPass2ComboBox = new JComboBox<ImageTransformEnums>(transformPass2);
 	private JToggleButton transformPass2DisplayButton = new JToggleButton("View");
 	private JCheckBox overlayPass2CheckBox = new JCheckBox("overlay");
+	private JSpinner jitter2Spinner = new JSpinner(new SpinnerNumberModel(5, 0, 255, 1));
 
 	private JCheckBox allKymosCheckBox = new JCheckBox("all kymographs", true);
 	private JSpinner spanTopSpinner = new JSpinner(new SpinnerNumberModel(3, 1, 100, 1));
@@ -120,6 +121,8 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 		add(panel02);
 
 		JPanel panel03 = new JPanel(layoutLeft);
+		panel03.add(new JLabel("pass2 vertical jitter"));
+		panel03.add(jitter2Spinner);
 		panel03.add(fromCheckBox);
 		panel03.add(runBackwardsCheckBox);
 		add(panel03);
@@ -291,9 +294,11 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 			break;
 
 		default:
+			flag = true;
 			break;
 		}
 		threshold2Spinner.setEnabled(flag);
+		jitter2Spinner.setEnabled(flag);
 	}
 
 	void setDialogFromOptions(Capillary cap) {
@@ -311,7 +316,7 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 		index = options.directionUp2 ? 0 : 1;
 		direction2ComboBox.setSelectedIndex(index);
 		threshold2Spinner.setValue(options.detectLevel2Threshold);
-
+		jitter2Spinner.setValue(options.jitter2);
 		allKymosCheckBox.setSelected(options.detectAllKymos);
 		leftCheckBox.setSelected(options.detectL);
 		rightCheckBox.setSelected(options.detectR);
@@ -365,6 +370,7 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 		options.transform02 = (ImageTransformEnums) transformPass2ComboBox.getSelectedItem();
 		options.directionUp2 = (direction2ComboBox.getSelectedIndex() == 0);
 		options.detectLevel2Threshold = (int) threshold2Spinner.getValue();
+		options.jitter2 = (int) jitter2Spinner.getValue();
 
 		options.analyzePartOnly = fromCheckBox.isSelected();
 		options.searchArea = getSearchAreaFromSearchRectangle(exp,

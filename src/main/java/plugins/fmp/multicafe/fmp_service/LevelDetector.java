@@ -212,7 +212,7 @@ public class LevelDetector {
 		case COLORDISTANCE_L1_Y:
 		case COLORDISTANCE_L2_Y:
 			findBestPosition(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
-					5);
+					5, options.detectLevel2Threshold, options.directionUp2);
 			break;
 
 		case SUBTRACT_1RSTCOL:
@@ -223,7 +223,7 @@ public class LevelDetector {
 
 		case DERICHE:
 			findBestPosition(capi.getTopLevel().limit, columnFirst, columnLast, transformed1DArray2, imageWidth, imageHeight,
-					5);
+					5, options.detectLevel2Threshold, options.directionUp2);
 			break;
 
 		default:
@@ -232,22 +232,36 @@ public class LevelDetector {
 	}
 
 	private void findBestPosition(int[] limits, int firstColumn, int lastColumn, int[] transformed1DArray2,
-			int imageWidth, int imageHeight, int delta) {
+			int imageWidth, int imageHeight, int delta, int threshold, boolean directionUp) {
 		for (int ix = firstColumn; ix <= lastColumn; ix++) {
 			int iy = limits[ix];
-			int maxVal = transformed1DArray2[ix + iy * imageWidth];
+			int maxVal = Integer.MIN_VALUE;
 			int iyVal = iy;
+			boolean foundCandidate = false;
+			
 			for (int irow = iy + delta; irow > iy - delta; irow--) {
 				if (irow < 0 || irow >= imageHeight)
 					continue;
 
 				int val = transformed1DArray2[ix + irow * imageWidth];
-				if (val > maxVal) {
-					maxVal = val;
-					iyVal = irow;
+				boolean meetsThreshold;
+				if (directionUp)
+					meetsThreshold = val > threshold;
+				else
+					meetsThreshold = val < threshold;
+				
+				if (meetsThreshold) {
+					if (!foundCandidate || val > maxVal) {
+						maxVal = val;
+						iyVal = irow;
+						foundCandidate = true;
+					}
 				}
 			}
-			limits[ix] = iyVal;
+			
+			if (foundCandidate) {
+				limits[ix] = iyVal;
+			}
 		}
 	}
 

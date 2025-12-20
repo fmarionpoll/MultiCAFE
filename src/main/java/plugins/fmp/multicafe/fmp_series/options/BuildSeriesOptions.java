@@ -54,7 +54,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public boolean analyzePartOnly = false;
 
 	public int spotThreshold = 35;
-	public int detectLevel2Threshold = 35;
+
 	public int threshold = -1;
 	public int flyThreshold = 60;
 	public int backgroundThreshold = 40;
@@ -79,6 +79,8 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public boolean pass1 = true;
 	public boolean pass2 = false;
 	public boolean directionUp2 = true;
+	public int detectLevel2Threshold = 35;
+	public int jitter2 = 5;
 	public boolean concurrentDisplay = true;
 
 	public boolean directionUp1 = true;
