@@ -390,10 +390,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Logs cage load completion with timing and statistics.
 	 * 
-	 * @param exp The experiment that was loaded
-	 * @param expIndex The index of the experiment
+	 * @param exp       The experiment that was loaded
+	 * @param expIndex  The index of the experiment
 	 * @param startTime The start time in nanoseconds
-	 * @param endTime The end time in nanoseconds
+	 * @param endTime   The end time in nanoseconds
 	 */
 	private void logCageLoadCompletion(Experiment exp, int expIndex, long startTime, long endTime) {
 		int cageCount = exp.getCages().getCageList().size();
@@ -413,8 +413,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Validates that the experiment is still selected and not being saved.
 	 * 
-	 * @param exp The experiment to validate
-	 * @param expIndex The index of the experiment
+	 * @param exp           The experiment to validate
+	 * @param expIndex      The index of the experiment
 	 * @param progressFrame The progress frame to close if validation fails
 	 * @return true if validation passes, false otherwise
 	 */
@@ -436,7 +436,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Initializes the experiment load by setting flags and tracking state.
 	 * 
-	 * @param exp The experiment being loaded
+	 * @param exp      The experiment being loaded
 	 * @param expIndex The index of the experiment
 	 */
 	private void initializeExperimentLoad(Experiment exp, int expIndex) {
@@ -448,10 +448,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Aborts the experiment load and cleans up state.
 	 * 
-	 * @param exp The experiment being aborted
-	 * @param expIndex The index of the experiment
+	 * @param exp           The experiment being aborted
+	 * @param expIndex      The index of the experiment
 	 * @param progressFrame The progress frame to close
-	 * @param reason The reason for aborting (for logging)
+	 * @param reason        The reason for aborting (for logging)
 	 * @return false to indicate load was aborted
 	 */
 	private boolean abortExperimentLoad(Experiment exp, int expIndex, ProgressFrame progressFrame, String reason) {
@@ -468,8 +468,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Loads experiment metadata (lazy or XML).
 	 * 
-	 * @param exp The experiment to load metadata for
-	 * @param expIndex The index of the experiment
+	 * @param exp           The experiment to load metadata for
+	 * @param expIndex      The index of the experiment
 	 * @param progressFrame The progress frame to update
 	 * @return true if successful, false if aborted
 	 */
@@ -491,8 +491,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Loads experiment images and updates the viewer.
 	 * 
-	 * @param exp The experiment to load images for
-	 * @param expIndex The index of the experiment
+	 * @param exp           The experiment to load images for
+	 * @param expIndex      The index of the experiment
 	 * @param progressFrame The progress frame to update
 	 * @return true if successful, false if aborted or failed
 	 */
@@ -501,7 +501,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		exp.getSeqCamData().loadImages();
 
 		if (parent0.expListComboLazy.getSelectedItem() != exp) {
-			return abortExperimentLoad(exp, expIndex, progressFrame, "different experiment selected after loading images");
+			return abortExperimentLoad(exp, expIndex, progressFrame,
+					"different experiment selected after loading images");
 		}
 
 		parent0.paneExperiment.updateViewerForSequenceCam(exp);
@@ -532,7 +533,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Loads capillaries data.
 	 * 
-	 * @param exp The experiment to load capillaries for
+	 * @param exp           The experiment to load capillaries for
 	 * @param progressFrame The progress frame to update
 	 */
 	private void loadCapillariesData(Experiment exp, ProgressFrame progressFrame) {
@@ -543,9 +544,9 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Loads kymographs and capillary measures.
 	 * 
-	 * @param exp The experiment to load kymographs for
+	 * @param exp            The experiment to load kymographs for
 	 * @param selectedBinDir The selected bin directory
-	 * @param progressFrame The progress frame to update
+	 * @param progressFrame  The progress frame to update
 	 */
 	private void loadKymographsAndMeasures(Experiment exp, String selectedBinDir, ProgressFrame progressFrame) {
 		progressFrame.setMessage("Load kymographs");
@@ -604,10 +605,10 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Creates the callback Runnable for async cage load completion.
 	 * 
-	 * @param exp The experiment being loaded
-	 * @param expIndex The index of the experiment
-	 * @param startTime The start time in nanoseconds
-	 * @param loadId The load ID for this operation
+	 * @param exp           The experiment being loaded
+	 * @param expIndex      The index of the experiment
+	 * @param startTime     The start time in nanoseconds
+	 * @param loadId        The load ID for this operation
 	 * @param progressFrame The progress frame to update
 	 * @return The callback Runnable
 	 */
@@ -622,8 +623,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			public void run() {
 				try {
 					if (currentLoadId != loadId) {
-						LOGGER.info("Skipping UI update for experiment [" + finalExpIndex
-								+ "] - newer load in progress");
+						LOGGER.info(
+								"Skipping UI update for experiment [" + finalExpIndex + "] - newer load in progress");
 						return;
 					}
 
@@ -667,8 +668,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 						finalExp.setLoading(false);
 					}
 				} catch (Exception e) {
-					LOGGER.severe("Error in cage load callback for experiment [" + finalExpIndex + "]: "
-							+ e.getMessage());
+					LOGGER.severe(
+							"Error in cage load callback for experiment [" + finalExpIndex + "]: " + e.getMessage());
 					e.printStackTrace();
 				} finally {
 					finalProgressFrame.close();
@@ -680,8 +681,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Creates the property change listener for worker completion safety.
 	 * 
-	 * @param exp The experiment being loaded
-	 * @param expIndex The index of the experiment
+	 * @param exp           The experiment being loaded
+	 * @param expIndex      The index of the experiment
 	 * @param progressFrame The progress frame to close
 	 * @return The property change listener
 	 */
@@ -697,8 +698,9 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				if (newState == SwingWorker.StateValue.DONE) {
 					SwingUtilities.invokeLater(() -> {
 						if (finalExp.isLoading()) {
-							LOGGER.info("Cage load completed but callback wasn't called - clearing loading flag for experiment ["
-									+ finalExpIndex + "]");
+							LOGGER.info(
+									"Cage load completed but callback wasn't called - clearing loading flag for experiment ["
+											+ finalExpIndex + "]");
 							finalExp.setLoading(false);
 							if (currentlyLoadingExperiment == finalExp) {
 								currentlyLoadingExperiment = null;
@@ -722,9 +724,9 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	/**
 	 * Starts the asynchronous cage loading process.
 	 * 
-	 * @param exp The experiment to load cages for
-	 * @param expIndex The index of the experiment
-	 * @param startTime The start time in nanoseconds
+	 * @param exp           The experiment to load cages for
+	 * @param expIndex      The index of the experiment
+	 * @param startTime     The start time in nanoseconds
 	 * @param progressFrame The progress frame to update
 	 */
 	private void startAsyncCageLoad(Experiment exp, int expIndex, long startTime, ProgressFrame progressFrame) {
@@ -783,7 +785,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			displayGraphsIfEnabled(exp);
 
 			if (!validateExperimentSelection(exp, expIndex, progressFrame)) {
-				return abortExperimentLoad(exp, expIndex, progressFrame, "different experiment selected before cage load");
+				return abortExperimentLoad(exp, expIndex, progressFrame,
+						"different experiment selected before cage load");
 			}
 
 			prepareCageMeasuresFile(exp);
@@ -837,16 +840,17 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 		List<String> binDirs = Directories.getSortedListOfSubDirectoriesWithTIFF(resultsDir);
 		if (binDirs == null || binDirs.isEmpty()) {
-			// No bin directories found - ask user what to do
-			int response = JOptionPane.showConfirmDialog(null,
-					"No bin directories found in " + resultsDir + "\nDo you want to continue without kymographs?",
-					"No Bin Directory Found", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-			if (response == JOptionPane.YES_OPTION) {
-				return null;
-			} else {
-				// User can manually select a directory
-				return selectBinDirectoryDialog(binDirs);
-			}
+			return null;
+//			// No bin directories found - ask user what to do
+//			int response = JOptionPane.showConfirmDialog(null,
+//					"No bin directories found in " + resultsDir + "\nDo you want to continue without kymographs?",
+//					"No Bin Directory Found", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+//			if (response == JOptionPane.YES_OPTION) {
+//				return null;
+//			} else {
+//				// User can manually select a directory
+//				return selectBinDirectoryDialog(binDirs);
+//			}
 		}
 
 		// Check if we're loading a single experiment or a series
