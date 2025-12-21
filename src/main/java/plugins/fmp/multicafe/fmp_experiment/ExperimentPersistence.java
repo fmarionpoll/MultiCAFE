@@ -117,9 +117,10 @@ public class ExperimentPersistence {
 			XMLUtil.setElementValue(node, ID_SEX, exp.getSex());
 			XMLUtil.setElementValue(node, ID_COND1, exp.getCondition1());
 			XMLUtil.setElementValue(node, ID_COND2, exp.getCondition2());
-			
+
 			// Save generator program (optional field)
-			// Auto-determine if not already set - Experiment class handles detection automatically
+			// Auto-determine if not already set - Experiment class handles detection
+			// automatically
 			String programToSave = exp.getGeneratorProgram();
 			if (programToSave == null) {
 				programToSave = Experiment.determineProgramFromStackTraceStatic();
@@ -169,6 +170,7 @@ public class ExperimentPersistence {
 
 		if (loadCapillaries) {
 			exp.loadMCCapillaries_Only();
+			exp.getCapillaries().transferCapillaryRoiToSequence(exp.getSeqCamData().getSequence());
 			if (!exp.getCapillaries().load_Capillaries(exp.getKymosBinFullDirectory()))
 				return false;
 		}
@@ -182,7 +184,10 @@ public class ExperimentPersistence {
 		boolean flag = false;
 		if (exp.getSeqKymos() != null) {
 			flag = exp.xmlSave_MCExperiment();
-			exp.saveCapillariesMeasures(directory);
+			// Always use kymos bin directory for capillaries measures, not the passed
+			// directory
+			// This ensures CapillariesMeasures.csv is saved to Bin60, not Results
+			exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
 		}
 		return flag;
 	}

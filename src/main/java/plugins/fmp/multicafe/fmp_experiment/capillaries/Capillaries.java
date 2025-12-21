@@ -156,9 +156,12 @@ public class Capillaries {
 	}
 
 	public Capillary getCapillaryFromKymographName(String name) {
+		if (name == null)
+			return null;
 		Capillary capFound = null;
 		for (Capillary cap : getList()) {
-			if (cap.getKymographName().equals(name)) {
+			String capName = cap.getKymographName();
+			if (capName != null && capName.equals(name)) {
 				capFound = cap;
 				break;
 			}
@@ -180,6 +183,9 @@ public class Capillaries {
 	public void updateCapillariesFromSequence(Sequence seq) {
 		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", seq);
 		Collections.sort(listROISCap, new Comparators.ROI2D_Name());
+		
+		// Capillary-driven approach: Only update existing capillaries with ROIs from sequence
+		// Do NOT create new capillaries from ROIs - capillaries should come from saved data
 		for (Capillary cap : getList()) {
 			cap.getProperties().valid = false;
 			String capName = Capillary.replace_LR_with_12(cap.getRoiName());
@@ -190,26 +196,24 @@ public class Capillaries {
 				if (roiName.equals(capName)) {
 					cap.setRoi((ROI2DShape) roi);
 					cap.getProperties().valid = true;
-				}
-				if (cap.getProperties().valid) {
 					iterator.remove();
 					break;
 				}
 			}
 		}
+		
+		// Remove capillaries that don't have matching ROIs in the sequence
+		// (This allows users to delete capillaries by removing their ROIs)
 		Iterator<Capillary> iterator = getList().iterator();
 		while (iterator.hasNext()) {
 			Capillary cap = iterator.next();
 			if (!cap.getProperties().valid)
 				iterator.remove();
 		}
-		if (listROISCap.size() > 0) {
-			for (ROI2D roi : listROISCap) {
-				Capillary cap = new Capillary((ROI2DShape) roi);
-				if (!isPresent(cap))
-					getList().add(cap);
-			}
-		}
+		
+		// Do NOT create new capillaries from remaining ROIs - this would be file-driven, not capillary-driven
+		// Capillaries should only be created explicitly by the user or loaded from saved data
+		
 		Collections.sort(getList());
 		return;
 	}

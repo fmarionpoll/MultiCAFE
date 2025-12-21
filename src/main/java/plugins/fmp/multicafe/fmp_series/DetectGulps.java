@@ -16,7 +16,9 @@ public class DetectGulps extends BuildSeries {
 
 	private boolean loadExperimentDataToDetectGulps(Experiment exp) {
 		exp.xmlLoad_MCExperiment();
+
 		boolean flag = exp.loadMCCapillaries_Only();
+		exp.getCapillaries().transferCapillaryRoiToSequence(exp.getSeqCamData().getSequence());
 		flag &= exp.loadKymographs();
 		flag &= exp.loadCapillaries();
 		return flag;

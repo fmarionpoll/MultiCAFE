@@ -233,6 +233,12 @@ public class KymographBuilder {
 
 		int len = imageWidth * imageHeight;
 		int nbcapillaries = exp.getCapillaries().getList().size();
+		
+		// Safety check: warn if there are too many capillaries (might indicate a problem)
+		if (nbcapillaries > 100) {
+			Logger.warn("KymographBuilder:buildCapInteger - Warning: Processing " + nbcapillaries + " capillaries. This may cause memory issues.");
+		}
+		
 		// cap_bufKymoImage = new ArrayList<IcyBufferedImage>(nbcapillaries);
 
 		for (int i = 0; i < nbcapillaries; i++) {

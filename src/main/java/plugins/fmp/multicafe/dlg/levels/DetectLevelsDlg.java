@@ -54,8 +54,8 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 	private JComboBox<String> direction2ComboBox = new JComboBox<String>(
 			new String[] { " threshold >", " threshold <" });
 	private JSpinner threshold2Spinner = new JSpinner(new SpinnerNumberModel(40, 1, 255, 1));
-	private ImageTransformEnums[] transformPass2 = new ImageTransformEnums[] { ImageTransformEnums.YDIFFN,
-			ImageTransformEnums.YDIFFN2, ImageTransformEnums.DERICHE, ImageTransformEnums.DERICHE_COLOR,
+	private ImageTransformEnums[] transformPass2 = new ImageTransformEnums[] { ImageTransformEnums.DERICHE,
+			ImageTransformEnums.DERICHE_COLOR, ImageTransformEnums.YDIFFN, ImageTransformEnums.YDIFFN2,
 			ImageTransformEnums.MINUSHORIZAVG, ImageTransformEnums.COLORDISTANCE_L1_Y,
 			ImageTransformEnums.COLORDISTANCE_L2_Y, ImageTransformEnums.SUBTRACT_1RSTCOL,
 			ImageTransformEnums.L1DIST_TO_1RSTCOL };

@@ -1584,6 +1584,12 @@ public class Experiment {
 			cages.cagesToROIs(seqCamData);
 			cages.cagesFromROIs(seqCamData);
 		}
+
+		// If cages list is empty after loading, create cages from capillaries
+		if (cages.getCageList().size() == 0 && capillaries.getList().size() > 0) {
+			dispatchCapillariesToCages();
+		}
+
 		return flag;
 	}
 
@@ -1754,6 +1760,7 @@ public class Experiment {
 		boolean flag = true;
 		if (loadCapillaries) {
 			flag = loadMCCapillaries_Only();
+			getCapillaries().transferCapillaryRoiToSequence(getSeqCamData().getSequence());
 		}
 		if (loadDrosoPositions) {
 			flag &= load_MS96_cages();
@@ -1763,8 +1770,10 @@ public class Experiment {
 
 	private boolean replaceCapillariesValuesIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
-		if (capillaries.getList().size() == 0)
+		if (capillaries.getList().size() == 0) {
 			loadMCCapillaries_Only();
+			getCapillaries().transferCapillaryRoiToSequence(getSeqCamData().getSequence());
+		}
 		// Convert new enum to old enum for Capillary compatibility
 		EnumXLSColumnHeader oldEnum = convertToOldEnum(fieldEnumCode);
 		if (oldEnum == null)

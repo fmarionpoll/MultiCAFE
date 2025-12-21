@@ -157,7 +157,38 @@ public class CapillaryPersistence {
 		// Access properties via getter
 		CapillaryProperties props = cap.getProperties();
 
-		List<String> row = Arrays.asList(cap.getRoiNamePrefix(), Integer.toString(cap.kymographIndex),
+		// Ensure cap_prefix is never null - derive from ROI name or kymograph name
+		String capPrefix = cap.getRoiNamePrefix();
+		if (capPrefix == null || capPrefix.isEmpty()) {
+			// Try to derive from ROI name first (format: "line0L" -> "0L")
+			String roiName = cap.getRoiName();
+			if (roiName != null && roiName.startsWith("line")) {
+				// Extract number and L/R suffix (e.g., "line0L" -> "0L")
+				String suffix = roiName.substring(4); // Skip "line"
+				capPrefix = suffix;
+			} else {
+				// Fallback to kymograph name (format: "line01" -> "01", but we want "0L" or "0R")
+				String kymoName = cap.getKymographName();
+				if (kymoName != null && kymoName.length() >= 2) {
+					// If kymograph name ends with "1" or "2", convert to "L" or "R"
+					String lastChar = kymoName.substring(kymoName.length() - 1);
+					if (lastChar.equals("1")) {
+						capPrefix = kymoName.substring(kymoName.length() - 2, kymoName.length() - 1) + "L";
+					} else if (lastChar.equals("2")) {
+						capPrefix = kymoName.substring(kymoName.length() - 2, kymoName.length() - 1) + "R";
+					} else {
+						// Just use last 2 characters
+						capPrefix = kymoName.substring(kymoName.length() - 2);
+					}
+				}
+			}
+		}
+		// If still null, use empty string
+		if (capPrefix == null) {
+			capPrefix = "";
+		}
+
+		List<String> row = Arrays.asList(capPrefix, Integer.toString(cap.kymographIndex),
 				cap.getKymographName(), cap.filenameTIFF, Integer.toString(props.getCageID()),
 				Integer.toString(props.getNFlies()), Double.toString(props.getVolume()),
 				Integer.toString(props.getPixels()), props.getStimulus(), props.getConcentration(), props.getSide());

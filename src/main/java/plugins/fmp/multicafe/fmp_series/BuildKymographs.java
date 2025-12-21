@@ -31,6 +31,7 @@ public class BuildKymographs extends BuildSeries {
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
 		boolean flag = exp.loadMCCapillaries_Only();
+		// exp.getCapillaries().transferCapillaryRoiToSequence(exp.getSeqCamData().getSequence());
 		SequenceCamData seqData = exp.getSeqCamData();
 
 		seqData.setSequence(seqData.getImageLoader().initSequenceFromFirstImage(seqData.getImagesList(true)));

@@ -106,6 +106,8 @@ public class Level2D extends Polyline2D {
 	}
 
 	public void offsetToStartWithZeroAmplitude() {
+		if (npoints == 0 || ypoints == null)
+			return;
 		double value0 = ypoints[0];
 		for (int i = 0; i < npoints; i++) {
 			ypoints[i] -= value0;

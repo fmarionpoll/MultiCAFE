@@ -66,12 +66,39 @@ public class KymographService {
 		renameCapillary_Files(dir);
 
 		String directoryFull = dir + File.separator;
-		int ncapillaries = capillaries.getList().size();
-		List<ImageFileData> myListOfFiles = new ArrayList<ImageFileData>(ncapillaries);
-		for (int i = 0; i < ncapillaries; i++) {
+		
+		// Iterate through existing capillaries and create file list from their kymograph names
+		// This is capillary-driven: only process capillaries that exist, not files on disk
+		List<ImageFileData> myListOfFiles = new ArrayList<ImageFileData>();
+		for (Capillary cap : capillaries.getList()) {
+			String kymographName = cap.getKymographName();
+			if (kymographName == null || kymographName.isEmpty()) {
+				Logger.warn("KymographService:loadListOfPotentialKymographsFromCapillaries - Capillary has no kymograph name, skipping");
+				continue;
+			}
+			
+			// Try .tiff first, then .tif
+			String fileNameTiff = directoryFull + kymographName + ".tiff";
+			String fileNameTif = directoryFull + kymographName + ".tif";
+			File fileTiff = new File(fileNameTiff);
+			File fileTif = new File(fileNameTif);
+			
 			ImageFileData temp = new ImageFileData();
-			temp.fileName = directoryFull + capillaries.getList().get(i).getKymographName() + ".tiff";
-			myListOfFiles.add(temp);
+			if (fileTiff.exists()) {
+				temp.fileName = fileNameTiff;
+				temp.exists = true;
+				myListOfFiles.add(temp);
+			} else if (fileTif.exists()) {
+				temp.fileName = fileNameTif;
+				temp.exists = true;
+				myListOfFiles.add(temp);
+			} else {
+				// File doesn't exist, but still add it to the list (will be marked as non-existent)
+				temp.fileName = fileNameTiff;
+				temp.exists = false;
+				myListOfFiles.add(temp);
+				Logger.info("KymographService:loadListOfPotentialKymographsFromCapillaries - Kymograph file not found for capillary: " + kymographName);
+			}
 		}
 		return myListOfFiles;
 	}
