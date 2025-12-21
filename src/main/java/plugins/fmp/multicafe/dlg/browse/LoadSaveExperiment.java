@@ -370,7 +370,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		}
 	}
 
-	boolean openSelecteExperiment(Experiment exp) {
+	boolean openSelectedExperiment(Experiment exp) {
 		final long startTime = System.nanoTime();
 		int expIndex = parent0.expListComboLazy.getSelectedIndex();
 
@@ -891,7 +891,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					currentlyLoadingExperiment = null;
 					currentlyLoadingIndex = -1;
 				}
-				openSelecteExperiment(exp);
+				openSelectedExperiment(exp);
 			}
 		} else if (e.getStateChange() == ItemEvent.DESELECTED) {
 			Experiment exp = (Experiment) e.getItem();
