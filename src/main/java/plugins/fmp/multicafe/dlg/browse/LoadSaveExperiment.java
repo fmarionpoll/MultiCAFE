@@ -569,94 +569,137 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					exp, new Runnable() {
 						@Override
 						public void run() {
-							// This runs on EDT after async load completes
-							// Check if this is still the most recent load (prevent stale loads from
-							// applying data)
-							if (currentLoadId != thisLoadId) {
-								LOGGER.info("Skipping UI update for experiment [" + finalExpIndex
-										+ "] - newer load in progress");
-								return;
-							}
+							try {
+								// This runs on EDT after async load completes
+								// Check if this is still the most recent load (prevent stale loads from
+								// applying data)
+								if (currentLoadId != thisLoadId) {
+									LOGGER.info("Skipping UI update for experiment [" + finalExpIndex
+											+ "] - newer load in progress");
+									return;
+								}
 
-							// Check if this experiment is still the selected one
-							if (parent0.expListComboLazy.getSelectedItem() != finalExp) {
-								LOGGER.info("Skipping UI update for experiment [" + finalExpIndex
-										+ "] - no longer selected");
-								return;
-							}
+								// Check if this experiment is still the selected one
+								if (parent0.expListComboLazy.getSelectedItem() != finalExp) {
+									LOGGER.info("Skipping UI update for experiment [" + finalExpIndex
+											+ "] - no longer selected");
+									return;
+								}
 
-							// Check if sequence is still valid
-							if (finalExp.getSeqCamData() != null && finalExp.getSeqCamData().getSequence() != null) {
-								// Log cage counts before cagesFromROIs
-								int cagesWithFlyPosBefore = 0;
+								// Check if sequence is still valid
+								if (finalExp.getSeqCamData() != null && finalExp.getSeqCamData().getSequence() != null) {
+									// Log cage counts before cagesFromROIs
+									int cagesWithFlyPosBefore = 0;
+									for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages()
+											.getCageList()) {
+										if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
+												&& !cage.flyPositions.flyPositionList.isEmpty()) {
+											cagesWithFlyPosBefore++;
+										}
+									}
+
+									finalExp.getCages().cagesToROIs(finalExp.getSeqCamData());
+									finalExp.getCages().cagesFromROIs(finalExp.getSeqCamData());
+
+									// Log cage counts after cagesFromROIs to detect if fly positions are lost
+									int cagesWithFlyPosAfter = 0;
+									for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages()
+											.getCageList()) {
+										if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
+												&& !cage.flyPositions.flyPositionList.isEmpty()) {
+											cagesWithFlyPosAfter++;
+										}
+									}
+
+									if (cagesWithFlyPosBefore > cagesWithFlyPosAfter) {
+										LOGGER.warning("LoadExperiment [" + finalExpIndex + "] Lost fly positions: before="
+												+ cagesWithFlyPosBefore + ", after=" + cagesWithFlyPosAfter);
+									}
+								}
+
+								finalExp.updateROIsAt(0);
+								finalProgressFrame.setMessage("Load data: update dialogs");
+
+								parent0.paneExperiment.updateDialogs(finalExp);
+								parent0.paneKymos.updateDialogs(finalExp);
+								parent0.paneCapillaries.updateDialogs(finalExp);
+
+								parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(finalExp, finalExp);
+
+								// Log completion timing and cage counts
+								long callbackEndTime = System.nanoTime();
+								int cageCount = finalExp.getCages().getCageList().size();
+								int cagesWithFlyPositions = 0;
+								int totalFlyPositions = 0;
 								for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages()
 										.getCageList()) {
 									if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
 											&& !cage.flyPositions.flyPositionList.isEmpty()) {
-										cagesWithFlyPosBefore++;
+										cagesWithFlyPositions++;
+										totalFlyPositions += cage.flyPositions.flyPositionList.size();
 									}
 								}
+								System.out.println("LoadExperiment: openSelecteExperiment [" + finalExpIndex
+										+ "] async load completed, total time: " + (callbackEndTime - startTime) / 1e6
+										+ " ms, cages: " + cageCount + ", with fly positions: " + cagesWithFlyPositions
+										+ ", total fly positions: " + totalFlyPositions);
 
-								finalExp.getCages().cagesToROIs(finalExp.getSeqCamData());
-								finalExp.getCages().cagesFromROIs(finalExp.getSeqCamData());
-
-								// Log cage counts after cagesFromROIs to detect if fly positions are lost
-								int cagesWithFlyPosAfter = 0;
-								for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages()
-										.getCageList()) {
-									if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
-											&& !cage.flyPositions.flyPositionList.isEmpty()) {
-										cagesWithFlyPosAfter++;
-									}
+								// Only clear flags if this is still the currently loading experiment
+								if (currentlyLoadingExperiment == finalExp) {
+									finalExp.setLoading(false);
+									currentlyLoadingExperiment = null;
+									currentlyLoadingIndex = -1;
+									activeLoadWorker = null;
+								} else {
+									// This load completed but experiment changed - make sure loading flag is
+									// cleared
+									finalExp.setLoading(false);
 								}
-
-								if (cagesWithFlyPosBefore > cagesWithFlyPosAfter) {
-									LOGGER.warning("LoadExperiment [" + finalExpIndex + "] Lost fly positions: before="
-											+ cagesWithFlyPosBefore + ", after=" + cagesWithFlyPosAfter);
-								}
-							}
-
-							finalExp.updateROIsAt(0);
-							finalProgressFrame.setMessage("Load data: update dialogs");
-
-							parent0.paneExperiment.updateDialogs(finalExp);
-							parent0.paneKymos.updateDialogs(finalExp);
-							parent0.paneCapillaries.updateDialogs(finalExp);
-
-							parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(finalExp, finalExp);
-							finalProgressFrame.close();
-
-							// Log completion timing and cage counts
-							long callbackEndTime = System.nanoTime();
-							int cageCount = finalExp.getCages().getCageList().size();
-							int cagesWithFlyPositions = 0;
-							int totalFlyPositions = 0;
-							for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages()
-									.getCageList()) {
-								if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
-										&& !cage.flyPositions.flyPositionList.isEmpty()) {
-									cagesWithFlyPositions++;
-									totalFlyPositions += cage.flyPositions.flyPositionList.size();
-								}
-							}
-							System.out.println("LoadExperiment: openSelecteExperiment [" + finalExpIndex
-									+ "] async load completed, total time: " + (callbackEndTime - startTime) / 1e6
-									+ " ms, cages: " + cageCount + ", with fly positions: " + cagesWithFlyPositions
-									+ ", total fly positions: " + totalFlyPositions);
-
-							// Only clear flags if this is still the currently loading experiment
-							if (currentlyLoadingExperiment == finalExp) {
-								finalExp.setLoading(false);
-								currentlyLoadingExperiment = null;
-								currentlyLoadingIndex = -1;
-								activeLoadWorker = null;
-							} else {
-								// This load completed but experiment changed - make sure loading flag is
-								// cleared
-								finalExp.setLoading(false);
+							} catch (Exception e) {
+								LOGGER.severe("Error in cage load callback for experiment [" + finalExpIndex + "]: "
+										+ e.getMessage());
+								e.printStackTrace();
+							} finally {
+								// Always close the progress frame, even if there was an error or early return
+								finalProgressFrame.close();
 							}
 						}
 					});
+
+			// Ensure progress frame is closed and loading flag is cleared when worker completes,
+			// even if callback wasn't called (e.g., on failure)
+			// The done() method in CagesArrayPersistence only calls the callback on success, so we need this safety net
+			activeLoadWorker.addPropertyChangeListener(evt -> {
+				if ("state".equals(evt.getPropertyName())) {
+					SwingWorker.StateValue newState = (SwingWorker.StateValue) evt.getNewValue();
+					if (newState == SwingWorker.StateValue.DONE) {
+						// Use invokeLater to ensure we're on EDT when closing the frame and clearing flags
+						SwingUtilities.invokeLater(() -> {
+							// Check if the callback was called (it would have cleared the flag)
+							// If loading flag is still true, the callback wasn't called (likely due to failure)
+							if (finalExp.isLoading()) {
+								// Callback wasn't called - clear the loading flag and close progress frame
+								LOGGER.info("Cage load completed but callback wasn't called - clearing loading flag for experiment [" + finalExpIndex + "]");
+								finalExp.setLoading(false);
+								if (currentlyLoadingExperiment == finalExp) {
+									currentlyLoadingExperiment = null;
+									currentlyLoadingIndex = -1;
+									activeLoadWorker = null;
+								}
+							}
+							// Close the progress frame - it's safe to close multiple times
+							// The callback will also try to close it, but that's fine
+							if (finalProgressFrame != null) {
+								try {
+									finalProgressFrame.close();
+								} catch (Exception e) {
+									// Ignore if already closed or any other error
+								}
+							}
+						});
+					}
+				}
+			});
 
 			activeLoadWorker.execute();
 
