@@ -110,9 +110,8 @@ public class Directories {
 
 //				LOGGER.fine("Found " + hSet.size() + " directories with files matching '" + filter + "' in "
 //						+ rootDirectory);
-			} else {
-				LOGGER.warning("Root directory does not exist: " + rootDirectory);
 			}
+
 		} catch (IOException e) {
 			LOGGER.severe("Error accessing directory " + rootDirectory + ": " + e.getMessage());
 		}
@@ -212,9 +211,10 @@ public class Directories {
 
 				LOGGER.fine(
 						"Found " + (subfolders != null ? subfolders.size() : 0) + " subdirectories in " + directory);
-			} else {
-				LOGGER.warning("Directory does not exist: " + directory);
 			}
+//			else {
+//				LOGGER.warning("Directory does not exist: " + directory);
+//			}
 		} catch (IOException e) {
 			LOGGER.severe("Error accessing directory " + directory + ": " + e.getMessage());
 		}

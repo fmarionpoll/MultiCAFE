@@ -634,6 +634,11 @@ public class Experiment {
 		try {
 			final Document doc = XMLUtil.loadDocument(csFileName);
 			if (doc == null) {
+				String resultsDir = getResultsDirectory();
+				File resultsDirFile = new File(resultsDir);
+				if (!resultsDirFile.exists() || !resultsDirFile.isDirectory()) {
+					return false;
+				}
 				System.err.println("ERROR: Could not load XML document from " + csFileName);
 				return false;
 			}
@@ -1092,11 +1097,11 @@ public class Experiment {
 			Logger.error("Cannot save reference image: image is null");
 			return false;
 		}
-		
+
 		String fullPath = getReferenceImageFullName();
 		File outputfile = new File(fullPath);
 		File parentDir = outputfile.getParentFile();
-		
+
 		if (parentDir != null && !parentDir.exists()) {
 			Logger.info("Creating directory for reference image: " + parentDir.getPath());
 			if (!parentDir.mkdirs()) {
@@ -1104,17 +1109,17 @@ public class Experiment {
 				return false;
 			}
 		}
-		
+
 		Logger.info("Saving reference image to: " + fullPath);
 		RenderedImage image = ImageUtil.toRGBImage(referenceImage);
 		boolean success = ImageUtil.save(image, "jpg", outputfile);
-		
+
 		if (!success) {
 			Logger.error("Failed to save reference image to: " + fullPath);
 		} else {
 			Logger.info("Reference image saved successfully to: " + fullPath);
 		}
-		
+
 		return success;
 	}
 
@@ -1656,7 +1661,7 @@ public class Experiment {
 			}
 			cage.addCapillaryIfUnique(cap);
 		}
-		
+
 		if (cages.getCageList().size() > 0) {
 			cages.checkAndCorrectCagePositions();
 		}

@@ -10,6 +10,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -322,7 +323,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			}
 
 		} catch (Exception e) {
-			LOGGER.warning("Failed to process metadata for file [" + fileIndex + "] " + fileName + ": " + e.getMessage());
+			LOGGER.warning(
+					"Failed to process metadata for file [" + fileIndex + "] " + fileName + ": " + e.getMessage());
 		}
 	}
 
@@ -371,13 +373,13 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	boolean openSelecteExperiment(Experiment exp) {
 		final long startTime = System.nanoTime();
 		int expIndex = parent0.expListComboLazy.getSelectedIndex();
-		
+
 		// Check if this experiment is still the selected one
 		if (parent0.expListComboLazy.getSelectedItem() != exp) {
 			LOGGER.info("Skipping load for experiment [" + expIndex + "] - no longer selected");
 			return false;
 		}
-		
+
 		ProgressFrame progressFrame = new ProgressFrame("Load Experiment Data");
 
 		// Don't start loading if saving is in progress (wait for save to complete)
@@ -389,7 +391,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 		// Set loading flag to prevent saving while loading
 		exp.setLoading(true);
-		
+
 		// Track this as the currently loading experiment
 		currentlyLoadingExperiment = exp;
 		currentlyLoadingIndex = expIndex;
@@ -404,7 +406,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				progressFrame.close();
 				return false;
 			}
-			
+
 			// If it's a LazyExperiment, load the metadata first (without images)
 			if (exp instanceof LazyExperiment) {
 				progressFrame.setMessage("Loading experiment metadata...");
@@ -416,7 +418,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 			// Check again after lazy load
 			if (parent0.expListComboLazy.getSelectedItem() != exp) {
-				LOGGER.info("Aborting load for experiment [" + expIndex + "] - different experiment selected after lazy load");
+				LOGGER.info("Aborting load for experiment [" + expIndex
+						+ "] - different experiment selected after lazy load");
 				exp.setLoading(false);
 				currentlyLoadingExperiment = null;
 				currentlyLoadingIndex = -1;
@@ -428,11 +431,12 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			progressFrame.setMessage("Load image");
 
 			// Step 1: Load seqCamData images
-			boolean imagesLoaded = exp.getSeqCamData().loadImages();
-			
+			exp.getSeqCamData().loadImages();
+
 			// Check if still loading the correct experiment before updating viewer
 			if (parent0.expListComboLazy.getSelectedItem() != exp) {
-				LOGGER.info("Aborting load for experiment [" + expIndex + "] - different experiment selected after loading images");
+				LOGGER.info("Aborting load for experiment [" + expIndex
+						+ "] - different experiment selected after loading images");
 				exp.setLoading(false);
 				if (currentlyLoadingExperiment == exp) {
 					currentlyLoadingExperiment = null;
@@ -441,12 +445,26 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				progressFrame.close();
 				return false;
 			}
-			
-			// Check if images were loaded successfully
-			if (!imagesLoaded || exp.getSeqCamData().getSequence() == null) {
+
+			parent0.paneExperiment.updateViewerForSequenceCam(exp);
+
+			// Check if still loading the correct experiment
+			if (parent0.expListComboLazy.getSelectedItem() != exp) {
+				LOGGER.info(
+						"Aborting load for experiment [" + expIndex + "] - different experiment selected during load");
+				exp.setLoading(false);
+				if (currentlyLoadingExperiment == exp) {
+					currentlyLoadingExperiment = null;
+					currentlyLoadingIndex = -1;
+				}
+				progressFrame.close();
+				return false;
+			}
+
+			if (exp.getSeqCamData() == null) {
 				flag = false;
-				LOGGER.severe(
-						"LoadSaveExperiments:openSelectedExperiment() [" + expIndex + "] Error: no jpg files found for this experiment\n");
+				LOGGER.severe("LoadSaveExperiments:openSelectedExperiment() [" + expIndex
+						+ "] Error: no jpg files found for this experiment\n");
 				progressFrame.close();
 				// Clear loading flag - loading failed early
 				exp.setLoading(false);
@@ -455,20 +473,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					currentlyLoadingIndex = -1;
 				}
 				return flag;
-			}
-			
-			parent0.paneExperiment.updateViewerForSequenceCam(exp);
-
-			// Check if still loading the correct experiment
-			if (parent0.expListComboLazy.getSelectedItem() != exp) {
-				LOGGER.info("Aborting load for experiment [" + expIndex + "] - different experiment selected during load");
-				exp.setLoading(false);
-				if (currentlyLoadingExperiment == exp) {
-					currentlyLoadingExperiment = null;
-					currentlyLoadingIndex = -1;
-				}
-				progressFrame.close();
-				return false;
 			}
 
 			if (exp.getSeqCamData().getSequence() != null)
@@ -523,7 +527,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 			// Check if still loading the correct experiment before starting async load
 			if (parent0.expListComboLazy.getSelectedItem() != exp) {
-				LOGGER.info("Aborting load for experiment [" + expIndex + "] - different experiment selected before cage load");
+				LOGGER.info("Aborting load for experiment [" + expIndex
+						+ "] - different experiment selected before cage load");
 				exp.setLoading(false);
 				if (currentlyLoadingExperiment == exp) {
 					currentlyLoadingExperiment = null;
@@ -544,113 +549,122 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					fileToMove.renameTo(f);
 				}
 			}
-			
+
 			// Load cage measures asynchronously
 			progressFrame.setMessage("Load cage measures...");
 			final Experiment finalExp = exp;
 			final int finalExpIndex = expIndex;
 			final ProgressFrame finalProgressFrame = progressFrame;
-			
+
 			// Cancel any previous load worker
 			if (activeLoadWorker != null && !activeLoadWorker.isDone()) {
 				activeLoadWorker.cancel(true);
 			}
-			
+
 			// Generate a new load ID for this load operation
 			final long thisLoadId = System.nanoTime();
 			currentLoadId = thisLoadId;
-			
-			activeLoadWorker = exp.getCages().getPersistence().loadCagesAsync(
-				exp.getCages(),
-				exp.getResultsDirectory(),
-				exp,
-				new Runnable() {
-					@Override
-					public void run() {
-						// This runs on EDT after async load completes
-						// Check if this is still the most recent load (prevent stale loads from applying data)
-						if (currentLoadId != thisLoadId) {
-							LOGGER.info("Skipping UI update for experiment [" + finalExpIndex + "] - newer load in progress");
-							return;
-						}
-						
-						// Check if this experiment is still the selected one
-						if (parent0.expListComboLazy.getSelectedItem() != finalExp) {
-							LOGGER.info("Skipping UI update for experiment [" + finalExpIndex + "] - no longer selected");
-							return;
-						}
-						
-						// Check if sequence is still valid
-						if (finalExp.getSeqCamData() != null && finalExp.getSeqCamData().getSequence() != null) {
-							// Log cage counts before cagesFromROIs
-							int cagesWithFlyPosBefore = 0;
-							for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages().getCageList()) {
-								if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null 
-										&& !cage.flyPositions.flyPositionList.isEmpty()) {
-									cagesWithFlyPosBefore++;
+
+			activeLoadWorker = exp.getCages().getPersistence().loadCagesAsync(exp.getCages(), exp.getResultsDirectory(),
+					exp, new Runnable() {
+						@Override
+						public void run() {
+							// This runs on EDT after async load completes
+							// Check if this is still the most recent load (prevent stale loads from
+							// applying data)
+							if (currentLoadId != thisLoadId) {
+								LOGGER.info("Skipping UI update for experiment [" + finalExpIndex
+										+ "] - newer load in progress");
+								return;
+							}
+
+							// Check if this experiment is still the selected one
+							if (parent0.expListComboLazy.getSelectedItem() != finalExp) {
+								LOGGER.info("Skipping UI update for experiment [" + finalExpIndex
+										+ "] - no longer selected");
+								return;
+							}
+
+							// Check if sequence is still valid
+							if (finalExp.getSeqCamData() != null && finalExp.getSeqCamData().getSequence() != null) {
+								// Log cage counts before cagesFromROIs
+								int cagesWithFlyPosBefore = 0;
+								for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages()
+										.getCageList()) {
+									if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
+											&& !cage.flyPositions.flyPositionList.isEmpty()) {
+										cagesWithFlyPosBefore++;
+									}
+								}
+
+								finalExp.getCages().cagesToROIs(finalExp.getSeqCamData());
+								finalExp.getCages().cagesFromROIs(finalExp.getSeqCamData());
+
+								// Log cage counts after cagesFromROIs to detect if fly positions are lost
+								int cagesWithFlyPosAfter = 0;
+								for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages()
+										.getCageList()) {
+									if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
+											&& !cage.flyPositions.flyPositionList.isEmpty()) {
+										cagesWithFlyPosAfter++;
+									}
+								}
+
+								if (cagesWithFlyPosBefore > cagesWithFlyPosAfter) {
+									LOGGER.warning("LoadExperiment [" + finalExpIndex + "] Lost fly positions: before="
+											+ cagesWithFlyPosBefore + ", after=" + cagesWithFlyPosAfter);
 								}
 							}
-							
-							finalExp.getCages().cagesToROIs(finalExp.getSeqCamData());
-							finalExp.getCages().cagesFromROIs(finalExp.getSeqCamData());
-							
-							// Log cage counts after cagesFromROIs to detect if fly positions are lost
-							int cagesWithFlyPosAfter = 0;
-							for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages().getCageList()) {
-								if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null 
+
+							finalExp.updateROIsAt(0);
+							finalProgressFrame.setMessage("Load data: update dialogs");
+
+							parent0.paneExperiment.updateDialogs(finalExp);
+							parent0.paneKymos.updateDialogs(finalExp);
+							parent0.paneCapillaries.updateDialogs(finalExp);
+
+							parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(finalExp, finalExp);
+							finalProgressFrame.close();
+
+							// Log completion timing and cage counts
+							long callbackEndTime = System.nanoTime();
+							int cageCount = finalExp.getCages().getCageList().size();
+							int cagesWithFlyPositions = 0;
+							int totalFlyPositions = 0;
+							for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages()
+									.getCageList()) {
+								if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null
 										&& !cage.flyPositions.flyPositionList.isEmpty()) {
-									cagesWithFlyPosAfter++;
+									cagesWithFlyPositions++;
+									totalFlyPositions += cage.flyPositions.flyPositionList.size();
 								}
 							}
-							
-							if (cagesWithFlyPosBefore > cagesWithFlyPosAfter) {
-								LOGGER.warning("LoadExperiment [" + finalExpIndex + "] Lost fly positions: before=" + cagesWithFlyPosBefore + ", after=" + cagesWithFlyPosAfter);
+							System.out.println("LoadExperiment: openSelecteExperiment [" + finalExpIndex
+									+ "] async load completed, total time: " + (callbackEndTime - startTime) / 1e6
+									+ " ms, cages: " + cageCount + ", with fly positions: " + cagesWithFlyPositions
+									+ ", total fly positions: " + totalFlyPositions);
+
+							// Only clear flags if this is still the currently loading experiment
+							if (currentlyLoadingExperiment == finalExp) {
+								finalExp.setLoading(false);
+								currentlyLoadingExperiment = null;
+								currentlyLoadingIndex = -1;
+								activeLoadWorker = null;
+							} else {
+								// This load completed but experiment changed - make sure loading flag is
+								// cleared
+								finalExp.setLoading(false);
 							}
 						}
-						
-						finalExp.updateROIsAt(0);
-						finalProgressFrame.setMessage("Load data: update dialogs");
+					});
 
-						parent0.paneExperiment.updateDialogs(finalExp);
-						parent0.paneKymos.updateDialogs(finalExp);
-						parent0.paneCapillaries.updateDialogs(finalExp);
-
-						parent0.paneExperiment.tabInfos.transferPreviousExperimentInfosToDialog(finalExp, finalExp);
-						finalProgressFrame.close();
-
-						// Log completion timing and cage counts
-						long callbackEndTime = System.nanoTime();
-						int cageCount = finalExp.getCages().getCageList().size();
-						int cagesWithFlyPositions = 0;
-						int totalFlyPositions = 0;
-						for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : finalExp.getCages().getCageList()) {
-							if (cage.flyPositions != null && cage.flyPositions.flyPositionList != null 
-									&& !cage.flyPositions.flyPositionList.isEmpty()) {
-								cagesWithFlyPositions++;
-								totalFlyPositions += cage.flyPositions.flyPositionList.size();
-							}
-						}
-						System.out.println("LoadExperiment: openSelecteExperiment [" + finalExpIndex + "] async load completed, total time: " + (callbackEndTime - startTime) / 1e6 + " ms, cages: " + cageCount + ", with fly positions: " + cagesWithFlyPositions + ", total fly positions: " + totalFlyPositions);
-
-						// Only clear flags if this is still the currently loading experiment
-						if (currentlyLoadingExperiment == finalExp) {
-							finalExp.setLoading(false);
-							currentlyLoadingExperiment = null;
-							currentlyLoadingIndex = -1;
-							activeLoadWorker = null;
-						} else {
-							// This load completed but experiment changed - make sure loading flag is cleared
-							finalExp.setLoading(false);
-						}
-					}
-				});
-			
 			activeLoadWorker.execute();
-			
+
 			// Log timing for async load start
 			long endTime = System.nanoTime();
-			System.out.println("LoadExperiment: openSelecteExperiment [" + expIndex + "] started async load, took " + (endTime - startTime) / 1e6 + " ms");
-			
+			System.out.println("LoadExperiment: openSelecteExperiment [" + expIndex + "] started async load, took "
+					+ (endTime - startTime) / 1e6 + " ms");
+
 			// Return true to indicate load started (even though it's async)
 			// The actual completion will be handled in the callback
 			return true;
@@ -669,8 +683,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			}
 
 			long endTime = System.nanoTime();
-			System.out.println(
-					"LoadExperiment: openSelecteExperiment [" + expIndex + "] failed, took " + (endTime - startTime) / 1e6 + " ms");
+			System.out.println("LoadExperiment: openSelecteExperiment [" + expIndex + "] failed, took "
+					+ (endTime - startTime) / 1e6 + " ms");
 			return false;
 		}
 	}
@@ -684,6 +698,12 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	private String selectBinDirectory(Experiment exp) {
 		String resultsDir = exp.getResultsDirectory();
 		if (resultsDir == null) {
+			return null;
+		}
+
+		// Check if results directory exists on disk
+		File resultsDirFile = new File(resultsDir);
+		if (!resultsDirFile.exists() || !resultsDirFile.isDirectory()) {
 			return null;
 		}
 
@@ -812,22 +832,23 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			final Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null) {
-			// Cancel any ongoing load for a different experiment
-			if (currentlyLoadingExperiment != null && currentlyLoadingExperiment != exp) {
-				LOGGER.info("Cancelling load for experiment [" + currentlyLoadingIndex + "] - new experiment selected");
-				// Cancel the active load worker
-				if (activeLoadWorker != null && !activeLoadWorker.isDone()) {
-					activeLoadWorker.cancel(true);
-					activeLoadWorker = null;
+				// Cancel any ongoing load for a different experiment
+				if (currentlyLoadingExperiment != null && currentlyLoadingExperiment != exp) {
+					LOGGER.info(
+							"Cancelling load for experiment [" + currentlyLoadingIndex + "] - new experiment selected");
+					// Cancel the active load worker
+					if (activeLoadWorker != null && !activeLoadWorker.isDone()) {
+						activeLoadWorker.cancel(true);
+						activeLoadWorker = null;
+					}
+					// Clear loading flag for the previous experiment
+					if (currentlyLoadingExperiment != null) {
+						currentlyLoadingExperiment.setLoading(false);
+					}
+					currentlyLoadingExperiment = null;
+					currentlyLoadingIndex = -1;
 				}
-				// Clear loading flag for the previous experiment
-				if (currentlyLoadingExperiment != null) {
-					currentlyLoadingExperiment.setLoading(false);
-				}
-				currentlyLoadingExperiment = null;
-				currentlyLoadingIndex = -1;
-			}
-			openSelecteExperiment(exp);
+				openSelecteExperiment(exp);
 			}
 		} else if (e.getStateChange() == ItemEvent.DESELECTED) {
 			Experiment exp = (Experiment) e.getItem();
@@ -855,7 +876,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				return;
 			}
 
-			// Don't start a new save if one is already in progress (prevents concurrent saves)
+			// Don't start a new save if one is already in progress (prevents concurrent
+			// saves)
 			if (exp.isSaving()) {
 				LOGGER.warning("Skipping save for experiment - save operation already in progress: " + exp.toString());
 				return;
@@ -868,23 +890,20 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				if (exp.getSeqCamData() != null) {
 					exp.xmlSave_MCExperiment();
 					exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
-					
+
 					// Save cage measures asynchronously
 					exp.getCages().cagesFromROIs(exp.getSeqCamData());
-					
+
 					// Cancel any previous save future
 					if (activeSaveFuture != null && !activeSaveFuture.isDone()) {
 						activeSaveFuture.cancel(true);
 					}
-					
+
 					// Start async save
 					final Experiment finalExp = exp;
-					activeSaveFuture = exp.getCages().getPersistence().saveCagesAsync(
-						exp.getCages(),
-						exp.getResultsDirectory(),
-						exp
-					);
-					
+					activeSaveFuture = exp.getCages().getPersistence().saveCagesAsync(exp.getCages(),
+							exp.getResultsDirectory(), exp);
+
 					// Handle save completion
 					activeSaveFuture.whenComplete((result, throwable) -> {
 						if (throwable != null) {
@@ -898,7 +917,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 						finalExp.setSaving(false);
 						activeSaveFuture = null;
 					});
-					
+
 					// Close sequences immediately (don't wait for async save)
 					exp.closeSequences();
 				} else {

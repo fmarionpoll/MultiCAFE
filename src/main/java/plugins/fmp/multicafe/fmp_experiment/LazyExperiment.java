@@ -71,10 +71,8 @@ public class LazyExperiment extends Experiment {
 					
 					// Load XML metadata only (no images, no cages)
 					// xmlLoad_MCExperiment() loads from resultsDirectory + MCexperiment.xml
-					if (!xmlLoad_MCExperiment()) {
-						LOGGER.warning("Failed to load experiment XML for " + metadata.getCameraDirectory());
-						return;
-					}
+					// XML file is optional - continue even if it doesn't exist (for new experiments)
+					xmlLoad_MCExperiment();
 					
 					// Set up ImageLoader with directory and file names only (NO sequence loading)
 					ImageLoader imgLoader = getSeqCamData().getImageLoader();
@@ -102,6 +100,8 @@ public class LazyExperiment extends Experiment {
 			} catch (Exception e) {
 				LOGGER.warning("Error loading experiment " + metadata.getCameraDirectory() + ": " + e.getMessage());
 				e.printStackTrace();
+				// Set isLoaded to true even on error to prevent infinite loops
+				this.isLoaded = true;
 			}
 		}
 	}
@@ -118,19 +118,22 @@ public class LazyExperiment extends Experiment {
 				File xmlFile = new File(xmlFileName);
 
 				if (!xmlFile.exists()) {
-					LOGGER.warning("XML file not found: " + xmlFileName);
+					// XML file is optional - mark as loaded to prevent repeated attempts
+					experimentPropertiesLoaded = true;
 					return false;
 				}
 
 				Document doc = XMLUtil.loadDocument(xmlFileName);
 				if (doc == null) {
-					LOGGER.warning("Could not load XML document from " + xmlFileName);
+					// Mark as loaded to prevent repeated attempts
+					experimentPropertiesLoaded = true;
 					return false;
 				}
 
 				Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
 				if (node == null) {
-					LOGGER.warning("Could not find MCexperiment node in XML");
+					// Mark as loaded to prevent repeated attempts
+					experimentPropertiesLoaded = true;
 					return false;
 				}
 
@@ -142,6 +145,8 @@ public class LazyExperiment extends Experiment {
 			} catch (Exception e) {
 				LOGGER.warning("Error loading properties for experiment " + metadata.getCameraDirectory() + ": "
 						+ e.getMessage());
+				// Mark as loaded to prevent repeated attempts
+				experimentPropertiesLoaded = true;
 				return false;
 			}
 		}
