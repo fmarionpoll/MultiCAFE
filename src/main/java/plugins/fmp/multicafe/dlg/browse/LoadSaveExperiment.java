@@ -428,7 +428,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			progressFrame.setMessage("Load image");
 
 			// Step 1: Load seqCamData images
-			exp.getSeqCamData().loadImages();
+			boolean imagesLoaded = exp.getSeqCamData().loadImages();
 			
 			// Check if still loading the correct experiment before updating viewer
 			if (parent0.expListComboLazy.getSelectedItem() != exp) {
@@ -440,6 +440,21 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				}
 				progressFrame.close();
 				return false;
+			}
+			
+			// Check if images were loaded successfully
+			if (!imagesLoaded || exp.getSeqCamData().getSequence() == null) {
+				flag = false;
+				LOGGER.severe(
+						"LoadSaveExperiments:openSelectedExperiment() [" + expIndex + "] Error: no jpg files found for this experiment\n");
+				progressFrame.close();
+				// Clear loading flag - loading failed early
+				exp.setLoading(false);
+				if (currentlyLoadingExperiment == exp) {
+					currentlyLoadingExperiment = null;
+					currentlyLoadingIndex = -1;
+				}
+				return flag;
 			}
 			
 			parent0.paneExperiment.updateViewerForSequenceCam(exp);
@@ -454,20 +469,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				}
 				progressFrame.close();
 				return false;
-			}
-
-			if (exp.getSeqCamData() == null) {
-				flag = false;
-				LOGGER.severe(
-						"LoadSaveExperiments:openSelectedExperiment() [" + expIndex + "] Error: no jpg files found for this experiment\n");
-				progressFrame.close();
-				// Clear loading flag - loading failed early
-				exp.setLoading(false);
-				if (currentlyLoadingExperiment == exp) {
-					currentlyLoadingExperiment = null;
-					currentlyLoadingIndex = -1;
-				}
-				return flag;
 			}
 
 			if (exp.getSeqCamData().getSequence() != null)
