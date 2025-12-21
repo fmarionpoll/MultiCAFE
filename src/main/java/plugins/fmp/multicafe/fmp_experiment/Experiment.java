@@ -1373,6 +1373,13 @@ public class Experiment {
 		return filename;
 	}
 
+	public String getKymoFullPath(String filename) {
+		String fullpath = resultsDirectory;
+		if (binDirectory != null)
+			fullpath += File.separator + binDirectory + File.separator + filename + ".tiff";
+		return fullpath;
+	}
+
 	public String getExperimentDirectory() {
 		return resultsDirectory;
 	}
