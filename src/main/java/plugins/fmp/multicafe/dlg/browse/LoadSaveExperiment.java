@@ -698,9 +698,9 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				if (newState == SwingWorker.StateValue.DONE) {
 					SwingUtilities.invokeLater(() -> {
 						if (finalExp.isLoading()) {
-							LOGGER.info(
-									"Cage load completed but callback wasn't called - clearing loading flag for experiment ["
-											+ finalExpIndex + "]");
+//							LOGGER.info(
+//									"Cage load completed but callback wasn't called - clearing loading flag for experiment ["
+//											+ finalExpIndex + "]");
 							finalExp.setLoading(false);
 							if (currentlyLoadingExperiment == finalExp) {
 								currentlyLoadingExperiment = null;
