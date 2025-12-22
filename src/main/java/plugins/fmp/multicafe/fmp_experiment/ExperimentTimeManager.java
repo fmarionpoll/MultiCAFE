@@ -19,9 +19,8 @@ public class ExperimentTimeManager {
 	private long kymoBin_ms = 60000;
 
 	public void getFileIntervalsFromSeqCamData(SequenceCamData seqCamData, String imagesDirectory) {
-		if (seqCamData != null && (camImageFirst_ms < 0 || camImageLast_ms < 0 || camImageBin_ms < 0)) {
+		if (seqCamData != null) // && (camImageFirst_ms < 0 || camImageLast_ms < 0 || camImageBin_ms < 0))
 			loadFileIntervalsFromSeqCamData(seqCamData, imagesDirectory);
-		}
 	}
 
 	public void loadFileIntervalsFromSeqCamData(SequenceCamData seqCamData, String imagesDirectory) {

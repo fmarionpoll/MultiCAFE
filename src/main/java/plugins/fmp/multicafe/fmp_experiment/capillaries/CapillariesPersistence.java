@@ -50,8 +50,43 @@ public class CapillariesPersistence {
 		if (directory == null)
 			return false;
 
+		// Prevent saving CapillariesMeasures.csv to the results directory
+		// The CSV should only be saved to bin directories (e.g., bin60)
+		// The XML file (MCcapillaries.xml) is saved to results directory separately
+		if (isResultsDirectory(directory)) {
+			return false;
+		}
+
 		csvSave_Capillaries(capillaries, directory);
 		return true;
+	}
+
+	private boolean isResultsDirectory(String directory) {
+		if (directory == null)
+			return false;
+		
+		// Normalize path separators
+		String normalizedPath = directory.replace('\\', '/');
+		
+		// Check if the path ends with "/results" or is exactly "results"
+		// This prevents saving CSV to results directory
+		if (normalizedPath.endsWith("/results") || normalizedPath.equals("results")) {
+			return true;
+		}
+		
+		// Check if the path contains "/results/" as a directory component
+		// but only if it's not followed by "bin" (which would indicate a bin subdirectory)
+		int resultsIndex = normalizedPath.indexOf("/results/");
+		if (resultsIndex >= 0) {
+			// Extract the part after "results/"
+			String afterResults = normalizedPath.substring(resultsIndex + 9); // "/results/" is 9 chars
+			// If there's nothing after "results/" or it doesn't start with "bin", it's the results directory
+			if (afterResults.isEmpty() || !afterResults.startsWith("bin")) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	public String getXMLNameToAppend() {
