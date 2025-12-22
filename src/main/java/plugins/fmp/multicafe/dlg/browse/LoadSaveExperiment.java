@@ -194,8 +194,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				ExperimentDirectories eDAF = new ExperimentDirectories();
 				if (eDAF.getDirectoriesFromDialog(parent0.expListComboLazy, null, true)) {
 					int item = addExperimentFrom3NamesAnd2Lists(eDAF);
-					parent0.paneExperiment.tabInfos.initCombos();
 					parent0.expListComboLazy.setSelectedIndex(item);
+					parent0.paneExperiment.tabInfos.initCombos();
 				}
 			}
 		});
@@ -910,8 +910,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 			LazyExperiment lazyExp = new LazyExperiment(metadata);
 			int selectedIndex = parent0.expListComboLazy.addLazyExperiment(lazyExp);
-			parent0.paneExperiment.tabInfos.initCombos();
 			parent0.expListComboLazy.setSelectedIndex(selectedIndex);
+			parent0.paneExperiment.tabInfos.initCombos();
 		}
 	}
 
