@@ -44,7 +44,6 @@ public class LevelDetector {
 		final Rectangle searchRect = options.searchArea;
 		SequenceLoaderService loader = new SequenceLoaderService();
 
-		// Iterate through capillaries (capillary-driven approach)
 		for (Capillary cap : exp.getCapillaries().getList()) {
 			if (cap == null) {
 				Logger.warn("LevelDetector:detectLevels - Null capillary in list, skipping");
