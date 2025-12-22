@@ -331,18 +331,19 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 	}
 
 	void setOptionsFromDialog(Capillary cap) {
-		BuildSeriesOptions capOptions = cap.getProperties().limitsOptions;
-		capOptions.pass1 = pass1CheckBox.isSelected();
-		capOptions.pass2 = pass2CheckBox.isSelected();
-		capOptions.transform01 = (ImageTransformEnums) transformPass1ComboBox.getSelectedItem();
-		capOptions.transform02 = (ImageTransformEnums) transformPass2ComboBox.getSelectedItem();
-		capOptions.directionUp1 = (direction1ComboBox.getSelectedIndex() == 0);
-		capOptions.detectLevel1Threshold = (int) threshold1Spinner.getValue();
-		capOptions.directionUp2 = (direction2ComboBox.getSelectedIndex() == 0);
-		capOptions.detectLevel2Threshold = (int) threshold2Spinner.getValue();
-		capOptions.detectAllKymos = allKymosCheckBox.isSelected();
-		capOptions.detectL = leftCheckBox.isSelected();
-		capOptions.detectR = rightCheckBox.isSelected();
+		BuildSeriesOptions options = cap.getProperties().limitsOptions;
+		options.pass1 = pass1CheckBox.isSelected();
+		options.pass2 = pass2CheckBox.isSelected();
+		options.transform01 = (ImageTransformEnums) transformPass1ComboBox.getSelectedItem();
+		options.transform02 = (ImageTransformEnums) transformPass2ComboBox.getSelectedItem();
+		options.directionUp1 = (direction1ComboBox.getSelectedIndex() == 0);
+		options.detectLevel1Threshold = (int) threshold1Spinner.getValue();
+		options.directionUp2 = (direction2ComboBox.getSelectedIndex() == 0);
+		options.detectLevel2Threshold = (int) threshold2Spinner.getValue();
+		options.detectAllKymos = allKymosCheckBox.isSelected();
+
+		options.detectL = leftCheckBox.isSelected();
+		options.detectR = rightCheckBox.isSelected();
 	}
 
 	private BuildSeriesOptions initBuildParameters(Experiment exp) {

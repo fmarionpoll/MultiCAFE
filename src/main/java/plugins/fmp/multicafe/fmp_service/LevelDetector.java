@@ -1,6 +1,7 @@
 package plugins.fmp.multicafe.fmp_service;
 
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -44,27 +45,46 @@ public class LevelDetector {
 		final Rectangle searchRect = options.searchArea;
 		SequenceLoaderService loader = new SequenceLoaderService();
 
-		for (Capillary cap : exp.getCapillaries().getList()) {
-			if (cap == null) {
-				Logger.warn("LevelDetector:detectLevels - Null capillary in list, skipping");
-				continue;
-			}
+//		for (Capillary cap : exp.getCapillaries().getList()) {
+//			if (cap == null) {
+//				Logger.warn("LevelDetector:detectLevels - Null capillary in list, skipping");
+//				continue;
+//			}
+//
+//			String kymographName = cap.getKymographName();
+//			if (kymographName == null || kymographName.isEmpty()) {
+//				Logger.warn("LevelDetector:detectLevels - Capillary has no kymograph name, skipping");
+//				continue;
+//			}
+//
+//			String fileName = exp.getKymoFullPath(kymographName);
+//
+//			// Process this capillary's kymograph
+//			final Capillary capi = cap;
+//			final IcyBufferedImage rawImage = loader.imageIORead(fileName);
+//			if (rawImage == null) {
+//				Logger.warn("LevelDetector:detectLevels - Failed to load image for file=" + fileName);
+//				continue;
+//			}
 
-			String kymographName = cap.getKymographName();
-			if (kymographName == null || kymographName.isEmpty()) {
-				Logger.warn("LevelDetector:detectLevels - Capillary has no kymograph name, skipping");
+		for (int tKymo = tFirsKymo; tKymo <= tLastKymo; tKymo++) {
+			String fullPath = exp.getSeqKymos().getFileNameFromImageList(tKymo);
+			String nameWithoutExt = new File(fullPath).getName().replaceFirst("[.][^.]+$", "");
+			final Capillary capi = exp.getCapillaries().getCapillaryFromKymographName(nameWithoutExt);
+			if (capi == null)
 				continue;
-			}
 
-			String fileName = exp.getKymoFullPath(kymographName);
-
-			// Process this capillary's kymograph
-			final Capillary capi = cap;
-			final IcyBufferedImage rawImage = loader.imageIORead(fileName);
-			if (rawImage == null) {
-				Logger.warn("LevelDetector:detectLevels - Failed to load image for file=" + fileName);
+			if (!options.detectR && capi.getKymographName().endsWith("2"))
 				continue;
-			}
+			if (!options.detectL && capi.getKymographName().endsWith("1"))
+				continue;
+
+			capi.kymographIndex = tKymo;
+			capi.getDerivative().clear();
+			capi.getGulps().clear();
+			capi.getProperties().limitsOptions.copyFrom(options);
+			final IcyBufferedImage rawImage = loader
+					.imageIORead(seqKymos.getFileNameFromImageList(capi.kymographIndex));
 
 			futures.add(processor.submit(new Runnable() {
 				@Override

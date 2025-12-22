@@ -271,6 +271,7 @@ public class ExperimentDirectories {
 	}
 
 	// -----------------------
+
 	public boolean getDirectoriesFromDialog(JComboBoxExperimentLazy expListCombo, String rootDirectory,
 			boolean createResults) {
 		cameraImagesList = getV2ImagesListFromDialog(rootDirectory);

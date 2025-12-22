@@ -68,10 +68,8 @@ public class CapillaryGulps {
 	}
 
 	// -------------------------------
-
-	public void clearAll() {
+	public void clear() {
 		gulpAmplitude = new Level2D();
-		gulps.clear();
 	}
 
 	public void ensureSize(int npoints) {
@@ -304,7 +302,7 @@ public class CapillaryGulps {
 		if (data == null || data.length <= startAt)
 			return;
 
-		clearAll();
+		clear();
 		int firstValue = (int) Double.parseDouble(data[startAt]);
 		int offset = startAt + 1;
 
