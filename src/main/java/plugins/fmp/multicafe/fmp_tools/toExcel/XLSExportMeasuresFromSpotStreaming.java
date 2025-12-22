@@ -149,7 +149,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExportSpots {
 			cage.updateSpotsStimulus_i();
 
 			// Process spots in chunks
-			List<Spot> spots = cage.spotsArray.getSpotsList();
+			List<Spot> spots = cage.spotsArray.getList();
 			for (int i = 0; i < spots.size(); i += CHUNK_SIZE) {
 				int endIndex = Math.min(i + CHUNK_SIZE, spots.size());
 				List<Spot> spotChunk = spots.subList(i, endIndex);
@@ -330,7 +330,7 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExportSpots {
 	private int calculateTotalSpots(Experiment exp) {
 		int total = 0;
 		for (Cage cage : exp.getCages().cagesList) {
-			total += cage.spotsArray.getSpotsList().size();
+			total += cage.spotsArray.getList().size();
 		}
 		return total;
 	}

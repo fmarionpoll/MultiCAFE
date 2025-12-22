@@ -193,7 +193,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 
 		for (Cage cage : exp.getCages().cagesList) {
 
-			if (cage.spotsArray.getSpotsList().size() == 0)
+			if (cage.spotsArray.getList().size() == 0)
 				continue;
 
 			if (resultsOptions.onlyalive && cage.getProperties().getCageNFlies() < 1)

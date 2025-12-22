@@ -55,7 +55,7 @@ public class SpotsArray {
 
 	// === SPOTS MANAGEMENT ===
 
-	public List<Spot> getSpotsList() {
+	public List<Spot> getList() {
 		return spotsList;
 	}
 
@@ -420,7 +420,7 @@ public class SpotsArray {
 		}
 
 		spotsList.clear();
-		for (Spot sourceSpot : sourceArray.getSpotsList()) {
+		for (Spot sourceSpot : sourceArray.getList()) {
 			Spot spot = new Spot(sourceSpot, includeMeasurements);
 			spotsList.add(spot);
 		}
@@ -435,7 +435,7 @@ public class SpotsArray {
 			return;
 		}
 
-		for (Spot targetSpot : targetArray.getSpotsList()) {
+		for (Spot targetSpot : targetArray.getList()) {
 			for (Spot sourceSpot : spotsList) {
 				if (sourceSpot.compareTo(targetSpot) == 0) {
 					targetSpot.copyFrom(sourceSpot, includeMeasurements);
@@ -450,7 +450,7 @@ public class SpotsArray {
 			return;
 		}
 
-		for (Spot sourceSpot : sourceArray.getSpotsList()) {
+		for (Spot sourceSpot : sourceArray.getList()) {
 			if (!isSpotPresent(sourceSpot)) {
 				spotsList.add(sourceSpot);
 			}

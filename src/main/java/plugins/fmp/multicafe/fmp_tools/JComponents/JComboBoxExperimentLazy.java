@@ -418,7 +418,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	public void getFieldValuesToComboLightweight(JComboBox<String> combo, EnumXLSColumnHeader header) {
 		combo.removeAllItems();
 		List<String> textList = getFieldValuesFromAllExperimentsLightweight(header);
-		java.util.Collections.sort(textList);
+		Collections.sort(textList);
 		for (String text : textList)
 			combo.addItem(text);
 	}

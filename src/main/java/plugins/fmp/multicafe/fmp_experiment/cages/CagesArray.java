@@ -305,7 +305,7 @@ public class CagesArray {
 	public Cage findFirstCageWithSelectedSpot() {
 		Cage cageFound = null;
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
+			for (Spot spot : cage.spotsArray.getList()) {
 				ROI2D roi = spot.getRoi();
 				if (roi.isSelected()) {
 					return cage;
@@ -364,7 +364,7 @@ public class CagesArray {
 
 	public Cage getCageFromSpotROIName(String name) {
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
+			for (Spot spot : cage.spotsArray.getList()) {
 				if (spot.getRoi().getName().contains(name))
 					return cage;
 			}
@@ -700,9 +700,9 @@ public class CagesArray {
 	public void transferCageSpotsToSequenceAsROIs(SequenceCamData seqCamData) {
 		if (cagesList.size() > 0) {
 			List<ROI2D> spotROIList = new ArrayList<ROI2D>(
-					cagesList.get(0).spotsArray.getSpotsList().size() * cagesList.size());
+					cagesList.get(0).spotsArray.getList().size() * cagesList.size());
 			for (Cage cage : cagesList) {
-				for (Spot spot : cage.spotsArray.getSpotsList())
+				for (Spot spot : cage.spotsArray.getList())
 					spotROIList.add(spot.getRoi());
 			}
 			Collections.sort(spotROIList, new Comparators.ROI2D_Name());
@@ -719,7 +719,7 @@ public class CagesArray {
 //			T = v.getPositionT();
 		Collections.sort(listSeqRois, new Comparators.ROI_Name());
 		for (Cage cage : cagesList) {
-			Iterator<Spot> iteratorSpots = cage.spotsArray.getSpotsList().iterator();
+			Iterator<Spot> iteratorSpots = cage.spotsArray.getList().iterator();
 			while (iteratorSpots.hasNext()) {
 				Spot spot = iteratorSpots.next();
 				String spotRoiName = spot.getRoi().getName();
@@ -744,7 +744,7 @@ public class CagesArray {
 
 	public Spot getSpotFromROIName(String name) {
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
+			for (Spot spot : cage.spotsArray.getList()) {
 				if (spot.getRoi().getName().contains(name))
 					return spot;
 			}
@@ -765,7 +765,7 @@ public class CagesArray {
 
 		ArrayList<Spot> enclosedSpots = new ArrayList<Spot>();
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
+			for (Spot spot : cage.spotsArray.getList()) {
 				try {
 					if (envelopeRoi.contains(spot.getRoi())) {
 						spot.getRoi().setSelected(true);
@@ -783,7 +783,7 @@ public class CagesArray {
 	public ArrayList<Spot> getSpotsSelected() {
 		ArrayList<Spot> enclosedSpots = new ArrayList<Spot>();
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
+			for (Spot spot : cage.spotsArray.getList()) {
 				if (spot.getRoi().isSelected())
 					enclosedSpots.add(spot);
 			}
@@ -794,8 +794,8 @@ public class CagesArray {
 	public SpotsArray getAllSpotsArray() {
 		SpotsArray spotsArray = new SpotsArray();
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
-				spotsArray.getSpotsList().add(spot);
+			for (Spot spot : cage.spotsArray.getList()) {
+				spotsArray.getList().add(spot);
 			}
 		}
 		return spotsArray;
@@ -804,12 +804,12 @@ public class CagesArray {
 	public Spot getSpotAtGlobalIndex(int indexT) {
 		int i = 0;
 		for (Cage cage : cagesList) {
-			int count = cage.spotsArray.getSpotsList().size();
+			int count = cage.spotsArray.getList().size();
 			if (i + count - 1 < indexT) {
 				i += count;
 				continue;
 			}
-			Spot spot = cage.getSpotsArray().getSpotsList().get(indexT - i);
+			Spot spot = cage.getSpotsArray().getList().get(indexT - i);
 			return spot;
 		}
 		return null;
@@ -819,14 +819,14 @@ public class CagesArray {
 		int i = 0;
 		int cageID = spot.getProperties().getCageID();
 		for (Cage cage : cagesList) {
-			int count = cage.getSpotsArray().getSpotsList().size();
+			int count = cage.getSpotsArray().getList().size();
 			if (cageID != cage.getProperties().getCageID()) {
 				i += count;
 				continue;
 			}
 			String name = spot.getRoi().getName();
-			for (int j = 0; j < cage.getSpotsArray().getSpotsList().size(); j++) {
-				if (name.equals(cage.getSpotsArray().getSpotsList().get(j).getRoi().getName())) {
+			for (int j = 0; j < cage.getSpotsArray().getList().size(); j++) {
+				if (name.equals(cage.getSpotsArray().getList().get(j).getRoi().getName())) {
 					return i + j;
 				}
 			}
@@ -837,7 +837,7 @@ public class CagesArray {
 	public int getTotalNumberOfSpots() {
 		int nspots = 0;
 		for (Cage cage : cagesList) {
-			nspots += cage.getSpotsArray().getSpotsList().size();
+			nspots += cage.getSpotsArray().getList().size();
 		}
 		return nspots;
 	}
@@ -891,7 +891,7 @@ public class CagesArray {
 
 	public void transferROIsMeasuresFromSequenceToSpots() {
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.getSpotsArray().getSpotsList()) {
+			for (Spot spot : cage.getSpotsArray().getList()) {
 				spot.transferRoiMeasuresToLevel2D();
 			}
 		}
@@ -904,7 +904,7 @@ public class CagesArray {
 		int height = seq.getHeight();
 		int i = 0;
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.getSpotsArray().getSpotsList()) {
+			for (Spot spot : cage.getSpotsArray().getList()) {
 				List<ROI2D> listOfRois = spot.transferMeasuresToRois(height);
 				for (ROI2D roi : listOfRois) {
 					if (roi != null)
@@ -949,8 +949,8 @@ public class CagesArray {
 		SpotsArray spotsArray = new SpotsArray();
 		if (cagesList.size() > 0) {
 			for (Cage cage : cagesList) {
-				List<Spot> spotsList = cage.getSpotsArray().getSpotsList();
-				spotsArray.getSpotsList().addAll(spotsList);
+				List<Spot> spotsList = cage.getSpotsArray().getList();
+				spotsArray.getList().addAll(spotsList);
 			}
 		}
 		return spotsArray;

@@ -137,15 +137,15 @@ public final class CageModern implements Comparable<CageModern>, AutoCloseable {
 			}
 
 			// Create spot
-			Spot spot = createEllipseSpot(spotsArray.getSpotsList().size(), center, radius);
+			Spot spot = createEllipseSpot(spotsArray.getList().size(), center, radius);
 
 			// Add spot to array
-			spotsArray.getSpotsList().add(spot);
+			spotsArray.getList().add(spot);
 
 			long processingTime = System.currentTimeMillis() - startTime;
 
 			return CageOperationResult.success("ADD_SPOT", "Successfully added spot").toBuilder()
-					.processingTimeMs(processingTime).addMetadata("spotCount", spotsArray.getSpotsList().size())
+					.processingTimeMs(processingTime).addMetadata("spotCount", spotsArray.getList().size())
 					.addMetadata("spotRadius", radius).addMetadata("spotCenter", center).build();
 
 		} catch (Exception e) {
@@ -297,7 +297,7 @@ public final class CageModern implements Comparable<CageModern>, AutoCloseable {
 	@Override
 	public String toString() {
 		return String.format("ModernCage{name='%s', id=%d, valid=%b, spots=%d}", data.getName(),
-				data.getProperties().getCageID(), data.isValid(), spotsArray.getSpotsList().size());
+				data.getProperties().getCageID(), data.isValid(), spotsArray.getList().size());
 	}
 
 	// === PRIVATE HELPER METHODS ===

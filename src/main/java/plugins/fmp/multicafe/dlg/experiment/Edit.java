@@ -17,7 +17,6 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
-
 public class Edit extends JPanel {
 	/**
 	 * 
@@ -28,7 +27,7 @@ public class Edit extends JPanel {
 			new EnumXLSColumnHeader[] { EnumXLSColumnHeader.EXP_EXPT, EnumXLSColumnHeader.EXP_BOXID,
 					EnumXLSColumnHeader.EXP_STIM1, EnumXLSColumnHeader.EXP_CONC1, EnumXLSColumnHeader.EXP_STRAIN,
 					EnumXLSColumnHeader.EXP_SEX, EnumXLSColumnHeader.EXP_STIM2, EnumXLSColumnHeader.EXP_CONC2,
-					EnumXLSColumnHeader.CAP_STIM, EnumXLSColumnHeader.CAP_CONC });
+					EnumXLSColumnHeader.CAP_STIM, EnumXLSColumnHeader.CAP_CONC, EnumXLSColumnHeader.CAP_VOLUME });
 
 	private JComboBox<String> fieldOldValuesCombo = new JComboBox<String>();
 	private JTextField newValueTextField = new JTextField(10);
@@ -72,7 +71,8 @@ public class Edit extends JPanel {
 
 	public void initEditCombos() {
 		editExpList.setExperimentsFromList(parent0.expListComboLazy.getExperimentsAsList());
-		editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo, (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
+		editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo,
+				(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 	}
 
 	private void defineActionListeners() {
@@ -104,7 +104,8 @@ public class Edit extends JPanel {
 			Experiment exp = editExpList.getItemAt(i);
 			exp.load_MS96_experiment();
 			exp.load_MS96_cages();
-			// exp.loadCapillaries(); // Not sure if this has an equivalent or is needed if cages are loaded
+			// exp.loadCapillaries(); // Not sure if this has an equivalent or is needed if
+			// cages are loaded
 
 			exp.replaceExperimentFieldIfEqualOldValue(fieldEnumCode, oldValue, newValue);
 

@@ -153,7 +153,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 				}
 			} else {
 				if (cage.spotsArray.getSpotsCount() > 0) {
-					spotFound = cage.spotsArray.getSpotsList().get(0);
+					spotFound = cage.spotsArray.getList().get(0);
 				}
 			}
 

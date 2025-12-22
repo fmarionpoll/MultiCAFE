@@ -225,7 +225,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	private int getMaxImageHeight(Experiment exp) {
 		int maxImageHeight = 0;
 		for (Cage cage : exp.getCages().cagesList) {
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
+			for (Spot spot : cage.spotsArray.getList()) {
 				int height = spot.getSpotImage().getHeight();
 				if (height > maxImageHeight)
 					maxImageHeight = height;

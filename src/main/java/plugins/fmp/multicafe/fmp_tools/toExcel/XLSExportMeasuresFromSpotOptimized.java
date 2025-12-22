@@ -128,7 +128,7 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExportSpots {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(resultType);
 			cage.updateSpotsStimulus_i();
 
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
+			for (Spot spot : cage.spotsArray.getList()) {
 				pt.y = 0;
 				pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, resultType);
 

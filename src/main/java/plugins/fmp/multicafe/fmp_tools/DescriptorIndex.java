@@ -113,8 +113,8 @@ public class DescriptorIndex {
 										cage.getField(EnumXLSColumnHeader.CAGE_STRAIN));
 								addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.CAGE_AGE),
 										cage.getField(EnumXLSColumnHeader.CAGE_AGE));
-								if (cage.spotsArray != null && cage.spotsArray.getSpotsList() != null) {
-									for (Spot spot : cage.spotsArray.getSpotsList()) {
+								if (cage.spotsArray != null && cage.spotsArray.getList() != null) {
+									for (Spot spot : cage.spotsArray.getList()) {
 										addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.SPOT_STIM),
 												spot.getField(EnumXLSColumnHeader.SPOT_STIM));
 										addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.SPOT_CONC),

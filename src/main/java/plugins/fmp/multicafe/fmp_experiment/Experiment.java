@@ -883,6 +883,11 @@ public class Experiment {
 		case CAGE_AGE:
 			textList = getCagesFieldValues(fieldEnumCode);
 			break;
+		case CAP_STIM:
+		case CAP_CONC:
+		case CAP_VOLUME:
+			textList = getCapillariesFieldValues(fieldEnumCode);
+			break;
 		default:
 			break;
 		}
@@ -1220,7 +1225,7 @@ public class Experiment {
 		load_MS96_cages();
 		boolean flag = false;
 		for (Cage cage : cages.cagesList) {
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
+			for (Spot spot : cage.spotsArray.getList()) {
 				String current = spot.getField(fieldEnumCode);
 				if (current != null && oldValue != null && current.trim().equals(oldValue.trim())) {
 					spot.setField(fieldEnumCode, newValue);
@@ -1256,8 +1261,17 @@ public class Experiment {
 		load_MS96_cages();
 		List<String> textList = new ArrayList<String>();
 		for (Cage cage : cages.cagesList)
-			for (Spot spot : cage.spotsArray.getSpotsList())
+			for (Spot spot : cage.getSpotsArray().getList())
 				addValueIfUnique(spot.getField(fieldEnumCode), textList);
+		return textList;
+	}
+
+	private List<String> getCapillariesFieldValues(EnumXLSColumnHeader fieldEnumCode) {
+		load_MS96_cages();
+		List<String> textList = new ArrayList<String>();
+		for (Cage cage : cages.cagesList)
+			for (Capillary cap : cage.getCapillaries().getList())
+				addValueIfUnique(cap.getField(fieldEnumCode), textList);
 		return textList;
 	}
 

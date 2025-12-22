@@ -30,7 +30,7 @@ public class CageSpotSeriesBuilder implements CageSeriesBuilder {
 		}
 
 		XYSeriesCollection dataset = new XYSeriesCollection();
-		for (Spot spot : cage.spotsArray.getSpotsList()) {
+		for (Spot spot : cage.spotsArray.getList()) {
 			XYSeries series = createXYSeriesFromSpotMeasure(exp, spot, options);
 			if (series == null)
 				continue;

@@ -361,7 +361,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 			int ii_local = frameIndex - iiFirst;
 			for (Cage cage : exp.getCages().cagesList) {
-				for (Spot spot : cage.spotsArray.getSpotsList()) {
+				for (Spot spot : cage.spotsArray.getList()) {
 					if (!spot.isReadyForAnalysis()) {
 						continue;
 					}
@@ -513,7 +513,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		int spotArrayGlobalIndex = 0;
 		for (Cage cage : exp.getCages().cagesList) {
 			int spotPosition = 0;
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
+			for (Spot spot : cage.spotsArray.getList()) {
 				spot.getProperties().setCagePosition(spotPosition);
 				spot.getProperties().setCageID(cage.getProperties().getCageID());
 				spot.getProperties().setSpotArrayIndex(spotArrayGlobalIndex);
@@ -533,7 +533,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 					exp.getSeqCamData().getImageLoader().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 
 		for (Cage cage : exp.getCages().cagesList) {
-			for (Spot spot : cage.spotsArray.getSpotsList()) {
+			for (Spot spot : cage.spotsArray.getList()) {
 				ROI2DWithMask roiT = null;
 				try {
 					roiT = new ROI2DWithMask(spot.getRoi());

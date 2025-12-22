@@ -556,7 +556,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public Spot getSpotFromRoiName(String name) {
 		int cagePosition = SpotString.getSpotCagePositionFromSpotName(name);
-		for (Spot spot : spotsArray.getSpotsList()) {
+		for (Spot spot : spotsArray.getList()) {
 			if (spot.getProperties().getCagePosition() == cagePosition)
 				return spot;
 		}
@@ -569,7 +569,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		Rectangle rect = cageROI2D.getBounds();
 		int deltaX = rect.width / 8;
 		int deltaY = rect.height / 4;
-		for (Spot spot : spotsArray.getSpotsList()) {
+		for (Spot spot : spotsArray.getList()) {
 			Rectangle rectSpot = spot.getRoi().getBounds();
 			spot.getProperties().setCageColumn((rectSpot.x - rect.x) / deltaX);
 			spot.getProperties().setCageRow((rectSpot.y - rect.y) / deltaY);
@@ -577,8 +577,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public void cleanUpSpotNames() {
-		for (int i = 0; i < spotsArray.getSpotsList().size(); i++) {
-			Spot spot = spotsArray.getSpotsList().get(i);
+		for (int i = 0; i < spotsArray.getList().size(); i++) {
+			Spot spot = spotsArray.getList().get(i);
 			spot.setName(prop.getCageID(), i);
 			spot.getProperties().setCageID(prop.getCageID());
 			spot.getProperties().setCagePosition(i);
@@ -587,7 +587,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public void updateSpotsStimulus_i() {
 		ArrayList<String> stimulusArray = new ArrayList<String>(8);
-		for (Spot spot : spotsArray.getSpotsList()) {
+		for (Spot spot : spotsArray.getList()) {
 			String test = spot.getProperties().getStimulus();
 			stimulusArray.add(test);
 			spot.getProperties().setStimulusI(test + "_" + findNumberOfIdenticalItems(test, stimulusArray));
@@ -604,7 +604,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public Spot combineSpotsWithSameStimConc(String stim, String conc) {
 		Spot spotCombined = null;
-		for (Spot spotSource : spotsArray.getSpotsList()) {
+		for (Spot spotSource : spotsArray.getList()) {
 			if (stim.equals(spotSource.getProperties().getStimulus())
 					&& conc.equals(spotSource.getProperties().getConcentration())) {
 				if (spotCombined == null) {
@@ -618,7 +618,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public void normalizeSpotMeasures() {
-		for (Spot spot : spotsArray.getSpotsList()) {
+		for (Spot spot : spotsArray.getList()) {
 			spot.normalizeMeasures();
 		}
 	}
