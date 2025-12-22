@@ -254,6 +254,9 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		case CAGE_STRAIN:
 			stringValue = prop.getFlyStrain();
 			break;
+		case CAGE_NFLIES:
+			stringValue = Integer.toString(prop.getCageNFlies());
+			break;
 		default:
 			break;
 		}
@@ -278,7 +281,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public ROI2DRectangle getRoiRectangleFromPositionAtT(int t) {
-		// Return null if cage ROI is not available (prevents NPE in getCageNumberFromRoiName)
+		// Return null if cage ROI is not available (prevents NPE in
+		// getCageNumberFromRoiName)
 		if (cageROI2D == null) {
 			return null;
 		}
@@ -497,9 +501,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		List<String> row = new ArrayList<String>();
 		row.add(prop.getStrCageNumber());
 		// Handle null ROI name safely
-		String roiName = (cageROI2D != null && cageROI2D.getName() != null) 
-			? cageROI2D.getName() 
-			: "cage" + String.format("%03d", prop.getCageID());
+		String roiName = (cageROI2D != null && cageROI2D.getName() != null) ? cageROI2D.getName()
+				: "cage" + String.format("%03d", prop.getCageID());
 		row.add(roiName);
 		row.add(Integer.toString(prop.getCageNFlies()));
 		row.add(Integer.toString(prop.getFlyAge()));
@@ -654,7 +657,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public void csvImport_CAGE_Header(String[] data) {
 		if (data == null || data.length < 3) {
-			System.err.println("Cage:csvImport_CAGE_Header() Invalid data array length: " + (data == null ? "null" : data.length));
+			System.err.println(
+					"Cage:csvImport_CAGE_Header() Invalid data array length: " + (data == null ? "null" : data.length));
 			return;
 		}
 

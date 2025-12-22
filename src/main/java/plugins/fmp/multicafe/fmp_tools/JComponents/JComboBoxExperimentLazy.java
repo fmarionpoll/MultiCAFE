@@ -1,5 +1,7 @@
 package plugins.fmp.multicafe.fmp_tools.JComponents;
 
+import java.awt.Cursor;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.swing.JComboBox;
+import javax.swing.SwingUtilities;
 
 import icy.gui.frame.progress.ProgressFrame;
 import icy.system.SystemUtil;
@@ -16,6 +19,7 @@ import plugins.fmp.multicafe.fmp_experiment.LazyExperiment;
 import plugins.fmp.multicafe.fmp_experiment.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
+import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumColumnType;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
 /**
@@ -382,21 +386,55 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 
 	public List<String> getFieldValuesFromAllExperimentsLightweight(EnumXLSColumnHeader field) {
 		List<String> textList = new ArrayList<>();
+		// Capillary, spot, and cage fields require full experiment loading (including cages)
+		// because they are stored on individual capillaries/spots/cages, not in experiment properties
+		boolean requiresFullLoad = field.toType() == EnumColumnType.CAP 
+				|| field.toType() == EnumColumnType.SPOT
+				|| field == EnumXLSColumnHeader.CAGE_SEX 
+				|| field == EnumXLSColumnHeader.CAGE_STRAIN 
+				|| field == EnumXLSColumnHeader.CAGE_AGE
+				|| field == EnumXLSColumnHeader.CAP_STIM
+				|| field == EnumXLSColumnHeader.CAP_CONC
+				|| field == EnumXLSColumnHeader.CAP_VOLUME;
+		
+		// Iterate through all experiments
 		for (int i = 0; i < getItemCount(); i++) {
-			Object item = super.getItemAt(i);
-			if (item instanceof LazyExperiment) {
-				LazyExperiment lazyExp = (LazyExperiment) item;
-				String fieldValue = lazyExp.getFieldValue(field);
-				if (fieldValue != null && !fieldValue.isEmpty()) {
-					addIfUniqueString(textList, fieldValue);
+			Experiment exp = getItemAtNoLoad(i);
+			if (exp == null)
+				continue;
+			
+			try {
+				if (requiresFullLoad) {
+					// For capillary/spot/cage fields, we need to fully load the experiment
+					if (exp instanceof LazyExperiment) {
+						((LazyExperiment) exp).loadIfNeeded();
+					}
+					exp.load_MS96_experiment();
+					exp.load_MS96_cages();
+					List<String> values = exp.getFieldValues(field);
+					if (values != null && !values.isEmpty()) {
+						addIfUniqueStrings(textList, values);
+					}
+				} else {
+					// For experiment-level fields, we can use lightweight property access
+					if (exp instanceof LazyExperiment) {
+						LazyExperiment lazyExp = (LazyExperiment) exp;
+						String fieldValue = lazyExp.getFieldValue(field);
+						if (fieldValue != null && !fieldValue.isEmpty() && !fieldValue.equals("..")) {
+							addIfUniqueString(textList, fieldValue);
+						}
+					} else {
+						exp.load_MS96_experiment();
+						List<String> values = exp.getFieldValues(field);
+						if (values != null && !values.isEmpty()) {
+							addIfUniqueStrings(textList, values);
+						}
+					}
 				}
-			} else if (item instanceof Experiment) {
-				Experiment exp = (Experiment) item;
-				if (exp instanceof LazyExperiment) {
-					((LazyExperiment) exp).loadIfNeeded();
-				}
-				exp.load_MS96_experiment();
-				addIfUniqueStrings(textList, exp.getFieldValues(field));
+			} catch (Exception e) {
+				// Skip experiments that fail to load - continue with next one
+				System.err.println("Error loading field values from experiment " + i + ": " + e.getMessage());
+				e.printStackTrace();
 			}
 		}
 		return textList;
@@ -417,10 +455,36 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 
 	public void getFieldValuesToComboLightweight(JComboBox<String> combo, EnumXLSColumnHeader header) {
 		combo.removeAllItems();
-		List<String> textList = getFieldValuesFromAllExperimentsLightweight(header);
-		Collections.sort(textList);
-		for (String text : textList)
-			combo.addItem(text);
+		
+		// Show wait cursor during the operation - set it on the top-level window for visibility
+		Cursor oldCursor = null;
+		Window topWindow = SwingUtilities.getWindowAncestor(combo);
+		if (topWindow == null) {
+			topWindow = SwingUtilities.getWindowAncestor(this);
+		}
+		
+		try {
+			if (SwingUtilities.isEventDispatchThread() && topWindow != null) {
+				oldCursor = topWindow.getCursor();
+				topWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				// Force cursor update by flushing graphics pipeline
+				try {
+					java.awt.Toolkit.getDefaultToolkit().sync();
+				} catch (Exception e) {
+					// Ignore if sync fails
+				}
+			}
+			
+			List<String> textList = getFieldValuesFromAllExperimentsLightweight(header);
+			Collections.sort(textList);
+			for (String text : textList)
+				combo.addItem(text);
+		} finally {
+			// Restore cursor
+			if (oldCursor != null && SwingUtilities.isEventDispatchThread() && topWindow != null) {
+				topWindow.setCursor(oldCursor);
+			}
+		}
 	}
 
 	public List<Experiment> getExperimentsAsList() {

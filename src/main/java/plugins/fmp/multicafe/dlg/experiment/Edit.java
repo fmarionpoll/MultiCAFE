@@ -71,7 +71,8 @@ public class Edit extends JPanel {
 
 	public void initEditCombos() {
 		editExpList.setExperimentsFromList(parent0.expListComboLazy.getExperimentsAsList());
-		editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo,
+		// Use parent0.expListComboLazy to get values from ALL experiments
+		parent0.expListComboLazy.getFieldValuesToComboLightweight(fieldOldValuesCombo,
 				(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 	}
 
@@ -88,7 +89,8 @@ public class Edit extends JPanel {
 		fieldNamesCombo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo,
+				// Use parent0.expListComboLazy to get values from ALL experiments, not just editExpList
+				parent0.expListComboLazy.getFieldValuesToComboLightweight(fieldOldValuesCombo,
 						(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 			}
 		});
