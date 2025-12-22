@@ -30,6 +30,7 @@ public class ExperimentTimeManager {
 			firstImage_FileTime = seqCamData.getFileTimeFromStructuredName(0);
 			lastImage_FileTime = seqCamData
 					.getFileTimeFromStructuredName(seqCamData.getImageLoader().getNTotalFrames() - 1);
+
 			if (firstImage_FileTime != null && lastImage_FileTime != null) {
 				camImageFirst_ms = firstImage_FileTime.toMillis();
 				camImageLast_ms = lastImage_FileTime.toMillis();

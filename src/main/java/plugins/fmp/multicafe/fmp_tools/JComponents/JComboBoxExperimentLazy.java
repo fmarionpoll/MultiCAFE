@@ -170,20 +170,20 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		} else {
 			if (resultsOptions.absoluteTime) {
 				Experiment expFirst = exp0.getFirstChainedExperiment(resultsOptions.collateSeries);
-				expAll.setFileTimeImageFirst(expFirst.firstImage_FileTime);
+				expAll.setFirstImage_FileTime(expFirst.getFirstImage_FileTime());
 				Experiment expLast = exp0.getLastChainedExperiment(resultsOptions.collateSeries);
-				expAll.setFileTimeImageLast(expLast.lastImage_FileTime);
+				expAll.setLastImage_FileTime(expLast.getLastImage_FileTime());
 				for (int i = 0; i < getItemCount(); i++) {
 					Experiment exp = getItemAt(i);
 					expFirst = exp.getFirstChainedExperiment(resultsOptions.collateSeries);
-					if (expAll.firstImage_FileTime.compareTo(expFirst.firstImage_FileTime) > 0)
-						expAll.setFileTimeImageFirst(expFirst.firstImage_FileTime);
+					if (expAll.getFirstImage_FileTime().compareTo(expFirst.getFirstImage_FileTime()) > 0)
+						expAll.setFirstImage_FileTime(expFirst.getFirstImage_FileTime());
 					expLast = exp.getLastChainedExperiment(resultsOptions.collateSeries);
-					if (expAll.lastImage_FileTime.compareTo(expLast.lastImage_FileTime) < 0)
-						expAll.setFileTimeImageLast(expLast.lastImage_FileTime);
+					if (expAll.getLastImage_FileTime().compareTo(expLast.getLastImage_FileTime()) < 0)
+						expAll.setLastImage_FileTime(expLast.getLastImage_FileTime());
 				}
-				expAll.getSeqCamData().setFirstImageMs(expAll.firstImage_FileTime.toMillis());
-				expAll.getSeqCamData().setLastImageMs(expAll.lastImage_FileTime.toMillis());
+				expAll.getSeqCamData().setFirstImageMs(expAll.getFirstImage_FileTime().toMillis());
+				expAll.getSeqCamData().setLastImageMs(expAll.getLastImage_FileTime().toMillis());
 			} else {
 				expAll.getSeqCamData().setFirstImageMs(0);
 				expAll.getSeqCamData().setLastImageMs(exp0.getSeqCamData().getTimeManager().getBinLast_ms()

@@ -60,9 +60,6 @@ public class Experiment {
 	private Capillaries capillaries = new Capillaries();
 	private ExperimentTimeManager timeManager = new ExperimentTimeManager();
 
-	public FileTime firstImage_FileTime;
-	public FileTime lastImage_FileTime;
-
 	private ExperimentProperties prop = new ExperimentProperties();
 	public int col = -1;
 	public Experiment chainToPreviousExperiment = null;
@@ -95,13 +92,7 @@ public class Experiment {
 		this.cages = cages;
 	}
 
-	public ExperimentTimeManager getTimeManager() {
-		return timeManager;
-	}
-
-	public void setTimeManager(ExperimentTimeManager timeManager) {
-		this.timeManager = timeManager;
-	}
+	// __________________________________________________
 
 	public FileTime getFirstImage_FileTime() {
 		return timeManager.getFirstImage_FileTime();
@@ -118,8 +109,6 @@ public class Experiment {
 	public void setLastImage_FileTime(FileTime fileTime) {
 		timeManager.setLastImage_FileTime(fileTime);
 	}
-
-	// __________________________________________________
 
 	public long getCamImageFirst_ms() {
 		return timeManager.getCamImageFirst_ms();
@@ -869,14 +858,6 @@ public class Experiment {
 		if (globalValue && chainToNextExperiment != null)
 			exp = chainToNextExperiment.getLastChainedExperiment(globalValue);
 		return exp;
-	}
-
-	public void setFileTimeImageFirst(FileTime fileTimeImageFirst) {
-		this.firstImage_FileTime = fileTimeImageFirst;
-	}
-
-	public void setFileTimeImageLast(FileTime fileTimeImageLast) {
-		this.lastImage_FileTime = fileTimeImageLast;
 	}
 
 	public List<String> getFieldValues(EnumXLSColumnHeader fieldEnumCode) {

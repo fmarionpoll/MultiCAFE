@@ -202,6 +202,7 @@ public class KymographBuilder {
 		int sizey = seqCamData.getSequence().getSizeY();
 
 		int kymoImageWidth = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
+		System.out.println("kymoImageWidth =" + kymoImageWidth);
 		int imageHeight = 0;
 		for (Capillary cap : exp.getCapillaries().getList()) {
 			for (AlongT capT : cap.getROIsForKymo()) {
@@ -233,12 +234,14 @@ public class KymographBuilder {
 
 		int len = imageWidth * imageHeight;
 		int nbcapillaries = exp.getCapillaries().getList().size();
-		
-		// Safety check: warn if there are too many capillaries (might indicate a problem)
+
+		// Safety check: warn if there are too many capillaries (might indicate a
+		// problem)
 		if (nbcapillaries > 100) {
-			Logger.warn("KymographBuilder:buildCapInteger - Warning: Processing " + nbcapillaries + " capillaries. This may cause memory issues.");
+			Logger.warn("KymographBuilder:buildCapInteger - Warning: Processing " + nbcapillaries
+					+ " capillaries. This may cause memory issues.");
 		}
-		
+
 		// cap_bufKymoImage = new ArrayList<IcyBufferedImage>(nbcapillaries);
 
 		for (int i = 0; i < nbcapillaries; i++) {
