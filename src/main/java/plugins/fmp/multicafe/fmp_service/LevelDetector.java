@@ -116,6 +116,7 @@ public class LevelDetector {
 		}
 
 		waitFuturesCompletion(processor, futures);
+		exp.saveCapillaries();
 		seqKymos.getSequence().endUpdate();
 	}
 
