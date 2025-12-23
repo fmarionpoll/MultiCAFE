@@ -56,20 +56,21 @@ public class Experiment {
 	private SequenceCamData seqCamData = null;
 	private SequenceKymos seqKymos = null;
 	private Sequence seqReference = null;
+
 	private CagesArray cages = new CagesArray();
 	private Capillaries capillaries = new Capillaries();
-	private ExperimentTimeManager timeManager = new ExperimentTimeManager();
 
+	private ExperimentTimeManager timeManager = new ExperimentTimeManager();
 	private ExperimentProperties prop = new ExperimentProperties();
-	public int col = -1;
+
 	public Experiment chainToPreviousExperiment = null;
 	public Experiment chainToNextExperiment = null;
 	public long chainImageFirst_ms = 0;
 	public int experimentID = 0;
+	public int col = -1;
+
 	private String generatorProgram = null;
-
 	private static String staticProgramContext = null;
-
 	// Flags to prevent race conditions between loading and saving
 	private volatile boolean isLoading = false;
 	private volatile boolean isSaving = false;

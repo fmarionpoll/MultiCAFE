@@ -64,28 +64,30 @@ public class CapillariesPersistence {
 	private boolean isResultsDirectory(String directory) {
 		if (directory == null)
 			return false;
-		
+
 		// Normalize path separators
 		String normalizedPath = directory.replace('\\', '/');
-		
+
 		// Check if the path ends with "/results" or is exactly "results"
 		// This prevents saving CSV to results directory
 		if (normalizedPath.endsWith("/results") || normalizedPath.equals("results")) {
 			return true;
 		}
-		
+
 		// Check if the path contains "/results/" as a directory component
-		// but only if it's not followed by "bin" (which would indicate a bin subdirectory)
+		// but only if it's not followed by "bin" (which would indicate a bin
+		// subdirectory)
 		int resultsIndex = normalizedPath.indexOf("/results/");
 		if (resultsIndex >= 0) {
 			// Extract the part after "results/"
 			String afterResults = normalizedPath.substring(resultsIndex + 9); // "/results/" is 9 chars
-			// If there's nothing after "results/" or it doesn't start with "bin", it's the results directory
+			// If there's nothing after "results/" or it doesn't start with "bin", it's the
+			// results directory
 			if (afterResults.isEmpty() || !afterResults.startsWith("bin")) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -161,8 +163,7 @@ public class CapillariesPersistence {
 		boolean flag = false;
 		int ncapillaries = capillaries.getList().size();
 		for (int i = 0; i < ncapillaries; i++) {
-			String csFile = directory + File.separator + capillaries.getList().get(i).getKymographName()
-					+ ".xml";
+			String csFile = directory + File.separator + capillaries.getList().get(i).getKymographName() + ".xml";
 			final Document capdoc = XMLUtil.loadDocument(csFile);
 			if (capdoc != null) {
 				Node node = XMLUtil.getRootElement(capdoc, true);
@@ -306,8 +307,9 @@ public class CapillariesPersistence {
 	}
 
 	/**
-	 * Skip a measures section until the next header line (a line starting with '#').
-	 * The header line itself is consumed (consistent with other csvLoad_* methods).
+	 * Skip a measures section until the next header line (a line starting with
+	 * '#'). The header line itself is consumed (consistent with other csvLoad_*
+	 * methods).
 	 */
 	private void csvSkipSection(BufferedReader csvReader, String sep) throws IOException {
 		String row;
@@ -354,8 +356,7 @@ public class CapillariesPersistence {
 				if (ncapillaries >= capillaries.getList().size())
 					((ArrayList<Capillary>) capillaries.getList()).ensureCapacity(ncapillaries);
 				else
-					capillaries.getList().subList(ncapillaries, capillaries.getList().size())
-							.clear();
+					capillaries.getList().subList(ncapillaries, capillaries.getList().size()).clear();
 
 				row = csvReader.readLine();
 				data = row.split(sep);
@@ -441,8 +442,7 @@ public class CapillariesPersistence {
 			if (capillaries.getList().size() <= 1)
 				return false;
 
-			csvWriter.append(
-					capillaries.getList().get(0).csvExport_MeasureSectionHeader(measureType, csvSep));
+			csvWriter.append(capillaries.getList().get(0).csvExport_MeasureSectionHeader(measureType, csvSep));
 			for (Capillary cap : capillaries.getList())
 				csvWriter.append(cap.csvExport_MeasuresOneType(measureType, csvSep));
 

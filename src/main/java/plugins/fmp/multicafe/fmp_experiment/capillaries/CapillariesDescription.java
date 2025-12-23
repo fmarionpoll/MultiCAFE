@@ -251,17 +251,17 @@ public class CapillariesDescription {
 		version = XMLUtil.getElementIntValue(node, "version", 0);
 		switch (version) {
 		case 0:
-			flag = xmlLoadCapillaryDescriptionv0(node);
+			flag = xmlLoadCapillariesDescriptionv0(node);
 			break;
 		case 1:
 		default:
-			flag = xmlLoadCapillaryDescriptionv1(node);
+			flag = xmlLoadCapillariesDescriptionv1(node);
 			break;
 		}
 		return flag;
 	}
 
-	private boolean xmlLoadCapillaryDescriptionv0(Node node) {
+	private boolean xmlLoadCapillariesDescriptionv0(Node node) {
 		Element xmlElement = XMLUtil.getElement(node, ID_PARAMETERS);
 		if (xmlElement == null)
 			return false;
@@ -300,7 +300,7 @@ public class CapillariesDescription {
 		return true;
 	}
 
-	private boolean xmlLoadCapillaryDescriptionv1(Node node) {
+	private boolean xmlLoadCapillariesDescriptionv1(Node node) {
 		Element xmlElement = XMLUtil.getElement(node, ID_PARAMETERS);
 		if (xmlElement == null)
 			return false;

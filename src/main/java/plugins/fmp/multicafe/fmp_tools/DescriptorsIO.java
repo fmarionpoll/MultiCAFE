@@ -17,6 +17,7 @@ import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
@@ -130,19 +131,13 @@ public class DescriptorsIO {
 		ExperimentProperties p = exp.getProperties();
 		if (p != null) {
 			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_EXPT), p.getField(EnumXLSColumnHeader.EXP_EXPT));
-			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_BOXID),
-					p.getField(EnumXLSColumnHeader.EXP_BOXID));
-			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_STIM1),
-					p.getField(EnumXLSColumnHeader.EXP_STIM1));
-			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_CONC1),
-					p.getField(EnumXLSColumnHeader.EXP_CONC1));
-			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_STRAIN),
-					p.getField(EnumXLSColumnHeader.EXP_STRAIN));
+			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_BOXID), p.getField(EnumXLSColumnHeader.EXP_BOXID));
+			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_STIM1), p.getField(EnumXLSColumnHeader.EXP_STIM1));
+			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_CONC1), p.getField(EnumXLSColumnHeader.EXP_CONC1));
+			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_STRAIN), p.getField(EnumXLSColumnHeader.EXP_STRAIN));
 			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_SEX), p.getField(EnumXLSColumnHeader.EXP_SEX));
-			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_STIM2),
-					p.getField(EnumXLSColumnHeader.EXP_STIM2));
-			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_CONC2),
-					p.getField(EnumXLSColumnHeader.EXP_CONC2));
+			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_STIM2), p.getField(EnumXLSColumnHeader.EXP_STIM2));
+			addIfNotEmpty(dicts.get(EnumXLSColumnHeader.EXP_CONC2), p.getField(EnumXLSColumnHeader.EXP_CONC2));
 		}
 
 		// cages/spots
@@ -164,6 +159,21 @@ public class DescriptorsIO {
 									spot.getField(EnumXLSColumnHeader.SPOT_VOLUME));
 						}
 					}
+				}
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+
+		// capillaries
+		try {
+			exp.loadMCCapillaries_Only();
+			if (exp.getCapillaries() != null && exp.getCapillaries().getList() != null) {
+				for (Capillary cap : exp.getCapillaries().getList()) {
+					addIfNotEmpty(dicts.get(EnumXLSColumnHeader.CAP_STIM), cap.getField(EnumXLSColumnHeader.CAP_STIM));
+					addIfNotEmpty(dicts.get(EnumXLSColumnHeader.CAP_CONC), cap.getField(EnumXLSColumnHeader.CAP_CONC));
+					addIfNotEmpty(dicts.get(EnumXLSColumnHeader.CAP_VOLUME),
+							cap.getField(EnumXLSColumnHeader.CAP_VOLUME));
 				}
 			}
 		} catch (Exception e) {
