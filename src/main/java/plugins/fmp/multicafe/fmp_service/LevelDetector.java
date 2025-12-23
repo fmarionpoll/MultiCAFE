@@ -45,28 +45,6 @@ public class LevelDetector {
 		final Rectangle searchRect = options.searchArea;
 		SequenceLoaderService loader = new SequenceLoaderService();
 
-//		for (Capillary cap : exp.getCapillaries().getList()) {
-//			if (cap == null) {
-//				Logger.warn("LevelDetector:detectLevels - Null capillary in list, skipping");
-//				continue;
-//			}
-//
-//			String kymographName = cap.getKymographName();
-//			if (kymographName == null || kymographName.isEmpty()) {
-//				Logger.warn("LevelDetector:detectLevels - Capillary has no kymograph name, skipping");
-//				continue;
-//			}
-//
-//			String fileName = exp.getKymoFullPath(kymographName);
-//
-//			// Process this capillary's kymograph
-//			final Capillary capi = cap;
-//			final IcyBufferedImage rawImage = loader.imageIORead(fileName);
-//			if (rawImage == null) {
-//				Logger.warn("LevelDetector:detectLevels - Failed to load image for file=" + fileName);
-//				continue;
-//			}
-
 		for (int tKymo = tFirsKymo; tKymo <= tLastKymo; tKymo++) {
 			String fullPath = exp.getSeqKymos().getFileNameFromImageList(tKymo);
 			String nameWithoutExt = new File(fullPath).getName().replaceFirst("[.][^.]+$", "");

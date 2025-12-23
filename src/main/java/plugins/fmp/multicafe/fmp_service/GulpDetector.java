@@ -1,6 +1,7 @@
 package plugins.fmp.multicafe.fmp_service;
 
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -39,9 +40,15 @@ public class GulpDetector {
 
 		final Sequence seqAnalyzed = exp.getSeqKymos().getSequence();
 
-		for (int indexCapillary = firstKymo; indexCapillary <= lastKymo; indexCapillary++) {
-			final Capillary capi = exp.getCapillaries().getList().get(indexCapillary);
+		for (int tKymo = firstKymo; tKymo <= lastKymo; tKymo++) {
+			String fullPath = exp.getSeqKymos().getFileNameFromImageList(tKymo);
+			String nameWithoutExt = new File(fullPath).getName().replaceFirst("[.][^.]+$", "");
+			final Capillary capi = exp.getCapillaries().getCapillaryFromKymographName(nameWithoutExt);
+			if (capi == null)
+				continue;
+
 			capi.setGulpsOptions(options);
+			capi.kymographIndex = tKymo;
 			futures.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {

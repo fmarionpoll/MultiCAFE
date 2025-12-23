@@ -15,12 +15,14 @@ import javax.swing.JTextField;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
+import java.util.logging.Logger;
 
 public class Edit extends JPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2190848825783418962L;
+	private static final Logger LOGGER = Logger.getLogger(Edit.class.getName());
 
 	private JComboBox<EnumXLSColumnHeader> fieldNamesCombo = new JComboBox<EnumXLSColumnHeader>(
 			new EnumXLSColumnHeader[] { EnumXLSColumnHeader.EXP_EXPT, EnumXLSColumnHeader.EXP_BOXID,
@@ -30,6 +32,7 @@ public class Edit extends JPanel {
 
 	private JComboBox<String> fieldOldValuesCombo = new JComboBox<String>();
 	private JTextField newValueTextField = new JTextField(10);
+	private JButton updateButton = new JButton("Update");
 	private JButton applyButton = new JButton("Apply");
 	private MultiCAFE parent0 = null;
 	boolean disableChangeFile = false;
@@ -56,6 +59,7 @@ public class Edit extends JPanel {
 		panel1.add(new JLabel("Field value "));
 		panel1.add(fieldOldValuesCombo);
 		fieldOldValuesCombo.setPreferredSize(new Dimension(bWidth, bHeight));
+		panel1.add(updateButton);
 		add(panel1);
 
 		JPanel panel2 = new JPanel(flowlayout);
@@ -69,8 +73,8 @@ public class Edit extends JPanel {
 	}
 
 	public void initEditCombos() {
-		parent0.expListComboLazy.setExperimentsFromList(parent0.expListComboLazy.getExperimentsAsList());
 		// Use parent0.expListComboLazy to get values from ALL experiments
+		// No need to reset the combo box - just get the field values
 		parent0.expListComboLazy.getFieldValuesToComboLightweight(fieldOldValuesCombo,
 				(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 	}
@@ -94,6 +98,13 @@ public class Edit extends JPanel {
 						(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 			}
 		});
+
+		updateButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				initEditCombos();
+			}
+		});
 	}
 
 	void applyChange() {
@@ -104,6 +115,10 @@ public class Edit extends JPanel {
 
 		for (int i = 0; i < nExperiments; i++) {
 			Experiment exp = parent0.expListComboLazy.getItemAt(i);
+			
+			// Wait for any ongoing async save operations to complete before proceeding
+			waitForSaveToComplete(exp, i);
+			
 			exp.load_MS96_experiment();
 			exp.load_MS96_cages();
 
@@ -119,9 +134,43 @@ public class Edit extends JPanel {
 				exp.save_MS96_cages();
 			}
 		}
+	}
 
-		parent0.expListComboLazy.getFieldValuesToComboLightweight(fieldOldValuesCombo,
-				(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
+	/**
+	 * Waits for any ongoing async save operation to complete for the given experiment.
+	 * This prevents conflicts between Edit's synchronous saves and LoadSaveExperiment's async saves.
+	 * 
+	 * @param exp The experiment to wait for
+	 * @param expIndex The index of the experiment (for logging)
+	 */
+	private void waitForSaveToComplete(Experiment exp, int expIndex) {
+		if (!exp.isSaving()) {
+			return; // No save in progress, proceed immediately
+		}
+
+		// Wait for save to complete with a timeout to avoid infinite waits
+		long timeoutMs = 30000; // 30 seconds timeout
+		long startTime = System.currentTimeMillis();
+		long pollIntervalMs = 100; // Check every 100ms
+
+		LOGGER.info("Waiting for save operation to complete for experiment [" + expIndex + "]: " + exp.toString());
+
+		while (exp.isSaving() && (System.currentTimeMillis() - startTime) < timeoutMs) {
+			try {
+				Thread.sleep(pollIntervalMs);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				LOGGER.warning("Interrupted while waiting for save to complete for experiment [" + expIndex + "]");
+				return;
+			}
+		}
+
+		if (exp.isSaving()) {
+			LOGGER.warning("Timeout waiting for save operation to complete for experiment [" + expIndex 
+					+ "]. Proceeding anyway, but save may not have completed: " + exp.toString());
+		} else {
+			LOGGER.info("Save operation completed for experiment [" + expIndex + "]");
+		}
 	}
 
 }
