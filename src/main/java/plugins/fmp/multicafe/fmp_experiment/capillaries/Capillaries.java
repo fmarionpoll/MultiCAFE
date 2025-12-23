@@ -183,9 +183,11 @@ public class Capillaries {
 	public void updateCapillariesFromSequence(Sequence seq) {
 		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", seq);
 		Collections.sort(listROISCap, new Comparators.ROI2D_Name());
-		
-		// Capillary-driven approach: Only update existing capillaries with ROIs from sequence
-		// Do NOT create new capillaries from ROIs - capillaries should come from saved data
+
+		// Capillary-driven approach: Only update existing capillaries with ROIs from
+		// sequence
+		// Do NOT create new capillaries from ROIs - capillaries should come from saved
+		// data
 		for (Capillary cap : getList()) {
 			cap.getProperties().valid = false;
 			String capName = Capillary.replace_LR_with_12(cap.getRoiName());
@@ -201,7 +203,7 @@ public class Capillaries {
 				}
 			}
 		}
-		
+
 		// Remove capillaries that don't have matching ROIs in the sequence
 		// (This allows users to delete capillaries by removing their ROIs)
 		Iterator<Capillary> iterator = getList().iterator();
@@ -210,10 +212,12 @@ public class Capillaries {
 			if (!cap.getProperties().valid)
 				iterator.remove();
 		}
-		
-		// Do NOT create new capillaries from remaining ROIs - this would be file-driven, not capillary-driven
-		// Capillaries should only be created explicitly by the user or loaded from saved data
-		
+
+		// Do NOT create new capillaries from remaining ROIs - this would be
+		// file-driven, not capillary-driven
+		// Capillaries should only be created explicitly by the user or loaded from
+		// saved data
+
 		Collections.sort(getList());
 		return;
 	}

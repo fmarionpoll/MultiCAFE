@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
 public class Edit extends JPanel {
@@ -34,7 +33,7 @@ public class Edit extends JPanel {
 	private JButton applyButton = new JButton("Apply");
 	private MultiCAFE parent0 = null;
 	boolean disableChangeFile = false;
-	JComboBoxExperimentLazy editExpList = new JComboBoxExperimentLazy();
+	// JComboBoxExperimentLazy editExpList = new JComboBoxExperimentLazy();
 
 	void init(GridLayout capLayout, MultiCAFE parent0) {
 		this.parent0 = parent0;
@@ -70,7 +69,7 @@ public class Edit extends JPanel {
 	}
 
 	public void initEditCombos() {
-		editExpList.setExperimentsFromList(parent0.expListComboLazy.getExperimentsAsList());
+		parent0.expListComboLazy.setExperimentsFromList(parent0.expListComboLazy.getExperimentsAsList());
 		// Use parent0.expListComboLazy to get values from ALL experiments
 		parent0.expListComboLazy.getFieldValuesToComboLightweight(fieldOldValuesCombo,
 				(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
@@ -89,7 +88,8 @@ public class Edit extends JPanel {
 		fieldNamesCombo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				// Use parent0.expListComboLazy to get values from ALL experiments, not just editExpList
+				// Use parent0.expListComboLazy to get values from ALL experiments, not just
+				// editExpList
 				parent0.expListComboLazy.getFieldValuesToComboLightweight(fieldOldValuesCombo,
 						(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 			}
@@ -97,23 +97,31 @@ public class Edit extends JPanel {
 	}
 
 	void applyChange() {
-		int nExperiments = editExpList.getItemCount();
+		int nExperiments = parent0.expListComboLazy.getItemCount();
 		EnumXLSColumnHeader fieldEnumCode = (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem();
 		String oldValue = (String) fieldOldValuesCombo.getSelectedItem();
 		String newValue = newValueTextField.getText();
 
 		for (int i = 0; i < nExperiments; i++) {
-			Experiment exp = editExpList.getItemAt(i);
+			Experiment exp = parent0.expListComboLazy.getItemAt(i);
 			exp.load_MS96_experiment();
 			exp.load_MS96_cages();
-			// exp.loadCapillaries(); // Not sure if this has an equivalent or is needed if
-			// cages are loaded
 
-			exp.replaceExperimentFieldIfEqualOldValue(fieldEnumCode, oldValue, newValue);
+			if (fieldEnumCode == EnumXLSColumnHeader.CAP_STIM || fieldEnumCode == EnumXLSColumnHeader.CAP_CONC
+					|| fieldEnumCode == EnumXLSColumnHeader.CAP_VOLUME) {
+				exp.loadCapillaries();
+				exp.replaceCapillariesFieldIfEqualOldValue(fieldEnumCode, oldValue, newValue);
+				exp.saveMCCapillaries_Only();
 
-			exp.save_MS96_experiment();
-			exp.save_MS96_cages();
+			} else {
+				exp.replaceExperimentFieldIfEqualOldValue(fieldEnumCode, oldValue, newValue);
+				exp.save_MS96_experiment();
+				exp.save_MS96_cages();
+			}
 		}
+
+		parent0.expListComboLazy.getFieldValuesToComboLightweight(fieldOldValuesCombo,
+				(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 	}
 
 }

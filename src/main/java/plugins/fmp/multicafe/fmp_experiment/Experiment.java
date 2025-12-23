@@ -887,6 +887,7 @@ public class Experiment {
 		case CAP_STIM:
 		case CAP_CONC:
 		case CAP_VOLUME:
+			loadMCCapillaries();
 			textList = getCapillariesFieldValues(fieldEnumCode);
 			break;
 		default:
@@ -902,6 +903,17 @@ public class Experiment {
 			prop.setFieldNoTest(fieldEnumCode, newValue);
 		}
 		return flag;
+	}
+
+	public void replaceCapillariesFieldIfEqualOldValue(EnumXLSColumnHeader fieldEnumCode, String oldValue,
+			String newValue) {
+		for (Capillary cap : getCapillaries().getList()) {
+			String capVal = cap.getField(fieldEnumCode);
+			boolean flag = capVal.equals(oldValue);
+			if (flag) {
+				cap.setField(fieldEnumCode, newValue);
+			}
+		}
 	}
 
 	public String getExperimentField(EnumXLSColumnHeader fieldEnumCode) {
@@ -1268,11 +1280,10 @@ public class Experiment {
 	}
 
 	private List<String> getCapillariesFieldValues(EnumXLSColumnHeader fieldEnumCode) {
-		load_MS96_cages();
+		loadCapillaries();
 		List<String> textList = new ArrayList<String>();
-		for (Cage cage : cages.cagesList)
-			for (Capillary cap : cage.getCapillaries().getList())
-				addValueIfUnique(cap.getField(fieldEnumCode), textList);
+		for (Capillary cap : getCapillaries().getList())
+			addValueIfUnique(cap.getField(fieldEnumCode), textList);
 		return textList;
 	}
 

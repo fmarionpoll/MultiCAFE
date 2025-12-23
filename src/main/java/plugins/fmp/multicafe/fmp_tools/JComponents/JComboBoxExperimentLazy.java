@@ -1,7 +1,5 @@
 package plugins.fmp.multicafe.fmp_tools.JComponents;
 
-import java.awt.Cursor;
-import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +7,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.swing.JComboBox;
-import javax.swing.SwingUtilities;
 
 import icy.gui.frame.progress.ProgressFrame;
 import icy.system.SystemUtil;
@@ -386,23 +383,21 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 
 	public List<String> getFieldValuesFromAllExperimentsLightweight(EnumXLSColumnHeader field) {
 		List<String> textList = new ArrayList<>();
-		// Capillary, spot, and cage fields require full experiment loading (including cages)
-		// because they are stored on individual capillaries/spots/cages, not in experiment properties
-		boolean requiresFullLoad = field.toType() == EnumColumnType.CAP 
-				|| field.toType() == EnumColumnType.SPOT
-				|| field == EnumXLSColumnHeader.CAGE_SEX 
-				|| field == EnumXLSColumnHeader.CAGE_STRAIN 
-				|| field == EnumXLSColumnHeader.CAGE_AGE
-				|| field == EnumXLSColumnHeader.CAP_STIM
-				|| field == EnumXLSColumnHeader.CAP_CONC
-				|| field == EnumXLSColumnHeader.CAP_VOLUME;
-		
+		// Capillary, spot, and cage fields require full experiment loading (including
+		// cages)
+		// because they are stored on individual capillaries/spots/cages, not in
+		// experiment properties
+		boolean requiresFullLoad = field.toType() == EnumColumnType.CAP || field.toType() == EnumColumnType.SPOT
+				|| field == EnumXLSColumnHeader.CAGE_SEX || field == EnumXLSColumnHeader.CAGE_STRAIN
+				|| field == EnumXLSColumnHeader.CAGE_AGE || field == EnumXLSColumnHeader.CAP_STIM
+				|| field == EnumXLSColumnHeader.CAP_CONC || field == EnumXLSColumnHeader.CAP_VOLUME;
+
 		// Iterate through all experiments
 		for (int i = 0; i < getItemCount(); i++) {
 			Experiment exp = getItemAtNoLoad(i);
 			if (exp == null)
 				continue;
-			
+
 			try {
 				if (requiresFullLoad) {
 					// For capillary/spot/cage fields, we need to fully load the experiment
@@ -411,6 +406,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 					}
 					exp.load_MS96_experiment();
 					exp.load_MS96_cages();
+
 					List<String> values = exp.getFieldValues(field);
 					if (values != null && !values.isEmpty()) {
 						addIfUniqueStrings(textList, values);
@@ -455,36 +451,11 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 
 	public void getFieldValuesToComboLightweight(JComboBox<String> combo, EnumXLSColumnHeader header) {
 		combo.removeAllItems();
-		
-		// Show wait cursor during the operation - set it on the top-level window for visibility
-		Cursor oldCursor = null;
-		Window topWindow = SwingUtilities.getWindowAncestor(combo);
-		if (topWindow == null) {
-			topWindow = SwingUtilities.getWindowAncestor(this);
-		}
-		
-		try {
-			if (SwingUtilities.isEventDispatchThread() && topWindow != null) {
-				oldCursor = topWindow.getCursor();
-				topWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				// Force cursor update by flushing graphics pipeline
-				try {
-					java.awt.Toolkit.getDefaultToolkit().sync();
-				} catch (Exception e) {
-					// Ignore if sync fails
-				}
-			}
-			
-			List<String> textList = getFieldValuesFromAllExperimentsLightweight(header);
-			Collections.sort(textList);
-			for (String text : textList)
-				combo.addItem(text);
-		} finally {
-			// Restore cursor
-			if (oldCursor != null && SwingUtilities.isEventDispatchThread() && topWindow != null) {
-				topWindow.setCursor(oldCursor);
-			}
-		}
+
+		List<String> textList = getFieldValuesFromAllExperimentsLightweight(header);
+		Collections.sort(textList);
+		for (String text : textList)
+			combo.addItem(text);
 	}
 
 	public List<Experiment> getExperimentsAsList() {
