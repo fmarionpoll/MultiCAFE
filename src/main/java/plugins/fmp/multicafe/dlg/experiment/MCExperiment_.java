@@ -38,7 +38,7 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 	public Options tabOptions = new Options();
 	public Infos tabInfos = new Infos();
 	public Filter tabFilter = new Filter();
-	public Edit tabEdit = new Edit();
+	public EditCapillariesConditional tabEditCond = new EditCapillariesConditional();
 	public Intervals tabIntervals = new Intervals();
 
 	private MultiCAFE parent0 = null;
@@ -60,8 +60,8 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 		tabFilter.init(tabsLayout, parent0);
 		tabsPane.addTab("Filter", null, tabFilter, "Filter experiments based on descriptors");
 
-		tabEdit.init(tabsLayout, parent0);
-		tabsPane.addTab("Edit", null, tabEdit, "Edit descriptors");
+		tabEditCond.init(tabsLayout, parent0);
+		tabsPane.addTab("Edit", null, tabEditCond, "Edit descriptors with 1 or 2 conditions");
 
 		tabIntervals.init(tabsLayout, parent0);
 		tabsPane.addTab("Intervals", null, tabIntervals, "View/edit time-lapse intervals");
@@ -108,14 +108,16 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 				// Check if this experiment is still the selected one
 				Experiment currentlySelected = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (currentlySelected != exp) {
-					System.err.println("MCExperiment_:updateViewerForSequenceCam [" + expIndex + "] - Experiment no longer selected, aborting viewer creation");
+					System.err.println("MCExperiment_:updateViewerForSequenceCam [" + expIndex
+							+ "] - Experiment no longer selected, aborting viewer creation");
 					return;
 				}
-				
+
 				// Re-check sequence is still valid (may have changed during async execution)
 				Sequence currentSeq = exp.getSeqCamData() != null ? exp.getSeqCamData().getSequence() : null;
 				if (currentSeq == null) {
-					System.err.println("MCExperiment_:updateViewerForSequenceCam [" + expIndex + "] - Sequence became null before viewer creation");
+					System.err.println("MCExperiment_:updateViewerForSequenceCam [" + expIndex
+							+ "] - Sequence became null before viewer creation");
 					return;
 				}
 
@@ -141,7 +143,8 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 						// Now make the viewer visible with the correct position already set
 						v.setVisible(true);
 					} catch (Exception e) {
-						System.err.println("MCExperiment_:updateViewerForSequenceCam [" + expIndex + "] - Failed to create viewer: " + e.getMessage());
+						System.err.println("MCExperiment_:updateViewerForSequenceCam [" + expIndex
+								+ "] - Failed to create viewer: " + e.getMessage());
 						return;
 					}
 				} else {
