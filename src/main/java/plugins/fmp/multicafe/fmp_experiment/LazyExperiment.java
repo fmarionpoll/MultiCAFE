@@ -68,6 +68,7 @@ public class LazyExperiment extends Experiment {
 					// Set up directories using public methods
 					setResultsDirectory(expDirectories.getResultsDirectory());
 					setImagesDirectory(expDirectories.getCameraImagesDirectory());
+					setBinDirectory(expDirectories.getResultsDirectory() + File.separator + expDirectories.getBinSubDirectory());
 					
 					// Load XML metadata only (no images, no cages)
 					// xmlLoad_MCExperiment() loads from resultsDirectory + MCexperiment.xml

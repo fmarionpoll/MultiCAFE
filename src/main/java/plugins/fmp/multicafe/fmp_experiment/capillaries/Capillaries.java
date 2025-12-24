@@ -75,6 +75,10 @@ public class Capillaries {
 		return persistence.loadMCCapillaries_Descriptors(this, csFileName);
 	}
 
+	public boolean mergeMCCapillaries_Descriptors(String csFileName) {
+		return persistence.mergeMCCapillaries_Descriptors(this, csFileName);
+	}
+
 	public boolean xmlLoadOldCapillaries_Only(String csFileName) {
 		return persistence.xmlLoadOldCapillaries_Only(this, csFileName);
 	}

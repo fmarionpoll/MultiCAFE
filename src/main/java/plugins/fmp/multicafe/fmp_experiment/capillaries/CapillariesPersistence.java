@@ -124,6 +124,44 @@ public class CapillariesPersistence {
 		return true;
 	}
 
+	public boolean mergeMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
+		boolean flag = false;
+		if (csFileName == null)
+			return flag;
+
+		final Document doc = XMLUtil.loadDocument(csFileName);
+		if (doc != null) {
+			capillaries.getCapillariesDescription().xmlLoadCapillaryDescription(doc);
+			flag = xmlMergeCapillaries_Descriptors(capillaries, doc);
+		}
+		return flag;
+	}
+
+	private boolean xmlMergeCapillaries_Descriptors(Capillaries capillaries, Document doc) {
+		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_CAPILLARYTRACK);
+		if (node == null)
+			return false;
+		Node nodecaps = XMLUtil.getElement(node, ID_LISTOFCAPILLARIES);
+		int nitems = XMLUtil.getElementIntValue(nodecaps, ID_NCAPILLARIES, 0);
+		
+		for (int i = 0; i < nitems; i++) {
+			Node nodecapillary = XMLUtil.getElement(node, ID_CAPILLARY_ + i);
+			Capillary capXML = new Capillary();
+			capXML.xmlLoad_CapillaryOnly(nodecapillary);
+
+			// Find matching capillary in existing list and update its descriptors
+			for (Capillary cap : capillaries.getList()) {
+				if (cap.getRoiName().equals(capXML.getRoiName())) {
+					cap.setStimulus(capXML.getStimulus());
+					cap.setConcentration(capXML.getConcentration());
+					cap.setVolume(capXML.getVolume());
+					break;
+				}
+			}
+		}
+		return true;
+	}
+
 	public boolean loadMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
 		boolean flag = false;
 		if (csFileName == null)
@@ -135,6 +173,97 @@ public class CapillariesPersistence {
 			flag = xmlLoadCapillaries_Only_v1(capillaries, doc);
 		}
 		return flag;
+	}
+
+	public boolean mergeMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
+		boolean flag = false;
+		if (csFileName == null)
+			return flag;
+
+		final Document doc = XMLUtil.loadDocument(csFileName);
+		if (doc != null) {
+			capillaries.getCapillariesDescription().xmlLoadCapillaryDescription(doc);
+			flag = xmlMergeCapillaries_Descriptors(capillaries, doc);
+		}
+		return flag;
+	}
+
+	private boolean xmlMergeCapillaries_Descriptors(Capillaries capillaries, Document doc) {
+		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_CAPILLARYTRACK);
+		if (node == null)
+			return false;
+		Node nodecaps = XMLUtil.getElement(node, ID_LISTOFCAPILLARIES);
+		int nitems = XMLUtil.getElementIntValue(nodecaps, ID_NCAPILLARIES, 0);
+		
+		for (int i = 0; i < nitems; i++) {
+			Node nodecapillary = XMLUtil.getElement(node, ID_CAPILLARY_ + i);
+			// Temporary capillary to load data from XML
+			Capillary capXML = new Capillary();
+			capXML.xmlLoad_CapillaryOnly(nodecapillary);
+
+			// Find matching capillary in existing list
+			boolean found = false;
+			for (Capillary cap : capillaries.getList()) {
+				if (cap.getRoiName().equals(capXML.getRoiName())) {
+					cap.xmlLoad_CapillaryOnly(nodecapillary); // Overwrite descriptors
+					found = true;
+					break;
+				}
+			}
+			// If not found, should we add it? 
+			// If CSV loaded measures but missed some capillaries that are only defined in XML, 
+			// we probably want to add them.
+			if (!found) {
+				capillaries.getList().add(capXML);
+			}
+		}
+		return true;
+	}
+
+	public boolean mergeMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
+		boolean flag = false;
+		if (csFileName == null)
+			return flag;
+
+		final Document doc = XMLUtil.loadDocument(csFileName);
+		if (doc != null) {
+			capillaries.getCapillariesDescription().xmlLoadCapillaryDescription(doc);
+			flag = xmlMergeCapillaries_Descriptors(capillaries, doc);
+		}
+		return flag;
+	}
+
+	private boolean xmlMergeCapillaries_Descriptors(Capillaries capillaries, Document doc) {
+		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_CAPILLARYTRACK);
+		if (node == null)
+			return false;
+		Node nodecaps = XMLUtil.getElement(node, ID_LISTOFCAPILLARIES);
+		int nitems = XMLUtil.getElementIntValue(nodecaps, ID_NCAPILLARIES, 0);
+		
+		for (int i = 0; i < nitems; i++) {
+			Node nodecapillary = XMLUtil.getElement(node, ID_CAPILLARY_ + i);
+			// We only want to extract information to identify the capillary and update its descriptors
+			// We don't want to create a new capillary object if we can find one
+			
+			// Temporary capillary to load properties from XML
+			Capillary capXML = new Capillary();
+			capXML.xmlLoad_CapillaryOnly(nodecapillary);
+			
+			// Find matching capillary in the existing list
+			Capillary capExisting = capillaries.getCapillaryFromKymographName(capXML.getKymographName());
+			if (capExisting != null) {
+				// Update descriptors from XML
+				capExisting.setStimulus(capXML.getStimulus());
+				capExisting.setConcentration(capXML.getConcentration());
+				capExisting.setVolume(capXML.getVolume());
+				// Add other descriptor fields if needed
+			} else {
+				// If not found, add it? Or ignore?
+				// If we want XML to be master, we should probably add it if missing from CSV
+				capillaries.getList().add(capXML);
+			}
+		}
+		return true;
 	}
 
 	public boolean xmlLoadOldCapillaries_Only(Capillaries capillaries, String csFileName) {

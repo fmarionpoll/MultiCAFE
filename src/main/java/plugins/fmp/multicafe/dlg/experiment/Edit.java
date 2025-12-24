@@ -124,9 +124,10 @@ public class Edit extends JPanel {
 
 			if (fieldEnumCode == EnumXLSColumnHeader.CAP_STIM || fieldEnumCode == EnumXLSColumnHeader.CAP_CONC
 					|| fieldEnumCode == EnumXLSColumnHeader.CAP_VOLUME) {
-				exp.loadCapillaries();
+				exp.loadMCCapillaries();
 				exp.replaceCapillariesFieldIfEqualOldValue(fieldEnumCode, oldValue, newValue);
 				exp.saveMCCapillaries_Only();
+				exp.saveCapillaries();
 
 			} else {
 				exp.replaceExperimentFieldIfEqualOldValue(fieldEnumCode, oldValue, newValue);

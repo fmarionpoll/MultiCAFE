@@ -1495,17 +1495,19 @@ public class Experiment {
 	}
 
 	public boolean loadMCCapillaries() {
-		String xmlCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY,
-				BIN_DIRECTORY, IMG_DIRECTORY);
-		boolean flag1 = capillaries.loadMCCapillaries_Descriptors(xmlCapillaryFileName);
 		String kymosImagesDirectory = getKymosBinFullDirectory();
 		boolean flag2 = capillaries.load_Capillaries(kymosImagesDirectory);
+
+		String xmlCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY,
+				BIN_DIRECTORY, IMG_DIRECTORY);
+		boolean flag1 = capillaries.mergeMCCapillaries_Descriptors(xmlCapillaryFileName);
+
 		if (flag1 & flag2) {
 			// TODO: Add loadListOfPotentialKymographsFromCapillaries method to
 			// SequenceKymos
 			// For now, this functionality may need to be implemented
 		}
-		return flag1 & flag2;
+		return flag1 | flag2;
 	}
 
 	private boolean xmlLoadOldCapillaries() {
