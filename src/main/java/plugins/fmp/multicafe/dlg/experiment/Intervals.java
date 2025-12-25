@@ -57,10 +57,12 @@ public class Intervals extends JPanel {
 		panel1.add(new JLabel("Time between frames ", SwingConstants.RIGHT));
 		panel1.add(binSizeJSpinner);
 		panel1.add(binUnit);
+		panel1.add(refreshButton);
 		add(panel1);
 
-		panel1.add(refreshButton);
-		panel1.add(applyButton);
+		JPanel panel2 = new JPanel(layout1);
+		panel2.add(applyButton);
+		add(panel2);
 
 		defineActionListeners();
 	}

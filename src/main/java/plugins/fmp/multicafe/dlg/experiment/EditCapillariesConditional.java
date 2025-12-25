@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -17,7 +18,6 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
-import java.util.logging.Logger;
 
 public class EditCapillariesConditional extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -26,30 +26,21 @@ public class EditCapillariesConditional extends JPanel {
 	// Available fields for conditions - all fields from Edit.java
 	private static final EnumXLSColumnHeader[] CONDITION_FIELDS = {
 			// Experiment-level fields
-			EnumXLSColumnHeader.EXP_EXPT,
-			EnumXLSColumnHeader.EXP_BOXID,
-			EnumXLSColumnHeader.EXP_STIM1,
-			EnumXLSColumnHeader.EXP_CONC1,
-			EnumXLSColumnHeader.EXP_STRAIN,
-			EnumXLSColumnHeader.EXP_SEX,
-			EnumXLSColumnHeader.EXP_STIM2,
-			EnumXLSColumnHeader.EXP_CONC2,
+			EnumXLSColumnHeader.EXP_EXPT, EnumXLSColumnHeader.EXP_BOXID, EnumXLSColumnHeader.EXP_STIM1,
+			EnumXLSColumnHeader.EXP_CONC1, EnumXLSColumnHeader.EXP_STRAIN, EnumXLSColumnHeader.EXP_SEX,
+			EnumXLSColumnHeader.EXP_STIM2, EnumXLSColumnHeader.EXP_CONC2,
 			// Capillary-level fields
-			EnumXLSColumnHeader.CAP_STIM,
-			EnumXLSColumnHeader.CAP_CONC,
-			EnumXLSColumnHeader.CAP_VOLUME
-	};
+			EnumXLSColumnHeader.CAP_STIM, EnumXLSColumnHeader.CAP_CONC, EnumXLSColumnHeader.CAP_VOLUME };
 
 	// UI Components
 	private JComboBox<EnumXLSColumnHeader> conditionField1Combo = new JComboBox<>(CONDITION_FIELDS);
 	private JComboBox<String> conditionValue1Combo = new JComboBox<>();
 	private JButton updateValue1Button = new JButton("Update");
 
-	private JCheckBox useCondition2CheckBox = new JCheckBox("Use second condition", false);
+	private JCheckBox useCondition2CheckBox = new JCheckBox("AND", false);
 	private JComboBox<EnumXLSColumnHeader> conditionField2Combo = new JComboBox<>(CONDITION_FIELDS);
 	private JComboBox<String> conditionValue2Combo = new JComboBox<>();
 	private JButton updateValue2Button = new JButton("Update");
-	private JLabel andLabel = new JLabel("AND");
 
 	private JComboBox<EnumXLSColumnHeader> targetFieldCombo = new JComboBox<>(CONDITION_FIELDS);
 	private JTextField newValueTextField = new JTextField(10);
@@ -69,7 +60,6 @@ public class EditCapillariesConditional extends JPanel {
 
 		// Condition 1: Field and Value
 		JPanel panel1 = new JPanel(flowlayout);
-		panel1.add(new JLabel("Condition - Field: "));
 		conditionField1Combo.setPreferredSize(new Dimension(bWidth, bHeight));
 		panel1.add(conditionField1Combo);
 		panel1.add(new JLabel(" Value: "));
@@ -84,36 +74,36 @@ public class EditCapillariesConditional extends JPanel {
 		JPanel panel2 = new JPanel(flowlayout);
 		useCondition2CheckBox.setPreferredSize(new Dimension(150, bHeight));
 		panel2.add(useCondition2CheckBox);
-		andLabel.setPreferredSize(new Dimension(40, bHeight));
-		panel2.add(andLabel);
-		panel2.add(new JLabel("Field: "));
+		add(panel2);
+
+		JPanel panel3 = new JPanel(flowlayout);
 		bWidth = 100;
 		conditionField2Combo.setPreferredSize(new Dimension(bWidth, bHeight));
-		panel2.add(conditionField2Combo);
-		panel2.add(new JLabel(" Value: "));
+		panel3.add(conditionField2Combo);
+		panel3.add(new JLabel(" Value: "));
 		bWidth = 200;
 		conditionValue2Combo.setPreferredSize(new Dimension(bWidth, bHeight));
-		panel2.add(conditionValue2Combo);
+		panel3.add(conditionValue2Combo);
 		updateValue2Button.setPreferredSize(new Dimension(80, bHeight));
-		panel2.add(updateValue2Button);
-		add(panel2);
+		panel3.add(updateValue2Button);
+		add(panel3);
 
 		// Initially disable condition 2 components
 		updateCondition2Enabled();
 
 		// Target field and new value
-		JPanel panel3 = new JPanel(flowlayout);
-		panel3.add(new JLabel("Change field: "));
+		JPanel panel4 = new JPanel(flowlayout);
+		panel4.add(new JLabel("Change field: "));
 		bWidth = 100;
 		targetFieldCombo.setPreferredSize(new Dimension(bWidth, bHeight));
-		panel3.add(targetFieldCombo);
-		panel3.add(new JLabel(" to: "));
+		panel4.add(targetFieldCombo);
+		panel4.add(new JLabel(" to: "));
 		bWidth = 200;
 		newValueTextField.setPreferredSize(new Dimension(bWidth, bHeight));
-		panel3.add(newValueTextField);
+		panel4.add(newValueTextField);
 		applyButton.setPreferredSize(new Dimension(80, bHeight));
-		panel3.add(applyButton);
-		add(panel3);
+		panel4.add(applyButton);
+		add(panel4);
 
 		defineActionListeners();
 		initEditCombos();
@@ -124,8 +114,7 @@ public class EditCapillariesConditional extends JPanel {
 		updateConditionValueCombo(conditionField2Combo, conditionValue2Combo);
 	}
 
-	private void updateConditionValueCombo(JComboBox<EnumXLSColumnHeader> fieldCombo,
-			JComboBox<String> valueCombo) {
+	private void updateConditionValueCombo(JComboBox<EnumXLSColumnHeader> fieldCombo, JComboBox<String> valueCombo) {
 		EnumXLSColumnHeader selectedField = (EnumXLSColumnHeader) fieldCombo.getSelectedItem();
 		if (selectedField != null) {
 			parent0.expListComboLazy.getFieldValuesToComboLightweight(valueCombo, selectedField);
@@ -188,7 +177,6 @@ public class EditCapillariesConditional extends JPanel {
 	 */
 	private void updateCondition2Enabled() {
 		boolean enabled = useCondition2CheckBox.isSelected();
-		andLabel.setEnabled(enabled);
 		conditionField2Combo.setEnabled(enabled);
 		conditionValue2Combo.setEnabled(enabled);
 		updateValue2Button.setEnabled(enabled);
@@ -201,8 +189,8 @@ public class EditCapillariesConditional extends JPanel {
 		String newValue = newValueTextField.getText();
 
 		// Validation for required fields
-		if (conditionField1 == null || conditionValue1 == null || targetField == null 
-				|| newValue == null || newValue.isEmpty()) {
+		if (conditionField1 == null || conditionValue1 == null || targetField == null || newValue == null
+				|| newValue.isEmpty()) {
 			LOGGER.warning("EditCapillariesConditional: Missing required fields");
 			return;
 		}
@@ -245,15 +233,15 @@ public class EditCapillariesConditional extends JPanel {
 
 			exp.load_MS96_experiment();
 			exp.load_MS96_cages();
-			
+
 			// Only load capillaries if needed
 			if (condition1IsCapillary || (useCondition2 && condition2IsCapillary) || targetIsCapillary) {
 				exp.loadMCCapillaries();
 			}
 
-			int updated = replaceFieldWithConditions(exp, conditionField1, conditionValue1,
-					useCondition2, conditionField2, conditionValue2, targetField, newValue,
-					condition1IsCapillary, condition2IsCapillary, targetIsCapillary);
+			int updated = replaceFieldWithConditions(exp, conditionField1, conditionValue1, useCondition2,
+					conditionField2, conditionValue2, targetField, newValue, condition1IsCapillary,
+					condition2IsCapillary, targetIsCapillary);
 
 			// Save based on what was updated
 			if (updated > 0) {
@@ -269,31 +257,32 @@ public class EditCapillariesConditional extends JPanel {
 		}
 
 		String updateType = targetIsCapillary ? "capillaries" : "experiments";
-		LOGGER.info("EditCapillariesConditional: Updated " + totalUpdated + " " + updateType + " across all experiments");
+		LOGGER.info(
+				"EditCapillariesConditional: Updated " + totalUpdated + " " + updateType + " across all experiments");
 	}
 
 	/**
 	 * Checks if a field is a capillary-level field.
 	 */
 	private boolean isCapillaryField(EnumXLSColumnHeader field) {
-		return field == EnumXLSColumnHeader.CAP_STIM || 
-			   field == EnumXLSColumnHeader.CAP_CONC || 
-			   field == EnumXLSColumnHeader.CAP_VOLUME;
+		return field == EnumXLSColumnHeader.CAP_STIM || field == EnumXLSColumnHeader.CAP_CONC
+				|| field == EnumXLSColumnHeader.CAP_VOLUME;
 	}
 
 	/**
-	 * Replaces the target field value based on one or two conditions. Handles:
-	 * - Experiment-level fields as conditions/targets
-	 * - Capillary-level fields as conditions/targets
-	 * - Mixed combinations (experiment + capillary)
-	 * - Single condition (when useCondition2 is false)
+	 * Replaces the target field value based on one or two conditions. Handles: -
+	 * Experiment-level fields as conditions/targets - Capillary-level fields as
+	 * conditions/targets - Mixed combinations (experiment + capillary) - Single
+	 * condition (when useCondition2 is false)
 	 * 
 	 * @param exp                   The experiment
 	 * @param conditionField1       First condition field (required)
 	 * @param conditionValue1       First condition value to match (required)
 	 * @param useCondition2         Whether to use a second condition
-	 * @param conditionField2      Second condition field (null if useCondition2 is false)
-	 * @param conditionValue2       Second condition value to match (null if useCondition2 is false)
+	 * @param conditionField2       Second condition field (null if useCondition2 is
+	 *                              false)
+	 * @param conditionValue2       Second condition value to match (null if
+	 *                              useCondition2 is false)
 	 * @param targetField           Field to update
 	 * @param newValue              New value to set
 	 * @param condition1IsCapillary Whether condition1 is a capillary field
@@ -301,15 +290,15 @@ public class EditCapillariesConditional extends JPanel {
 	 * @param targetIsCapillary     Whether target is a capillary field
 	 * @return Number of items updated (experiments or capillaries)
 	 */
-	private int replaceFieldWithConditions(Experiment exp, EnumXLSColumnHeader conditionField1,
-			String conditionValue1, boolean useCondition2, EnumXLSColumnHeader conditionField2, 
-			String conditionValue2, EnumXLSColumnHeader targetField, String newValue,
-			boolean condition1IsCapillary, boolean condition2IsCapillary, boolean targetIsCapillary) {
+	private int replaceFieldWithConditions(Experiment exp, EnumXLSColumnHeader conditionField1, String conditionValue1,
+			boolean useCondition2, EnumXLSColumnHeader conditionField2, String conditionValue2,
+			EnumXLSColumnHeader targetField, String newValue, boolean condition1IsCapillary,
+			boolean condition2IsCapillary, boolean targetIsCapillary) {
 
 		// Check condition 1
 		String expValue1 = null;
 		boolean condition1Matches = false;
-		
+
 		if (condition1IsCapillary) {
 			// For capillary conditions, we need to check if ANY capillary matches
 			// This will be checked per-capillary in the loop below
@@ -323,7 +312,7 @@ public class EditCapillariesConditional extends JPanel {
 		// Check condition 2 (if used)
 		String expValue2 = null;
 		boolean condition2Matches = true; // Default to true if condition 2 is not used
-		
+
 		if (useCondition2) {
 			if (condition2IsCapillary) {
 				// For capillary conditions, we need to check if ANY capillary matches
@@ -335,7 +324,8 @@ public class EditCapillariesConditional extends JPanel {
 			}
 		}
 
-		// If both conditions are experiment-level (or only condition 1 if condition 2 not used)
+		// If both conditions are experiment-level (or only condition 1 if condition 2
+		// not used)
 		if (!condition1IsCapillary && (!useCondition2 || !condition2IsCapillary)) {
 			if (condition1Matches && condition2Matches) {
 				if (targetIsCapillary) {
@@ -355,7 +345,8 @@ public class EditCapillariesConditional extends JPanel {
 			return 0;
 		}
 
-		// If at least one condition is capillary-level, we need to iterate through capillaries
+		// If at least one condition is capillary-level, we need to iterate through
+		// capillaries
 		if (condition1IsCapillary || (useCondition2 && condition2IsCapillary) || targetIsCapillary) {
 			// First check experiment-level conditions if any
 			if (!condition1IsCapillary && !condition1Matches) {
@@ -394,7 +385,8 @@ public class EditCapillariesConditional extends JPanel {
 							exp.setExperimentFieldNoTest(targetField, newValue);
 							updated = 1;
 						}
-						// Break after first match since experiment field is the same for all capillaries
+						// Break after first match since experiment field is the same for all
+						// capillaries
 						break;
 					}
 				}
@@ -406,8 +398,9 @@ public class EditCapillariesConditional extends JPanel {
 	}
 
 	/**
-	 * Waits for any ongoing async save operation to complete for the given experiment.
-	 * This prevents conflicts between Edit's synchronous saves and LoadSaveExperiment's async saves.
+	 * Waits for any ongoing async save operation to complete for the given
+	 * experiment. This prevents conflicts between Edit's synchronous saves and
+	 * LoadSaveExperiment's async saves.
 	 * 
 	 * @param exp      The experiment to wait for
 	 * @param expIndex The index of the experiment (for logging)
@@ -442,4 +435,3 @@ public class EditCapillariesConditional extends JPanel {
 		}
 	}
 }
-

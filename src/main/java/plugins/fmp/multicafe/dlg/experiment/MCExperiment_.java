@@ -232,8 +232,8 @@ public class MCExperiment_ extends JPanel implements ViewerListener, ChangeListe
 			if (tabFilter != null)
 				tabFilter.initCombos();
 		} else if (tabbedPane.getSelectedIndex() == 2) {
-			if (tabEdit != null)
-				tabEdit.initEditCombos();
+			if (tabEditCond != null)
+				tabEditCond.initEditCombos();
 		}
 	}
 
