@@ -44,7 +44,7 @@ public class CapillaryPersistence {
 			cap.version = XMLUtil.getElementValue(nodeMeta, ID_VERSION, "0.0.0");
 			cap.kymographIndex = XMLUtil.getElementIntValue(nodeMeta, ID_INDEXIMAGE, cap.kymographIndex);
 			cap.setKymographName(XMLUtil.getElementValue(nodeMeta, ID_NAME, cap.getKymographName()));
-			cap.filenameTIFF = XMLUtil.getElementValue(nodeMeta, ID_NAMETIFF, cap.filenameTIFF);
+			cap.kymographFilename = XMLUtil.getElementValue(nodeMeta, ID_NAMETIFF, cap.kymographFilename);
 
 			// Load properties
 			cap.getProperties().loadFromXml(nodeMeta);
@@ -100,8 +100,8 @@ public class CapillaryPersistence {
 		XMLUtil.setElementIntValue(nodeMeta, ID_INDEXIMAGE, cap.kymographIndex);
 		XMLUtil.setElementValue(nodeMeta, ID_NAME, cap.getKymographName());
 
-		if (cap.filenameTIFF != null) {
-			String filename = Paths.get(cap.filenameTIFF).getFileName().toString();
+		if (cap.kymographFilename != null) {
+			String filename = Paths.get(cap.kymographFilename).getFileName().toString();
 			XMLUtil.setElementValue(nodeMeta, ID_NAMETIFF, filename);
 		}
 
@@ -189,7 +189,7 @@ public class CapillaryPersistence {
 		}
 
 		List<String> row = Arrays.asList(capPrefix, Integer.toString(cap.kymographIndex),
-				cap.getKymographName(), cap.filenameTIFF, Integer.toString(props.getCageID()),
+				cap.getKymographName(), cap.kymographFilename, Integer.toString(props.getCageID()),
 				Integer.toString(props.getNFlies()), Double.toString(props.getVolume()),
 				Integer.toString(props.getPixels()), props.getStimulus(), props.getConcentration(), props.getSide());
 		sbf.append(String.join(sep, row));
@@ -261,7 +261,7 @@ public class CapillaryPersistence {
 		i++;
 		cap.setKymographName(data[i]);
 		i++;
-		cap.filenameTIFF = data[i];
+		cap.kymographFilename = data[i];
 		i++;
 		CapillaryProperties props = cap.getProperties();
 		props.setCageID(Integer.valueOf(data[i]));

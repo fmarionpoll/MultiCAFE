@@ -282,17 +282,16 @@ public class SequenceKymos extends SequenceCamData {
 				if (roi instanceof ROI2D && ((ROI2D) roi).getT() == kymo)
 					roisAtT.add(roi);
 			}
-			if (capillaries.getList().size() <= kymo)
+			if (capillaries.getList().size() <= kymo) {
 				capillaries.getList().add(new Capillary());
+			}
 			Capillary cap = capillaries.getList().get(kymo);
-			cap.filenameTIFF = getFileNameFromImageList(kymo);
-			cap.kymographIndex = kymo;
 			cap.transferROIsToMeasures(roisAtT);
 		}
 		return true;
 	}
 
-	public boolean transferKymosRoi_atT_ToCapillaries_Measures(int t, Capillaries capillaries) {
+	public boolean transferKymosRoi_atT_ToCapillaries_Measures(int t, Capillary cap) {
 		List<ROI> allRois = getSequence().getROIs();
 		if (allRois.size() < 1)
 			return false;
@@ -302,11 +301,9 @@ public class SequenceKymos extends SequenceCamData {
 			if (roi instanceof ROI2D && ((ROI2D) roi).getT() == t)
 				roisAtT.add(roi);
 		}
-		if (capillaries.getList().size() <= t)
-			capillaries.getList().add(new Capillary());
-		Capillary cap = capillaries.getList().get(t);
-		cap.filenameTIFF = getFileNameFromImageList(t);
-		cap.kymographIndex = t;
+
+//		cap.filenameTIFF = getFileNameFromImageList(t);
+//		cap.kymographIndex = t;
 		cap.transferROIsToMeasures(roisAtT);
 
 		return true;

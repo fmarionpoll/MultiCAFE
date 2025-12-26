@@ -63,8 +63,9 @@ public class KymographBuilder {
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					for (Capillary capi : exp.getCapillaries().getList())
+					for (Capillary capi : exp.getCapillaries().getList()) {
 						analyzeImageWithCapillary(sourceImage, capi, fromSourceImageIndex, kymographColumn);
+					}
 				}
 			}));
 		}
@@ -99,6 +100,8 @@ public class KymographBuilder {
 					Capillary cap = exp.getCapillaries().getList().get(t_index);
 					String filename = directory + File.separator + cap.getKymographName() + ".tiff";
 					File file = new File(filename);
+					cap.kymographFilename = filename;
+					cap.kymographIndex = t_index;
 					IcyBufferedImage image = exp.getSeqKymos().getSeqImage(t_index, 0);
 					try {
 						Saver.saveImage(image, file, true);

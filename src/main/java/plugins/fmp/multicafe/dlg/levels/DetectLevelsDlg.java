@@ -395,9 +395,11 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 	void startLevelsDetection() {
 		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
+
 			threadDetectLevels = new DetectLevels();
 			threadDetectLevels.options = initBuildParameters(exp);
-
+			exp.getCapillaries().clearAllMeasures(threadDetectLevels.options.kymoFirst,
+					threadDetectLevels.options.kymoLast);
 			threadDetectLevels.addPropertyChangeListener(this);
 			threadDetectLevels.execute();
 			detectButton.setText("STOP");

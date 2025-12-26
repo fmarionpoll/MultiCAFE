@@ -166,8 +166,14 @@ public class EditLevels extends JPanel {
 		if (roi == null)
 			return;
 
-		seqKymos.transferKymosRoi_atT_ToCapillaries_Measures(t, exp.getCapillaries());
 		Capillary cap = exp.getCapillaries().getList().get(t);
+		if (cap == null) {
+			System.out.println("capillary not found!");
+			return;
+		}
+
+		seqKymos.transferKymosRoi_atT_ToCapillaries_Measures(t, cap);
+
 		String optionSelected = (String) roiTypeCombo.getSelectedItem();
 		if (optionSelected.contains("gulp")) {
 			List<ROI> listGulpsSelected = selectGulpsWithinRoi(roi, seqKymos.getSequence(), seqKymos.getCurrentFrame());

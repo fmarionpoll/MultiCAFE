@@ -132,6 +132,14 @@ public class Capillaries {
 		}
 	}
 
+	public void clearAllMeasures(int first, int last) {
+		for (Capillary cap : getList()) {
+			int i = cap.kymographIndex;
+			if (first < 0 || last < 0 || (i >= first && i <= last))
+				cap.clearAllMeasures();
+		}
+	}
+
 	private void transferCapGroupCageIDToCapillary(Capillary cap) {
 		if (capillariesDescription.getGrouping() != 2)
 			return;

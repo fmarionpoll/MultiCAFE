@@ -34,11 +34,8 @@ public class Create extends JPanel implements PropertyChangeListener {
 
 	JButton startComputationButton = new JButton("Start");
 	JSpinner diskRadiusSpinner = new JSpinner(new SpinnerNumberModel(3, 1, 100, 1));
-//	JCheckBox 	doRegistrationCheckBox 	= new JCheckBox("registration", false);
 	JCheckBox concurrentDisplayCheckBox = new JCheckBox("concurrent display", false);
 	JCheckBox allSeriesCheckBox = new JCheckBox("ALL series (current to last)", false);
-//	JLabel		startFrameLabel			= new JLabel ("starting at frame");
-//	JSpinner	startFrameSpinner 		= new JSpinner(new SpinnerNumberModel(0, 0, 100000, 1));
 	JSpinner binSize = new JSpinner(new SpinnerNumberModel(1., 1., 1000., 1.));
 	JComboBoxMs binUnit = new JComboBoxMs();
 
@@ -65,10 +62,7 @@ public class Create extends JPanel implements PropertyChangeListener {
 		((FlowLayout) panel0.getLayout()).setVgap(1);
 		panel0.add(startComputationButton);
 		panel0.add(allSeriesCheckBox);
-//		panel0.add(doRegistrationCheckBox);
 		panel0.add(concurrentDisplayCheckBox);
-//		panel0.add(startFrameLabel);
-//		panel0.add(startFrameSpinner);
 
 		JPanel panel1 = new JPanel(layoutLeft);
 		panel1.add(new JLabel("area around ROIs", SwingConstants.RIGHT));
@@ -91,9 +85,6 @@ public class Create extends JPanel implements PropertyChangeListener {
 		add(panel0);
 		add(panel1);
 		add(panel2);
-
-//		startFrameLabel.setVisible(false);
-//		startFrameSpinner.setVisible(false);
 
 		enableIntervalButtons(false);
 		ButtonGroup group = new ButtonGroup();
@@ -124,17 +115,6 @@ public class Create extends JPanel implements PropertyChangeListener {
 				startComputationButton.setForeground(color);
 			}
 		});
-
-//		doRegistrationCheckBox.addActionListener(new ActionListener () 
-//		{ 
-//			@Override public void actionPerformed( final ActionEvent e ) 
-//			{
-//				boolean flag = doRegistrationCheckBox.isSelected();
-//				startFrameLabel.setVisible(flag);
-//				startFrameSpinner.setVisible(flag);
-//				if (flag)
-//					allSeriesCheckBox.setSelected(false);
-//		}});
 
 		isFixedFrameButton.addActionListener(new ActionListener() {
 			@Override
@@ -167,13 +147,9 @@ public class Create extends JPanel implements PropertyChangeListener {
 			options.expList.index1 = options.expList.index0;
 
 		options.isFrameFixed = getIsFixedFrame();
-		// parent0.paneExcel.tabCommonOptions.getIsFixedFrame();
 		options.t_Ms_First = getStartMs();
-		// parent0.paneExcel.tabCommonOptions.getStartMs();
 		options.t_Ms_Last = getEndMs();
-		// parent0.paneExcel.tabCommonOptions.getEndMs();
 		options.t_Ms_BinDuration = (long) ((double) binSize.getValue() * (double) binUnit.getMsUnitValue());
-		// parent0.paneExcel.tabCommonOptions.getBinMs();
 
 		options.diskRadius = (int) diskRadiusSpinner.getValue();
 		options.doRegistration = false; // doRegistrationCheckBox.isSelected();
@@ -188,8 +164,13 @@ public class Create extends JPanel implements PropertyChangeListener {
 	private void startComputation() {
 		sComputation = EnumStatusComputation.STOP_COMPUTATION;
 		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-		if (exp != null)
+		if (exp != null) {
+			if (exp.getSeqKymos().getSequence() != null)
+				exp.getSeqKymos().getSequence().close();
+			exp.setSeqKymos(null);
+			exp.getCapillaries().clearAllMeasures(-1, -1);
 			parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);
+		}
 
 		threadBuildKymo = new BuildKymographs();
 		threadBuildKymo.options = initBuildParameters();
