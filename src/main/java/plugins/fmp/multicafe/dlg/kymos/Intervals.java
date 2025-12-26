@@ -25,7 +25,7 @@ public class Intervals extends JPanel {
 	private MultiCAFE parent0 = null;
 	private JComboBox<String> binUnit = new JComboBox<String>(new String[] { "ms", "s", "min", "h", "day" });
 	JButton applyButton = new JButton("Apply");
-	JButton getFromCamDataButton = new JButton("Get from stack of images");
+	JButton getFromCamDataButton = new JButton("Update");
 	JSpinner firstColumnJSpinner = new JSpinner(new SpinnerNumberModel(0., 0., 10000., 1.));
 	JSpinner lastColumnJSpinner = new JSpinner(new SpinnerNumberModel(99999999., 0., 99999999., 1.));
 	JSpinner binColumnJSpinner = new JSpinner(new SpinnerNumberModel(1., 1., 1000., 1.));

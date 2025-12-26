@@ -57,7 +57,7 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 		tabsPane.addTab("Load/Save", null, tabLoadSave, "Load/Save xml file with capillaries descriptors");
 
 		tabRegister.init(capLayout, parent0);
-		tabsPane.addTab("Register", null, tabRegister, "Register source images");
+		tabsPane.addTab("Registration", null, tabRegister, "Register source images");
 
 		tabsPane.addChangeListener(this);
 		tabsPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);

@@ -376,6 +376,20 @@ public class Capillaries {
 		getList().clear();
 	}
 
+	public int getSelectedCapillary() {
+		int selected = -1;
+		if (getList().size() > 0) {
+			for (Capillary cap : capillariesList) {
+				ROI2D roi = cap.getRoi();
+				if (roi != null && roi.isSelected()) {
+					selected = cap.kymographIndex;
+					break;
+				}
+			}
+		}
+		return selected;
+	}
+
 	// -------------------------------------------------
 
 }

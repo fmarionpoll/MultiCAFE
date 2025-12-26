@@ -64,7 +64,9 @@ public class KymographBuilder {
 				@Override
 				public void run() {
 					for (Capillary capi : exp.getCapillaries().getList()) {
-						analyzeImageWithCapillary(sourceImage, capi, fromSourceImageIndex, kymographColumn);
+						int i = capi.kymographIndex;
+						if (i >= options.kymoFirst && i <= options.kymoLast)
+							analyzeImageWithCapillary(sourceImage, capi, fromSourceImageIndex, kymographColumn);
 					}
 				}
 			}));

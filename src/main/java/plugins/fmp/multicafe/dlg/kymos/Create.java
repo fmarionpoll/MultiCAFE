@@ -1,6 +1,7 @@
 package plugins.fmp.multicafe.dlg.kymos;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -34,8 +35,8 @@ public class Create extends JPanel implements PropertyChangeListener {
 
 	JButton startComputationButton = new JButton("Start");
 	JSpinner diskRadiusSpinner = new JSpinner(new SpinnerNumberModel(3, 1, 100, 1));
-	JCheckBox concurrentDisplayCheckBox = new JCheckBox("concurrent display", false);
 	JCheckBox allSeriesCheckBox = new JCheckBox("ALL series (current to last)", false);
+	JCheckBox selectedCapCheckBox = new JCheckBox("selected capillary", false);
 	JSpinner binSize = new JSpinner(new SpinnerNumberModel(1., 1., 1000., 1.));
 	JComboBoxMs binUnit = new JComboBoxMs();
 
@@ -62,7 +63,8 @@ public class Create extends JPanel implements PropertyChangeListener {
 		((FlowLayout) panel0.getLayout()).setVgap(1);
 		panel0.add(startComputationButton);
 		panel0.add(allSeriesCheckBox);
-		panel0.add(concurrentDisplayCheckBox);
+		panel0.add(selectedCapCheckBox);
+		add(panel0);
 
 		JPanel panel1 = new JPanel(layoutLeft);
 		panel1.add(new JLabel("area around ROIs", SwingConstants.RIGHT));
@@ -71,19 +73,19 @@ public class Create extends JPanel implements PropertyChangeListener {
 		panel1.add(binSize);
 		panel1.add(binUnit);
 		binUnit.setSelectedIndex(2);
+		add(panel1);
 
 		JPanel panel2 = new JPanel(layoutLeft);
 		panel2.add(new JLabel("Analyze "));
 		panel2.add(isFloatingFrameButton);
 		panel2.add(isFixedFrameButton);
 		panel2.add(startJSpinner);
+		startJSpinner.setPreferredSize(new Dimension(80, 20));
 		panel2.add(new JLabel(" to "));
 		panel2.add(endJSpinner);
+		startJSpinner.setPreferredSize(new Dimension(80, 20));
 		panel2.add(intervalsUnit);
 		intervalsUnit.setSelectedIndex(2);
-
-		add(panel0);
-		add(panel1);
 		add(panel2);
 
 		enableIntervalButtons(false);
@@ -137,7 +139,7 @@ public class Create extends JPanel implements PropertyChangeListener {
 		intervalsUnit.setEnabled(isSelected);
 	}
 
-	private BuildSeriesOptions initBuildParameters() {
+	private BuildSeriesOptions initBuildParameters(Experiment exp) {
 		BuildSeriesOptions options = new BuildSeriesOptions();
 		options.expList = parent0.expListComboLazy;
 		options.expList.index0 = parent0.expListComboLazy.getSelectedIndex();
@@ -154,26 +156,38 @@ public class Create extends JPanel implements PropertyChangeListener {
 		options.diskRadius = (int) diskRadiusSpinner.getValue();
 		options.doRegistration = false; // doRegistrationCheckBox.isSelected();
 		options.referenceFrame = 0; // (int) startFrameSpinner.getValue();
-		options.concurrentDisplay = concurrentDisplayCheckBox.isSelected();
+		options.concurrentDisplay = false;
 		options.doCreateBinDir = true;
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = Experiment.BIN + options.t_Ms_BinDuration / 1000;
+
+		options.kymoFirst = 0;
+		options.kymoLast = exp.getCapillaries().getList().size() - 1;
+		if (selectedCapCheckBox.isSelected()) {
+			int t = exp.getCapillaries().getSelectedCapillary();
+			if (t >= 0) {
+				options.kymoFirst = t;
+				options.kymoLast = t;
+			}
+		}
+
 		return options;
 	}
 
 	private void startComputation() {
 		sComputation = EnumStatusComputation.STOP_COMPUTATION;
 		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-		if (exp != null) {
-			if (exp.getSeqKymos().getSequence() != null)
-				exp.getSeqKymos().getSequence().close();
-			exp.setSeqKymos(null);
-			exp.getCapillaries().clearAllMeasures(-1, -1);
-			parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);
-		}
+		if (exp == null)
+			return;
+
+		if (exp.getSeqKymos().getSequence() != null)
+			exp.getSeqKymos().getSequence().close();
+		exp.setSeqKymos(null);
+		parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);
 
 		threadBuildKymo = new BuildKymographs();
-		threadBuildKymo.options = initBuildParameters();
+		threadBuildKymo.options = initBuildParameters(exp);
+		exp.getCapillaries().clearAllMeasures(threadBuildKymo.options.kymoFirst, threadBuildKymo.options.kymoLast);
 
 		threadBuildKymo.addPropertyChangeListener(this);
 		threadBuildKymo.execute();
