@@ -179,7 +179,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 	}
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
-		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSequence());
+		ROI2DUtilities.removeRoisContainingStringAtT(-1, "cage", exp.getSeqCamData().getSequence());
 //		exp.getCages().getCageList().clear();
 
 		int t = exp.getSeqCamData().getCurrentFrame();

@@ -268,8 +268,11 @@ public class SequenceCamData implements AutoCloseable {
 			case DISPLAY:
 				roiManager.displaySpecificROIs(seq, operation.isVisible(), operation.getPattern());
 				return true;
-			case REMOVE:
+			case REMOVE_WITH_PATTERN:
 				roiManager.removeROIsContainingString(seq, operation.getPattern());
+				return true;
+			case REMOVE_MISSING_PATTERN:
+				roiManager.removeROIsMissingString(seq, operation.getPattern());
 				return true;
 			case CENTER:
 				roiManager.centerOnRoi(seq, operation.getRoi());
@@ -307,6 +310,30 @@ public class SequenceCamData implements AutoCloseable {
 		lock.lock();
 		try {
 			return roiManager.getROIsContainingString(seq, pattern);
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	/**
+	 * Finds all ROIs missing the specified pattern.
+	 * 
+	 * @param pattern the search pattern
+	 * @return list of matching ROIs
+	 */
+	public List<ROI2D> findROIsMissingNamePattern(String pattern) {
+		if (pattern == null) {
+			throw new IllegalArgumentException("Pattern cannot be null");
+		}
+
+		ensureNotClosed();
+		if (seq == null) {
+			return new ArrayList<>();
+		}
+
+		lock.lock();
+		try {
+			return roiManager.getROIsMissingString(seq, pattern);
 		} finally {
 			lock.unlock();
 		}

@@ -155,7 +155,7 @@ public class BuildCagesAsArray extends JPanel {
 	}
 
 	private void createROIsFromSelectedPolygon(Experiment exp) {
-		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSequence());
+		ROI2DUtilities.removeRoisContainingStringAtT(-1, "cage", exp.getSeqCamData().getSequence());
 //		exp.getCages().getCageList().clear();
 
 		// read values from text boxes
@@ -173,7 +173,7 @@ public class BuildCagesAsArray extends JPanel {
 		seqCamData.getSequence().removeROI(roiUserPolygon);
 
 		// generate cage frames
-		ROI2DUtilities.removeRoisContainingString(-1, "cage", exp.getSeqCamData().getSequence());
+		ROI2DUtilities.removeRoisContainingStringAtT(-1, "cage", exp.getSeqCamData().getSequence());
 		exp.getCages().getCageList().clear();
 		String cageRoot = "cage";
 		int iRoot = 0;

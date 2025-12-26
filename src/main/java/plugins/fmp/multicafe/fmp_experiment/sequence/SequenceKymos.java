@@ -313,8 +313,8 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public void transferCapillariesMeasuresToKymos(Capillaries capillaries) {
-		List<ROI2D> seqRoisList = getSequence().getROI2Ds(false);
-		ROI2DUtilities.removeROI2DsMissingChar(seqRoisList, '_');
+		List<ROI2D> matchingROIs = this.findROIsMissingNamePattern("_");
+		this.getSequence().removeROIs(matchingROIs, false);
 
 		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
 		int ncapillaries = capillaries.getList().size();
@@ -322,9 +322,8 @@ public class SequenceKymos extends SequenceCamData {
 			List<ROI2D> listOfRois = capillaries.getList().get(i).transferMeasuresToROIs();
 			newRoisList.addAll(listOfRois);
 		}
-		ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, getSequence());
-		getSequence().removeAllROI();
-		getSequence().addROIs(seqRoisList, false);
+
+		getSequence().addROIs(newRoisList, false);
 	}
 
 	public void saveKymosCurvesToCapillariesMeasures(Experiment exp) {
@@ -581,8 +580,9 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	/**
-	 * Updates the maximum dimensions from the current sequence dimensions.
-	 * This is useful when the sequence has been loaded and dimensions need to be synchronized.
+	 * Updates the maximum dimensions from the current sequence dimensions. This is
+	 * useful when the sequence has been loaded and dimensions need to be
+	 * synchronized.
 	 * 
 	 * @return updated KymographInfo with the new dimensions
 	 * @throws IllegalStateException if sequence is not initialized

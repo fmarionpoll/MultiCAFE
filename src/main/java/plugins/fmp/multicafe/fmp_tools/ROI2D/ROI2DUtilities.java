@@ -302,7 +302,7 @@ public class ROI2DUtilities {
 
 	// ----------------------
 
-	public static void removeRoisContainingString(int t, String string, Sequence seq) {
+	public static void removeRoisContainingStringAtT(int t, String string, Sequence seq) {
 		for (ROI roi : seq.getROIs()) {
 			if (roi instanceof ROI2D && roi.getName().contains(string) && (t < 0 || ((ROI2D) roi).getT() == t))
 				seq.removeROI(roi);
