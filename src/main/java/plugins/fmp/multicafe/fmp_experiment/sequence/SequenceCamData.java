@@ -294,7 +294,7 @@ public class SequenceCamData implements AutoCloseable {
 	 * @param pattern the search pattern
 	 * @return list of matching ROIs
 	 */
-	public List<ROI2D> findROIs(String pattern) {
+	public List<ROI2D> findROIsMatchingNamePattern(String pattern) {
 		if (pattern == null) {
 			throw new IllegalArgumentException("Pattern cannot be null");
 		}

@@ -24,7 +24,6 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_tools.Line2DPlus;
-import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DLine;
 
 public class Adjust extends JPanel {
@@ -103,7 +102,7 @@ public class Adjust extends JPanel {
 		if (seqCamData == null)
 			return;
 
-		List<ROI2D> capillaryRois = ROI2DUtilities.getROIs2DContainingString("line", seqCamData.getSequence());
+		List<ROI2D> capillaryRois = seqCamData.findROIsMatchingNamePattern("line");
 		if (capillaryRois == null || capillaryRois.isEmpty())
 			return;
 
@@ -269,7 +268,7 @@ public class Adjust extends JPanel {
 				vinputImage.isSignedDataType());
 
 		// loop through all lines
-		List<ROI2D> capillaryRois = ROI2DUtilities.getROIs2DContainingString("line", seqCamData.getSequence());
+		List<ROI2D> capillaryRois = seqCamData.findROIsMatchingNamePattern("line");
 		for (ROI2D roi : capillaryRois) {
 			if (roi instanceof ROI2DLine) {
 				Line2D line = roisCenterLinetoCapillary(sourceValues, xwidth, (ROI2DLine) roi, jitter);
@@ -402,7 +401,7 @@ public class Adjust extends JPanel {
 			refLineUpper = new Line2D.Double(0, seqheight / 3, seqwidth, seqheight / 3);
 			refLineLower = new Line2D.Double(0, 2 * seqheight / 3, seqwidth, 2 * seqheight / 3);
 
-			List<ROI2D> capillaryRois = ROI2DUtilities.getROIs2DContainingString("line", seqCamData.getSequence());
+			List<ROI2D> capillaryRois = seqCamData.findROIsMatchingNamePattern("line");
 			Rectangle extRect = new Rectangle(capillaryRois.get(0).getBounds());
 			for (ROI2D roi : capillaryRois) {
 				Rectangle rect = roi.getBounds();

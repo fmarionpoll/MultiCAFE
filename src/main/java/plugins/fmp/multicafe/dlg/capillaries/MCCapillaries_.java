@@ -119,13 +119,13 @@ public class MCCapillaries_ extends JPanel implements PropertyChangeListener, Ch
 		if (exp != null) {
 			SequenceKymosUtils.transferCamDataROIStoKymo(exp);
 			exp.getCapillaries().getDesc_old().copy(exp.getCapillaries().getCapillariesDescription());
-			tabInfos.setAllDescriptors(exp.getCapillaries());
+			tabInfos.setDlgInfosCapillaryDescriptors(exp.getCapillaries());
 			tabCreate.setGroupingAndNumber(exp.getCapillaries());
 		}
 	}
 
 	public void getDialogCapillariesInfos(Experiment exp) {
-		tabInfos.getDescriptors(exp.getCapillaries());
+		tabInfos.getCapillaryDescriptorsFromDlgInfos(exp.getCapillaries());
 		tabCreate.setCapillariesGrouping(exp.getCapillaries());
 	}
 

@@ -6,7 +6,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,7 +20,6 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.kernel.roi.roi2d.ROI2DLine;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -309,17 +307,6 @@ public class ROI2DUtilities {
 			if (roi instanceof ROI2D && roi.getName().contains(string) && (t < 0 || ((ROI2D) roi).getT() == t))
 				seq.removeROI(roi);
 		}
-	}
-
-	public static List<ROI2D> getROIs2DContainingString(String string, Sequence seq) {
-		List<ROI2D> roiList = seq.getROI2Ds();
-		Collections.sort(roiList, new Comparators.ROI2D_Name());
-		List<ROI2D> listROIsMatchingString = new ArrayList<ROI2D>();
-		for (ROI2D roi : roiList) {
-			if ((roi instanceof ROI2DShape) && roi.getName().contains(string))
-				listROIsMatchingString.add(roi);
-		}
-		return listROIsMatchingString;
 	}
 
 	public static Polygon2D orderVerticesofPolygon(Polygon roiPolygon) {

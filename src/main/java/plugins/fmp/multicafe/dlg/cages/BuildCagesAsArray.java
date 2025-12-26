@@ -98,7 +98,7 @@ public class BuildCagesAsArray extends JPanel {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
-					exp.getCages().cagesFromROIs(exp.getSeqCamData());
+					exp.getCages().updateCagesFromSequence(exp.getSeqCamData());
 					if (exp.getCapillaries().getList().size() > 0)
 						exp.getCages().transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getList());
 				}

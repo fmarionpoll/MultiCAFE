@@ -1327,7 +1327,7 @@ public class Experiment {
 	}
 
 	public boolean saveCagesArray_File() {
-		cages.transferROIsFromSequenceToCages(seqCamData);
+		cages.updateCagesFromSequence(seqCamData);
 		save_MS96_cages();
 		return save_MS96_spotsMeasures();
 	}
@@ -1598,7 +1598,7 @@ public class Experiment {
 		boolean flag = cages.load_Cages(getResultsDirectory());
 		if (flag && seqCamData.getSequence() != null) {
 			cages.cagesToROIs(seqCamData);
-			cages.cagesFromROIs(seqCamData);
+			cages.updateCagesFromSequence(seqCamData);
 		}
 
 		// If cages list is empty after loading, create cages from capillaries
@@ -1623,7 +1623,7 @@ public class Experiment {
 	}
 
 	public void saveCageAndMeasures() {
-		cages.cagesFromROIs(seqCamData);
+		cages.updateCagesFromSequence(seqCamData);
 		saveCageMeasures();
 	}
 

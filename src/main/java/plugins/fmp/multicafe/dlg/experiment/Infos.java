@@ -255,7 +255,7 @@ public class Infos extends JPanel {
 				.setGroupedBy2(exp0.getCapillaries().getCapillariesDescription().getGrouping() == 2);
 		exp.getCapillaries().getCapillariesDescription()
 				.setVolume(exp0.getCapillaries().getCapillariesDescription().getVolume());
-		parent0.paneCapillaries.tabInfos.setAllDescriptors(exp0.getCapillaries());
+		parent0.paneCapillaries.tabInfos.setDlgInfosCapillaryDescriptors(exp0.getCapillaries());
 	}
 
 	void zoomToUpperCorner(Experiment exp) {

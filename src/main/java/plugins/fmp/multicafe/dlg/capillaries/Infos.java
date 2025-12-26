@@ -80,12 +80,12 @@ public class Infos extends JPanel {
 
 	// set/ get
 
-	public void setAllDescriptors(Capillaries cap) {
+	public void setDlgInfosCapillaryDescriptors(Capillaries cap) {
 		capillaryVolumeSpinner.setValue(cap.getCapillariesDescription().getVolume());
 		capillaryPixelsSpinner.setValue(cap.getCapillariesDescription().getPixels());
 	}
 
-	void getDescriptors(Capillaries capList) {
+	void getCapillaryDescriptorsFromDlgInfos(Capillaries capList) {
 		capList.getCapillariesDescription().setVolume((double) capillaryVolumeSpinner.getValue());
 		capList.getCapillariesDescription().setPixels((int) capillaryPixelsSpinner.getValue());
 	}
@@ -94,7 +94,7 @@ public class Infos extends JPanel {
 		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		int npixels = 0;
 		if (exp != null) {
-			exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData().getSequence());
+			exp.getCapillaries().updateCapillariesFromSequence(exp.getSeqCamData());
 			if (exp.getCapillaries().getList().size() > 0) {
 				Capillary cap = exp.getCapillaries().getList().get(0);
 				npixels = cap.getCapillaryROILength();

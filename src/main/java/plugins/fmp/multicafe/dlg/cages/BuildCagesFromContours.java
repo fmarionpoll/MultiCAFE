@@ -103,7 +103,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					createROIsFromSelectedPolygon(exp);
-					exp.getCages().cagesFromROIs(exp.getSeqCamData());
+					exp.getCages().updateCagesFromSequence(exp.getSeqCamData());
 					if (exp.getCapillaries().getList().size() > 0)
 						exp.getCages().transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getList());
 				}
@@ -232,7 +232,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		if (roiSnip == null)
 			return;
 
-		List<ROI2D> roiList = ROI2DUtilities.getROIs2DContainingString("cage", seqCamData.getSequence());
+		List<ROI2D> roiList = seqCamData.findROIsMatchingNamePattern("cage");
 		for (ROI2D cageRoi : roiList) {
 			if (roiSnip.intersects(cageRoi) && cageRoi instanceof ROI2DPolygon) {
 				Polygon2D oldPolygon = ((ROI2DPolygon) cageRoi).getPolygon2D();

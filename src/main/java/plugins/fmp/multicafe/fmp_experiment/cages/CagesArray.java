@@ -195,7 +195,6 @@ public class CagesArray {
 		return persistence.xmlReadCagesFromFileNoQuestion(this, tempname);
 	}
 
-
 	// --------------
 
 	private boolean isPresent(Cage cagenew) {
@@ -389,10 +388,10 @@ public class CagesArray {
 			sequence.addROIs(cageROIList, true);
 	}
 
-	public void transferROIsFromSequenceToCages(SequenceCamData seqCamData) {
-		// Use modern ROI finding API
-		List<ROI2D> roiList = seqCamData.findROIs("cage");
+	public void updateCagesFromSequence(SequenceCamData seqCamData) {
+		List<ROI2D> roiList = seqCamData.findROIsMatchingNamePattern("cage");
 		Collections.sort(roiList, new Comparators.ROI2D_Name());
+
 		transferROIsToCages(roiList);
 		addMissingCages(roiList);
 		removeOrphanCages(roiList);
@@ -430,7 +429,7 @@ public class CagesArray {
 						// Fall back to string matching
 					}
 				}
-				
+
 				// Fall back to string matching if ID matching failed
 				if (!matched) {
 					CageProperties prop = cage.getProperties();
@@ -477,7 +476,8 @@ public class CagesArray {
 				}
 			}
 			if (!found) {
-				// Only create new cage if no match found - this preserves fly positions from loaded cages
+				// Only create new cage if no match found - this preserves fly positions from
+				// loaded cages
 				Cage cage = new Cage();
 				cage.setRoi((ROI2DShape) roi);
 				cagesList.add(cage);
@@ -535,10 +535,6 @@ public class CagesArray {
 
 	public void cagesToROIs(SequenceCamData seqCamData) {
 		transferCagesToSequenceAsROIs(seqCamData);
-	}
-
-	public void cagesFromROIs(SequenceCamData seqCamData) {
-		transferROIsFromSequenceToCages(seqCamData);
 	}
 
 	public boolean load_Cages(String directory) {
@@ -712,7 +708,7 @@ public class CagesArray {
 
 	public void transferROIsFromSequenceToCageSpots(SequenceCamData seqCamData) {
 		// Use modern ROI finding API
-		List<ROI2D> listSeqRois = seqCamData.findROIs("spot");
+		List<ROI2D> listSeqRois = seqCamData.findROIsMatchingNamePattern("spot");
 //		int T = 0;
 //		Viewer v = seqCamData.getSequence().getFirstViewer();
 //		if (v != null)

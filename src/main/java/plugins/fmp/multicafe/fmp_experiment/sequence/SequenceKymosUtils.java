@@ -8,7 +8,6 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.Logger;
-import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class SequenceKymosUtils {
@@ -23,7 +22,7 @@ public class SequenceKymosUtils {
 		}
 
 		// rois not in cap? add
-		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", exp.getSeqCamData().getSequence());
+		List<ROI2D> listROISCap = exp.getSeqCamData().findROIsMatchingNamePattern("line");
 		for (ROI2D roi : listROISCap) {
 			boolean found = false;
 			for (Capillary cap : exp.getCapillaries().getList()) {
@@ -55,7 +54,7 @@ public class SequenceKymosUtils {
 	public static void transferKymoCapillariesToCamData(Experiment exp) {
 		if (exp.getCapillaries() == null)
 			return;
-		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", exp.getSeqCamData().getSequence());
+		List<ROI2D> listROISCap = exp.getSeqCamData().findROIsMatchingNamePattern("line");
 		// roi with no corresponding cap? add ROI
 		for (Capillary cap : exp.getCapillaries().getList()) {
 			boolean found = false;

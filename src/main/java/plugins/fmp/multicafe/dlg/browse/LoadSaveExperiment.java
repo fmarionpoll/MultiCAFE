@@ -637,7 +637,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 						int cagesWithFlyPosBefore = countCagesWithFlyPositions(finalExp);
 
 						finalExp.getCages().cagesToROIs(finalExp.getSeqCamData());
-						finalExp.getCages().cagesFromROIs(finalExp.getSeqCamData());
+						finalExp.getCages().updateCagesFromSequence(finalExp.getSeqCamData());
 
 						int cagesWithFlyPosAfter = countCagesWithFlyPositions(finalExp);
 
@@ -1024,7 +1024,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
 
 					// Save cage measures asynchronously
-					exp.getCages().cagesFromROIs(exp.getSeqCamData());
+					exp.getCages().updateCagesFromSequence(exp.getSeqCamData());
 
 					// Cancel any previous save future
 					if (activeSaveFuture != null && !activeSaveFuture.isDone()) {

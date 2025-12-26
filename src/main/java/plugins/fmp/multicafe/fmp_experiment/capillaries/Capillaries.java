@@ -9,9 +9,9 @@ import java.util.List;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
+import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.AlongT;
-import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
@@ -142,7 +142,6 @@ public class Capillaries {
 			String nameL = name.substring(0, name.length() - 1) + "L";
 			Capillary cap0 = getCapillaryFromRoiName(nameL);
 			if (cap0 != null) {
-//				cap.capNFlies = cap0.capNFlies;
 				cap.setCageID(cap0.getCageID());
 			}
 		}
@@ -184,8 +183,8 @@ public class Capillaries {
 		return capFound;
 	}
 
-	public void updateCapillariesFromSequence(Sequence seq) {
-		List<ROI2D> listROISCap = ROI2DUtilities.getROIs2DContainingString("line", seq);
+	public void updateCapillariesFromSequence(SequenceCamData seqCamData) {
+		List<ROI2D> listROISCap = seqCamData.findROIsMatchingNamePattern("line");
 		Collections.sort(listROISCap, new Comparators.ROI2D_Name());
 
 		// Capillary-driven approach: Only update existing capillaries with ROIs from
