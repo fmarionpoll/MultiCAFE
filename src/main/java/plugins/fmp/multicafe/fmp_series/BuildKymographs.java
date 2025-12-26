@@ -41,14 +41,10 @@ public class BuildKymographs extends BuildSeries {
 
 	protected void getTimeLimitsOfSequence(Experiment exp) {
 		exp.getFileIntervalsFromSeqCamData();
-		System.out.println("first:" + exp.getCamImageFirst_ms() + " last:" + exp.getCamImageLast_ms());
-
 		exp.setKymoBin_ms(options.t_Ms_BinDuration);
 		if (options.isFrameFixed) {
 			exp.setKymoFirst_ms(options.t_Ms_First);
 			exp.setKymoLast_ms(options.t_Ms_Last);
-//			if (exp.getKymoLast_ms() + exp.getCamImageFirst_ms() > exp.getCamImageLast_ms())
-//				exp.setKymoLast_ms(exp.getCamImageLast_ms() - exp.getCamImageFirst_ms());
 			if (exp.getKymoLast_ms() > exp.getCamImageLast_ms())
 				exp.setKymoLast_ms(exp.getCamImageLast_ms());
 		} else {
