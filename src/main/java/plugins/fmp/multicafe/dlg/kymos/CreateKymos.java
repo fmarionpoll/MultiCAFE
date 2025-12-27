@@ -26,7 +26,7 @@ import plugins.fmp.multicafe.fmp_series.BuildKymographs;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxMs;
 
-public class Create extends JPanel implements PropertyChangeListener {
+public class CreateKymos extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */

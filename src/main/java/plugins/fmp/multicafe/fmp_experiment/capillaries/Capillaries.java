@@ -191,6 +191,17 @@ public class Capillaries {
 		return capFound;
 	}
 
+	public Capillary getCapillaryAtT(int t) {
+		Capillary capFound = null;
+		for (Capillary cap : getList()) {
+			if (cap.kymographIndex == t) {
+				capFound = cap;
+				break;
+			}
+		}
+		return capFound;
+	}
+
 	public void updateCapillariesFromSequence(SequenceCamData seqCamData) {
 		List<ROI2D> listROISCap = seqCamData.findROIsMatchingNamePattern("line");
 		Collections.sort(listROISCap, new Comparators.ROI2D_Name());

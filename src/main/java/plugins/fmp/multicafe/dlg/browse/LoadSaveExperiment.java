@@ -689,7 +689,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	private PropertyChangeListener createCageLoadWorkerListener(Experiment exp, int expIndex,
 			ProgressFrame progressFrame) {
 		final Experiment finalExp = exp;
-//		final int finalExpIndex = expIndex;
+		;
 		final ProgressFrame finalProgressFrame = progressFrame;
 
 		return evt -> {

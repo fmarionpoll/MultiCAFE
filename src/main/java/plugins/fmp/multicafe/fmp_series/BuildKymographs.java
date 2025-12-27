@@ -1,32 +1,21 @@
 package plugins.fmp.multicafe.fmp_series;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.swing.SwingUtilities;
-
-import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_service.KymographBuilder;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 public class BuildKymographs extends BuildSeries {
 	public Sequence seqData = new Sequence();
-	private Viewer vData = null;
+//	private Viewer vData = null;
 
 	void analyzeExperiment(Experiment exp) {
 		loadExperimentDataToBuildKymos(exp);
-
-		openKymoViewers(exp);
 		getTimeLimitsOfSequence(exp);
 
 		KymographBuilder builder = new KymographBuilder();
 		if (builder.buildKymograph(exp, options))
 			builder.saveComputation(exp, options);
-
-		closeKymoViewers();
-		exp.getSeqKymos().closeSequence();
 	}
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
@@ -50,29 +39,6 @@ public class BuildKymographs extends BuildSeries {
 		} else {
 			exp.setKymoFirst_ms(0);
 			exp.setKymoLast_ms(exp.getCamImageLast_ms() - exp.getCamImageFirst_ms());
-		}
-
-		int kymoImageWidth = (int) ((exp.getKymoLast_ms() - exp.getKymoFirst_ms()) / exp.getKymoBin_ms() + 1);
-		System.out.println("kymoImageWidth =" + kymoImageWidth);
-	}
-
-	private void closeKymoViewers() {
-		closeViewer(vData);
-		closeSequence(seqData);
-	}
-
-	private void openKymoViewers(Experiment exp) {
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {
-					seqData = newSequence(
-							"analyze stack starting with file " + exp.getSeqCamData().getSequence().getName(),
-							exp.getSeqCamData().getSeqImage(0, 0));
-					vData = new Viewer(seqData, true);
-				}
-			});
-		} catch (InvocationTargetException | InterruptedException e) {
-			Logger.error("BuildKymographs:openKymoViewers() Failed to open kymograph viewers", e);
 		}
 	}
 

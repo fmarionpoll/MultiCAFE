@@ -24,7 +24,7 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 	private static final long serialVersionUID = 1122367183829360097L;
 	PopupPanel capPopupPanel = null;
 	JTabbedPane tabsPane = new JTabbedPane();
-	public Create tabCreate = new Create();
+	public CreateKymos tabCreate = new CreateKymos();
 	public Display tabDisplay = new Display();
 	public Intervals tabIntervals = new Intervals();
 	public LoadSave tabLoadSave = new LoadSave();
