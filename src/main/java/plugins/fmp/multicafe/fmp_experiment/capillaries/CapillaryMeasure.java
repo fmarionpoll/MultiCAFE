@@ -312,6 +312,7 @@ public class CapillaryMeasure {
 				sbf.append(sep);
 			}
 		}
+
 		return true;
 	}
 

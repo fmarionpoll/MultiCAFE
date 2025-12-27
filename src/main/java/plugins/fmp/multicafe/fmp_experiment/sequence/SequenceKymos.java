@@ -285,8 +285,14 @@ public class SequenceKymos extends SequenceCamData {
 			if (capillaries.getList().size() <= kymo) {
 				capillaries.getList().add(new Capillary());
 			}
-			Capillary cap = capillaries.getList().get(kymo);
-			cap.transferROIsToMeasures(roisAtT);
+
+//			Capillary cap = capillaries.getList().get(kymo);
+//			cap.transferROIsToMeasures(roisAtT);
+			final int i = kymo;
+			Capillary cap = capillaries.getList().stream().filter(c -> c.kymographIndex == i).findFirst().orElse(null);
+			if (cap != null) {
+				cap.transferROIsToMeasures(roisAtT);
+			}
 		}
 		return true;
 	}

@@ -54,7 +54,7 @@ public class LevelDetector {
 				continue;
 			if (!options.detectL && capi.getKymographName().endsWith("1"))
 				continue;
-			System.out.println("cap name=" + capi.getRoiName() + " filename=" + fullPath);
+
 			capi.getDerivative().clear();
 			capi.getGulps().clear();
 			capi.getProperties().limitsOptions.copyFrom(options);

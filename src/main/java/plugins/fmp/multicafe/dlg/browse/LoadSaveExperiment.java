@@ -559,17 +559,19 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		}
 
 		progressFrame.setMessage("Load capillary measures");
+		boolean loadMeasures = true;
 		if (selectedBinDir != null && exp.getBinSubDirectory() != null) {
 			String binFullDir = exp.getKymosBinFullDirectory();
 			if (binFullDir != null) {
 				exp.loadCapillaries();
 				if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
 					exp.getSeqKymos().transferCapillariesMeasuresToKymos(exp.getCapillaries());
+					loadMeasures = false;
 				}
 			}
 		}
 
-		if (kymosLoaded && exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
+		if (loadMeasures && kymosLoaded && exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
 			exp.getSeqKymos().transferCapillariesMeasuresToKymos(exp.getCapillaries());
 		}
 	}
