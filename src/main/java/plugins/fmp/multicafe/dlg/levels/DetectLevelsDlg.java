@@ -64,7 +64,7 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 	private JCheckBox overlayPass2CheckBox = new JCheckBox("overlay");
 	private JSpinner jitter2Spinner = new JSpinner(new SpinnerNumberModel(5, 0, 255, 1));
 
-	private JCheckBox allKymosCheckBox = new JCheckBox("all kymographs", true);
+	private JCheckBox selectedKymoCheckBox = new JCheckBox("selected kymograph", false);
 	private JSpinner spanTopSpinner = new JSpinner(new SpinnerNumberModel(3, 1, 100, 1));
 	private String detectString = "        Detect     ";
 	private JButton detectButton = new JButton(detectString);
@@ -95,7 +95,7 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 		JPanel panel0 = new JPanel(layoutLeft);
 		panel0.add(detectButton);
 		panel0.add(allSeriesCheckBox);
-		panel0.add(allKymosCheckBox);
+		panel0.add(selectedKymoCheckBox);
 		panel0.add(leftCheckBox);
 		panel0.add(rightCheckBox);
 		add(panel0);
@@ -323,7 +323,7 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 		direction2ComboBox.setSelectedIndex(index);
 		threshold2Spinner.setValue(options.detectLevel2Threshold);
 		jitter2Spinner.setValue(options.jitter2);
-		allKymosCheckBox.setSelected(options.detectAllKymos);
+		selectedKymoCheckBox.setSelected(!options.detectSelectedKymo);
 		leftCheckBox.setSelected(options.detectL);
 		rightCheckBox.setSelected(options.detectR);
 
@@ -340,7 +340,7 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 		options.detectLevel1Threshold = (int) threshold1Spinner.getValue();
 		options.directionUp2 = (direction2ComboBox.getSelectedIndex() == 0);
 		options.detectLevel2Threshold = (int) threshold2Spinner.getValue();
-		options.detectAllKymos = allKymosCheckBox.isSelected();
+		options.detectSelectedKymo = selectedKymoCheckBox.isSelected();
 
 		options.detectL = leftCheckBox.isSelected();
 		options.detectR = rightCheckBox.isSelected();
@@ -356,16 +356,17 @@ public class DetectLevelsDlg extends JPanel implements PropertyChangeListener {
 		else
 			options.expList.index1 = parent0.expListComboLazy.getSelectedIndex();
 		// list of kymographs
-		options.detectAllKymos = allKymosCheckBox.isSelected();
-		currentKymographImage = 0;
-		if (!allKymosCheckBox.isSelected()) {
-			int t = exp.getSeqKymos().getSequence().getFirstViewer().getPositionT();
-			options.kymoFirst = t;
-			options.kymoLast = t;
+		options.detectSelectedKymo = selectedKymoCheckBox.isSelected();
+
+		if (selectedKymoCheckBox.isSelected()) {
+			options.kymoFirst = exp.getSeqKymos().getSequence().getFirstViewer().getPositionT();
+			;
+			options.kymoLast = options.kymoFirst;
 			currentKymographImage = exp.getSeqKymos().getSequence().getFirstViewer().getPositionT();
 		} else {
 			options.kymoFirst = 0;
 			options.kymoLast = exp.getSeqKymos().getSequence().getSizeT() - 1;
+			currentKymographImage = 0;
 		}
 		// other parameters
 		options.pass1 = pass1CheckBox.isSelected();

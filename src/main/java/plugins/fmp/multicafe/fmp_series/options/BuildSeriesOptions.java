@@ -37,7 +37,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public int detectCage = -1;
 	public boolean detectL = true;
 	public boolean detectR = true;
-	public boolean detectAllKymos = true;
+	public boolean detectSelectedKymo = true;
 	public int kymoFirst = 0;
 	public int kymoLast = 0;
 	public double detectGulpsThreshold_uL = .3;

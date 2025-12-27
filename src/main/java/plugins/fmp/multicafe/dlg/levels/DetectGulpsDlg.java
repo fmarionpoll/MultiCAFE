@@ -33,7 +33,7 @@ public class DetectGulpsDlg extends JPanel implements PropertyChangeListener {
 	 */
 	private static final long serialVersionUID = -5590697762090397890L;
 
-	JCheckBox allKymosCheckBox = new JCheckBox("all kymographs", true);
+	JCheckBox selectedKymoCheckBox = new JCheckBox("selected kymograph", false);
 	ImageTransformEnums[] gulpTransforms = new ImageTransformEnums[] { ImageTransformEnums.XDIFFN,
 			ImageTransformEnums.YDIFFN, ImageTransformEnums.YDIFFN2, ImageTransformEnums.XYDIFFN };
 
@@ -63,7 +63,7 @@ public class DetectGulpsDlg extends JPanel implements PropertyChangeListener {
 		JPanel panel0 = new JPanel(layoutLeft);
 		panel0.add(detectButton);
 		panel0.add(all_checkbox);
-		panel0.add(allKymosCheckBox);
+		panel0.add(selectedKymoCheckBox);
 		panel0.add(derivative_checkbox);
 		panel0.add(gulps_checkbox);
 		add(panel0);
@@ -147,9 +147,9 @@ public class DetectGulpsDlg extends JPanel implements PropertyChangeListener {
 		else
 			options.expList.index1 = parent0.expListComboLazy.getSelectedIndex();
 
-		options.detectAllKymos = allKymosCheckBox.isSelected();
+		options.detectSelectedKymo = selectedKymoCheckBox.isSelected();
 
-		if (!allKymosCheckBox.isSelected()) {
+		if (selectedKymoCheckBox.isSelected()) {
 			int t = exp.getSeqKymos().getSequence().getFirstViewer().getPositionT();
 			options.kymoFirst = t;
 			options.kymoLast = t;
@@ -159,7 +159,7 @@ public class DetectGulpsDlg extends JPanel implements PropertyChangeListener {
 		}
 		options.detectGulpsThreshold_uL = (double) detectGulpsThresholdSpinner.getValue();
 		options.transformForGulps = (ImageTransformEnums) gulpTransforms_comboBox.getSelectedItem();
-		options.detectAllGulps = allKymosCheckBox.isSelected();
+		options.detectAllGulps = selectedKymoCheckBox.isSelected();
 		options.spanDiff = (int) spanTransf2Spinner.getValue();
 		options.buildGulps = gulps_checkbox.isSelected();
 		options.buildDerivative = derivative_checkbox.isSelected();
@@ -189,7 +189,7 @@ public class DetectGulpsDlg extends JPanel implements PropertyChangeListener {
 		BuildSeriesOptions options = cap.getGulpsOptions();
 		detectGulpsThresholdSpinner.setValue(options.detectGulpsThreshold_uL);
 		gulpTransforms_comboBox.setSelectedItem(options.transformForGulps);
-		allKymosCheckBox.setSelected(options.detectAllGulps);
+		selectedKymoCheckBox.setSelected(options.detectAllGulps);
 	}
 
 	private void stopComputation() {

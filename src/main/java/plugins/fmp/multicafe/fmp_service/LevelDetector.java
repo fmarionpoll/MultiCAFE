@@ -21,9 +21,9 @@ import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 public class LevelDetector {
 
 	public void detectLevels(Experiment exp, BuildSeriesOptions options) {
-		SequenceKymos seqKymos = exp.getSeqKymos();
-		seqKymos.getSequence().removeAllROI();
+		final SequenceKymos seqKymos = exp.getSeqKymos();
 		seqKymos.getSequence().beginUpdate();
+		seqKymos.getSequence().removeAllROI();
 
 		int tFirsKymo = options.kymoFirst;
 		if (tFirsKymo > seqKymos.getSequence().getSizeT() || tFirsKymo < 0)
@@ -32,11 +32,10 @@ public class LevelDetector {
 		if (tLastKymo >= seqKymos.getSequence().getSizeT())
 			tLastKymo = seqKymos.getSequence().getSizeT() - 1;
 
-		int nframes = tLastKymo - tFirsKymo + 1;
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("detectlevel");
 		processor.setPriority(Processor.NORM_PRIORITY);
-		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(nframes);
+		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(tLastKymo - tFirsKymo + 1);
 		futures.clear();
 
 		final int jitter = 10;
@@ -46,18 +45,16 @@ public class LevelDetector {
 		SequenceLoaderService loader = new SequenceLoaderService();
 
 		for (int tKymo = tFirsKymo; tKymo <= tLastKymo; tKymo++) {
-			String fullPath = exp.getSeqKymos().getFileNameFromImageList(tKymo);
+			String fullPath = seqKymos.getFileNameFromImageList(tKymo);
 			String nameWithoutExt = new File(fullPath).getName().replaceFirst("[.][^.]+$", "");
 			final Capillary capi = exp.getCapillaries().getCapillaryFromKymographName(nameWithoutExt);
 			if (capi == null)
 				continue;
-
 			if (!options.detectR && capi.getKymographName().endsWith("2"))
 				continue;
 			if (!options.detectL && capi.getKymographName().endsWith("1"))
 				continue;
-
-			capi.kymographIndex = tKymo;
+			System.out.println("cap name=" + capi.getRoiName() + " filename=" + fullPath);
 			capi.getDerivative().clear();
 			capi.getGulps().clear();
 			capi.getProperties().limitsOptions.copyFrom(options);
