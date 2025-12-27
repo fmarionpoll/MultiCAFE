@@ -182,10 +182,6 @@ public class KymographBuilder {
 	}
 
 	private void build_capillaryImage_from_capInteger(final Capillary cap, final int sizeC) {
-		if (cap.cap_Image == null) {
-			return;
-		}
-
 		ArrayList<int[]> cap_Integer = cap.getCapInteger();
 		boolean isSignedDataType = cap.cap_Image.isSignedDataType();
 		for (int chan = 0; chan < sizeC; chan++) {
