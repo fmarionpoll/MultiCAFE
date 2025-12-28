@@ -25,7 +25,7 @@ public class GulpDetector {
 		int jitter = options.jitter;
 		int firstKymo = 0;
 		int lastKymo = exp.getSeqKymos().getSequence().getSizeT() - 1;
-		if (!options.detectAllGulps) {
+		if (options.detectSelectedKymo) {
 			firstKymo = options.kymoFirst;
 			lastKymo = firstKymo;
 		}
@@ -46,15 +46,16 @@ public class GulpDetector {
 			final Capillary capi = exp.getCapillaries().getCapillaryFromKymographName(nameWithoutExt);
 			if (capi == null)
 				continue;
-
+			if (tKymo != capi.getKymographIndex())
+				System.out.println(
+						"discrepancy between t=" + tKymo + " and cap.kymographIndex=" + capi.getKymographIndex());
 			capi.setGulpsOptions(options);
-			capi.kymographIndex = tKymo;
 			futures.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
 					if (options.buildDerivative)
 						capi.setDerivative(new CapillaryMeasure(capi.getLast2ofCapillaryName() + "_derivative",
-								capi.kymographIndex, getDerivativeProfile(seqAnalyzed, capi, jitter)));
+								capi.getKymographIndex(), getDerivativeProfile(seqAnalyzed, capi, jitter)));
 
 					if (options.buildGulps) {
 						capi.initGulps();
@@ -92,7 +93,7 @@ public class GulpDetector {
 
 		int z = seq.getSizeZ() - 1;
 		int c = 0;
-		IcyBufferedImage image = seq.getImage(cap.kymographIndex, z, c);
+		IcyBufferedImage image = seq.getImage(cap.getKymographIndex(), z, c);
 		List<Point2D> listOfMaxPoints = new ArrayList<>();
 		int[] kymoImageValues = Array1DUtil.arrayToIntArray(image.getDataXY(c), image.isSignedDataType());
 		int xwidth = image.getSizeX();

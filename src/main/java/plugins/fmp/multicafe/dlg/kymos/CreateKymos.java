@@ -170,7 +170,6 @@ public class CreateKymos extends JPanel implements PropertyChangeListener {
 				options.kymoLast = t;
 			}
 		}
-
 		return options;
 	}
 

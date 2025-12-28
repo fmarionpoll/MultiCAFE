@@ -21,8 +21,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePair;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePanel;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
@@ -47,8 +47,9 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 	 * Creates a new capillary chart interaction handler.
 	 * 
 	 * @param experiment      the experiment containing the data
-	 * @param resultsOptions   the export options
-	 * @param chartPanelArray  the array of chart panel pairs (unused, kept for interface compatibility)
+	 * @param resultsOptions  the export options
+	 * @param chartPanelArray the array of chart panel pairs (unused, kept for
+	 *                        interface compatibility)
 	 */
 	public CapillaryChartInteractionHandler(Experiment experiment, ResultsOptions resultsOptions,
 			@SuppressWarnings("unused") ChartCagePair[][] chartPanelArray) {
@@ -60,7 +61,6 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 	public ChartMouseListener createMouseListener() {
 		return new CapillaryChartMouseListener();
 	}
-
 
 	/**
 	 * Gets the capillary from a clicked chart.
@@ -315,9 +315,8 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 		// Convert time (minutes) to frame index
 		if (timeMinutes >= 0) {
 			// Find nearest frame index
-			int frameIndex = exp.getSeqCamData().getTimeManager()
-					.findNearestIntervalWithBinarySearch((long) (timeMinutes * 60000), 0,
-							exp.getSeqCamData().getImageLoader().getNTotalFrames());
+			int frameIndex = exp.getSeqCamData().getTimeManager().findNearestIntervalWithBinarySearch(
+					(long) (timeMinutes * 60000), 0, exp.getSeqCamData().getImageLoader().getNTotalFrames());
 			v.setPositionT(frameIndex);
 		}
 	}
@@ -344,7 +343,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 		}
 
 		// Use kymographIndex if available, otherwise find by capillary position
-		int kymographIndex = capillary.kymographIndex;
+		int kymographIndex = capillary.getKymographIndex();
 		if (kymographIndex < 0) {
 			// Find capillary index in the list
 			List<Capillary> capillaries = exp.getCapillaries().getList();
@@ -359,13 +358,13 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 	/**
 	 * Handles the selection of a clicked capillary.
 	 * 
-	 * @param exp            the experiment
-	 * @param resultsOptions the export options
+	 * @param exp              the experiment
+	 * @param resultsOptions   the export options
 	 * @param clickedCapillary the clicked capillary
-	 * @param timeMinutes    the time in minutes from the clicked X coordinate
+	 * @param timeMinutes      the time in minutes from the clicked X coordinate
 	 */
-	private void chartSelectClickedCapillary(Experiment exp, ResultsOptions resultsOptions,
-			Capillary clickedCapillary, double timeMinutes) {
+	private void chartSelectClickedCapillary(Experiment exp, ResultsOptions resultsOptions, Capillary clickedCapillary,
+			double timeMinutes) {
 		if (clickedCapillary == null) {
 			LOGGER.warning("Clicked capillary is null");
 			return;
@@ -436,4 +435,3 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 		}
 	}
 }
-

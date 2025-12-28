@@ -42,9 +42,9 @@ public class CapillaryPersistence {
 		boolean flag = (nodeMeta != null);
 		if (flag) {
 			cap.version = XMLUtil.getElementValue(nodeMeta, ID_VERSION, "0.0.0");
-			cap.kymographIndex = XMLUtil.getElementIntValue(nodeMeta, ID_INDEXIMAGE, cap.kymographIndex);
+			cap.setKymographIndex(XMLUtil.getElementIntValue(nodeMeta, ID_INDEXIMAGE, cap.getKymographIndex()));
 			cap.setKymographName(XMLUtil.getElementValue(nodeMeta, ID_NAME, cap.getKymographName()));
-			cap.kymographFilename = XMLUtil.getElementValue(nodeMeta, ID_NAMETIFF, cap.kymographFilename);
+			cap.setKymographFileName(XMLUtil.getElementValue(nodeMeta, ID_NAMETIFF, cap.getKymographFileName()));
 
 			// Load properties
 			cap.getProperties().loadFromXml(nodeMeta);
@@ -97,11 +97,11 @@ public class CapillaryPersistence {
 			cap.version = ID_VERSIONNUM;
 
 		XMLUtil.setElementValue(nodeMeta, ID_VERSION, cap.version);
-		XMLUtil.setElementIntValue(nodeMeta, ID_INDEXIMAGE, cap.kymographIndex);
+		XMLUtil.setElementIntValue(nodeMeta, ID_INDEXIMAGE, cap.getKymographIndex());
 		XMLUtil.setElementValue(nodeMeta, ID_NAME, cap.getKymographName());
 
-		if (cap.kymographFilename != null) {
-			String filename = Paths.get(cap.kymographFilename).getFileName().toString();
+		if (cap.getKymographFileName() != null) {
+			String filename = Paths.get(cap.getKymographFileName()).getFileName().toString();
 			XMLUtil.setElementValue(nodeMeta, ID_NAMETIFF, filename);
 		}
 
@@ -158,7 +158,7 @@ public class CapillaryPersistence {
 		CapillaryProperties props = cap.getProperties();
 
 		// Ensure cap_prefix is never null - derive from ROI name or kymograph name
-		String capPrefix = cap.getRoiNamePrefix();
+		String capPrefix = cap.getKymographPrefix();
 		if (capPrefix == null || capPrefix.isEmpty()) {
 			// Try to derive from ROI name first (format: "line0L" -> "0L")
 			String roiName = cap.getRoiName();
@@ -167,7 +167,8 @@ public class CapillaryPersistence {
 				String suffix = roiName.substring(4); // Skip "line"
 				capPrefix = suffix;
 			} else {
-				// Fallback to kymograph name (format: "line01" -> "01", but we want "0L" or "0R")
+				// Fallback to kymograph name (format: "line01" -> "01", but we want "0L" or
+				// "0R")
 				String kymoName = cap.getKymographName();
 				if (kymoName != null && kymoName.length() >= 2) {
 					// If kymograph name ends with "1" or "2", convert to "L" or "R"
@@ -188,10 +189,10 @@ public class CapillaryPersistence {
 			capPrefix = "";
 		}
 
-		List<String> row = Arrays.asList(capPrefix, Integer.toString(cap.kymographIndex),
-				cap.getKymographName(), cap.kymographFilename, Integer.toString(props.getCageID()),
-				Integer.toString(props.getNFlies()), Double.toString(props.getVolume()),
-				Integer.toString(props.getPixels()), props.getStimulus(), props.getConcentration(), props.getSide());
+		List<String> row = Arrays.asList(capPrefix, Integer.toString(cap.getKymographIndex()), cap.getKymographName(),
+				cap.getKymographFileName(), Integer.toString(props.getCageID()), Integer.toString(props.getNFlies()),
+				Double.toString(props.getVolume()), Integer.toString(props.getPixels()), props.getStimulus(),
+				props.getConcentration(), props.getSide());
 		sbf.append(String.join(sep, row));
 		sbf.append("\n");
 		return sbf.toString();
@@ -227,7 +228,7 @@ public class CapillaryPersistence {
 
 	public static String csvExportMeasuresOneType(Capillary cap, EnumCapillaryMeasures measureType, String sep) {
 		StringBuffer sbf = new StringBuffer();
-		sbf.append(cap.getRoiNamePrefix() + sep + cap.kymographIndex + sep);
+		sbf.append(cap.getKymographPrefix() + sep + cap.getKymographIndex() + sep);
 
 		switch (measureType) {
 		case TOPRAW:
@@ -257,11 +258,11 @@ public class CapillaryPersistence {
 		int i = 0;
 		cap.setKymographPrefix(data[i]);
 		i++;
-		cap.kymographIndex = Integer.valueOf(data[i]);
+		cap.setKymographIndex(Integer.valueOf(data[i]));
 		i++;
 		cap.setKymographName(data[i]);
 		i++;
-		cap.kymographFilename = data[i];
+		cap.setKymographFileName(data[i]);
 		i++;
 		CapillaryProperties props = cap.getProperties();
 		props.setCageID(Integer.valueOf(data[i]));

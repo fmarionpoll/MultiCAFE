@@ -134,7 +134,7 @@ public class Capillaries {
 
 	public void clearAllMeasures(int first, int last) {
 		for (Capillary cap : getList()) {
-			int i = cap.kymographIndex;
+			int i = cap.getKymographIndex();
 			if (first < 0 || last < 0 || (i >= first && i <= last))
 				cap.clearAllMeasures();
 		}
@@ -183,7 +183,7 @@ public class Capillaries {
 	public Capillary getCapillaryFromRoiNamePrefix(String name) {
 		Capillary capFound = null;
 		for (Capillary cap : getList()) {
-			if (cap.getRoiNamePrefix().equals(name)) {
+			if (cap.getKymographPrefix().equals(name)) {
 				capFound = cap;
 				break;
 			}
@@ -194,7 +194,7 @@ public class Capillaries {
 	public Capillary getCapillaryAtT(int t) {
 		Capillary capFound = null;
 		for (Capillary cap : getList()) {
-			if (cap.kymographIndex == t) {
+			if (cap.getKymographIndex() == t) {
 				capFound = cap;
 				break;
 			}
@@ -393,7 +393,7 @@ public class Capillaries {
 			for (Capillary cap : capillariesList) {
 				ROI2D roi = cap.getRoi();
 				if (roi != null && roi.isSelected()) {
-					selected = cap.kymographIndex;
+					selected = cap.getKymographIndex();
 					break;
 				}
 			}

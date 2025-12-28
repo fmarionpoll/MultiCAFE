@@ -263,7 +263,7 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 		if (exp == null || exp.getCapillaries() == null)
 			return null;
 		for (Capillary cap : exp.getCapillaries().getList()) {
-			if (cap.kymographIndex == t) {
+			if (cap.getKymographIndex() == t) {
 				return cap;
 			}
 		}

@@ -254,7 +254,7 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public void updateROIFromCapillaryMeasure(Capillary cap, CapillaryMeasure caplimits) {
-		int t = cap.kymographIndex;
+		int t = cap.getKymographIndex();
 		List<ROI2D> listRois = getSequence().getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!(roi instanceof ROI2DPolyLine))
@@ -289,7 +289,8 @@ public class SequenceKymos extends SequenceCamData {
 //			Capillary cap = capillaries.getList().get(kymo);
 //			cap.transferROIsToMeasures(roisAtT);
 			final int i = kymo;
-			Capillary cap = capillaries.getList().stream().filter(c -> c.kymographIndex == i).findFirst().orElse(null);
+			Capillary cap = capillaries.getList().stream().filter(c -> c.getKymographIndex() == i).findFirst()
+					.orElse(null);
 			if (cap != null) {
 				cap.transferROIsToMeasures(roisAtT);
 			}

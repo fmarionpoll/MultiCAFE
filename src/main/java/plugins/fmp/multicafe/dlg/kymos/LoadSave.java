@@ -103,10 +103,10 @@ public class LoadSave extends JPanel {
 		if (returnedval == JFileChooser.APPROVE_OPTION) {
 			outputpath = f.getSelectedFile().getAbsolutePath();
 			for (int t = 0; t < seqKymos.getSequence().getSizeT(); t++) {
-				Capillary cap = exp.getCapillaries().getList().get(t);
+				Capillary cap = exp.getCapillaries().getCapillaryAtT(t);
 				progress.setMessage("Save kymograph file : " + cap.getKymographName());
-				cap.kymographFilename = outputpath + File.separator + cap.getKymographName() + ".tiff";
-				final File file = new File(cap.kymographFilename);
+				cap.setKymographFileName(outputpath + File.separator + cap.getKymographName() + ".tiff");
+				final File file = new File(cap.getKymographFileName());
 				IcyBufferedImage image = seqKymos.getSeqImage(t, 0);
 				ThreadUtil.bgRun(new Runnable() {
 					@Override

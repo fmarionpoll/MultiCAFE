@@ -9,6 +9,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPosition;
 import plugins.fmp.multicafe.fmp_experiment.cages.FlyPositions;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 
@@ -217,6 +218,53 @@ public class Comparators {
 	public static class Cage_Name implements Comparator<Cage> {
 		@Override
 		public int compare(Cage o1, Cage o2) {
+			if (o1 == null && o2 == null) {
+				return 0;
+			}
+			if (o1 == null) {
+				return 1;
+			}
+			if (o2 == null) {
+				return -1;
+			}
+
+			ROI2D roi1 = o1.getRoi();
+			ROI2D roi2 = o2.getRoi();
+
+			if (roi1 == null && roi2 == null) {
+				return 0;
+			}
+			if (roi1 == null) {
+				return 1;
+			}
+			if (roi2 == null) {
+				return -1;
+			}
+
+			String name1 = roi1.getName();
+			String name2 = roi2.getName();
+
+			if (name1 == null && name2 == null) {
+				return 0;
+			}
+			if (name1 == null) {
+				return 1;
+			}
+			if (name2 == null) {
+				return -1;
+			}
+
+			return name1.compareTo(name2);
+		}
+	}
+
+	/**
+	 * Comparator for Cage objects based on their ROI names. Handles null values by
+	 * treating them as greater than non-null values.
+	 */
+	public static class Capillary_ROIName implements Comparator<Capillary> {
+		@Override
+		public int compare(Capillary o1, Capillary o2) {
 			if (o1 == null && o2 == null) {
 				return 0;
 			}

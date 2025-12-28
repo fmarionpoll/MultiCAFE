@@ -215,7 +215,7 @@ public class CapillariesPersistence {
 			if (capdoc != null) {
 				Node node = XMLUtil.getRootElement(capdoc, true);
 				Capillary cap = capillaries.getList().get(i);
-				cap.kymographIndex = i;
+				cap.setKymographIndex(i);
 				flag |= cap.xmlLoad_MeasuresOnly(node);
 			}
 		}
@@ -239,7 +239,7 @@ public class CapillariesPersistence {
 		if (!capillaries.isPresent(cap))
 			capillaries.getList().add(cap);
 		String csFile = directory + roiCapillary.getName() + ".xml";
-		cap.kymographIndex = t;
+		cap.setKymographIndex(t);
 		final Document dockymo = XMLUtil.loadDocument(csFile);
 		if (dockymo != null) {
 			NodeList nodeROISingle = dockymo.getElementsByTagName("roi");

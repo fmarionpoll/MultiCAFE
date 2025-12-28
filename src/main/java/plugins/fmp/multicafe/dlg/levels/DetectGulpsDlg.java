@@ -159,7 +159,7 @@ public class DetectGulpsDlg extends JPanel implements PropertyChangeListener {
 		}
 		options.detectGulpsThreshold_uL = (double) detectGulpsThresholdSpinner.getValue();
 		options.transformForGulps = (ImageTransformEnums) gulpTransforms_comboBox.getSelectedItem();
-		options.detectAllGulps = selectedKymoCheckBox.isSelected();
+		options.detectSelectedKymo = selectedKymoCheckBox.isSelected();
 		options.spanDiff = (int) spanTransf2Spinner.getValue();
 		options.buildGulps = gulps_checkbox.isSelected();
 		options.buildDerivative = derivative_checkbox.isSelected();
@@ -189,7 +189,7 @@ public class DetectGulpsDlg extends JPanel implements PropertyChangeListener {
 		BuildSeriesOptions options = cap.getGulpsOptions();
 		detectGulpsThresholdSpinner.setValue(options.detectGulpsThreshold_uL);
 		gulpTransforms_comboBox.setSelectedItem(options.transformForGulps);
-		selectedKymoCheckBox.setSelected(options.detectAllGulps);
+		selectedKymoCheckBox.setSelected(options.detectSelectedKymo);
 	}
 
 	private void stopComputation() {

@@ -90,14 +90,14 @@ public class LevelDetector {
 							String topLevelName = capi.getLast2ofCapillaryName();
 							if (topLevelName != null)
 								capi.getTopLevel().setPolylineLevelFromTempData(topLevelName + "_toplevel",
-										capi.kymographIndex, columnFirst, columnLast);
+										capi.getKymographIndex(), columnFirst, columnLast);
 						}
 
 						if (capi.getBottomLevel() != null && capi.getBottomLevel().limit != null) {
 							String bottomLevelName = capi.getLast2ofCapillaryName();
 							if (bottomLevelName != null)
 								capi.getBottomLevel().setPolylineLevelFromTempData(bottomLevelName + "_bottomlevel",
-										capi.kymographIndex, columnFirst, columnLast);
+										capi.getKymographIndex(), columnFirst, columnLast);
 						}
 					}
 					if (capi.getTopLevel() != null)

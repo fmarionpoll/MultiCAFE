@@ -18,7 +18,6 @@ import icy.image.IcyBufferedImage;
 import icy.type.DataType;
 import icy.type.collection.array.Array1DUtil;
 import loci.formats.FormatException;
-
 import plugins.fmp.multicafe.fmp_experiment.EnumStatus;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
@@ -48,8 +47,8 @@ public class KymographService {
 			SequenceKymosUtils.transferCamDataROIStoKymo(exp);
 
 		for (int t = 0; t < nimages; t++) {
-			Capillary cap = exp.getCapillaries().getList().get(t);
-			cap.kymographIndex = t;
+			Capillary cap = exp.getCapillaries().getCapillaryAtT(t);
+
 			IcyBufferedImage img = seqKymos.getSeqImage(t, zChannelSource);
 			IcyBufferedImage img2 = transform.getTransformedImage(img, null);
 			if (seqKymos.getSequence().getSizeZ(0) < (zChannelDestination + 1))
@@ -66,23 +65,26 @@ public class KymographService {
 		renameCapillary_Files(dir);
 
 		String directoryFull = dir + File.separator;
-		
-		// Iterate through existing capillaries and create file list from their kymograph names
-		// This is capillary-driven: only process capillaries that exist, not files on disk
+
+		// Iterate through existing capillaries and create file list from their
+		// kymograph names
+		// This is capillary-driven: only process capillaries that exist, not files on
+		// disk
 		List<ImageFileData> myListOfFiles = new ArrayList<ImageFileData>();
 		for (Capillary cap : capillaries.getList()) {
 			String kymographName = cap.getKymographName();
 			if (kymographName == null || kymographName.isEmpty()) {
-				Logger.warn("KymographService:loadListOfPotentialKymographsFromCapillaries - Capillary has no kymograph name, skipping");
+				Logger.warn(
+						"KymographService:loadListOfPotentialKymographsFromCapillaries - Capillary has no kymograph name, skipping");
 				continue;
 			}
-			
+
 			// Try .tiff first, then .tif
 			String fileNameTiff = directoryFull + kymographName + ".tiff";
 			String fileNameTif = directoryFull + kymographName + ".tif";
 			File fileTiff = new File(fileNameTiff);
 			File fileTif = new File(fileNameTif);
-			
+
 			ImageFileData temp = new ImageFileData();
 			if (fileTiff.exists()) {
 				temp.fileName = fileNameTiff;
@@ -93,11 +95,14 @@ public class KymographService {
 				temp.exists = true;
 				myListOfFiles.add(temp);
 			} else {
-				// File doesn't exist, but still add it to the list (will be marked as non-existent)
+				// File doesn't exist, but still add it to the list (will be marked as
+				// non-existent)
 				temp.fileName = fileNameTiff;
 				temp.exists = false;
 				myListOfFiles.add(temp);
-				Logger.info("KymographService:loadListOfPotentialKymographsFromCapillaries - Kymograph file not found for capillary: " + kymographName);
+				Logger.info(
+						"KymographService:loadListOfPotentialKymographsFromCapillaries - Kymograph file not found for capillary: "
+								+ kymographName);
 			}
 		}
 		return myListOfFiles;
@@ -134,7 +139,7 @@ public class KymographService {
 		}
 
 		if (myList.size() > 0) {
-			String[] strExt = {"tiff"};
+			String[] strExt = { "tiff" };
 			myList = ExperimentDirectories.keepOnlyAcceptedNames_List(myList, strExt);
 			seqKymos.setImagesList(convertLinexLRFileNames(myList));
 
@@ -180,8 +185,8 @@ public class KymographService {
 				continue;
 
 			KymographInfo kymoInfo = seqKymos.getKymographInfo();
-			IcyBufferedImage ibufImage2 = new IcyBufferedImage(kymoInfo.getMaxWidth(),
-					kymoInfo.getMaxHeight(), ibufImage1.getSizeC(), ibufImage1.getDataType_());
+			IcyBufferedImage ibufImage2 = new IcyBufferedImage(kymoInfo.getMaxWidth(), kymoInfo.getMaxHeight(),
+					ibufImage1.getSizeC(), ibufImage1.getDataType_());
 			transferImage1To2(ibufImage1, ibufImage2);
 
 			try {
