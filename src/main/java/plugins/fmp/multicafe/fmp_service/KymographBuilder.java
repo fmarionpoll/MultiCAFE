@@ -211,7 +211,8 @@ public class KymographBuilder {
 				i = index;
 				cap.setKymographIndex(i);
 				cap.setKymographFileName(cap.getKymographName() + ".tiff");
-				System.out.println(cap.getKymographFileName());
+				System.out.println(
+						"buildkymos - index=" + cap.getKymographIndex() + " name=" + cap.getKymographFileName());
 			}
 			index++;
 			cap.setKymographBuild(i >= options.kymoFirst && i <= options.kymoLast);

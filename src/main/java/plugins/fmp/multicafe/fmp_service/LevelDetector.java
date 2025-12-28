@@ -3,6 +3,7 @@ package plugins.fmp.multicafe.fmp_service;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -14,6 +15,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
+import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
@@ -24,6 +26,7 @@ public class LevelDetector {
 		final SequenceKymos seqKymos = exp.getSeqKymos();
 		seqKymos.getSequence().beginUpdate();
 		seqKymos.getSequence().removeAllROI();
+		initArrayToBuildCapillaries(exp, options);
 
 		int tFirsKymo = options.kymoFirst;
 		if (tFirsKymo > seqKymos.getSequence().getSizeT() || tFirsKymo < 0)
@@ -110,6 +113,7 @@ public class LevelDetector {
 
 		waitFuturesCompletion(processor, futures);
 		exp.saveCapillaries();
+		exp.saveMCCapillaries_Only();
 		seqKymos.getSequence().endUpdate();
 	}
 
@@ -296,5 +300,21 @@ public class LevelDetector {
 			}
 		}
 		return y;
+	}
+
+	private void initArrayToBuildCapillaries(Experiment exp, BuildSeriesOptions options) {
+		Collections.sort(exp.getCapillaries().getList(), new Comparators.Capillary_ROIName());
+		int index = 0;
+		for (Capillary cap : exp.getCapillaries().getList()) {
+			int i = cap.getKymographIndex();
+			if (i < 0) {
+				i = index;
+				cap.setKymographIndex(i);
+				cap.setKymographFileName(cap.getKymographName() + ".tiff");
+				System.out.println(
+						"buildCapillaries - index=" + cap.getKymographIndex() + " name=" + cap.getKymographFileName());
+			}
+			index++;
+		}
 	}
 }
