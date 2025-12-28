@@ -208,63 +208,6 @@ public class CagesArray {
 		return flag;
 	}
 
-//	private void addMissingCages(List<ROI2D> roiList) {
-//		for (ROI2D roi : roiList) {
-//			if (roi.getName() == null)
-//				continue;
-//			boolean found = false;
-//			for (Cage cage : cagesList) {
-//				if (cage.getRoi() == null)
-//					continue;
-//				if (roi.getName().equals(cage.getRoi().getName())) {
-//					found = true;
-//					break;
-//				}
-//			}
-//			if (!found) {
-//				Cage cage = new Cage();
-//				cage.setRoi((ROI2DShape) roi);
-//				cagesList.add(cage);
-//			}
-//		}
-//	}
-
-	private void removeOrphanCages(List<ROI2D> roiList) {
-		// remove cages with names not in the list
-		// BUT: if roiList is empty, preserve cages that already have valid ROIs set
-		// (this prevents clearing all cages when sequence is being closed)
-		if (roiList.isEmpty()) {
-			// Don't remove cages that already have valid ROIs - preserve them for saving
-			Iterator<Cage> iterator = cagesList.iterator();
-			while (iterator.hasNext()) {
-				Cage cage = iterator.next();
-				// Only remove cages that have null ROIs when roiList is empty
-				if (cage.getRoi() == null && cage.getCapillaries().getList().size() < 1) {
-					iterator.remove();
-				}
-			}
-			return;
-		}
-
-		// Normal case: remove cages whose ROIs are not in the sequence
-		Iterator<Cage> iterator = cagesList.iterator();
-		while (iterator.hasNext()) {
-			Cage cage = iterator.next();
-			boolean found = false;
-			if (cage.getRoi() != null) {
-				String cageRoiName = cage.getRoi().getName();
-				for (ROI2D roi : roiList) {
-					if (roi.getName() != null && roi.getName().equals(cageRoiName)) {
-						found = true;
-						break;
-					}
-				}
-			}
-			if (!found)
-				iterator.remove();
-		}
-	}
-
 	public List<ROI2D> getROIsWithCageName(SequenceCamData seqCamData) {
 		List<ROI2D> roiList = seqCamData.getSequence().getROI2Ds();
 		List<ROI2D> roisCageList = new ArrayList<ROI2D>();
@@ -415,10 +358,8 @@ public class CagesArray {
 	public void updateCagesFromSequence(SequenceCamData seqCamData) {
 		List<ROI2D> roiList = seqCamData.findROIsMatchingNamePattern("cage");
 		Collections.sort(roiList, new Comparators.ROI2D_Name());
-
 		transferROIsToCages(roiList);
 		addMissingCages(roiList);
-		removeOrphanCages(roiList);
 		Collections.sort(cagesList, new Comparators.Cage_Name());
 	}
 
@@ -427,85 +368,34 @@ public class CagesArray {
 			return;
 
 		for (Cage cage : cagesList) {
-			// Try to match by cage ID first (more reliable)
-			int cageID = cage.getProperties().getCageID();
 			if (roiList.isEmpty())
 				return;
 
-			// Don't remove cages that already have valid ROIs - preserve them for saving
+			String strCageID = cage.formatCageNumberToString(cage.getCageID());
 			Iterator<ROI2D> iterator = roiList.iterator();
-			boolean matched = false;
 			while (iterator.hasNext()) {
 				ROI2D roi = iterator.next();
-				// Try matching by cage ID from ROI name
 				String roiName = roi.getName();
-				if (roiName != null && roiName.length() > 4) {
-					try {
-						String roiNameClipped = roiName.substring(4);
-						int roiCageID = Integer.parseInt(roiNameClipped);
-						if (roiCageID == cageID) {
-							cage.setCageRoi(roi);
-							iterator.remove();
-							matched = true;
-							break;
-						}
-					} catch (NumberFormatException e) {
-						// Fall back to string matching
-					}
-				}
-
-				// Fall back to string matching if ID matching failed
-				if (!matched) {
-					CageProperties prop = cage.getProperties();
-					String strNumber = prop.getStrCageNumber();
-					if (strNumber != null && roiName != null && roiName.length() > 4) {
-						String roiNameClipped = roiName.substring(4);
-						if (roiNameClipped.equals(strNumber)) {
-							cage.setCageRoi(roi);
-							iterator.remove();
-							break;
-						}
-					}
+				if (roiName != null && roiName.contains(strCageID)) {
+					cage.setCageRoi(roi);
+					iterator.remove();
+					break;
 				}
 			}
-
 		}
 	}
 
 	private void addMissingCages(List<ROI2D> roiList) {
-		for (ROI2D roi : roiList) {
+		Iterator<ROI2D> iterator = roiList.iterator();
+		while (iterator.hasNext()) {
+			ROI2D roi = iterator.next();
 			if (roi.getName() == null)
 				continue;
-			boolean found = false;
-			for (Cage cage : cagesList) {
-				// Check both by ROI name and by cage ID to avoid creating duplicates
-				if (cage.getRoi() != null && roi.getName().equals(cage.getRoi().getName())) {
-					found = true;
-					break;
-				}
-				// Also check by cage ID if ROI name doesn't match but IDs do
-				if (roi.getName().length() > 4) {
-					try {
-						String roiNameClipped = roi.getName().substring(4);
-						int roiCageID = Integer.parseInt(roiNameClipped);
-						if (cage.getProperties().getCageID() == roiCageID) {
-							// Match found by ID - update ROI but preserve fly positions
-							cage.setCageRoi((ROI2DShape) roi);
-							found = true;
-							break;
-						}
-					} catch (NumberFormatException e) {
-						// Not a numeric cage ID, continue
-					}
-				}
-			}
-			if (!found) {
-				// Only create new cage if no match found - this preserves fly positions from
-				// loaded cages
-				Cage cage = new Cage();
-				cage.setCageRoi((ROI2DShape) roi);
-				cagesList.add(cage);
-			}
+
+			Cage cage = new Cage();
+			cage.setCageRoi((ROI2DShape) roi);
+			addCageIfUnique(cage);
+			iterator.remove();
 		}
 	}
 
