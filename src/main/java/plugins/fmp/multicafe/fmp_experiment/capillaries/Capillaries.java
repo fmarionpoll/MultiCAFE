@@ -143,6 +143,7 @@ public class Capillaries {
 	private void transferCapGroupCageIDToCapillary(Capillary cap) {
 		if (capillariesDescription.getGrouping() != 2)
 			return;
+
 		String name = cap.getRoiName();
 		String letter = name.substring(name.length() - 1);
 		cap.getProperties().side = letter;

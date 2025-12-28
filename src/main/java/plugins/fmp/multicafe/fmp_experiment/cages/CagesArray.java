@@ -342,7 +342,7 @@ public class CagesArray {
 
 	public Cage getCageFromID(int cageID) {
 		for (Cage cage : cagesList) {
-			if (cage.getProperties().getCageID() == cageID)
+			if (cage.getCageID() == cageID)
 				return cage;
 		}
 		return null;
@@ -369,6 +369,30 @@ public class CagesArray {
 			}
 		}
 		return null;
+	}
+
+	public void createEmptyCagesFromCapillaries(Capillaries capillaries) {
+		for (Capillary cap : capillaries.getList()) {
+			int cageID = cap.getCageID();
+			Cage cage = getCageFromID(cageID);
+			if (cage != null)
+				continue;
+
+			cage = new Cage();
+			cage.setCageID(cageID);
+			addCageIfUnique(cage);
+		}
+	}
+
+	public boolean addCageIfUnique(Cage newCage) {
+		boolean created = false;
+		int newCageID = newCage.getCageID();
+		Cage cage = getCageFromID(newCageID);
+		if (cage == null) {
+			created = true;
+			cagesList.add(newCage);
+		}
+		return created;
 	}
 
 	// --------------
@@ -420,7 +444,7 @@ public class CagesArray {
 						String roiNameClipped = roiName.substring(4);
 						int roiCageID = Integer.parseInt(roiNameClipped);
 						if (roiCageID == cageID) {
-							cage.setRoi(roi);
+							cage.setCageRoi(roi);
 							iterator.remove();
 							matched = true;
 							break;
@@ -437,7 +461,7 @@ public class CagesArray {
 					if (strNumber != null && roiName != null && roiName.length() > 4) {
 						String roiNameClipped = roiName.substring(4);
 						if (roiNameClipped.equals(strNumber)) {
-							cage.setRoi(roi);
+							cage.setCageRoi(roi);
 							iterator.remove();
 							break;
 						}
@@ -466,7 +490,7 @@ public class CagesArray {
 						int roiCageID = Integer.parseInt(roiNameClipped);
 						if (cage.getProperties().getCageID() == roiCageID) {
 							// Match found by ID - update ROI but preserve fly positions
-							cage.setRoi((ROI2DShape) roi);
+							cage.setCageRoi((ROI2DShape) roi);
 							found = true;
 							break;
 						}
@@ -479,7 +503,7 @@ public class CagesArray {
 				// Only create new cage if no match found - this preserves fly positions from
 				// loaded cages
 				Cage cage = new Cage();
-				cage.setRoi((ROI2DShape) roi);
+				cage.setCageRoi((ROI2DShape) roi);
 				cagesList.add(cage);
 			}
 		}
@@ -746,13 +770,6 @@ public class CagesArray {
 			}
 		}
 		return null;
-	}
-
-	public void initCagesAndSpotsWithNFlies(int nflies) {
-		for (Cage cage : cagesList) {
-			cage.getProperties().setCageNFlies(nflies);
-			cage.setNFlies(nflies);
-		}
 	}
 
 	public ArrayList<Spot> getSpotsEnclosed(ROI2DPolygon envelopeRoi) {

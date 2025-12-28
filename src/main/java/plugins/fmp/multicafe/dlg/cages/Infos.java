@@ -81,6 +81,8 @@ public class Infos extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
+					if (exp.getCages().getCageList().size() < 1)
+						exp.getCages().createEmptyCagesFromCapillaries(exp.getCapillaries());
 					exp.getCapillaries().transferDescriptionToCapillaries();
 					exp.getCages().transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getList());
 					dialog = new InfosCagesTable();

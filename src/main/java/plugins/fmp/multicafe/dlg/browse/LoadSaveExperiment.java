@@ -1006,14 +1006,16 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (exp != null) {
 			// Don't save if loading is still in progress (prevents race condition)
 			if (exp.isLoading()) {
-				LOGGER.warning("Skipping save for experiment - loading still in progress: " + exp.toString());
+				LOGGER.warning("LoadSaveExperiment: Skipping save for experiment - loading still in progress: "
+						+ exp.toString());
 				return;
 			}
 
 			// Don't start a new save if one is already in progress (prevents concurrent
 			// saves)
 			if (exp.isSaving()) {
-				LOGGER.warning("Skipping save for experiment - save operation already in progress: " + exp.toString());
+				LOGGER.warning("LoadSaveExperiment: Skipping save for experiment - save operation already in progress: "
+						+ exp.toString());
 				return;
 			}
 

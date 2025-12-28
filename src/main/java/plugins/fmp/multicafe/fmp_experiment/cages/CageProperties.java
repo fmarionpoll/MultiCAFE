@@ -163,7 +163,6 @@ public class CageProperties {
 		propTo.flyStrain = flyStrain;
 		propTo.countStim1 = countStim1;
 		propTo.countStim2 = countStim2;
-		
 
 		// Fire PropertyChange events for all changed properties
 		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_INDEX, oldArrayIndex, propTo.arrayIndex);
@@ -176,7 +175,8 @@ public class CageProperties {
 		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_FLY_AGE, oldFlyAge, propTo.flyAge);
 		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_COMMENT, oldComment, propTo.comment);
 		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_FLY_SEX, oldFlySex, propTo.flySex);
-		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_STR_CAGE_NUMBER, oldStrCageNumber, propTo.strCageNumber);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_STR_CAGE_NUMBER, oldStrCageNumber,
+				propTo.strCageNumber);
 		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_FLY_STRAIN, oldFlyStrain, propTo.flyStrain);
 	}
 
@@ -383,11 +383,11 @@ public class CageProperties {
 		this.strCageNumber = strCageNumber;
 		propertyChangeSupport.firePropertyChange(PROPERTY_STR_CAGE_NUMBER, oldValue, this.strCageNumber);
 	}
-	
+
 	public int getCountStim1() {
 		return countStim1;
 	}
-	
+
 	public void setCountStim1(int countSpotsStim1) {
 		this.countStim1 = countSpotsStim1;
 	}
@@ -395,7 +395,7 @@ public class CageProperties {
 	public int getCountStim2() {
 		return countStim2;
 	}
-	
+
 	public void setCountStim2(int countSpotsStim2) {
 		this.countStim2 = countSpotsStim2;
 	}

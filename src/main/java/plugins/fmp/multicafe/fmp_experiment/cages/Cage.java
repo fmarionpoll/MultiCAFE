@@ -34,7 +34,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	private static final Color FLY_POSITION_ROI_COLOR = Color.YELLOW;
 
 	private ROI2D cageROI2D = null;
-	public int kymographIndex = -1;
+	// public int kymographIndex = -1;
 	public BooleanMask2D cageMask2D = null;
 	public CageProperties prop = new CageProperties();
 	public CageMeasures measures = new CageMeasures();
@@ -88,14 +88,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return spotsArray;
 	}
 
-	public void setCapillaries(Capillaries capArray) {
-		capillaries = capArray;
-	}
-
-	public Capillaries getCapillaries() {
-		return capillaries;
-	}
-
 	public CageProperties getProperties() {
 		return prop;
 	}
@@ -108,12 +100,53 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return cageROI2D;
 	}
 
+	public void setCageRoi(ROI2D roi) {
+		cageROI2D = roi;
+		setCageID(getCageIDFromRoiName());
+	}
+
+	public String getCageNumberFromRoiName() {
+		if (cageROI2D == null || cageROI2D.getName() == null) {
+			// Fallback to cage ID or existing strCageNumber if ROI is not available
+			String fallback = prop.getStrCageNumber();
+			if (fallback == null || fallback.isEmpty() || fallback.equals("0")) {
+				fallback = formatCageNumberToString(prop.getCageID());
+			}
+			prop.setStrCageNumber(fallback);
+			return prop.getStrCageNumber();
+		}
+
+		String roiName = cageROI2D.getName();
+		if (roiName.length() >= 3) {
+			prop.setStrCageNumber(roiName.substring(roiName.length() - 3));
+		} else {
+			// ROI name too short, use cage ID as fallback
+			String fallback = String.format("%03d", prop.getCageID());
+			prop.setStrCageNumber(fallback);
+		}
+		return prop.getStrCageNumber();
+	}
+
+	public String formatCageNumberToString(int number) {
+		return String.format("%03d", number);
+	}
+
+	public int getCageIDFromRoiName() {
+		int cageID = -1;
+		if (cageROI2D != null && cageROI2D.getName() != null) {
+			String roiName = cageROI2D.getName();
+			if (roiName.length() >= 3)
+				cageID = Integer.parseInt(roiName.substring(roiName.length() - 3));
+		}
+		return cageID;
+	}
+
 	public int getCageID() {
 		return prop.getCageID();
 	}
 
-	public void setRoi(ROI2D roi) {
-		cageROI2D = roi;
+	public void setCageID(int ID) {
+		prop.setCageID(ID);
 	}
 
 	public BooleanMask2D getCageMask2D() {
@@ -132,29 +165,18 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		prop.setCageNFlies(nFlies);
 	}
 
-	public FlyPositions getFlyPositions() {
-		return flyPositions;
+	// ------------------------------------------
+
+	public void setCapillaries(Capillaries capArray) {
+		capillaries = capArray;
 	}
 
-	public String getCageNumberFromRoiName() {
-		if (cageROI2D == null || cageROI2D.getName() == null) {
-			// Fallback to cage ID or existing strCageNumber if ROI is not available
-			String fallback = prop.getStrCageNumber();
-			if (fallback == null || fallback.isEmpty() || fallback.equals("0")) {
-				fallback = String.format("%03d", prop.getCageID());
-			}
-			prop.setStrCageNumber(fallback);
-			return prop.getStrCageNumber();
-		}
-		String roiName = cageROI2D.getName();
-		if (roiName.length() >= 3) {
-			prop.setStrCageNumber(roiName.substring(roiName.length() - 3));
-		} else {
-			// ROI name too short, use cage ID as fallback
-			String fallback = String.format("%03d", prop.getCageID());
-			prop.setStrCageNumber(fallback);
-		}
-		return prop.getStrCageNumber();
+	public Capillaries getCapillaries() {
+		return capillaries;
+	}
+
+	public FlyPositions getFlyPositions() {
+		return flyPositions;
 	}
 
 	public void clearMeasures() {
@@ -214,6 +236,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public List<Capillary> getCapillaryList() {
 		return capillaries.getList();
 	}
+
+	// -------------------------------------------------
 
 	public void copyCageInfo(Cage cageFrom) {
 		copyCage(cageFrom, false);
@@ -526,10 +550,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	// --------------------------------------------------------
 
-	public void setNFlies(int nFlies) {
-		this.getProperties().setCageNFlies(nFlies);
-	}
-
 	public int addEllipseSpot(Point2D.Double center, int radius) {
 		int index = spotsArray.getSpotsCount();
 		Spot spot = createEllipseSpot(index, center, radius);
@@ -565,8 +585,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		}
 		return null;
 	}
-
-	// --------------------------------------------
 
 	public void mapSpotsToCageColumnRow() {
 		Rectangle rect = cageROI2D.getBounds();
