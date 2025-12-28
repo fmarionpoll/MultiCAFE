@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import plugins.fmp.multicafe.fmp_experiment.sequence.TIntervalsArray;
@@ -54,7 +53,7 @@ import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
  */
 public class ModernSpotsArray implements AutoCloseable {
 	// === CONSTANTS ===
-	private static final Logger LOGGER = Logger.getLogger(ModernSpotsArray.class.getName());
+//	private static final Logger LOGGER = Logger.getLogger(ModernSpotsArray.class.getName());
 
 	// === CORE FIELDS ===
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();

@@ -2,11 +2,8 @@ package plugins.fmp.multicafe.fmp_experiment.capillaries.computations;
 
 import java.util.ArrayList;
 
-import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryGulps;
 import plugins.fmp.multicafe.fmp_tools.results.MeasurementComputation;
-import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
  * Computations for gulp-based measures (NBGULPS, AMPLITUDEGULPS, TTOGULP).
@@ -14,8 +11,8 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 public class GulpMeasureComputation {
 
 	/**
-	 * Computes the number of gulps per time bin (NBGULPS).
-	 * Returns 1 if a gulp occurs in the bin, 0 otherwise.
+	 * Computes the number of gulps per time bin (NBGULPS). Returns 1 if a gulp
+	 * occurs in the bin, 0 otherwise.
 	 */
 	public static MeasurementComputation computeNbGulps() {
 		return (exp, cap, options) -> {
@@ -124,4 +121,3 @@ public class GulpMeasureComputation {
 		};
 	}
 }
-

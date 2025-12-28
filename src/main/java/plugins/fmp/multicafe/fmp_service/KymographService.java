@@ -47,8 +47,7 @@ public class KymographService {
 			SequenceKymosUtils.transferCamDataROIStoKymo(exp);
 
 		for (int t = 0; t < nimages; t++) {
-			Capillary cap = exp.getCapillaries().getCapillaryAtT(t);
-
+//			Capillary cap = exp.getCapillaries().getCapillaryAtT(t);
 			IcyBufferedImage img = seqKymos.getSeqImage(t, zChannelSource);
 			IcyBufferedImage img2 = transform.getTransformedImage(img, null);
 			if (seqKymos.getSequence().getSizeZ(0) < (zChannelDestination + 1))

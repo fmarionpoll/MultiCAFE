@@ -1,24 +1,5 @@
 package plugins.fmp.multicafe.viewer1D;
 
-/**
- *  this class is modified from the plugin Intensity Profile by Fab.
- * 
- * 
- * 
- * @author Wei Ouyang
- * 
- */
-
-import icy.canvas.IcyCanvas;
-import icy.gui.component.IcySlider;
-import icy.gui.util.ComponentUtil;
-import icy.gui.util.GuiUtil;
-import icy.image.IcyBufferedImage;
-import icy.sequence.DimensionId;
-import icy.sequence.Sequence;
-import icy.system.thread.ThreadUtil;
-import icy.type.collection.array.Array1DUtil;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -38,11 +19,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
@@ -55,8 +39,25 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+
+/**
+ *  this class is modified from the plugin Intensity Profile by Fab.
+ * 
+ * 
+ * 
+ * @author Wei Ouyang
+ * 
+ */
+
+import icy.canvas.IcyCanvas;
+import icy.gui.component.IcySlider;
+import icy.gui.util.ComponentUtil;
+import icy.gui.util.GuiUtil;
+import icy.image.IcyBufferedImage;
+import icy.sequence.DimensionId;
+import icy.sequence.Sequence;
+import icy.system.thread.ThreadUtil;
+import icy.type.collection.array.Array1DUtil;
 
 public class IntensityProfile {
 
@@ -191,14 +192,10 @@ public class IntensityProfile {
 									dataArr[i] += " \t \t";
 								}
 							}
-
 						}
 						for (String s : dataArr) {
-
 							writer.write(s + "\n");
-
 						}
-
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					} finally {
@@ -208,9 +205,7 @@ public class IntensityProfile {
 						} catch (Exception e1) {
 						}
 					}
-
 				}
-
 			}
 		});
 		exportToFileBtn.setToolTipText("Print current line data to the console of Icy.");

@@ -49,8 +49,7 @@ public class CageMeasures {
 	}
 
 	public boolean saveToXml(Node node) {
-		Element xmlVal = XMLUtil.addElement(node, ID_CAGEMEASURES);
-
+//		Element xmlVal = XMLUtil.addElement(node, ID_CAGEMEASURES);
 		boolean result = true;
 //		result &= sum.saveCapillaryLimit2XML(xmlVal, ID_SUM) > 0;
 //		result &= pi.saveCapillaryLimit2XML(xmlVal, ID_PI) > 0;
