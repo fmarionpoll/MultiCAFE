@@ -217,8 +217,22 @@ public class ExperimentDirectories {
 	private String getResultsDirectory(String parentDirectory, String resultsSubDirectory) {
 		resultsSubDirectory = getParentIf(resultsSubDirectory, Experiment.BIN);
 
-		if (!resultsSubDirectory.contains(Experiment.RESULTS) || !resultsSubDirectory.contains(parentDirectory))
-			resultsSubDirectory = parentDirectory + File.separator + Experiment.RESULTS;
+		// Check if parentDirectory already ends with "results" to prevent results\results bug
+		Path parentPath = Paths.get(parentDirectory).normalize();
+		boolean parentEndsWithResults = parentPath.getFileName() != null 
+			&& parentPath.getFileName().toString().equalsIgnoreCase(Experiment.RESULTS);
+
+		// Original logic: append "results" if resultsSubDirectory doesn't contain "results" 
+		// or doesn't contain parentDirectory
+		if (!resultsSubDirectory.contains(Experiment.RESULTS) || !resultsSubDirectory.contains(parentDirectory)) {
+			// Only append "results" if parentDirectory doesn't already end with it (prevents results\results)
+			if (!parentEndsWithResults) {
+				resultsSubDirectory = parentDirectory + File.separator + Experiment.RESULTS;
+			} else {
+				// Parent already ends with results, use it to prevent results\results
+				resultsSubDirectory = parentDirectory;
+			}
+		}
 		return resultsSubDirectory;
 	}
 

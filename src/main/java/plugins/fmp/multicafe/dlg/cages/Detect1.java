@@ -94,8 +94,6 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		panel2.add(thresholdSpinner);
 		add(panel2);
 
-//		objectLowsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
-//		objectUpsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
 		JPanel panel3 = new JPanel(flowLayout);
 		panel3.add(objectLowsizeCheckBox);
 		panel3.add(objectLowsizeSpinner);
