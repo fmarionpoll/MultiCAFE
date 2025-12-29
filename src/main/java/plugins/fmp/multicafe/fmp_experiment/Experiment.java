@@ -1655,6 +1655,17 @@ public class Experiment {
 	}
 
 	public boolean saveCapillariesMeasures(String directory) {
+		// CRITICAL: Load capillaries if not already loaded to prevent overwriting with empty list
+		// This protects against cases where BuildSeries operations (fly detection, background building)
+		// load only cages but not capillaries, and then a save operation is triggered
+		if (capillaries.getList().isEmpty()) {
+			loadMCCapillaries_Only();
+			// Also try to load the actual measures if kymos directory exists
+			if (getKymosBinFullDirectory() != null) {
+				capillaries.load_Capillaries(getKymosBinFullDirectory());
+			}
+		}
+		
 		boolean flag = false;
 		if (seqKymos != null && seqKymos.getSequence() != null) {
 			seqKymos.validateROIs();

@@ -122,6 +122,14 @@ public class BuildBackground extends BuildSeries {
 				Logger.warn("Cages not loaded for background building - this is optional and background building will continue");
 			}
 			
+			// CRITICAL: Also load capillaries to prevent them from being overwritten as empty
+			// when save operations are triggered (e.g., closeViewsForCurrentExperiment)
+			// This protects kymograph measures from being erased during background building
+			experiment.loadMCCapillaries_Only();
+			if (experiment.getKymosBinFullDirectory() != null) {
+				experiment.getCapillaries().load_Capillaries(experiment.getKymosBinFullDirectory());
+			}
+			
 			return ProcessingResult.success();
 		} catch (Exception e) {
 			return ProcessingResult.failure("Error loading experiment data", e);

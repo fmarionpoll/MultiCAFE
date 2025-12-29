@@ -9,22 +9,16 @@ import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
 import plugins.fmp.multicafe.fmp_tools.Logger;
-import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 
 public abstract class FlyDetect extends BuildSeries {
 	public DetectFlyTools find_flies = new DetectFlyTools();
-	Sequence seqNegative = null;
-	ViewerFMP vNegative = null;
 
 	@Override
 	void analyzeExperiment(Experiment exp) {
 		if (!loadDrosoTrack2(exp))
 			return;
-		// Add this line to ensure capillaries are loaded and won't be overwritten as
-		// empty if a save occurs
-		exp.loadMCCapillaries_Only();
 		if (!checkBoundsForCages(exp))
 			return;
 		if (!checkCagesForFlyDetection(exp))
@@ -127,6 +121,13 @@ public abstract class FlyDetect extends BuildSeries {
 		Sequence seq = new SequenceLoaderService().initSequenceFromFirstImage(imagesList);
 		exp.getSeqCamData().setSequence(seq);
 		boolean flag = exp.loadCageMeasures();
+		// CRITICAL: Also load capillaries to prevent them from being overwritten as empty
+		// when save operations are triggered (e.g., closeViewsForCurrentExperiment)
+		// This protects kymograph measures from being erased during fly detection
+		exp.loadMCCapillaries_Only();
+		if (exp.getKymosBinFullDirectory() != null) {
+			exp.getCapillaries().load_Capillaries(exp.getKymosBinFullDirectory());
+		}
 		return flag;
 	}
 }
