@@ -38,7 +38,7 @@ public class DetectFlyFromCleanBackground extends BuildSeries {
 		options.threshold = options.thresholdDiff;
 
 		if (exp.loadReferenceImage()) {
-			openFlyDetectViewers(exp);
+			openFlyDetectViewers1(exp);
 			findFliesInAllFrames(exp);
 		}
 	}
@@ -63,7 +63,7 @@ public class DetectFlyFromCleanBackground extends BuildSeries {
 				seqNegative.setImage(0, 0, negativeImage);
 				vNegative.setTitle(title);
 				List<Rectangle2D> listRectangles = find_flies.findFlies(negativeImage, t_from);
-				displayRectanglesAsROIs(seqNegative, listRectangles, true);
+				displayRectanglesAsROIs1(seqNegative, listRectangles, true);
 				seqNegative.endUpdate();
 			} catch (InterruptedException e) {
 				e.printStackTrace();

@@ -1,5 +1,6 @@
 package plugins.fmp.multicafe.fmp_series;
 
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -21,7 +22,6 @@ import icy.sequence.Sequence;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
-import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
 import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
@@ -203,17 +203,20 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		return seq;
 	}
 
-	void displayRectanglesAsROIs(Sequence seq, List<Rectangle2D> listRectangles, boolean eraseOldPoints) {
+	// -------------------------- used by flydetection classes
+
+	void displayRectanglesAsROIs1(Sequence seq, List<Rectangle2D> listRectangles, boolean eraseOldPoints) {
 		if (eraseOldPoints)
 			seq.removeAllROI();
 
 		for (Rectangle2D rectangle : listRectangles) {
-			ROI2DRectangle flyPoint = new ROI2DRectangle(rectangle);
-			seq.addROI(flyPoint);
+			ROI2DRectangle flyRectangle = new ROI2DRectangle(rectangle);
+			flyRectangle.setColor(Color.YELLOW);
+			seq.addROI(flyRectangle);
 		}
 	}
 
-	void openFlyDetectViewers(Experiment exp) {
+	void openFlyDetectViewers1(Experiment exp) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
@@ -227,11 +230,4 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		}
 	}
 
-	protected boolean loadDrosoTrack(Experiment exp) {
-		List<String> imagesList = exp.getSeqCamData().getImagesList(true);
-		Sequence seq = new SequenceLoaderService().initSequenceFromFirstImage(imagesList);
-		exp.getSeqCamData().setSequence(seq);
-		boolean flag = exp.loadCageMeasures();
-		return flag;
-	}
 }

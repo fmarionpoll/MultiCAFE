@@ -16,7 +16,7 @@ public class FlyDetect1 extends FlyDetect {
 		find_flies.initParametersForDetection(exp, options);
 		exp.getCages().initFlyPositions(options.detectCage);
 
-		openFlyDetectViewers(exp);
+		openFlyDetectViewers1(exp);
 		findFliesInAllFrames(exp);
 	}
 

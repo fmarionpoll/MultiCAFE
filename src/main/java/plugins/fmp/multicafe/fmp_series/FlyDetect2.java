@@ -19,7 +19,7 @@ public class FlyDetect2 extends FlyDetect {
 
 		options.threshold = options.thresholdDiff;
 		if (new SequenceLoaderService().loadReferenceImage(exp)) {
-			openFlyDetectViewers(exp);
+			openFlyDetectViewers1(exp);
 			findFliesInAllFrames(exp);
 		}
 	}

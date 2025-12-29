@@ -1,11 +1,7 @@
 package plugins.fmp.multicafe.fmp_series;
 
-import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
-import javax.swing.SwingUtilities;
 
 import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
@@ -16,7 +12,6 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
-import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public abstract class FlyDetect extends BuildSeries {
 	public DetectFlyTools find_flies = new DetectFlyTools();
@@ -25,8 +20,11 @@ public abstract class FlyDetect extends BuildSeries {
 
 	@Override
 	void analyzeExperiment(Experiment exp) {
-		if (!loadDrosoTrack(exp))
+		if (!loadDrosoTrack2(exp))
 			return;
+		// Add this line to ensure capillaries are loaded and won't be overwritten as
+		// empty if a save occurs
+		exp.loadMCCapillaries_Only();
 		if (!checkBoundsForCages(exp))
 			return;
 		if (!checkCagesForFlyDetection(exp))
@@ -44,34 +42,41 @@ public abstract class FlyDetect extends BuildSeries {
 
 	protected boolean checkCagesForFlyDetection(Experiment exp) {
 		if (exp.getCages() == null || exp.getCages().cagesList == null || exp.getCages().cagesList.isEmpty()) {
-			Logger.error("FlyDetect:checkCagesForFlyDetection() No cages loaded for experiment: " + exp.getResultsDirectory());
+			Logger.error("FlyDetect:checkCagesForFlyDetection() No cages loaded for experiment: "
+					+ exp.getResultsDirectory());
 			return false;
 		}
 
 		int cagesWithFlies = 0;
 		int targetCageID = options.detectCage;
-		
+
 		for (plugins.fmp.multicafe.fmp_experiment.cages.Cage cage : exp.getCages().cagesList) {
 			if (cage.getProperties().getCageNFlies() > 0) {
 				cagesWithFlies++;
 				if (targetCageID != -1 && cage.getProperties().getCageID() == targetCageID) {
-					Logger.info("FlyDetect:checkCagesForFlyDetection() Found target cage " + targetCageID + " with " + cage.getProperties().getCageNFlies() + " fly(ies)");
+					Logger.info("FlyDetect:checkCagesForFlyDetection() Found target cage " + targetCageID + " with "
+							+ cage.getProperties().getCageNFlies() + " fly(ies)");
 					return true;
 				}
 			}
 		}
 
 		if (cagesWithFlies == 0) {
-			Logger.error("FlyDetect:checkCagesForFlyDetection() No cages with flies (nFlies > 0) found. All " + exp.getCages().cagesList.size() + " cages have nFlies = 0. Experiment: " + exp.getResultsDirectory());
+			Logger.error("FlyDetect:checkCagesForFlyDetection() No cages with flies (nFlies > 0) found. All "
+					+ exp.getCages().cagesList.size() + " cages have nFlies = 0. Experiment: "
+					+ exp.getResultsDirectory());
 			return false;
 		}
 
 		if (targetCageID != -1) {
-			Logger.error("FlyDetect:checkCagesForFlyDetection() Target cage " + targetCageID + " not found or has nFlies = 0. Found " + cagesWithFlies + " cage(s) with flies, but not the target cage.");
+			Logger.error("FlyDetect:checkCagesForFlyDetection() Target cage " + targetCageID
+					+ " not found or has nFlies = 0. Found " + cagesWithFlies
+					+ " cage(s) with flies, but not the target cage.");
 			return false;
 		}
 
-		Logger.info("FlyDetect:checkCagesForFlyDetection() Found " + cagesWithFlies + " cage(s) with flies out of " + exp.getCages().cagesList.size() + " total cages");
+		Logger.info("FlyDetect:checkCagesForFlyDetection() Found " + cagesWithFlies + " cage(s) with flies out of "
+				+ exp.getCages().cagesList.size() + " total cages");
 		return true;
 	}
 
@@ -101,7 +106,7 @@ public abstract class FlyDetect extends BuildSeries {
 				seqNegative.setImage(0, 0, negativeImage);
 				vNegative.setTitle(title);
 				List<Rectangle2D> listRectangles = find_flies.findFlies(negativeImage, t);
-				displayRectanglesAsROIs(seqNegative, listRectangles, true);
+				displayRectanglesAsROIs1(seqNegative, listRectangles, true);
 				seqNegative.endUpdate();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -117,28 +122,11 @@ public abstract class FlyDetect extends BuildSeries {
 		// default does nothing
 	}
 
-	void displayRectanglesAsROIs(Sequence seq, List<Rectangle2D> listRectangles, boolean eraseOldPoints) {
-		if (eraseOldPoints)
-			seq.removeAllROI();
-
-		for (Rectangle2D rectangle : listRectangles) {
-			ROI2DRectangle flyRectangle = new ROI2DRectangle(rectangle);
-			flyRectangle.setColor(Color.YELLOW);
-			seq.addROI(flyRectangle);
-		}
-	}
-
-	void openFlyDetectViewers(Experiment exp) {
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {
-					seqNegative = newSequence("detectionImage", exp.getSeqCamData().getReferenceImage());
-					vNegative = new ViewerFMP(seqNegative, false, true);
-					vNegative.setVisible(true);
-				}
-			});
-		} catch (InvocationTargetException | InterruptedException e) {
-			Logger.error("BuildSeries:openFlyDetectViewers() Failed to open fly detection viewers", e);
-		}
+	protected boolean loadDrosoTrack2(Experiment exp) {
+		List<String> imagesList = exp.getSeqCamData().getImagesList(true);
+		Sequence seq = new SequenceLoaderService().initSequenceFromFirstImage(imagesList);
+		exp.getSeqCamData().setSequence(seq);
+		boolean flag = exp.loadCageMeasures();
+		return flag;
 	}
 }

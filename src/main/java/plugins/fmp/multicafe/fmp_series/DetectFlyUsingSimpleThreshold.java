@@ -35,7 +35,7 @@ public class DetectFlyUsingSimpleThreshold extends BuildSeries {
 		find_flies.initParametersForDetection(exp, options);
 		exp.getCages().initFlyPositions(options.detectCage);
 
-		openFlyDetectViewers(exp);
+		openFlyDetectViewers1(exp);
 		findFliesInAllFrames(exp);
 	}
 
@@ -79,7 +79,7 @@ public class DetectFlyUsingSimpleThreshold extends BuildSeries {
 				seqNegative.setImage(0, 0, workImage);
 				vNegative.setTitle(title);
 				List<Rectangle2D> listRectangles = find_flies.findFlies(workImage, t_from);
-				displayRectanglesAsROIs(seqNegative, listRectangles, true);
+				displayRectanglesAsROIs1(seqNegative, listRectangles, true);
 				seqNegative.endUpdate();
 			} catch (InterruptedException e) {
 				e.printStackTrace();

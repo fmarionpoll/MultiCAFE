@@ -19,7 +19,7 @@ public class DetectSpotsOutline extends BuildSeries {
 		if (!checkBoundsForCages(exp))
 			return;
 
-		openFlyDetectViewers(exp);
+		openFlyDetectViewers1(exp);
 		runSpotsDetect(exp);
 		if (!stopFlag)
 			exp.save_MS96_cages();
