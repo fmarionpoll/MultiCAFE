@@ -13,7 +13,6 @@ import plugins.fmp.multicafe.fmp_experiment.ids.CapillaryID;
 import plugins.fmp.multicafe.fmp_experiment.ids.SpotID;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArrayPersistence;
 import plugins.fmp.multicafe.fmp_tools.Logger;
 
 /**
@@ -65,20 +64,19 @@ public class MigrationTool {
 			// Save descriptions to results directory, measures to bin directory
 			
 			// Save spots descriptions to new format
-			SpotsArrayPersistence spotsPersistence = new SpotsArrayPersistence();
-			boolean spotsDescriptionsSaved = spotsPersistence.save_SpotsArray_Descriptions(exp.getSpotsArray(), directory);
+			boolean spotsDescriptionsSaved = exp.getSpotsArray().getPersistence().saveSpotsArrayDescription(exp.getSpotsArray(), directory);
 			if (!spotsDescriptionsSaved) {
 				Logger.warn("MigrationTool:migrateExperiment() Failed to save spot descriptions to CSV");
 			}
 			
 			// Save cages descriptions to new format
-			boolean cagesDescriptionsSaved = exp.getCages().getPersistence().save_CagesArray_Descriptions(exp.getCages(), directory);
+			boolean cagesDescriptionsSaved = exp.getCages().getPersistence().saveCagesArrayDescription(exp.getCages(), directory);
 			if (!cagesDescriptionsSaved) {
 				Logger.warn("MigrationTool:migrateExperiment() Failed to save cage descriptions");
 			}
 			
 			// Save capillary descriptions to new format (if available)
-			boolean capillariesDescriptionsSaved = exp.getCapillaries().getPersistence().save_CapillariesArray_Descriptions(exp.getCapillaries(), directory);
+			boolean capillariesDescriptionsSaved = exp.getCapillaries().getPersistence().saveCapillariesArrayDescription(exp.getCapillaries(), directory);
 			if (!capillariesDescriptionsSaved) {
 				Logger.warn("MigrationTool:migrateExperiment() Failed to save capillary descriptions");
 			}
@@ -87,10 +85,10 @@ public class MigrationTool {
 			String binDir = exp.getKymosBinFullDirectory();
 			if (binDir != null) {
 				// Save spots measures
-				spotsPersistence.save_SpotsArrayMeasures(exp.getSpotsArray(), binDir);
+				exp.getSpotsArray().getPersistence().saveSpotsArrayMeasures(exp.getSpotsArray(), binDir);
 				
 				// Save cages measures
-				exp.getCages().getPersistence().save_CagesArrayMeasures(exp.getCages(), binDir);
+				exp.getCages().getPersistence().saveCagesArrayMeasures(exp.getCages(), binDir);
 				
 				// Save capillary measures
 				exp.getCapillaries().getPersistence().save_CapillariesArrayMeasures(exp.getCapillaries(), binDir);

@@ -46,11 +46,18 @@ public class SpotsArray {
 
 	// === CORE FIELDS ===
 	private final List<Spot> spotsList;
+	private SpotsArrayPersistence persistence = new SpotsArrayPersistence();
 
 	// === CONSTRUCTORS ===
 
 	public SpotsArray() {
 		this.spotsList = new ArrayList<>();
+	}
+
+	// === PERSISTENCE ===
+
+	public SpotsArrayPersistence getPersistence() {
+		return persistence;
 	}
 
 	// === SPOTS MANAGEMENT ===

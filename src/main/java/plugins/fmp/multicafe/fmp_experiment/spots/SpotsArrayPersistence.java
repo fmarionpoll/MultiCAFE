@@ -44,7 +44,7 @@ public class SpotsArrayPersistence {
 		}
 
 		// Priority 1: Try new format (descriptions only)
-		boolean descriptionsLoaded = load_SpotsArray_Descriptions(spotsArray, directory);
+		boolean descriptionsLoaded = loadSpotsArrayDescription(spotsArray, directory);
 		if (descriptionsLoaded) {
 			Logger.info("SpotsArrayPersistence:load_SpotsArray() loaded " + spotsArray.getSpotsCount()
 					+ " spot descriptions from new format");
@@ -73,7 +73,7 @@ public class SpotsArrayPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean load_SpotsArray_Descriptions(SpotsArray spotsArray, String resultsDirectory) {
+	public boolean loadSpotsArrayDescription(SpotsArray spotsArray, String resultsDirectory) {
 		if (resultsDirectory == null) {
 			return false;
 		}
@@ -125,7 +125,7 @@ public class SpotsArrayPersistence {
 			}
 			return descriptionLoaded || spotsLoaded;
 		} catch (Exception e) {
-			Logger.error("SpotsArrayPersistence:load_SpotsArray_Descriptions() Failed: " + e.getMessage(), e, true);
+			Logger.error("SpotsArrayPersistence:loadSpotsArray() Failed: " + e.getMessage(), e, true);
 			return false;
 		}
 	}
@@ -137,7 +137,7 @@ public class SpotsArrayPersistence {
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public boolean load_SpotsArrayMeasures(SpotsArray spotsArray, String binDirectory) {
+	public boolean loadSpotsArrayMeasures(SpotsArray spotsArray, String binDirectory) {
 		if (binDirectory == null) {
 			return false;
 		}
@@ -181,7 +181,7 @@ public class SpotsArrayPersistence {
 	 * @return true if successful
 	 */
 	public boolean save_SpotsArray(SpotsArray spotsArray, String resultsDirectory) {
-		return save_SpotsArray_Descriptions(spotsArray, resultsDirectory);
+		return saveSpotsArrayDescription(spotsArray, resultsDirectory);
 	}
 	
 	/**
@@ -191,15 +191,15 @@ public class SpotsArrayPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean save_SpotsArray_Descriptions(SpotsArray spotsArray, String resultsDirectory) {
+	public boolean saveSpotsArrayDescription(SpotsArray spotsArray, String resultsDirectory) {
 		if (resultsDirectory == null) {
-			Logger.warn("SpotsArrayPersistence:save_SpotsArray_Descriptions() directory is null");
+			Logger.warn("SpotsArrayPersistence:saveSpotsArray() directory is null");
 			return false;
 		}
 
 		Path path = Paths.get(resultsDirectory);
 		if (!Files.exists(path)) {
-			Logger.warn("SpotsArrayPersistence:save_SpotsArray_Descriptions() directory does not exist: " + resultsDirectory);
+			Logger.warn("SpotsArrayPersistence:saveSpotsArray() directory does not exist: " + resultsDirectory);
 			return false;
 		}
 
@@ -209,11 +209,11 @@ public class SpotsArrayPersistence {
 			if (!spotsArray.csvSaveSpotsArraySection(writer)) {
 				return false;
 			}
-			Logger.info("SpotsArrayPersistence:save_SpotsArray_Descriptions() saved " + spotsArray.getSpotsCount()
+			Logger.info("SpotsArrayPersistence:saveSpotsArray() saved " + spotsArray.getSpotsCount()
 					+ " spot descriptions to " + ID_SPOTSARRAY_CSV);
 			return true;
 		} catch (IOException e) {
-			Logger.error("SpotsArrayPersistence:save_SpotsArray_Descriptions() Failed: " + e.getMessage(), e, true);
+			Logger.error("SpotsArrayPersistence:saveSpotsArray() Failed: " + e.getMessage(), e, true);
 			return false;
 		}
 	}
@@ -225,7 +225,7 @@ public class SpotsArrayPersistence {
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public boolean save_SpotsArrayMeasures(SpotsArray spotsArray, String binDirectory) {
+	public boolean saveSpotsArrayMeasures(SpotsArray spotsArray, String binDirectory) {
 		if (binDirectory == null) {
 			Logger.warn("SpotsArrayPersistence:save_SpotsArrayMeasures() directory is null");
 			return false;

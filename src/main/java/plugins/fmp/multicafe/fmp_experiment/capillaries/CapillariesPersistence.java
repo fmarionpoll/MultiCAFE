@@ -64,7 +64,7 @@ public class CapillariesPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean load_CapillariesArray_Descriptions(Capillaries capillaries, String resultsDirectory) {
+	public boolean loadCapillariesArrayDescription(Capillaries capillaries, String resultsDirectory) {
 		if (resultsDirectory == null) {
 			return false;
 		}
@@ -113,7 +113,7 @@ public class CapillariesPersistence {
 			csvReader.close();
 			return false;
 		} catch (Exception e) {
-			Logger.error("CapillariesPersistence:load_CapillariesArray_Descriptions() Error: " + e.getMessage(), e, true);
+			Logger.error("CapillariesPersistence:loadCapillariesArray() Error: " + e.getMessage(), e, true);
 			return false;
 		}
 	}
@@ -659,15 +659,15 @@ public class CapillariesPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean save_CapillariesArray_Descriptions(Capillaries capillaries, String resultsDirectory) {
+	public boolean saveCapillariesArrayDescription(Capillaries capillaries, String resultsDirectory) {
 		if (resultsDirectory == null) {
-			Logger.warn("CapillariesPersistence:save_CapillariesArray_Descriptions() directory is null");
+			Logger.warn("CapillariesPersistence:saveCapillariesArrayDescription() directory is null");
 			return false;
 		}
 
 		Path path = Paths.get(resultsDirectory);
 		if (!Files.exists(path)) {
-			Logger.warn("CapillariesPersistence:save_CapillariesArray_Descriptions() directory does not exist: " + resultsDirectory);
+			Logger.warn("CapillariesPersistence:saveCapillariesArrayDescription() directory does not exist: " + resultsDirectory);
 			return false;
 		}
 
@@ -676,10 +676,10 @@ public class CapillariesPersistence {
 			csvSave_DescriptionSection(capillaries, csvWriter);
 			csvWriter.flush();
 			csvWriter.close();
-			Logger.info("CapillariesPersistence:save_CapillariesArray_Descriptions() Saved descriptions to " + ID_CAPILLARIESARRAY_CSV);
+			Logger.info("CapillariesPersistence:saveCapillariesArrayDescription() Saved descriptions to " + ID_CAPILLARIESARRAY_CSV);
 			return true;
 		} catch (IOException e) {
-			Logger.error("CapillariesPersistence:save_CapillariesArray_Descriptions() Error: " + e.getMessage(), e);
+			Logger.error("CapillariesPersistence:saveCapillariesArrayDescription() Error: " + e.getMessage(), e);
 			return false;
 		}
 	}

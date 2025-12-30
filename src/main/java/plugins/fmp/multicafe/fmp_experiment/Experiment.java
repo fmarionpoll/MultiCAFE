@@ -835,8 +835,14 @@ public class Experiment {
 				}
 			}
 			// Also load spots from CSV (may be empty if migration failed)
-			SpotsArrayPersistence spotsPersistence = new SpotsArrayPersistence();
-			spotsPersistence.load_SpotsArray(spotsArray, resultsDir);
+			spotsArray.getPersistence().loadSpotsArrayDescription(spotsArray, resultsDir);
+			
+			// Transfer cages to ROIs on sequence if loaded successfully
+			if (loaded && seqCamData != null && seqCamData.getSequence() != null) {
+				cages.cagesToROIs(seqCamData);
+				cages.updateCagesFromSequence(seqCamData);
+			}
+			
 			return loaded;
 		}
 		
@@ -846,16 +852,21 @@ public class Experiment {
 		// Load measures from bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
-			cages.getPersistence().load_CagesArrayMeasures(cages, binDir);
+			cages.getPersistence().loadCagesArrayMeasures(cages, binDir);
+		}
+		
+		// Transfer cages to ROIs on sequence if loaded successfully
+		if (cagesLoaded && seqCamData != null && seqCamData.getSequence() != null) {
+			cages.cagesToROIs(seqCamData);
+			cages.updateCagesFromSequence(seqCamData);
 		}
 		
 		// Also load spots descriptions from CSV (independent persistence)
-		SpotsArrayPersistence spotsPersistence = new SpotsArrayPersistence();
-		spotsPersistence.load_SpotsArray(spotsArray, resultsDir);
+		spotsArray.getPersistence().loadSpotsArrayDescription(spotsArray, resultsDir);
 		
 		// Load spots measures from bin directory (if available)
 		if (binDir != null) {
-			spotsPersistence.load_SpotsArrayMeasures(spotsArray, binDir);
+			spotsArray.getPersistence().loadSpotsArrayMeasures(spotsArray, binDir);
 		}
 		
 		return cagesLoaded;
@@ -868,7 +879,7 @@ public class Experiment {
 		// Also save measures to bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
-			cages.getPersistence().save_CagesArrayMeasures(cages, binDir);
+			cages.getPersistence().saveCagesArrayMeasures(cages, binDir);
 		}
 		
 		return descriptionsSaved;
@@ -878,13 +889,12 @@ public class Experiment {
 
 	public boolean load_MS96_spotsMeasures() {
 		String resultsDir = getResultsDirectory();
-		SpotsArrayPersistence persistence = new SpotsArrayPersistence();
-		boolean descriptionsLoaded = persistence.load_SpotsArray(spotsArray, resultsDir);
+		boolean descriptionsLoaded = spotsArray.getPersistence().loadSpotsArrayDescription(spotsArray, resultsDir);
 		
 		// Load measures from bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
-			persistence.load_SpotsArrayMeasures(spotsArray, binDir);
+			spotsArray.getPersistence().loadSpotsArrayMeasures(spotsArray, binDir);
 		}
 		
 		return descriptionsLoaded;
@@ -892,13 +902,12 @@ public class Experiment {
 
 	public boolean save_MS96_spotsMeasures() {
 		String resultsDir = getResultsDirectory();
-		SpotsArrayPersistence persistence = new SpotsArrayPersistence();
-		boolean descriptionsSaved = persistence.save_SpotsArray(spotsArray, resultsDir);
+		boolean descriptionsSaved = spotsArray.getPersistence().saveSpotsArrayDescription(spotsArray, resultsDir);
 		
 		// Also save measures to bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
-			persistence.save_SpotsArrayMeasures(spotsArray, binDir);
+			spotsArray.getPersistence().saveSpotsArrayMeasures(spotsArray, binDir);
 		}
 		
 		return descriptionsSaved;
@@ -1550,14 +1559,24 @@ public class Experiment {
 	// ------------------------------
 
 	public boolean loadMCCapillaries_Only() {
-		String mcCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY,
-				BIN_DIRECTORY, IMG_DIRECTORY);
-		if (mcCapillaryFileName == null && seqCamData != null)
-			return xmlLoadOldCapillaries();
+		// Try to load from CSV first (new format)
+		String resultsDir = getResultsDirectory();
+		boolean csvLoaded = capillaries.getPersistence().loadCapillariesArrayDescription(capillaries, resultsDir);
+		
+		// Only load from XML if CSV didn't have the data (backward compatibility)
+		boolean flag = false;
+		if (!csvLoaded) {
+			String mcCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY,
+					BIN_DIRECTORY, IMG_DIRECTORY);
+			if (mcCapillaryFileName == null && seqCamData != null)
+				return xmlLoadOldCapillaries();
 
-		boolean flag = capillaries.loadMCCapillaries_Descriptors(mcCapillaryFileName);
-		if (capillaries.getList().size() < 1)
-			flag = xmlLoadOldCapillaries();
+			flag = capillaries.loadMCCapillaries_Descriptors(mcCapillaryFileName);
+			if (capillaries.getList().size() < 1)
+				flag = xmlLoadOldCapillaries();
+		} else {
+			flag = true; // CSV loaded successfully
+		}
 
 		// load MCcapillaries description of experiment
 		if (prop.field_boxID.contentEquals("..") && prop.field_experiment.contentEquals("..")
@@ -1579,9 +1598,19 @@ public class Experiment {
 		String kymosImagesDirectory = getKymosBinFullDirectory();
 		boolean flag2 = capillaries.load_Capillaries(kymosImagesDirectory);
 
-		String xmlCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY,
-				BIN_DIRECTORY, IMG_DIRECTORY);
-		boolean flag1 = capillaries.mergeMCCapillaries_Descriptors(xmlCapillaryFileName);
+		// Try to load from CSV first (new format)
+		String resultsDir = getResultsDirectory();
+		boolean csvLoaded = capillaries.getPersistence().loadCapillariesArrayDescription(capillaries, resultsDir);
+		
+		// Only load from XML if CSV didn't have the data (backward compatibility)
+		boolean flag1 = false;
+		if (!csvLoaded) {
+			String xmlCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY,
+					BIN_DIRECTORY, IMG_DIRECTORY);
+			flag1 = capillaries.mergeMCCapillaries_Descriptors(xmlCapillaryFileName);
+		} else {
+			flag1 = true; // CSV loaded successfully
+		}
 
 		if (flag1 & flag2) {
 			// TODO: Add loadListOfPotentialKymographsFromCapillaries method to
@@ -1645,9 +1674,11 @@ public class Experiment {
 	// ---------------------------------------------
 
 	public boolean saveMCCapillaries_Only() {
-		String xmlCapillaryFileName = resultsDirectory + File.separator + capillaries.getXMLNameToAppend();
+		// XML save disabled - descriptions and ROI coordinates are now stored in CSV
+		// String xmlCapillaryFileName = resultsDirectory + File.separator + capillaries.getXMLNameToAppend();
 		transferExpDescriptorsToCapillariesDescriptors();
-		return capillaries.xmlSaveCapillaries_Descriptors(xmlCapillaryFileName);
+		// return capillaries.xmlSaveCapillaries_Descriptors(xmlCapillaryFileName);
+		return true; // Return true since CSV save is handled separately
 	}
 
 	private void transferExpDescriptorsToCapillariesDescriptors() {
@@ -1665,7 +1696,7 @@ public class Experiment {
 	public boolean loadCapillaries() {
 		String resultsDir = getResultsDirectory();
 		// Try new format: descriptions from results, measures from bin
-		boolean descriptionsLoaded = capillaries.getPersistence().load_CapillariesArray_Descriptions(capillaries, resultsDir);
+		boolean descriptionsLoaded = capillaries.getPersistence().loadCapillariesArrayDescription(capillaries, resultsDir);
 		
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
@@ -1682,7 +1713,7 @@ public class Experiment {
 	public boolean saveCapillaries() {
 		String resultsDir = getResultsDirectory();
 		// Save descriptions to new format
-		boolean descriptionsSaved = capillaries.getPersistence().save_CapillariesArray_Descriptions(capillaries, resultsDir);
+		boolean descriptionsSaved = capillaries.getPersistence().saveCapillariesArrayDescription(capillaries, resultsDir);
 		
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
