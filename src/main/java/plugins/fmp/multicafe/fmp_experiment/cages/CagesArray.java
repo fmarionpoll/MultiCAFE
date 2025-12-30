@@ -14,6 +14,7 @@ import icy.type.geom.Polygon2D;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_experiment.ids.CapillaryID;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ROIOperation;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TIntervalsArray;
@@ -289,6 +290,48 @@ public class CagesArray {
 				return cage;
 		}
 		return null;
+	}
+
+	// -----------------------------------------
+	// Reverse lookup helper methods (ID-based)
+
+	/**
+	 * Finds the cage containing the specified capillary ID.
+	 * Uses simple iteration through all cages.
+	 * 
+	 * @param capID the CapillaryID to search for
+	 * @return the Cage containing this capillary, or null if not found
+	 */
+	public Cage findCageContainingCapillary(CapillaryID capID) {
+		if (capID == null) {
+			return null;
+		}
+		for (Cage cage : cagesList) {
+			if (cage.getCapillaryIDs().contains(capID)) {
+				return cage;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds all cages containing the specified capillary ID.
+	 * Returns a list in case of many-to-many relationships.
+	 * 
+	 * @param capID the CapillaryID to search for
+	 * @return list of Cages containing this capillary (may be empty)
+	 */
+	public List<Cage> findCagesContainingCapillary(CapillaryID capID) {
+		List<Cage> result = new ArrayList<>();
+		if (capID == null) {
+			return result;
+		}
+		for (Cage cage : cagesList) {
+			if (cage.getCapillaryIDs().contains(capID)) {
+				result.add(cage);
+			}
+		}
+		return result;
 	}
 
 	public Cage getCageFromName(String name) {

@@ -250,13 +250,18 @@ public class SpotsArray {
 	}
 
 	// === XML OPERATIONS ===
+	// NOTE: XML operations are deprecated. Spots now use CSV-only persistence.
+	// These methods are kept for backward compatibility during migration.
 
 	/**
 	 * Saves spots array to XML.
+	 * @deprecated Spots now use CSV-only persistence. ROIs are regenerated from coordinates.
+	 * This method is kept for backward compatibility during migration.
 	 * 
 	 * @param node the XML node
 	 * @return true if successful
 	 */
+	@Deprecated
 	public boolean saveToXml(Node node) {
 		if (node == null) {
 			System.err.println("ERROR: Null node provided for SpotsArray save");
@@ -314,10 +319,12 @@ public class SpotsArray {
 
 	/**
 	 * Loads spots array from XML.
+	 * @deprecated Spots now use CSV-only persistence. This method is kept for backward compatibility during migration.
 	 * 
 	 * @param node the XML node
 	 * @return true if successful
 	 */
+	@Deprecated
 	public boolean loadFromXml(Node node) {
 		if (node == null) {
 			System.err.println("ERROR: Null node provided for SpotsArray load");
@@ -371,6 +378,7 @@ public class SpotsArray {
 		}
 	}
 
+	@Deprecated
 	public boolean saveDescriptorsToXml(String fileName) {
 		if (fileName == null) {
 			return false;
@@ -390,6 +398,7 @@ public class SpotsArray {
 		}
 	}
 
+	@Deprecated
 	public boolean loadDescriptorsFromXml(String fileName) {
 		if (fileName == null) {
 			return false;
@@ -594,7 +603,7 @@ public class SpotsArray {
 		}
 	}
 
-	private String csvLoadSpotsArray(BufferedReader reader, String csvSeparator) throws IOException {
+	String csvLoadSpotsArray(BufferedReader reader, String csvSeparator) throws IOException {
 		String line = reader.readLine();
 		while ((line = reader.readLine()) != null) {
 			String[] spotData = line.split(csvSeparator);
@@ -612,7 +621,7 @@ public class SpotsArray {
 		return null;
 	}
 
-	private String csvLoadSpotsDescription(BufferedReader reader, String csvSeparator) throws IOException {
+	String csvLoadSpotsDescription(BufferedReader reader, String csvSeparator) throws IOException {
 		String line = reader.readLine();
 		String[] data = line.split(csvSeparator);
 		String motif = data[0].substring(0, Math.min(data[0].length(), 6));
@@ -630,7 +639,7 @@ public class SpotsArray {
 		return null;
 	}
 
-	private String csvLoadSpotsMeasures(BufferedReader reader, EnumSpotMeasures measureType, String csvSeparator)
+	String csvLoadSpotsMeasures(BufferedReader reader, EnumSpotMeasures measureType, String csvSeparator)
 			throws IOException {
 		String line = reader.readLine();
 		boolean y = true;
@@ -675,7 +684,7 @@ public class SpotsArray {
 		}
 	}
 
-	private boolean csvSaveSpotsArraySection(FileWriter writer) throws IOException {
+	boolean csvSaveSpotsArraySection(FileWriter writer) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
 		writer.write("#" + CSV_SEPARATOR + "SPOTS_ARRAY" + CSV_SEPARATOR + "multiSPOTS data\n");
 		writer.write("n spots=" + CSV_SEPARATOR + spotsList.size() + "\n");
@@ -692,7 +701,7 @@ public class SpotsArray {
 		return true;
 	}
 
-	private boolean csvSaveMeasuresSection(FileWriter writer, EnumSpotMeasures measureType) throws IOException {
+	boolean csvSaveMeasuresSection(FileWriter writer, EnumSpotMeasures measureType) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
 		writer.write("#" + CSV_SEPARATOR + measureType.toString() + CSV_SEPARATOR + "v0\n");
 		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "npts" + CSV_SEPARATOR + "yi\n");

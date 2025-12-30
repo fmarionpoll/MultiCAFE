@@ -20,6 +20,8 @@ import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_experiment.ids.CapillaryID;
+import plugins.fmp.multicafe.fmp_experiment.ids.SpotID;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotString;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
@@ -40,8 +42,18 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public CageMeasures measures = new CageMeasures();
 
 	public FlyPositions flyPositions = new FlyPositions();
+	
+	// ID-based references (new approach)
+	private List<SpotID> spotIDs = new ArrayList<>();
+	private List<CapillaryID> capillaryIDs = new ArrayList<>();
+	
+	// Legacy fields for backward compatibility during transition
+	// These will be removed after full migration
+	@Deprecated
 	public SpotsArray spotsArray = new SpotsArray();
+	@Deprecated
 	private Capillaries capillaries = new Capillaries();
+	
 	private final AtomicBoolean closed = new AtomicBoolean(false);
 
 	public boolean valid = false;
@@ -84,6 +96,73 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	// ------------------------------------
+	// ID-based access methods
+	
+	public List<SpotID> getSpotIDs() {
+		return spotIDs;
+	}
+	
+	public void setSpotIDs(List<SpotID> spotIDs) {
+		this.spotIDs = spotIDs != null ? new ArrayList<>(spotIDs) : new ArrayList<>();
+	}
+	
+	public List<CapillaryID> getCapillaryIDs() {
+		return capillaryIDs;
+	}
+	
+	public void setCapillaryIDs(List<CapillaryID> capillaryIDs) {
+		this.capillaryIDs = capillaryIDs != null ? new ArrayList<>(capillaryIDs) : new ArrayList<>();
+	}
+	
+	/**
+	 * Resolves SpotIDs to actual Spot objects from the global SpotsArray.
+	 * 
+	 * @param allSpots the global SpotsArray containing all spots
+	 * @return list of Spot objects for this cage
+	 */
+	public List<Spot> getSpots(SpotsArray allSpots) {
+		List<Spot> result = new ArrayList<>();
+		if (allSpots == null) {
+			return result;
+		}
+		for (SpotID spotID : spotIDs) {
+			// Find spot by matching cageID and position
+			for (Spot spot : allSpots.getList()) {
+				if (spot.getProperties().getCageID() == spotID.getCageID() 
+						&& spot.getProperties().getCagePosition() == spotID.getPosition()) {
+					result.add(spot);
+					break;
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Resolves CapillaryIDs to actual Capillary objects from the global Capillaries.
+	 * 
+	 * @param allCapillaries the global Capillaries containing all capillaries
+	 * @return list of Capillary objects for this cage
+	 */
+	public List<Capillary> getCapillaries(Capillaries allCapillaries) {
+		List<Capillary> result = new ArrayList<>();
+		if (allCapillaries == null) {
+			return result;
+		}
+		for (CapillaryID capID : capillaryIDs) {
+			// Find capillary by kymographIndex
+			for (Capillary cap : allCapillaries.getList()) {
+				if (cap.getKymographIndex() == capID.getKymographIndex()) {
+					result.add(cap);
+					break;
+				}
+			}
+		}
+		return result;
+	}
+	
+	// Backward-compatible getters (deprecated, use ID-based methods)
+	@Deprecated
 	public SpotsArray getSpotsArray() {
 		return spotsArray;
 	}
@@ -166,11 +245,21 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	// ------------------------------------------
-
+	
+	// Backward-compatible getters (deprecated, use ID-based methods)
+	@Deprecated
 	public void setCapillaries(Capillaries capArray) {
 		capillaries = capArray;
+		// Also update ID list if capillaries are set directly
+		if (capArray != null) {
+			capillaryIDs.clear();
+			for (Capillary cap : capArray.getList()) {
+				capillaryIDs.add(new CapillaryID(cap.getKymographIndex()));
+			}
+		}
 	}
 
+	@Deprecated
 	public Capillaries getCapillaries() {
 		return capillaries;
 	}
@@ -209,17 +298,30 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public void addCapillaryIfUnique(Capillary cap) {
+		if (cap == null) {
+			return;
+		}
+		CapillaryID capID = new CapillaryID(cap.getKymographIndex());
+		if (!capillaryIDs.contains(capID)) {
+			capillaryIDs.add(capID);
+		}
+		// Also update legacy field for backward compatibility
 		if (capillaries.getList().size() == 0) {
 			capillaries.addCapillary(cap);
 			return;
 		}
-
 		for (Capillary capCage : capillaries.getList()) {
 			if (capCage.compareTo(cap) == 0) {
 				return;
 			}
 		}
 		capillaries.addCapillary(cap);
+	}
+	
+	public void addCapillaryIDIfUnique(CapillaryID capID) {
+		if (capID != null && !capillaryIDs.contains(capID)) {
+			capillaryIDs.add(capID);
+		}
 	}
 
 	public void addCapillaryIfUniqueBulkFilteredOnCageID(List<Capillary> capillaryList) {
@@ -230,9 +332,12 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public void clearCapillaryList() {
+		capillaryIDs.clear();
+		// Also clear legacy field
 		capillaries.getList().clear();
 	}
 
+	@Deprecated
 	public List<Capillary> getCapillaryList() {
 		return capillaries.getList();
 	}
@@ -249,18 +354,30 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		valid = false;
 		if (bMeasures)
 			flyPositions.copyXYTaSeries(cageFrom.flyPositions);
+		// Copy ID lists
+		spotIDs = new ArrayList<>(cageFrom.spotIDs);
+		capillaryIDs = new ArrayList<>(cageFrom.capillaryIDs);
+		// Also copy legacy arrays for backward compatibility
 		spotsArray.copySpotsInfo(cageFrom.spotsArray);
 	}
 
 	public void pasteCageInfo(Cage cageTo) {
 		prop.paste(cageTo.prop);
 		cageTo.cageROI2D = (ROI2D) cageROI2D.getCopy();
+		// Paste ID lists
+		cageTo.spotIDs = new ArrayList<>(spotIDs);
+		cageTo.capillaryIDs = new ArrayList<>(capillaryIDs);
+		// Also paste legacy arrays for backward compatibility
 		spotsArray.pasteSpotsInfo(cageTo.spotsArray);
 	}
 
 	public void pasteCage(Cage cageTo, boolean bMeasures) {
 		prop.paste(cageTo.prop);
 		cageTo.cageROI2D = (ROI2D) cageROI2D.getCopy();
+		// Paste ID lists
+		cageTo.spotIDs = new ArrayList<>(spotIDs);
+		cageTo.capillaryIDs = new ArrayList<>(capillaryIDs);
+		// Also paste legacy arrays for backward compatibility
 		spotsArray.pasteSpots(cageTo.spotsArray, bMeasures);
 		if (bMeasures)
 			flyPositions.copyXYTaSeries(cageTo.flyPositions);
@@ -381,10 +498,18 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 				cageROI2D.setColor(prop.getColor());
 			}
 
-			// Load spots array with error handling
-			if (!spotsArray.loadFromXml(xmlVal)) {
-				// Keep cage loaded even if spots descriptors are missing
-				// Spots arrays are optional (not present in MultiCAFE experiments)
+			// Load capillary IDs (new format)
+			if (!xmlLoadCapillaryIDs(xmlVal)) {
+				// Legacy format will be handled by migration tool
+			}
+
+			// Load spot IDs (new format)
+			if (!xmlLoadSpotIDs(xmlVal)) {
+				// Try legacy format (spots nested in XML)
+				if (spotsArray.loadFromXml(xmlVal)) {
+					// Convert legacy spots to IDs
+					convertSpotsArrayToIDs();
+				}
 			}
 
 			// Load cage measures
@@ -436,9 +561,15 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 				return false;
 			}
 
-			// Save spots array with error handling
-			if (!spotsArray.saveToXml(xmlVal)) {
-				System.err.println("ERROR: Failed to save spots array for cage " + index);
+			// Save capillary IDs (new format)
+			if (!xmlSaveCapillaryIDs(xmlVal)) {
+				System.err.println("ERROR: Failed to save capillary IDs for cage " + index);
+				return false;
+			}
+
+			// Save spot IDs (new format)
+			if (!xmlSaveSpotIDs(xmlVal)) {
+				System.err.println("ERROR: Failed to save spot IDs for cage " + index);
 				return false;
 			}
 
@@ -519,6 +650,128 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	// -----------------------------------------
+	// SpotID persistence methods
+
+	private static final String ID_SPOTIDS = "SpotIDs";
+	private static final String ID_NSPOTIDS = "N_spotIDs";
+	private static final String ID_SPOTID_ = "spotID_";
+	private static final String ID_CAPILLARYIDS = "CapillaryIDs";
+	private static final String ID_NCAPILLARYIDS = "N_capillaryIDs";
+	private static final String ID_CAPILLARYID_ = "capillaryID_";
+
+	private boolean xmlSaveSpotIDs(Element xmlVal) {
+		try {
+			Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_SPOTIDS);
+			if (xmlVal2 == null) {
+				return false;
+			}
+			XMLUtil.setElementIntValue(xmlVal2, ID_NSPOTIDS, spotIDs.size());
+			for (int i = 0; i < spotIDs.size(); i++) {
+				Element spotIDElement = XMLUtil.addElement(xmlVal2, ID_SPOTID_ + i);
+				SpotID spotID = spotIDs.get(i);
+				XMLUtil.setElementIntValue(spotIDElement, "cageID", spotID.getCageID());
+				XMLUtil.setElementIntValue(spotIDElement, "position", spotID.getPosition());
+			}
+			return true;
+		} catch (Exception e) {
+			System.err.println("ERROR saving spot IDs: " + e.getMessage());
+			return false;
+		}
+	}
+
+	private boolean xmlLoadSpotIDs(Element xmlVal) {
+		try {
+			Element xmlVal2 = XMLUtil.getElement(xmlVal, ID_SPOTIDS);
+			if (xmlVal2 == null) {
+				return false;
+			}
+			int nitems = XMLUtil.getElementIntValue(xmlVal2, ID_NSPOTIDS, 0);
+			spotIDs.clear();
+			for (int i = 0; i < nitems; i++) {
+				Element spotIDElement = XMLUtil.getElement(xmlVal2, ID_SPOTID_ + i);
+				if (spotIDElement != null) {
+					int cageID = XMLUtil.getElementIntValue(spotIDElement, "cageID", -1);
+					int position = XMLUtil.getElementIntValue(spotIDElement, "position", -1);
+					if (cageID >= 0 && position >= 0) {
+						spotIDs.add(new SpotID(cageID, position));
+					}
+				}
+			}
+			return true;
+		} catch (Exception e) {
+			System.err.println("ERROR loading spot IDs: " + e.getMessage());
+			return false;
+		}
+	}
+
+	private boolean xmlSaveCapillaryIDs(Element xmlVal) {
+		try {
+			Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_CAPILLARYIDS);
+			if (xmlVal2 == null) {
+				return false;
+			}
+			XMLUtil.setElementIntValue(xmlVal2, ID_NCAPILLARYIDS, capillaryIDs.size());
+			for (int i = 0; i < capillaryIDs.size(); i++) {
+				Element capIDElement = XMLUtil.addElement(xmlVal2, ID_CAPILLARYID_ + i);
+				CapillaryID capID = capillaryIDs.get(i);
+				XMLUtil.setElementIntValue(capIDElement, "kymographIndex", capID.getKymographIndex());
+			}
+			return true;
+		} catch (Exception e) {
+			System.err.println("ERROR saving capillary IDs: " + e.getMessage());
+			return false;
+		}
+	}
+
+	private boolean xmlLoadCapillaryIDs(Element xmlVal) {
+		try {
+			Element xmlVal2 = XMLUtil.getElement(xmlVal, ID_CAPILLARYIDS);
+			if (xmlVal2 == null) {
+				return false;
+			}
+			int nitems = XMLUtil.getElementIntValue(xmlVal2, ID_NCAPILLARYIDS, 0);
+			capillaryIDs.clear();
+			for (int i = 0; i < nitems; i++) {
+				Element capIDElement = XMLUtil.getElement(xmlVal2, ID_CAPILLARYID_ + i);
+				if (capIDElement != null) {
+					int kymographIndex = XMLUtil.getElementIntValue(capIDElement, "kymographIndex", -1);
+					if (kymographIndex >= 0) {
+						capillaryIDs.add(new CapillaryID(kymographIndex));
+					}
+				}
+			}
+			return true;
+		} catch (Exception e) {
+			System.err.println("ERROR loading capillary IDs: " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Converts legacy spotsArray to SpotID list.
+	 * Used during migration from old format.
+	 */
+	private void convertSpotsArrayToIDs() {
+		spotIDs.clear();
+		for (Spot spot : spotsArray.getList()) {
+			int cageID = spot.getProperties().getCageID();
+			int position = spot.getProperties().getCagePosition();
+			if (cageID >= 0 && position >= 0) {
+				spotIDs.add(new SpotID(cageID, position));
+			}
+		}
+	}
+
+	/**
+	 * Adds a SpotID to this cage if it's not already present.
+	 */
+	public void addSpotIDIfUnique(SpotID spotID) {
+		if (spotID != null && !spotIDs.contains(spotID)) {
+			spotIDs.add(spotID);
+		}
+	}
+
+	// -----------------------------------------
 
 	public String csvExportCageDescription(String sep) {
 		StringBuffer sbf = new StringBuffer();
@@ -551,11 +804,14 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	// --------------------------------------------------------
 
 	public int addEllipseSpot(Point2D.Double center, int radius) {
-		int index = spotsArray.getSpotsCount();
-		Spot spot = createEllipseSpot(index, center, radius);
-		spot.getProperties().setCagePosition(spotsArray.getSpotsCount());
+		int position = spotIDs.size();
+		SpotID spotID = new SpotID(prop.getCageID(), position);
+		spotIDs.add(spotID);
+		// Also add to legacy array for backward compatibility
+		Spot spot = createEllipseSpot(position, center, radius);
+		spot.getProperties().setCagePosition(position);
 		spotsArray.addSpot(spot);
-		return spotsArray.getSpotsCount();
+		return spotIDs.size();
 	}
 
 	private Spot createEllipseSpot(int cagePosition, Point2D.Double center, int radius) {

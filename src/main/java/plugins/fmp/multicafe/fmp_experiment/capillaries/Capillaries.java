@@ -53,6 +53,10 @@ public class Capillaries {
 
 	// ---------------------------------
 
+	public CapillariesPersistence getPersistence() {
+		return persistence;
+	}
+
 	public boolean load_Capillaries(String directory) {
 		return persistence.load_Capillaries(this, directory);
 	}

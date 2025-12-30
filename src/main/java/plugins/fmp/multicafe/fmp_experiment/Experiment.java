@@ -25,6 +25,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillariesDescription;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_experiment.ids.CapillaryID;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageAdjustmentOptions;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
@@ -33,7 +34,11 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.KymographInfo;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
+import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationDetector;
+import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationTool;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArrayPersistence;
 import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.Logger;
@@ -59,6 +64,7 @@ public class Experiment {
 
 	private CagesArray cages = new CagesArray();
 	private Capillaries capillaries = new Capillaries();
+	private SpotsArray spotsArray = new SpotsArray();
 
 	private ExperimentTimeManager timeManager = new ExperimentTimeManager();
 	private ExperimentProperties prop = new ExperimentProperties();
@@ -808,29 +814,94 @@ public class Experiment {
 	}
 
 	public boolean load_MS96_cages() {
-		String fileName = getXML_MS96_cages_Location(cages.ID_MS96_cages_XML);
-		if (fileName == null) {
-			return false;
+		String resultsDir = getResultsDirectory();
+		
+		// Check if migration is needed
+		MigrationDetector detector = new MigrationDetector();
+		if (detector.needsMigration(resultsDir)) {
+			Logger.info("Experiment:load_MS96_cages() Old format detected, running migration...");
+			MigrationTool migrationTool = new MigrationTool();
+			// Load old format first (spots will be in cage XML)
+			boolean loaded = cages.getPersistence().load_Cages(cages, resultsDir);
+			if (loaded) {
+				// Run migration to convert to new format
+				boolean migrated = migrationTool.migrateExperiment(this, resultsDir);
+				if (migrated) {
+					Logger.info("Experiment:load_MS96_cages() Migration completed successfully");
+					// Reload in new format
+					loaded = cages.getPersistence().load_Cages(cages, resultsDir);
+				} else {
+					Logger.warn("Experiment:load_MS96_cages() Migration failed, using old format");
+				}
+			}
+			// Also load spots from CSV (may be empty if migration failed)
+			SpotsArrayPersistence spotsPersistence = new SpotsArrayPersistence();
+			spotsPersistence.load_SpotsArray(spotsArray, resultsDir);
+			return loaded;
 		}
-		File file = new File(fileName);
-		if (!file.exists()) {
-			return false;
+		
+		// New format - load descriptions from results directory
+		boolean cagesLoaded = cages.getPersistence().load_Cages(cages, resultsDir);
+		
+		// Load measures from bin directory (if available)
+		String binDir = getKymosBinFullDirectory();
+		if (binDir != null) {
+			cages.getPersistence().load_CagesArrayMeasures(cages, binDir);
 		}
-		return cages.xmlReadCagesFromFileNoQuestion(fileName);
+		
+		// Also load spots descriptions from CSV (independent persistence)
+		SpotsArrayPersistence spotsPersistence = new SpotsArrayPersistence();
+		spotsPersistence.load_SpotsArray(spotsArray, resultsDir);
+		
+		// Load spots measures from bin directory (if available)
+		if (binDir != null) {
+			spotsPersistence.load_SpotsArrayMeasures(spotsArray, binDir);
+		}
+		
+		return cagesLoaded;
 	}
 
 	public boolean save_MS96_cages() {
-		return cages.save_Cages(getResultsDirectory());
+		String resultsDir = getResultsDirectory();
+		boolean descriptionsSaved = cages.getPersistence().save_Cages(cages, resultsDir);
+		
+		// Also save measures to bin directory (if available)
+		String binDir = getKymosBinFullDirectory();
+		if (binDir != null) {
+			cages.getPersistence().save_CagesArrayMeasures(cages, binDir);
+		}
+		
+		return descriptionsSaved;
 	}
 
 	// -------------------------------
 
 	public boolean load_MS96_spotsMeasures() {
-		return cages.load_SpotsMeasures(getResultsDirectory());
+		String resultsDir = getResultsDirectory();
+		SpotsArrayPersistence persistence = new SpotsArrayPersistence();
+		boolean descriptionsLoaded = persistence.load_SpotsArray(spotsArray, resultsDir);
+		
+		// Load measures from bin directory (if available)
+		String binDir = getKymosBinFullDirectory();
+		if (binDir != null) {
+			persistence.load_SpotsArrayMeasures(spotsArray, binDir);
+		}
+		
+		return descriptionsLoaded;
 	}
 
 	public boolean save_MS96_spotsMeasures() {
-		return cages.save_SpotsMeasures(getResultsDirectory());
+		String resultsDir = getResultsDirectory();
+		SpotsArrayPersistence persistence = new SpotsArrayPersistence();
+		boolean descriptionsSaved = persistence.save_SpotsArray(spotsArray, resultsDir);
+		
+		// Also save measures to bin directory (if available)
+		String binDir = getKymosBinFullDirectory();
+		if (binDir != null) {
+			persistence.save_SpotsArrayMeasures(spotsArray, binDir);
+		}
+		
+		return descriptionsSaved;
 	}
 
 	public boolean load_MS96_fliesPositions() {
@@ -1353,6 +1424,16 @@ public class Experiment {
 		this.capillaries = capillaries;
 	}
 
+	// ------------------------------ Spots Support
+
+	public SpotsArray getSpotsArray() {
+		return spotsArray;
+	}
+
+	public void setSpotsArray(SpotsArray spotsArray) {
+		this.spotsArray = spotsArray != null ? spotsArray : new SpotsArray();
+	}
+
 	public SequenceCamData getSeqCamData() {
 		if (seqCamData == null)
 			seqCamData = new SequenceCamData();
@@ -1582,11 +1663,39 @@ public class Experiment {
 	}
 
 	public boolean loadCapillaries() {
-		return capillaries.load_Capillaries(getKymosBinFullDirectory());
+		String resultsDir = getResultsDirectory();
+		// Try new format: descriptions from results, measures from bin
+		boolean descriptionsLoaded = capillaries.getPersistence().load_CapillariesArray_Descriptions(capillaries, resultsDir);
+		
+		String binDir = getKymosBinFullDirectory();
+		if (binDir != null) {
+			boolean measuresLoaded = capillaries.getPersistence().load_CapillariesArrayMeasures(capillaries, binDir);
+			if (descriptionsLoaded || measuresLoaded) {
+				return true;
+			}
+		}
+		
+		// Fall back to legacy format
+		return capillaries.load_Capillaries(binDir != null ? binDir : resultsDir);
 	}
 
 	public boolean saveCapillaries() {
-		return capillaries.save_Capillaries(getKymosBinFullDirectory());
+		String resultsDir = getResultsDirectory();
+		// Save descriptions to new format
+		boolean descriptionsSaved = capillaries.getPersistence().save_CapillariesArray_Descriptions(capillaries, resultsDir);
+		
+		String binDir = getKymosBinFullDirectory();
+		if (binDir != null) {
+			// Save measures to new format
+			capillaries.getPersistence().save_CapillariesArrayMeasures(capillaries, binDir);
+		}
+		
+		// Also save to legacy format for backward compatibility
+		if (binDir != null) {
+			capillaries.save_Capillaries(binDir);
+		}
+		
+		return descriptionsSaved;
 	}
 
 	public boolean loadCageMeasures() {
@@ -1683,10 +1792,12 @@ public class Experiment {
 		if (capillaries.getList().size() < 1)
 			return;
 
+		// Clear capillary ID lists in all cages
 		for (Cage cage : cages.getCageList()) {
 			cage.clearCapillaryList();
 		}
 
+		// Dispatch capillaries to cages using ID-based approach
 		for (Capillary cap : capillaries.getList()) {
 			int nflies = cap.getProperties().nFlies;
 			int cageID = cap.getCageID();
@@ -1697,6 +1808,10 @@ public class Experiment {
 				cage.getProperties().setCageNFlies(nflies);
 				cages.getCageList().add(cage);
 			}
+			// Add capillary ID instead of object reference
+			CapillaryID capID = new CapillaryID(cap.getKymographIndex());
+			cage.addCapillaryIDIfUnique(capID);
+			// Also update legacy field for backward compatibility
 			cage.addCapillaryIfUnique(cap);
 		}
 

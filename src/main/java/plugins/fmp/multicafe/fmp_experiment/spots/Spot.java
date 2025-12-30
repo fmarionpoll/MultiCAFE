@@ -188,10 +188,14 @@ public class Spot implements Comparable<Spot> {
 
 	/**
 	 * Gets the ROI associated with this spot.
+	 * If ROI is not set, regenerates it from coordinates.
 	 * 
-	 * @return the ROI, or null if not set
+	 * @return the ROI, or null if coordinates are invalid
 	 */
 	public ROI2D getRoi() {
+		if (spotROI2D == null) {
+			regenerateROIFromCoordinates();
+		}
 		return spotROI2D;
 	}
 
@@ -202,6 +206,51 @@ public class Spot implements Comparable<Spot> {
 	 */
 	public void setRoi(ROI2DShape roi) {
 		this.spotROI2D = roi;
+	}
+
+	/**
+	 * Regenerates the ROI from stored coordinates (spotXCoord, spotYCoord, spotRadius).
+	 * This is used when ROIs are not persisted (CSV-only persistence) and need to be
+	 * recreated for display purposes.
+	 * 
+	 * @return true if ROI was successfully regenerated, false if coordinates are invalid
+	 */
+	public boolean regenerateROIFromCoordinates() {
+		int x = properties.getSpotXCoord();
+		int y = properties.getSpotYCoord();
+		int radius = properties.getSpotRadius();
+
+		// Validate coordinates
+		if (x < 0 || y < 0 || radius <= 0) {
+			return false;
+		}
+
+		try {
+			// Create ellipse ROI from center coordinates and radius
+			// The ellipse bounds are: (x - radius, y - radius, 2*radius, 2*radius)
+			java.awt.geom.Ellipse2D ellipse = new java.awt.geom.Ellipse2D.Double(
+					x - radius, y - radius, 2 * radius, 2 * radius);
+			plugins.kernel.roi.roi2d.ROI2DEllipse roiEllipse = new plugins.kernel.roi.roi2d.ROI2DEllipse(ellipse);
+			
+			// Set the name if available
+			String name = properties.getName();
+			if (name != null && !name.isEmpty()) {
+				roiEllipse.setName(name);
+			} else {
+				// Generate name from cageID and position if available
+				int cageID = properties.getCageID();
+				int position = properties.getCagePosition();
+				if (cageID >= 0 && position >= 0) {
+					roiEllipse.setName(plugins.fmp.multicafe.fmp_experiment.spots.SpotString.createSpotString(cageID, position));
+				}
+			}
+			
+			this.spotROI2D = roiEllipse;
+			return true;
+		} catch (Exception e) {
+			System.err.println("Error regenerating ROI from coordinates: " + e.getMessage());
+			return false;
+		}
 	}
 
 	/**
