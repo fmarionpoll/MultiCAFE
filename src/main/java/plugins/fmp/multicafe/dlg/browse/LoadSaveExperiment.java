@@ -1025,9 +1025,11 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			try {
 				if (exp.getSeqCamData() != null) {
 					exp.xmlSave_MCExperiment();
-					exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
+					
+					// Save capillaries using new dual-file system (descriptions + measures)
+					exp.saveCapillaries();
 
-					// Save cage measures asynchronously
+					// Update cages from sequence before saving
 					exp.getCages().updateCagesFromSequence(exp.getSeqCamData());
 
 					// Cancel any previous save future
@@ -1035,7 +1037,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 						activeSaveFuture.cancel(true);
 					}
 
-					// Start async save
+					// Start async save for cages descriptions
 					final Experiment finalExp = exp;
 					activeSaveFuture = exp.getCages().getPersistence().saveCagesAsync(exp.getCages(),
 							exp.getResultsDirectory(), exp);
@@ -1043,8 +1045,17 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					// Handle save completion
 					activeSaveFuture.whenComplete((result, throwable) -> {
 						if (throwable != null) {
-							LOGGER.severe("Error saving cage measures asynchronously: " + throwable.getMessage());
+							LOGGER.severe("Error saving cage descriptions asynchronously: " + throwable.getMessage());
+						} else {
+							// Save cage measures to bin directory after descriptions are saved
+							String binDir = finalExp.getKymosBinFullDirectory();
+							if (binDir != null) {
+								finalExp.getCages().getPersistence().save_CagesArrayMeasures(finalExp.getCages(), binDir);
+							}
 						}
+						// Save spots using new dual-file system
+						finalExp.save_MS96_spotsMeasures();
+						
 						// Save MS96_descriptors.xml (synchronous, but quick)
 						if (finalExp.getSeqCamData() != null) {
 							DescriptorsIO.buildFromExperiment(finalExp);

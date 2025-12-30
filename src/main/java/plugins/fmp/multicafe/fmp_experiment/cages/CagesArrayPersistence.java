@@ -985,10 +985,10 @@ public class CagesArrayPersistence {
 				}
 
 				try {
-					// Save bulk data to CSV (fast, efficient)
-					csvSaveCagesMeasures(cages, directory);
+					// Save descriptions to new format (CagesArray.csv in results directory)
+					save_CagesArray_Descriptions(cages, directory);
 
-					// Save ROIs to XML (standard format for ROI serialization)
+					// Save ROIs to XML (optional, for backward compatibility)
 					String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
 					xmlSaveCagesROIsOnly(cages, tempName);
 

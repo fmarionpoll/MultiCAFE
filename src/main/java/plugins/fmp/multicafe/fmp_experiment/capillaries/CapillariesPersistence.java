@@ -89,12 +89,12 @@ public class CapillariesPersistence {
 					switch (data[1]) {
 					case "DESCRIPTION":
 						csvLoad_Description(capillaries, csvReader, sep);
+						break;
+					case "CAPILLARIES":
+						// Load CAPILLARIES section with ROI coordinates
+						csvLoad_Capillaries_Description(capillaries, csvReader, sep);
 						csvReader.close();
 						return true;
-					case "CAPILLARIES":
-						// Skip CAPILLARIES section in new format (descriptions only)
-						csvSkipSection(csvReader, sep);
-						break;
 					case "TOPLEVEL":
 					case "TOPRAW":
 					case "BOTTOMLEVEL":
@@ -529,26 +529,33 @@ public class CapillariesPersistence {
 		}
 	}
 
-//	private String csvLoad_Capillaries_Description(Capillaries capillaries, BufferedReader csvReader, String sep) {
-//		String row;
-//		try {
-//			row = csvReader.readLine();
-//			while ((row = csvReader.readLine()) != null) {
-//				String[] data = row.split(sep);
-//				if (data[0].equals("#"))
-//					return data[1];
-//				Capillary cap = capillaries.getCapillaryFromKymographName(data[2]);
-//				if (cap == null) {
-//					cap = new Capillary();
-//					capillaries.getList().add(cap);
-//				}
-//				cap.csvImport_CapillaryDescription(data);
-//			}
-//		} catch (IOException e) {
-//			Logger.error("CapillariesPersistence:csvLoad_Capillaries() Failed to read CSV file", e);
-//		}
-//		return null;
-//	}
+	private String csvLoad_Capillaries_Description(Capillaries capillaries, BufferedReader csvReader, String sep) {
+		String row;
+		try {
+			// Skip header line
+			row = csvReader.readLine();
+			while ((row = csvReader.readLine()) != null) {
+				String[] data = row.split(sep);
+				if (data.length > 0 && data[0].equals("#"))
+					return data.length > 1 ? data[1] : null;
+				
+				// Find or create capillary
+				Capillary cap = null;
+				if (data.length > 2) {
+					cap = capillaries.getCapillaryFromKymographName(data[2]);
+				}
+				if (cap == null) {
+					cap = new Capillary();
+					capillaries.getList().add(cap);
+				}
+				// Import description including ROI coordinates
+				cap.csvImport_CapillaryDescription(data);
+			}
+		} catch (IOException e) {
+			Logger.error("CapillariesPersistence:csvLoad_Capillaries_Description() Failed to read CSV file", e);
+		}
+		return null;
+	}
 
 	private String csvLoad_Description(Capillaries capillaries, BufferedReader csvReader, String sep) {
 		String row;

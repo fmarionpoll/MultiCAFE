@@ -1,6 +1,7 @@
 package plugins.fmp.multicafe.fmp_experiment.capillaries;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -146,7 +147,7 @@ public class CapillaryPersistence {
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("#" + sep + "CAPILLARIES" + sep + "describe each capillary\n");
 		List<String> row2 = Arrays.asList("cap_prefix", "kymoIndex", "kymographName", "kymoFile", "cap_cage",
-				"cap_nflies", "cap_volume", "cap_npixel", "cap_stim", "cap_conc", "cap_side");
+				"cap_nflies", "cap_volume", "cap_npixel", "cap_stim", "cap_conc", "cap_side", "ROIname", "npoints");
 		sbf.append(String.join(sep, row2));
 		sbf.append("\n");
 		return sbf.toString();
@@ -189,10 +190,46 @@ public class CapillaryPersistence {
 			capPrefix = "";
 		}
 
-		List<String> row = Arrays.asList(capPrefix, Integer.toString(cap.getKymographIndex()), cap.getKymographName(),
+		// Build base row data
+		List<String> row = new ArrayList<>(Arrays.asList(capPrefix, Integer.toString(cap.getKymographIndex()), cap.getKymographName(),
 				cap.getKymographFileName(), Integer.toString(props.getCageID()), Integer.toString(props.getNFlies()),
 				Double.toString(props.getVolume()), Integer.toString(props.getPixels()), props.getStimulus(),
-				props.getConcentration(), props.getSide());
+				props.getConcentration(), props.getSide()));
+		
+		// Add ROI name and points (similar to cages format)
+		String roiName = (cap.getRoi() != null && cap.getRoi().getName() != null) ? cap.getRoi().getName() : "";
+		row.add(roiName);
+		
+		// Extract ROI points (for ROI2DPolyLine or ROI2DLine)
+		int npoints = 0;
+		if (cap.getRoi() != null) {
+			if (cap.getRoi() instanceof plugins.kernel.roi.roi2d.ROI2DPolyLine) {
+				plugins.kernel.roi.roi2d.ROI2DPolyLine polyLineRoi = (plugins.kernel.roi.roi2d.ROI2DPolyLine) cap.getRoi();
+				icy.type.geom.Polyline2D polyline = polyLineRoi.getPolyline2D();
+				npoints = polyline.npoints;
+				row.add(Integer.toString(npoints));
+				// Add x, y coordinates for each point
+				for (int i = 0; i < npoints; i++) {
+					row.add(Integer.toString((int) polyline.xpoints[i]));
+					row.add(Integer.toString((int) polyline.ypoints[i]));
+				}
+			} else if (cap.getRoi() instanceof plugins.kernel.roi.roi2d.ROI2DLine) {
+				plugins.kernel.roi.roi2d.ROI2DLine lineRoi = (plugins.kernel.roi.roi2d.ROI2DLine) cap.getRoi();
+				java.awt.geom.Line2D line = lineRoi.getLine();
+				npoints = 2; // Line has 2 points
+				row.add(Integer.toString(npoints));
+				// Add x, y coordinates for both points
+				row.add(Integer.toString((int) line.getX1()));
+				row.add(Integer.toString((int) line.getY1()));
+				row.add(Integer.toString((int) line.getX2()));
+				row.add(Integer.toString((int) line.getY2()));
+			} else {
+				row.add("0"); // No points if ROI type not supported
+			}
+		} else {
+			row.add("0"); // No ROI
+		}
+		
 		sbf.append(String.join(sep, row));
 		sbf.append("\n");
 		return sbf.toString();
@@ -278,6 +315,53 @@ public class CapillaryPersistence {
 		props.setConcentration(data[i]);
 		i++;
 		props.setSide(data[i]);
+		i++;
+		
+		// Load ROI information if present (new format with ROI coordinates)
+		if (i < data.length && data[i] != null && !data[i].isEmpty()) {
+			String roiName = data[i];
+			i++;
+			
+			// Read number of points
+			if (i < data.length) {
+				int npoints = 0;
+				try {
+					npoints = Integer.valueOf(data[i]);
+					i++;
+					
+					// Reconstruct ROI from coordinates if npoints > 0
+					if (npoints > 0 && i + (npoints * 2) <= data.length) {
+						if (npoints == 2) {
+							// Line: 2 points
+							int x1 = Integer.valueOf(data[i]);
+							int y1 = Integer.valueOf(data[i + 1]);
+							int x2 = Integer.valueOf(data[i + 2]);
+							int y2 = Integer.valueOf(data[i + 3]);
+							
+							java.awt.geom.Line2D line = new java.awt.geom.Line2D.Double(x1, y1, x2, y2);
+							plugins.kernel.roi.roi2d.ROI2DLine roiLine = new plugins.kernel.roi.roi2d.ROI2DLine(line);
+							roiLine.setName(roiName);
+							cap.setRoi(roiLine);
+						} else {
+							// Polyline: multiple points
+							double[] xpoints = new double[npoints];
+							double[] ypoints = new double[npoints];
+							for (int j = 0; j < npoints; j++) {
+								xpoints[j] = Integer.valueOf(data[i + j * 2]);
+								ypoints[j] = Integer.valueOf(data[i + j * 2 + 1]);
+							}
+							
+							icy.type.geom.Polyline2D polyline = new icy.type.geom.Polyline2D(xpoints, ypoints, npoints);
+							plugins.kernel.roi.roi2d.ROI2DPolyLine roiPolyline = new plugins.kernel.roi.roi2d.ROI2DPolyLine(polyline);
+							roiPolyline.setName(roiName);
+							cap.setRoi(roiPolyline);
+						}
+					}
+				} catch (NumberFormatException e) {
+					// Invalid npoints, skip ROI reconstruction
+				}
+			}
+		}
 	}
 
 	public static void csvImportCapillaryData(Capillary cap, EnumCapillaryMeasures measureType, String[] data,
