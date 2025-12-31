@@ -28,7 +28,8 @@ public class DetectFlyFromCleanBackground extends BuildSeries {
 		if (!stopFlag)
 			exp.save_MS96_fliesPositions();
 		exp.getSeqCamData().closeSequence();
-//		closeSequence(seqNegative);
+		closeSequence(seqNegative);
+		closeViewer(vNegative);
 	}
 
 	private void runFlyDetect2(Experiment exp) {

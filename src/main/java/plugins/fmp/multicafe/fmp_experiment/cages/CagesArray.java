@@ -1041,7 +1041,7 @@ public class CagesArray {
 	public void prepareComputations(Experiment exp, ResultsOptions resultsOptions) {
 		exp.dispatchCapillariesToCages();
 
-		clearComputedMeasures();
+		clearComputedMeasures(exp);
 
 		// Ensure gulps/derivatives exist when charting gulp-based outputs.
 		// NOTE: We do NOT auto-detect gulps here anymore.
@@ -1127,9 +1127,13 @@ public class CagesArray {
 			cageComputations = new HashMap<>();
 		}
 
+		Capillaries allCapillaries = exp.getCapillaries();
+		if (allCapillaries == null)
+			return;
+		
 		for (Cage cage : cagesList) {
 			CageCapillariesComputation cageComputation = new CageCapillariesComputation(cage);
-			cageComputation.computeLRMeasures(threshold);
+			cageComputation.computeLRMeasures(allCapillaries, threshold);
 			// Store for later access
 			cageComputations.put(cage.getCageID(), cageComputation);
 		}
@@ -1148,15 +1152,21 @@ public class CagesArray {
 
 	/**
 	 * Clears all computed measures from capillaries in all cages.
+	 * 
+	 * @param exp The experiment containing all capillaries
 	 */
-	public void clearComputedMeasures() {
+	public void clearComputedMeasures(Experiment exp) {
+		if (exp == null)
+			return;
+		
 		CagesArrayCapillariesComputation computation = new CagesArrayCapillariesComputation(this);
-		computation.clearComputedMeasures();
+		computation.clearComputedMeasures(exp);
 
 		// Clear cage computations map
+		Capillaries allCapillaries = exp.getCapillaries();
 		if (cageComputations != null) {
 			for (CageCapillariesComputation cageComp : cageComputations.values()) {
-				cageComp.clearComputedMeasures();
+				cageComp.clearComputedMeasures(allCapillaries);
 			}
 			cageComputations.clear();
 		}

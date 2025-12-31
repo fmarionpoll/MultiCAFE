@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_tools.Level2D;
@@ -61,10 +62,14 @@ public class CageCapillariesComputation {
 	 * 
 	 * Note: This should be called AFTER evaporation correction if needed.
 	 * 
+	 * @param allCapillaries The global Capillaries containing all capillaries
 	 * @param threshold Minimum SUM value required to compute PI
 	 */
-	public void computeLRMeasures(double threshold) {
-		List<Capillary> caps = cage.getCapillaries().getList();
+	public void computeLRMeasures(Capillaries allCapillaries, double threshold) {
+		if (allCapillaries == null)
+			return;
+		
+		List<Capillary> caps = cage.getCapillaries(allCapillaries);
 		if (caps.size() < 2)
 			return;
 
@@ -106,14 +111,18 @@ public class CageCapillariesComputation {
 
 	/**
 	 * Clears all computed measures for the associated cage.
+	 * 
+	 * @param allCapillaries The global Capillaries containing all capillaries
 	 */
-	public void clearComputedMeasures() {
+	public void clearComputedMeasures(Capillaries allCapillaries) {
 		if (cage.measures != null) {
 			cage.measures.clear();
 		}
 		// Also clear individual capillary computed measures
-		for (Capillary cap : cage.getCapillaries().getList()) {
-			cap.clearComputedMeasures();
+		if (allCapillaries != null) {
+			for (Capillary cap : cage.getCapillaries(allCapillaries)) {
+				cap.clearComputedMeasures();
+			}
 		}
 	}
 

@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCageBuild;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
@@ -183,22 +184,28 @@ public class ComboBoxUIControlsFactory implements ChartUIControlsFactory {
 
 		// Get capillaries from the first cage that has the maximum number
 		// This ensures we show all possible capillary types
+		Capillaries allCapillaries = experiment.getCapillaries();
+		if (allCapillaries == null) {
+			bottomPanel.add(new LegendItem("L", Color.BLUE));
+			bottomPanel.add(new LegendItem("R", Color.RED));
+			return;
+		}
+		
 		List<Capillary> referenceCapillaries = new ArrayList<>();
 		for (Cage cage : experiment.getCages().getCageList()) {
-			if (cage.getCapillaries() != null) {
-				List<Capillary> cageCaps = cage.getCapillaries().getList();
-				if (cageCaps.size() == maxCapillariesPerCage) {
-					referenceCapillaries = cageCaps;
-					break;
-				}
+			List<Capillary> cageCaps = cage.getCapillaries(allCapillaries);
+			if (cageCaps != null && cageCaps.size() == maxCapillariesPerCage) {
+				referenceCapillaries = cageCaps;
+				break;
 			}
 		}
 
 		// If we didn't find a cage with max capillaries, get from any cage
 		if (referenceCapillaries.isEmpty()) {
 			for (Cage cage : experiment.getCages().getCageList()) {
-				if (cage.getCapillaries() != null && !cage.getCapillaries().getList().isEmpty()) {
-					referenceCapillaries = cage.getCapillaries().getList();
+				List<Capillary> cageCaps = cage.getCapillaries(allCapillaries);
+				if (cageCaps != null && !cageCaps.isEmpty()) {
+					referenceCapillaries = cageCaps;
 					break;
 				}
 			}

@@ -220,6 +220,9 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
+					// Close any existing sequence and viewer before creating new ones
+					closeSequence(seqNegative);
+					closeViewer(vNegative);
 					seqNegative = newSequence("detectionImage", exp.getSeqCamData().getReferenceImage());
 					vNegative = new ViewerFMP(seqNegative, false, true);
 					vNegative.setVisible(true);

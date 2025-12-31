@@ -10,6 +10,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
@@ -25,11 +26,17 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 public class CageCapillarySeriesBuilder implements CageSeriesBuilder {
 	@Override
 	public XYSeriesCollection build(Experiment exp, Cage cage, ResultsOptions options) {
-		if (cage == null || cage.getCapillaries() == null || cage.getCapillaries().getList().isEmpty()) {
+		if (cage == null || exp == null || exp.getCapillaries() == null) {
 			return new XYSeriesCollection();
 		}
 		if (options == null)
 			return new XYSeriesCollection();
+
+		Capillaries allCapillaries = exp.getCapillaries();
+		List<Capillary> capillaries = cage.getCapillaries(allCapillaries);
+		if (capillaries == null || capillaries.isEmpty()) {
+			return new XYSeriesCollection();
+		}
 
 		if (ChartCageBuild.isLRType(options.resultType)) {
 			return buildLR(exp, cage, options);
@@ -37,7 +44,7 @@ public class CageCapillarySeriesBuilder implements CageSeriesBuilder {
 
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		int i = 0;
-		for (Capillary cap : cage.getCapillaries().getList()) {
+		for (Capillary cap : capillaries) {
 			XYSeries series = createXYSeriesFromCapillaryMeasure(exp, cap, options);
 			if (series != null) {
 				series.setDescription(buildSeriesDescription(cage, cap, i));

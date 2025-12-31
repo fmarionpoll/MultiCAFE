@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_tools.Level2D;
@@ -44,12 +45,16 @@ public class CagesArrayCapillariesComputation {
 		// First, dispatch capillaries to cages to ensure they're organized
 		exp.dispatchCapillariesToCages();
 
+		Capillaries allCapillaries = exp.getCapillaries();
+		if (allCapillaries == null)
+			return;
+
 		// Collect all capillaries with zero flies for evaporation calculation
 		List<Capillary> zeroFliesCapillariesL = new ArrayList<>();
 		List<Capillary> zeroFliesCapillariesR = new ArrayList<>();
 
 		for (Cage cage : cagesArray.getCageList()) {
-			for (Capillary cap : cage.getCapillaries().getList()) {
+			for (Capillary cap : cage.getCapillaries(allCapillaries)) {
 				if (cap.getProperties().nFlies == 0 && cap.getTopLevel() != null
 						&& cap.getTopLevel().polylineLevel != null && cap.getTopLevel().polylineLevel.npoints > 0) {
 					// Determine side from capSide or capillary name
@@ -77,7 +82,7 @@ public class CagesArrayCapillariesComputation {
 
 		// Apply evaporation correction to all capillaries
 		for (Cage cage : cagesArray.getCageList()) {
-			for (Capillary cap : cage.getCapillaries().getList()) {
+			for (Capillary cap : cage.getCapillaries(allCapillaries)) {
 				if (cap.getTopLevel() == null || cap.getTopLevel().polylineLevel == null
 						|| cap.getTopLevel().polylineLevel.npoints == 0)
 					continue;
@@ -102,10 +107,16 @@ public class CagesArrayCapillariesComputation {
 
 	/**
 	 * Clears all computed measures from capillaries in all cages.
+	 * 
+	 * @param exp The experiment containing all capillaries
 	 */
-	public void clearComputedMeasures() {
+	public void clearComputedMeasures(Experiment exp) {
+		if (exp == null || exp.getCapillaries() == null)
+			return;
+		
+		Capillaries allCapillaries = exp.getCapillaries();
 		for (Cage cage : cagesArray.getCageList()) {
-			for (Capillary cap : cage.getCapillaries().getList()) {
+			for (Capillary cap : cage.getCapillaries(allCapillaries)) {
 				cap.clearComputedMeasures();
 			}
 		}
