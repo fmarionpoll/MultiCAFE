@@ -2,6 +2,7 @@ package plugins.fmp.multicafe.dlg.levels;
 
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.jfree.chart.ChartMouseEvent;
@@ -149,11 +150,12 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 				XYDataset xyDataset = xyPlot.getDataset(0);
 				if (xyDataset != null && xyDataset.getSeriesCount() > 0) {
 					String description = (String) xyDataset.getSeriesKey(0);
-					spotFound = experiment.getCages().getSpotFromROIName(description);
+					spotFound = experiment.getCages().getSpotFromROIName(description, experiment.getSpotsArray());
 				}
 			} else {
-				if (cage.spotsArray.getSpotsCount() > 0) {
-					spotFound = cage.spotsArray.getList().get(0);
+				List<Spot> spots = cage.getSpots(experiment.getSpotsArray());
+				if (spots.size() > 0) {
+					spotFound = spots.get(0);
 				}
 			}
 
@@ -162,7 +164,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 				return null;
 			}
 
-			int index = experiment.getCages().getSpotGlobalPosition(spotFound);
+			int index = experiment.getCages().getSpotGlobalPosition(spotFound, experiment.getSpotsArray());
 			spotFound.setSpotKymographT(index);
 			return spotFound;
 		} catch (Exception ex) {
@@ -199,7 +201,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 
 		description = description.substring(0, Math.min(description.length(), MAX_DESCRIPTION_LENGTH));
 
-		Spot spotFound = experiment.getCages().getSpotFromROIName(description);
+		Spot spotFound = experiment.getCages().getSpotFromROIName(description, experiment.getSpotsArray());
 		if (spotFound == null) {
 			LOGGER.warning("Graph clicked but source not found - description (roiName)=" + description);
 			return null;
@@ -293,7 +295,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 		}
 
 		String spotName = clickedSpot.getRoi().getName();
-		Cage cage = exp.getCages().getCageFromSpotROIName(spotName);
+		Cage cage = exp.getCages().getCageFromSpotROIName(spotName, exp.getSpotsArray());
 		if (cage != null) {
 			ROI2D cageRoi = cage.getRoi();
 			exp.getSeqCamData().centerDisplayOnRoi(cageRoi);

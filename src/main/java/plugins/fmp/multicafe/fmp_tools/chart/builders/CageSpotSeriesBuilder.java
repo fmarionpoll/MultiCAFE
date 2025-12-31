@@ -11,6 +11,8 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotMeasure;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import java.util.List;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCageBuild;
 import plugins.fmp.multicafe.fmp_tools.chart.style.SeriesStyleCodec;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
@@ -24,13 +26,19 @@ public class CageSpotSeriesBuilder implements CageSeriesBuilder {
 
 	@Override
 	public XYSeriesCollection build(Experiment exp, Cage cage, ResultsOptions options) {
-		if (cage == null || cage.spotsArray == null || cage.spotsArray.getSpotsCount() < 1) {
+		SpotsArray allSpots = exp.getSpotsArray();
+		if (cage == null || allSpots == null) {
+			LOGGER.fine("No spot data for cage");
+			return new XYSeriesCollection();
+		}
+		List<Spot> spots = cage.getSpots(allSpots);
+		if (spots.isEmpty()) {
 			LOGGER.fine("No spot data for cage");
 			return new XYSeriesCollection();
 		}
 
 		XYSeriesCollection dataset = new XYSeriesCollection();
-		for (Spot spot : cage.spotsArray.getList()) {
+		for (Spot spot : spots) {
 			XYSeries series = createXYSeriesFromSpotMeasure(exp, spot, options);
 			if (series == null)
 				continue;

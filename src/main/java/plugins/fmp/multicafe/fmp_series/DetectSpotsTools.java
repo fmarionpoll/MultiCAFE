@@ -15,6 +15,7 @@ import icy.sequence.Sequence;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.ids.SpotID;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
@@ -62,11 +63,13 @@ public class DetectSpotsTools {
 		exp.getCages().computeBooleanMasksForCages();
 		final ROI2DArea binarizedImageRoi = binarizeImage(workimage, options);
 
+		SpotsArray allSpots = exp.getSpotsArray();
 		for (Cage cage : exp.getCages().cagesList) {
 			if (!options.selectedIndexes.contains(cage.getProperties().getCageID()))
 				continue;
 
-			cage.spotsArray = new SpotsArray();
+			// Clear existing spots for this cage
+			cage.getSpotIDs().clear();
 			int spotID = 0;
 			BooleanMask2D[] blobs;
 			try {
@@ -94,7 +97,11 @@ public class DetectSpotsTools {
 							Spot spot = new Spot(roi);
 							spot.setName(cage.getProperties().getCageID(), spotID);
 							spot.getProperties().setCageID(cage.getProperties().getCageID());
-							cage.spotsArray.addSpot(spot);
+							spot.getProperties().setCagePosition(spotID);
+							// Add to global SpotsArray
+							allSpots.addSpot(spot);
+							// Add ID to cage
+							cage.getSpotIDs().add(new SpotID(cage.getProperties().getCageID(), spotID));
 							spotID++;
 						}
 					} catch (InterruptedException e) {

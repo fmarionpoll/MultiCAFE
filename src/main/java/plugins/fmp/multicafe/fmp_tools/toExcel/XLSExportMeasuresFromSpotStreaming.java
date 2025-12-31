@@ -11,6 +11,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
@@ -143,13 +144,14 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExportSpots {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
+		SpotsArray allSpots = exp.getSpotsArray();
 		// Process cages in chunks
 		for (Cage cage : exp.getCages().cagesList) {
-			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(resultType);
-			cage.updateSpotsStimulus_i();
+			double scalingFactorToPhysicalUnits = allSpots.getScalingFactorToPhysicalUnits(resultType);
+			cage.updateSpotsStimulus_i(allSpots);
 
 			// Process spots in chunks
-			List<Spot> spots = cage.spotsArray.getList();
+			List<Spot> spots = cage.getSpots(allSpots);
 			for (int i = 0; i < spots.size(); i += CHUNK_SIZE) {
 				int endIndex = Math.min(i + CHUNK_SIZE, spots.size());
 				List<Spot> spotChunk = spots.subList(i, endIndex);
@@ -329,8 +331,9 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExportSpots {
 	 */
 	private int calculateTotalSpots(Experiment exp) {
 		int total = 0;
+		SpotsArray allSpots = exp.getSpotsArray();
 		for (Cage cage : exp.getCages().cagesList) {
-			total += cage.spotsArray.getList().size();
+			total += cage.getSpots(allSpots).size();
 		}
 		return total;
 	}

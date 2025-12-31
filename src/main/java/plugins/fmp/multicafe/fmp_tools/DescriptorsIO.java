@@ -149,8 +149,9 @@ public class DescriptorsIO {
 					addIfNotEmpty(dicts.get(EnumXLSColumnHeader.CAGE_STRAIN),
 							cage.getField(EnumXLSColumnHeader.CAGE_STRAIN));
 					addIfNotEmpty(dicts.get(EnumXLSColumnHeader.CAGE_AGE), cage.getField(EnumXLSColumnHeader.CAGE_AGE));
-					if (cage.spotsArray != null && cage.spotsArray.getList() != null) {
-						for (Spot spot : cage.spotsArray.getList()) {
+					List<Spot> spots = cage.getSpots(exp.getSpotsArray());
+					if (spots != null && !spots.isEmpty()) {
+						for (Spot spot : spots) {
 							addIfNotEmpty(dicts.get(EnumXLSColumnHeader.SPOT_STIM),
 									spot.getField(EnumXLSColumnHeader.SPOT_STIM));
 							addIfNotEmpty(dicts.get(EnumXLSColumnHeader.SPOT_CONC),

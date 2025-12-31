@@ -9,6 +9,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
@@ -89,11 +90,12 @@ public class XLSExportMeasuresFromSpot extends XLSExportSpots {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
+		SpotsArray allSpots = exp.getSpotsArray();
 		for (Cage cage : exp.getCages().cagesList) {
-			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(resultType);
-			cage.updateSpotsStimulus_i();
+			double scalingFactorToPhysicalUnits = allSpots.getScalingFactorToPhysicalUnits(resultType);
+			cage.updateSpotsStimulus_i(allSpots);
 
-			for (Spot spot : cage.spotsArray.getList()) {
+			for (Spot spot : cage.getSpots(allSpots)) {
 				pt.y = 0;
 				pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, resultType);
 				Results results = getResultsDataValuesFromSpotMeasures(exp, cage, spot, options);

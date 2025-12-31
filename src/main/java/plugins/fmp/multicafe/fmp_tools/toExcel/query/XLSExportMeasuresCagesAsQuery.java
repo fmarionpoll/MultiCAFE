@@ -12,6 +12,7 @@ import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
@@ -191,23 +192,24 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		String stim2 = exp.getProperties().getField_stim2();
 		String conc2 = exp.getProperties().getField_conc2();
 
+		SpotsArray allSpots = exp.getSpotsArray();
 		for (Cage cage : exp.getCages().cagesList) {
 
-			if (cage.spotsArray.getList().size() == 0)
+			if (cage.getSpots(allSpots).size() == 0)
 				continue;
 
 			if (resultsOptions.onlyalive && cage.getProperties().getCageNFlies() < 1)
 				continue;
 
-			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(resultType);
+			double scalingFactorToPhysicalUnits = allSpots.getScalingFactorToPhysicalUnits(resultType);
 
-			Spot spot1 = cage.combineSpotsWithSameStimConc(stim1, conc1);
+			Spot spot1 = cage.combineSpotsWithSameStimConc(stim1, conc1, allSpots);
 			Results xlsStim1 = getResultForCage(exp, cage, spot1, scalingFactorToPhysicalUnits, resultsOptions,
 					resultType);
 			if (spot1 != null)
 				cage.getProperties().setCountStim1(spot1.getProperties().getCountAggregatedSpots());
 
-			Spot spot2 = cage.combineSpotsWithSameStimConc(stim2, conc2);
+			Spot spot2 = cage.combineSpotsWithSameStimConc(stim2, conc2, allSpots);
 			Results xlsStim2 = getResultForCage(exp, cage, spot2, scalingFactorToPhysicalUnits, resultsOptions,
 					resultType);
 			if (spot2 != null)

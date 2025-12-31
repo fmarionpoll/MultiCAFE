@@ -16,6 +16,7 @@ import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_experiment.LazyExperiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
@@ -106,6 +107,7 @@ public class DescriptorIndex {
 					try {
 						exp.load_MS96_cages();
 						if (exp.getCages() != null && exp.getCages().cagesList != null) {
+							SpotsArray allSpots = exp.getSpotsArray();
 							for (Cage cage : exp.getCages().cagesList) {
 								addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.CAGE_SEX),
 										cage.getField(EnumXLSColumnHeader.CAGE_SEX));
@@ -113,14 +115,17 @@ public class DescriptorIndex {
 										cage.getField(EnumXLSColumnHeader.CAGE_STRAIN));
 								addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.CAGE_AGE),
 										cage.getField(EnumXLSColumnHeader.CAGE_AGE));
-								if (cage.spotsArray != null && cage.spotsArray.getList() != null) {
-									for (Spot spot : cage.spotsArray.getList()) {
-										addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.SPOT_STIM),
-												spot.getField(EnumXLSColumnHeader.SPOT_STIM));
-										addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.SPOT_CONC),
-												spot.getField(EnumXLSColumnHeader.SPOT_CONC));
-										addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.SPOT_VOLUME),
-												spot.getField(EnumXLSColumnHeader.SPOT_VOLUME));
+								if (allSpots != null) {
+									List<Spot> spots = cage.getSpots(allSpots);
+									if (spots != null && !spots.isEmpty()) {
+										for (Spot spot : spots) {
+											addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.SPOT_STIM),
+													spot.getField(EnumXLSColumnHeader.SPOT_STIM));
+											addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.SPOT_CONC),
+													spot.getField(EnumXLSColumnHeader.SPOT_CONC));
+											addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.SPOT_VOLUME),
+													spot.getField(EnumXLSColumnHeader.SPOT_VOLUME));
+										}
 									}
 								}
 							}

@@ -35,6 +35,7 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
@@ -423,12 +424,15 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param cagesArray    the cages array
 	 * @return list of image file descriptors
 	 */
-	public List<ImageFileData> createKymographFileList(String baseDirectory, CagesArray cagesArray) {
+	public List<ImageFileData> createKymographFileList(String baseDirectory, CagesArray cagesArray, SpotsArray allSpots) {
 		if (baseDirectory == null || baseDirectory.trim().isEmpty()) {
 			throw new IllegalArgumentException("Base directory cannot be null or empty");
 		}
 		if (cagesArray == null) {
 			throw new IllegalArgumentException("Cages array cannot be null");
+		}
+		if (allSpots == null) {
+			return new ArrayList<>();
 		}
 
 		processingLock.lock();
@@ -441,21 +445,23 @@ public class SequenceKymos extends SequenceCamData {
 			}
 
 			Cage firstCage = cagesArray.cagesList.get(0);
-			if (firstCage.spotsArray == null || firstCage.spotsArray.getList().isEmpty()) {
+			List<Spot> firstCageSpots = firstCage.getSpots(allSpots);
+			if (firstCageSpots.isEmpty()) {
 				LOGGER.warning("No spots found in first cage");
 				return new ArrayList<>();
 			}
 
 			// Calculate total expected files
-			int totalExpectedFiles = cagesArray.cagesList.size() * firstCage.spotsArray.getList().size();
+			int totalExpectedFiles = cagesArray.cagesList.size() * firstCageSpots.size();
 			List<ImageFileData> fileList = new ArrayList<>(totalExpectedFiles);
 
 			// Generate file descriptors for each spot in each cage
 			for (Cage cage : cagesArray.cagesList) {
-				if (cage.spotsArray == null)
+				List<Spot> spots = cage.getSpots(allSpots);
+				if (spots.isEmpty())
 					continue;
 
-				for (Spot spot : cage.spotsArray.getList()) {
+				for (Spot spot : spots) {
 					ImageFileData descriptor = new ImageFileData();
 					descriptor.fileName = fullDirectory + spot.getRoi().getName() + ".tiff";
 					descriptor.exists = new File(descriptor.fileName).exists();
@@ -513,11 +519,11 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	/**
-	 * @deprecated Use {@link #createKymographFileList(String, CagesArray)} instead
+	 * @deprecated Use {@link #createKymographFileList(String, CagesArray, SpotsArray)} instead
 	 */
 	@Deprecated
-	public List<ImageFileData> loadListOfPotentialKymographsFromSpots(String dir, CagesArray cagesArray) {
-		return createKymographFileList(dir, cagesArray);
+	public List<ImageFileData> loadListOfPotentialKymographsFromSpots(String dir, CagesArray cagesArray, SpotsArray allSpots) {
+		return createKymographFileList(dir, cagesArray, allSpots);
 	}
 
 	/**

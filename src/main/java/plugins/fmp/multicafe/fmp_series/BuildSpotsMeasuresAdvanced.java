@@ -3,6 +3,7 @@ package plugins.fmp.multicafe.fmp_series;
 import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
@@ -18,6 +19,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
+import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ProcessingException;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DWithMask;
@@ -103,7 +105,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			this.batchCount = 0;
 			getTimeLimitsOfSequence(exp);
 			loadExperimentDataToMeasureSpots(exp);
-			exp.getCages().setReadyToAnalyze(true, options);
+			exp.getCages().setReadyToAnalyze(true, options, exp.getSpotsArray());
 			openViewers(exp);
 
 			boolean processed = measureSpotsAdvanced(exp);
@@ -112,7 +114,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 			logMemoryUsage("After Processing");
 
-			exp.getCages().setReadyToAnalyze(false, options);
+			exp.getCages().setReadyToAnalyze(false, options, exp.getSpotsArray());
 			closeViewers();
 			cleanupResources();
 			enhancedPostProcessingCleanup();
@@ -147,8 +149,8 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		if (directory == null)
 			return;
 
-		exp.getCages().transferMeasuresToLevel2D();
-		exp.getCages().medianFilterFromSumToSumClean();
+		exp.getCages().transferMeasuresToLevel2D(exp.getSpotsArray());
+		exp.getCages().medianFilterFromSumToSumClean(exp.getSpotsArray());
 
 		exp.save_MS96_experiment();
 		exp.save_MS96_spotsMeasures();
@@ -173,7 +175,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	}
 
 	private boolean measureSpotsAdvanced(Experiment exp) {
-		if (exp.getCages().getTotalNumberOfSpots() < 1) {
+		if (exp.getCages().getTotalNumberOfSpots(exp.getSpotsArray()) < 1) {
 //			System.out.println("DetectAreas:measureAreas Abort (1): nbspots = 0");
 			return false;
 		}
@@ -360,8 +362,10 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			totalCursorsCreated += 2;
 
 			int ii_local = frameIndex - iiFirst;
+			SpotsArray allSpots = exp.getSpotsArray();
 			for (Cage cage : exp.getCages().cagesList) {
-				for (Spot spot : cage.spotsArray.getList()) {
+				List<Spot> spots = cage.getSpots(allSpots);
+				for (Spot spot : spots) {
 					if (!spot.isReadyForAnalysis()) {
 						continue;
 					}
@@ -511,9 +515,11 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	private void initSpotsDataArrays(Experiment exp) {
 		int nFrames = exp.getSeqCamData().getImageLoader().getNTotalFrames();
 		int spotArrayGlobalIndex = 0;
+		SpotsArray allSpots = exp.getSpotsArray();
 		for (Cage cage : exp.getCages().cagesList) {
 			int spotPosition = 0;
-			for (Spot spot : cage.spotsArray.getList()) {
+			List<Spot> spots = cage.getSpots(allSpots);
+			for (Spot spot : spots) {
 				spot.getProperties().setCagePosition(spotPosition);
 				spot.getProperties().setCageID(cage.getProperties().getCageID());
 				spot.getProperties().setSpotArrayIndex(spotArrayGlobalIndex);
@@ -532,8 +538,10 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			seqCamData.attachSequence(
 					exp.getSeqCamData().getImageLoader().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 
+		SpotsArray allSpots = exp.getSpotsArray();
 		for (Cage cage : exp.getCages().cagesList) {
-			for (Spot spot : cage.spotsArray.getList()) {
+			List<Spot> spots = cage.getSpots(allSpots);
+			for (Spot spot : spots) {
 				ROI2DWithMask roiT = null;
 				try {
 					roiT = new ROI2DWithMask(spot.getRoi());

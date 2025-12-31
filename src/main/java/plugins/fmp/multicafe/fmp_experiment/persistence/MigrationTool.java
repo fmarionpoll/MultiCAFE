@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.ids.CapillaryID;
 import plugins.fmp.multicafe.fmp_experiment.ids.SpotID;
@@ -132,43 +133,37 @@ public class MigrationTool {
 	 */
 	private void extractSpotsFromCages(Experiment exp) {
 		SpotsArray globalSpots = exp.getSpotsArray();
-		globalSpots.clearSpots();
-
-		for (Cage cage : exp.getCages().getCageList()) {
-			// Get spots from legacy spotsArray (loaded from old XML format)
-			for (Spot spot : cage.getSpotsArray().getList()) {
-				// Ensure coordinates are saved (extract from ROI if needed)
-				if (spot.getRoi() != null && (spot.getProperties().getSpotXCoord() < 0
-						|| spot.getProperties().getSpotYCoord() < 0)) {
-					// Extract coordinates from ROI
-					java.awt.geom.Rectangle2D bounds = spot.getRoi().getBounds2D();
-					spot.getProperties().setSpotXCoord((int) bounds.getCenterX());
-					spot.getProperties().setSpotYCoord((int) bounds.getCenterY());
-					if (spot.getProperties().getSpotRadius() <= 0) {
-						spot.getProperties().setSpotRadius((int) Math.max(bounds.getWidth(), bounds.getHeight()) / 2);
-					}
-				}
-
-				// Add to global array if not already present
-				if (!globalSpots.isSpotPresent(spot)) {
-					globalSpots.addSpot(spot);
+		// Spots should already be in global array if loaded from XML
+		// This method is kept for compatibility but spots are now loaded directly to global array
+		// Ensure coordinates are saved for all spots
+		for (Spot spot : globalSpots.getList()) {
+			if (spot.getRoi() != null && (spot.getProperties().getSpotXCoord() < 0
+					|| spot.getProperties().getSpotYCoord() < 0)) {
+				// Extract coordinates from ROI
+				java.awt.geom.Rectangle2D bounds = spot.getRoi().getBounds2D();
+				spot.getProperties().setSpotXCoord((int) bounds.getCenterX());
+				spot.getProperties().setSpotYCoord((int) bounds.getCenterY());
+				if (spot.getProperties().getSpotRadius() <= 0) {
+					spot.getProperties().setSpotRadius((int) Math.max(bounds.getWidth(), bounds.getHeight()) / 2);
 				}
 			}
 		}
 
-		Logger.info("MigrationTool:extractSpotsFromCages() Extracted " + globalSpots.getSpotsCount() + " spots");
+		Logger.info("MigrationTool:extractSpotsFromCages() Processed " + globalSpots.getSpotsCount() + " spots");
 	}
 
 	/**
-	 * Converts cage's spotsArray to SpotID lists.
+	 * Converts global spots to SpotID lists in cages.
 	 */
 	private void convertCageSpotsToIDs(Experiment exp) {
+		SpotsArray globalSpots = exp.getSpotsArray();
 		for (Cage cage : exp.getCages().getCageList()) {
 			List<SpotID> spotIDs = new ArrayList<>();
-			for (Spot spot : cage.getSpotsArray().getList()) {
+			// Find all spots belonging to this cage
+			for (Spot spot : globalSpots.getList()) {
 				int cageID = spot.getProperties().getCageID();
 				int position = spot.getProperties().getCagePosition();
-				if (cageID >= 0 && position >= 0) {
+				if (cageID == cage.getCageID() && position >= 0) {
 					spotIDs.add(new SpotID(cageID, position));
 				}
 			}
@@ -178,13 +173,17 @@ public class MigrationTool {
 	}
 
 	/**
-	 * Converts cage's capillaries to CapillaryID lists.
+	 * Converts global capillaries to CapillaryID lists in cages.
 	 */
 	private void convertCageCapillariesToIDs(Experiment exp) {
+		Capillaries globalCapillaries = exp.getCapillaries();
 		for (Cage cage : exp.getCages().getCageList()) {
 			List<CapillaryID> capillaryIDs = new ArrayList<>();
-			for (Capillary cap : cage.getCapillaries().getList()) {
-				capillaryIDs.add(new CapillaryID(cap.getKymographIndex()));
+			// Find all capillaries belonging to this cage
+			for (Capillary cap : globalCapillaries.getList()) {
+				if (cap.getCageID() == cage.getCageID()) {
+					capillaryIDs.add(new CapillaryID(cap.getKymographIndex()));
+				}
 			}
 			cage.setCapillaryIDs(capillaryIDs);
 		}

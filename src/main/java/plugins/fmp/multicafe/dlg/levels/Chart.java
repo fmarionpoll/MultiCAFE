@@ -304,7 +304,7 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 			}
 		}
 
-		cageFound = exp.getCages().findFirstCageWithSelectedCapillary();
+		cageFound = exp.getCages().findFirstCageWithSelectedCapillary(exp.getCapillaries());
 		if (cageFound != null)
 			return cageFound;
 

@@ -36,7 +36,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	private static final Color FLY_POSITION_ROI_COLOR = Color.YELLOW;
 
 	private ROI2D cageROI2D = null;
-	// public int kymographIndex = -1;
 	public BooleanMask2D cageMask2D = null;
 	public CageProperties prop = new CageProperties();
 	public CageMeasures measures = new CageMeasures();
@@ -46,13 +45,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	// ID-based references (new approach)
 	private List<SpotID> spotIDs = new ArrayList<>();
 	private List<CapillaryID> capillaryIDs = new ArrayList<>();
-	
-	// Legacy fields for backward compatibility during transition
-	// These will be removed after full migration
-	@Deprecated
-	public SpotsArray spotsArray = new SpotsArray();
-	@Deprecated
-	private Capillaries capillaries = new Capillaries();
 	
 	private final AtomicBoolean closed = new AtomicBoolean(false);
 
@@ -164,7 +156,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	// Backward-compatible getters (deprecated, use ID-based methods)
 	@Deprecated
 	public SpotsArray getSpotsArray() {
-		return spotsArray;
+		return null; // Deprecated - use getSpots(SpotsArray allSpots) instead
 	}
 
 	public CageProperties getProperties() {
@@ -249,10 +241,9 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	// Backward-compatible getters (deprecated, use ID-based methods)
 	@Deprecated
 	public void setCapillaries(Capillaries capArray) {
-		capillaries = capArray;
-		// Also update ID list if capillaries are set directly
+		// Update ID list from capillaries
+		capillaryIDs.clear();
 		if (capArray != null) {
-			capillaryIDs.clear();
 			for (Capillary cap : capArray.getList()) {
 				capillaryIDs.add(new CapillaryID(cap.getKymographIndex()));
 			}
@@ -261,7 +252,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	@Deprecated
 	public Capillaries getCapillaries() {
-		return capillaries;
+		return null; // Deprecated - use getCapillaries(Capillaries allCapillaries) instead
 	}
 
 	public FlyPositions getFlyPositions() {
@@ -305,17 +296,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		if (!capillaryIDs.contains(capID)) {
 			capillaryIDs.add(capID);
 		}
-		// Also update legacy field for backward compatibility
-		if (capillaries.getList().size() == 0) {
-			capillaries.addCapillary(cap);
-			return;
-		}
-		for (Capillary capCage : capillaries.getList()) {
-			if (capCage.compareTo(cap) == 0) {
-				return;
-			}
-		}
-		capillaries.addCapillary(cap);
 	}
 	
 	public void addCapillaryIDIfUnique(CapillaryID capID) {
@@ -333,13 +313,11 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public void clearCapillaryList() {
 		capillaryIDs.clear();
-		// Also clear legacy field
-		capillaries.getList().clear();
 	}
 
 	@Deprecated
 	public List<Capillary> getCapillaryList() {
-		return capillaries.getList();
+		return new ArrayList<>(); // Deprecated - use getCapillaries(Capillaries allCapillaries) instead
 	}
 
 	// -------------------------------------------------
@@ -357,8 +335,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		// Copy ID lists
 		spotIDs = new ArrayList<>(cageFrom.spotIDs);
 		capillaryIDs = new ArrayList<>(cageFrom.capillaryIDs);
-		// Also copy legacy arrays for backward compatibility
-		spotsArray.copySpotsInfo(cageFrom.spotsArray);
 	}
 
 	public void pasteCageInfo(Cage cageTo) {
@@ -367,8 +343,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		// Paste ID lists
 		cageTo.spotIDs = new ArrayList<>(spotIDs);
 		cageTo.capillaryIDs = new ArrayList<>(capillaryIDs);
-		// Also paste legacy arrays for backward compatibility
-		spotsArray.pasteSpotsInfo(cageTo.spotsArray);
 	}
 
 	public void pasteCage(Cage cageTo, boolean bMeasures) {
@@ -377,8 +351,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		// Paste ID lists
 		cageTo.spotIDs = new ArrayList<>(spotIDs);
 		cageTo.capillaryIDs = new ArrayList<>(capillaryIDs);
-		// Also paste legacy arrays for backward compatibility
-		spotsArray.pasteSpots(cageTo.spotsArray, bMeasures);
 		if (bMeasures)
 			flyPositions.copyXYTaSeries(cageTo.flyPositions);
 	}
@@ -505,11 +477,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 			// Load spot IDs (new format)
 			if (!xmlLoadSpotIDs(xmlVal)) {
-				// Try legacy format (spots nested in XML)
-				if (spotsArray.loadFromXml(xmlVal)) {
-					// Convert legacy spots to IDs
-					convertSpotsArrayToIDs();
-				}
+				// Legacy format support removed - spots must be loaded via ID-based system
+				// Legacy files should be migrated using MigrationTool
 			}
 
 			// Load cage measures
@@ -747,20 +716,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		}
 	}
 
-	/**
-	 * Converts legacy spotsArray to SpotID list.
-	 * Used during migration from old format.
-	 */
-	private void convertSpotsArrayToIDs() {
-		spotIDs.clear();
-		for (Spot spot : spotsArray.getList()) {
-			int cageID = spot.getProperties().getCageID();
-			int position = spot.getProperties().getCagePosition();
-			if (cageID >= 0 && position >= 0) {
-				spotIDs.add(new SpotID(cageID, position));
-			}
-		}
-	}
 
 	/**
 	 * Adds a SpotID to this cage if it's not already present.
@@ -803,14 +758,16 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	// --------------------------------------------------------
 
-	public int addEllipseSpot(Point2D.Double center, int radius) {
+	public int addEllipseSpot(Point2D.Double center, int radius, SpotsArray allSpots) {
 		int position = spotIDs.size();
 		SpotID spotID = new SpotID(prop.getCageID(), position);
 		spotIDs.add(spotID);
-		// Also add to legacy array for backward compatibility
-		Spot spot = createEllipseSpot(position, center, radius);
-		spot.getProperties().setCagePosition(position);
-		spotsArray.addSpot(spot);
+		// Add spot to global SpotsArray
+		if (allSpots != null) {
+			Spot spot = createEllipseSpot(position, center, radius);
+			spot.getProperties().setCagePosition(position);
+			allSpots.addSpot(spot);
+		}
 		return spotIDs.size();
 	}
 
@@ -833,38 +790,54 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return spot;
 	}
 
-	public Spot getSpotFromRoiName(String name) {
+	public Spot getSpotFromRoiName(String name, SpotsArray allSpots) {
+		if (allSpots == null) {
+			return null;
+		}
 		int cagePosition = SpotString.getSpotCagePositionFromSpotName(name);
-		for (Spot spot : spotsArray.getList()) {
+		List<Spot> spots = getSpots(allSpots);
+		for (Spot spot : spots) {
 			if (spot.getProperties().getCagePosition() == cagePosition)
 				return spot;
 		}
 		return null;
 	}
 
-	public void mapSpotsToCageColumnRow() {
+	public void mapSpotsToCageColumnRow(SpotsArray allSpots) {
+		if (allSpots == null || cageROI2D == null) {
+			return;
+		}
 		Rectangle rect = cageROI2D.getBounds();
 		int deltaX = rect.width / 8;
 		int deltaY = rect.height / 4;
-		for (Spot spot : spotsArray.getList()) {
+		List<Spot> spots = getSpots(allSpots);
+		for (Spot spot : spots) {
 			Rectangle rectSpot = spot.getRoi().getBounds();
 			spot.getProperties().setCageColumn((rectSpot.x - rect.x) / deltaX);
 			spot.getProperties().setCageRow((rectSpot.y - rect.y) / deltaY);
 		}
 	}
 
-	public void cleanUpSpotNames() {
-		for (int i = 0; i < spotsArray.getList().size(); i++) {
-			Spot spot = spotsArray.getList().get(i);
+	public void cleanUpSpotNames(SpotsArray allSpots) {
+		if (allSpots == null) {
+			return;
+		}
+		List<Spot> spots = getSpots(allSpots);
+		for (int i = 0; i < spots.size(); i++) {
+			Spot spot = spots.get(i);
 			spot.setName(prop.getCageID(), i);
 			spot.getProperties().setCageID(prop.getCageID());
 			spot.getProperties().setCagePosition(i);
 		}
 	}
 
-	public void updateSpotsStimulus_i() {
+	public void updateSpotsStimulus_i(SpotsArray allSpots) {
+		if (allSpots == null) {
+			return;
+		}
 		ArrayList<String> stimulusArray = new ArrayList<String>(8);
-		for (Spot spot : spotsArray.getList()) {
+		List<Spot> spots = getSpots(allSpots);
+		for (Spot spot : spots) {
 			String test = spot.getProperties().getStimulus();
 			stimulusArray.add(test);
 			spot.getProperties().setStimulusI(test + "_" + findNumberOfIdenticalItems(test, stimulusArray));
@@ -879,9 +852,13 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return items;
 	}
 
-	public Spot combineSpotsWithSameStimConc(String stim, String conc) {
+	public Spot combineSpotsWithSameStimConc(String stim, String conc, SpotsArray allSpots) {
+		if (allSpots == null) {
+			return null;
+		}
 		Spot spotCombined = null;
-		for (Spot spotSource : spotsArray.getList()) {
+		List<Spot> spots = getSpots(allSpots);
+		for (Spot spotSource : spots) {
 			if (stim.equals(spotSource.getProperties().getStimulus())
 					&& conc.equals(spotSource.getProperties().getConcentration())) {
 				if (spotCombined == null) {
@@ -894,8 +871,12 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return spotCombined;
 	}
 
-	public void normalizeSpotMeasures() {
-		for (Spot spot : spotsArray.getList()) {
+	public void normalizeSpotMeasures(SpotsArray allSpots) {
+		if (allSpots == null) {
+			return;
+		}
+		List<Spot> spots = getSpots(allSpots);
+		for (Spot spot : spots) {
 			spot.normalizeMeasures();
 		}
 	}
