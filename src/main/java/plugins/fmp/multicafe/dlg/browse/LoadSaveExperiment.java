@@ -398,7 +398,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				totalFlyPositions += cage.flyPositions.flyPositionList.size();
 			}
 		}
-		System.out.println("LoadExperiment: openSelecteExperiment [" + expIndex + "] async load completed, total time: "
+		System.out.println("LoadExperiment: openSelectedExperiment [" + expIndex + "] load completed, total time: "
 				+ (endTime - startTime) / 1e6 + " ms, cages: " + cageCount + ", with fly positions: "
 				+ cagesWithFlyPositions + ", total fly positions: " + totalFlyPositions);
 	}
@@ -652,17 +652,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 			// Update cages from sequence after loading
 			if (exp.getSeqCamData() != null && exp.getSeqCamData().getSequence() != null) {
-				int cagesWithFlyPosBefore = countCagesWithFlyPositions(exp);
-
 				exp.getCages().cagesToROIs(exp.getSeqCamData());
 				exp.getCages().updateCagesFromSequence(exp.getSeqCamData());
-
-				int cagesWithFlyPosAfter = countCagesWithFlyPositions(exp);
-
-				if (cagesWithFlyPosBefore > cagesWithFlyPosAfter) {
-					LOGGER.warning("LoadExperiment [" + expIndex + "] Lost fly positions: before="
-							+ cagesWithFlyPosBefore + ", after=" + cagesWithFlyPosAfter);
-				}
 			}
 
 			exp.updateROIsAt(0);
