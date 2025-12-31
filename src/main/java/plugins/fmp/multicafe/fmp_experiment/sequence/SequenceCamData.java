@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import icy.gui.viewer.Viewer;
 import icy.image.IcyBufferedImage;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
@@ -574,7 +575,17 @@ public class SequenceCamData implements AutoCloseable {
 		lock.lock();
 		try {
 			if (seq != null) {
+				// Remove all ROIs before closing to prevent them from persisting in viewers
 				seq.removeAllROI();
+				// Close all viewers associated with this sequence
+				List<Viewer> viewers = seq.getViewers();
+				if (viewers != null) {
+					for (Viewer viewer : viewers) {
+						if (viewer != null) {
+							viewer.close();
+						}
+					}
+				}
 				seq.close();
 				seq = null;
 			}

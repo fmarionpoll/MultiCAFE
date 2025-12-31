@@ -901,6 +901,11 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			exp.setSaving(true);
 
 			try {
+				// Clean up fly detection ROIs before closing
+				if (exp.getSeqCamData() != null && exp.getSeqCamData().getSequence() != null) {
+					exp.cleanPreviousDetectedFliesROIs();
+				}
+				
 				if (exp.getSeqCamData() != null) {
 					exp.xmlSave_MCExperiment();
 					

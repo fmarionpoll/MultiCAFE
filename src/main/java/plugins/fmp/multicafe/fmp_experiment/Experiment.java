@@ -919,8 +919,13 @@ public class Experiment {
 	}
 
 	public boolean save_MS96_fliesPositions() {
-		// TODO write real code
-		return false;
+		// Save fly positions to bin directory (e.g., results/bin60/CagesArrayMeasures.csv)
+		String binDir = getKymosBinFullDirectory();
+		if (binDir != null) {
+			return cages.getPersistence().saveCagesArrayMeasures(cages, binDir);
+		}
+		// Fallback: save to results directory if bin directory not set
+		return cages.save_Cages(getResultsDirectory());
 	}
 
 	// -------------------------------
@@ -1203,11 +1208,11 @@ public class Experiment {
 	}
 
 	public void cleanPreviousDetectedFliesROIs() {
-		ArrayList<ROI2D> list = seqCamData.getSequence().getROI2Ds();
-		for (ROI2D roi : list) {
-			if (roi.getName().contains("det"))
-				seqCamData.getSequence().removeROI(roi);
+		if (seqCamData == null || seqCamData.getSequence() == null) {
+			return;
 		}
+		// Remove all ROIs containing "det" (detected fly positions)
+		seqCamData.removeROIsContainingString("det");
 	}
 
 	public String zgetMCDrosoTrackFullName() {
