@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.fmp_experiment.sequence;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.canvas.Canvas2D;
 import icy.canvas.IcyCanvas;
@@ -15,20 +15,19 @@ import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 
 public class ROIManager {
-	private static final Logger LOGGER = Logger.getLogger(ROIManager.class.getName());
 
 	public ROIManager() {
 	}
 
 	public void displaySpecificROIs(Sequence seq, boolean isVisible, String pattern) {
 		if (seq == null) {
-			LOGGER.warning("Cannot display ROIs: sequence is null");
+			Logger.warn("Cannot display ROIs: sequence is null");
 			return;
 		}
 
 		Viewer v = seq.getFirstViewer();
 		if (v == null) {
-			LOGGER.warning("Cannot display ROIs: viewer is null");
+			Logger.warn("Cannot display ROIs: viewer is null");
 			return;
 		}
 
@@ -52,7 +51,7 @@ public class ROIManager {
 
 	public ArrayList<ROI2D> getROIsContainingString(Sequence seq, String pattern) {
 		if (seq == null) {
-			LOGGER.warning("Cannot get ROIs: sequence is null");
+			Logger.warn("Cannot get ROIs: sequence is null");
 			return new ArrayList<>();
 		}
 
@@ -70,7 +69,7 @@ public class ROIManager {
 
 	public ArrayList<ROI2D> getROIsMissingString(Sequence seq, String pattern) {
 		if (seq == null) {
-			LOGGER.warning("Cannot get ROIs: sequence is null");
+			Logger.warn("Cannot get ROIs: sequence is null");
 			return new ArrayList<>();
 		}
 
@@ -88,7 +87,7 @@ public class ROIManager {
 
 	public void removeROIsContainingString(Sequence seq, String pattern) {
 		if (seq == null) {
-			LOGGER.warning("Cannot remove ROIs: sequence is null");
+			Logger.warn("Cannot remove ROIs: sequence is null");
 			return;
 		}
 
@@ -101,7 +100,7 @@ public class ROIManager {
 
 	public void removeROIsMissingString(Sequence seq, String pattern) {
 		if (seq == null) {
-			LOGGER.warning("Cannot remove ROIs: sequence is null");
+			Logger.warn("Cannot remove ROIs: sequence is null");
 			return;
 		}
 
@@ -113,13 +112,13 @@ public class ROIManager {
 
 	public void centerOnRoi(Sequence seq, ROI2D roi) {
 		if (seq == null || roi == null) {
-			LOGGER.warning("Cannot center on ROI: sequence or ROI is null");
+			Logger.warn("Cannot center on ROI: sequence or ROI is null");
 			return;
 		}
 
 		Viewer v = seq.getFirstViewer();
 		if (v == null) {
-			LOGGER.warning("Cannot center on ROI: viewer is null");
+			Logger.warn("Cannot center on ROI: viewer is null");
 			return;
 		}
 
@@ -127,13 +126,13 @@ public class ROIManager {
 			Canvas2D canvas = (Canvas2D) v.getCanvas();
 			canvas.centerOn(roi.getBounds());
 		} catch (ClassCastException e) {
-			LOGGER.warning("Cannot center on ROI: canvas is not Canvas2D");
+			Logger.warn("Cannot center on ROI: canvas is not Canvas2D");
 		}
 	}
 
 	public void selectRoi(Sequence seq, ROI2D roi, boolean select) {
 		if (seq == null || roi == null) {
-			LOGGER.warning("Cannot select ROI: sequence or ROI is null");
+			Logger.warn("Cannot select ROI: sequence or ROI is null");
 			return;
 		}
 
@@ -146,7 +145,7 @@ public class ROIManager {
 
 	public void clearAllROIs(Sequence seq) {
 		if (seq == null) {
-			LOGGER.warning("Cannot clear ROIs: sequence is null");
+			Logger.warn("Cannot clear ROIs: sequence is null");
 			return;
 		}
 		seq.removeAllROI();
@@ -154,7 +153,7 @@ public class ROIManager {
 
 	public void addROI(Sequence seq, ROI roi) {
 		if (seq == null || roi == null) {
-			LOGGER.warning("Cannot add ROI: sequence or ROI is null");
+			Logger.warn("Cannot add ROI: sequence or ROI is null");
 			return;
 		}
 		seq.addROI(roi);

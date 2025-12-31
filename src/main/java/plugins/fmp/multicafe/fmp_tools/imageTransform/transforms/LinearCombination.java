@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe.fmp_tools.imageTransform.transforms;
 
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.image.IcyBufferedImage;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.AlgorithmException;
@@ -42,7 +42,6 @@ import plugins.fmp.multicafe.fmp_tools.imageTransform.InvalidParameterException;
  */
 public class LinearCombination extends ImageTransformBase {
     
-    private static final Logger logger = Logger.getLogger(LinearCombination.class.getName());
     private static final ArrayOperationCache arrayCache = new ArrayOperationCache();
     
     private final double[] weights;
@@ -117,7 +116,7 @@ public class LinearCombination extends ImageTransformBase {
         // Warn about potentially problematic weights
         double maxWeight = Math.max(Math.abs(weights[0]), Math.max(Math.abs(weights[1]), Math.abs(weights[2])));
         if (maxWeight > 10.0) {
-            logger.warning("Large weight detected: " + maxWeight + ". Results may be out of range.");
+            Logger.warn("Large weight detected: " + maxWeight + ". Results may be out of range.");
         }
     }
     

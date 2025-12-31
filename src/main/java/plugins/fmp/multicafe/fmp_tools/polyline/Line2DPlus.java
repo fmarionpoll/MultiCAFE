@@ -42,9 +42,6 @@ public class Line2DPlus extends Line2D.Double {
 	/** Serial version UID for serialization */
 	private static final long serialVersionUID = 935528755853877320L;
 
-	/** Logger for this class */
-//    private static final Logger LOGGER = Logger.getLogger(Line2DPlus.class.getName());
-
 	/** Epsilon for floating-point comparisons */
 	private static final double EPSILON = 1e-10;
 

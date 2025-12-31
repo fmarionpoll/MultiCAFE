@@ -2,15 +2,13 @@ package plugins.fmp.multicafe.fmp_tools.results;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
 
 public class ResultsArrayFromCapillaries extends ResultsArray {
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ResultsArrayFromCapillaries.class.getName());
 	Results evapL = null;
 	Results evapR = null;
 	boolean sameLR = true;
@@ -152,7 +150,7 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 		ResultsArray resultsArray = new ResultsArray();
 		List<Capillary> capillaries = exp.getCapillaries().getList();
 		if (capillaries == null) {
-			LOGGER.warning("Capillaries list is null");
+			Logger.warn("Capillaries list is null");
 			return resultsArray;
 		}
 
@@ -164,7 +162,7 @@ public class ResultsArrayFromCapillaries extends ResultsArray {
 					resultsArray.addRow(results);
 				}
 			} catch (Exception e) {
-				LOGGER.warning("Error processing capillary: " + e.getMessage());
+				Logger.warn("Error processing capillary: " + e.getMessage());
 			}
 		}
 

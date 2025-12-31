@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.fmp_series;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.vecmath.Vector2d;
 
@@ -22,7 +22,6 @@ import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
  */
 public class SafeRegistrationProcessor implements RegistrationProcessor {
 
-	private static final Logger LOGGER = Logger.getLogger(SafeRegistrationProcessor.class.getName());
 
 	private final ImageProcessor imageProcessor;
 	private final ProgressReporter progressReporter;
@@ -77,7 +76,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 			return ProcessingResult.success(result);
 
 		} catch (Exception e) {
-			LOGGER.warning("Failed to find translation: " + e.getMessage());
+			Logger.warn("Failed to find translation: " + e.getMessage());
 			return ProcessingResult.failure("Translation detection failed", e);
 		}
 	}
@@ -108,7 +107,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 			return ProcessingResult.success(result);
 
 		} catch (Exception e) {
-			LOGGER.warning("Failed to find rotation: " + e.getMessage());
+			Logger.warn("Failed to find rotation: " + e.getMessage());
 			return ProcessingResult.failure("Rotation detection failed", e);
 		}
 	}
@@ -130,7 +129,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 			return ProcessingResult.success(result);
 
 		} catch (Exception e) {
-			LOGGER.warning("Failed to apply translation: " + e.getMessage());
+			Logger.warn("Failed to apply translation: " + e.getMessage());
 			return ProcessingResult.failure("Translation application failed", e);
 		}
 	}
@@ -152,7 +151,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 			return ProcessingResult.success(result);
 
 		} catch (Exception e) {
-			LOGGER.warning("Failed to apply rotation: " + e.getMessage());
+			Logger.warn("Failed to apply rotation: " + e.getMessage());
 			return ProcessingResult.failure("Rotation application failed", e);
 		}
 	}
@@ -262,7 +261,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 					stats.addTranslationMagnitude(frameResultData.getAverageTranslationMagnitude());
 					stats.addRotationAngle(frameResultData.getAverageRotationAngle());
 				} else {
-					LOGGER.warning("Frame " + frame + " processing failed: " + frameResult.getErrorMessage());
+					Logger.warn("Frame " + frame + " processing failed: " + frameResult.getErrorMessage());
 				}
 			}
 
@@ -341,7 +340,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 					if (appliedResult.isSuccess()) {
 						workImage = appliedResult.getDataOrThrow();
 						frameStats.incrementTranslations();
-						LOGGER.info("Applied translation correction: (" + translation.getX() + ", " + translation.getY()
+						Logger.info("Applied translation correction: (" + translation.getX() + ", " + translation.getY()
 								+ ")");
 					}
 				}
@@ -359,7 +358,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 					if (appliedResult.isSuccess()) {
 						workImage = appliedResult.getDataOrThrow();
 						frameStats.incrementRotations();
-						LOGGER.info("Applied rotation correction: " + rotation.getAngleDegrees() + " degrees");
+						Logger.info("Applied rotation correction: " + rotation.getAngleDegrees() + " degrees");
 					}
 				}
 			}
@@ -370,7 +369,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 				&& (frameStats.getTotalTranslations() > 0 || frameStats.getTotalRotations() > 0)) {
 			ProcessingResult<Void> saveResult = saveCorrectedImage(workImage, fileName);
 			if (saveResult.isFailure()) {
-				LOGGER.warning("Failed to save corrected image: " + saveResult.getErrorMessage());
+				Logger.warn("Failed to save corrected image: " + saveResult.getErrorMessage());
 			}
 		}
 

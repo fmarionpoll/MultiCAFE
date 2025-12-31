@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.dlg.levels;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.List;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -32,7 +32,6 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
  */
 public class SpotChartInteractionHandler implements ChartInteractionHandler {
 
-	private static final Logger LOGGER = Logger.getLogger(SpotChartInteractionHandler.class.getName());
 
 	private static final String CHART_ID_DELIMITER = ":";
 	private static final int MAX_DESCRIPTION_LENGTH = 16;
@@ -69,7 +68,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 	 */
 	private Spot getSpotFromClickedChart(ChartMouseEvent e) {
 		if (e == null) {
-			LOGGER.warning("Chart mouse event is null");
+			Logger.warn("Chart mouse event is null");
 			return null;
 		}
 
@@ -80,7 +79,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 
 		JFreeChart chart = e.getChart();
 		if (chart == null) {
-			LOGGER.warning("Chart is null");
+			Logger.warn("Chart is null");
 			return null;
 		}
 
@@ -96,20 +95,20 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 		} else if (source instanceof ChartPanel) {
 			panel = (ChartPanel) source;
 		} else {
-			LOGGER.warning("Event source is not a ChartPanel: " + source);
+			Logger.warn("Event source is not a ChartPanel: " + source);
 			return null;
 		}
 
 		// Fall back to array lookup if cage not found directly
 		if (cage == null) {
 			if (chart.getID() == null) {
-				LOGGER.warning("Chart ID is null and cannot get cage from ChartCagePanel");
+				Logger.warn("Chart ID is null and cannot get cage from ChartCagePanel");
 				return null;
 			}
 
 			String[] chartID = chart.getID().split(CHART_ID_DELIMITER);
 			if (chartID.length < 4) {
-				LOGGER.warning("Invalid chart ID format: " + chart.getID());
+				Logger.warn("Invalid chart ID format: " + chart.getID());
 				return null;
 			}
 
@@ -118,17 +117,17 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 				int col = Integer.parseInt(chartID[3]);
 
 				if (row < 0 || row >= chartPanelArray.length || col < 0 || col >= chartPanelArray[0].length) {
-					LOGGER.warning("Invalid chart coordinates: row=" + row + ", col=" + col);
+					Logger.warn("Invalid chart coordinates: row=" + row + ", col=" + col);
 					return null;
 				}
 
 				cage = chartPanelArray[row][col].getCage();
 				if (cage == null) {
-					LOGGER.warning("Clicked chart has no associated cage");
+					Logger.warn("Clicked chart has no associated cage");
 					return null;
 				}
 			} catch (NumberFormatException ex) {
-				LOGGER.warning("Could not parse chart coordinates: " + ex.getMessage());
+				Logger.warn("Could not parse chart coordinates: " + ex.getMessage());
 				return null;
 			}
 		}
@@ -160,7 +159,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 			}
 
 			if (spotFound == null) {
-				LOGGER.warning("Failed to find spot from clicked chart");
+				Logger.warn("Failed to find spot from clicked chart");
 				return null;
 			}
 
@@ -168,7 +167,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 			spotFound.setSpotKymographT(index);
 			return spotFound;
 		} catch (Exception ex) {
-			LOGGER.warning("Error processing spot from clicked chart: " + ex.getMessage());
+			Logger.warn("Error processing spot from clicked chart: " + ex.getMessage());
 			return null;
 		}
 	}
@@ -181,7 +180,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 	 */
 	private Spot getSpotFromXYItemEntity(XYItemEntity xyItemEntity) {
 		if (xyItemEntity == null) {
-			LOGGER.warning("XY item entity is null");
+			Logger.warn("XY item entity is null");
 			return null;
 		}
 
@@ -189,13 +188,13 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 		XYDataset xyDataset = xyItemEntity.getDataset();
 
 		if (xyDataset == null) {
-			LOGGER.warning("XY dataset is null");
+			Logger.warn("XY dataset is null");
 			return null;
 		}
 
 		String description = (String) xyDataset.getSeriesKey(seriesIndex);
 		if (description == null) {
-			LOGGER.warning("Series description is null");
+			Logger.warn("Series description is null");
 			return null;
 		}
 
@@ -203,7 +202,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 
 		Spot spotFound = experiment.getCages().getSpotFromROIName(description, experiment.getSpotsArray());
 		if (spotFound == null) {
-			LOGGER.warning("Graph clicked but source not found - description (roiName)=" + description);
+			Logger.warn("Graph clicked but source not found - description (roiName)=" + description);
 			return null;
 		}
 
@@ -219,7 +218,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 	 */
 	private void chartSelectSpot(Experiment exp, Spot spot) {
 		if (exp == null || spot == null) {
-			LOGGER.warning("Cannot select spot: experiment or spot is null");
+			Logger.warn("Cannot select spot: experiment or spot is null");
 			return;
 		}
 
@@ -239,7 +238,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 	 */
 	private void selectT(Experiment exp, ResultsOptions resultsOptions, Spot spot) {
 		if (exp == null || spot == null) {
-			LOGGER.warning("Cannot select time: experiment or spot is null");
+			Logger.warn("Cannot select time: experiment or spot is null");
 			return;
 		}
 
@@ -259,7 +258,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 	 */
 	private void chartSelectKymograph(Experiment exp, Spot spot) {
 		if (exp == null || spot == null) {
-			LOGGER.warning("Cannot select kymograph: experiment or spot is null");
+			Logger.warn("Cannot select kymograph: experiment or spot is null");
 			return;
 		}
 
@@ -281,7 +280,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 	 */
 	private void chartSelectClickedSpot(Experiment exp, ResultsOptions resultsOptions, Spot clickedSpot) {
 		if (clickedSpot == null) {
-			LOGGER.warning("Clicked spot is null");
+			Logger.warn("Clicked spot is null");
 			return;
 		}
 
@@ -300,7 +299,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 			ROI2D cageRoi = cage.getRoi();
 			exp.getSeqCamData().centerDisplayOnRoi(cageRoi);
 		} else {
-			LOGGER.warning("Could not find cage for spot: " + spotName);
+			Logger.warn("Could not find cage for spot: " + spotName);
 		}
 	}
 

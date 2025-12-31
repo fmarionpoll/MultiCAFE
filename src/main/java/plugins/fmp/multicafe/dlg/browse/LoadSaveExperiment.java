@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -44,7 +44,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	 * 
 	 */
 	private static final long serialVersionUID = -690874563607080412L;
-	private static final Logger LOGGER = Logger.getLogger(LoadSaveExperiment.class.getName());
 
 	// Performance constants for metadata-only processing
 	private static final int METADATA_BATCH_SIZE = 20; // Process 20 experiments at a time
@@ -203,7 +202,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			}
 
 			if (isProcessing) {
-				LOGGER.warning("File processing already in progress, ignoring new request");
+				Logger.warn("File processing already in progress, ignoring new request");
 				return;
 			}
 
@@ -295,7 +294,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			selectedNames.clear();
 
 		} catch (Exception e) {
-			LOGGER.severe("Error processing experiment metadata: " + e.getMessage());
+			Logger.error("Error processing experiment metadata: " + e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
 				progressFrame.setMessage("Error: " + e.getMessage());
 			});
@@ -316,8 +315,8 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			}
 
 		} catch (Exception e) {
-			LOGGER.warning(
-					"Failed to process metadata for file [" + fileIndex + "] " + fileName + ": " + e.getMessage());
+			Logger.warn(
+					"Failed to process metadata for file [" + fileIndex + "] " + fileName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -359,7 +358,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			}.execute();
 
 		} catch (Exception e) {
-			LOGGER.warning("Error adding metadata to UI: " + e.getMessage());
+			Logger.warn("Error adding metadata to UI: " + e.getMessage(), e);
 		}
 	}
 
@@ -413,12 +412,12 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	 */
 	private boolean validateExperimentSelection(Experiment exp, int expIndex, ProgressFrame progressFrame) {
 		if (parent0.expListComboLazy.getSelectedItem() != exp) {
-			LOGGER.info("Skipping load for experiment [" + expIndex + "] - no longer selected");
+			Logger.info("Skipping load for experiment [" + expIndex + "] - no longer selected");
 			return false;
 		}
 
 		if (exp.isSaving()) {
-			LOGGER.warning("Cannot load experiment [" + expIndex + "] - save operation in progress: " + exp.toString());
+			Logger.warn("Cannot load experiment [" + expIndex + "] - save operation in progress: " + exp.toString());
 			progressFrame.close();
 			return false;
 		}
@@ -448,7 +447,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	 * @return false to indicate load was aborted
 	 */
 	private boolean abortExperimentLoad(Experiment exp, int expIndex, ProgressFrame progressFrame, String reason) {
-		LOGGER.info("Aborting load for experiment [" + expIndex + "] - " + reason);
+		Logger.info("Aborting load for experiment [" + expIndex + "] - " + reason);
 		exp.setLoading(false);
 		if (currentlyLoadingExperiment == exp) {
 			currentlyLoadingExperiment = null;
@@ -505,7 +504,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		}
 
 		if (exp.getSeqCamData() == null) {
-			LOGGER.severe("LoadSaveExperiments:openSelectedExperiment() [" + expIndex
+			Logger.error("LoadSaveExperiments:openSelectedExperiment() [" + expIndex
 					+ "] Error: no jpg files found for this experiment\n");
 			progressFrame.close();
 			exp.setLoading(false);
@@ -647,7 +646,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			boolean cagesLoaded = exp.getCages().getPersistence().loadCages(exp.getCages(), exp.getResultsDirectory(), exp);
 			
 			if (!cagesLoaded) {
-				LOGGER.warning("Failed to load cages for experiment [" + expIndex + "]");
+				Logger.warn("Failed to load cages for experiment [" + expIndex + "]");
 			}
 
 			// Update cages from sequence after loading
@@ -677,10 +676,9 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			progressFrame.close();
 			return true;
 		} catch (Exception e) {
-			LOGGER.severe("Error opening experiment [" + expIndex + "]: "
-					+ (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
-			LOGGER.severe("Exception details [" + expIndex + "]: " + e.toString());
-			e.printStackTrace();
+			Logger.error("Error opening experiment [" + expIndex + "]: "
+					+ (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
+			Logger.error("Exception details [" + expIndex + "]: " + e.toString(), e);
 			progressFrame.close();
 
 			// Clear loading flag - loading failed but we're done trying
@@ -843,7 +841,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			if (exp != null) {
 				// Cancel any ongoing load for a different experiment
 				if (currentlyLoadingExperiment != null && currentlyLoadingExperiment != exp) {
-					LOGGER.info(
+					Logger.info(
 							"Cancelling load for experiment [" + currentlyLoadingIndex + "] - new experiment selected");
 					// Clear loading flag for the previous experiment
 					if (currentlyLoadingExperiment != null) {
@@ -876,14 +874,14 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (exp != null) {
 			// Don't save if loading is still in progress (prevents race condition)
 			if (exp.isLoading()) {
-				LOGGER.warning("LoadSaveExperiment: Skipping save for experiment - loading still in progress: "
+				Logger.warn("LoadSaveExperiment: Skipping save for experiment - loading still in progress: "
 						+ exp.toString());
 				return;
 			}
 
 			// Don't start a new save if one is already in progress (prevents concurrent saves)
 			if (exp.isSaving()) {
-				LOGGER.warning("LoadSaveExperiment: Skipping save for experiment - save operation already in progress: "
+				Logger.warn("LoadSaveExperiment: Skipping save for experiment - save operation already in progress: "
 						+ exp.toString());
 				return;
 			}
@@ -927,8 +925,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					exp.closeSequences();
 				}
 			} catch (Exception e) {
-				LOGGER.severe("Error in closeViewsForCurrentExperiment: " + e.getMessage());
-				e.printStackTrace();
+				Logger.error("Error in closeViewsForCurrentExperiment: " + e.getMessage(), e);
 			} finally {
 				// Always clear saving flag, even if save fails
 				exp.setSaving(false);

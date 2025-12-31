@@ -2,8 +2,7 @@ package plugins.fmp.multicafe.fmp_tools.polyline;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 /**
  * Bresenham's line drawing algorithm implementation for pixel-perfect line
@@ -52,8 +51,6 @@ import java.util.logging.Logger;
  */
 public final class Bresenham {
 
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(Bresenham.class.getName());
 
 //    /** Array index for x-coordinate */
 //    private static final int X_INDEX = 0;
@@ -127,7 +124,7 @@ public final class Bresenham {
 			return linePixels;
 
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error generating line pixels", e);
+			Logger.error("Error generating line pixels", e);
 			return new ArrayList<>();
 		}
 	}
@@ -165,7 +162,7 @@ public final class Bresenham {
 				Point2D nextPoint = pointsList.get(i);
 
 				if (currentPoint == null || nextPoint == null) {
-					LOGGER.warning("Skipping null point at index " + (currentPoint == null ? i - 1 : i));
+					Logger.warn("Skipping null point at index " + (currentPoint == null ? i - 1 : i));
 					continue;
 				}
 
@@ -180,7 +177,7 @@ public final class Bresenham {
 			return allLinePixels;
 
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error generating polyline pixels", e);
+			Logger.error("Error generating polyline pixels", e);
 			return new ArrayList<>();
 		}
 	}

@@ -8,7 +8,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -16,7 +16,6 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 public class TimeManager {
-	private static final Logger LOGGER = Logger.getLogger(TimeManager.class.getName());
 
 	private int indexTimePattern = -1;
 
@@ -61,7 +60,7 @@ public class TimeManager {
 	public FileTime getFileTimeFromFileAttributes(ImageLoader imageLoader, int t) {
 		String filename = imageLoader.getFileNameFromImageList(t);
 		if (filename == null) {
-			LOGGER.warning("Null filename for index " + t);
+			Logger.warn("Null filename for index " + t);
 			return null;
 		}
 
@@ -76,7 +75,7 @@ public class TimeManager {
 				filetime = FileTime.fromMillis(creationDate.getTime());
 			}
 		} catch (IOException e) {
-			LOGGER.warning("Failed to get file attributes: " + e.getMessage());
+			Logger.warn("Failed to get file attributes: " + e.getMessage());
 		}
 		return filetime;
 	}
@@ -84,7 +83,7 @@ public class TimeManager {
 	public FileTime getFileTimeFromJPEGMetaData(ImageLoader imageLoader, int t) {
 		String filename = imageLoader.getFileNameFromImageList(t);
 		if (filename == null) {
-			LOGGER.warning("Null filename for index " + t);
+			Logger.warn("Null filename for index " + t);
 			return null;
 		}
 
@@ -98,14 +97,14 @@ public class TimeManager {
 				Date date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
 				filetime = FileTime.fromMillis(date.getTime());
 			} else {
-				LOGGER.warning("EXIF data not found in file: " + filename);
+				Logger.warn("EXIF data not found in file: " + filename);
 			}
 		} catch (ImageProcessingException e) {
-			LOGGER.warning("Image processing error: " + e.getMessage());
+			Logger.warn("Image processing error: " + e.getMessage());
 		} catch (IOException e) {
-			LOGGER.warning("IO error reading metadata: " + e.getMessage());
+			Logger.warn("IO error reading metadata: " + e.getMessage());
 		} catch (Exception e) {
-			LOGGER.warning("Error reading JPEG metadata: " + e.getMessage());
+			Logger.warn("Error reading JPEG metadata: " + e.getMessage());
 		}
 		return filetime;
 	}

@@ -4,8 +4,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.gui.frame.progress.AnnounceFrame;
 import icy.type.geom.Polygon2D;
@@ -42,9 +41,6 @@ import icy.type.geom.Polygon2D;
  * @see java.awt.geom.Point2D
  */
 public final class PolygonUtilities {
-    
-    /** Logger for this class */
-    private static final Logger LOGGER = Logger.getLogger(PolygonUtilities.class.getName());
     
     /** Required number of vertices for 4-corner polygon operations */
     private static final int REQUIRED_VERTICES = 4;
@@ -125,7 +121,7 @@ public final class PolygonUtilities {
             return orderedPolygon;
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error ordering polygon vertices", e);
+            Logger.error("Error ordering polygon vertices", e);
             return new Polygon2D();
         }
     }
@@ -180,7 +176,7 @@ public final class PolygonUtilities {
             return new Polygon2D(newXPoints, newYPoints, REQUIRED_VERTICES);
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error inflating polygon", e);
+            Logger.error("Error inflating polygon", e);
             return new Polygon2D();
         }
     }
@@ -191,7 +187,7 @@ public final class PolygonUtilities {
      */
     @Deprecated
     public static Polygon2D inflate(Polygon2D roiPolygon, int ncolumns, int nrows, int width_cage, int width_interval) {
-        LOGGER.warning("Using deprecated method inflate(). Use inflatePolygon() instead.");
+        Logger.warn("Using deprecated method inflate(). Use inflatePolygon() instead.");
         return inflatePolygon(roiPolygon, ncolumns, nrows, width_cage, width_cage, width_interval, width_interval);
     }
 
@@ -202,7 +198,7 @@ public final class PolygonUtilities {
     @Deprecated
     public static Polygon2D inflate2(Polygon2D roiPolygon, int ncolumns, int width_cage, int width_interval, 
                                    int nrows, int height_cage, int height_interval) {
-        LOGGER.warning("Using deprecated method inflate2(). Use inflatePolygon() instead.");
+        Logger.warn("Using deprecated method inflate2(). Use inflatePolygon() instead.");
         return inflatePolygon(roiPolygon, ncolumns, nrows, width_cage, height_cage, width_interval, height_interval);
     }
 
@@ -268,7 +264,7 @@ public final class PolygonUtilities {
             return gridPoints;
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error dividing polygon into grid", e);
+            Logger.error("Error dividing polygon into grid", e);
             return new ArrayList<>();
         }
     }
@@ -313,7 +309,7 @@ public final class PolygonUtilities {
             return null;
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error calculating line intersection", e);
+            Logger.error("Error calculating line intersection", e);
             return null;
         }
     }
@@ -380,7 +376,7 @@ public final class PolygonUtilities {
             return gridPoints;
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error creating grid inside polygon", e);
+            Logger.error("Error creating grid inside polygon", e);
             return new Point2D.Double[0][0];
         }
     }
@@ -413,7 +409,7 @@ public final class PolygonUtilities {
             return Math.abs(area) / 2.0;
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error calculating polygon area", e);
+            Logger.error("Error calculating polygon area", e);
             return 0.0;
         }
     }
@@ -462,7 +458,7 @@ public final class PolygonUtilities {
             return true;
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error checking polygon convexity", e);
+            Logger.error("Error checking polygon convexity", e);
             return false;
         }
     }
@@ -481,7 +477,7 @@ public final class PolygonUtilities {
             }
         }
         
-        LOGGER.warning("No vertex found in " + quadrantName + " quadrant");
+        Logger.warn("No vertex found in " + quadrantName + " quadrant");
     }
     
     /**

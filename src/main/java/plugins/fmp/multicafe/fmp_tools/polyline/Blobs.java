@@ -8,8 +8,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.image.IcyBufferedImage;
 import icy.roi.BooleanMask2D;
@@ -45,8 +44,6 @@ import icy.type.geom.Polygon2D;
  */
 public class Blobs {
 
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(Blobs.class.getName());
 
 	/** Minimum blob number (background pixels have value 0) */
 	private static final int BACKGROUND_VALUE = 0;
@@ -96,8 +93,6 @@ public class Blobs {
 		if (binaryData == null || binaryData.length != totalPixels) {
 			throw new IllegalArgumentException("Invalid image data");
 		}
-
-//        LOGGER.info("Created Blobs instance for image of size " + imageWidth + "x" + imageHeight);
 	}
 
 	/**
@@ -132,11 +127,10 @@ public class Blobs {
 			}
 
 			int numBlobs = currentBlobNumber - FIRST_BLOB_NUMBER;
-//            LOGGER.info("Found " + numBlobs + " connected components");
 			return numBlobs;
 
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error during connected component labeling", e);
+			Logger.error("Error during connected component labeling", e);
 			return 0;
 		}
 	}
@@ -162,11 +156,8 @@ public class Blobs {
 					mergeWithNeighbors(x, y, currentValue);
 				}
 			}
-
-//            LOGGER.info("Completed blob merging");
-
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error during blob merging", e);
+			Logger.error("Error during blob merging", e);
 		}
 	}
 
@@ -198,11 +189,8 @@ public class Blobs {
 					x = lastX;
 				}
 			}
-
-//            LOGGER.info("Completed hole filling");
-
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error during hole filling", e);
+			Logger.error("Error during hole filling", e);
 		}
 	}
 
@@ -246,7 +234,7 @@ public class Blobs {
 	 */
 	@Deprecated
 	public List<Integer> getListOfBlobs(int[] binaryData) {
-		LOGGER.warning("Using deprecated method getListOfBlobs(int[])");
+		Logger.warn("Using deprecated method getListOfBlobs(int[])");
 		return getListOfBlobs();
 	}
 
@@ -305,7 +293,7 @@ public class Blobs {
 			return Polygon2D.getPolygon2D(polygonPoints, POLYGON_DEVIATION);
 
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error creating polygon for blob " + blobNumber, e);
+			Logger.error("Error creating polygon for blob " + blobNumber, e);
 			return new Polygon2D();
 		}
 	}
@@ -334,7 +322,7 @@ public class Blobs {
 			}
 
 			if (blobPoints.isEmpty()) {
-				LOGGER.warning("No pixels found for blob " + blobNumber);
+				Logger.warn("No pixels found for blob " + blobNumber);
 				return new BooleanMask2D(new Point[0]);
 			}
 
@@ -342,7 +330,7 @@ public class Blobs {
 			return new BooleanMask2D(pointArray);
 
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error creating boolean mask for blob " + blobNumber, e);
+			Logger.error("Error creating boolean mask for blob " + blobNumber, e);
 			return new BooleanMask2D(new Point[0]);
 		}
 	}
@@ -380,14 +368,14 @@ public class Blobs {
 			}
 
 			if (!blobFound) {
-				LOGGER.warning("No pixels found for blob " + blobNumber);
+				Logger.warn("No pixels found for blob " + blobNumber);
 				return new Rectangle(0, 0, 0, 0);
 			}
 
 			return new Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1);
 
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error calculating rectangle for blob " + blobNumber, e);
+			Logger.error("Error calculating rectangle for blob " + blobNumber, e);
 			return new Rectangle(0, 0, 0, 0);
 		}
 	}

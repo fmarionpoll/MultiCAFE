@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.common.exception.UnsupportedFormatException;
 import icy.file.Loader;
@@ -75,8 +74,6 @@ import plugins.kernel.roi.roi2d.ROI2DPolyLine;
  * @since 1.0
  */
 public class SequenceKymos extends SequenceCamData {
-	// === CONSTANTS ===
-	private static final Logger LOGGER = Logger.getLogger(SequenceKymos.class.getName());
 
 	// === CORE FIELDS ===
 	private final ReentrantLock processingLock = new ReentrantLock();
@@ -199,7 +196,7 @@ public class SequenceKymos extends SequenceCamData {
 					roi.setColor(Color.red);
 
 				} catch (Exception e) {
-					LOGGER.log(Level.WARNING, "Failed to process ROI: " + roi.getName(), e);
+					Logger.warn("Failed to process ROI: " + roi.getName(), e);
 					failed++;
 				}
 			}
@@ -399,7 +396,7 @@ public class SequenceKymos extends SequenceCamData {
 					.message(String.format("Successfully loaded %d kymograph images", acceptedFiles.size())).build();
 
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Failed to load kymographs", e);
+			Logger.error("Failed to load kymographs", e);
 			return ImageProcessingResult.failure(e, "Failed to load kymographs: " + e.getMessage());
 		} finally {
 			isLoadingImages = false;
@@ -440,14 +437,14 @@ public class SequenceKymos extends SequenceCamData {
 			String fullDirectory = baseDirectory + File.separator;
 
 			if (cagesArray.cagesList.isEmpty()) {
-				LOGGER.warning("No cages found in cages array");
+				Logger.warn("No cages found in cages array");
 				return new ArrayList<>();
 			}
 
 			Cage firstCage = cagesArray.cagesList.get(0);
 			List<Spot> firstCageSpots = firstCage.getSpots(allSpots);
 			if (firstCageSpots.isEmpty()) {
-				LOGGER.warning("No spots found in first cage");
+				Logger.warn("No spots found in first cage");
 				return new ArrayList<>();
 			}
 
@@ -468,10 +465,6 @@ public class SequenceKymos extends SequenceCamData {
 					fileList.add(descriptor);
 				}
 			}
-
-//			LOGGER.info(String.format("Created %d kymograph file descriptors from %d cages", fileList.size(),
-//					cagesArray.cagesList.size()));
-
 			return fileList;
 
 		} finally {
@@ -632,7 +625,7 @@ public class SequenceKymos extends SequenceCamData {
 				maxWidth = Math.max(maxWidth, descriptor.imageWidth);
 				maxHeight = Math.max(maxHeight, descriptor.imageHeight);
 			} catch (Exception e) {
-				LOGGER.log(Level.WARNING, "Failed to get dimensions for: " + descriptor.fileName, e);
+				Logger.warn("Failed to get dimensions for: " + descriptor.fileName, e);
 			}
 		}
 
@@ -703,7 +696,7 @@ public class SequenceKymos extends SequenceCamData {
 					processed++;
 
 				} catch (Exception e) {
-					LOGGER.log(Level.WARNING, "Failed to adjust image: " + descriptor.fileName, e);
+					Logger.warn("Failed to adjust image: " + descriptor.fileName, e);
 					failed++;
 					failedFiles.add(descriptor.fileName);
 				}
@@ -848,7 +841,7 @@ public class SequenceKymos extends SequenceCamData {
 				getSequence().setName(sequenceName);
 			}
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Failed to set sequence name from first image", e);
+			Logger.warn("Failed to set sequence name from first image", e);
 		}
 	}
 
@@ -879,7 +872,7 @@ public class SequenceKymos extends SequenceCamData {
 			updateImageDimensions(fileProp);
 			return true;
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Failed to get image dimensions", e);
+			Logger.warn("Failed to get image dimensions", e);
 			return false;
 		}
 	}

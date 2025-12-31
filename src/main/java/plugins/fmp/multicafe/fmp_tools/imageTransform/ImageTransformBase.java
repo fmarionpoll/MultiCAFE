@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe.fmp_tools.imageTransform;
 
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.image.IcyBufferedImage;
 import icy.type.DataType;
@@ -26,7 +26,6 @@ import icy.type.collection.array.Array1DUtil;
  */
 public abstract class ImageTransformBase implements ImageTransformInterface {
     
-    private static final Logger logger = Logger.getLogger(ImageTransformBase.class.getName());
     
     // Static cache for array operations to improve performance
     private static final ArrayOperationCache arrayCache = new ArrayOperationCache();
@@ -43,10 +42,10 @@ public abstract class ImageTransformBase implements ImageTransformInterface {
             return executeTransformSafely(sourceImage, options, transformName);
             
         } catch (ImageTransformException e) {
-            logger.severe("Transform failed: " + e.getMessage());
+            Logger.error("Transform failed: " + e.getMessage(), e);
             return handleTransformError(e, sourceImage);
         } catch (Exception e) {
-            logger.severe("Unexpected error in transform " + transformName + ": " + e.getMessage());
+            Logger.error("Unexpected error in transform " + transformName + ": " + e.getMessage(), e);
             ImageTransformException transformException = new ImageTransformException(
                 "Unexpected error during transformation", e, transformName, "Transform execution");
             return handleTransformError(transformException, sourceImage);
@@ -272,7 +271,7 @@ public abstract class ImageTransformBase implements ImageTransformInterface {
      * @return The fallback image or null if no fallback is appropriate
      */
     protected IcyBufferedImage handleTransformError(ImageTransformException error, IcyBufferedImage fallbackImage) {
-        logger.warning("Transform error handled: " + error.getMessage());
+        Logger.warn("Transform error handled: " + error.getMessage());
         
         // For now, return null to indicate failure
         // In a production system, you might want to return the original image

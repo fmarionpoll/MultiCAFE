@@ -44,7 +44,6 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 
 	private static final long serialVersionUID = 2L;
-//	private static final Logger LOGGER = Logger.getLogger(JComboBoxExperimentLazy.class.getName());
 
 	public int index0 = 0;
 	public int index1 = 0;

@@ -6,8 +6,7 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.canvas.IcyCanvas;
 import icy.canvas.IcyCanvas2D;
@@ -46,8 +45,6 @@ import plugins.kernel.roi.roi2d.ROI2DPolyLine;
  */
 public class OverlayThreshold extends Overlay implements SequenceListener {
     
-    /** Logger for this class */
-    private static final Logger LOGGER = Logger.getLogger(OverlayThreshold.class.getName());
     
     /** Default overlay name */
     private static final String DEFAULT_OVERLAY_NAME = "ThresholdOverlay";
@@ -268,20 +265,20 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
      */
     public IcyBufferedImage getTransformedImage(int timePoint) {
         if (localSequence == null) {
-            LOGGER.warning("Cannot get transformed image: sequence is not set");
+            Logger.warn("Cannot get transformed image: sequence is not set");
             return null;
         }
         
         try {
             IcyBufferedImage image = localSequence.getImage(timePoint, 0);
             if (image == null) {
-                LOGGER.warning("No image found at time point: " + timePoint);
+                Logger.warn("No image found at time point: " + timePoint);
                 return null;
             }
             
             return getTransformedImage(image);
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Error getting transformed image for time point " + timePoint, e);
+            Logger.warn("Error getting transformed image for time point " + timePoint, e);
             return null;
         }
     }
@@ -301,13 +298,13 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
         try {
             IcyBufferedImage transformedImage = imageTransformFunction.getTransformedImage(inputImage, imageTransformOptions);
             if (transformedImage == null) {
-                LOGGER.warning("Transform function returned null image");
+                Logger.warn("Transform function returned null image");
                 return null;
             }
             
             return imageThresholdFunction.getTransformedImage(transformedImage, imageTransformOptions);
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Error applying image transformation", e);
+            Logger.warn("Error applying image transformation", e);
             return null;
         }
     }
@@ -340,7 +337,7 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
                 }
             }
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Error painting overlay", e);
+            Logger.warn("Error painting overlay", e);
         }
     }
 
@@ -362,9 +359,9 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
             
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            LOGGER.log(Level.WARNING, "Overlay rendering was interrupted", e);
+            Logger.warn("Overlay rendering was interrupted", e);
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Error rendering overlay", e);
+            Logger.warn("Error rendering overlay", e);
         }
     }
 
@@ -454,7 +451,7 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
             }
             
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Error drawing detection path", e);
+            Logger.warn("Error drawing detection path", e);
         }
     }
     
@@ -512,7 +509,7 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
             localSequence.addROI(detectionROI);
             
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Error creating detection ROI", e);
+            Logger.warn("Error creating detection ROI", e);
         }
     }
     
@@ -524,7 +521,7 @@ public class OverlayThreshold extends Overlay implements SequenceListener {
             try {
                 localSequence.removeROI(detectionROI);
             } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Error removing detection ROI", e);
+                Logger.warn("Error removing detection ROI", e);
             }
             detectionROI = null;
         }

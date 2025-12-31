@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.fmp_tools;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Arrays;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.swing.SwingConstants;
 import javax.vecmath.Vector2d;
@@ -40,8 +40,6 @@ import icy.type.collection.array.Array1DUtil;
  */
 public class GaspardRigidRegistration {
 
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(GaspardRigidRegistration.class.getName());
 
 	/** Default log-polar size for theta (angle) */
 	private static final int DEFAULT_SIZE_THETA = 1080;
@@ -89,7 +87,7 @@ public class GaspardRigidRegistration {
 		int width = sourceImage.getWidth();
 		int height = sourceImage.getHeight();
 
-		LOGGER.fine("Finding translation between images: " + width + "x" + height);
+		Logger.debug("Finding translation between images: " + width + "x" + height);
 
 		float[] _source = Array1DUtil.arrayToFloatArray(sourceImage.getDataXY(sourceC), sourceImage.isSignedDataType());
 		float[] _target = Array1DUtil.arrayToFloatArray(targetImage.getDataXY(targetC), targetImage.isSignedDataType());
@@ -110,7 +108,7 @@ public class GaspardRigidRegistration {
 		}
 
 		Vector2d translation = new Vector2d(-transX, -transY);
-		LOGGER.fine("Found translation: (" + translation.x + ", " + translation.y + ")");
+		Logger.debug("Found translation: (" + translation.x + ", " + translation.y + ")");
 
 		return translation;
 	}
@@ -260,7 +258,7 @@ public class GaspardRigidRegistration {
 		if (translation.lengthSquared() > MIN_TRANSLATION_THRESHOLD) {
 			change = true;
 			img = GaspardRigidRegistration.applyTranslation2D(img, -1, translation, true);
-			LOGGER.info("Applied translation correction: (" + translation.x + ", " + translation.y + ")");
+			Logger.info("Applied translation correction: (" + translation.x + ", " + translation.y + ")");
 		}
 		return change;
 	}
@@ -310,10 +308,10 @@ public class GaspardRigidRegistration {
 		int dx = (int) Math.round(vector.x);
 		int dy = (int) Math.round(vector.y);
 
-		LOGGER.fine("Applying translation: dx=" + dx + " dy=" + dy);
+		Logger.debug("Applying translation: dx=" + dx + " dy=" + dy);
 
 		if (dx == 0 && dy == 0) {
-			LOGGER.fine("No translation needed");
+			Logger.debug("No translation needed");
 			return image;
 		}
 
@@ -357,7 +355,7 @@ public class GaspardRigidRegistration {
 		if (Math.abs(angle) > MIN_ROTATION_THRESHOLD) {
 			rotate = true;
 			img = GaspardRigidRegistration.applyRotation2D(img, -1, angle, true);
-			LOGGER.info("Applied rotation correction: " + Math.toDegrees(angle) + " degrees");
+			Logger.info("Applied rotation correction: " + Math.toDegrees(angle) + " degrees");
 		}
 		return rotate;
 	}
@@ -458,7 +456,7 @@ public class GaspardRigidRegistration {
 		}
 
 		double rotation = -rotX * 2 * Math.PI / width;
-		LOGGER.fine("Found rotation: " + Math.toDegrees(rotation) + " degrees");
+		Logger.debug("Found rotation: " + Math.toDegrees(rotation) + " degrees");
 
 		return rotation;
 	}
@@ -600,7 +598,7 @@ public class GaspardRigidRegistration {
 		}
 
 		if (Math.abs(angle) < MIN_ROTATION_THRESHOLD) {
-			LOGGER.fine("No rotation needed (angle too small)");
+			Logger.debug("No rotation needed (angle too small)");
 			return img;
 		}
 

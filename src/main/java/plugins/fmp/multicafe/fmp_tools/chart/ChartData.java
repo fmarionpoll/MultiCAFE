@@ -38,9 +38,6 @@ import plugins.fmp.multicafe.fmp_tools.MaxMinDouble;
  */
 public class ChartData {
 
-	/** Logger for this class */
-//	private static final Logger LOGGER = Logger.getLogger(ChartData.class.getName());
-
 	private MaxMinDouble yMaxMin;
 	private MaxMinDouble xMaxMin;
 	private XYSeriesCollection xyDataset;

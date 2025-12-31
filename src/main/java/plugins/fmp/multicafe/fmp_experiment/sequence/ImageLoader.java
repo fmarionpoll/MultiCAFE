@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.imageio.ImageIO;
 
@@ -18,7 +18,6 @@ import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 
 public class ImageLoader {
-	private static final Logger LOGGER = Logger.getLogger(ImageLoader.class.getName());
 
 	private ArrayList<String> imagesList = new ArrayList<>();
 	private String imagesDirectory = null;
@@ -118,14 +117,14 @@ public class ImageLoader {
 			image = ImageIO.read(new File(name));
 			return IcyBufferedImage.createFrom(image);
 		} catch (IOException e) {
-			LOGGER.severe("Failed to read image: " + name + " - " + e.getMessage());
+			Logger.error("Failed to read image: " + name + " - " + e.getMessage());
 			return null;
 		}
 	}
 
 	public Sequence loadSequenceFromImagesList(List<String> images) {
 		if (images.isEmpty()) {
-			LOGGER.warning("Empty images list provided");
+			Logger.warn("Empty images list provided");
 			return null;
 		}
 
@@ -141,24 +140,20 @@ public class ImageLoader {
 			);
 
 			if (sequenceList.isEmpty()) {
-				LOGGER.warning("No sequences loaded");
+				Logger.warn("No sequences loaded");
 				return null;
 			}
 
-//			if (sequenceList.size() > 1) {
-//				LOGGER.info("Multiple sequences loaded, using first one. Count: " + sequenceList.size());
-//			}
-
 			return sequenceList.get(0);
 		} catch (Exception e) {
-			LOGGER.severe("Error loading sequence: " + e.getMessage());
+			Logger.error("Error loading sequence: " + e.getMessage());
 			return null;
 		}
 	}
 
 	public Sequence initSequenceFromFirstImage(List<String> images) {
 		if (images.isEmpty()) {
-			LOGGER.warning("Empty images list provided");
+			Logger.warn("Empty images list provided");
 			return null;
 		}
 
@@ -166,7 +161,7 @@ public class ImageLoader {
 			SequenceFileImporter seqFileImporter = Loader.getSequenceFileImporter(images.get(0), true);
 			return Loader.loadSequence(seqFileImporter, images.get(0), 0, false);
 		} catch (Exception e) {
-			LOGGER.severe("Error initializing sequence: " + e.getMessage());
+			Logger.error("Error initializing sequence: " + e.getMessage());
 			return null;
 		}
 	}

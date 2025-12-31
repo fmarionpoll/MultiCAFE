@@ -5,8 +5,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.gui.viewer.Viewer;
 import icy.image.IcyBufferedImage;
@@ -50,8 +49,6 @@ import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
  * @since 1.0
  */
 public class SequenceCamData implements AutoCloseable {
-	// === CONSTANTS ===
-	private static final Logger LOGGER = Logger.getLogger(SequenceCamData.class.getName());
 
 	// === CORE FIELDS ===
 	private final ReentrantLock lock = new ReentrantLock();
@@ -215,7 +212,7 @@ public class SequenceCamData implements AutoCloseable {
 			currentFrame = t;
 			return seq.getImage(t, z);
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Failed to get image at t=" + t + ", z=" + z, e);
+			Logger.warn("Failed to get image at t=" + t + ", z=" + z, e);
 			return null;
 		} finally {
 			lock.unlock();
@@ -259,7 +256,7 @@ public class SequenceCamData implements AutoCloseable {
 
 		ensureNotClosed();
 		if (seq == null) {
-			LOGGER.warning("Cannot process ROIs: sequence is not initialized");
+			Logger.warn("Cannot process ROIs: sequence is not initialized");
 			return false;
 		}
 
@@ -285,7 +282,7 @@ public class SequenceCamData implements AutoCloseable {
 				return false;
 			}
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Failed to process ROI operation: " + operation.getType(), e);
+			Logger.warn("Failed to process ROI operation: " + operation.getType(), e);
 			return false;
 		} finally {
 			lock.unlock();
@@ -404,7 +401,7 @@ public class SequenceCamData implements AutoCloseable {
 
 		ensureNotClosed();
 		if (seq == null) {
-			LOGGER.warning("Cannot configure viewer: sequence is not initialized");
+			Logger.warn("Cannot configure viewer: sequence is not initialized");
 			return;
 		}
 

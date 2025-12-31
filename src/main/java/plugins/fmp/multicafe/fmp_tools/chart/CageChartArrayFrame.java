@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -63,8 +63,6 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
  */
 public class CageChartArrayFrame extends IcyFrame {
 
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(CageChartArrayFrame.class.getName());
 
 	/** Default chart width in pixels */
 	protected static final int DEFAULT_CHART_WIDTH = 200;
@@ -544,7 +542,7 @@ public class CageChartArrayFrame extends IcyFrame {
 	 */
 	protected void displayChartFrame() {
 		if (mainChartFrame == null) {
-			LOGGER.warning("Cannot display chart frame: mainChartFrame is null");
+			Logger.warn("Cannot display chart frame: mainChartFrame is null");
 			return;
 		}
 

@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.fmp_experiment;
 
 import java.io.File;
 import java.util.List;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -33,7 +33,6 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
  */
 public class LazyExperiment extends Experiment {
 
-	private static final Logger LOGGER = Logger.getLogger(LazyExperiment.class.getName());
 
 	private final ExperimentMetadata metadata;
 	private boolean isLoaded = false;
@@ -99,7 +98,7 @@ public class LazyExperiment extends Experiment {
 					this.isLoaded = true;
 				}
 			} catch (Exception e) {
-				LOGGER.warning("Error loading experiment " + metadata.getCameraDirectory() + ": " + e.getMessage());
+				Logger.warn("Error loading experiment " + metadata.getCameraDirectory() + ": " + e.getMessage(), e);
 				e.printStackTrace();
 				// Set isLoaded to true even on error to prevent infinite loops
 				this.isLoaded = true;
@@ -144,8 +143,8 @@ public class LazyExperiment extends Experiment {
 
 				return true;
 			} catch (Exception e) {
-				LOGGER.warning("Error loading properties for experiment " + metadata.getCameraDirectory() + ": "
-						+ e.getMessage());
+				Logger.warn("Error loading properties for experiment " + metadata.getCameraDirectory() + ": "
+						+ e.getMessage(), e);
 				// Mark as loaded to prevent repeated attempts
 				experimentPropertiesLoaded = true;
 				return false;

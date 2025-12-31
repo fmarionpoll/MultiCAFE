@@ -35,9 +35,6 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
  */
 public class ChartCagePair {
 
-	/** Logger for this class */
-//	private static final Logger LOGGER = Logger.getLogger(ChartCagePair.class.getName());
-
 	/** The chart panel associated with this pair */
 	private ChartPanel chartPanel;
 
@@ -52,17 +49,8 @@ public class ChartCagePair {
 	 * @throws IllegalArgumentException if either parameter is null
 	 */
 	public ChartCagePair(ChartPanel chartPanel, Cage cage) {
-//		if (chartPanel == null) {
-//			throw new IllegalArgumentException("Chart panel cannot be null");
-//		}
-//		if (cage == null) {
-//			throw new IllegalArgumentException("Cage cannot be null");
-//		}
-
 		this.chartPanel = chartPanel;
 		this.cage = cage;
-
-//		LOGGER.fine("Created CageChartPair for cage ID: " + cage.getProperties().getCageID());
 	}
 
 	/**
@@ -86,7 +74,6 @@ public class ChartCagePair {
 		}
 
 		this.chartPanel = chartPanel;
-//		LOGGER.fine("Updated chart panel for cage ID: " + cage.getProperties().getCageID());
 	}
 
 	/**
@@ -110,7 +97,6 @@ public class ChartCagePair {
 		}
 
 		this.cage = cage;
-//		LOGGER.fine("Updated cage for chart panel, new cage ID: " + cage.getProperties().getCageID());
 	}
 
 	/**

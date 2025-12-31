@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.fmp_tools.chart.builders;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -20,7 +20,6 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
  */
 public class CageFlyPositionSeriesBuilder implements CageSeriesBuilder {
 	
-	private static final Logger LOGGER = Logger.getLogger(CageFlyPositionSeriesBuilder.class.getName());
 	
 	/** Value representing alive status */
 	private static final double ALIVE_VALUE = 1.0;
@@ -76,12 +75,12 @@ public class CageFlyPositionSeriesBuilder implements CageSeriesBuilder {
 	 */
 	private void addPointsToXYSeries(Cage cage, FlyPositions flyPositions, EnumResults resultType, XYSeries seriesXY) {
 		if (cage == null || seriesXY == null || flyPositions == null) {
-			LOGGER.warning("Cannot add points: cage, series, or flyPositions is null");
+			Logger.warn("Cannot add points: cage, series, or flyPositions is null");
 			return;
 		}
 
 		if (flyPositions.flyPositionList == null || flyPositions.flyPositionList.isEmpty()) {
-			LOGGER.warning("No fly positions data for cage ID: " + cage.getProperties().getCageID());
+			Logger.warn("No fly positions data for cage ID: " + cage.getProperties().getCageID());
 			return;
 		}
 
@@ -163,7 +162,7 @@ public class CageFlyPositionSeriesBuilder implements CageSeriesBuilder {
 		}
 		
 		if (rect1 == null) {
-			LOGGER.warning("Cannot process position data: cage ROI is null");
+			Logger.warn("Cannot process position data: cage ROI is null");
 			return;
 		}
 		
@@ -182,7 +181,7 @@ public class CageFlyPositionSeriesBuilder implements CageSeriesBuilder {
 	 */
 	private void addxyPos(XYSeries seriesXY, FlyPosition pos, Double ypos) {
 		if (seriesXY == null || pos == null) {
-			LOGGER.warning("Cannot add position: series or position is null");
+			Logger.warn("Cannot add position: series or position is null");
 			return;
 		}
 

@@ -52,8 +52,6 @@ import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
  * @since 2.3.3
  */
 public class ModernSpotsArray implements AutoCloseable {
-	// === CONSTANTS ===
-//	private static final Logger LOGGER = Logger.getLogger(ModernSpotsArray.class.getName());
 
 	// === CORE FIELDS ===
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();

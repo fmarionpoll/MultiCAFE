@@ -1,7 +1,7 @@
 package plugins.fmp.multicafe.fmp_tools.ROI2D;
 
 import java.awt.Point;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.w3c.dom.Node;
 
@@ -20,7 +20,6 @@ import icy.util.XMLUtil;
  */
 public class ROI2DWithMask implements XMLPersistent {
 
-	private static final Logger logger = Logger.getLogger(ROI2DWithMask.class.getName());
 
 	// Private fields with proper encapsulation
 
@@ -288,7 +287,7 @@ public class ROI2DWithMask implements XMLPersistent {
 		try {
 			final Node nodeMeta = XMLUtil.getElement(node, Constants.XML.ID_META);
 			if (nodeMeta == null) {
-				logger.warning("No metadata node found in XML");
+				Logger.warn("No metadata node found in XML");
 				return false;
 			}
 
@@ -299,7 +298,7 @@ public class ROI2DWithMask implements XMLPersistent {
 
 			return true;
 		} catch (Exception e) {
-			logger.severe("Failed to load ROI2DAlongT from XML: " + e.getMessage());
+			Logger.error("Failed to load ROI2DAlongT from XML: " + e.getMessage(), e);
 			return false;
 		}
 	}
@@ -309,7 +308,7 @@ public class ROI2DWithMask implements XMLPersistent {
 		try {
 			final Node nodeMeta = XMLUtil.setElement(node, Constants.XML.ID_META);
 			if (nodeMeta == null) {
-				logger.warning("Failed to create metadata node in XML");
+				Logger.warn("Failed to create metadata node in XML");
 				return false;
 			}
 
@@ -319,7 +318,7 @@ public class ROI2DWithMask implements XMLPersistent {
 
 			return true;
 		} catch (Exception e) {
-			logger.severe("Failed to save ROI2DAlongT to XML: " + e.getMessage());
+			Logger.error("Failed to save ROI2DAlongT to XML: " + e.getMessage(), e);
 			return false;
 		}
 	}

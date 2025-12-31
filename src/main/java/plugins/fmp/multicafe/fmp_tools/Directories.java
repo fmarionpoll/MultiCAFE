@@ -10,8 +10,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 
@@ -40,9 +40,6 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
  * @author MultiSPOTS96
  */
 public class Directories {
-
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(Directories.class.getName());
 
 	/** Default depth for directory traversal */
 	private static final int DEFAULT_DEPTH = 1;
@@ -79,7 +76,7 @@ public class Directories {
 		}
 		Collections.sort(shortList, CASE_INSENSITIVE_COMPARATOR);
 
-		LOGGER.fine("Reduced " + dirList.size() + " full paths to " + shortList.size() + " short names");
+		Logger.debug("Reduced " + dirList.size() + " full paths to " + shortList.size() + " short names");
 		return shortList;
 	}
 
@@ -107,13 +104,10 @@ public class Directories {
 				Files.walk(rootPath).filter(Files::isRegularFile)
 						.filter(p -> p.getFileName().toString().toLowerCase().endsWith(filter.toLowerCase()))
 						.forEach(p -> hSet.add(p.toFile().getParent().toString()));
-
-//				LOGGER.fine("Found " + hSet.size() + " directories with files matching '" + filter + "' in "
-//						+ rootDirectory);
 			}
 
 		} catch (IOException e) {
-			LOGGER.severe("Error accessing directory " + rootDirectory + ": " + e.getMessage());
+			Logger.error("Error accessing directory " + rootDirectory + ": " + e.getMessage(), e);
 		}
 		return hSet;
 	}
@@ -136,14 +130,13 @@ public class Directories {
 
 		List<Path> subfolders = getAllSubPathsOfDirectory(directory, DEFAULT_DEPTH);
 		if (subfolders == null) {
-			LOGGER.warning("No subdirectories found in " + directory);
+			Logger.warn("No subdirectories found in " + directory);
 			return null;
 		}
 
 		List<String> dirList = getPathsContainingString(subfolders, filter);
 		if (dirList != null) {
 			Collections.sort(dirList, CASE_INSENSITIVE_COMPARATOR);
-//			LOGGER.fine("Found " + dirList.size() + " subdirectories matching '" + filter + "' in " + directory);
 		}
 		return dirList;
 	}
@@ -162,7 +155,7 @@ public class Directories {
 			throw new IllegalArgumentException("Filter cannot be null");
 		}
 		if (subfolders == null) {
-			LOGGER.warning("Subfolders list is null");
+			Logger.warn("Subfolders list is null");
 			return null;
 		}
 
@@ -177,7 +170,6 @@ public class Directories {
 		}
 
 		List<String> result = new ArrayList<String>(dirList);
-//		LOGGER.fine("Found " + result.size() + " paths containing '" + filter + "'");
 		return result;
 	}
 
@@ -209,14 +201,11 @@ public class Directories {
 					subfolders.remove(0);
 				}
 
-				LOGGER.fine(
+				Logger.debug(
 						"Found " + (subfolders != null ? subfolders.size() : 0) + " subdirectories in " + directory);
 			}
-//			else {
-//				LOGGER.warning("Directory does not exist: " + directory);
-//			}
 		} catch (IOException e) {
-			LOGGER.severe("Error accessing directory " + directory + ": " + e.getMessage());
+			Logger.error("Error accessing directory " + directory + ": " + e.getMessage(), e);
 		}
 		return subfolders;
 	}
@@ -237,7 +226,6 @@ public class Directories {
 		String strDirectory = filepath.isDirectory() ? filepath.getAbsolutePath()
 				: filepath.getParentFile().getAbsolutePath();
 
-//		LOGGER.fine("Extracted directory from '" + fileName + "': " + strDirectory);
 		return strDirectory;
 	}
 
@@ -296,7 +284,6 @@ public class Directories {
 			}
 		});
 
-//		LOGGER.fine("Found " + list.size() + " TIFF directories in " + parentDirectory);
 		return list;
 	}
 
@@ -347,13 +334,13 @@ public class Directories {
 
 		File folder = new File(directory);
 		if (!folder.exists() || !folder.isDirectory()) {
-			LOGGER.warning("Directory does not exist or is not a directory: " + directory);
+			Logger.warn("Directory does not exist or is not a directory: " + directory);
 			return;
 		}
 
 		File[] files = folder.listFiles();
 		if (files == null) {
-			LOGGER.warning("Cannot list files in directory: " + directory);
+			Logger.warn("Cannot list files in directory: " + directory);
 			return;
 		}
 
@@ -362,17 +349,12 @@ public class Directories {
 			if (file != null && file.isFile()) {
 				String name = file.getName();
 				if (name.toLowerCase().endsWith(filter.toLowerCase())) {
-					if (file.delete()) {
-//						deletedCount++;
-//						LOGGER.fine("Deleted file: " + file.getAbsolutePath());
-					} else {
-						LOGGER.warning("Failed to delete file: " + file.getAbsolutePath());
+					if (!file.delete()) {
+						Logger.warn("Failed to delete file: " + file.getAbsolutePath());
 					}
 				}
 			}
 		}
-
-//        LOGGER.info("Deleted " + deletedCount + " files with extension '" + filter + "' in " + directory);
 	}
 
 	/**
@@ -400,14 +382,14 @@ public class Directories {
 						try {
 							Files.move(path, destinationPath);
 						} catch (IOException e) {
-							LOGGER.warning("Failed to move file: " + path + " to " + destinationPath);
+							Logger.warn("Failed to move file: " + path + " to " + destinationPath);
 							e.printStackTrace();
 						}
 					}
 				});
 			}
 		} catch (IOException e) {
-			LOGGER.severe("Error accessing directory: " + directoryStr);
+			Logger.error("Error accessing directory: " + directoryStr);
 			e.printStackTrace();
 		}
 	}
@@ -442,14 +424,14 @@ public class Directories {
 						try {
 							Files.move(path, destinationPath);
 						} catch (IOException e) {
-							LOGGER.warning("Failed to move file: " + path + " to " + destinationPath);
+							Logger.warn("Failed to move file: " + path + " to " + destinationPath);
 							e.printStackTrace();
 						}
 					}
 				});
 			}
 		} catch (IOException e) {
-			LOGGER.severe("Error accessing directory: " + directoryStr);
+			Logger.error("Error accessing directory: " + directoryStr);
 			e.printStackTrace();
 		}
 	}

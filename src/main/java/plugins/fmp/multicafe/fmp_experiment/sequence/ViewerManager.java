@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.fmp_experiment.sequence;
 
 import java.awt.Rectangle;
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -12,7 +12,6 @@ import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multicafe.fmp_tools.overlay.OverlayThreshold;
 
 public class ViewerManager {
-	private static final Logger LOGGER = Logger.getLogger(ViewerManager.class.getName());
 
 	private OverlayThreshold overlayThresholdCam = null;
 
@@ -21,12 +20,12 @@ public class ViewerManager {
 
 	public void displayViewerAtRectangle(Sequence seq, Rectangle parentRect) {
 		if (seq == null) {
-			LOGGER.warning("Cannot display viewer: sequence is null");
+			Logger.warn("Cannot display viewer: sequence is null");
 			return;
 		}
 
 		if (parentRect == null) {
-			LOGGER.warning("Cannot display viewer: parent rectangle is null");
+			Logger.warn("Cannot display viewer: parent rectangle is null");
 			return;
 		}
 
@@ -43,13 +42,13 @@ public class ViewerManager {
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
-			LOGGER.severe("Error displaying viewer: " + e.getMessage());
+			Logger.error("Error displaying viewer: " + e.getMessage());
 		}
 	}
 
 	public void updateOverlay(Sequence seq) {
 		if (seq == null) {
-			LOGGER.warning("Cannot update overlay: sequence is null");
+			Logger.warn("Cannot update overlay: sequence is null");
 			return;
 		}
 

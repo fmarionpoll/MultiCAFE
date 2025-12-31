@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.fmp_series;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.vecmath.Vector2d;
 
@@ -124,8 +124,6 @@ public class Registration extends BuildSeries {
 //	        closeSequence(dataSequence);
 	}
 
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(CorrectDrift.class.getName());
 	/** Minimum threshold for considering a translation significant */
 	private static final double MIN_TRANSLATION_THRESHOLD = 0.001;
 	/** Minimum threshold for considering a rotation significant */
@@ -170,7 +168,7 @@ public class Registration extends BuildSeries {
 			if (translation.lengthSquared() > MIN_TRANSLATION_THRESHOLD) {
 				change = true;
 				workImage = GaspardRigidRegistration.applyTranslation2D(workImage, -1, translation, true);
-				LOGGER.info("Applied translation correction: (" + translation.x + ", " + translation.y + ")");
+				Logger.info("Applied translation correction: (" + translation.x + ", " + translation.y + ")");
 			}
 
 			boolean rotate = false;
@@ -186,7 +184,7 @@ public class Registration extends BuildSeries {
 			if (Math.abs(angle) > MIN_ROTATION_THRESHOLD) {
 				rotate = true;
 				workImage = GaspardRigidRegistration.applyRotation2D(workImage, -1, angle, true);
-				LOGGER.info("Applied rotation correction: " + Math.toDegrees(angle) + " degrees");
+				Logger.info("Applied rotation correction: " + Math.toDegrees(angle) + " degrees");
 
 				workImageTransformed = transformFunction.getTransformedImage(workImage, transformOptions);
 				reducedWorkImage = IcyBufferedImageUtil.getSubImage(workImageTransformed, rect.x, rect.y, rect.height,

@@ -2,7 +2,7 @@ package plugins.fmp.multicafe.fmp_tools.chart.style;
 
 import java.awt.Color;
 import java.util.Optional;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.jfree.chart.ChartColor;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -20,7 +20,6 @@ import org.jfree.data.xy.XYSeriesCollection;
  * </p>
  */
 public final class SeriesStyleCodec {
-	private static final Logger LOGGER = Logger.getLogger(SeriesStyleCodec.class.getName());
 
 	// Legacy format produced in chart code: "ID:..:Pos:..:nflies:..:R:..:G:..:B:.."
 	private static final String DELIM = ":";
@@ -92,7 +91,7 @@ public final class SeriesStyleCodec {
 				Color c = tryParseColor(description).orElse(Color.BLACK);
 				renderer.setSeriesPaint(i, new ChartColor(c.getRed(), c.getGreen(), c.getBlue()));
 			} catch (Exception e) {
-				LOGGER.fine("Failed to style series " + i + ": " + e.getMessage());
+				Logger.debug("Failed to style series " + i + ": " + e.getMessage());
 				renderer.setSeriesPaint(i, ChartColor.BLACK);
 			}
 		}

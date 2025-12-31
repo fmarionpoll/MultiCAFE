@@ -8,7 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,7 +32,6 @@ import plugins.kernel.roi.roi2d.ROI2DRectangle;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Cage implements Comparable<Cage>, AutoCloseable {
-	private static final Logger LOGGER = Logger.getLogger(CageModern.class.getName());
 	private static final Color FLY_POSITION_ROI_COLOR = Color.YELLOW;
 
 	private ROI2D cageROI2D = null;
@@ -1036,7 +1035,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		if (closed.compareAndSet(false, true)) {
-			LOGGER.fine("Closing cage: "); // + data.getName());
+			Logger.debug("Closing cage: "); // + data.getName());
 			// Cleanup resources if needed
 			flyPositions.clear();
 		}

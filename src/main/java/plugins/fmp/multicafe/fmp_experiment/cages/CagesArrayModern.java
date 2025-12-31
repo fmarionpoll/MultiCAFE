@@ -10,8 +10,8 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.roi.ROI2D;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
@@ -53,7 +53,6 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
  * @since 2.3.3
  */
 public final class CagesArrayModern implements AutoCloseable {
-	private static final Logger LOGGER = Logger.getLogger(CagesArrayModern.class.getName());
 
 	// === THREAD-SAFE COLLECTIONS ===
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -221,7 +220,7 @@ public final class CagesArrayModern implements AutoCloseable {
 				try {
 					cage.close();
 				} catch (Exception e) {
-					LOGGER.warning("Error closing cage during removal: " + e.getMessage());
+					Logger.warn("Error closing cage during removal: " + e.getMessage());
 				}
 
 				long processingTime = System.currentTimeMillis() - startTime;
@@ -396,7 +395,7 @@ public final class CagesArrayModern implements AutoCloseable {
 				try {
 					cage.close();
 				} catch (Exception e) {
-					LOGGER.warning("Error closing cage during clear: " + e.getMessage());
+					Logger.warn("Error closing cage during clear: " + e.getMessage());
 				}
 			}
 
@@ -482,7 +481,7 @@ public final class CagesArrayModern implements AutoCloseable {
 						try {
 							cage.close();
 						} catch (Exception e) {
-							LOGGER.warning("Error closing cage: " + cage.getData().getName() + " - " + e.getMessage());
+							Logger.warn("Error closing cage: " + cage.getData().getName() + " - " + e.getMessage());
 						}
 					}
 
@@ -490,8 +489,6 @@ public final class CagesArrayModern implements AutoCloseable {
 					cagesByID.clear();
 					cagesByName.clear();
 					closed = true;
-
-//					LOGGER.info("ModernCagesArray closed successfully");
 				}
 			} finally {
 				lock.writeLock().unlock();

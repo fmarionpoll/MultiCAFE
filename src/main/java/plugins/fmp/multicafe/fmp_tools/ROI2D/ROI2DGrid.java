@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.roi.ROI;
 import icy.roi.ROIEvent;
@@ -28,7 +28,6 @@ import plugins.kernel.roi.roi2d.ROI2DPolyLine;
  */
 public class ROI2DGrid implements ROIListener {
 
-	private static final Logger logger = Logger.getLogger(ROI2DGrid.class.getName());
 
 	// Thread safety
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -590,7 +589,7 @@ public class ROI2DGrid implements ROIListener {
 				}
 
 			} catch (Exception e) {
-				logger.warning("Failed to update grid from ROI change: " + e.getMessage());
+				Logger.warn("Failed to update grid from ROI change: " + e.getMessage(), e);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -631,7 +630,7 @@ public class ROI2DGrid implements ROIListener {
 				return Integer.parseInt(name.substring(lastSeparator + 1));
 			}
 		} catch (NumberFormatException e) {
-			logger.warning("Failed to extract index from ROI name: " + name);
+			Logger.warn("Failed to extract index from ROI name: " + name);
 		}
 		return -1;
 	}

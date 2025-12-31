@@ -1,7 +1,7 @@
 package plugins.fmp.multicafe.fmp_tools.JComponents;
 
 import java.io.File;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -16,7 +16,6 @@ import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogExceptio
  */
 public final class Dialog {
 	
-	private static final Logger logger = Logger.getLogger(Dialog.class.getName());
 	
 	// Private constructor to prevent instantiation
 	private Dialog() {
@@ -49,7 +48,7 @@ public final class Dialog {
 			return null;
 			
 		} catch (Exception e) {
-			logger.severe("Error in saveFileAs: " + e.getMessage());
+			Logger.error("Error in saveFileAs: " + e.getMessage(), e);
 			throw new FileDialogException("Failed to open save dialog", "save_file_as", extension, e);
 		}
 	}
@@ -75,7 +74,7 @@ public final class Dialog {
 			return null;
 			
 		} catch (Exception e) {
-			logger.severe("Error in selectFiles: " + e.getMessage());
+			Logger.error("Error in selectFiles: " + e.getMessage(), e);
 			throw new FileDialogException("Failed to open file selection dialog", "select_files", extension, e);
 		}
 	}

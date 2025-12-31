@@ -4,7 +4,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.roi.BooleanMask2D;
 import icy.roi.ROI2D;
@@ -45,7 +45,6 @@ import plugins.kernel.roi.roi2d.ROI2DEllipse;
  * @since 2.3.3
  */
 public final class CageModern implements Comparable<CageModern>, AutoCloseable {
-	private static final Logger LOGGER = Logger.getLogger(CageModern.class.getName());
 
 	// === CORE DATA ===
 	private final CageData data;
@@ -272,7 +271,7 @@ public final class CageModern implements Comparable<CageModern>, AutoCloseable {
 	@Override
 	public void close() {
 		if (closed.compareAndSet(false, true)) {
-			LOGGER.fine("Closing cage: " + data.getName());
+			Logger.debug("Closing cage: " + data.getName());
 			// Cleanup resources if needed
 			flyPositions.clear();
 		}
@@ -337,7 +336,7 @@ public final class CageModern implements Comparable<CageModern>, AutoCloseable {
 			spot.getProperties().setSpotNPixels((int) roiEllipse.getNumberOfPoints());
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			LOGGER.warning("Interrupted while computing spot pixels for cage: " + data.getName());
+			Logger.warn("Interrupted while computing spot pixels for cage: " + data.getName());
 			spot.getProperties().setSpotNPixels(0);
 		}
 

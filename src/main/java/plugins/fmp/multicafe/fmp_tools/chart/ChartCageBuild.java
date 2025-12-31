@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.fmp_tools.chart;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -51,8 +51,6 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
  */
 public class ChartCageBuild {
 
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ChartCageBuild.class.getName());
 
 	/** Default stroke width for chart lines */
 	private static final float DEFAULT_STROKE_WIDTH = 0.5f;
@@ -120,8 +118,6 @@ public class ChartCageBuild {
 		globalYMax = 0;
 		globalYMin = 0;
 		globalXMax = 0;
-
-		// LOGGER.fine("Initialized max/min tracking variables");
 	}
 
 	/**
@@ -232,27 +228,16 @@ public class ChartCageBuild {
 			globalYMin = ymin;
 			globalXMax = xmax;
 			flagMaxMinSet = true;
-			// LOGGER.fine(
-//					"Set initial global extrema: Y[" + globalYMin + ", " + globalYMax + "], X[0, " + globalXMax + "]");
 		} else {
-//			boolean updated = false;
 			if (Double.isNaN(globalYMax) || globalYMax < ymax) {
 				globalYMax = ymax;
-//				updated = true;
 			}
 			if (Double.isNaN(globalYMin) || globalYMin > ymin) {
 				globalYMin = ymin;
-//				updated = true;
 			}
 			if (globalXMax < xmax) {
 				globalXMax = xmax;
-//				updated = true;
 			}
-
-//			if (updated) {
-//				LOGGER.fine(
-//						"Updated global extrema: Y[" + globalYMin + ", " + globalYMax + "], X[0, " + globalXMax + "]");
-//			}
 		}
 	}
 
@@ -265,7 +250,7 @@ public class ChartCageBuild {
 	@SuppressWarnings("unused")
 	private static XYLineAndShapeRenderer getSubPlotRenderer(XYSeriesCollection xySeriesCollection) {
 		if (xySeriesCollection == null) {
-			LOGGER.warning("Cannot create renderer: dataset is null");
+			Logger.warn("Cannot create renderer: dataset is null");
 			return null;
 		}
 
@@ -280,9 +265,6 @@ public class ChartCageBuild {
 				subPlotRenderer.setSeriesStroke(i, stroke);
 			}
 		}
-
-		// LOGGER.fine("Created renderer for " + xySeriesCollection.getSeriesCount() + "
-		// series");
 		return subPlotRenderer;
 	}
 

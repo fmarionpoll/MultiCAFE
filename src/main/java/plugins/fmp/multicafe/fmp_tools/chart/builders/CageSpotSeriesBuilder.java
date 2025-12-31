@@ -1,7 +1,7 @@
 package plugins.fmp.multicafe.fmp_tools.chart.builders;
 
 import java.awt.Color;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -22,18 +22,17 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
  * Builds cage datasets from Spot measurements.
  */
 public class CageSpotSeriesBuilder implements CageSeriesBuilder {
-	private static final Logger LOGGER = Logger.getLogger(CageSpotSeriesBuilder.class.getName());
 
 	@Override
 	public XYSeriesCollection build(Experiment exp, Cage cage, ResultsOptions options) {
 		SpotsArray allSpots = exp.getSpotsArray();
 		if (cage == null || allSpots == null) {
-			LOGGER.fine("No spot data for cage");
+			Logger.debug("No spot data for cage");
 			return new XYSeriesCollection();
 		}
 		List<Spot> spots = cage.getSpots(allSpots);
 		if (spots.isEmpty()) {
-			LOGGER.fine("No spot data for cage");
+			Logger.debug("No spot data for cage");
 			return new XYSeriesCollection();
 		}
 

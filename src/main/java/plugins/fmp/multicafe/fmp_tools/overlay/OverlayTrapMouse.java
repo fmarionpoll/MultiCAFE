@@ -3,8 +3,7 @@ package plugins.fmp.multicafe.fmp_tools.overlay;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -43,8 +42,6 @@ import icy.type.point.Point5D;
  */
 public class OverlayTrapMouse extends Overlay {
 
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(OverlayTrapMouse.class.getName());
 
 	/** Default overlay name */
 	private static final String DEFAULT_OVERLAY_NAME = "Mouse Trap Overlay";
@@ -133,8 +130,6 @@ public class OverlayTrapMouse extends Overlay {
 		this.pickColorButton = pickColorButton;
 		this.colorPickComboBox = colorPickComboBox;
 		this.originalButtonText = pickColorButton.getText();
-
-//        LOGGER.info("UI elements attached to overlay");
 	}
 
 	/**
@@ -149,8 +144,6 @@ public class OverlayTrapMouse extends Overlay {
 		this.pickColorButton = null;
 		this.colorPickComboBox = null;
 		this.originalButtonText = null;
-
-//        LOGGER.info("UI elements detached from overlay");
 	}
 
 	/**
@@ -175,7 +168,7 @@ public class OverlayTrapMouse extends Overlay {
 		try {
 			onMouseClicked(canvas.getSequence(), canvas.getPositionT(), imagePoint);
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error handling mouse click", e);
+			Logger.warn("Error handling mouse click", e);
 		}
 	}
 
@@ -192,7 +185,7 @@ public class OverlayTrapMouse extends Overlay {
 		try {
 			onMouseMoved(canvas.getSequence(), canvas.getPositionT(), imagePoint);
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error handling mouse move", e);
+			Logger.warn("Error handling mouse move", e);
 		}
 	}
 
@@ -260,7 +253,7 @@ public class OverlayTrapMouse extends Overlay {
 			}
 
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error updating UI with color", e);
+			Logger.warn("Error updating UI with color", e);
 		}
 	}
 
@@ -289,7 +282,7 @@ public class OverlayTrapMouse extends Overlay {
 			return colorPickComboBox.getItemCount() - 1;
 
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error managing color in combo box", e);
+			Logger.warn("Error managing color in combo box", e);
 			return -1;
 		}
 	}
@@ -315,7 +308,7 @@ public class OverlayTrapMouse extends Overlay {
 			pickColorButton.setText(colorText.toString());
 
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error updating button display", e);
+			Logger.warn("Error updating button display", e);
 		}
 	}
 
@@ -342,7 +335,7 @@ public class OverlayTrapMouse extends Overlay {
 			// Get image at specified time
 			IcyBufferedImage image = sequence.getImage(timePosition, 0);
 			if (image == null) {
-				LOGGER.warning("No image available at time position: " + timePosition);
+				Logger.warn("No image available at time position: " + timePosition);
 				return null;
 			}
 
@@ -360,7 +353,7 @@ public class OverlayTrapMouse extends Overlay {
 			return new Color(red, green, blue);
 
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error extracting color at point", e);
+			Logger.warn("Error extracting color at point", e);
 			return null;
 		}
 	}

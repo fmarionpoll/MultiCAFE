@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -36,7 +36,6 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
  */
 public class CapillaryChartInteractionHandler implements ChartInteractionHandler {
 
-	private static final Logger LOGGER = Logger.getLogger(CapillaryChartInteractionHandler.class.getName());
 
 	private static final int LEFT_MOUSE_BUTTON = MouseEvent.BUTTON1;
 
@@ -70,7 +69,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 	 */
 	private Capillary getCapillaryFromClickedChart(ChartMouseEvent e) {
 		if (e == null) {
-			LOGGER.warning("Chart mouse event is null");
+			Logger.warn("Chart mouse event is null");
 			return null;
 		}
 
@@ -81,7 +80,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 
 		JFreeChart chart = e.getChart();
 		if (chart == null) {
-			LOGGER.warning("Chart is null");
+			Logger.warn("Chart is null");
 			return null;
 		}
 
@@ -94,15 +93,15 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 			cage = ((ChartCagePanel) panel).getCage();
 		} else if (source instanceof ChartPanel) {
 			panel = (ChartPanel) source;
-			LOGGER.warning("Event source is ChartPanel but not ChartCagePanel: " + source);
+			Logger.warn("Event source is ChartPanel but not ChartCagePanel: " + source);
 			return null;
 		} else {
-			LOGGER.warning("Event source is not a ChartPanel: " + source);
+			Logger.warn("Event source is not a ChartPanel: " + source);
 			return null;
 		}
 
 		if (cage == null) {
-			LOGGER.warning("Could not get cage from ChartCagePanel");
+			Logger.warn("Could not get cage from ChartCagePanel");
 			return null;
 		}
 
@@ -130,7 +129,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 	 */
 	private Capillary getCapillaryFromXYItemEntity(XYItemEntity xyItemEntity, Cage cage) {
 		if (xyItemEntity == null) {
-			LOGGER.warning("XY item entity is null");
+			Logger.warn("XY item entity is null");
 			return null;
 		}
 
@@ -138,13 +137,13 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 		XYDataset xyDataset = xyItemEntity.getDataset();
 
 		if (xyDataset == null) {
-			LOGGER.warning("XY dataset is null");
+			Logger.warn("XY dataset is null");
 			return null;
 		}
 
 		String seriesKey = (String) xyDataset.getSeriesKey(seriesIndex);
 		if (seriesKey == null) {
-			LOGGER.warning("Series key is null");
+			Logger.warn("Series key is null");
 			return null;
 		}
 
@@ -166,7 +165,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 
 		String[] parts = seriesKey.split("_");
 		if (parts.length < 2) {
-			LOGGER.warning("Invalid series key format: " + seriesKey);
+			Logger.warn("Invalid series key format: " + seriesKey);
 			return null;
 		}
 
@@ -205,7 +204,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 			}
 		}
 
-		LOGGER.warning("Could not find capillary for series key: " + seriesKey);
+		Logger.warn("Could not find capillary for series key: " + seriesKey);
 		return null;
 	}
 
@@ -278,7 +277,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 	 */
 	private void chartSelectCapillary(Experiment exp, Capillary capillary) {
 		if (exp == null || capillary == null) {
-			LOGGER.warning("Cannot select capillary: experiment or capillary is null");
+			Logger.warn("Cannot select capillary: experiment or capillary is null");
 			return;
 		}
 
@@ -303,7 +302,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 	private void selectTForCapillary(Experiment exp, ResultsOptions resultsOptions, Capillary capillary,
 			double timeMinutes) {
 		if (exp == null || capillary == null) {
-			LOGGER.warning("Cannot select time: experiment or capillary is null");
+			Logger.warn("Cannot select time: experiment or capillary is null");
 			return;
 		}
 
@@ -329,7 +328,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 	 */
 	private void chartSelectKymographForCapillary(Experiment exp, Capillary capillary) {
 		if (exp == null || capillary == null) {
-			LOGGER.warning("Cannot select kymograph: experiment or capillary is null");
+			Logger.warn("Cannot select kymograph: experiment or capillary is null");
 			return;
 		}
 
@@ -366,7 +365,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 	private void chartSelectClickedCapillary(Experiment exp, ResultsOptions resultsOptions, Capillary clickedCapillary,
 			double timeMinutes) {
 		if (clickedCapillary == null) {
-			LOGGER.warning("Clicked capillary is null");
+			Logger.warn("Clicked capillary is null");
 			return;
 		}
 

@@ -5,7 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -21,7 +21,6 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
 public class EditCapillariesConditional extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = Logger.getLogger(EditCapillariesConditional.class.getName());
 
 	// Available fields for conditions - all fields from Edit.java
 	private static final EnumXLSColumnHeader[] CONDITION_FIELDS = {
@@ -191,7 +190,7 @@ public class EditCapillariesConditional extends JPanel {
 		// Validation for required fields
 		if (conditionField1 == null || conditionValue1 == null || targetField == null || newValue == null
 				|| newValue.isEmpty()) {
-			LOGGER.warning("EditCapillariesConditional: Missing required fields");
+			Logger.warn("EditCapillariesConditional: Missing required fields");
 			return;
 		}
 
@@ -206,13 +205,13 @@ public class EditCapillariesConditional extends JPanel {
 
 			// Validate condition 2 if enabled
 			if (conditionField2 == null || conditionValue2 == null) {
-				LOGGER.warning("EditCapillariesConditional: Condition 2 is enabled but missing values");
+				Logger.warn("EditCapillariesConditional: Condition 2 is enabled but missing values");
 				return;
 			}
 
 			// Ensure condition fields are different
 			if (conditionField1 == conditionField2) {
-				LOGGER.warning("EditCapillariesConditional: Condition fields must be different");
+				Logger.warn("EditCapillariesConditional: Condition fields must be different");
 				return;
 			}
 		}
@@ -257,7 +256,7 @@ public class EditCapillariesConditional extends JPanel {
 		}
 
 		String updateType = targetIsCapillary ? "capillaries" : "experiments";
-		LOGGER.info(
+		Logger.info(
 				"EditCapillariesConditional: Updated " + totalUpdated + " " + updateType + " across all experiments");
 	}
 
@@ -415,23 +414,23 @@ public class EditCapillariesConditional extends JPanel {
 		long startTime = System.currentTimeMillis();
 		long pollIntervalMs = 100; // Check every 100ms
 
-		LOGGER.info("Waiting for save operation to complete for experiment [" + expIndex + "]: " + exp.toString());
+			Logger.info("Waiting for save operation to complete for experiment [" + expIndex + "]: " + exp.toString());
 
 		while (exp.isSaving() && (System.currentTimeMillis() - startTime) < timeoutMs) {
 			try {
 				Thread.sleep(pollIntervalMs);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
-				LOGGER.warning("Interrupted while waiting for save to complete for experiment [" + expIndex + "]");
+				Logger.warn("Interrupted while waiting for save to complete for experiment [" + expIndex + "]");
 				return;
 			}
 		}
 
 		if (exp.isSaving()) {
-			LOGGER.warning("Timeout waiting for save operation to complete for experiment [" + expIndex
+			Logger.warn("Timeout waiting for save operation to complete for experiment [" + expIndex
 					+ "]. Proceeding anyway, but save may not have completed: " + exp.toString());
 		} else {
-			LOGGER.info("Save operation completed for experiment [" + expIndex + "]");
+			Logger.info("Save operation completed for experiment [" + expIndex + "]");
 		}
 	}
 }

@@ -2,8 +2,7 @@ package plugins.fmp.multicafe.fmp_tools.polyline;
 
 import java.awt.geom.Point2D;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.type.geom.Polyline2D;
 
@@ -40,8 +39,6 @@ import icy.type.geom.Polyline2D;
  */
 public class Level2D extends Polyline2D {
 
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(Level2D.class.getName());
 
 	/**
 	 * Creates an empty Level2D polyline.
@@ -223,7 +220,7 @@ public class Level2D extends Polyline2D {
 			return new Level2D(newXPoints, newYPoints, imageWidth);
 
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error expanding polyline", e);
+			Logger.error("Error expanding polyline", e);
 			return new Level2D(imageWidth);
 		}
 	}
@@ -254,7 +251,7 @@ public class Level2D extends Polyline2D {
 			return new Level2D(newXPoints, newYPoints, imageWidth);
 
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error cropping polyline", e);
+			Logger.error("Error cropping polyline", e);
 			return new Level2D(imageWidth);
 		}
 	}

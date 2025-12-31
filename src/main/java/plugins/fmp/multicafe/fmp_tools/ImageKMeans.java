@@ -1,7 +1,7 @@
 package plugins.fmp.multicafe.fmp_tools;
 
 import java.util.List;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.sequence.Sequence;
 import plugins.nherve.toolbox.image.feature.DefaultClusteringAlgorithmImpl;
@@ -46,8 +46,6 @@ import plugins.nherve.toolbox.image.segmentation.SegmentationException;
  */
 public class ImageKMeans {
 
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ImageKMeans.class.getName());
 
 	/** Default number of clusters if not specified */
 	private static final int DEFAULT_NUM_CLUSTERS = 5;
@@ -93,20 +91,16 @@ public class ImageKMeans {
 		if (stab2 < 0) {
 			throw new IllegalArgumentException("Stability threshold cannot be negative: " + stab2);
 		}
-
-//        LOGGER.info("Starting K-means clustering with " + nbc2 + " clusters, " + nbi2 + " iterations");
-
 		Segmentation segmentation = null;
 		try {
 			segmentation = doClusteringKM(seq, nbc2, nbi2, stab2, cs);
 			if (segmentation != null) {
 				segmentation.reInitColors(seq.getImage(0, 0));
-//                LOGGER.info("K-means clustering completed successfully");
 			} else {
-				LOGGER.warning("K-means clustering returned null result");
+				Logger.warn("K-means clustering returned null result");
 			}
 		} catch (Exception e) {
-			LOGGER.severe("Error during K-means clustering: " + e.getMessage());
+			Logger.error("Error during K-means clustering: " + e.getMessage());
 			throw e;
 		}
 
@@ -136,29 +130,29 @@ public class ImageKMeans {
 			throw new IllegalArgumentException("Current sequence cannot be null");
 		}
 
-		LOGGER.fine("Creating segmentable image from sequence");
+		Logger.debug("Creating segmentable image from sequence");
 		SegmentableIcyBufferedImage img = new SegmentableIcyBufferedImage(currentSequence.getFirstImage());
 
-		LOGGER.fine("Configuring K-means algorithm");
+		Logger.debug("Configuring K-means algorithm");
 		KMeans km2 = new KMeans(nbc2, nbi2, stab2);
 		km2.setLogEnabled(false);
 
 		Segmentation seg = null;
 		DefaultDescriptorImpl<SegmentableIcyBufferedImage, ? extends Signature> col = null;
 
-		LOGGER.fine("Setting up color pixel descriptor");
+		Logger.debug("Setting up color pixel descriptor");
 		ColorPixel cd = new ColorPixel(false);
 		cd.setColorSpace(cs);
 		col = cd;
 		col.setLogEnabled(false);
 
-		LOGGER.fine("Creating grid factory and extracting regions");
+		Logger.debug("Creating grid factory and extracting regions");
 		GridFactory factory = new GridFactory(GridFactory.ALGO_ONLY_PIXELS);
 		factory.setLogEnabled(false);
 
 		List<IcySupportRegion> lRegions = factory.extractRegions(img);
 		if (lRegions == null || lRegions.isEmpty()) {
-			LOGGER.warning("No regions extracted from image");
+			Logger.warn("No regions extracted from image");
 			return null;
 		}
 
@@ -170,9 +164,9 @@ public class ImageKMeans {
 			}
 		}
 
-		LOGGER.fine("Extracted " + r + " regions from image");
+		Logger.debug("Extracted " + r + " regions from image");
 		if (r == 0) {
-			LOGGER.warning("No valid regions found after filtering");
+			Logger.warn("No valid regions found after filtering");
 			return null;
 		}
 
@@ -208,18 +202,18 @@ public class ImageKMeans {
 			throw new IllegalArgumentException("Algorithm cannot be null");
 		}
 
-//		LOGGER.fine("Creating segmentation algorithm");
+//		Logger.debug("Creating segmentation algorithm");
 		DefaultSegmentationAlgorithm<SegmentableIcyBufferedImage> segAlgo = new DefaultSegmentationAlgorithm<SegmentableIcyBufferedImage>(
 				descriptor, algo);
 		segAlgo.setLogEnabled(false);
 
-//		LOGGER.fine("Performing segmentation");
+//		Logger.debug("Performing segmentation");
 		Segmentation seg = segAlgo.segment(img, regions);
 
 		if (seg == null) {
-			LOGGER.warning("Segmentation returned null result");
+			Logger.warn("Segmentation returned null result");
 //		} else {
-//			LOGGER.fine("Segmentation completed successfully");
+//			Logger.debug("Segmentation completed successfully");
 		}
 
 		return seg;

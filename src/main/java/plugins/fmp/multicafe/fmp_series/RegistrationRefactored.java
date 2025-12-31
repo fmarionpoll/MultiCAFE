@@ -1,6 +1,6 @@
 package plugins.fmp.multicafe.fmp_series;
 
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformEnums;
@@ -19,7 +19,6 @@ import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
  */
 public class RegistrationRefactored extends BuildSeries {
     
-    private static final Logger LOGGER = Logger.getLogger(RegistrationRefactored.class.getName());
     
     private final RegistrationProcessor registrationProcessor;
     private final ProgressReporter progressReporter;
@@ -38,7 +37,7 @@ public class RegistrationRefactored extends BuildSeries {
     
     @Override
     void analyzeExperiment(Experiment experiment) {
-        LOGGER.info("Starting registration analysis for experiment: " + experiment.getResultsDirectory());
+        Logger.info("Starting registration analysis for experiment: " + experiment.getResultsDirectory());
         
         // Create registration options from current BuildSeriesOptions
         RegistrationOptions options = createRegistrationOptions();
@@ -49,11 +48,11 @@ public class RegistrationRefactored extends BuildSeries {
         
         if (result.isFailure()) {
             String errorMessage = "Registration analysis failed: " + result.getErrorMessage();
-            LOGGER.severe(errorMessage);
+            Logger.error(errorMessage);
             progressReporter.failed(errorMessage);
         } else {
             RegistrationProcessor.RegistrationResult registrationResult = result.getDataOrThrow();
-            LOGGER.info("Registration completed successfully. Processed: " + 
+            Logger.info("Registration completed successfully. Processed: " + 
                        registrationResult.getFramesProcessed() + " frames, Corrected: " + 
                        registrationResult.getFramesCorrected() + " frames");
             progressReporter.completed();

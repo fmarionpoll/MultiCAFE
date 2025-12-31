@@ -28,9 +28,6 @@ package plugins.fmp.multicafe.fmp_tools;
  */
 public class MaxMinDouble {
 
-	/** Logger for this class */
-//	private static final Logger LOGGER = Logger.getLogger(MaxMinDouble.class.getName());
-
 	/** Maximum value tracked */
 	private double max = 0;
 
@@ -66,8 +63,6 @@ public class MaxMinDouble {
 			this.max = val2;
 		}
 		this.hasValues = true;
-
-//        LOGGER.fine("Created MaxMinDouble with range [" + min + ", " + max + "]");
 	}
 
 	/**
@@ -111,15 +106,12 @@ public class MaxMinDouble {
 			this.max = value;
 			this.min = value;
 			this.hasValues = true;
-//            LOGGER.fine("Set initial values: min=" + min + ", max=" + max);
 		} else {
 			if (value > max) {
 				this.max = value;
-//                LOGGER.fine("Updated max to: " + max);
 			}
 			if (value < min) {
 				this.min = value;
-//                LOGGER.fine("Updated min to: " + min);
 			}
 		}
 		return this;
@@ -196,7 +188,6 @@ public class MaxMinDouble {
 		this.max = 0;
 		this.min = 0;
 		this.hasValues = false;
-//        LOGGER.fine("Reset MaxMinDouble tracker");
 	}
 
 	/**

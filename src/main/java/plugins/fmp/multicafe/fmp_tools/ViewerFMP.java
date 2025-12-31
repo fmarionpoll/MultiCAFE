@@ -31,9 +31,6 @@ import icy.sequence.Sequence;
  */
 public class ViewerFMP extends Viewer {
 
-	/** Logger for this class */
-//	private static final Logger LOGGER = Logger.getLogger(ViewerFMP.class.getName());
-
 	/** Flag to control whether title refresh is inhibited */
 	private boolean inhibitRefreshViewerTitle = false;
 
@@ -53,8 +50,6 @@ public class ViewerFMP extends Viewer {
 		}
 
 		this.inhibitRefreshViewerTitle = inhibit;
-
-//        LOGGER.fine("Created ViewerFMP with inhibitRefreshViewerTitle=" + inhibit);
 	}
 
 	/**
@@ -65,9 +60,6 @@ public class ViewerFMP extends Viewer {
 	public void refreshViewerTitle() {
 		if (!inhibitRefreshViewerTitle) {
 			super.refreshViewerTitle();
-//            LOGGER.fine("Refreshed viewer title");
-//        } else {
-//            LOGGER.fine("Skipped viewer title refresh (inhibited)");
 		}
 	}
 
@@ -78,7 +70,6 @@ public class ViewerFMP extends Viewer {
 	 */
 	public void setInhibitRefreshViewerTitle(boolean inhibit) {
 		this.inhibitRefreshViewerTitle = inhibit;
-//        LOGGER.fine("Set inhibitRefreshViewerTitle to: " + inhibit);
 	}
 
 	/**
@@ -110,8 +101,6 @@ public class ViewerFMP extends Viewer {
 		} finally {
 			this.inhibitRefreshViewerTitle = originalInhibit;
 		}
-
-//        LOGGER.fine("Performed operation without title refresh");
 	}
 
 	/**

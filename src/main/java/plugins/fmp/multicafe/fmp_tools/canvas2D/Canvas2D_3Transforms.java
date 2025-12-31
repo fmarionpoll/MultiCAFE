@@ -3,7 +3,7 @@ package plugins.fmp.multicafe.fmp_tools.canvas2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.logging.Logger;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -46,7 +46,6 @@ import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 public class Canvas2D_3Transforms extends Canvas2D {
 
 	private static final long serialVersionUID = 8827595503996677250L;
-	private static final Logger logger = Logger.getLogger(Canvas2D_3Transforms.class.getName());
 
 	// UI Components - properly encapsulated
 	private final JComboBox<ImageTransformEnums> transformsComboStep1;
@@ -97,7 +96,7 @@ public class Canvas2D_3Transforms extends Canvas2D {
 			setupToolbarStep1(toolBar);
 			super.customizeToolbar(toolBar);
 		} catch (Exception e) {
-			logger.severe(String.format(Canvas2DConstants.ErrorMessages.TOOLBAR_SETUP_FAILED, e.getMessage()));
+			Logger.error(String.format(Canvas2DConstants.ErrorMessages.TOOLBAR_SETUP_FAILED, e.getMessage()), e);
 		}
 	}
 
@@ -196,7 +195,7 @@ public class Canvas2D_3Transforms extends Canvas2D {
 			return super.getImage(t, z, c); // Fallback to original image
 
 		} catch (Exception e) {
-			logger.severe(String.format(Canvas2DConstants.ErrorMessages.IMAGE_TRANSFORM_FAILED, e.getMessage()));
+			Logger.error(String.format(Canvas2DConstants.ErrorMessages.IMAGE_TRANSFORM_FAILED, e.getMessage()), e);
 			return super.getImage(t, z, c); // Fallback to original image
 		}
 	}
@@ -532,7 +531,7 @@ public class Canvas2D_3Transforms extends Canvas2D {
 			super.customizeToolbar(toolBar);
 			addStep2Controls(toolBar);
 		} catch (Exception e) {
-			logger.severe(String.format(Canvas2DConstants.ErrorMessages.TOOLBAR_SETUP_FAILED, e.getMessage()));
+			Logger.error(String.format(Canvas2DConstants.ErrorMessages.TOOLBAR_SETUP_FAILED, e.getMessage()), e);
 		}
 	}
 
@@ -639,7 +638,7 @@ public class Canvas2D_3Transforms extends Canvas2D {
 				setScale(scaleX, scaleY, true, true);
 
 			} catch (Exception e) {
-				logger.warning("Failed to fit Y axis: " + e.getMessage());
+				Logger.warn("Failed to fit Y axis: " + e.getMessage(), e);
 			}
 		}
 
@@ -662,7 +661,7 @@ public class Canvas2D_3Transforms extends Canvas2D {
 				setScale(scaleX, scaleY, true, true);
 
 			} catch (Exception e) {
-				logger.warning("Failed to fit XY axis: " + e.getMessage());
+				Logger.warn("Failed to fit XY axis: " + e.getMessage(), e);
 			}
 		}
 	}

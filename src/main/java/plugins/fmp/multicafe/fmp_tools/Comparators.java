@@ -14,8 +14,6 @@ import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 
 public class Comparators {
-	/** Logger for this class */
-//	private static final Logger LOGGER = Logger.getLogger(Comparators.class.getName());
 
 	/** Default cage grid width for position calculations */
 	private static final int CAGE_GRID_WIDTH = 8;
