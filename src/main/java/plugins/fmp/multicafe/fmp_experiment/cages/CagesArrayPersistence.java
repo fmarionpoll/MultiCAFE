@@ -268,15 +268,18 @@ public class CagesArrayPersistence {
 			String sep = csvSep;
 			
 			while ((row = csvReader.readLine()) != null) {
-				if (row.length() > 0 && row.charAt(0) == '#')
+				if (row.length() > 0 && row.charAt(0) == '#') {
 					sep = String.valueOf(row.charAt(1));
+				}
 
 				String[] data = row.split(sep);
 				if (data.length > 0 && data[0].equals("#")) {
-					if (data.length > 1 && data[1].equals("POSITION")) {
-						csvLoad_Measures(cages, csvReader, EnumCageMeasures.POSITION, sep);
-						csvReader.close();
-						return true;
+					if (data.length > 1) {
+						if (data[1].equals("POSITION")) {
+							csvLoad_Measures(cages, csvReader, EnumCageMeasures.POSITION, sep);
+							csvReader.close();
+							return true;
+						}
 					}
 				}
 			}
@@ -284,6 +287,7 @@ public class CagesArrayPersistence {
 			return false;
 		} catch (Exception e) {
 			Logger.error("CagesArrayPersistence:loadCagesArrayMeasures() Error: " + e.getMessage(), e);
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -691,8 +695,9 @@ public class CagesArrayPersistence {
 
 			while ((row = csvReader.readLine()) != null) {
 				String[] data = row.split(sep);
-				if (data.length > 0 && data[0].equals("#"))
+				if (data.length > 0 && data[0].equals("#")) {
 					return;
+				}
 
 				if (data.length > 0) {
 					int cageID = -1;
@@ -708,6 +713,7 @@ public class CagesArrayPersistence {
 						cages.cagesList.add(cage);
 						cage.prop.setCageID(cageID);
 					}
+					
 					if (v0) {
 						cage.csvImport_MEASURE_Data_v0(measureType, data, complete);
 					} else {
@@ -717,6 +723,7 @@ public class CagesArrayPersistence {
 			}
 		} catch (IOException e) {
 			Logger.error("CagesArrayPersistence:csvLoad_Measures() Error: " + e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 
@@ -860,8 +867,18 @@ public class CagesArrayPersistence {
 		}
 
 		try {
-			// Use existing synchronous load method
-			return load_Cages(cages, directory);
+			// Use existing synchronous load method to load descriptions
+			boolean descriptionsLoaded = load_Cages(cages, directory);
+			
+			// Also load measures from bin directory (if available)
+			if (exp != null) {
+				String binDir = exp.getKymosBinFullDirectory();
+				if (binDir != null) {
+					loadCagesArrayMeasures(cages, binDir);
+				}
+			}
+			
+			return descriptionsLoaded;
 		} catch (Exception e) {
 			Logger.error("CagesArrayPersistence:loadCages() Error: " + e.getMessage(), e);
 			return false;

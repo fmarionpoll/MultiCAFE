@@ -41,7 +41,16 @@ public class CageFlyPositionSeriesBuilder implements CageSeriesBuilder {
 		
 		// Get flyPositions (try both field and getter for compatibility)
 		FlyPositions flyPositions = cage.flyPositions != null ? cage.flyPositions : cage.getFlyPositions();
-		if (flyPositions == null || flyPositions.flyPositionList == null || flyPositions.flyPositionList.isEmpty()) {
+		
+		if (flyPositions == null) {
+			return new XYSeriesCollection();
+		}
+		
+		if (flyPositions.flyPositionList == null) {
+			return new XYSeriesCollection();
+		}
+		
+		if (flyPositions.flyPositionList.isEmpty()) {
 			return new XYSeriesCollection();
 		}
 		
