@@ -38,7 +38,6 @@ import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationDetector;
 import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationTool;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArrayPersistence;
 import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.Logger;
@@ -1472,17 +1471,29 @@ public class Experiment {
 	}
 
 	public String getKymosBinFullDirectory() {
-		String filename = resultsDirectory;
-		if (binDirectory != null)
-			filename += File.separator + binDirectory;
-		return filename;
+		if (binDirectory == null) {
+			return resultsDirectory;
+		}
+		// Check if binDirectory is already an absolute path
+		File binDirFile = new File(binDirectory);
+		if (binDirFile.isAbsolute()) {
+			return binDirectory;
+		}
+		// Otherwise, concatenate it to resultsDirectory
+		return resultsDirectory + File.separator + binDirectory;
 	}
 
 	public String getKymoFullPath(String filename) {
-		String fullpath = resultsDirectory;
-		if (binDirectory != null)
-			fullpath += File.separator + binDirectory + File.separator + filename + ".tiff";
-		return fullpath;
+		if (binDirectory == null) {
+			return resultsDirectory + File.separator + filename + ".tiff";
+		}
+		// Check if binDirectory is already an absolute path
+		File binDirFile = new File(binDirectory);
+		if (binDirFile.isAbsolute()) {
+			return binDirectory + File.separator + filename + ".tiff";
+		}
+		// Otherwise, concatenate it to resultsDirectory
+		return resultsDirectory + File.separator + binDirectory + File.separator + filename + ".tiff";
 	}
 
 	public String getExperimentDirectory() {

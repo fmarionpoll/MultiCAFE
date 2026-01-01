@@ -7,6 +7,7 @@ import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
 import plugins.fmp.multicafe.fmp_service.SequenceLoaderService;
 import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
@@ -118,7 +119,39 @@ public abstract class FlyDetect extends BuildSeries {
 
 	protected boolean loadDrosoTrack2(Experiment exp) {
 		List<String> imagesList = exp.getSeqCamData().getImagesList(true);
+		
+		// If images list is empty, load it from the experiment's images directory
+		if (imagesList == null || imagesList.isEmpty()) {
+			String imagesDirectory = exp.getImagesDirectory();
+			if (imagesDirectory == null || imagesDirectory.isEmpty()) {
+				// Try to get images directory from results directory
+				String resultsDir = exp.getResultsDirectory();
+				if (resultsDir != null) {
+					imagesDirectory = ExperimentDirectories.getImagesDirectoryAsParentFromFileName(resultsDir);
+					exp.setImagesDirectory(imagesDirectory);
+				}
+			}
+			
+			if (imagesDirectory != null && !imagesDirectory.isEmpty()) {
+				imagesList = ExperimentDirectories.getImagesListFromPathV2(imagesDirectory, "jpg");
+				if (imagesList != null && !imagesList.isEmpty()) {
+					exp.getSeqCamData().setImagesList(imagesList);
+					exp.getSeqCamData().getImageLoader().setImagesDirectory(imagesDirectory);
+				} else {
+					Logger.error("FlyDetect:loadDrosoTrack2() No images found in directory: " + imagesDirectory);
+					return false;
+				}
+			} else {
+				Logger.error("FlyDetect:loadDrosoTrack2() Could not determine images directory for experiment: " + exp.getResultsDirectory());
+				return false;
+			}
+		}
+		
 		Sequence seq = new SequenceLoaderService().initSequenceFromFirstImage(imagesList);
+		if (seq == null) {
+			Logger.error("FlyDetect:loadDrosoTrack2() Failed to initialize sequence from images list");
+			return false;
+		}
 		exp.getSeqCamData().setSequence(seq);
 		boolean flag = exp.loadCageMeasures();
 		// CRITICAL: Also load capillaries to prevent them from being overwritten as empty
