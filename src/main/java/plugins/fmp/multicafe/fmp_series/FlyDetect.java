@@ -154,13 +154,13 @@ public abstract class FlyDetect extends BuildSeries {
 		}
 		exp.getSeqCamData().setSequence(seq);
 		boolean flag = exp.loadCageMeasures();
-		// CRITICAL: Also load capillaries to prevent them from being overwritten as empty
-		// when save operations are triggered (e.g., closeViewsForCurrentExperiment)
-		// This protects kymograph measures from being erased during fly detection
-		exp.loadMCCapillaries_Only();
-		if (exp.getKymosBinFullDirectory() != null) {
-			exp.getCapillaries().load_Capillaries(exp.getKymosBinFullDirectory());
-		}
+//		// CRITICAL: Also load capillaries to prevent them from being overwritten as empty
+//		// when save operations are triggered (e.g., closeViewsForCurrentExperiment)
+//		// This protects kymograph measures from being erased during fly detection
+//		exp.loadMCCapillaries_Only();
+//		if (exp.getKymosBinFullDirectory() != null) {
+//			exp.getCapillaries().load_Capillaries(exp.getKymosBinFullDirectory());
+//		}
 		return flag;
 	}
 }

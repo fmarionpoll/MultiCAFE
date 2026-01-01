@@ -10,12 +10,19 @@ public class BuildKymographs extends BuildSeries {
 //	private Viewer vData = null;
 
 	void analyzeExperiment(Experiment exp) {
-		loadExperimentDataToBuildKymos(exp);
-		getTimeLimitsOfSequence(exp);
+		try {
+			loadExperimentDataToBuildKymos(exp);
+			getTimeLimitsOfSequence(exp);
 
-		KymographBuilder builder = new KymographBuilder();
-		if (builder.buildKymograph(exp, options))
-			builder.saveComputation(exp, options);
+			KymographBuilder builder = new KymographBuilder();
+			if (builder.buildKymograph(exp, options))
+				builder.saveComputation(exp, options);
+		} finally {
+			// Close sequences to free memory after processing
+			if (exp.getSeqCamData() != null) {
+				exp.getSeqCamData().closeSequence();
+			}
+		}
 	}
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {

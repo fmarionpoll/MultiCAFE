@@ -28,6 +28,8 @@ import plugins.fmp.multicafe.fmp_tools.polyline.Bresenham;
 
 public class KymographBuilder {
 
+	private static final int BATCH_SIZE = 15; // Process images in batches to limit memory usage
+
 	public boolean buildKymograph(Experiment exp, BuildSeriesOptions options) {
 		if (exp.getCapillaries().getList().size() < 1) {
 			Logger.warn("KymographBuilder:buildKymo Abort (1): nbcapillaries = 0");
@@ -43,39 +45,50 @@ public class KymographBuilder {
 
 		initArraysToBuildKymographImages(exp, options);
 
-		int iToColumn = 0;
-
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("buildKymograph");
 		processor.setPriority(Processor.NORM_PRIORITY);
-		int ntasks = exp.getCapillaries().getList().size();
-		ArrayList<Future<?>> futures = new ArrayList<Future<?>>(ntasks);
-		futures.clear();
 
 		SequenceLoaderService loader = new SequenceLoaderService();
 		long first = exp.getKymoFirst_ms();
 		long last = exp.getKymoLast_ms();
 		long step = exp.getKymoBin_ms();
 
-		for (long ii_ms = first; ii_ms <= last; ii_ms += step, iToColumn++) {
-			int sourceImageIndex = exp.findNearestIntervalWithBinarySearch(ii_ms, 0,
-					exp.getSeqCamData().getImageLoader().getNTotalFrames());
-			final int fromSourceImageIndex = sourceImageIndex;
-			final int kymographColumn = iToColumn;
-			final String fullPath = exp.getSeqCamData().getFileNameFromImageList(fromSourceImageIndex);
-			final IcyBufferedImage sourceImage = loader.imageIORead(fullPath);
+		// Calculate total number of images to process
+		int totalImages = (int) ((last - first) / step) + 1;
 
-			futures.add(processor.submit(new Runnable() {
-				@Override
-				public void run() {
-					for (Capillary capi : exp.getCapillaries().getList()) {
-						if (capi.getKymographBuild())
-							analyzeImageUnderCapillary(sourceImage, capi, fromSourceImageIndex, kymographColumn);
+		// Process images in batches to limit memory usage
+		int iToColumn = 0;
+		for (int batchStart = 0; batchStart < totalImages; batchStart += BATCH_SIZE) {
+			int batchEnd = Math.min(batchStart + BATCH_SIZE, totalImages);
+			ArrayList<Future<?>> futures = new ArrayList<Future<?>>(batchEnd - batchStart);
+
+			// Load images and submit tasks for this batch
+			for (int batchIndex = batchStart; batchIndex < batchEnd; batchIndex++) {
+				long ii_ms = first + batchIndex * step;
+				int sourceImageIndex = exp.findNearestIntervalWithBinarySearch(ii_ms, 0,
+						exp.getSeqCamData().getImageLoader().getNTotalFrames());
+				final int fromSourceImageIndex = sourceImageIndex;
+				final int kymographColumn = iToColumn;
+				final String fullPath = exp.getSeqCamData().getFileNameFromImageList(fromSourceImageIndex);
+				final IcyBufferedImage sourceImage = loader.imageIORead(fullPath);
+
+				futures.add(processor.submit(new Runnable() {
+					@Override
+					public void run() {
+						for (Capillary capi : exp.getCapillaries().getList()) {
+							if (capi.getKymographBuild())
+								analyzeImageUnderCapillary(sourceImage, capi, fromSourceImageIndex, kymographColumn);
+						}
 					}
-				}
-			}));
+				}));
+				iToColumn++;
+			}
+
+			// Wait for batch completion and cleanup
+			waitFuturesCompletion(processor, futures);
+			futures.clear(); // Explicitly clear futures to help GC
 		}
-		waitFuturesCompletion(processor, futures);
 
 		int sizeC = exp.getSeqCamData().getSequence().getSizeC();
 		export_Kymographs_to_file(exp, sizeC);
