@@ -1767,7 +1767,17 @@ public class Experiment {
 	}
 
 	public boolean saveCageMeasures() {
-		return cages.save_Cages(getResultsDirectory());
+		String resultsDir = getResultsDirectory();
+		boolean descriptionsSaved = cages.getPersistence().save_Cages(cages, resultsDir);
+		
+		// Also save measures to bin directory (if available)
+		String binDir = getKymosBinFullDirectory();
+		System.out.println(binDir);
+		if (binDir != null) {
+			cages.getPersistence().saveCagesArrayMeasures(cages, binDir);
+		}
+		
+		return descriptionsSaved;
 	}
 
 	public void saveCageAndMeasures() {

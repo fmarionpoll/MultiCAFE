@@ -175,7 +175,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 		if ("Sum".equals(sideOrType) || "PI".equals(sideOrType)) {
 			// For Sum/PI, default to first L capillary for Sum, first R for PI
 			// or find based on user preference
-			List<Capillary> capillaries = cage.getCapillaries().getList();
+			List<Capillary> capillaries = cage.getCapillaries(experiment.getCapillaries());
 			if (capillaries.isEmpty()) {
 				return null;
 			}
@@ -195,7 +195,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 		}
 
 		// Handle individual capillaries: L, R, 1, 2, etc.
-		List<Capillary> capillaries = cage.getCapillaries().getList();
+		List<Capillary> capillaries = cage.getCapillaries(experiment.getCapillaries());
 		for (Capillary cap : capillaries) {
 			String capSide = cap.getCapillarySide();
 			if (sideOrType.equals(capSide) || sideOrType.equals("1") && ("L".equals(capSide) || "1".equals(capSide))

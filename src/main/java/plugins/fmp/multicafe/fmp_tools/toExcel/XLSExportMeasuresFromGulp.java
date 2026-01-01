@@ -188,7 +188,12 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		CageCapillarySeriesBuilder builder = new CageCapillarySeriesBuilder();
 
 		for (Cage cage : exp.getCages().getCageList()) {
-			if (cage == null || cage.getCapillaries() == null || cage.getCapillaries().getList().isEmpty()) {
+			if (cage == null) {
+				continue;
+			}
+
+			List<Capillary> capillaries = cage.getCapillaries(exp.getCapillaries());
+			if (capillaries == null || capillaries.isEmpty()) {
 				continue;
 			}
 
@@ -197,9 +202,8 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 				continue;
 			}
 
-			List<Capillary> capillaries = cage.getCapillaries().getList();
 			for (Capillary cap : capillaries) {
-				XYSeries series = findSeriesForCapillary(dataset, cage, cap, resultType);
+				XYSeries series = findSeriesForCapillary(dataset, exp, cage, cap, resultType);
 				if (series == null) {
 					continue;
 				}
@@ -406,12 +410,13 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * For regular types, finds series matching the capillary side.
 	 * 
 	 * @param dataset    The XYSeriesCollection from the builder
+	 * @param exp       The experiment
 	 * @param cage       The cage containing the capillary
 	 * @param cap        The capillary to find series for
 	 * @param resultType The export result type
 	 * @return The matching XYSeries or null if not found
 	 */
-	private XYSeries findSeriesForCapillary(XYSeriesCollection dataset, Cage cage, Capillary cap,
+	private XYSeries findSeriesForCapillary(XYSeriesCollection dataset, Experiment exp, Cage cage, Capillary cap,
 			EnumResults resultType) {
 		if (dataset == null || cage == null || cap == null) {
 			return null;
@@ -428,7 +433,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 				return findSeriesByKey(dataset, cage.getCageID() + "_PI");
 			}
 			// Fallback: first capillary is L (Sum), second is R (PI)
-			List<Capillary> caps = cage.getCapillaries().getList();
+			List<Capillary> caps = cage.getCapillaries(exp.getCapillaries());
 			int capIndex = caps.indexOf(cap);
 			if (capIndex == 0) {
 				return findSeriesByKey(dataset, cage.getCageID() + "_Sum");

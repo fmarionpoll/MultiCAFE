@@ -57,11 +57,11 @@ public class CorrelationComputation {
 		return (exp, cap, options) -> {
 			// For LR, we need to combine L and R capillaries from the same cage
 			Cage cage = exp.getCages().getCageFromID(cap.getCageID());
-			if (cage == null || cage.getCapillaries() == null) {
+			if (cage == null) {
 				return null;
 			}
 
-			List<Capillary> capillaries = cage.getCapillaries().getList();
+			List<Capillary> capillaries = cage.getCapillaries(exp.getCapillaries());
 			if (capillaries.size() < 2) {
 				return computeAutocorrelation().compute(exp, cap, options);
 			}
@@ -84,11 +84,11 @@ public class CorrelationComputation {
 	public static MeasurementComputation computeCrosscorrelation() {
 		return (exp, cap, options) -> {
 			Cage cage = exp.getCages().getCageFromID(cap.getCageID());
-			if (cage == null || cage.getCapillaries() == null) {
+			if (cage == null) {
 				return null;
 			}
 
-			List<Capillary> capillaries = cage.getCapillaries().getList();
+			List<Capillary> capillaries = cage.getCapillaries(exp.getCapillaries());
 			if (capillaries.size() < 2) {
 				return new ArrayList<>();
 			}

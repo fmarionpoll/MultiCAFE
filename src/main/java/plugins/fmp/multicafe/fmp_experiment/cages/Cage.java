@@ -152,11 +152,11 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return result;
 	}
 	
-	// Backward-compatible getters (deprecated, use ID-based methods)
-	@Deprecated
-	public SpotsArray getSpotsArray() {
-		return null; // Deprecated - use getSpots(SpotsArray allSpots) instead
-	}
+//	// Backward-compatible getters (deprecated, use ID-based methods)
+//	@Deprecated
+//	public SpotsArray getSpotsArray() {
+//		return null; // Deprecated - use getSpots(SpotsArray allSpots) instead
+//	}
 
 	public CageProperties getProperties() {
 		return prop;
@@ -237,23 +237,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	// ------------------------------------------
 	
-	// Backward-compatible getters (deprecated, use ID-based methods)
-	@Deprecated
-	public void setCapillaries(Capillaries capArray) {
-		// Update ID list from capillaries
-		capillaryIDs.clear();
-		if (capArray != null) {
-			for (Capillary cap : capArray.getList()) {
-				capillaryIDs.add(new CapillaryID(cap.getKymographIndex()));
-			}
-		}
-	}
-
-	@Deprecated
-	public Capillaries getCapillaries() {
-		return null; // Deprecated - use getCapillaries(Capillaries allCapillaries) instead
-	}
-
 	public FlyPositions getFlyPositions() {
 		return flyPositions;
 	}

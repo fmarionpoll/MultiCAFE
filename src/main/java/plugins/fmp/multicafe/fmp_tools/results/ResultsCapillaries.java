@@ -54,7 +54,7 @@ public class ResultsCapillaries extends Results {
 		} else {
 			// Side unclear, try first capillary as L, second as R
 			List<Capillary> caps = exp.getCages().getCageList().stream().filter(c -> c.getCageID() == cageID)
-					.findFirst().map(c -> c.getCapillaries().getList()).orElse(java.util.Collections.emptyList());
+					.findFirst().map(c -> c.getCapillaries(exp.getCapillaries())).orElse(java.util.Collections.emptyList());
 
 			if (!caps.isEmpty() && caps.get(0) == capillary) {
 				measure = cageComp.getSumMeasure();
