@@ -63,7 +63,15 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 			System.out.println("BuildSeries:doInBackground process ended - duration: "
 					+ ((endTime2InNs - startTimeInNs) / 1000000000f) + " s");
 
-			System.gc();
+			// Force multiple GC passes with delays to help free memory for next experiment
+			for (int i = 0; i < 3; i++) {
+				System.gc();
+				try {
+					Thread.sleep(200); // Give GC time to work
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+			}
 		}
 		progress.close();
 		threadRunning = false;
