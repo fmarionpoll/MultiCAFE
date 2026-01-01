@@ -1,9 +1,13 @@
 package plugins.fmp.multicafe.dlg.levels;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.jfree.chart.ChartMouseEvent;
@@ -223,7 +227,7 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 			return null;
 		}
 
-		java.awt.Point screenPoint = e.getTrigger().getPoint();
+		Point screenPoint = e.getTrigger().getPoint();
 		Point2D java2DPoint = panel.translateScreenToJava2D(screenPoint);
 
 		Rectangle2D dataArea = panel.getScreenDataArea();
@@ -239,33 +243,52 @@ public class CapillaryChartInteractionHandler implements ChartInteractionHandler
 		}
 
 		XYSeriesCollection seriesCollection = (XYSeriesCollection) dataset;
-		double minDistance = Double.MAX_VALUE;
-		Capillary closestCapillary = null;
-
-		// Iterate through all series to find the closest point
+		
+		// Step 1: Identify all capillaries displayed in this graph by examining series keys
+		Map<Capillary, List<XYSeries>> capillaryToSeriesMap = new HashMap<>();
+		
 		for (int seriesIndex = 0; seriesIndex < seriesCollection.getSeriesCount(); seriesIndex++) {
 			XYSeries series = seriesCollection.getSeries(seriesIndex);
 			String seriesKey = (String) series.getKey();
-
-			// Find closest point in this series
-			for (int itemIndex = 0; itemIndex < series.getItemCount(); itemIndex++) {
-				double x = series.getX(itemIndex).doubleValue();
-				double y = series.getY(itemIndex).doubleValue();
-
-				// Calculate distance (Euclidean distance in chart coordinates)
-				double distance = Math.sqrt(Math.pow(x - clickedX, 2) + Math.pow(y - clickedY, 2));
-
-				if (distance < minDistance) {
-					minDistance = distance;
-					// Get capillary from series key
-					Capillary cap = getCapillaryFromSeriesKey(seriesKey, cage);
-					if (cap != null) {
+			
+			// Get the capillary for this series key
+			Capillary cap = getCapillaryFromSeriesKey(seriesKey, cage);
+			if (cap != null) {
+				// Group series by capillary (one capillary may have multiple series, e.g., L/R and Sum/PI)
+				capillaryToSeriesMap.computeIfAbsent(cap, k -> new ArrayList<>()).add(series);
+			}
+		}
+		
+		if (capillaryToSeriesMap.isEmpty()) {
+			return null;
+		}
+		
+		// Step 2: For each capillary displayed in the graph, find the closest point
+		// across all its series, then return the capillary with the overall closest point
+		double minDistance = Double.MAX_VALUE;
+		Capillary closestCapillary = null;
+		
+		for (Map.Entry<Capillary, List<XYSeries>> entry : capillaryToSeriesMap.entrySet()) {
+			Capillary cap = entry.getKey();
+			java.util.List<XYSeries> seriesList = entry.getValue();
+			
+			// Find the closest point across all series for this capillary
+			for (XYSeries series : seriesList) {
+				for (int itemIndex = 0; itemIndex < series.getItemCount(); itemIndex++) {
+					double x = series.getX(itemIndex).doubleValue();
+					double y = series.getY(itemIndex).doubleValue();
+					
+					// Calculate distance (Euclidean distance in chart coordinates)
+					double distance = Math.sqrt(Math.pow(x - clickedX, 2) + Math.pow(y - clickedY, 2));
+					
+					if (distance < minDistance) {
+						minDistance = distance;
 						closestCapillary = cap;
 					}
 				}
 			}
 		}
-
+		
 		return closestCapillary;
 	}
 
