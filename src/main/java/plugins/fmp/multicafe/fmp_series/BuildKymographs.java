@@ -26,10 +26,8 @@ public class BuildKymographs extends BuildSeries {
 			exp.xmlSave_MCExperiment();
 		}
 
-		// Close seqKymos sequence like legacy version does (line 29)
-		if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
-			exp.getSeqKymos().closeSequence();
-		}
+		// Don't close seqKymos sequence - it will be needed when loading the experiment later
+		// The sequence will be properly managed by the experiment lifecycle
 		
 		closeDataViewerAndSequence();
 	}
@@ -39,7 +37,10 @@ public class BuildKymographs extends BuildSeries {
 		// exp.getCapillaries().transferCapillaryRoiToSequence(exp.getSeqCamData().getSequence());
 		SequenceCamData seqData = exp.getSeqCamData();
 
-		seqData.setSequence(seqData.getImageLoader().initSequenceFromFirstImage(seqData.getImagesList(true)));
+		// Use loadImages() like LoadSaveExperiment does to properly initialize the sequence
+		seqData.loadImages();
+		// Initialize time parameters for this experiment BEFORE building time intervals array
+		exp.getFileIntervalsFromSeqCamData();
 		exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList(exp.getCamImageFirst_ms());
 		return flag;
 	}
