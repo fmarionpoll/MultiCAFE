@@ -1,26 +1,37 @@
 package plugins.fmp.multicafe.fmp_series;
 
+import java.lang.reflect.InvocationTargetException;
+
+import javax.swing.SwingUtilities;
+
+import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_service.KymographBuilder;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 public class BuildKymographs extends BuildSeries {
-	public Sequence seqData = new Sequence();
-//	private Viewer vData = null;
+	public Sequence seqDataForKymos = new Sequence();
+	private Viewer vData = null;
 
 	void analyzeExperiment(Experiment exp) {
 		loadExperimentDataToBuildKymos(exp);
+		openDataViewer(exp);
 		getTimeLimitsOfSequence(exp);
 
 		KymographBuilder builder = new KymographBuilder();
-		if (builder.buildKymograph(exp, options))
-			builder.saveComputation(exp, options);
+		if (builder.buildKymograph(exp, options)) {
+//			builder.saveComputation(exp, options);
+			exp.xmlSave_MCExperiment();
+		}
 
 		// Close seqKymos sequence like legacy version does (line 29)
 		if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
 			exp.getSeqKymos().closeSequence();
 		}
+		
+		closeDataViewerAndSequence();
 	}
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
@@ -47,4 +58,22 @@ public class BuildKymographs extends BuildSeries {
 		}
 	}
 
+	private void openDataViewer(Experiment exp) {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					seqDataForKymos = newSequence("analyze stack starting with file " + exp.getSeqCamData().getSequence().getName(),
+							exp.getSeqCamData().getSeqImage(0, 0));
+					vData = new Viewer(seqDataForKymos, true);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			Logger.error("BuildKymographs:openKymoViewers() Failed to open kymograph viewers", e);
+		}
+	}
+	
+	private void closeDataViewerAndSequence() {
+		closeViewer(vData);
+		closeSequence(seqDataForKymos);
+	}
 }

@@ -1923,7 +1923,6 @@ public class Experiment {
 		if (getSeqKymos() == null)
 			setSeqKymos(new SequenceKymos());
 
-		// Use KymographService to get list of potential kymographs from capillaries
 		List<ImageFileData> myList = new KymographService()
 				.loadListOfPotentialKymographsFromCapillaries(getKymosBinFullDirectory(), capillaries);
 
