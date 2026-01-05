@@ -189,14 +189,6 @@ public class CagesArray {
 
 	// -----------------------------------------------------
 
-	public boolean xmlReadCagesFromFile(Experiment exp) {
-		return persistence.xmlReadCagesFromFile(this, exp);
-	}
-
-	public boolean xmlReadCagesFromFileNoQuestion(String tempname) {
-		return persistence.xmlReadCagesFromFileNoQuestion(this, tempname);
-	}
-
 	// --------------
 
 	private boolean isPresent(Cage cagenew) {

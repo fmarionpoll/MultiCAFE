@@ -57,14 +57,6 @@ public class Capillaries {
 		return persistence;
 	}
 
-	public boolean load_Capillaries(String directory) {
-		return persistence.load_Capillaries(this, directory);
-	}
-
-	public boolean save_Capillaries(String directory) {
-		return persistence.save_Capillaries(this, directory);
-	}
-
 	// ---------------------------------
 
 	public String getXMLNameToAppend() {
@@ -73,18 +65,6 @@ public class Capillaries {
 
 	public boolean xmlSaveCapillaries_Descriptors(String csFileName) {
 		return persistence.xmlSaveCapillaries_Descriptors(this, csFileName);
-	}
-
-	public boolean loadMCCapillaries_Descriptors(String csFileName) {
-		return persistence.loadMCCapillaries_Descriptors(this, csFileName);
-	}
-
-	public boolean mergeMCCapillaries_Descriptors(String csFileName) {
-		return persistence.mergeMCCapillaries_Descriptors(this, csFileName);
-	}
-
-	public boolean xmlLoadOldCapillaries_Only(String csFileName) {
-		return persistence.xmlLoadOldCapillaries_Only(this, csFileName);
 	}
 
 	// ---------------------------------

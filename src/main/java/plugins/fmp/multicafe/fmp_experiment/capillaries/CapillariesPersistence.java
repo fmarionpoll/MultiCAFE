@@ -42,10 +42,6 @@ public class CapillariesPersistence {
 	// Public API methods (delegate to nested classes)
 	// ========================================================================
 
-	public boolean load_Capillaries(Capillaries capillaries, String directory) {
-		return Legacy.load(capillaries, directory);
-	}
-	
 	/**
 	 * Loads capillary descriptions (DESCRIPTION section) from CapillariesArray.csv.
 	 * 
@@ -68,20 +64,6 @@ public class CapillariesPersistence {
 		return Persistence.loadMeasures(capillaries, binDirectory);
 	}
 
-	public boolean save_Capillaries(Capillaries capillaries, String directory) {
-		if (directory == null)
-			return false;
-
-		// Prevent saving CapillariesMeasures.csv to the results directory
-		// The CSV should only be saved to bin directories (e.g., bin60)
-		// The XML file (MCcapillaries.xml) is saved to results directory separately
-		if (isResultsDirectory(directory)) {
-			return false;
-		}
-
-		return Legacy.save(capillaries, directory);
-	}
-	
 	/**
 	 * Saves capillary descriptions (DESCRIPTION section) to CapillariesArray.csv in results directory.
 	 * 
@@ -112,15 +94,23 @@ public class CapillariesPersistence {
 		return Legacy.xmlSaveCapillaries_Descriptors(capillaries, csFileName);
 	}
 
-	public boolean mergeMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
+	// ========================================================================
+	// Legacy methods - private, only for internal use within persistence class
+	// ========================================================================
+
+	private boolean load_Capillaries(Capillaries capillaries, String directory) {
+		return Legacy.load(capillaries, directory);
+	}
+
+	private boolean mergeMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
 		return Legacy.mergeMCCapillaries_Descriptors(capillaries, csFileName);
 	}
 
-	public boolean loadMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
+	private boolean loadMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
 		return Legacy.loadMCCapillaries_Descriptors(capillaries, csFileName);
 	}
 
-	public boolean xmlLoadOldCapillaries_Only(Capillaries capillaries, String csFileName) {
+	private boolean xmlLoadOldCapillaries_Only(Capillaries capillaries, String csFileName) {
 		return Legacy.xmlLoadOldCapillaries_Only(capillaries, csFileName);
 	}
 

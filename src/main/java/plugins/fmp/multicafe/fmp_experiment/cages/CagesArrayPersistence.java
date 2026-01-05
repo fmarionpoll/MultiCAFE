@@ -157,11 +157,11 @@ public class CagesArrayPersistence {
 		return Persistence.loadMeasures(cages, binDirectory);
 	}
 
-	public boolean xmlReadCagesFromFile(CagesArray cages, Experiment exp) {
-		return Legacy.xmlReadCagesFromFile(cages, exp);
-	}
+	// ========================================================================
+	// Legacy methods - private, only for internal use within persistence class
+	// ========================================================================
 
-	public boolean xmlReadCagesFromFileNoQuestion(CagesArray cages, String tempname) {
+	private boolean xmlReadCagesFromFileNoQuestion(CagesArray cages, String tempname) {
 		return Legacy.xmlReadCagesFromFileNoQuestion(cages, tempname);
 	}
 

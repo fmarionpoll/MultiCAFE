@@ -1577,20 +1577,8 @@ public class Experiment {
 		String resultsDir = getResultsDirectory();
 		boolean csvLoaded = capillaries.getPersistence().loadCapillariesArrayDescription(capillaries, resultsDir);
 
-		// Only load from XML if CSV didn't have the data (backward compatibility)
-		boolean flag = false;
-		if (!csvLoaded) {
-			String mcCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY,
-					BIN_DIRECTORY, IMG_DIRECTORY);
-			if (mcCapillaryFileName == null && seqCamData != null)
-				return xmlLoadOldCapillaries();
-
-			flag = capillaries.loadMCCapillaries_Descriptors(mcCapillaryFileName);
-			if (capillaries.getList().size() < 1)
-				flag = xmlLoadOldCapillaries();
-		} else {
-			flag = true; // CSV loaded successfully
-		}
+		// New format methods already have internal fallback to legacy formats
+		boolean flag = csvLoaded;
 
 		// load MCcapillaries description of experiment
 		if (prop.field_boxID.contentEquals("..") && prop.field_experiment.contentEquals("..")
@@ -1609,21 +1597,15 @@ public class Experiment {
 	}
 
 	public boolean loadMCCapillaries() {
-		String kymosImagesDirectory = getKymosBinFullDirectory();
-		boolean flag2 = capillaries.load_Capillaries(kymosImagesDirectory);
-
 		// Try to load from CSV first (new format)
 		String resultsDir = getResultsDirectory();
-		boolean csvLoaded = capillaries.getPersistence().loadCapillariesArrayDescription(capillaries, resultsDir);
+		boolean flag1 = capillaries.getPersistence().loadCapillariesArrayDescription(capillaries, resultsDir);
 
-		// Only load from XML if CSV didn't have the data (backward compatibility)
-		boolean flag1 = false;
-		if (!csvLoaded) {
-			String xmlCapillaryFileName = findFile_3Locations(capillaries.getXMLNameToAppend(), EXPT_DIRECTORY,
-					BIN_DIRECTORY, IMG_DIRECTORY);
-			flag1 = capillaries.mergeMCCapillaries_Descriptors(xmlCapillaryFileName);
-		} else {
-			flag1 = true; // CSV loaded successfully
+		// Load measures from bin directory (new format)
+		String kymosImagesDirectory = getKymosBinFullDirectory();
+		boolean flag2 = false;
+		if (kymosImagesDirectory != null) {
+			flag2 = capillaries.getPersistence().load_CapillariesArrayMeasures(capillaries, kymosImagesDirectory);
 		}
 
 		if (flag1 & flag2) {
@@ -1634,29 +1616,12 @@ public class Experiment {
 		return flag1 | flag2;
 	}
 
+	// TODO: Refactor migration logic - xmlLoadOldCapillaries() needs access to legacy methods
+	// for migration purposes. Consider moving this to a migration service or making
+	// legacy methods accessible for migration only.
 	private boolean xmlLoadOldCapillaries() {
-		String filename = findFile_3Locations("capillarytrack.xml", IMG_DIRECTORY, EXPT_DIRECTORY, BIN_DIRECTORY);
-		if (capillaries.xmlLoadOldCapillaries_Only(filename)) {
-			saveMCCapillaries_Only();
-			saveCapillaries();
-			try {
-				Files.delete(Paths.get(filename));
-			} catch (IOException e) {
-				Logger.warn("Experiment:xmlLoadOldCapillaries() Failed to delete old file: " + filename, e);
-			}
-			return true;
-		}
-
-		filename = findFile_3Locations("roislines.xml", IMG_DIRECTORY, EXPT_DIRECTORY, BIN_DIRECTORY);
-		if (xmlReadCamDataROIs(filename)) {
-			xmlReadRoiLineParameters(filename);
-			try {
-				Files.delete(Paths.get(filename));
-			} catch (IOException e) {
-				Logger.warn("Experiment:xmlLoadOldCapillaries() Failed to delete old file: " + filename, e);
-			}
-			return true;
-		}
+		// Migration logic temporarily disabled - new format methods have internal fallback
+		// This method should be refactored to use migration service
 		return false;
 	}
 
@@ -1722,8 +1687,8 @@ public class Experiment {
 			}
 		}
 
-		// Fall back to legacy format
-		return capillaries.load_Capillaries(binDir != null ? binDir : resultsDir);
+		// New format methods already have internal fallback to legacy formats
+		return descriptionsLoaded;
 	}
 
 	public boolean saveCapillaries() {
@@ -1825,8 +1790,9 @@ public class Experiment {
 		if (capillaries.getList().isEmpty()) {
 			loadMCCapillaries_Only();
 			// Also try to load the actual measures if kymos directory exists
-			if (getKymosBinFullDirectory() != null) {
-				capillaries.load_Capillaries(getKymosBinFullDirectory());
+			String binDir = getKymosBinFullDirectory();
+			if (binDir != null) {
+				capillaries.getPersistence().load_CapillariesArrayMeasures(capillaries, binDir);
 			}
 		}
 
