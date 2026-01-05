@@ -88,21 +88,23 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	}
 
 	private int isFoundAt(LazyExperiment newLazyExperiment) {
-		ExperimentMetadata newMetadata = newLazyExperiment.getMetadata();
+		int newCode = newLazyExperiment.getMetadata().hashCode();
 		int index = -1;
 		for (ExperimentMetadata expData : experimentMetadataList) {
-			index++;
-			if (expData.equals(newMetadata)) {
+			int codeFromList = expData.hashCode();
+			if (codeFromList == newCode) {
 				return index;
 			}
+			index++;
 		}
 		return -1;
 	}
 
 	private boolean isUnique(LazyExperiment newLazyExperiment) {
-		ExperimentMetadata newMetadata = newLazyExperiment.getMetadata();
+		int newCode = newLazyExperiment.getMetadata().hashCode();
 		for (ExperimentMetadata expData : experimentMetadataList) {
-			if (expData.equals(newMetadata)) {
+			int codeFromList = expData.hashCode();
+			if (codeFromList == newCode) {
 				return false;
 			}
 		}

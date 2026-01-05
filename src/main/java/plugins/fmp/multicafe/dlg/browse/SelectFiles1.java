@@ -282,23 +282,15 @@ public class SelectFiles1 extends JPanel {
 	private void addNamesToSelectedList(List<String> stringList) {
 		for (String name : stringList) {
 			String directoryName = Paths.get(name).getParent().toString();
-			if (isDirectoryWithJpg(directoryName)) {
-				boolean found = false;
-				for (String existingName : selectedNames) {
-					if (existingName.equalsIgnoreCase(directoryName)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found)
-					selectedNames.add(directoryName);
-			}
+			if (isDirectoryWithJpg(directoryName))
+				selectedNames.add(directoryName);
 		}
 		Collections.sort(selectedNames);
 	}
 
 	private boolean isDirectoryWithJpg(String directoryName) {
 		String imageDirectory = ExperimentDirectories.getImagesDirectoryAsParentFromFileName(directoryName);
+//		HashSet <String> hSet = Directories.getDirectoriesWithFilesType (imageDirectory, ".jpg");
 		File dir = new File(imageDirectory);
 		File[] files = dir.listFiles((d, name) -> name.endsWith(".jpg"));
 		boolean flag = (files.length > 0);
