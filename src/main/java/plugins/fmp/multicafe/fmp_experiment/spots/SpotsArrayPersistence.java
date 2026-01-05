@@ -16,11 +16,13 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
  */
 public class SpotsArrayPersistence {
 
-	// New format filenames
+	// New v2 format filenames
+	private static final String ID_V2_SPOTSARRAY_CSV = "v2_SpotsArray.csv";
+	private static final String ID_V2_SPOTSARRAYMEASURES_CSV = "v2_SpotsArrayMeasures.csv";
+	
+	// Legacy filenames (for fallback)
 	private static final String ID_SPOTSARRAY_CSV = "SpotsArray.csv";
 	private static final String ID_SPOTSARRAYMEASURES_CSV = "SpotsArrayMeasures.csv";
-	
-	// Legacy filename (for fallback)
 	private static final String CSV_FILENAME = "SpotsMeasures.csv";
 
 	/**
@@ -43,7 +45,7 @@ public class SpotsArrayPersistence {
 			return false;
 		}
 
-		// Priority 1: Try new format (descriptions only)
+		// Priority 1: Try new v2_ format (descriptions only)
 		boolean descriptionsLoaded = loadSpotsArrayDescription(spotsArray, directory);
 		if (descriptionsLoaded) {
 			Logger.info("SpotsArrayPersistence:load_SpotsArray() loaded " + spotsArray.getSpotsCount()
@@ -78,9 +80,14 @@ public class SpotsArrayPersistence {
 			return false;
 		}
 
-		Path csvPath = Paths.get(resultsDirectory, ID_SPOTSARRAY_CSV);
+		// Priority 1: Try v2_ format
+		Path csvPath = Paths.get(resultsDirectory, ID_V2_SPOTSARRAY_CSV);
 		if (!Files.exists(csvPath)) {
-			return false;
+			// Priority 2: Fallback to legacy format
+			csvPath = Paths.get(resultsDirectory, ID_SPOTSARRAY_CSV);
+			if (!Files.exists(csvPath)) {
+				return false;
+			}
 		}
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(csvPath.toFile()))) {
@@ -142,9 +149,14 @@ public class SpotsArrayPersistence {
 			return false;
 		}
 
-		Path csvPath = Paths.get(binDirectory, ID_SPOTSARRAYMEASURES_CSV);
+		// Priority 1: Try v2_ format
+		Path csvPath = Paths.get(binDirectory, ID_V2_SPOTSARRAYMEASURES_CSV);
 		if (!Files.exists(csvPath)) {
-			return false;
+			// Priority 2: Fallback to legacy format
+			csvPath = Paths.get(binDirectory, ID_SPOTSARRAYMEASURES_CSV);
+			if (!Files.exists(csvPath)) {
+				return false;
+			}
 		}
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(csvPath.toFile()))) {
@@ -203,14 +215,15 @@ public class SpotsArrayPersistence {
 			return false;
 		}
 
-		Path csvPath = Paths.get(resultsDirectory, ID_SPOTSARRAY_CSV);
+		// Always save to v2_ format
+		Path csvPath = Paths.get(resultsDirectory, ID_V2_SPOTSARRAY_CSV);
 		try (FileWriter writer = new FileWriter(csvPath.toFile())) {
 			// Save spots array section
 			if (!spotsArray.csvSaveSpotsArraySection(writer)) {
 				return false;
 			}
 			Logger.info("SpotsArrayPersistence:saveSpotsArray() saved " + spotsArray.getSpotsCount()
-					+ " spot descriptions to " + ID_SPOTSARRAY_CSV);
+					+ " spot descriptions to " + ID_V2_SPOTSARRAY_CSV);
 			return true;
 		} catch (IOException e) {
 			Logger.error("SpotsArrayPersistence:saveSpotsArray() Failed: " + e.getMessage(), e, true);
@@ -237,7 +250,8 @@ public class SpotsArrayPersistence {
 			return false;
 		}
 
-		Path csvPath = Paths.get(binDirectory, ID_SPOTSARRAYMEASURES_CSV);
+		// Always save to v2_ format
+		Path csvPath = Paths.get(binDirectory, ID_V2_SPOTSARRAYMEASURES_CSV);
 		try (FileWriter writer = new FileWriter(csvPath.toFile())) {
 			// Save measures sections
 			if (!spotsArray.csvSaveMeasuresSection(writer, plugins.fmp.multicafe.fmp_experiment.spots.EnumSpotMeasures.AREA_SUM)) {
@@ -246,7 +260,7 @@ public class SpotsArrayPersistence {
 			if (!spotsArray.csvSaveMeasuresSection(writer, plugins.fmp.multicafe.fmp_experiment.spots.EnumSpotMeasures.AREA_SUMCLEAN)) {
 				return false;
 			}
-			Logger.info("SpotsArrayPersistence:save_SpotsArrayMeasures() saved measures to " + ID_SPOTSARRAYMEASURES_CSV);
+			Logger.info("SpotsArrayPersistence:save_SpotsArrayMeasures() saved measures to " + ID_V2_SPOTSARRAYMEASURES_CSV);
 			return true;
 		} catch (IOException e) {
 			Logger.error("SpotsArrayPersistence:save_SpotsArrayMeasures() Failed: " + e.getMessage(), e, true);

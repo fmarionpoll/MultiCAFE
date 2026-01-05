@@ -23,6 +23,9 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
 public class DescriptorsIO {
 
+	// New v2 format filename
+	private static final String V2_FILE_NAME = "v2_Descriptors.xml";
+	// Legacy filename (for fallback)
 	private static final String FILE_NAME = "MS96_descriptors.xml";
 	private static final String ROOT = "MS96_DESCRIPTORS";
 	private static final String VERSION_ATTR = "version";
@@ -33,12 +36,27 @@ public class DescriptorsIO {
 	private static final String VAL = "VAL";
 
 	public static String getDescriptorsFullName(String resultsDirectory) {
+		// Try v2_ format first
+		String v2Path = resultsDirectory + File.separator + V2_FILE_NAME;
+		File v2File = new File(v2Path);
+		if (v2File.exists()) {
+			return v2Path;
+		}
+		// Fallback to legacy format
 		return resultsDirectory + File.separator + FILE_NAME;
 	}
 
 	public static Map<EnumXLSColumnHeader, List<String>> readDescriptors(String resultsDirectory) {
-		String path = getDescriptorsFullName(resultsDirectory);
-		Document doc = XMLUtil.loadDocument(path);
+		// Priority 1: Try v2_ format
+		String v2Path = resultsDirectory + File.separator + V2_FILE_NAME;
+		Document doc = XMLUtil.loadDocument(v2Path);
+		
+		// Priority 2: Fallback to legacy format
+		if (doc == null) {
+			String legacyPath = resultsDirectory + File.separator + FILE_NAME;
+			doc = XMLUtil.loadDocument(legacyPath);
+		}
+		
 		if (doc == null)
 			return null;
 
@@ -111,7 +129,8 @@ public class DescriptorsIO {
 				}
 			}
 
-			String path = getDescriptorsFullName(resultsDirectory);
+			// Always save to v2_ format
+			String path = resultsDirectory + File.separator + V2_FILE_NAME;
 			return XMLUtil.saveDocument(doc, path);
 		} catch (Exception ex) {
 			return false;

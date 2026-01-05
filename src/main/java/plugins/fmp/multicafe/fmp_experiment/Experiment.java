@@ -196,7 +196,11 @@ public class Experiment {
 
 	private final static String ID_IMAGESDIRECTORY = "imagesDirectory";
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
-	private final String ID_MS96_experiment_XML = "MCexperiment.xml"; // "MS96_experiment.xml";
+	// New v2 format filename
+	private final String ID_V2_EXPERIMENT_XML = "v2_Experiment.xml";
+	// Legacy filenames (for fallback)
+	private final String ID_MS96_experiment_XML = "MCexperiment.xml";
+	private final String ID_MCEXPERIMENT_XML_LEGACY = "MS96_experiment.xml";
 	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	private final static String ID_GENERATOR_PROGRAM = "generatorProgram";
 
@@ -218,15 +222,14 @@ public class Experiment {
 		this.seqCamData = seqCamData;
 		resultsDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
-		load_MS96_experiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML));
+		load_MS96_experiment();
 	}
 
 	public Experiment(ExperimentDirectories eADF) {
 		camDataImagesDirectory = eADF.getCameraImagesDirectory();
 		resultsDirectory = eADF.getResultsDirectory();
 		seqCamData = SequenceCamData.builder().withStatus(EnumStatus.FILESTACK).build();
-		String fileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
-		load_MS96_experiment(fileName);
+		load_MS96_experiment();
 
 		ImageLoader imgLoader = seqCamData.getImageLoader();
 		imgLoader.setImagesDirectory(eADF.getCameraImagesDirectory());
@@ -621,8 +624,22 @@ public class Experiment {
 			camDataImagesDirectory = seqCamData.getImagesDirectory();
 			resultsDirectory = camDataImagesDirectory + File.separator + RESULTS;
 		}
-		String csFileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
-		return load_MS96_experiment(csFileName);
+		
+		// Priority 1: Try new v2_ format
+		String v2FileName = concatenateExptDirectoryWithSubpathAndName(null, ID_V2_EXPERIMENT_XML);
+		if (load_MS96_experiment(v2FileName)) {
+			return true;
+		}
+		
+		// Priority 2: Try legacy MCexperiment.xml
+		String legacyFileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
+		if (load_MS96_experiment(legacyFileName)) {
+			return true;
+		}
+		
+		// Priority 3: Try legacy MS96_experiment.xml
+		String legacy2FileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML_LEGACY);
+		return load_MS96_experiment(legacy2FileName);
 	}
 
 	private boolean load_MS96_experiment(String csFileName) {
@@ -780,7 +797,8 @@ public class Experiment {
 				camDataImagesDirectory = seqCamData.getImagesDirectory();
 			XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, camDataImagesDirectory);
 
-			String tempname = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
+			// Always save to v2_ format
+			String tempname = concatenateExptDirectoryWithSubpathAndName(null, ID_V2_EXPERIMENT_XML);
 			boolean success = XMLUtil.saveDocument(doc, tempname);
 			return success;
 		} catch (Exception e) {

@@ -28,11 +28,13 @@ public class CagesArrayPersistence {
 	private final String ID_NCOLUMNSPERCAGE = "N_columns_per_cage";
 	private final String ID_NROWSPERCAGE = "N_rows_per_cage";
 
-	// New format filenames
-	private final String ID_CAGESARRAY_CSV = "CagesArray.csv";
-	private final String ID_CAGESARRAYMEASURES_CSV = "CagesArrayMeasures.csv";
+	// New v2 format filenames
+	private final String ID_V2_CAGESARRAY_CSV = "v2_CagesArray.csv";
+	private final String ID_V2_CAGESARRAYMEASURES_CSV = "v2_CagesArrayMeasures.csv";
 
 	// Legacy filenames (for fallback)
+	private final String ID_CAGESARRAY_CSV = "CagesArray.csv";
+	private final String ID_CAGESARRAYMEASURES_CSV = "CagesArrayMeasures.csv";
 	private final String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	private final String ID_CAGESMEASURES_CSV = "CagesMeasures.csv";
 
@@ -41,7 +43,7 @@ public class CagesArrayPersistence {
 	public boolean load_Cages(CagesArray cages, String directory) {
 		int cagesBefore = cages.cagesList.size();
 
-		// Priority 1: Try new format (descriptions + measures separate)
+		// Priority 1: Try new v2_ format (descriptions + measures separate)
 		boolean descriptionsLoaded = loadCagesArrayDescription(cages, directory);
 
 		// Try to load measures from bin directory (if provided, will be loaded
@@ -106,7 +108,7 @@ public class CagesArrayPersistence {
 			return false;
 		}
 
-		// Save descriptions to new format file (includes ROI coordinates in CSV)
+		// Save descriptions to v2_ format file (includes ROI coordinates in CSV)
 		saveCagesArrayDescription(cages, directory);
 
 		// XML save disabled - ROI coordinates are now stored in CSV
@@ -137,12 +139,13 @@ public class CagesArrayPersistence {
 		}
 
 		try {
-			FileWriter csvWriter = new FileWriter(resultsDirectory + File.separator + ID_CAGESARRAY_CSV);
+			// Always save to v2_ format
+			FileWriter csvWriter = new FileWriter(resultsDirectory + File.separator + ID_V2_CAGESARRAY_CSV);
 			csvSaveDESCRIPTIONSection(cages, csvWriter);
 			csvSaveCAGESection(cages, csvWriter);
 			csvWriter.flush();
 			csvWriter.close();
-			Logger.info("CagesArrayPersistence:saveCagesArray() Saved descriptions to " + ID_CAGESARRAY_CSV);
+			Logger.info("CagesArrayPersistence:saveCagesArray() Saved descriptions to " + ID_V2_CAGESARRAY_CSV);
 			return true;
 		} catch (IOException e) {
 			Logger.error("CagesArrayPersistence:saveCagesArray() Error: " + e.getMessage(), e);
@@ -171,12 +174,13 @@ public class CagesArrayPersistence {
 		}
 
 		try {
-			FileWriter csvWriter = new FileWriter(binDirectory + File.separator + ID_CAGESARRAYMEASURES_CSV);
+			// Always save to v2_ format
+			FileWriter csvWriter = new FileWriter(binDirectory + File.separator + ID_V2_CAGESARRAYMEASURES_CSV);
 			csvSaveMeasuresSection(cages, csvWriter, EnumCageMeasures.POSITION);
 			csvWriter.flush();
 			csvWriter.close();
 			Logger.info(
-					"CagesArrayPersistence:saveCagesArrayMeasures() Saved measures to " + ID_CAGESARRAYMEASURES_CSV);
+					"CagesArrayPersistence:saveCagesArrayMeasures() Saved measures to " + ID_V2_CAGESARRAYMEASURES_CSV);
 			return true;
 		} catch (IOException e) {
 			Logger.error("CagesArrayPersistence:saveCagesArrayMeasures() Error: " + e.getMessage(), e);
@@ -197,10 +201,16 @@ public class CagesArrayPersistence {
 			return false;
 		}
 
-		String pathToCsv = resultsDirectory + File.separator + ID_CAGESARRAY_CSV;
+		// Priority 1: Try v2_ format
+		String pathToCsv = resultsDirectory + File.separator + ID_V2_CAGESARRAY_CSV;
 		File csvFile = new File(pathToCsv);
 		if (!csvFile.isFile()) {
-			return false;
+			// Priority 2: Fallback to legacy format
+			pathToCsv = resultsDirectory + File.separator + ID_CAGESARRAY_CSV;
+			csvFile = new File(pathToCsv);
+			if (!csvFile.isFile()) {
+				return false;
+			}
 		}
 
 		try {
@@ -258,10 +268,16 @@ public class CagesArrayPersistence {
 			return false;
 		}
 
-		String pathToCsv = binDirectory + File.separator + ID_CAGESARRAYMEASURES_CSV;
+		// Priority 1: Try v2_ format
+		String pathToCsv = binDirectory + File.separator + ID_V2_CAGESARRAYMEASURES_CSV;
 		File csvFile = new File(pathToCsv);
 		if (!csvFile.isFile()) {
-			return false;
+			// Priority 2: Fallback to legacy format
+			pathToCsv = binDirectory + File.separator + ID_CAGESARRAYMEASURES_CSV;
+			csvFile = new File(pathToCsv);
+			if (!csvFile.isFile()) {
+				return false;
+			}
 		}
 
 		try {

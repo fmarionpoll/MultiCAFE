@@ -25,7 +25,11 @@ public class ExperimentPersistence {
 
 	private final static String ID_IMAGESDIRECTORY = "imagesDirectory";
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
+	// New v2 format filename
+	public final static String ID_V2_EXPERIMENT_XML = "v2_Experiment.xml";
+	// Legacy filenames (for fallback)
 	public final static String ID_MCEXPERIMENT_XML = "MCexperiment.xml";
+	private final static String ID_MS96_EXPERIMENT_XML_LEGACY = "MS96_experiment.xml";
 
 	private final static String ID_BOXID = "boxID";
 	private final static String ID_EXPERIMENT = "experiment";
@@ -139,10 +143,24 @@ public class ExperimentPersistence {
 	}
 
 	public boolean xmlLoad_MCExperiment(Experiment exp) {
-		String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
+		// Priority 1: Try new v2_ format
+		String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_V2_EXPERIMENT_XML);
 		boolean found = xmlLoadExperiment(exp, filename);
+		
+		// Priority 2: Try legacy MCexperiment.xml
+		if (!found) {
+			filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
+			found = xmlLoadExperiment(exp, filename);
+		}
+		
+		// Priority 3: Try legacy MS96_experiment.xml
+		if (!found) {
+			filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MS96_EXPERIMENT_XML_LEGACY);
+			found = xmlLoadExperiment(exp, filename);
+		}
+		
+		// Priority 4: Try loading from images directory (legacy behavior)
 		if (!found && exp.getSeqCamData() != null) {
-			// try to load from the images directory
 			String imagesDirectory = exp.getSeqCamData().getImagesDirectory();
 			if (imagesDirectory != null) {
 				filename = imagesDirectory + File.separator + ID_MCEXPERIMENT_XML;
@@ -153,7 +171,8 @@ public class ExperimentPersistence {
 	}
 
 	public boolean xmlSave_MCExperiment(Experiment exp) {
-		String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
+		// Always save to v2_ format
+		String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_V2_EXPERIMENT_XML);
 		return xmlSaveExperiment(exp, filename);
 	}
 

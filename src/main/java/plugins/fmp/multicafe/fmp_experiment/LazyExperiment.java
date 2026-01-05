@@ -41,7 +41,11 @@ public class LazyExperiment extends Experiment {
 
 	// XML file constants for properties loading
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
-	private final static String ID_MS96_experiment_XML = "MCexperiment.xml"; // "MS96_experiment.xml";
+	// New v2 format filename
+	private final static String ID_V2_EXPERIMENT_XML = "v2_Experiment.xml";
+	// Legacy filenames (for fallback)
+	private final static String ID_MS96_experiment_XML = "MCexperiment.xml";
+	private final static String ID_MS96_EXPERIMENT_XML_LEGACY = "MS96_experiment.xml";
 //	private final static String ID_MS96_cages_XML = "MS96_cages.xml";
 
 	public LazyExperiment(ExperimentMetadata metadata) {
@@ -114,8 +118,21 @@ public class LazyExperiment extends Experiment {
 					resultsDir = metadata.getCameraDirectory() + File.separator + "results";
 				}
 
-				String xmlFileName = resultsDir + File.separator + ID_MS96_experiment_XML;
+				// Priority 1: Try v2_ format
+				String xmlFileName = resultsDir + File.separator + ID_V2_EXPERIMENT_XML;
 				File xmlFile = new File(xmlFileName);
+				
+				// Priority 2: Fallback to legacy MCexperiment.xml
+				if (!xmlFile.exists()) {
+					xmlFileName = resultsDir + File.separator + ID_MS96_experiment_XML;
+					xmlFile = new File(xmlFileName);
+				}
+				
+				// Priority 3: Fallback to legacy MS96_experiment.xml
+				if (!xmlFile.exists()) {
+					xmlFileName = resultsDir + File.separator + ID_MS96_EXPERIMENT_XML_LEGACY;
+					xmlFile = new File(xmlFileName);
+				}
 
 				if (!xmlFile.exists()) {
 					// XML file is optional - mark as loaded to prevent repeated attempts

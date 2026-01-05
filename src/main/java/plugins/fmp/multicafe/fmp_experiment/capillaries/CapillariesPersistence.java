@@ -29,11 +29,13 @@ public class CapillariesPersistence {
 	public final static String ID_LISTOFCAPILLARIES = "List_of_capillaries";
 	public final static String ID_CAPILLARY_ = "capillary_";
 	
-	// New format filenames
-	public final static String ID_CAPILLARIESARRAY_CSV = "CapillariesArray.csv";
-	public final static String ID_CAPILLARIESARRAYMEASURES_CSV = "CapillariesArrayMeasures.csv";
+	// New v2 format filenames
+	public final static String ID_V2_CAPILLARIESARRAY_CSV = "v2_CapillariesArray.csv";
+	public final static String ID_V2_CAPILLARIESARRAYMEASURES_CSV = "v2_CapillariesArrayMeasures.csv";
 	
 	// Legacy filenames (for fallback)
+	public final static String ID_CAPILLARIESARRAY_CSV = "CapillariesArray.csv";
+	public final static String ID_CAPILLARIESARRAYMEASURES_CSV = "CapillariesArrayMeasures.csv";
 	public final static String ID_MCCAPILLARIES_XML = "MCcapillaries.xml";
 	private final String ID_CAPILLARIESMEASURES_CSV = "CapillariesMeasures.csv";
 	
@@ -69,10 +71,16 @@ public class CapillariesPersistence {
 			return false;
 		}
 
-		String pathToCsv = resultsDirectory + File.separator + ID_CAPILLARIESARRAY_CSV;
+		// Priority 1: Try v2_ format
+		String pathToCsv = resultsDirectory + File.separator + ID_V2_CAPILLARIESARRAY_CSV;
 		File csvFile = new File(pathToCsv);
 		if (!csvFile.isFile()) {
-			return false;
+			// Priority 2: Fallback to legacy format
+			pathToCsv = resultsDirectory + File.separator + ID_CAPILLARIESARRAY_CSV;
+			csvFile = new File(pathToCsv);
+			if (!csvFile.isFile()) {
+				return false;
+			}
 		}
 
 		try {
@@ -130,10 +138,16 @@ public class CapillariesPersistence {
 			return false;
 		}
 
-		String pathToCsv = binDirectory + File.separator + ID_CAPILLARIESARRAYMEASURES_CSV;
+		// Priority 1: Try v2_ format
+		String pathToCsv = binDirectory + File.separator + ID_V2_CAPILLARIESARRAYMEASURES_CSV;
 		File csvFile = new File(pathToCsv);
 		if (!csvFile.isFile()) {
-			return false;
+			// Priority 2: Fallback to legacy format
+			pathToCsv = binDirectory + File.separator + ID_CAPILLARIESARRAYMEASURES_CSV;
+			csvFile = new File(pathToCsv);
+			if (!csvFile.isFile()) {
+				return false;
+			}
 		}
 
 		try {
@@ -672,11 +686,12 @@ public class CapillariesPersistence {
 		}
 
 		try {
-			FileWriter csvWriter = new FileWriter(resultsDirectory + File.separator + ID_CAPILLARIESARRAY_CSV);
+			// Always save to v2_ format
+			FileWriter csvWriter = new FileWriter(resultsDirectory + File.separator + ID_V2_CAPILLARIESARRAY_CSV);
 			csvSave_DescriptionSection(capillaries, csvWriter);
 			csvWriter.flush();
 			csvWriter.close();
-			Logger.info("CapillariesPersistence:saveCapillariesArrayDescription() Saved descriptions to " + ID_CAPILLARIESARRAY_CSV);
+			Logger.info("CapillariesPersistence:saveCapillariesArrayDescription() Saved descriptions to " + ID_V2_CAPILLARIESARRAY_CSV);
 			return true;
 		} catch (IOException e) {
 			Logger.error("CapillariesPersistence:saveCapillariesArrayDescription() Error: " + e.getMessage(), e);
@@ -704,7 +719,8 @@ public class CapillariesPersistence {
 		}
 
 		try {
-			FileWriter csvWriter = new FileWriter(binDirectory + File.separator + ID_CAPILLARIESARRAYMEASURES_CSV);
+			// Always save to v2_ format
+			FileWriter csvWriter = new FileWriter(binDirectory + File.separator + ID_V2_CAPILLARIESARRAYMEASURES_CSV);
 			csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.TOPRAW);
 			csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.TOPLEVEL);
 			csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.BOTTOMLEVEL);
@@ -712,7 +728,7 @@ public class CapillariesPersistence {
 			csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.GULPS);
 			csvWriter.flush();
 			csvWriter.close();
-			Logger.info("CapillariesPersistence:save_CapillariesArrayMeasures() Saved measures to " + ID_CAPILLARIESARRAYMEASURES_CSV);
+			Logger.info("CapillariesPersistence:save_CapillariesArrayMeasures() Saved measures to " + ID_V2_CAPILLARIESARRAYMEASURES_CSV);
 			return true;
 		} catch (IOException e) {
 			Logger.error("CapillariesPersistence:save_CapillariesArrayMeasures() Error: " + e.getMessage(), e);
