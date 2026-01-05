@@ -22,7 +22,7 @@ import javax.swing.SwingConstants;
 import icy.util.StringUtil;
 import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_series.BuildKymographs;
+import plugins.fmp.multicafe.fmp_series.BuildKymosFromCapillaries;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxMs;
 
@@ -48,7 +48,7 @@ public class CreateKymos extends JPanel implements PropertyChangeListener {
 
 	EnumStatusComputation sComputation = EnumStatusComputation.START_COMPUTATION;
 	private MultiCAFE parent0 = null;
-	private BuildKymographs threadBuildKymo = null;
+	private BuildKymosFromCapillaries threadBuildKymo = null;
 
 	// -----------------------------------------------------
 
@@ -184,7 +184,7 @@ public class CreateKymos extends JPanel implements PropertyChangeListener {
 		exp.setSeqKymos(null);
 		parent0.paneCapillaries.tabFile.saveCapillaries_file(exp);
 
-		threadBuildKymo = new BuildKymographs();
+		threadBuildKymo = new BuildKymosFromCapillaries();
 		threadBuildKymo.options = initBuildParameters(exp);
 		exp.getCapillaries().clearAllMeasures(threadBuildKymo.options.kymoFirst, threadBuildKymo.options.kymoLast);
 

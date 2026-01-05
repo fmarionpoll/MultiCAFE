@@ -9,7 +9,7 @@ import icy.sequence.Sequence;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.ViewerFMP;
 
-public class BuildSpotsKymos extends BuildSeries {
+public class BuildKymosFromSpots extends BuildSeries {
 	public Sequence seqData = new Sequence();
 	private ViewerFMP vData = null;
 //	private int kymoImageWidth = 0;

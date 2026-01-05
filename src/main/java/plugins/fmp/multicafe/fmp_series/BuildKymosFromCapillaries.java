@@ -11,7 +11,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_service.KymographBuilder;
 import plugins.fmp.multicafe.fmp_tools.Logger;
 
-public class BuildKymographs extends BuildSeries {
+public class BuildKymosFromCapillaries extends BuildSeries {
 	public Sequence seqDataForKymos = new Sequence();
 	private Viewer vData = null;
 
