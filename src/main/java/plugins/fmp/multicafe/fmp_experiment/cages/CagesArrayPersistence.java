@@ -31,7 +31,7 @@ public class CagesArrayPersistence {
 	// New format filenames
 	private final String ID_CAGESARRAY_CSV = "CagesArray.csv";
 	private final String ID_CAGESARRAYMEASURES_CSV = "CagesArrayMeasures.csv";
-	
+
 	// Legacy filenames (for fallback)
 	private final String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	private final String ID_CAGESMEASURES_CSV = "CagesMeasures.csv";
@@ -43,11 +43,12 @@ public class CagesArrayPersistence {
 
 		// Priority 1: Try new format (descriptions + measures separate)
 		boolean descriptionsLoaded = loadCagesArrayDescription(cages, directory);
-		
-		// Try to load measures from bin directory (if provided, will be loaded separately by Experiment)
+
+		// Try to load measures from bin directory (if provided, will be loaded
+		// separately by Experiment)
 		// For now, we just load descriptions from results directory
-		
-		if (descriptionsLoaded) {			
+
+		if (!descriptionsLoaded) {
 			// Optionally load ROIs from XML if CSV doesn't have them
 			String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
 			int cagesWithROIsBefore = 0;
@@ -68,10 +69,9 @@ public class CagesArrayPersistence {
 		boolean csvLoadSuccess = false;
 		try {
 			csvLoadSuccess = csvLoadCagesMeasures(cages, directory);
-			if (csvLoadSuccess) {
+			if (!csvLoadSuccess) {
 				int cagesAfterCSV = cages.cagesList.size();
-				Logger.info(String.format(
-						"CagesArrayPersistence:load_Cages() Legacy CSV loaded: %d cages (was %d)",
+				Logger.info(String.format("CagesArrayPersistence:load_Cages() Legacy CSV loaded: %d cages (was %d)",
 						cagesAfterCSV, cagesBefore));
 
 				// Optionally load ROIs from XML
@@ -85,13 +85,11 @@ public class CagesArrayPersistence {
 		}
 
 		// Priority 3: Fall back to XML (legacy format)
-		Logger.warn(
-				"CagesArrayPersistence:load_Cages() CSV load failed, falling back to XML");
+		Logger.warn("CagesArrayPersistence:load_Cages() CSV load failed, falling back to XML");
 		String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
 		boolean xmlLoadSuccess = xmlReadCagesFromFileNoQuestion(cages, tempName);
 		int cagesAfterXML = cages.cagesList.size();
-		Logger.info(String.format("CagesArrayPersistence:load_Cages() After XML load: %d cages",
-				cagesAfterXML));
+		Logger.info(String.format("CagesArrayPersistence:load_Cages() After XML load: %d cages", cagesAfterXML));
 
 		return xmlLoadSuccess;
 	}
@@ -117,11 +115,12 @@ public class CagesArrayPersistence {
 
 		return true;
 	}
-	
+
 	/**
-	 * Saves cage descriptions (DESCRIPTION and CAGE sections) to CagesArray.csv in results directory.
+	 * Saves cage descriptions (DESCRIPTION and CAGE sections) to CagesArray.csv in
+	 * results directory.
 	 * 
-	 * @param cages the CagesArray to save
+	 * @param cages            the CagesArray to save
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
@@ -150,11 +149,12 @@ public class CagesArrayPersistence {
 			return false;
 		}
 	}
-	
+
 	/**
-	 * Saves cage measures (POSITION section) to CagesArrayMeasures.csv in bin directory.
+	 * Saves cage measures (POSITION section) to CagesArrayMeasures.csv in bin
+	 * directory.
 	 * 
-	 * @param cages the CagesArray to save
+	 * @param cages        the CagesArray to save
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
@@ -175,19 +175,20 @@ public class CagesArrayPersistence {
 			csvSaveMeasuresSection(cages, csvWriter, EnumCageMeasures.POSITION);
 			csvWriter.flush();
 			csvWriter.close();
-			Logger.info("CagesArrayPersistence:saveCagesArrayMeasures() Saved measures to " + ID_CAGESARRAYMEASURES_CSV);
+			Logger.info(
+					"CagesArrayPersistence:saveCagesArrayMeasures() Saved measures to " + ID_CAGESARRAYMEASURES_CSV);
 			return true;
 		} catch (IOException e) {
 			Logger.error("CagesArrayPersistence:saveCagesArrayMeasures() Error: " + e.getMessage(), e);
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Loads cage descriptions (DESCRIPTION and CAGE sections) from CagesArray.csv.
 	 * Stops reading when it encounters a POSITION section.
 	 * 
-	 * @param cages the CagesArray to populate
+	 * @param cages            the CagesArray to populate
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
@@ -208,7 +209,7 @@ public class CagesArrayPersistence {
 			String sep = csvSep;
 			boolean descriptionLoaded = false;
 			boolean cageLoaded = false;
-			
+
 			while ((row = csvReader.readLine()) != null) {
 				if (row.length() > 0 && row.charAt(0) == '#')
 					sep = String.valueOf(row.charAt(1));
@@ -243,11 +244,12 @@ public class CagesArrayPersistence {
 			return false;
 		}
 	}
-	
+
 	/**
-	 * Loads cage measures (POSITION section) from CagesArrayMeasures.csv in bin directory.
+	 * Loads cage measures (POSITION section) from CagesArrayMeasures.csv in bin
+	 * directory.
 	 * 
-	 * @param cages the CagesArray to populate
+	 * @param cages        the CagesArray to populate
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
@@ -266,7 +268,7 @@ public class CagesArrayPersistence {
 			BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
 			String row;
 			String sep = csvSep;
-			
+
 			while ((row = csvReader.readLine()) != null) {
 				if (row.length() > 0 && row.charAt(0) == '#') {
 					sep = String.valueOf(row.charAt(1));
@@ -713,7 +715,7 @@ public class CagesArrayPersistence {
 						cages.cagesList.add(cage);
 						cage.prop.setCageID(cageID);
 					}
-					
+
 					if (v0) {
 						cage.csvImport_MEASURE_Data_v0(measureType, data, complete);
 					} else {
@@ -855,9 +857,10 @@ public class CagesArrayPersistence {
 	/**
 	 * Synchronously loads cage descriptions and measures from CSV/XML files.
 	 * 
-	 * @param cages      The CagesArray to populate
-	 * @param directory  The directory containing cage files
-	 * @param exp        The experiment being loaded (for validation, currently unused)
+	 * @param cages     The CagesArray to populate
+	 * @param directory The directory containing cage files
+	 * @param exp       The experiment being loaded (for validation, currently
+	 *                  unused)
 	 * @return true if successful, false otherwise
 	 */
 	public boolean loadCages(CagesArray cages, String directory, Experiment exp) {
@@ -869,7 +872,7 @@ public class CagesArrayPersistence {
 		try {
 			// Use existing synchronous load method to load descriptions
 			boolean descriptionsLoaded = load_Cages(cages, directory);
-			
+
 			// Also load measures from bin directory (if available)
 			if (exp != null) {
 				String binDir = exp.getKymosBinFullDirectory();
@@ -877,7 +880,7 @@ public class CagesArrayPersistence {
 					loadCagesArrayMeasures(cages, binDir);
 				}
 			}
-			
+
 			return descriptionsLoaded;
 		} catch (Exception e) {
 			Logger.error("CagesArrayPersistence:loadCages() Error: " + e.getMessage(), e);
@@ -890,7 +893,8 @@ public class CagesArrayPersistence {
 	 * 
 	 * @param cages     The CagesArray to save
 	 * @param directory The directory to save CagesArray.csv
-	 * @param exp       The experiment being saved (for validation, currently unused)
+	 * @param exp       The experiment being saved (for validation, currently
+	 *                  unused)
 	 * @return true if successful, false otherwise
 	 */
 	public boolean saveCages(CagesArray cages, String directory, Experiment exp) {
