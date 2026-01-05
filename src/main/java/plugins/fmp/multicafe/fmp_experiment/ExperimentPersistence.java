@@ -6,8 +6,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
-import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 
 public class ExperimentPersistence {
 
@@ -41,184 +39,173 @@ public class ExperimentPersistence {
 	private final static String ID_COND2 = "cond2";
 	private final static String ID_GENERATOR_PROGRAM = "generatorProgram";
 
-	public boolean xmlLoadExperiment(Experiment exp, String csFileName) {
-		final Document doc = XMLUtil.loadDocument(csFileName);
-		if (doc == null)
-			return false;
-		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
-		if (node == null)
-			return false;
-
-		String version = XMLUtil.getElementValue(node, ID_VERSION, ID_VERSIONNUM);
-		if (!version.equals(ID_VERSIONNUM))
-			return false;
-		exp.setCamImageFirst_ms(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0));
-		exp.setCamImageLast_ms(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0));
-		if (exp.getCamImageLast_ms() <= 0) {
-			exp.setCamImageFirst_ms(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGE, 0) * 60000);
-			exp.setCamImageLast_ms(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0) * 60000);
-		}
-
-		exp.setBinT0(XMLUtil.getElementLongValue(node, ID_BINT0, 0));
-		exp.setKymoFirst_ms(XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1));
-		exp.setKymoLast_ms(XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1));
-		exp.setKymoBin_ms(XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1));
-
-		if (exp.getKymoBin_ms() < 0)
-			exp.setKymoBin_ms(60000); // Default value
-
-		// check offsets
-		if (exp.getCamImageFirst_ms() < 0)
-			exp.setCamImageFirst_ms(0);
-		if (exp.getCamImageLast_ms() < 0)
-			exp.setCamImageLast_ms(0);
-		if (exp.getKymoFirst_ms() < 0)
-			exp.setKymoFirst_ms(0);
-		if (exp.getKymoLast_ms() < 0)
-			exp.setKymoLast_ms(0);
-
-		if (exp.getBoxID() != null && exp.getBoxID().contentEquals("..")) {
-			exp.setBoxID(XMLUtil.getElementValue(node, ID_BOXID, ".."));
-			exp.setExperiment(XMLUtil.getElementValue(node, ID_EXPERIMENT, ".."));
-			exp.setComment1(XMLUtil.getElementValue(node, ID_COMMENT1, ".."));
-			exp.setComment2(XMLUtil.getElementValue(node, ID_COMMENT2, ".."));
-			exp.setStrain(XMLUtil.getElementValue(node, ID_STRAIN, ".."));
-			exp.setSex(XMLUtil.getElementValue(node, ID_SEX, ".."));
-			exp.setCondition1(XMLUtil.getElementValue(node, ID_COND1, ".."));
-			exp.setCondition2(XMLUtil.getElementValue(node, ID_COND2, ".."));
-		}
-		String generatorProgram = XMLUtil.getElementValue(node, ID_GENERATOR_PROGRAM, null);
-		if (generatorProgram != null) {
-			exp.setGeneratorProgram(generatorProgram);
-		}
-		return true;
-	}
-
-	public boolean xmlSaveExperiment(Experiment exp, String csFileName) {
-		final Document doc = XMLUtil.createDocument(true);
-		if (doc != null) {
-			Node xmlRoot = XMLUtil.getRootElement(doc, true);
-			Node node = XMLUtil.setElement(xmlRoot, ID_MCEXPERIMENT);
-			if (node == null)
-				return false;
-
-			XMLUtil.setElementValue(node, ID_VERSION, ID_VERSIONNUM);
-			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, exp.getCamImageFirst_ms());
-			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, exp.getCamImageLast_ms());
-
-			XMLUtil.setElementLongValue(node, ID_BINT0, exp.getBinT0());
-			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, exp.getKymoFirst_ms());
-			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, exp.getKymoLast_ms());
-			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, exp.getKymoBin_ms());
-
-			XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, exp.getImagesDirectory());
-
-			XMLUtil.setElementValue(node, ID_BOXID, exp.getBoxID());
-			XMLUtil.setElementValue(node, ID_EXPERIMENT, exp.getExperiment());
-			XMLUtil.setElementValue(node, ID_COMMENT1, exp.getComment1());
-			XMLUtil.setElementValue(node, ID_COMMENT2, exp.getComment2());
-			XMLUtil.setElementValue(node, ID_STRAIN, exp.getStrain());
-			XMLUtil.setElementValue(node, ID_SEX, exp.getSex());
-			XMLUtil.setElementValue(node, ID_COND1, exp.getCondition1());
-			XMLUtil.setElementValue(node, ID_COND2, exp.getCondition2());
-
-			// Save generator program (optional field)
-			// Auto-determine if not already set - Experiment class handles detection
-			// automatically
-			String programToSave = exp.getGeneratorProgram();
-			if (programToSave == null) {
-				programToSave = Experiment.determineProgramFromStackTraceStatic();
-				if (programToSave != null) {
-					exp.setGeneratorProgram(programToSave);
-				}
-			}
-			if (programToSave != null) {
-				XMLUtil.setElementValue(node, ID_GENERATOR_PROGRAM, programToSave);
-			}
-
-			XMLUtil.saveDocument(doc, csFileName);
-			return true;
-		}
-		return false;
-	}
+	// ========================================================================
+	// Public API methods (delegate to nested classes)
+	// ========================================================================
 
 	public boolean xmlLoad_MCExperiment(Experiment exp) {
-		// Priority 1: Try new v2_ format
-		String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_V2_EXPERIMENT_XML);
-		boolean found = xmlLoadExperiment(exp, filename);
-		
-		// Priority 2: Try legacy MCexperiment.xml
-		if (!found) {
-			filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
-			found = xmlLoadExperiment(exp, filename);
-		}
-		
-		// Priority 3: Try legacy MS96_experiment.xml
-		if (!found) {
-			filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MS96_EXPERIMENT_XML_LEGACY);
-			found = xmlLoadExperiment(exp, filename);
-		}
-		
-		// Priority 4: Try loading from images directory (legacy behavior)
-		if (!found && exp.getSeqCamData() != null) {
-			String imagesDirectory = exp.getSeqCamData().getImagesDirectory();
-			if (imagesDirectory != null) {
-				filename = imagesDirectory + File.separator + ID_MCEXPERIMENT_XML;
-				found = xmlLoadExperiment(exp, filename);
-			}
-		}
-		return found;
+		return Persistence.load(exp);
 	}
 
 	public boolean xmlSave_MCExperiment(Experiment exp) {
-		// Always save to v2_ format
-		String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_V2_EXPERIMENT_XML);
-		return xmlSaveExperiment(exp, filename);
+		return Persistence.save(exp);
 	}
 
-	// ------------------------------------------------------------------
+	// ========================================================================
+	// Nested class for current v2 format persistence
+	// ========================================================================
 
-	public boolean openMeasures(Experiment exp, boolean loadCapillaries, boolean loadDrosoPositions) {
-		if (exp.getSeqCamData() == null)
-			exp.setSeqCamData(new SequenceCamData());
-		xmlLoad_MCExperiment(exp);
-		exp.getFileIntervalsFromSeqCamData();
+	public static class Persistence {
 
-		if (exp.getSeqKymos() == null)
-			exp.setSeqKymos(new SequenceKymos());
+		/**
+		 * Loads experiment from XML file.
+		 * Tries v2_ format first, then falls back to legacy formats.
+		 */
+		public static boolean load(Experiment exp) {
+			// Priority 1: Try new v2_ format
+			String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_V2_EXPERIMENT_XML);
+			boolean found = xmlLoadExperiment(exp, filename);
+			
+			// Priority 2: Try legacy MCexperiment.xml
+			if (!found) {
+				filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
+				found = xmlLoadExperiment(exp, filename);
+			}
+			
+			// Priority 3: Try legacy MS96_experiment.xml
+			if (!found) {
+				filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MS96_EXPERIMENT_XML_LEGACY);
+				found = xmlLoadExperiment(exp, filename);
+			}
+			
+			// Priority 4: Try loading from images directory (legacy behavior)
+			if (!found && exp.getSeqCamData() != null) {
+				String imagesDirectory = exp.getSeqCamData().getImagesDirectory();
+				if (imagesDirectory != null) {
+					filename = imagesDirectory + File.separator + ID_MCEXPERIMENT_XML;
+					found = xmlLoadExperiment(exp, filename);
+				}
+			}
+			return found;
+		}
 
-		if (loadCapillaries) {
-			exp.loadMCCapillaries_Only();
-			exp.getCapillaries().transferCapillaryRoiToSequence(exp.getSeqCamData().getSequence());
-			if (!exp.getCapillaries().load_Capillaries(exp.getKymosBinFullDirectory()))
+		/**
+		 * Saves experiment to XML file.
+		 * Always saves to v2_ format.
+		 */
+		public static boolean save(Experiment exp) {
+			// Always save to v2_ format
+			String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_V2_EXPERIMENT_XML);
+			return xmlSaveExperiment(exp, filename);
+		}
+
+		private static boolean xmlLoadExperiment(Experiment exp, String csFileName) {
+			final Document doc = XMLUtil.loadDocument(csFileName);
+			if (doc == null)
 				return false;
+			Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
+			if (node == null)
+				return false;
+
+			String version = XMLUtil.getElementValue(node, ID_VERSION, ID_VERSIONNUM);
+			if (!version.equals(ID_VERSIONNUM))
+				return false;
+			exp.setCamImageFirst_ms(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0));
+			exp.setCamImageLast_ms(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0));
+			if (exp.getCamImageLast_ms() <= 0) {
+				exp.setCamImageFirst_ms(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGE, 0) * 60000);
+				exp.setCamImageLast_ms(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0) * 60000);
+			}
+
+			exp.setBinT0(XMLUtil.getElementLongValue(node, ID_BINT0, 0));
+			exp.setKymoFirst_ms(XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1));
+			exp.setKymoLast_ms(XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1));
+			exp.setKymoBin_ms(XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1));
+
+			if (exp.getKymoBin_ms() < 0)
+				exp.setKymoBin_ms(60000); // Default value
+
+			// check offsets
+			if (exp.getCamImageFirst_ms() < 0)
+				exp.setCamImageFirst_ms(0);
+			if (exp.getCamImageLast_ms() < 0)
+				exp.setCamImageLast_ms(0);
+			if (exp.getKymoFirst_ms() < 0)
+				exp.setKymoFirst_ms(0);
+			if (exp.getKymoLast_ms() < 0)
+				exp.setKymoLast_ms(0);
+
+			if (exp.getBoxID() != null && exp.getBoxID().contentEquals("..")) {
+				exp.setBoxID(XMLUtil.getElementValue(node, ID_BOXID, ".."));
+				exp.setExperiment(XMLUtil.getElementValue(node, ID_EXPERIMENT, ".."));
+				exp.setComment1(XMLUtil.getElementValue(node, ID_COMMENT1, ".."));
+				exp.setComment2(XMLUtil.getElementValue(node, ID_COMMENT2, ".."));
+				exp.setStrain(XMLUtil.getElementValue(node, ID_STRAIN, ".."));
+				exp.setSex(XMLUtil.getElementValue(node, ID_SEX, ".."));
+				exp.setCondition1(XMLUtil.getElementValue(node, ID_COND1, ".."));
+				exp.setCondition2(XMLUtil.getElementValue(node, ID_COND2, ".."));
+			}
+			String generatorProgram = XMLUtil.getElementValue(node, ID_GENERATOR_PROGRAM, null);
+			if (generatorProgram != null) {
+				exp.setGeneratorProgram(generatorProgram);
+			}
+			return true;
 		}
-		if (loadDrosoPositions) {
-			exp.loadCageMeasures();
+
+		private static boolean xmlSaveExperiment(Experiment exp, String csFileName) {
+			final Document doc = XMLUtil.createDocument(true);
+			if (doc != null) {
+				Node xmlRoot = XMLUtil.getRootElement(doc, true);
+				Node node = XMLUtil.setElement(xmlRoot, ID_MCEXPERIMENT);
+				if (node == null)
+					return false;
+
+				XMLUtil.setElementValue(node, ID_VERSION, ID_VERSIONNUM);
+				XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, exp.getCamImageFirst_ms());
+				XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, exp.getCamImageLast_ms());
+
+				XMLUtil.setElementLongValue(node, ID_BINT0, exp.getBinT0());
+				XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, exp.getKymoFirst_ms());
+				XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, exp.getKymoLast_ms());
+				XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, exp.getKymoBin_ms());
+
+				XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, exp.getImagesDirectory());
+
+				XMLUtil.setElementValue(node, ID_BOXID, exp.getBoxID());
+				XMLUtil.setElementValue(node, ID_EXPERIMENT, exp.getExperiment());
+				XMLUtil.setElementValue(node, ID_COMMENT1, exp.getComment1());
+				XMLUtil.setElementValue(node, ID_COMMENT2, exp.getComment2());
+				XMLUtil.setElementValue(node, ID_STRAIN, exp.getStrain());
+				XMLUtil.setElementValue(node, ID_SEX, exp.getSex());
+				XMLUtil.setElementValue(node, ID_COND1, exp.getCondition1());
+				XMLUtil.setElementValue(node, ID_COND2, exp.getCondition2());
+
+				// Save generator program (optional field)
+				// Auto-determine if not already set - Experiment class handles detection
+				// automatically
+				String programToSave = exp.getGeneratorProgram();
+				if (programToSave == null) {
+					programToSave = Experiment.determineProgramFromStackTraceStatic();
+					if (programToSave != null) {
+						exp.setGeneratorProgram(programToSave);
+					}
+				}
+				if (programToSave != null) {
+					XMLUtil.setElementValue(node, ID_GENERATOR_PROGRAM, programToSave);
+				}
+
+				XMLUtil.saveDocument(doc, csFileName);
+				return true;
+			}
+			return false;
 		}
-		return true;
-	}
 
-	public boolean saveExperimentMeasures(Experiment exp, String directory) {
-		boolean flag = false;
-		if (exp.getSeqKymos() != null) {
-			flag = exp.xmlSave_MCExperiment();
-			// Always use kymos bin directory for capillaries measures, not the passed
-			// directory
-			// This ensures CapillariesMeasures.csv is saved to Bin60, not Results
-			exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());
+		private static String concatenateExptDirectoryWithSubpathAndName(Experiment exp, String subpath, String name) {
+			String strExperimentDirectory = exp.getExperimentDirectory();
+			if (subpath != null)
+				return strExperimentDirectory + File.separator + subpath + File.separator + name;
+			else
+				return strExperimentDirectory + File.separator + name;
 		}
-		return flag;
 	}
-
-	// -----------------------------------------------------------------
-
-	private String concatenateExptDirectoryWithSubpathAndName(Experiment exp, String subpath, String name) {
-		String strExperimentDirectory = exp.getExperimentDirectory();
-		if (subpath != null)
-			return strExperimentDirectory + File.separator + subpath + File.separator + name;
-		else
-			return strExperimentDirectory + File.separator + name;
-	}
-
 }

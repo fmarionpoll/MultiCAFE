@@ -26,6 +26,8 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillariesDescription;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.ids.CapillaryID;
+import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationDetector;
+import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationTool;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageAdjustmentOptions;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
@@ -34,8 +36,6 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.KymographInfo;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
-import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationDetector;
-import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationTool;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_service.KymographService;
@@ -624,19 +624,19 @@ public class Experiment {
 			camDataImagesDirectory = seqCamData.getImagesDirectory();
 			resultsDirectory = camDataImagesDirectory + File.separator + RESULTS;
 		}
-		
+
 		// Priority 1: Try new v2_ format
 		String v2FileName = concatenateExptDirectoryWithSubpathAndName(null, ID_V2_EXPERIMENT_XML);
 		if (load_MS96_experiment(v2FileName)) {
 			return true;
 		}
-		
+
 		// Priority 2: Try legacy MCexperiment.xml
 		String legacyFileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
 		if (load_MS96_experiment(legacyFileName)) {
 			return true;
 		}
-		
+
 		// Priority 3: Try legacy MS96_experiment.xml
 		String legacy2FileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML_LEGACY);
 		return load_MS96_experiment(legacy2FileName);
@@ -832,7 +832,7 @@ public class Experiment {
 
 	public boolean load_MS96_cages() {
 		String resultsDir = getResultsDirectory();
-		
+
 		// Check if migration is needed
 		MigrationDetector detector = new MigrationDetector();
 		if (detector.needsMigration(resultsDir)) {
@@ -853,52 +853,52 @@ public class Experiment {
 			}
 			// Also load spots from CSV (may be empty if migration failed)
 			spotsArray.getPersistence().loadSpotsArrayDescription(spotsArray, resultsDir);
-			
+
 			// Transfer cages to ROIs on sequence if loaded successfully
 			if (loaded && seqCamData != null && seqCamData.getSequence() != null) {
 				cages.cagesToROIs(seqCamData);
 				cages.updateCagesFromSequence(seqCamData);
 			}
-			
+
 			return loaded;
 		}
-		
+
 		// New format - load descriptions from results directory
 		boolean cagesLoaded = cages.getPersistence().load_Cages(cages, resultsDir);
-		
+
 		// Load measures from bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
 			cages.getPersistence().loadCagesArrayMeasures(cages, binDir);
 		}
-		
+
 		// Transfer cages to ROIs on sequence if loaded successfully
 		if (cagesLoaded && seqCamData != null && seqCamData.getSequence() != null) {
 			cages.cagesToROIs(seqCamData);
 			cages.updateCagesFromSequence(seqCamData);
 		}
-		
+
 		// Also load spots descriptions from CSV (independent persistence)
 		spotsArray.getPersistence().loadSpotsArrayDescription(spotsArray, resultsDir);
-		
+
 		// Load spots measures from bin directory (if available)
 		if (binDir != null) {
 			spotsArray.getPersistence().loadSpotsArrayMeasures(spotsArray, binDir);
 		}
-		
+
 		return cagesLoaded;
 	}
 
 	public boolean save_MS96_cages() {
 		String resultsDir = getResultsDirectory();
 		boolean descriptionsSaved = cages.getPersistence().save_Cages(cages, resultsDir);
-		
+
 		// Also save measures to bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
 			cages.getPersistence().saveCagesArrayMeasures(cages, binDir);
 		}
-		
+
 		return descriptionsSaved;
 	}
 
@@ -907,26 +907,26 @@ public class Experiment {
 	public boolean load_MS96_spotsMeasures() {
 		String resultsDir = getResultsDirectory();
 		boolean descriptionsLoaded = spotsArray.getPersistence().loadSpotsArrayDescription(spotsArray, resultsDir);
-		
+
 		// Load measures from bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
 			spotsArray.getPersistence().loadSpotsArrayMeasures(spotsArray, binDir);
 		}
-		
+
 		return descriptionsLoaded;
 	}
 
 	public boolean save_MS96_spotsMeasures() {
 		String resultsDir = getResultsDirectory();
 		boolean descriptionsSaved = spotsArray.getPersistence().saveSpotsArrayDescription(spotsArray, resultsDir);
-		
+
 		// Also save measures to bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
 			spotsArray.getPersistence().saveSpotsArrayMeasures(spotsArray, binDir);
 		}
-		
+
 		return descriptionsSaved;
 	}
 
@@ -936,13 +936,13 @@ public class Experiment {
 	}
 
 	public boolean save_MS96_fliesPositions() {
-		// Save fly positions to bin directory (e.g., results/bin60/CagesArrayMeasures.csv)
+		// Save fly positions to bin directory (e.g.,
+		// results/bin60/CagesArrayMeasures.csv)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
 			return cages.getPersistence().saveCagesArrayMeasures(cages, binDir);
 		}
-		// Fallback: save to results directory if bin directory not set
-		return cages.save_Cages(getResultsDirectory());
+		return false;
 	}
 
 	// -------------------------------
@@ -1141,29 +1141,6 @@ public class Experiment {
 			break;
 		default:
 			textList.add(prop.getField(fieldEnumCode));
-			break;
-		}
-	}
-
-	public void replaceFieldValue(EnumXLSColumnHeader fieldEnumCode, String oldValue, String newValue) {
-		switch (fieldEnumCode) {
-		case EXP_STIM1:
-		case EXP_CONC1:
-		case EXP_EXPT:
-		case EXP_BOXID:
-		case EXP_STRAIN:
-		case EXP_SEX:
-		case EXP_STIM2:
-		case EXP_CONC2:
-			replaceExperimentFieldIfEqualOld(fieldEnumCode, oldValue, newValue);
-			break;
-		case SPOT_STIM:
-		case SPOT_CONC:
-			if (replaceCapillariesValuesIfEqualOld(fieldEnumCode, oldValue, newValue))
-				;
-			saveMCCapillaries_Only();
-			break;
-		default:
 			break;
 		}
 	}
@@ -1599,7 +1576,7 @@ public class Experiment {
 		// Try to load from CSV first (new format)
 		String resultsDir = getResultsDirectory();
 		boolean csvLoaded = capillaries.getPersistence().loadCapillariesArrayDescription(capillaries, resultsDir);
-		
+
 		// Only load from XML if CSV didn't have the data (backward compatibility)
 		boolean flag = false;
 		if (!csvLoaded) {
@@ -1638,7 +1615,7 @@ public class Experiment {
 		// Try to load from CSV first (new format)
 		String resultsDir = getResultsDirectory();
 		boolean csvLoaded = capillaries.getPersistence().loadCapillariesArrayDescription(capillaries, resultsDir);
-		
+
 		// Only load from XML if CSV didn't have the data (backward compatibility)
 		boolean flag1 = false;
 		if (!csvLoaded) {
@@ -1712,7 +1689,8 @@ public class Experiment {
 
 	public boolean saveMCCapillaries_Only() {
 		// XML save disabled - descriptions and ROI coordinates are now stored in CSV
-		// String xmlCapillaryFileName = resultsDirectory + File.separator + capillaries.getXMLNameToAppend();
+		// String xmlCapillaryFileName = resultsDirectory + File.separator +
+		// capillaries.getXMLNameToAppend();
 		transferExpDescriptorsToCapillariesDescriptors();
 		// return capillaries.xmlSaveCapillaries_Descriptors(xmlCapillaryFileName);
 		return true; // Return true since CSV save is handled separately
@@ -1733,8 +1711,9 @@ public class Experiment {
 	public boolean loadCapillaries() {
 		String resultsDir = getResultsDirectory();
 		// Try new format: descriptions from results, measures from bin
-		boolean descriptionsLoaded = capillaries.getPersistence().loadCapillariesArrayDescription(capillaries, resultsDir);
-		
+		boolean descriptionsLoaded = capillaries.getPersistence().loadCapillariesArrayDescription(capillaries,
+				resultsDir);
+
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
 			boolean measuresLoaded = capillaries.getPersistence().load_CapillariesArrayMeasures(capillaries, binDir);
@@ -1742,7 +1721,7 @@ public class Experiment {
 				return true;
 			}
 		}
-		
+
 		// Fall back to legacy format
 		return capillaries.load_Capillaries(binDir != null ? binDir : resultsDir);
 	}
@@ -1750,19 +1729,15 @@ public class Experiment {
 	public boolean saveCapillaries() {
 		String resultsDir = getResultsDirectory();
 		// Save descriptions to new format
-		boolean descriptionsSaved = capillaries.getPersistence().saveCapillariesArrayDescription(capillaries, resultsDir);
-		
+		boolean descriptionsSaved = capillaries.getPersistence().saveCapillariesArrayDescription(capillaries,
+				resultsDir);
+
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
 			// Save measures to new format
 			capillaries.getPersistence().save_CapillariesArrayMeasures(capillaries, binDir);
 		}
-		
-		// Also save to legacy format for backward compatibility
-		if (binDir != null) {
-			capillaries.save_Capillaries(binDir);
-		}
-		
+
 		return descriptionsSaved;
 	}
 
@@ -1798,14 +1773,14 @@ public class Experiment {
 	public boolean saveCageMeasures() {
 		String resultsDir = getResultsDirectory();
 		boolean descriptionsSaved = cages.getPersistence().save_Cages(cages, resultsDir);
-		
+
 		// Also save measures to bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		System.out.println(binDir);
 		if (binDir != null) {
 			cages.getPersistence().saveCagesArrayMeasures(cages, binDir);
 		}
-		
+
 		return descriptionsSaved;
 	}
 
@@ -1860,7 +1835,7 @@ public class Experiment {
 			seqKymos.validateROIs();
 			seqKymos.transferKymosRoisToCapillaries_Measures(capillaries);
 		}
-		flag = capillaries.save_Capillaries(directory);
+		flag = capillaries.getPersistence().save_CapillariesArrayMeasures(capillaries, directory);
 		return flag;
 	}
 
@@ -1974,40 +1949,6 @@ public class Experiment {
 		boolean flag = loadMCCapillaries_Only();
 		if (flag && seqCamData != null && seqCamData.getSequence() != null) {
 			capillaries.transferCapillaryRoiToSequence(seqCamData.getSequence());
-		}
-		return flag;
-	}
-
-	public boolean openMeasures(boolean loadCapillaries, boolean loadDrosoPositions) {
-		// TODO: Implement full logic similar to old ExperimentPersistence.openMeasures
-		// For now, delegate to appropriate load methods
-		boolean flag = true;
-		if (loadCapillaries) {
-			flag = loadMCCapillaries_Only();
-			getCapillaries().transferCapillaryRoiToSequence(getSeqCamData().getSequence());
-		}
-		if (loadDrosoPositions) {
-			flag &= load_MS96_cages();
-		}
-		return flag;
-	}
-
-	private boolean replaceCapillariesValuesIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
-			String newValue) {
-		if (capillaries.getList().size() == 0) {
-			loadMCCapillaries_Only();
-			getCapillaries().transferCapillaryRoiToSequence(getSeqCamData().getSequence());
-		}
-		// Convert new enum to old enum for Capillary compatibility
-		EnumXLSColumnHeader oldEnum = convertToOldEnum(fieldEnumCode);
-		if (oldEnum == null)
-			return false;
-		boolean flag = false;
-		for (Capillary cap : capillaries.getList()) {
-			if (cap.getCapillaryField(oldEnum).equals(oldValue)) {
-				cap.setCapillaryField(oldEnum, newValue);
-				flag = true;
-			}
 		}
 		return flag;
 	}
