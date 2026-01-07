@@ -1854,6 +1854,14 @@ public class Experiment {
 
 		// Dispatch capillaries to cages using ID-based approach
 		for (Capillary cap : capillaries.getList()) {
+			int kymographIndex = cap.getKymographIndex();
+			// Skip capillaries with invalid kymographIndex (not properly loaded from persistence)
+			if (kymographIndex < 0) {
+				Logger.warn("Experiment.dispatchCapillariesToCages() - Skipping capillary with invalid kymographIndex (-1): " 
+					+ cap.getKymographName() + ". This may indicate incomplete persistence data.");
+				continue;
+			}
+			
 			int nflies = cap.getProperties().nFlies;
 			int cageID = cap.getCageID();
 			Cage cage = cages.getCageFromID(cageID);
@@ -1864,7 +1872,7 @@ public class Experiment {
 				cages.getCageList().add(cage);
 			}
 			// Add capillary ID instead of object reference
-			CapillaryID capID = new CapillaryID(cap.getKymographIndex());
+			CapillaryID capID = new CapillaryID(kymographIndex);
 			cage.addCapillaryIDIfUnique(capID);
 			// Also update legacy field for backward compatibility
 			cage.addCapillaryIfUnique(cap);

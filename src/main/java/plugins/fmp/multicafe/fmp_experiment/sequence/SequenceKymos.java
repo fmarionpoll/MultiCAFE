@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.common.exception.UnsupportedFormatException;
 import icy.file.Loader;
@@ -37,6 +36,7 @@ import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
@@ -424,7 +424,8 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param cagesArray    the cages array
 	 * @return list of image file descriptors
 	 */
-	public List<ImageFileData> createKymographFileList(String baseDirectory, CagesArray cagesArray, SpotsArray allSpots) {
+	public List<ImageFileData> createKymographFileList(String baseDirectory, CagesArray cagesArray,
+			SpotsArray allSpots) {
 		if (baseDirectory == null || baseDirectory.trim().isEmpty()) {
 			throw new IllegalArgumentException("Base directory cannot be null or empty");
 		}
@@ -515,10 +516,13 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	/**
-	 * @deprecated Use {@link #createKymographFileList(String, CagesArray, SpotsArray)} instead
+	 * @deprecated Use
+	 *             {@link #createKymographFileList(String, CagesArray, SpotsArray)}
+	 *             instead
 	 */
 	@Deprecated
-	public List<ImageFileData> loadListOfPotentialKymographsFromSpots(String dir, CagesArray cagesArray, SpotsArray allSpots) {
+	public List<ImageFileData> loadListOfPotentialKymographsFromSpots(String dir, CagesArray cagesArray,
+			SpotsArray allSpots) {
 		return createKymographFileList(dir, cagesArray, allSpots);
 	}
 
@@ -847,59 +851,6 @@ public class SequenceKymos extends SequenceCamData {
 			Logger.warn("Failed to set sequence name from first image", e);
 		}
 	}
-
-	/**
-	 * @deprecated Use {@link #setSequenceNameFromFirstImage(List)} instead
-	 */
-	@Deprecated
-	protected void setParentDirectoryAsCSCamFileName(String filename) {
-		if (filename != null) {
-			setSequenceNameFromFirstImage(List.of(filename));
-		}
-	}
-
-	/**
-	 * @deprecated Use {@link #calculateMaxDimensions(List)} instead
-	 */
-	@Deprecated
-	Rectangle getMaxSizeofTiffFiles(List<ImageFileData> files) {
-		return calculateMaxDimensions(files);
-	}
-
-	/**
-	 * @deprecated Use {@link #updateImageDimensions(ImageFileData)} instead
-	 */
-	@Deprecated
-	boolean getImageDim(final ImageFileData fileProp) {
-		try {
-			updateImageDimensions(fileProp);
-			return true;
-		} catch (Exception e) {
-			Logger.warn("Failed to get image dimensions", e);
-			return false;
-		}
-	}
-
-	/**
-	 * @deprecated Use
-	 *             {@link #adjustImageSizes(List, Rectangle, ImageAdjustmentOptions)}
-	 *             instead
-	 */
-	@Deprecated
-	void adjustImagesToMaxSize(List<ImageFileData> files, Rectangle rect) {
-		ImageAdjustmentOptions options = ImageAdjustmentOptions.withSizeAdjustment(rect);
-		adjustImageSizes(files, rect, options);
-	}
-
-	/**
-	 * @deprecated Use
-	 *             {@link #transferImageData(IcyBufferedImage, IcyBufferedImage)}
-	 *             instead
-	 */
-//    @Deprecated
-//    private void transferImage1To2(IcyBufferedImage source, IcyBufferedImage destination) {
-//        transferImageData(source, destination);
-//    }
 
 	// === BUILDER PATTERN ===
 

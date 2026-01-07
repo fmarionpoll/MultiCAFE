@@ -147,7 +147,6 @@ public class KymographBuilder {
 					capImageChannel[cnt * kymoImageWidth + kymographColumn] = (int) (sum / mask.size());
 				cnt++;
 			}
-			capImage.setDataXY(chan, capImage.getDataXY(chan));
 		}
 	}
 
@@ -171,7 +170,6 @@ public class KymographBuilder {
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					// Data is already in cap_Image, just save it
 					String filename = directory + File.separator + cap.getKymographFileName();
 					File file = new File(filename);
 					try {
@@ -182,7 +180,6 @@ public class KymographBuilder {
 					} catch (IOException e) {
 						Logger.error("KymographBuilder: Failed to save kymograph (IO error): " + filename, e);
 					}
-
 				}
 			}));
 		}
