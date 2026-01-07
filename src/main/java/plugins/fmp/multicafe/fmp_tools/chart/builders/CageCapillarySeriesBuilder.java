@@ -10,18 +10,19 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
-import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.cages.CageProperties;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCageBuild;
 import plugins.fmp.multicafe.fmp_tools.chart.style.SeriesStyleCodec;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
- * Builds cage datasets from Capillary measurements (including LR Sum/PI synthesis).
+ * Builds cage datasets from Capillary measurements (including LR Sum/PI
+ * synthesis).
  */
 public class CageCapillarySeriesBuilder implements CageSeriesBuilder {
 	@Override
@@ -171,8 +172,11 @@ public class CageCapillarySeriesBuilder implements CageSeriesBuilder {
 		else if (side != null && (side.contains("R") || side.contains("2")))
 			color = Color.RED;
 
-		return SeriesStyleCodec.buildDescription(cageProp.getCageID(), cageProp.getCagePosition(), cageProp.getCageNFlies(),
-				color);
+		if (cap.getNFlies() < 0)
+			color = Color.DARK_GRAY;
+
+		return SeriesStyleCodec.buildDescription(cageProp.getCageID(), cageProp.getCagePosition(),
+				cageProp.getCageNFlies(), color);
 	}
 
 	private static XYSeries createXYSeriesFromCapillaryMeasure(Experiment exp, Capillary cap, ResultsOptions options) {
@@ -207,5 +211,3 @@ public class CageCapillarySeriesBuilder implements CageSeriesBuilder {
 		return seriesXY;
 	}
 }
-
-

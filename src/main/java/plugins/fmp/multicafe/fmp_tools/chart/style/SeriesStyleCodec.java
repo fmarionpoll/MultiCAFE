@@ -2,12 +2,13 @@ package plugins.fmp.multicafe.fmp_tools.chart.style;
 
 import java.awt.Color;
 import java.util.Optional;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.jfree.chart.ChartColor;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 /**
  * Centralizes the legacy encoding/decoding of series metadata in
@@ -34,6 +35,7 @@ public final class SeriesStyleCodec {
 	public static String buildDescription(int cageId, int cagePosition, int nFlies, Color color) {
 		if (color == null)
 			color = Color.BLACK;
+
 		return "ID" + DELIM + cageId + DELIM + "Pos" + DELIM + cagePosition + DELIM + KEY_NFLIES + DELIM + nFlies
 				+ DELIM + KEY_R + DELIM + color.getRed() + DELIM + KEY_G + DELIM + color.getGreen() + DELIM + KEY_B
 				+ DELIM + color.getBlue();
@@ -97,5 +99,3 @@ public final class SeriesStyleCodec {
 		}
 	}
 }
-
-

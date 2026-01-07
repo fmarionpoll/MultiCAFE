@@ -3,22 +3,14 @@ package plugins.fmp.multicafe.fmp_tools.chart;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_tools.chart.builders.CageCapillarySeriesBuilder;
-import plugins.fmp.multicafe.fmp_tools.chart.builders.CageSpotSeriesBuilder;
-import plugins.fmp.multicafe.fmp_tools.chart.plot.CageChartPlotFactory;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.chart.style.SeriesStyleCodec;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
-import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
  * Utility class for creating and managing cage charts. This class provides
@@ -51,7 +43,6 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
  */
 public class ChartCageBuild {
 
-
 	/** Default stroke width for chart lines */
 	private static final float DEFAULT_STROKE_WIDTH = 0.5f;
 
@@ -62,7 +53,8 @@ public class ChartCageBuild {
 	private static final float DASH_PHASE = 0.0f;
 
 	/** Background color for charts with data */
-	// kept for backward compatibility with earlier versions; unused in current refactor
+	// kept for backward compatibility with earlier versions; unused in current
+	// refactor
 	@SuppressWarnings("unused")
 	private static final Color BACKGROUND_WITH_DATA = Color.WHITE;
 
@@ -129,58 +121,6 @@ public class ChartCageBuild {
 	 * @return configured XYPlot ready for chart creation
 	 * @throws IllegalArgumentException if any parameter is null
 	 */
-	/**
-	 * @deprecated Use {@link CageChartPlotFactory#buildXYPlot(XYSeriesCollection, NumberAxis, NumberAxis)}.
-	 */
-	@Deprecated
-	static public XYPlot buildXYPlot(XYSeriesCollection xySeriesCollection, NumberAxis xAxis, NumberAxis yAxis) {
-		return CageChartPlotFactory.buildXYPlot(xySeriesCollection, xAxis, yAxis);
-	}
-
-	/**
-	 * Backward-compatible helper for UI components that update plot background as fly
-	 * counts change.
-	 */
-	/**
-	 * @deprecated Use {@link CageChartPlotFactory#setXYPlotBackGroundAccordingToNFlies(XYPlot, int)}.
-	 */
-	@Deprecated
-	public static void setXYPlotBackGroundAccordingToNFlies(XYPlot xyPlot, int nFlies) {
-		CageChartPlotFactory.setXYPlotBackGroundAccordingToNFlies(xyPlot, nFlies);
-	}
-
-	/**
-	 * Extracts spot data from one cage in the results array.
-	 * 
-	 * @param experiment the stack of images and assoc items
-	 * @param cage       the cage to get data for
-	 * @param options    list of options
-	 * @return XYSeriesCollection containing the cage's data
-	 */
-	/**
-	 * @deprecated Use {@link CageSpotSeriesBuilder}.
-	 */
-	@Deprecated
-	static XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage, ResultsOptions resultsOptions) {
-		return new CageSpotSeriesBuilder().build(exp, cage, resultsOptions);
-	}
-
-	/**
-	 * Extracts spot data from one cage in the results array.
-	 * 
-	 * @param experiment the stack of images and assoc items
-	 * @param cage       the cage to get data for
-	 * @param options    list of options
-	 * @return XYSeriesCollection containing the cage's data
-	 */
-	/**
-	 * @deprecated Use {@link CageCapillarySeriesBuilder}.
-	 */
-	@Deprecated
-	public static XYSeriesCollection getCapillaryDataDirectlyFromOneCage(Experiment exp, Cage cage,
-			ResultsOptions resultsOptions) {
-		return new CageCapillarySeriesBuilder().build(exp, cage, resultsOptions);
-	}
 
 	public static boolean isLRType(EnumResults resultType) {
 		return resultType == EnumResults.TOPLEVEL_LR || resultType == EnumResults.TOPLEVELDELTA_LR

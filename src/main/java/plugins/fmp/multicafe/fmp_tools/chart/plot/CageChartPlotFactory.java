@@ -13,7 +13,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 import plugins.fmp.multicafe.fmp_tools.chart.style.SeriesStyleCodec;
 
 /**
- * Central place to build and style cage XY plots from an {@link XYSeriesCollection}.
+ * Central place to build and style cage XY plots from an
+ * {@link XYSeriesCollection}.
  *
  * <p>
  * This class does not know how to extract data (Spot vs Capillary). It only
@@ -27,7 +28,7 @@ public final class CageChartPlotFactory {
 
 	private static final Color BACKGROUND_WITH_DATA = Color.WHITE;
 	private static final Color BACKGROUND_WITHOUT_DATA = Color.LIGHT_GRAY;
-	private static final Color BACKGROUND_WITH_ARTEFACT = Color.DARK_GRAY;
+//	private static final Color BACKGROUND_WITH_ARTEFACT = Color.DARK_GRAY;
 	private static final Color GRID_WITH_DATA = Color.GRAY;
 	private static final Color GRID_WITHOUT_DATA = Color.WHITE;
 
@@ -111,11 +112,11 @@ public final class CageChartPlotFactory {
 			xyPlot.setBackgroundPaint(BACKGROUND_WITHOUT_DATA);
 			xyPlot.setDomainGridlinePaint(GRID_WITHOUT_DATA);
 			xyPlot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
-		} else {
-			xyPlot.setBackgroundPaint(BACKGROUND_WITH_ARTEFACT);
-			xyPlot.setDomainGridlinePaint(GRID_WITHOUT_DATA);
-			xyPlot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
-		}
+		} // else {
+//			xyPlot.setBackgroundPaint(BACKGROUND_WITH_ARTEFACT);
+//			xyPlot.setDomainGridlinePaint(GRID_WITHOUT_DATA);
+//			xyPlot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
+//		}
 	}
 
 	private static XYLineAndShapeRenderer createRenderer(XYSeriesCollection dataset) {
@@ -133,5 +134,3 @@ public final class CageChartPlotFactory {
 		return renderer;
 	}
 }
-
-
