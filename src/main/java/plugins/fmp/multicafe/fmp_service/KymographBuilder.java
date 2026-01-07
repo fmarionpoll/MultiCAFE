@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -29,6 +31,8 @@ import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multicafe.fmp_tools.polyline.Bresenham;
 
 public class KymographBuilder {
+
+	private Map<Capillary, ArrayList<int[]>> capIntegerArrays = new HashMap<>();
 
 	public boolean buildKymograph(Experiment exp, BuildSeriesOptions options) {
 		if (exp.getCapillaries().getList().size() < 1) {
@@ -131,11 +135,12 @@ public class KymographBuilder {
 		int sizeC = sourceImage.getSizeC();
 		IcyBufferedImage capImage = cap.getCap_Image();
 		int kymoImageWidth = capImage.getWidth();
+		ArrayList<int[]> capInteger = capIntegerArrays.get(cap);
 
 		for (int chan = 0; chan < sizeC; chan++) {
 			int[] sourceImageChannel = Array1DUtil.arrayToIntArray(sourceImage.getDataXY(chan),
 					sourceImage.isSignedDataType());
-			int[] capImageChannel = capImage.getDataXYAsInt(chan);
+			int[] capImageChannel = capInteger.get(chan);
 
 			int cnt = 0;
 			int sourceImageWidth = sourceImage.getWidth();
@@ -170,11 +175,24 @@ public class KymographBuilder {
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
+					IcyBufferedImage capImage = cap.getCap_Image();
+					ArrayList<int[]> capInteger = capIntegerArrays.get(cap);
+					if (capInteger != null) {
+						boolean isSignedDataType = capImage.isSignedDataType();
+						for (int chan = 0; chan < sizeC; chan++) {
+							int[] tabValues = capInteger.get(chan);
+							Object destArray = capImage.getDataXY(chan);
+							Array1DUtil.intArrayToSafeArray(tabValues, 0, destArray, 0, -1, isSignedDataType, isSignedDataType);
+							capImage.setDataXY(chan, destArray);
+						}
+					}
+					
 					String filename = directory + File.separator + cap.getKymographFileName();
 					File file = new File(filename);
 					try {
-						Saver.saveImage(cap.getCap_Image(), file, true);
+						Saver.saveImage(capImage, file, true);
 						cap.setCap_Image(null);
+						capIntegerArrays.remove(cap);
 					} catch (FormatException e) {
 						Logger.error("KymographBuilder: Failed to save kymograph (format error): " + filename, e);
 					} catch (IOException e) {
@@ -222,8 +240,20 @@ public class KymographBuilder {
 		int numC = seq.getSizeC();
 		if (numC <= 0)
 			numC = 3;
-		DataType dataType = DataType.INT;
+		
+		DataType dataType = seq.getDataType_();
+		if (dataType == null || dataType.toString().equals("undefined"))
+			dataType = DataType.UBYTE;
+		
 		cap.setCap_Image(new IcyBufferedImage(imageWidth, imageHeight, numC, dataType));
+		
+		int len = imageWidth * imageHeight;
+		ArrayList<int[]> capInteger = new ArrayList<int[]>(numC);
+		for (int chan = 0; chan < numC; chan++) {
+			int[] tabValues = new int[len];
+			capInteger.add(tabValues);
+		}
+		capIntegerArrays.put(cap, capInteger);
 	}
 
 	private void getPointsfromROIPolyLineUsingBresenham(ArrayList<Point2D> pointsList, List<ArrayList<int[]>> masks,
