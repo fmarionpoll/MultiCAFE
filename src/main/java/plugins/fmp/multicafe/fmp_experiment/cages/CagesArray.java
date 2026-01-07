@@ -293,8 +293,8 @@ public class CagesArray {
 	// Reverse lookup helper methods (ID-based)
 
 	/**
-	 * Finds the cage containing the specified capillary ID.
-	 * Uses simple iteration through all cages.
+	 * Finds the cage containing the specified capillary ID. Uses simple iteration
+	 * through all cages.
 	 * 
 	 * @param capID the CapillaryID to search for
 	 * @return the Cage containing this capillary, or null if not found
@@ -312,8 +312,8 @@ public class CagesArray {
 	}
 
 	/**
-	 * Finds all cages containing the specified capillary ID.
-	 * Returns a list in case of many-to-many relationships.
+	 * Finds all cages containing the specified capillary ID. Returns a list in case
+	 * of many-to-many relationships.
 	 * 
 	 * @param capID the CapillaryID to search for
 	 * @return list of Cages containing this capillary (may be empty)
@@ -493,14 +493,6 @@ public class CagesArray {
 
 	public void cagesToROIs(SequenceCamData seqCamData) {
 		transferCagesToSequenceAsROIs(seqCamData);
-	}
-
-	public boolean load_Cages(String directory) {
-		return loadCagesMeasures(directory);
-	}
-
-	public boolean save_Cages(String directory) {
-		return saveCagesMeasures(directory);
 	}
 
 	public List<ROI2D> getPositionsAsListOfROI2DRectanglesAtT(int t) {
@@ -692,7 +684,8 @@ public class CagesArray {
 				}
 				if (!found) {
 					// Remove spot ID if ROI not found
-					SpotID spotID = new SpotID(spot.getProperties().getCageID(), spot.getProperties().getCagePosition());
+					SpotID spotID = new SpotID(spot.getProperties().getCageID(),
+							spot.getProperties().getCagePosition());
 					cage.getSpotIDs().remove(spotID);
 					allSpots.getList().remove(spot);
 				}
@@ -843,7 +836,8 @@ public class CagesArray {
 				// Update IDs after merge
 				cage.getSpotIDs().clear();
 				for (Spot spot : temp1.getList()) {
-					cage.getSpotIDs().add(new SpotID(spot.getProperties().getCageID(), spot.getProperties().getCagePosition()));
+					cage.getSpotIDs()
+							.add(new SpotID(spot.getProperties().getCageID(), spot.getProperties().getCagePosition()));
 				}
 			}
 		}
@@ -1122,7 +1116,7 @@ public class CagesArray {
 		Capillaries allCapillaries = exp.getCapillaries();
 		if (allCapillaries == null)
 			return;
-		
+
 		for (Cage cage : cagesList) {
 			CageCapillariesComputation cageComputation = new CageCapillariesComputation(cage);
 			cageComputation.computeLRMeasures(allCapillaries, threshold);
@@ -1150,7 +1144,7 @@ public class CagesArray {
 	public void clearComputedMeasures(Experiment exp) {
 		if (exp == null)
 			return;
-		
+
 		CagesArrayCapillariesComputation computation = new CagesArrayCapillariesComputation(this);
 		computation.clearComputedMeasures(exp);
 

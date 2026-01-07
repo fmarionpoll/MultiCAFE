@@ -403,8 +403,8 @@ public class CagesArrayPersistence {
 				Legacy.csvSaveMeasuresSection(cages, csvWriter, EnumCageMeasures.POSITION, csvSep);
 				csvWriter.flush();
 				csvWriter.close();
-				Logger.info(
-						"CagesArrayPersistence:saveCagesArrayMeasures() Saved measures to " + ID_V2_CAGESARRAYMEASURES_CSV);
+				Logger.info("CagesArrayPersistence:saveCagesArrayMeasures() Saved measures to "
+						+ ID_V2_CAGESARRAYMEASURES_CSV);
 				return true;
 			} catch (IOException e) {
 				Logger.error("CagesArrayPersistence:saveCagesArrayMeasures() Error: " + e.getMessage(), e);
@@ -497,8 +497,8 @@ public class CagesArrayPersistence {
 							cages.cagesList.add(cage);
 							loadedCages++;
 						} else {
-							Logger.warn(
-									"CagesArrayPersistence:xmlLoadCages() WARNING: Failed to load cage at index " + index);
+							Logger.warn("CagesArrayPersistence:xmlLoadCages() WARNING: Failed to load cage at index "
+									+ index);
 						}
 					} catch (Exception e) {
 						Logger.error("CagesArrayPersistence:xmlLoadCages() ERROR loading cage at index " + index + ": "
@@ -514,47 +514,47 @@ public class CagesArrayPersistence {
 			}
 		}
 
-		private static boolean xmlSaveCagesROIsOnly(CagesArray cages, String tempname) {
-			try {
-				final Document doc = XMLUtil.createDocument(true);
-				if (doc == null) {
-					Logger.error("CagesArrayPersistence:xmlSaveCagesROIsOnly() ERROR: Could not create XML document");
-					return false;
-				}
-
-				Node node = XMLUtil.getRootElement(doc);
-				Element xmlVal = XMLUtil.addElement(node, ID_CAGES);
-				int ncages = cages.cagesList.size();
-				XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, ncages);
-				XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGX, cages.nCagesAlongX);
-				XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGY, cages.nCagesAlongY);
-				XMLUtil.setAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, cages.nColumnsPerCage);
-				XMLUtil.setAttributeIntValue(xmlVal, ID_NROWSPERCAGE, cages.nRowsPerCage);
-
-				int index = 0;
-				for (Cage cage : cages.cagesList) {
-					if (cage == null) {
-						Logger.warn("CagesArrayPersistence:xmlSaveCagesROIsOnly() WARNING: Null cage at index " + index);
-						index++;
-						continue;
-					}
-
-					Element cageElement = XMLUtil.addElement(xmlVal, "Cage" + index);
-					if (cageElement != null) {
-						// Save only ROI (cage limits)
-						cage.xmlSaveCageLimits(cageElement);
-					}
-					index++;
-				}
-
-				boolean success = XMLUtil.saveDocument(doc, tempname);
-				return success;
-
-			} catch (Exception e) {
-				Logger.error("CagesArrayPersistence:xmlSaveCagesROIsOnly() ERROR during XML saving: " + e.getMessage(), e);
-				return false;
-			}
-		}
+//		private static boolean xmlSaveCagesROIsOnly(CagesArray cages, String tempname) {
+//			try {
+//				final Document doc = XMLUtil.createDocument(true);
+//				if (doc == null) {
+//					Logger.error("CagesArrayPersistence:xmlSaveCagesROIsOnly() ERROR: Could not create XML document");
+//					return false;
+//				}
+//
+//				Node node = XMLUtil.getRootElement(doc);
+//				Element xmlVal = XMLUtil.addElement(node, ID_CAGES);
+//				int ncages = cages.cagesList.size();
+//				XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, ncages);
+//				XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGX, cages.nCagesAlongX);
+//				XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGY, cages.nCagesAlongY);
+//				XMLUtil.setAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, cages.nColumnsPerCage);
+//				XMLUtil.setAttributeIntValue(xmlVal, ID_NROWSPERCAGE, cages.nRowsPerCage);
+//
+//				int index = 0;
+//				for (Cage cage : cages.cagesList) {
+//					if (cage == null) {
+//						Logger.warn("CagesArrayPersistence:xmlSaveCagesROIsOnly() WARNING: Null cage at index " + index);
+//						index++;
+//						continue;
+//					}
+//
+//					Element cageElement = XMLUtil.addElement(xmlVal, "Cage" + index);
+//					if (cageElement != null) {
+//						// Save only ROI (cage limits)
+//						cage.xmlSaveCageLimits(cageElement);
+//					}
+//					index++;
+//				}
+//
+//				boolean success = XMLUtil.saveDocument(doc, tempname);
+//				return success;
+//
+//			} catch (Exception e) {
+//				Logger.error("CagesArrayPersistence:xmlSaveCagesROIsOnly() ERROR during XML saving: " + e.getMessage(), e);
+//				return false;
+//			}
+//		}
 
 		static boolean xmlLoadCagesROIsOnly(CagesArray cages, String tempname) {
 			if (tempname == null) {
@@ -570,7 +570,8 @@ public class CagesArrayPersistence {
 			try {
 				final Document doc = XMLUtil.loadDocument(tempname);
 				if (doc == null) {
-					Logger.warn("CagesArrayPersistence:xmlLoadCagesROIsOnly() Could not load XML document: " + tempname);
+					Logger.warn(
+							"CagesArrayPersistence:xmlLoadCagesROIsOnly() Could not load XML document: " + tempname);
 					return false;
 				}
 
@@ -615,7 +616,8 @@ public class CagesArrayPersistence {
 				return loadedROIs > 0 || ncages == 0; // Return true if ROIs loaded or file was empty
 
 			} catch (Exception e) {
-				Logger.error("CagesArrayPersistence:xmlLoadCagesROIsOnly() ERROR during XML loading: " + e.getMessage(), e);
+				Logger.error("CagesArrayPersistence:xmlLoadCagesROIsOnly() ERROR during XML loading: " + e.getMessage(),
+						e);
 				return false;
 			}
 		}
@@ -695,8 +697,8 @@ public class CagesArrayPersistence {
 										cages.cagesList.subList(ncages, cages.cagesList.size()).clear();
 									}
 								} catch (NumberFormatException e) {
-									Logger.warn(
-											"CagesArrayPersistence:csvLoad_DIMENSION() Invalid n_cages value: " + data[1]);
+									Logger.warn("CagesArrayPersistence:csvLoad_DIMENSION() Invalid n_cages value: "
+											+ data[1]);
 								}
 							}
 							break; // Found n_cages parameter, done with DIMENSION section
@@ -862,11 +864,13 @@ public class CagesArrayPersistence {
 					csvWriter.append(String.format("%d%s%d%s%d%s%s%s%s%s%s%s", cage.getProperties().getCageID(), csvSep,
 							cage.getProperties().getCageNFlies(), csvSep, cage.getProperties().getFlyAge(), csvSep,
 							cage.getProperties().getComment() != null ? cage.getProperties().getComment() : "", csvSep,
-							cage.getProperties().getFlyStrain() != null ? cage.getProperties().getFlyStrain() : "", csvSep,
-							cage.getProperties().getFlySex() != null ? cage.getProperties().getFlySex() : "", csvSep));
+							cage.getProperties().getFlyStrain() != null ? cage.getProperties().getFlyStrain() : "",
+							csvSep, cage.getProperties().getFlySex() != null ? cage.getProperties().getFlySex() : "",
+							csvSep));
 
 					// Add ROI name
-					String roiName = (cage.getRoi() != null && cage.getRoi().getName() != null) ? cage.getRoi().getName()
+					String roiName = (cage.getRoi() != null && cage.getRoi().getName() != null)
+							? cage.getRoi().getName()
 							: "cage" + String.format("%03d", cage.getProperties().getCageID());
 					csvWriter.append(roiName + csvSep);
 
@@ -892,7 +896,8 @@ public class CagesArrayPersistence {
 			return true;
 		}
 
-		static boolean csvSaveMeasuresSection(CagesArray cages, FileWriter csvWriter, EnumCageMeasures measuresType, String csvSep) {
+		static boolean csvSaveMeasuresSection(CagesArray cages, FileWriter csvWriter, EnumCageMeasures measuresType,
+				String csvSep) {
 			try {
 				if (cages.cagesList.size() <= 0) {
 					return false;
@@ -926,7 +931,8 @@ public class CagesArrayPersistence {
 			return sbf.toString();
 		}
 
-		private static String csvExport_MEASURE_Data(Cage cage, EnumCageMeasures measureType, String sep, boolean complete) {
+		private static String csvExport_MEASURE_Data(Cage cage, EnumCageMeasures measureType, String sep,
+				boolean complete) {
 			StringBuffer sbf = new StringBuffer();
 			String cageID = Integer.toString(cage.getProperties().getCageID());
 

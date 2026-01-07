@@ -109,27 +109,28 @@ public class BuildBackground extends BuildSeries {
 	}
 
 	/**
-	 * Loads experiment data with proper error handling.
-	 * For background building, cages are optional - we can build background even if cages don't exist yet.
+	 * Loads experiment data with proper error handling. For background building,
+	 * cages are optional - we can build background even if cages don't exist yet.
 	 */
 	private ProcessingResult<Void> loadExperimentData(Experiment experiment) {
 		try {
 			experiment.getSeqCamData().attachSequence(experiment.getSeqCamData().getImageLoader()
 					.initSequenceFromFirstImage(experiment.getSeqCamData().getImagesList(true)));
-			
+
 			boolean cagesLoaded = experiment.load_MS96_cages();
 			if (!cagesLoaded) {
-				Logger.warn("Cages not loaded for background building - this is optional and background building will continue");
+				Logger.warn(
+						"Cages not loaded for background building - this is optional and background building will continue");
 			}
-			
-			// CRITICAL: Also load capillaries to prevent them from being overwritten as empty
-			// when save operations are triggered (e.g., closeViewsForCurrentExperiment)
-			// This protects kymograph measures from being erased during background building
-			experiment.loadMCCapillaries_Only();
-			if (experiment.getKymosBinFullDirectory() != null) {
-				experiment.getCapillaries().load_Capillaries(experiment.getKymosBinFullDirectory());
-			}
-			
+
+//			// CRITICAL: Also load capillaries to prevent them from being overwritten as empty
+//			// when save operations are triggered (e.g., closeViewsForCurrentExperiment)
+//			// This protects kymograph measures from being erased during background building
+//			experiment.loadMCCapillaries_Only();
+//			if (experiment.getKymosBinFullDirectory() != null) {
+//				experiment.getCapillaries().load_Capillaries(experiment.getKymosBinFullDirectory());
+//			}
+
 			return ProcessingResult.success();
 		} catch (Exception e) {
 			return ProcessingResult.failure("Error loading experiment data", e);
@@ -137,16 +138,17 @@ public class BuildBackground extends BuildSeries {
 	}
 
 	/**
-	 * Validates bounds for cages with proper error handling.
-	 * For background building, this is optional if cages don't exist yet.
+	 * Validates bounds for cages with proper error handling. For background
+	 * building, this is optional if cages don't exist yet.
 	 */
 	private ProcessingResult<Void> validateBoundsForCages(Experiment experiment) {
 		try {
-			if (experiment.getCages() == null || experiment.getCages().cagesList == null || experiment.getCages().cagesList.size() == 0) {
+			if (experiment.getCages() == null || experiment.getCages().cagesList == null
+					|| experiment.getCages().cagesList.size() == 0) {
 				Logger.warn("No cages found for background building - skipping bounds validation");
 				return ProcessingResult.success();
 			}
-			
+
 			boolean boundsValid = checkBoundsForCages(experiment);
 			if (!boundsValid) {
 				return ProcessingResult.failure("Invalid bounds for cages");
@@ -311,19 +313,20 @@ public class BuildBackground extends BuildSeries {
 			if (options.backgroundFirst < 0) {
 				return ProcessingResult.failure("Background first frame index is negative: " + options.backgroundFirst);
 			}
-			
+
 			String filename = experiment.getSeqCamData().getFileNameFromImageList(options.backgroundFirst);
 			if (filename == null || filename.isEmpty()) {
 				return ProcessingResult.failure("Cannot get filename for frame index: " + options.backgroundFirst);
 			}
-			
+
 			Logger.info("Loading initial background image from: " + filename);
 			ProcessingResult<IcyBufferedImage> result = imageProcessor.loadImage(filename);
-			
+
 			if (result.isFailure()) {
-				Logger.error("Failed to load initial background image from: " + filename + " - " + result.getErrorMessage());
+				Logger.error(
+						"Failed to load initial background image from: " + filename + " - " + result.getErrorMessage());
 			}
-			
+
 			return result;
 		} catch (Exception e) {
 			Logger.error("Exception loading initial background image", e);
@@ -360,11 +363,11 @@ public class BuildBackground extends BuildSeries {
 		if (transformOptions.backgroundImage == null) {
 			return ProcessingResult.failure("Background image is null - cannot process frames");
 		}
-		
+
 		if (referenceSequence == null) {
 			return ProcessingResult.failure("Reference sequence is null - cannot update background");
 		}
-		
+
 		for (int frame = frameRange.getFirst() + 1; frame <= frameRange.getLast() && !stopFlag; frame++) {
 			// Update progress
 			progressReporter.updateProgress("Processing frame", frame, frameRange.getLast());
@@ -432,28 +435,31 @@ public class BuildBackground extends BuildSeries {
 				saveSuccessful = false;
 				return ProcessingResult.failure(errorMsg);
 			}
-			
-			experiment.getSeqCamData().setReferenceImage(IcyBufferedImageUtil.getCopy(referenceSequence.getFirstImage()));
-			
+
+			experiment.getSeqCamData()
+					.setReferenceImage(IcyBufferedImageUtil.getCopy(referenceSequence.getFirstImage()));
+
 			String savePath = experiment.getResultsDirectory() + java.io.File.separator + "referenceImage.jpg";
 			Logger.info("Saving background image to: " + savePath);
-			
+
 			boolean saveSuccess = experiment.saveReferenceImage(referenceSequence.getFirstImage());
 			if (!saveSuccess) {
-				String errorMsg = "Failed to save background image to: " + savePath + "\nPlease check file permissions and disk space.";
+				String errorMsg = "Failed to save background image to: " + savePath
+						+ "\nPlease check file permissions and disk space.";
 				Logger.error(errorMsg, null, true);
 				saveSuccessful = false;
 				return ProcessingResult.failure(errorMsg);
 			}
-			
+
 			Logger.info("Background image saved successfully to: " + savePath);
 			saveSuccessful = true;
-			
+
 			java.io.File savedFile = new java.io.File(savePath);
 			if (!savedFile.exists()) {
-				Logger.warn("Background image file not found immediately after save - may need to wait for file system flush");
+				Logger.warn(
+						"Background image file not found immediately after save - may need to wait for file system flush");
 			}
-			
+
 			return ProcessingResult.success();
 		} catch (Exception e) {
 			String errorMsg = "Exception while saving background results: " + e.getMessage();
@@ -462,7 +468,7 @@ public class BuildBackground extends BuildSeries {
 			return ProcessingResult.failure(errorMsg, e);
 		}
 	}
-	
+
 	/**
 	 * Returns whether the background image was successfully saved.
 	 */

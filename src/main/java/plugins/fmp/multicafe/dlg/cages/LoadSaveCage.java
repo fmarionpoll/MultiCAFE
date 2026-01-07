@@ -73,7 +73,7 @@ public class LoadSaveCage extends JPanel {
 			return false;
 		ProgressFrame progress = new ProgressFrame("load fly positions");
 
-		boolean flag = exp.loadCageMeasures();
+		boolean flag = exp.loadCagesMeasures();
 		progress.close();
 		return flag;
 	}
@@ -81,7 +81,7 @@ public class LoadSaveCage extends JPanel {
 	public void saveCageAndMeasures(Experiment exp) {
 		if (exp != null) {
 			exp.getCages().updateCagesFromSequence(exp.getSeqCamData());
-			exp.saveCageMeasures();
+			exp.saveCagesMeasures();
 		}
 	}
 

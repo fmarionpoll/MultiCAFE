@@ -49,7 +49,7 @@ public class CapillariesPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean loadCapillariesArrayDescription(Capillaries capillaries, String resultsDirectory) {
+	public boolean load_CapillariesArrayDescription(Capillaries capillaries, String resultsDirectory) {
 		return Persistence.loadDescription(capillaries, resultsDirectory);
 	}
 	

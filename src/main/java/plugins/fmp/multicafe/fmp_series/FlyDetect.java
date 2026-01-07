@@ -28,7 +28,7 @@ public abstract class FlyDetect extends BuildSeries {
 		runFlyDetect(exp);
 		exp.getCages().orderFlyPositions();
 		if (!stopFlag)
-			exp.saveCageMeasures();
+			exp.saveCagesMeasures();
 		exp.getSeqCamData().closeSequence();
 		closeSequence(seqNegative);
 	}
@@ -153,7 +153,7 @@ public abstract class FlyDetect extends BuildSeries {
 			return false;
 		}
 		exp.getSeqCamData().setSequence(seq);
-		boolean flag = exp.loadCageMeasures();
+		boolean flag = exp.loadCagesMeasures();
 //		// CRITICAL: Also load capillaries to prevent them from being overwritten as empty
 //		// when save operations are triggered (e.g., closeViewsForCurrentExperiment)
 //		// This protects kymograph measures from being erased during fly detection

@@ -329,6 +329,9 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public void saveKymosCurvesToCapillariesMeasures(Experiment exp) {
+		if (exp == null) {
+			return;
+		}
 		exp.getSeqKymos().validateROIs();
 		exp.getSeqKymos().transferKymosRoisToCapillaries_Measures(exp.getCapillaries());
 		exp.saveCapillaries();

@@ -159,7 +159,7 @@ public abstract class XLSExport {
 				// This is critical for finding the CapillariesMeasures.csv file
 				ensureBinDirectoryIsDefined(exp);
 				exp.loadCapillaries();
-				exp.loadCageMeasures();
+				exp.loadCagesMeasures();
 				if (shouldSkipChainedExperiment(exp)) {
 					continue;
 				}
