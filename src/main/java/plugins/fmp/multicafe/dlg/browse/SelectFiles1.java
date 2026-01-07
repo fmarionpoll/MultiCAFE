@@ -40,8 +40,8 @@ public class SelectFiles1 extends JPanel {
 	 */
 	private static final long serialVersionUID = 4172927636287523049L;
 	IcyFrame dialogFrame = null;
-	private JComboBox<String> filterCombo = new JComboBox<String>(new String[] { "capillarytrack", "multicafe",
-			"roisline", "cam", "grabs", "MCcapillaries", "MCexperiment" });
+	private JComboBox<String> filterCombo = new JComboBox<String>(
+			new String[] { "capillarytrack", "multicafe", "roisline", "cam", "grabs", "MCcapillaries", "Experiment" });
 	private JButton findButton = new JButton("Select root directory and search...");
 	private JButton clearSelectedButton = new JButton("Clear selected");
 	private JButton clearAllButton = new JButton("Clear all");
@@ -106,13 +106,11 @@ public class SelectFiles1 extends JPanel {
 		findButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String pattern = (String) filterCombo.getSelectedItem();
+				String pattern = ((String) filterCombo.getSelectedItem()).toLowerCase();
 
 				// ugly patch to cope with one of the previous versions of multicafe that saved
 				// files under an other name
-				if (pattern.contains("MCexperiment"))
-					pattern = "MCexpe";
-				else if (pattern.contains("MCcapillaries"))
+				if (pattern.contains("MCcapillaries"))
 					pattern = "MCcapi";
 				boolean isFileName = rbFile.isSelected();
 				if (pattern.contains("grabs") || pattern.contains("cam"))
@@ -185,7 +183,8 @@ public class SelectFiles1 extends JPanel {
 		List<Path> result = null;
 		try (Stream<Path> walk = Files.walk(lastPath)) {
 			result = walk.filter(Files::isRegularFile) // is a file
-					.filter(p -> p.getFileName().toString().contains(pattern)).collect(Collectors.toList());
+					.filter(p -> p.getFileName().toString().toLowerCase().contains(pattern))
+					.collect(Collectors.toList());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
