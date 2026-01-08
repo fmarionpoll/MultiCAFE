@@ -762,7 +762,15 @@ public class Experiment {
 			if (binFirstMs >= 0 || binLastMs >= 0 || binDurationMs >= 0) {
 				// Determine target bin directory (use current binDirectory or default to bin_60)
 				String targetBinDir = binDirectory;
-				if (targetBinDir == null) {
+				if (targetBinDir != null) {
+					// Extract just the subdirectory name if binDirectory is a full path
+					File binDirFile = new File(targetBinDir);
+					if (binDirFile.isAbsolute()) {
+						// Extract just the last component of the path (e.g., "bin_60")
+						targetBinDir = binDirFile.getName();
+					}
+				} else {
+					// No bin directory set, default based on duration
 					targetBinDir = BIN + (binDurationMs / 1000);
 				}
 				
@@ -780,13 +788,19 @@ public class Experiment {
 					String binFullDir = resultsDirectory + File.separator + targetBinDir;
 					binDescriptionPersistence.save(binDesc, binFullDir);
 					
-					// Load into active bin description
+					// Load into active bin description (using subdirectory name, not full path)
 					loadBinDescription(targetBinDir);
 				}
 			} else {
 				// No bin parameters in XML, try to load from current bin directory
 				if (binDirectory != null) {
-					loadBinDescription(binDirectory);
+					// Extract subdirectory name if binDirectory is a full path
+					String binSubDir = binDirectory;
+					File binDirFile = new File(binDirectory);
+					if (binDirFile.isAbsolute()) {
+						binSubDir = binDirFile.getName();
+					}
+					loadBinDescription(binSubDir);
 				}
 			}
 
