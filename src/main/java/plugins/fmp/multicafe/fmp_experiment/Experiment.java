@@ -43,7 +43,7 @@ import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.Logger;
-import plugins.fmp.multicafe.fmp_tools.ROI2D.ROI2DUtilities;
+
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
@@ -217,7 +217,6 @@ public class Experiment {
 	private final static String ID_LASTKYMOCOLMS = "lastKymoColMs";
 	private final static String ID_BINKYMOCOLMS = "binKymoColMs";
 
-	private final static String ID_IMAGESDIRECTORY = "imagesDirectory";
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
 	// New v2 format filename
 	private final String ID_V2_EXPERIMENT_XML = "v2_Experiment.xml";
@@ -227,9 +226,9 @@ public class Experiment {
 	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	private final static String ID_GENERATOR_PROGRAM = "generatorProgram";
 
-	private final static int EXPT_DIRECTORY = 1;
-	private final static int IMG_DIRECTORY = 2;
-	private final static int BIN_DIRECTORY = 3;
+//	private final static int EXPT_DIRECTORY = 1;
+//	private final static int IMG_DIRECTORY = 2;
+//	private final static int BIN_DIRECTORY = 3;
 	// ----------------------------------
 
 	public Experiment() {
@@ -390,23 +389,23 @@ public class Experiment {
 		return staticProgramContext;
 	}
 
-	private String getOrDetermineGeneratorProgram() {
-		if (generatorProgram != null) {
-			return generatorProgram;
-		}
-		String programName = determineProgramFromStackTrace();
-		if (programName != null) {
-			return programName;
-		}
-		if (staticProgramContext != null) {
-			return staticProgramContext;
-		}
-		return null;
-	}
+//	private String getOrDetermineGeneratorProgram() {
+//		if (generatorProgram != null) {
+//			return generatorProgram;
+//		}
+//		String programName = determineProgramFromStackTrace();
+//		if (programName != null) {
+//			return programName;
+//		}
+//		if (staticProgramContext != null) {
+//			return staticProgramContext;
+//		}
+//		return null;
+//	}
 
-	private String determineProgramFromStackTrace() {
-		return determineProgramFromStackTraceStatic();
-	}
+//	private String determineProgramFromStackTrace() {
+//		return determineProgramFromStackTraceStatic();
+//	}
 
 	public static String determineProgramFromStackTraceStatic() {
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
@@ -560,12 +559,12 @@ public class Experiment {
 //		return cages.xmlReadCagesFromFileNoQuestion(filename);
 //	}
 
-	private String getRootWithNoResultNorBinString(String directoryName) {
-		String name = directoryName.toLowerCase();
-		while (name.contains(RESULTS) || name.contains(BIN))
-			name = Paths.get(resultsDirectory).getParent().toString();
-		return name;
-	}
+//	private String getRootWithNoResultNorBinString(String directoryName) {
+//		String name = directoryName.toLowerCase();
+//		while (name.contains(RESULTS) || name.contains(BIN))
+//			name = Paths.get(resultsDirectory).getParent().toString();
+//		return name;
+//	}
 
 	private SequenceCamData loadImagesForSequenceCamData(String filename) {
 		camDataImagesDirectory = ExperimentDirectories.getImagesDirectoryAsParentFromFileName(filename);
@@ -832,12 +831,12 @@ public class Experiment {
 
 	// -------------------------------
 
-	private String getXML_MS96_cages_Location(String XMLfileName) {
-		String fileName = findFile_3Locations(XMLfileName, EXPT_DIRECTORY, BIN_DIRECTORY, IMG_DIRECTORY);
-		if (fileName == null)
-			fileName = concatenateExptDirectoryWithSubpathAndName(null, XMLfileName);
-		return fileName;
-	}
+//	private String getXML_MS96_cages_Location(String XMLfileName) {
+//		String fileName = findFile_3Locations(XMLfileName, EXPT_DIRECTORY, BIN_DIRECTORY, IMG_DIRECTORY);
+//		if (fileName == null)
+//			fileName = concatenateExptDirectoryWithSubpathAndName(null, XMLfileName);
+//		return fileName;
+//	}
 
 	/**
 	 * High-level loader for cage description and measures (legacy \"MS96\" naming).
@@ -1278,64 +1277,64 @@ public class Experiment {
 		return step;
 	}
 
-	private String findFile_3Locations(String xmlFileName, int first, int second, int third) {
-		// current directory
-		String xmlFullFileName = findFile_1Location(xmlFileName, first);
-		if (xmlFullFileName == null)
-			xmlFullFileName = findFile_1Location(xmlFileName, second);
-		if (xmlFullFileName == null)
-			xmlFullFileName = findFile_1Location(xmlFileName, third);
-		return xmlFullFileName;
-	}
+//	private String findFile_3Locations(String xmlFileName, int first, int second, int third) {
+//		// current directory
+//		String xmlFullFileName = findFile_1Location(xmlFileName, first);
+//		if (xmlFullFileName == null)
+//			xmlFullFileName = findFile_1Location(xmlFileName, second);
+//		if (xmlFullFileName == null)
+//			xmlFullFileName = findFile_1Location(xmlFileName, third);
+//		return xmlFullFileName;
+//	}
 
-	private String findFile_1Location(String xmlFileName, int item) {
-		String xmlFullFileName = File.separator + xmlFileName;
-		switch (item) {
-		case IMG_DIRECTORY:
-			camDataImagesDirectory = getRootWithNoResultNorBinString(resultsDirectory);
-			xmlFullFileName = camDataImagesDirectory + File.separator + xmlFileName;
-			break;
+//	private String findFile_1Location(String xmlFileName, int item) {
+//		String xmlFullFileName = File.separator + xmlFileName;
+//		switch (item) {
+//		case IMG_DIRECTORY:
+//			camDataImagesDirectory = getRootWithNoResultNorBinString(resultsDirectory);
+//			xmlFullFileName = camDataImagesDirectory + File.separator + xmlFileName;
+//			break;
+//
+//		case BIN_DIRECTORY:
+//			// any directory (below)
+//			Path dirPath = Paths.get(resultsDirectory);
+//			List<Path> subFolders = Directories.getAllSubPathsOfDirectory(resultsDirectory, 1);
+//			if (subFolders == null)
+//				return null;
+//			List<String> resultsDirList = Directories.getPathsContainingString(subFolders, RESULTS);
+//			List<String> binDirList = Directories.getPathsContainingString(subFolders, BIN);
+//			resultsDirList.addAll(binDirList);
+//			for (String resultsSub : resultsDirList) {
+//				Path dir = dirPath.resolve(resultsSub + File.separator + xmlFileName);
+//				if (Files.notExists(dir))
+//					continue;
+//				xmlFullFileName = dir.toAbsolutePath().toString();
+//				break;
+//			}
+//			break;
+//
+//		case EXPT_DIRECTORY:
+//		default:
+//			xmlFullFileName = resultsDirectory + xmlFullFileName;
+//			break;
+//		}
+//
+//		// current directory
+//		if (xmlFullFileName != null && fileExists(xmlFullFileName)) {
+//			if (item == IMG_DIRECTORY) {
+//				camDataImagesDirectory = getRootWithNoResultNorBinString(resultsDirectory);
+//				ExperimentDirectories.moveAndRename(xmlFileName, camDataImagesDirectory, xmlFileName, resultsDirectory);
+//				xmlFullFileName = resultsDirectory + xmlFullFileName;
+//			}
+//			return xmlFullFileName;
+//		}
+//		return null;
+//	}
 
-		case BIN_DIRECTORY:
-			// any directory (below)
-			Path dirPath = Paths.get(resultsDirectory);
-			List<Path> subFolders = Directories.getAllSubPathsOfDirectory(resultsDirectory, 1);
-			if (subFolders == null)
-				return null;
-			List<String> resultsDirList = Directories.getPathsContainingString(subFolders, RESULTS);
-			List<String> binDirList = Directories.getPathsContainingString(subFolders, BIN);
-			resultsDirList.addAll(binDirList);
-			for (String resultsSub : resultsDirList) {
-				Path dir = dirPath.resolve(resultsSub + File.separator + xmlFileName);
-				if (Files.notExists(dir))
-					continue;
-				xmlFullFileName = dir.toAbsolutePath().toString();
-				break;
-			}
-			break;
-
-		case EXPT_DIRECTORY:
-		default:
-			xmlFullFileName = resultsDirectory + xmlFullFileName;
-			break;
-		}
-
-		// current directory
-		if (xmlFullFileName != null && fileExists(xmlFullFileName)) {
-			if (item == IMG_DIRECTORY) {
-				camDataImagesDirectory = getRootWithNoResultNorBinString(resultsDirectory);
-				ExperimentDirectories.moveAndRename(xmlFileName, camDataImagesDirectory, xmlFileName, resultsDirectory);
-				xmlFullFileName = resultsDirectory + xmlFullFileName;
-			}
-			return xmlFullFileName;
-		}
-		return null;
-	}
-
-	private boolean fileExists(String fileName) {
-		File f = new File(fileName);
-		return (f.exists() && !f.isDirectory());
-	}
+//	private boolean fileExists(String fileName) {
+//		File f = new File(fileName);
+//		return (f.exists() && !f.isDirectory());
+//	}
 
 	public boolean replaceSpotsFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
@@ -1699,41 +1698,41 @@ public class Experiment {
 		return flag1 | flag2;
 	}
 
-	// TODO: Refactor migration logic - xmlLoadOldCapillaries() needs access to
-	// legacy methods
-	// for migration purposes. Consider moving this to a migration service or making
-	// legacy methods accessible for migration only.
-	private boolean xmlLoadOldCapillaries() {
-		// Migration logic temporarily disabled - new format methods have internal
-		// fallback
-		// This method should be refactored to use migration service
-		return false;
-	}
+//	// TODO: Refactor migration logic - xmlLoadOldCapillaries() needs access to
+//	// legacy methods
+//	// for migration purposes. Consider moving this to a migration service or making
+//	// legacy methods accessible for migration only.
+//	private boolean xmlLoadOldCapillaries() {
+//		// Migration logic temporarily disabled - new format methods have internal
+//		// fallback
+//		// This method should be refactored to use migration service
+//		return false;
+//	}
 
-	private boolean xmlReadCamDataROIs(String fileName) {
-		Sequence seq = seqCamData.getSequence();
-		if (fileName != null) {
-			final Document doc = XMLUtil.loadDocument(fileName);
-			if (doc != null) {
-				List<ROI2D> seqRoisList = seq.getROI2Ds(false);
-				List<ROI2D> newRoisList = ROI2DUtilities.loadROIsFromXML(doc);
-				ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, seq);
-				seq.removeAllROI();
-				seq.addROIs(seqRoisList, false);
-				return true;
-			}
-		}
-		return false;
-	}
+//	private boolean xmlReadCamDataROIs(String fileName) {
+//		Sequence seq = seqCamData.getSequence();
+//		if (fileName != null) {
+//			final Document doc = XMLUtil.loadDocument(fileName);
+//			if (doc != null) {
+//				List<ROI2D> seqRoisList = seq.getROI2Ds(false);
+//				List<ROI2D> newRoisList = ROI2DUtilities.loadROIsFromXML(doc);
+//				ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, seq);
+//				seq.removeAllROI();
+//				seq.addROIs(seqRoisList, false);
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
-	private boolean xmlReadRoiLineParameters(String filename) {
-		if (filename != null) {
-			final Document doc = XMLUtil.loadDocument(filename);
-			if (doc != null)
-				return capillaries.getCapillariesDescription().xmlLoadCapillaryDescription(doc);
-		}
-		return false;
-	}
+//	private boolean xmlReadRoiLineParameters(String filename) {
+//		if (filename != null) {
+//			final Document doc = XMLUtil.loadDocument(filename);
+//			if (doc != null)
+//				return capillaries.getCapillariesDescription().xmlLoadCapillaryDescription(doc);
+//		}
+//		return false;
+//	}
 
 	// ---------------------------------------------
 
@@ -2029,16 +2028,16 @@ public class Experiment {
 			addValueIfUnique(cap.getCapillaryField(fieldEnumCode), textList);
 	}
 
-	private EnumXLSColumnHeader convertToOldEnum(EnumXLSColumnHeader newEnum) {
-		// Convert new enum values to old enum values for Capillary compatibility
-		switch (newEnum) {
-		case SPOT_STIM:
-			return EnumXLSColumnHeader.CAP_STIM;
-		case SPOT_CONC:
-			return EnumXLSColumnHeader.CAP_CONC;
-		default:
-			return null;
-		}
-	}
+//	private EnumXLSColumnHeader convertToOldEnum(EnumXLSColumnHeader newEnum) {
+//		// Convert new enum values to old enum values for Capillary compatibility
+//		switch (newEnum) {
+//		case SPOT_STIM:
+//			return EnumXLSColumnHeader.CAP_STIM;
+//		case SPOT_CONC:
+//			return EnumXLSColumnHeader.CAP_CONC;
+//		default:
+//			return null;
+//		}
+//	}
 
 }
