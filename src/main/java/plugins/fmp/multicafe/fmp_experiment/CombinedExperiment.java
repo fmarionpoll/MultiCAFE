@@ -22,7 +22,7 @@ public class CombinedExperiment extends Experiment {
 			setGroupedExperiment(exp);
 	}
 
-	public void loadExperimentDescriptors() {
+	public void loadCombinedExperimentDescriptors() {
 		Experiment expi = experimentList.get(0);
 		copyExperimentFields(expi);
 		copyOtherExperimentFields(expi);

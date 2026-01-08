@@ -249,7 +249,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 						((LazyExperiment) exp).loadIfNeeded();
 					}
 
-					exp.load_MS96_experiment();
+					exp.loadExperimentDescriptors();
 					exp.load_MS96_cages();
 					if (loadSpots)
 						exp.load_MS96_spotsMeasures();
@@ -403,7 +403,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 					if (exp instanceof LazyExperiment) {
 						((LazyExperiment) exp).loadIfNeeded();
 					}
-					exp.load_MS96_experiment();
+					exp.loadExperimentDescriptors();
 					exp.load_MS96_cages();
 					
 					// Ensure capillaries are loaded for CAP_* fields
@@ -426,7 +426,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 							addIfUniqueString(textList, fieldValue);
 						}
 					} else {
-						exp.load_MS96_experiment();
+						exp.loadExperimentDescriptors();
 						List<String> values = exp.getFieldValues(field);
 						if (values != null && !values.isEmpty()) {
 							addIfUniqueStrings(textList, values);

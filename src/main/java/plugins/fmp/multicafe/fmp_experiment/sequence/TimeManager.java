@@ -8,19 +8,20 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
+import plugins.fmp.multicafe.fmp_tools.Logger;
+
 public class TimeManager {
 
 	private int indexTimePattern = -1;
 
-	private long firstImage_ms = 0;
-	private long lastImage_ms = 0;
+	private long firstImage_ms = -1;
+	private long lastImage_ms = -1;
 	private long duration_ms = 0;
 	private long binImage_ms = 0;
 	private long[] camImages_time_ms = null;

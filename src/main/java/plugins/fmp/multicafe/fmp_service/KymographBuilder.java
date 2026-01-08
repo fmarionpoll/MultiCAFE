@@ -95,7 +95,7 @@ public class KymographBuilder {
 	}
 
 	public void saveComputation(Experiment exp, BuildSeriesOptions options) {
-		exp.xmlSave_MCExperiment();
+		exp.saveExperimentDescriptors();
 	}
 
 	private void getCapillariesToProcess(Experiment exp, BuildSeriesOptions options) {

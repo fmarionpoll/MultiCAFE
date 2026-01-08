@@ -23,7 +23,7 @@ public class BuildKymosFromCapillaries extends BuildSeries {
 		KymographBuilder builder = new KymographBuilder();
 		if (builder.buildKymograph(exp, options)) {
 //			builder.saveComputation(exp, options);
-			exp.xmlSave_MCExperiment();
+			exp.saveExperimentDescriptors();
 		}
 
 		// Don't close seqKymos sequence - it will be needed when loading the experiment later

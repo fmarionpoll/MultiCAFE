@@ -127,7 +127,7 @@ public class Infos extends JPanel {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					getExperimentInfosFromDialog(exp);
-					exp.xmlSave_MCExperiment();
+					exp.saveExperimentDescriptors();
 				}
 			}
 		});

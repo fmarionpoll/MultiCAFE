@@ -25,8 +25,8 @@ import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
 import plugins.fmp.multicafe.fmp_experiment.cages.CagesSequenceMapper;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillariesDescription;
-import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillariesKymosMapper;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.ids.CapillaryID;
 import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationDetector;
 import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationTool;
@@ -224,14 +224,14 @@ public class Experiment {
 		this.seqCamData = seqCamData;
 		resultsDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
-		load_MS96_experiment();
+		loadExperimentDescriptors();
 	}
 
 	public Experiment(ExperimentDirectories eADF) {
 		camDataImagesDirectory = eADF.getCameraImagesDirectory();
 		resultsDirectory = eADF.getResultsDirectory();
 		seqCamData = SequenceCamData.builder().withStatus(EnumStatus.FILESTACK).build();
-		load_MS96_experiment();
+		loadExperimentDescriptors();
 
 		ImageLoader imgLoader = seqCamData.getImageLoader();
 		imgLoader.setImagesDirectory(eADF.getCameraImagesDirectory());
@@ -524,7 +524,7 @@ public class Experiment {
 			// Use builder pattern for initialization
 			seqCamData = SequenceCamData.builder().withStatus(EnumStatus.FILESTACK).build();
 		}
-		load_MS96_experiment();
+		loadExperimentDescriptors();
 		getFileIntervalsFromSeqCamData();
 
 		return loadCagesMeasures();
@@ -572,7 +572,7 @@ public class Experiment {
 	public SequenceCamData openSequenceCamData() {
 		loadImagesForSequenceCamData(camDataImagesDirectory);
 		if (seqCamData != null) {
-			load_MS96_experiment();
+			loadExperimentDescriptors();
 			getFileIntervalsFromSeqCamData();
 		}
 		return seqCamData;
@@ -629,14 +629,15 @@ public class Experiment {
 	 * This is the primary entry point for experiment description persistence.
 	 */
 	public boolean xmlLoad_MCExperiment() {
-		return load_MS96_experiment();
+		return loadExperimentDescriptors();
 	}
 
-	public boolean xmlSave_MCExperiment() {
-		return save_MS96_experiment();
+	public boolean saveExperimentDescriptors() {
+		ExperimentPersistence persistence = new ExperimentPersistence();
+		return persistence.saveExperimentDescriptors(this);
 	}
 
-	public boolean load_MS96_experiment() {
+	public boolean loadExperimentDescriptors() {
 		if (resultsDirectory == null && seqCamData != null) {
 			camDataImagesDirectory = seqCamData.getImagesDirectory();
 			resultsDirectory = camDataImagesDirectory + File.separator + RESULTS;
@@ -756,75 +757,6 @@ public class Experiment {
 		}
 	}
 
-	public boolean save_MS96_experiment() {
-		try {
-			final Document doc = XMLUtil.createDocument(true);
-			if (doc == null) {
-				System.err.println("ERROR: Could not create XML document");
-				return false;
-			}
-
-			Node xmlRoot = XMLUtil.getRootElement(doc, true);
-			Node node = XMLUtil.setElement(xmlRoot, ID_MCEXPERIMENT);
-			if (node == null) {
-				System.err.println("ERROR: Could not create MCexperiment node");
-				return false;
-			}
-
-			// Version information
-			XMLUtil.setElementValue(node, ID_VERSION, ID_VERSIONNUM);
-			// System.out.println("Saving XML Version: " + ID_VERSIONNUM);
-
-			// Save ImageLoader configuration
-			ImageLoader imgLoader = seqCamData.getImageLoader();
-			long frameFirst = imgLoader.getAbsoluteIndexFirstImage();
-			long nImages = imgLoader.getFixedNumberOfImages();
-			XMLUtil.setElementLongValue(node, ID_FRAMEFIRST, frameFirst);
-			XMLUtil.setElementLongValue(node, ID_NFRAMES, nImages);
-
-			// Save TimeManager configuration
-			TimeManager timeManager = seqCamData.getTimeManager();
-			long firstMs = timeManager.getFirstImageMs();
-			long lastMs = timeManager.getLastImageMs();
-			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, firstMs);
-			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, lastMs);
-			XMLUtil.setElementLongValue(node, ID_FRAMEDELTA, timeManager.getDeltaImage());
-			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, timeManager.getBinFirst_ms());
-			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, timeManager.getBinLast_ms());
-			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, timeManager.getBinDurationMs());
-
-			// Save properties
-			try {
-				prop.saveXML_Properties(node);
-				// System.out.println("Experiment properties saved successfully");
-			} catch (Exception e) {
-				System.err.println("ERROR: Failed to save experiment properties: " + e.getMessage());
-				return false;
-			}
-
-			// Save generator program (optional field)
-			// Auto-determine if not already set
-			String programToSave = getOrDetermineGeneratorProgram();
-			if (programToSave != null) {
-				generatorProgram = programToSave;
-				XMLUtil.setElementValue(node, ID_GENERATOR_PROGRAM, generatorProgram);
-			}
-
-			if (camDataImagesDirectory == null)
-				camDataImagesDirectory = seqCamData.getImagesDirectory();
-			XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, camDataImagesDirectory);
-
-			// Always save to v2_ format
-			String tempname = concatenateExptDirectoryWithSubpathAndName(null, ID_V2_EXPERIMENT_XML);
-			boolean success = XMLUtil.saveDocument(doc, tempname);
-			return success;
-		} catch (Exception e) {
-			System.err.println("ERROR during experiment XML saving: " + e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
-	}
-
 	private void ugly_checkOffsetValues() {
 		if (seqCamData.getFirstImageMs() < 0)
 			seqCamData.setFirstImageMs(0);
@@ -852,9 +784,10 @@ public class Experiment {
 	 * <p>
 	 * Responsibilities:
 	 * <ul>
-	 *   <li>load cage description from results directory (CSV/XML with migration),</li>
-	 *   <li>load cage measures from bin directory,</li>
-	 *   <li>materialize cages and spots as ROIs on {@link SequenceCamData}.</li>
+	 * <li>load cage description from results directory (CSV/XML with
+	 * migration),</li>
+	 * <li>load cage measures from bin directory,</li>
+	 * <li>materialize cages and spots as ROIs on {@link SequenceCamData}.</li>
 	 * </ul>
 	 */
 	public boolean load_MS96_cages() {
@@ -1855,13 +1788,15 @@ public class Experiment {
 		// Dispatch capillaries to cages using ID-based approach
 		for (Capillary cap : capillaries.getList()) {
 			int kymographIndex = cap.getKymographIndex();
-			// Skip capillaries with invalid kymographIndex (not properly loaded from persistence)
+			// Skip capillaries with invalid kymographIndex (not properly loaded from
+			// persistence)
 			if (kymographIndex < 0) {
-				Logger.warn("Experiment.dispatchCapillariesToCages() - Skipping capillary with invalid kymographIndex (-1): " 
-					+ cap.getKymographName() + ". This may indicate incomplete persistence data.");
+				Logger.warn(
+						"Experiment.dispatchCapillariesToCages() - Skipping capillary with invalid kymographIndex (-1): "
+								+ cap.getKymographName() + ". This may indicate incomplete persistence data.");
 				continue;
 			}
-			
+
 			int nflies = cap.getProperties().nFlies;
 			int cageID = cap.getCageID();
 			Cage cage = cages.getCageFromID(cageID);

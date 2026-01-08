@@ -95,7 +95,7 @@ public class DescriptorIndex {
 						lexp.loadPropertiesIfNeeded();
 						props = lexp.getCachedProperties();
 					} else {
-						exp.load_MS96_experiment();
+						exp.loadExperimentDescriptors();
 						props = exp.getProperties();
 					}
 					if (props == null || resDir == null)
@@ -223,7 +223,7 @@ public class DescriptorIndex {
 					lexp.loadPropertiesIfNeeded();
 					props = lexp.getCachedProperties();
 				} else {
-					exp.load_MS96_experiment();
+					exp.loadExperimentDescriptors();
 					props = exp.getProperties();
 				}
 			}

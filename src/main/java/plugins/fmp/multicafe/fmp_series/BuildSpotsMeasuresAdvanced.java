@@ -133,7 +133,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	}
 
 	private boolean loadExperimentDataToMeasureSpots(Experiment exp) {
-		exp.load_MS96_experiment();
+		exp.loadExperimentDescriptors();
 		exp.getSeqCamData().attachSequence(
 				exp.getSeqCamData().getImageLoader().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 
@@ -152,7 +152,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		exp.getCages().transferMeasuresToLevel2D(exp.getSpotsArray());
 		exp.getCages().medianFilterFromSumToSumClean(exp.getSpotsArray());
 
-		exp.save_MS96_experiment();
+		exp.saveExperimentDescriptors();
 		exp.save_MS96_spotsMeasures();
 	}
 

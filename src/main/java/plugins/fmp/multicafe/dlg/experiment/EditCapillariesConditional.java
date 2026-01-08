@@ -230,7 +230,7 @@ public class EditCapillariesConditional extends JPanel {
 			// Wait for any ongoing async save operations to complete
 			waitForSaveToComplete(exp, i);
 
-			exp.load_MS96_experiment();
+			exp.loadExperimentDescriptors();
 			exp.load_MS96_cages();
 
 			// Only load capillaries if needed
@@ -248,7 +248,7 @@ public class EditCapillariesConditional extends JPanel {
 					exp.saveMCCapillaries_Only();
 					exp.saveCapillaries();
 				} else {
-					exp.save_MS96_experiment();
+					exp.saveExperimentDescriptors();
 					exp.save_MS96_cages();
 				}
 				totalUpdated += updated;

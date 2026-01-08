@@ -6,6 +6,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
+import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
+import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 public class ExperimentPersistence {
 
@@ -20,6 +23,9 @@ public class ExperimentPersistence {
 	private final static String ID_FIRSTKYMOCOLMS = "firstKymoColMs";
 	private final static String ID_LASTKYMOCOLMS = "lastKymoColMs";
 	private final static String ID_BINKYMOCOLMS = "binKymoColMs";
+	private final static String ID_FRAMEFIRST = "indexFrameFirst";
+	private final static String ID_NFRAMES = "nFrames";
+	private final static String ID_FRAMEDELTA = "indexFrameDelta";
 
 	private final static String ID_IMAGESDIRECTORY = "imagesDirectory";
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
@@ -43,11 +49,11 @@ public class ExperimentPersistence {
 	// Public API methods (delegate to nested classes)
 	// ========================================================================
 
-	public boolean xmlLoad_MCExperiment(Experiment exp) {
+	public boolean loadExperimentDescriptors(Experiment exp) {
 		return Persistence.load(exp);
 	}
 
-	public boolean xmlSave_MCExperiment(Experiment exp) {
+	public boolean saveExperimentDescriptors(Experiment exp) {
 		return Persistence.save(exp);
 	}
 
@@ -58,26 +64,26 @@ public class ExperimentPersistence {
 	public static class Persistence {
 
 		/**
-		 * Loads experiment from XML file.
-		 * Tries v2_ format first, then falls back to legacy formats.
+		 * Loads experiment from XML file. Tries v2_ format first, then falls back to
+		 * legacy formats.
 		 */
 		public static boolean load(Experiment exp) {
 			// Priority 1: Try new v2_ format
 			String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_V2_EXPERIMENT_XML);
 			boolean found = xmlLoadExperiment(exp, filename);
-			
+
 			// Priority 2: Try legacy MCexperiment.xml
 			if (!found) {
 				filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
 				found = xmlLoadExperiment(exp, filename);
 			}
-			
+
 			// Priority 3: Try legacy MS96_experiment.xml
 			if (!found) {
 				filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MS96_EXPERIMENT_XML_LEGACY);
 				found = xmlLoadExperiment(exp, filename);
 			}
-			
+
 			// Priority 4: Try loading from images directory (legacy behavior)
 			if (!found && exp.getSeqCamData() != null) {
 				String imagesDirectory = exp.getSeqCamData().getImagesDirectory();
@@ -90,14 +96,15 @@ public class ExperimentPersistence {
 		}
 
 		/**
-		 * Saves experiment to XML file.
-		 * Always saves to v2_ format.
+		 * Saves experiment to XML file. Always saves to v2_ format.
 		 */
 		public static boolean save(Experiment exp) {
 			// Always save to v2_ format
 			String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_V2_EXPERIMENT_XML);
 			return xmlSaveExperiment(exp, filename);
 		}
+
+		// ------------------------------------------
 
 		private static boolean xmlLoadExperiment(Experiment exp, String csFileName) {
 			final Document doc = XMLUtil.loadDocument(csFileName);
@@ -110,9 +117,10 @@ public class ExperimentPersistence {
 			String version = XMLUtil.getElementValue(node, ID_VERSION, ID_VERSIONNUM);
 			if (!version.equals(ID_VERSIONNUM))
 				return false;
-			exp.setCamImageFirst_ms(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0));
-			exp.setCamImageLast_ms(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0));
-			if (exp.getCamImageLast_ms() <= 0) {
+
+			exp.setCamImageFirst_ms(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, -1));
+			exp.setCamImageLast_ms(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, -1));
+			if (exp.getCamImageLast_ms() < 0) {
 				exp.setCamImageFirst_ms(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGE, 0) * 60000);
 				exp.setCamImageLast_ms(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0) * 60000);
 			}
@@ -125,25 +133,65 @@ public class ExperimentPersistence {
 			if (exp.getKymoBin_ms() < 0)
 				exp.setKymoBin_ms(60000); // Default value
 
-			// check offsets
-			if (exp.getCamImageFirst_ms() < 0)
-				exp.setCamImageFirst_ms(0);
-			if (exp.getCamImageLast_ms() < 0)
-				exp.setCamImageLast_ms(0);
-			if (exp.getKymoFirst_ms() < 0)
-				exp.setKymoFirst_ms(0);
-			if (exp.getKymoLast_ms() < 0)
-				exp.setKymoLast_ms(0);
+			// Load ImageLoader configuration
+			if (exp.getSeqCamData() != null) {
+				ImageLoader imgLoader = exp.getSeqCamData().getImageLoader();
+				long frameFirst = XMLUtil.getElementLongValue(node, ID_FRAMEFIRST, 0);
+				if (frameFirst < 0)
+					frameFirst = 0;
+				imgLoader.setAbsoluteIndexFirstImage(frameFirst);
 
-			if (exp.getBoxID() != null && exp.getBoxID().contentEquals("..")) {
-				exp.setBoxID(XMLUtil.getElementValue(node, ID_BOXID, ".."));
-				exp.setExperiment(XMLUtil.getElementValue(node, ID_EXPERIMENT, ".."));
-				exp.setComment1(XMLUtil.getElementValue(node, ID_COMMENT1, ".."));
-				exp.setComment2(XMLUtil.getElementValue(node, ID_COMMENT2, ".."));
-				exp.setStrain(XMLUtil.getElementValue(node, ID_STRAIN, ".."));
-				exp.setSex(XMLUtil.getElementValue(node, ID_SEX, ".."));
-				exp.setCondition1(XMLUtil.getElementValue(node, ID_COND1, ".."));
-				exp.setCondition2(XMLUtil.getElementValue(node, ID_COND2, ".."));
+				long nImages = XMLUtil.getElementLongValue(node, ID_NFRAMES, -1);
+				if (nImages > 0) {
+					imgLoader.setFixedNumberOfImages(nImages);
+					imgLoader.setNTotalFrames((int) (nImages - frameFirst));
+				} else {
+					int loadedImagesCount = imgLoader.getImagesCount();
+					if (loadedImagesCount > 0) {
+						nImages = loadedImagesCount + frameFirst;
+						imgLoader.setFixedNumberOfImages(nImages);
+						imgLoader.setNTotalFrames((int) (nImages - frameFirst));
+					}
+				}
+
+				// Load TimeManager configuration
+				TimeManager timeManager = exp.getSeqCamData().getTimeManager();
+				long firstMs = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, -1);
+				if (firstMs >= 0)
+					timeManager.setFirstImageMs(firstMs);
+				long lastMs = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, -1);
+				if (lastMs >= 0)
+					timeManager.setLastImageMs(lastMs);
+				if (firstMs >= 0 && lastMs >= 0) {
+					long durationMs = lastMs - firstMs;
+					timeManager.setDurationMs(durationMs);
+				}
+				long frameDelta = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
+				timeManager.setDeltaImage(frameDelta);
+				long binFirstMs = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
+				if (binFirstMs >= 0)
+					timeManager.setBinFirst_ms(binFirstMs);
+				long binLastMs = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
+				if (binLastMs >= 0)
+					timeManager.setBinLast_ms(binLastMs);
+				long binDurationMs = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
+				if (binDurationMs >= 0)
+					timeManager.setBinDurationMs(binDurationMs);
+			}
+
+			// Try to compute from sequenceCamData if still uninitialized (-1)
+			if (exp.getCamImageFirst_ms() < 0 || exp.getCamImageLast_ms() < 0) {
+				if (exp.getSeqCamData() != null) {
+					exp.getFileIntervalsFromSeqCamData();
+				}
+			}
+
+			// Load properties with error handling
+			try {
+				exp.getProperties().loadXML_Properties(node);
+			} catch (Exception e) {
+				Logger.warn("ExperimentPersistence.xmlLoadExperiment() - Failed to load experiment properties: "
+						+ e.getMessage());
 			}
 			String generatorProgram = XMLUtil.getElementValue(node, ID_GENERATOR_PROGRAM, null);
 			if (generatorProgram != null) {
@@ -161,24 +209,65 @@ public class ExperimentPersistence {
 					return false;
 
 				XMLUtil.setElementValue(node, ID_VERSION, ID_VERSIONNUM);
-				XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, exp.getCamImageFirst_ms());
-				XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, exp.getCamImageLast_ms());
+
+				// Check if values are uninitialized (-1) and attempt to compute from
+				// sequenceCamData
+				long firstMs = exp.getCamImageFirst_ms();
+				long lastMs = exp.getCamImageLast_ms();
+
+				if (firstMs < 0 || lastMs <= 0) {
+					// Attempt to compute from sequenceCamData
+					if (exp.getSeqCamData() != null) {
+						firstMs = exp.getSeqCamData().getFirstImageMs();
+						lastMs = exp.getSeqCamData().getLastImageMs();
+						if (firstMs < 0 || lastMs < 0) {
+							exp.getFileIntervalsFromSeqCamData();
+							firstMs = exp.getCamImageFirst_ms();
+							lastMs = exp.getCamImageLast_ms();
+						}
+					}
+
+					// If still uninitialized after attempting computation, log a warning
+					if (firstMs < 0 || lastMs < 0) {
+						Logger.warn(
+								"ExperimentPersistence.xmlSaveExperiment() - Could not compute fileTimeImageFirstMs/LastMs from sequenceCamData. Saving as -1.");
+					} else {
+						exp.setCamImageFirst_ms(firstMs);
+						exp.setCamImageLast_ms(lastMs);
+					}
+				}
+
+				XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, firstMs);
+				XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, lastMs);
 
 				XMLUtil.setElementLongValue(node, ID_BINT0, exp.getBinT0());
 				XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, exp.getKymoFirst_ms());
 				XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, exp.getKymoLast_ms());
 				XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, exp.getKymoBin_ms());
 
-				XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, exp.getImagesDirectory());
+				// Save ImageLoader configuration
+				if (exp.getSeqCamData() != null) {
+					ImageLoader imgLoader = exp.getSeqCamData().getImageLoader();
+					long frameFirst = imgLoader.getAbsoluteIndexFirstImage();
+					long nImages = imgLoader.getFixedNumberOfImages();
+					XMLUtil.setElementLongValue(node, ID_FRAMEFIRST, frameFirst);
+					XMLUtil.setElementLongValue(node, ID_NFRAMES, nImages);
 
-				XMLUtil.setElementValue(node, ID_BOXID, exp.getBoxID());
-				XMLUtil.setElementValue(node, ID_EXPERIMENT, exp.getExperiment());
-				XMLUtil.setElementValue(node, ID_COMMENT1, exp.getComment1());
-				XMLUtil.setElementValue(node, ID_COMMENT2, exp.getComment2());
-				XMLUtil.setElementValue(node, ID_STRAIN, exp.getStrain());
-				XMLUtil.setElementValue(node, ID_SEX, exp.getSex());
-				XMLUtil.setElementValue(node, ID_COND1, exp.getCondition1());
-				XMLUtil.setElementValue(node, ID_COND2, exp.getCondition2());
+					// Save TimeManager configuration
+					TimeManager timeManager = exp.getSeqCamData().getTimeManager();
+					XMLUtil.setElementLongValue(node, ID_FRAMEDELTA, timeManager.getDeltaImage());
+				}
+
+				if (exp.getImagesDirectory() != null)
+					XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, exp.getImagesDirectory());
+
+				// Save properties using ExperimentProperties.saveXML_Properties()
+				try {
+					exp.getProperties().saveXML_Properties(node);
+				} catch (Exception e) {
+					Logger.warn("ExperimentPersistence.xmlSaveExperiment() - Failed to save experiment properties: "
+							+ e.getMessage());
+				}
 
 				// Save generator program (optional field)
 				// Auto-determine if not already set - Experiment class handles detection

@@ -75,7 +75,7 @@ public class BuildKymosFromSpots extends BuildSeries {
 //		}
 //		waitFuturesCompletion(processor, futuresArray, progressBar);
 		progressBar.close();
-		exp.save_MS96_experiment();
+		exp.saveExperimentDescriptors();
 	}
 
 	private boolean buildKymo(Experiment exp) {

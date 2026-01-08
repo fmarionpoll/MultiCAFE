@@ -152,7 +152,7 @@ public abstract class XLSExport {
 				}
 
 				// Ensure properties are loaded (reload to ensure they're up to date)
-				exp.load_MS96_experiment();
+				exp.loadExperimentDescriptors();
 				exp.load_MS96_spotsMeasures();
 
 				// Ensure bin directory is set before loading capillaries
@@ -372,7 +372,7 @@ public abstract class XLSExport {
 	protected void writeExperimentProperties(SXSSFSheet sheet, Point pt, boolean transpose, Experiment exp,
 			String charSeries) {
 		// Ensure experiment properties are loaded
-		exp.load_MS96_experiment();
+		exp.loadExperimentDescriptors();
 		ExperimentProperties props = exp.getProperties();
 
 		XLSUtils.setFieldValueAtColumn(sheet, pt, transpose, props, EnumXLSColumnHeader.EXP_BOXID, charSeries);

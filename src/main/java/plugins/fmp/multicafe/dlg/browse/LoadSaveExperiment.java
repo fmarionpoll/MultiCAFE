@@ -896,7 +896,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				}
 				
 				if (exp.getSeqCamData() != null) {
-					exp.xmlSave_MCExperiment();
+					exp.saveExperimentDescriptors();
 					
 					// Save capillaries using new dual-file system (descriptions + measures)
 					exp.saveCapillaries();
