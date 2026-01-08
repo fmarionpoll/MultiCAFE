@@ -87,8 +87,12 @@ public class KymographBuilder {
 
 		SequenceCamData seqCamData = exp.getSeqCamData();
 		int sizeC = seqCamData.getSequence().getSizeC();
-		if (options.doCreateBinDir)
-			exp.setBinSubDirectory(exp.getBinNameFromKymoFrameStep());
+		if (options.doCreateBinDir) {
+			String binDir = exp.getBinNameFromKymoFrameStep();
+			exp.setBinSubDirectory(binDir);
+			// Save bin description with current parameters
+			exp.saveBinDescription(binDir);
+		}
 		
 		exportCapillaryKymographs(exp, sizeC);
 		return true;

@@ -126,12 +126,49 @@ public class ExperimentPersistence {
 			}
 
 			exp.setBinT0(XMLUtil.getElementLongValue(node, ID_BINT0, 0));
-			exp.setKymoFirst_ms(XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1));
-			exp.setKymoLast_ms(XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1));
-			exp.setKymoBin_ms(XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1));
-
-			if (exp.getKymoBin_ms() < 0)
-				exp.setKymoBin_ms(60000); // Default value
+			
+			// Migration: Extract bin parameters from old XML format and migrate to bin directory
+			long firstKymoColMs = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
+			long lastKymoColMs = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
+			long binKymoColMs = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
+			
+			if (binKymoColMs < 0)
+				binKymoColMs = 60000; // Default value
+			
+			// If bin parameters exist in old format, migrate them to bin directory
+			if (firstKymoColMs >= 0 || lastKymoColMs >= 0 || binKymoColMs >= 0) {
+				// Determine target bin directory (use current binDirectory or default to bin_60)
+				String targetBinDir = exp.getBinSubDirectory();
+				if (targetBinDir == null) {
+					targetBinDir = Experiment.BIN + (binKymoColMs / 1000);
+				}
+				
+				// Create BinDescription and save to bin directory
+				BinDescription binDesc = new BinDescription();
+				if (firstKymoColMs >= 0)
+					binDesc.setFirstKymoColMs(firstKymoColMs);
+				if (lastKymoColMs >= 0)
+					binDesc.setLastKymoColMs(lastKymoColMs);
+				binDesc.setBinKymoColMs(binKymoColMs);
+				binDesc.setBinDirectory(targetBinDir);
+				
+				// Save to bin directory
+				String resultsDir = exp.getResultsDirectory();
+				if (resultsDir != null) {
+					String binFullDir = resultsDir + File.separator + targetBinDir;
+					BinDescriptionPersistence binPersistence = new BinDescriptionPersistence();
+					binPersistence.save(binDesc, binFullDir);
+					
+					// Load into active bin description
+					exp.loadBinDescription(targetBinDir);
+				}
+			} else {
+				// No bin parameters in XML, try to load from current bin directory
+				String currentBinDir = exp.getBinSubDirectory();
+				if (currentBinDir != null) {
+					exp.loadBinDescription(currentBinDir);
+				}
+			}
 
 			// Load ImageLoader configuration
 			if (exp.getSeqCamData() != null) {
@@ -168,15 +205,8 @@ public class ExperimentPersistence {
 				}
 				long frameDelta = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
 				timeManager.setDeltaImage(frameDelta);
-				long binFirstMs = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
-				if (binFirstMs >= 0)
-					timeManager.setBinFirst_ms(binFirstMs);
-				long binLastMs = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
-				if (binLastMs >= 0)
-					timeManager.setBinLast_ms(binLastMs);
-				long binDurationMs = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
-				if (binDurationMs >= 0)
-					timeManager.setBinDurationMs(binDurationMs);
+				// Bin parameters are now stored in bin directories, not in experiment XML
+				// TimeManager bin parameters will be set from activeBinDescription when bin is loaded
 			}
 
 			// Try to compute from sequenceCamData if still uninitialized (-1)
@@ -241,9 +271,8 @@ public class ExperimentPersistence {
 				XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, lastMs);
 
 				XMLUtil.setElementLongValue(node, ID_BINT0, exp.getBinT0());
-				XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, exp.getKymoFirst_ms());
-				XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, exp.getKymoLast_ms());
-				XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, exp.getKymoBin_ms());
+				// Bin parameters (firstKymoColMs, lastKymoColMs, binKymoColMs) are now stored
+				// in v2_bindescription.xml files in each bin directory, not in v2_Experiment.xml
 
 				// Save ImageLoader configuration
 				if (exp.getSeqCamData() != null) {

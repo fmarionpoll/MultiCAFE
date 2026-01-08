@@ -70,6 +70,9 @@ public class Experiment {
 	private ExperimentTimeManager timeManager = new ExperimentTimeManager();
 	private ExperimentProperties prop = new ExperimentProperties();
 
+	private BinDescription activeBinDescription = new BinDescription();
+	private BinDescriptionPersistence binDescriptionPersistence = new BinDescriptionPersistence();
+
 	public Experiment chainToPreviousExperiment = null;
 	public Experiment chainToNextExperiment = null;
 	public long chainImageFirst_ms = 0;
@@ -159,26 +162,44 @@ public class Experiment {
 	}
 
 	public long getKymoFirst_ms() {
+		if (activeBinDescription != null && activeBinDescription.getFirstKymoColMs() >= 0) {
+			return activeBinDescription.getFirstKymoColMs();
+		}
 		return timeManager.getKymoFirst_ms();
 	}
 
 	public void setKymoFirst_ms(long ms) {
+		if (activeBinDescription != null) {
+			activeBinDescription.setFirstKymoColMs(ms);
+		}
 		timeManager.setKymoFirst_ms(ms);
 	}
 
 	public long getKymoLast_ms() {
+		if (activeBinDescription != null && activeBinDescription.getLastKymoColMs() >= 0) {
+			return activeBinDescription.getLastKymoColMs();
+		}
 		return timeManager.getKymoLast_ms();
 	}
 
 	public void setKymoLast_ms(long ms) {
+		if (activeBinDescription != null) {
+			activeBinDescription.setLastKymoColMs(ms);
+		}
 		timeManager.setKymoLast_ms(ms);
 	}
 
 	public long getKymoBin_ms() {
+		if (activeBinDescription != null && activeBinDescription.getBinKymoColMs() > 0) {
+			return activeBinDescription.getBinKymoColMs();
+		}
 		return timeManager.getKymoBin_ms();
 	}
 
 	public void setKymoBin_ms(long ms) {
+		if (activeBinDescription != null) {
+			activeBinDescription.setBinKymoColMs(ms);
+		}
 		timeManager.setKymoBin_ms(ms);
 	}
 
@@ -634,7 +655,12 @@ public class Experiment {
 
 	public boolean saveExperimentDescriptors() {
 		ExperimentPersistence persistence = new ExperimentPersistence();
-		return persistence.saveExperimentDescriptors(this);
+		boolean saved = persistence.saveExperimentDescriptors(this);
+		// Also save bin description if bin directory is set
+		if (saved && binDirectory != null) {
+			saveBinDescription();
+		}
+		return saved;
 	}
 
 	public boolean loadExperimentDescriptors() {
@@ -724,12 +750,46 @@ public class Experiment {
 			timeManager.setDurationMs(durationMs);
 			long frameDelta = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
 			timeManager.setDeltaImage(frameDelta);
+			
+			// Migration: Extract bin parameters from old XML format and migrate to bin directory
 			long binFirstMs = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
-			timeManager.setBinFirst_ms(binFirstMs);
 			long binLastMs = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
-			timeManager.setBinLast_ms(binLastMs);
 			long binDurationMs = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
-			timeManager.setBinDurationMs(binDurationMs);
+			
+			if (binDurationMs < 0)
+				binDurationMs = 60000; // Default value
+			
+			// If bin parameters exist in old format, migrate them to bin directory
+			if (binFirstMs >= 0 || binLastMs >= 0 || binDurationMs >= 0) {
+				// Determine target bin directory (use current binDirectory or default to bin_60)
+				String targetBinDir = binDirectory;
+				if (targetBinDir == null) {
+					targetBinDir = BIN + (binDurationMs / 1000);
+				}
+				
+				// Create BinDescription and save to bin directory
+				BinDescription binDesc = new BinDescription();
+				if (binFirstMs >= 0)
+					binDesc.setFirstKymoColMs(binFirstMs);
+				if (binLastMs >= 0)
+					binDesc.setLastKymoColMs(binLastMs);
+				binDesc.setBinKymoColMs(binDurationMs);
+				binDesc.setBinDirectory(targetBinDir);
+				
+				// Save to bin directory
+				if (resultsDirectory != null) {
+					String binFullDir = resultsDirectory + File.separator + targetBinDir;
+					binDescriptionPersistence.save(binDesc, binFullDir);
+					
+					// Load into active bin description
+					loadBinDescription(targetBinDir);
+				}
+			} else {
+				// No bin parameters in XML, try to load from current bin directory
+				if (binDirectory != null) {
+					loadBinDescription(binDirectory);
+				}
+			}
 
 			// Load properties with error handling
 			try {
@@ -1468,6 +1528,66 @@ public class Experiment {
 
 	public void setBinSubDirectory(String bin) {
 		binDirectory = bin;
+		if (bin != null) {
+			loadBinDescription(bin);
+		}
+	}
+
+	/**
+	 * Loads bin description from the specified bin directory.
+	 * 
+	 * @param binSubDirectory the bin subdirectory name (e.g., "bin_60")
+	 * @return true if successful
+	 */
+	public boolean loadBinDescription(String binSubDirectory) {
+		if (binSubDirectory == null || resultsDirectory == null) {
+			return false;
+		}
+		String binFullDir = resultsDirectory + File.separator + binSubDirectory;
+		boolean loaded = binDescriptionPersistence.load(activeBinDescription, binFullDir);
+		if (loaded) {
+			activeBinDescription.setBinDirectory(binSubDirectory);
+			// Sync with TimeManager for backward compatibility
+			timeManager.setKymoFirst_ms(activeBinDescription.getFirstKymoColMs());
+			timeManager.setKymoLast_ms(activeBinDescription.getLastKymoColMs());
+			timeManager.setKymoBin_ms(activeBinDescription.getBinKymoColMs());
+		} else {
+			// If loading failed, initialize from TimeManager (for backward compatibility)
+			activeBinDescription.setFirstKymoColMs(timeManager.getKymoFirst_ms());
+			activeBinDescription.setLastKymoColMs(timeManager.getKymoLast_ms());
+			activeBinDescription.setBinKymoColMs(timeManager.getKymoBin_ms());
+			activeBinDescription.setBinDirectory(binSubDirectory);
+		}
+		return loaded;
+	}
+
+	/**
+	 * Saves bin description to the specified bin directory.
+	 * 
+	 * @param binSubDirectory the bin subdirectory name (e.g., "bin_60")
+	 * @return true if successful
+	 */
+	public boolean saveBinDescription(String binSubDirectory) {
+		if (binSubDirectory == null || resultsDirectory == null) {
+			return false;
+		}
+		// Update activeBinDescription with current values before saving
+		activeBinDescription.setFirstKymoColMs(getKymoFirst_ms());
+		activeBinDescription.setLastKymoColMs(getKymoLast_ms());
+		activeBinDescription.setBinKymoColMs(getKymoBin_ms());
+		activeBinDescription.setBinDirectory(binSubDirectory);
+		
+		String binFullDir = resultsDirectory + File.separator + binSubDirectory;
+		return binDescriptionPersistence.save(activeBinDescription, binFullDir);
+	}
+
+	/**
+	 * Saves bin description to the currently active bin directory.
+	 * 
+	 * @return true if successful
+	 */
+	public boolean saveBinDescription() {
+		return saveBinDescription(binDirectory);
 	}
 
 	/**
