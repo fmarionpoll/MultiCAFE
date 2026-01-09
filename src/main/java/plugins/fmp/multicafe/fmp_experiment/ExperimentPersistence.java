@@ -64,26 +64,16 @@ public class ExperimentPersistence {
 			String filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_V2_EXPERIMENT_XML);
 			boolean found = xmlLoadExperiment(exp, filename);
 
-			// Priority 2: Try legacy MCexperiment.xml
+			// Priority 2: Try legacy MCexperiment.xml using legacy persistence
 			if (!found) {
-				filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MCEXPERIMENT_XML);
-				found = xmlLoadExperiment(exp, filename);
+				found = ExperimentPersistenceLegacy.loadMCExperiment(exp);
 			}
 
-			// Priority 3: Try legacy MS96_experiment.xml
+			// Priority 3: Try legacy MS96_experiment.xml using legacy persistence
 			if (!found) {
-				filename = concatenateExptDirectoryWithSubpathAndName(exp, null, ID_MS96_EXPERIMENT_XML_LEGACY);
-				found = xmlLoadExperiment(exp, filename);
+				found = ExperimentPersistenceLegacy.loadMS96Experiment(exp);
 			}
 
-			// Priority 4: Try loading from images directory (legacy behavior)
-			if (!found && exp.getSeqCamData() != null) {
-				String imagesDirectory = exp.getSeqCamData().getImagesDirectory();
-				if (imagesDirectory != null) {
-					filename = imagesDirectory + File.separator + ID_MCEXPERIMENT_XML;
-					found = xmlLoadExperiment(exp, filename);
-				}
-			}
 			return found;
 		}
 
@@ -98,6 +88,10 @@ public class ExperimentPersistence {
 
 		// ------------------------------------------
 
+		/**
+		 * Loads experiment from v2_ format XML file.
+		 * Legacy formats are handled by ExperimentPersistenceLegacy.
+		 */
 		private static boolean xmlLoadExperiment(Experiment exp, String csFileName) {
 			final Document doc = XMLUtil.loadDocument(csFileName);
 			if (doc == null)
@@ -119,8 +113,7 @@ public class ExperimentPersistence {
 
 			exp.setBinT0(XMLUtil.getElementLongValue(node, ID_BINT0, 0));
 
-			// Migration: Extract bin parameters from old XML format and migrate to bin
-			// directory
+			// Migration: Extract bin parameters from old XML format and migrate to bin directory
 			long firstKymoColMs = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
 			long lastKymoColMs = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
 			long binKymoColMs = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
@@ -130,8 +123,7 @@ public class ExperimentPersistence {
 
 			// If bin parameters exist in old format, migrate them to bin directory
 			if (firstKymoColMs >= 0 || lastKymoColMs >= 0 || binKymoColMs >= 0) {
-				// Determine target bin directory (use current binDirectory or default to
-				// bin_60)
+				// Determine target bin directory (use current binDirectory or default to bin_60)
 				String targetBinDir = exp.getBinSubDirectory();
 				if (targetBinDir != null) {
 					// Extract just the subdirectory name if binDirectory is a full path
@@ -211,8 +203,7 @@ public class ExperimentPersistence {
 				long frameDelta = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
 				timeManager.setDeltaImage(frameDelta);
 				// Bin parameters are now stored in bin directories, not in experiment XML
-				// TimeManager bin parameters will be set from activeBinDescription when bin is
-				// loaded
+				// TimeManager bin parameters will be set from activeBinDescription when bin is loaded
 			}
 
 			// Try to compute from sequenceCamData if still uninitialized (-1)

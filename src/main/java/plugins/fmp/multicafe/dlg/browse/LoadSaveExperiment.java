@@ -530,7 +530,13 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	 */
 	private void loadCapillariesData(Experiment exp, ProgressFrame progressFrame) {
 		progressFrame.setMessage("Load capillaries");
-		exp.loadCamDataCapillaries();
+		boolean loaded = exp.loadCamDataCapillaries();
+		if (loaded) {
+			int capCount = exp.getCapillaries() != null ? exp.getCapillaries().getList().size() : 0;
+			Logger.info("LoadSaveExperiment:loadCapillariesData() Loaded " + capCount + " capillaries");
+		} else {
+			Logger.warn("LoadSaveExperiment:loadCapillariesData() Failed to load capillaries");
+		}
 	}
 
 	/**
@@ -541,13 +547,23 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	 * @param progressFrame  The progress frame to update
 	 */
 	private void loadKymographsAndMeasures(Experiment exp, String selectedBinDir, ProgressFrame progressFrame) {
+		// Check if capillaries are loaded before trying to load kymographs
+		if (exp.getCapillaries() == null || exp.getCapillaries().getList().size() == 0) {
+			Logger.warn("LoadSaveExperiment:loadKymographsAndMeasures() No capillaries loaded, cannot load kymographs");
+			return;
+		}
+		
 		progressFrame.setMessage("Load kymographs");
 		boolean kymosLoaded = false;
 		if (selectedBinDir != null) {
 			kymosLoaded = parent0.paneKymos.tabLoadSave.loadDefaultKymos(exp);
 			if (kymosLoaded && exp.getSeqKymos() != null) {
 				parent0.paneKymos.tabDisplay.displayUpdateOnSwingThread();
+			} else {
+				Logger.warn("LoadSaveExperiment:loadKymographsAndMeasures() Failed to load kymographs (loaded: " + kymosLoaded + ", seqKymos: " + (exp.getSeqKymos() != null) + ")");
 			}
+		} else {
+			Logger.warn("LoadSaveExperiment:loadKymographsAndMeasures() No bin directory selected, cannot load kymographs");
 		}
 
 		progressFrame.setMessage("Load capillary measures");

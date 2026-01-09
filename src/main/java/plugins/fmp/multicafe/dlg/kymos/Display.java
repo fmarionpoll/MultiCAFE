@@ -449,8 +449,12 @@ public class Display extends JPanel implements ViewerListener {
 	}
 
 	private void selectKymographComboItem(int isel) {
+		if (kymographsCombo.getItemCount() == 0) {
+			// Combo box is empty, cannot select any item
+			return;
+		}
 		int icurrent = kymographsCombo.getSelectedIndex();
-		if (isel >= 0 && isel != icurrent)
+		if (isel >= 0 && isel < kymographsCombo.getItemCount() && isel != icurrent)
 			kymographsCombo.setSelectedIndex(isel);
 	}
 

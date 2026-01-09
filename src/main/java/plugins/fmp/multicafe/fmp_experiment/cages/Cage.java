@@ -466,6 +466,14 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			// Load cage measures
 			measures.loadFromXml(xmlVal);
 
+			// Load fly positions (legacy format support)
+			boolean flyPositionsLoaded = xmlLoadFlyPositions(xmlVal);
+			if (flyPositionsLoaded) {
+				System.out.println("Cage.xmlLoadCage() Successfully loaded fly positions for cage " + index);
+			} else {
+				System.out.println("Cage.xmlLoadCage() No fly positions found in XML for cage " + index);
+			}
+
 			// Memory monitoring after loading
 //			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 //			long memoryIncrease = endMemory - startMemory;
