@@ -47,21 +47,23 @@ public class CagesArrayPersistence {
 		// Priority 1: Try new v2_ format (descriptions + measures separate)
 		boolean descriptionsLoaded = Persistence.loadDescription(cages, directory);
 
-		if (!descriptionsLoaded) {
-			// Optionally load ROIs from XML if CSV doesn't have them
-			String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
-			int cagesWithROIsBefore = 0;
-			for (Cage cage : cages.cagesList) {
-				if (cage.getRoi() != null) {
-					cagesWithROIsBefore++;
-				}
-			}
-
-			if (cagesWithROIsBefore < cages.cagesList.size()) {
-				Legacy.xmlLoadCagesROIsOnly(cages, tempName);
-			}
-
+		if (descriptionsLoaded) {
+			// Successfully loaded from v2_ format - return early to prevent legacy loading from overwriting ROIs
 			return true;
+		}
+
+		// v2_ format not found - try fallback options
+		// Optionally load ROIs from XML if CSV doesn't have them
+		String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
+		int cagesWithROIsBefore = 0;
+		for (Cage cage : cages.cagesList) {
+			if (cage.getRoi() != null) {
+				cagesWithROIsBefore++;
+			}
+		}
+
+		if (cagesWithROIsBefore < cages.cagesList.size()) {
+			Legacy.xmlLoadCagesROIsOnly(cages, tempName);
 		}
 
 		// Priority 2: Fall back to legacy combined CSV format
@@ -74,7 +76,6 @@ public class CagesArrayPersistence {
 						cagesAfterCSV, cagesBefore));
 
 				// Optionally load ROIs from XML
-				String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
 				Legacy.xmlLoadCagesROIsOnly(cages, tempName);
 
 				return true;
@@ -85,7 +86,6 @@ public class CagesArrayPersistence {
 
 		// Priority 3: Fall back to XML (legacy format)
 		Logger.warn("CagesArrayPersistence:load_Cages() CSV load failed, falling back to XML");
-		String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
 		boolean xmlLoadSuccess = xmlReadCagesFromFileNoQuestion(cages, tempName);
 		int cagesAfterXML = cages.cagesList.size();
 		Logger.info(String.format("CagesArrayPersistence:load_Cages() After XML load: %d cages", cagesAfterXML));
