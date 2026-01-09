@@ -342,14 +342,14 @@ public class XLSExportMeasuresFromSpotStreaming extends XLSExportSpots {
 	 * Updates progress display.
 	 */
 	private void updateProgress() {
-		int current = processedSpots.get();
-		int total = totalSpots.get();
+//		int current = processedSpots.get();
+//		int total = totalSpots.get();
 
-		if (total > 0) {
-			double progress = (double) current / total * 100.0;
-			// Update progress frame if available
-			// This would integrate with the existing progress reporting system
-		}
+//		if (total > 0) {
+//			double progress = (double) current / total * 100.0;
+//			// Update progress frame if available
+//			// This would integrate with the existing progress reporting system
+//		}
 	}
 
 	/**

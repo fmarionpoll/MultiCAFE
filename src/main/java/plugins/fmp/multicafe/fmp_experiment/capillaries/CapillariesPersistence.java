@@ -28,11 +28,11 @@ public class CapillariesPersistence {
 	public final static String ID_NCAPILLARIES = "N_capillaries";
 	public final static String ID_LISTOFCAPILLARIES = "List_of_capillaries";
 	public final static String ID_CAPILLARY_ = "capillary_";
-	
+
 	// New v2 format filenames
 	public final static String ID_V2_CAPILLARIESARRAY_CSV = "v2_CapillariesArray.csv";
 	public final static String ID_V2_CAPILLARIESARRAYMEASURES_CSV = "v2_CapillariesArrayMeasures.csv";
-	
+
 	// Legacy filenames (for fallback)
 	public final static String ID_CAPILLARIESARRAY_CSV = "CapillariesArray.csv";
 	public final static String ID_CAPILLARIESARRAYMEASURES_CSV = "CapillariesArrayMeasures.csv";
@@ -45,18 +45,18 @@ public class CapillariesPersistence {
 	/**
 	 * Loads capillary descriptions (DESCRIPTION section) from CapillariesArray.csv.
 	 * 
-	 * @param capillaries the Capillaries to populate
+	 * @param capillaries      the Capillaries to populate
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
 	public boolean load_CapillariesArrayDescription(Capillaries capillaries, String resultsDirectory) {
 		return Persistence.loadDescription(capillaries, resultsDirectory);
 	}
-	
+
 	/**
 	 * Loads capillary measures from CapillariesArrayMeasures.csv in bin directory.
 	 * 
-	 * @param capillaries the Capillaries to populate
+	 * @param capillaries  the Capillaries to populate
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
@@ -65,20 +65,21 @@ public class CapillariesPersistence {
 	}
 
 	/**
-	 * Saves capillary descriptions (DESCRIPTION section) to CapillariesArray.csv in results directory.
+	 * Saves capillary descriptions (DESCRIPTION section) to CapillariesArray.csv in
+	 * results directory.
 	 * 
-	 * @param capillaries the Capillaries to save
+	 * @param capillaries      the Capillaries to save
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
 	public boolean saveCapillariesArrayDescription(Capillaries capillaries, String resultsDirectory) {
 		return Persistence.saveDescription(capillaries, resultsDirectory);
 	}
-	
+
 	/**
 	 * Saves capillary measures to CapillariesArrayMeasures.csv in bin directory.
 	 * 
-	 * @param capillaries the Capillaries to save
+	 * @param capillaries  the Capillaries to save
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
@@ -98,51 +99,51 @@ public class CapillariesPersistence {
 	// Legacy methods - private, only for internal use within persistence class
 	// ========================================================================
 
-	private boolean load_Capillaries(Capillaries capillaries, String directory) {
-		return Legacy.load(capillaries, directory);
-	}
-
-	private boolean mergeMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
-		return Legacy.mergeMCCapillaries_Descriptors(capillaries, csFileName);
-	}
-
-	private boolean loadMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
-		return Legacy.loadMCCapillaries_Descriptors(capillaries, csFileName);
-	}
-
-	private boolean xmlLoadOldCapillaries_Only(Capillaries capillaries, String csFileName) {
-		return Legacy.xmlLoadOldCapillaries_Only(capillaries, csFileName);
-	}
-
-	private boolean isResultsDirectory(String directory) {
-		if (directory == null)
-			return false;
-
-		// Normalize path separators
-		String normalizedPath = directory.replace('\\', '/');
-
-		// Check if the path ends with "/results" or is exactly "results"
-		// This prevents saving CSV to results directory
-		if (normalizedPath.endsWith("/results") || normalizedPath.equals("results")) {
-			return true;
-		}
-
-		// Check if the path contains "/results/" as a directory component
-		// but only if it's not followed by "bin" (which would indicate a bin
-		// subdirectory)
-		int resultsIndex = normalizedPath.indexOf("/results/");
-		if (resultsIndex >= 0) {
-			// Extract the part after "results/"
-			String afterResults = normalizedPath.substring(resultsIndex + 9); // "/results/" is 9 chars
-			// If there's nothing after "results/" or it doesn't start with "bin", it's the
-			// results directory
-			if (afterResults.isEmpty() || !afterResults.startsWith("bin")) {
-				return true;
-			}
-		}
-
-		return false;
-	}
+//	private boolean load_Capillaries(Capillaries capillaries, String directory) {
+//		return Legacy.load(capillaries, directory);
+//	}
+//
+//	private boolean mergeMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
+//		return Legacy.mergeMCCapillaries_Descriptors(capillaries, csFileName);
+//	}
+//
+//	private boolean loadMCCapillaries_Descriptors(Capillaries capillaries, String csFileName) {
+//		return Legacy.loadMCCapillaries_Descriptors(capillaries, csFileName);
+//	}
+//
+//	private boolean xmlLoadOldCapillaries_Only(Capillaries capillaries, String csFileName) {
+//		return Legacy.xmlLoadOldCapillaries_Only(capillaries, csFileName);
+//	}
+//
+//	private boolean isResultsDirectory(String directory) {
+//		if (directory == null)
+//			return false;
+//
+//		// Normalize path separators
+//		String normalizedPath = directory.replace('\\', '/');
+//
+//		// Check if the path ends with "/results" or is exactly "results"
+//		// This prevents saving CSV to results directory
+//		if (normalizedPath.endsWith("/results") || normalizedPath.equals("results")) {
+//			return true;
+//		}
+//
+//		// Check if the path contains "/results/" as a directory component
+//		// but only if it's not followed by "bin" (which would indicate a bin
+//		// subdirectory)
+//		int resultsIndex = normalizedPath.indexOf("/results/");
+//		if (resultsIndex >= 0) {
+//			// Extract the part after "results/"
+//			String afterResults = normalizedPath.substring(resultsIndex + 9); // "/results/" is 9 chars
+//			// If there's nothing after "results/" or it doesn't start with "bin", it's the
+//			// results directory
+//			if (afterResults.isEmpty() || !afterResults.startsWith("bin")) {
+//				return true;
+//			}
+//		}
+//
+//		return false;
+//	}
 
 	// ========================================================================
 	// Nested class for current v2 format persistence
@@ -155,7 +156,7 @@ public class CapillariesPersistence {
 		 * Loads capillary descriptions (DESCRIPTION section) from CapillariesArray.csv.
 		 * Tries v2_ format first, then falls back to legacy format.
 		 * 
-		 * @param capillaries the Capillaries to populate
+		 * @param capillaries      the Capillaries to populate
 		 * @param resultsDirectory the results directory
 		 * @return true if successful
 		 */
@@ -180,7 +181,7 @@ public class CapillariesPersistence {
 				BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
 				String row;
 				String sep = csvSep;
-				
+
 				while ((row = csvReader.readLine()) != null) {
 					if (row.charAt(0) == '#')
 						sep = String.valueOf(row.charAt(1));
@@ -218,12 +219,12 @@ public class CapillariesPersistence {
 				return false;
 			}
 		}
-		
+
 		/**
 		 * Loads capillary measures from CapillariesArrayMeasures.csv in bin directory.
 		 * Tries v2_ format first, then falls back to legacy format.
 		 * 
-		 * @param capillaries the Capillaries to populate
+		 * @param capillaries  the Capillaries to populate
 		 * @param binDirectory the bin directory (e.g., results/bin60)
 		 * @return true if successful
 		 */
@@ -250,7 +251,7 @@ public class CapillariesPersistence {
 				String sep = csvSep;
 				boolean seenGulpsFlat = false;
 				boolean measuresLoaded = false;
-				
+
 				while ((row = csvReader.readLine()) != null) {
 					if (row.charAt(0) == '#')
 						sep = String.valueOf(row.charAt(1));
@@ -269,23 +270,23 @@ public class CapillariesPersistence {
 						case "TOPLEVEL":
 						case "TOPRAW":
 							measuresLoaded = true;
-							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPRAW, sep,
-									row.contains("xi"));
+							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPRAW,
+									sep, row.contains("xi"));
 							break;
 						case "TOPLEVEL_CORRECTED":
 							measuresLoaded = true;
-							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPLEVEL, sep,
-									row.contains("xi"));
+							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPLEVEL,
+									sep, row.contains("xi"));
 							break;
 						case "BOTTOMLEVEL":
 							measuresLoaded = true;
-							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.BOTTOMLEVEL, sep,
-									row.contains("xi"));
+							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader,
+									EnumCapillaryMeasures.BOTTOMLEVEL, sep, row.contains("xi"));
 							break;
 						case "TOPDERIVATIVE":
 							measuresLoaded = true;
-							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPDERIVATIVE, sep,
-									row.contains("xi"));
+							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader,
+									EnumCapillaryMeasures.TOPDERIVATIVE, sep, row.contains("xi"));
 							break;
 						case "GULPS":
 						case "GULPS_CORRECTED":
@@ -294,12 +295,14 @@ public class CapillariesPersistence {
 								break;
 							}
 							measuresLoaded = true;
-							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep, true);
+							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS,
+									sep, true);
 							break;
 						case "GULPS_FLAT":
 							seenGulpsFlat = true;
 							measuresLoaded = true;
-							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep, true);
+							Legacy.csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS,
+									sep, true);
 							break;
 						default:
 							break;
@@ -309,16 +312,17 @@ public class CapillariesPersistence {
 				csvReader.close();
 				return measuresLoaded;
 			} catch (Exception e) {
-				Logger.error("CapillariesPersistence:load_CapillariesArrayMeasures() Error: " + e.getMessage(), e, true);
+				Logger.error("CapillariesPersistence:load_CapillariesArrayMeasures() Error: " + e.getMessage(), e,
+						true);
 				return false;
 			}
 		}
 
 		/**
-		 * Saves capillary descriptions (DESCRIPTION section) to CapillariesArray.csv in results directory.
-		 * Always saves to v2_ format.
+		 * Saves capillary descriptions (DESCRIPTION section) to CapillariesArray.csv in
+		 * results directory. Always saves to v2_ format.
 		 * 
-		 * @param capillaries the Capillaries to save
+		 * @param capillaries      the Capillaries to save
 		 * @param resultsDirectory the results directory
 		 * @return true if successful
 		 */
@@ -330,7 +334,8 @@ public class CapillariesPersistence {
 
 			Path path = Paths.get(resultsDirectory);
 			if (!Files.exists(path)) {
-				Logger.warn("CapillariesPersistence:saveCapillariesArrayDescription() directory does not exist: " + resultsDirectory);
+				Logger.warn("CapillariesPersistence:saveCapillariesArrayDescription() directory does not exist: "
+						+ resultsDirectory);
 				return false;
 			}
 
@@ -340,19 +345,20 @@ public class CapillariesPersistence {
 				Legacy.csvSave_DescriptionSection(capillaries, csvWriter, csvSep);
 				csvWriter.flush();
 				csvWriter.close();
-				Logger.info("CapillariesPersistence:saveCapillariesArrayDescription() Saved descriptions to " + ID_V2_CAPILLARIESARRAY_CSV);
+				Logger.info("CapillariesPersistence:saveCapillariesArrayDescription() Saved descriptions to "
+						+ ID_V2_CAPILLARIESARRAY_CSV);
 				return true;
 			} catch (IOException e) {
 				Logger.error("CapillariesPersistence:saveCapillariesArrayDescription() Error: " + e.getMessage(), e);
 				return false;
 			}
 		}
-		
+
 		/**
 		 * Saves capillary measures to CapillariesArrayMeasures.csv in bin directory.
 		 * Always saves to v2_ format.
 		 * 
-		 * @param capillaries the Capillaries to save
+		 * @param capillaries  the Capillaries to save
 		 * @param binDirectory the bin directory (e.g., results/bin60)
 		 * @return true if successful
 		 */
@@ -364,13 +370,15 @@ public class CapillariesPersistence {
 
 			Path path = Paths.get(binDirectory);
 			if (!Files.exists(path)) {
-				Logger.warn("CapillariesPersistence:save_CapillariesArrayMeasures() directory does not exist: " + binDirectory);
+				Logger.warn("CapillariesPersistence:save_CapillariesArrayMeasures() directory does not exist: "
+						+ binDirectory);
 				return false;
 			}
 
 			try {
 				// Always save to v2_ format
-				FileWriter csvWriter = new FileWriter(binDirectory + File.separator + ID_V2_CAPILLARIESARRAYMEASURES_CSV);
+				FileWriter csvWriter = new FileWriter(
+						binDirectory + File.separator + ID_V2_CAPILLARIESARRAYMEASURES_CSV);
 				Legacy.csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.TOPRAW, csvSep);
 				Legacy.csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.TOPLEVEL, csvSep);
 				Legacy.csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.BOTTOMLEVEL, csvSep);
@@ -378,7 +386,8 @@ public class CapillariesPersistence {
 				Legacy.csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.GULPS, csvSep);
 				csvWriter.flush();
 				csvWriter.close();
-				Logger.info("CapillariesPersistence:save_CapillariesArrayMeasures() Saved measures to " + ID_V2_CAPILLARIESARRAYMEASURES_CSV);
+				Logger.info("CapillariesPersistence:save_CapillariesArrayMeasures() Saved measures to "
+						+ ID_V2_CAPILLARIESARRAYMEASURES_CSV);
 				return true;
 			} catch (IOException e) {
 				Logger.error("CapillariesPersistence:save_CapillariesArrayMeasures() Error: " + e.getMessage(), e);
@@ -396,8 +405,8 @@ public class CapillariesPersistence {
 		private static final String ID_CAPILLARIESMEASURES_CSV = "CapillariesMeasures.csv";
 
 		/**
-		 * Legacy entry point for loading capillaries.
-		 * Tries CSV format first, then falls back to XML format.
+		 * Legacy entry point for loading capillaries. Tries CSV format first, then
+		 * falls back to XML format.
 		 */
 		public static boolean load(Capillaries capillaries, String directory) {
 			// Priority 1: Try new format (descriptions from results, measures from bin)
@@ -407,7 +416,8 @@ public class CapillariesPersistence {
 			try {
 				flag = csvLoad_Capillaries(capillaries, directory);
 			} catch (Exception e) {
-				Logger.error("CapillariesPersistence:load_Capillaries() Failed to load capillaries from CSV: " + directory,
+				Logger.error(
+						"CapillariesPersistence:load_Capillaries() Failed to load capillaries from CSV: " + directory,
 						e, true);
 			}
 
@@ -563,7 +573,8 @@ public class CapillariesPersistence {
 			}
 		}
 
-		private static void xmlLoadIndividualCapillary_v0(Capillaries capillaries, ROI2D roiCapillary, String directory, int t) {
+		private static void xmlLoadIndividualCapillary_v0(Capillaries capillaries, ROI2D roiCapillary, String directory,
+				int t) {
 			Capillary cap = new Capillary(roiCapillary);
 			if (!capillaries.isPresent(cap))
 				capillaries.getList().add(cap);
@@ -707,7 +718,7 @@ public class CapillariesPersistence {
 					String[] data = row.split(sep);
 					if (data.length > 0 && data[0].equals("#"))
 						return data.length > 1 ? data[1] : null;
-					
+
 					// Find or create capillary
 					Capillary cap = null;
 					if (data.length > 2) {

@@ -78,7 +78,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		else {
 		}
 		this.memoryMonitor = new MemoryMonitor();
-		this.streamingProcessor = new StreamingImageProcessor(memoryMonitor);
+		this.streamingProcessor = new StreamingImageProcessor();
 		this.adaptiveBatchSizer = new AdaptiveBatchSizer(memoryMonitor);
 
 		// Initialize image memory pools (will be configured with first image)
@@ -101,7 +101,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 		try {
 			// Reinitialize streaming state per experiment
-			this.streamingProcessor = new StreamingImageProcessor(new MemoryMonitor());
+			this.streamingProcessor = new StreamingImageProcessor();
 			this.batchCount = 0;
 			getTimeLimitsOfSequence(exp);
 			loadExperimentDataToMeasureSpots(exp);
@@ -134,8 +134,8 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 	private boolean loadExperimentDataToMeasureSpots(Experiment exp) {
 		exp.loadExperimentDescriptors();
-		exp.getSeqCamData().attachSequence(
-				exp.getSeqCamData().getImageLoader().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
+		exp.getSeqCamData().attachSequence(exp.getSeqCamData().getImageLoader()
+				.initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 
 		boolean flag = exp.load_MS96_cages();
 		if (exp.getSeqCamData().getTimeManager().getBinDurationMs() == 0)
@@ -535,8 +535,8 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	private void initMasks2DCompressed(Experiment exp) {
 		SequenceCamData seqCamData = exp.getSeqCamData();
 		if (seqCamData.getSequence() == null)
-			seqCamData.attachSequence(
-					exp.getSeqCamData().getImageLoader().initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
+			seqCamData.attachSequence(exp.getSeqCamData().getImageLoader()
+					.initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 
 		SpotsArray allSpots = exp.getSpotsArray();
 		for (Cage cage : exp.getCages().cagesList) {
@@ -576,7 +576,8 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					seqData = newSequence(exp.getSeqCamData().getCSCamFileName(), exp.getSeqCamData().getSeqImage(0, 0));
+					seqData = newSequence(exp.getSeqCamData().getCSCamFileName(),
+							exp.getSeqCamData().getSeqImage(0, 0));
 					vData = new ViewerFMP(seqData, true, true);
 				}
 			});

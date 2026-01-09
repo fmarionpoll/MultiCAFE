@@ -1,6 +1,10 @@
 package plugins.fmp.multicafe.fmp_series;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import icy.image.IcyBufferedImage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
@@ -13,11 +17,9 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
  */
 public class StreamingImageProcessor {
 	private final ArrayList<String> imageFiles;
-	private final MemoryMonitor memoryMonitor;
 
-	public StreamingImageProcessor(MemoryMonitor memoryMonitor) {
+	public StreamingImageProcessor() {
 		this.imageFiles = new ArrayList<>();
-		this.memoryMonitor = memoryMonitor;
 	}
 
 	public void start(SequenceCamData seqCamData, int startFrame, int endFrame) {
@@ -51,19 +53,15 @@ public class StreamingImageProcessor {
 		return imageIORead(fileName);
 	}
 
-
-
-
-
 	// Use the same imageIORead method as BuildSeries
 	private IcyBufferedImage imageIORead(String fileName) {
-		java.awt.image.BufferedImage image = null;
+		BufferedImage image = null;
 		try {
-			image = javax.imageio.ImageIO.read(new java.io.File(fileName));
-		} catch (java.io.IOException e) {
+			image = ImageIO.read(new java.io.File(fileName));
+		} catch (IOException e) {
 			System.err.println("Error loading image: " + fileName + " - " + e.getMessage());
 			return null;
 		}
-		return icy.image.IcyBufferedImage.createFrom(image);
+		return IcyBufferedImage.createFrom(image);
 	}
 }

@@ -7,7 +7,6 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.vecmath.Vector2d;
 
-import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
 import icy.image.ImageUtil;
@@ -221,7 +220,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 	 */
 	private ProcessingResult<RegistrationResult> executeRegistration(Experiment experiment, RegistrationOptions options,
 			boolean correctRotation, boolean correctTranslation) {
-		ProgressFrame progressBar = new ProgressFrame("Registration Analysis");
+		progressReporter.updateMessage("Registration Analysis");
 
 		try {
 			// Setup registration parameters
@@ -234,6 +233,7 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 			// Get reference image
 			ProcessingResult<IcyBufferedImage> refImageResult = loadReferenceImage(experiment, referenceFrame, options);
 			if (refImageResult.isFailure()) {
+				progressReporter.failed(refImageResult.getErrorMessage());
 				return ProcessingResult.failure(refImageResult.getErrorMessage());
 			}
 
@@ -244,8 +244,8 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 			// Process each frame
 			RegistrationStatistics stats = new RegistrationStatistics();
 
-			for (int frame = fromFrame; frame < toFrame && !stopFlag; frame++) {
-				progressBar.setMessage("Processing frame: " + frame + "/" + toFrame);
+			for (int frame = fromFrame; frame < toFrame && !progressReporter.isCancelled(); frame++) {
+				progressReporter.updateProgress("Processing frame", frame - fromFrame, toFrame - fromFrame);
 
 				ProcessingResult<RegistrationResult> frameResult = processFrame(experiment, frame, referenceImage,
 						reducedReference, options, correctRotation, correctTranslation, translationThreshold,
@@ -265,10 +265,18 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 				}
 			}
 
+			if (progressReporter.isCancelled()) {
+				progressReporter.failed("Registration cancelled by user");
+				return ProcessingResult.failure("Registration cancelled by user");
+			}
+
+			progressReporter.completed();
 			return ProcessingResult.success(stats.buildResult());
 
-		} finally {
-			progressBar.close();
+		} catch (Exception e) {
+			String errorMessage = "Registration failed: " + e.getMessage();
+			progressReporter.failed(errorMessage);
+			return ProcessingResult.failure(errorMessage, e);
 		}
 	}
 
@@ -455,9 +463,6 @@ public class SafeRegistrationProcessor implements RegistrationProcessor {
 					avgTranslation, avgRotation);
 		}
 	}
-
-	// Placeholder for stopFlag - should be injected or managed properly
-	private boolean stopFlag = false;
 
 	// Placeholder for loadSeqCamDataAndCages - should be moved to a proper service
 	private boolean loadSeqCamDataAndCages(Experiment experiment) {

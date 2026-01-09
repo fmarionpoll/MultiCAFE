@@ -1,7 +1,6 @@
 package plugins.fmp.multicafe.fmp_tools;
 
 import java.util.List;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.sequence.Sequence;
 import plugins.nherve.toolbox.image.feature.DefaultClusteringAlgorithmImpl;
@@ -45,7 +44,6 @@ import plugins.nherve.toolbox.image.segmentation.SegmentationException;
  * @see plugins.nherve.toolbox.image.segmentation.Segmentation
  */
 public class ImageKMeans {
-
 
 	/** Default number of clusters if not specified */
 	private static final int DEFAULT_NUM_CLUSTERS = 5;

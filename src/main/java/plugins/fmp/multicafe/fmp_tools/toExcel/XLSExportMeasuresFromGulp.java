@@ -140,22 +140,23 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
-		// All gulp measures now use the unified computation path via getCapillaryMeasuresForXLSPass1
+		// All gulp measures now use the unified computation path via
+		// getCapillaryMeasuresForXLSPass1
 		// which supports both computed and direct-access measures
 		return xlsExportExperimentGulpDataToSheetUsingBuilder(exp, sheet, resultType, col0, charSeries);
 	}
 
-	/**
-	 * Checks if a gulp result type is supported by the chart builder
-	 * (CageCapillarySeriesBuilder).
-	 * 
-	 * @param resultType The result type to check
-	 * @return true if supported, false otherwise
-	 */
-	private boolean isSupportedByChartBuilder(EnumResults resultType) {
-		return resultType == EnumResults.SUMGULPS || resultType == EnumResults.SUMGULPS_LR
-				|| resultType == EnumResults.NBGULPS || resultType == EnumResults.AMPLITUDEGULPS;
-	}
+//	/**
+//	 * Checks if a gulp result type is supported by the chart builder
+//	 * (CageCapillarySeriesBuilder).
+//	 * 
+//	 * @param resultType The result type to check
+//	 * @return true if supported, false otherwise
+//	 */
+//	private boolean isSupportedByChartBuilder(EnumResults resultType) {
+//		return resultType == EnumResults.SUMGULPS || resultType == EnumResults.SUMGULPS_LR
+//				|| resultType == EnumResults.NBGULPS || resultType == EnumResults.AMPLITUDEGULPS;
+//	}
 
 	/**
 	 * Exports gulp data using the chart builder approach (for supported types).
@@ -224,32 +225,32 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		return pt.x;
 	}
 
-	/**
-	 * Exports gulp data using the legacy approach (for unsupported types).
-	 * 
-	 * @param exp        The experiment to export
-	 * @param sheet      The sheet to write to
-	 * @param resultType The export type
-	 * @param col0       The starting column
-	 * @param charSeries The series identifier
-	 * @return The next available column
-	 */
-	private int xlsExportExperimentGulpDataToSheetLegacy(Experiment exp, SXSSFSheet sheet, EnumResults resultType,
-			int col0, String charSeries) {
-		Point pt = new Point(col0, 0);
-
-		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
-
-		for (Capillary capillary : exp.getCapillaries().getList()) {
-			pt.y = 0;
-			pt = writeExperimentGulpInfos(sheet, pt, exp, charSeries, capillary, resultType);
-			Results results = getResultsDataValuesFromGulpMeasures(exp, capillary, options);
-			results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
-			writeXLSResult(sheet, pt, results);
-			pt.x++;
-		}
-		return pt.x;
-	}
+//	/**
+//	 * Exports gulp data using the legacy approach (for unsupported types).
+//	 * 
+//	 * @param exp        The experiment to export
+//	 * @param sheet      The sheet to write to
+//	 * @param resultType The export type
+//	 * @param col0       The starting column
+//	 * @param charSeries The series identifier
+//	 * @return The next available column
+//	 */
+//	private int xlsExportExperimentGulpDataToSheetLegacy(Experiment exp, SXSSFSheet sheet, EnumResults resultType,
+//			int col0, String charSeries) {
+//		Point pt = new Point(col0, 0);
+//
+//		double scalingFactorToPhysicalUnits = exp.getCapillaries().getScalingFactorToPhysicalUnits(resultType);
+//
+//		for (Capillary capillary : exp.getCapillaries().getList()) {
+//			pt.y = 0;
+//			pt = writeExperimentGulpInfos(sheet, pt, exp, charSeries, capillary, resultType);
+//			Results results = getResultsDataValuesFromGulpMeasures(exp, capillary, options);
+//			results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, resultType);
+//			writeXLSResult(sheet, pt, results);
+//			pt.x++;
+//		}
+//		return pt.x;
+//	}
 
 	/**
 	 * Gets the results for a gulp.
@@ -405,12 +406,12 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	}
 
 	/**
-	 * Finds the appropriate XYSeries for a given capillary based on the result type.
-	 * For LR types, maps L capillary to Sum series and R capillary to PI series.
-	 * For regular types, finds series matching the capillary side.
+	 * Finds the appropriate XYSeries for a given capillary based on the result
+	 * type. For LR types, maps L capillary to Sum series and R capillary to PI
+	 * series. For regular types, finds series matching the capillary side.
 	 * 
 	 * @param dataset    The XYSeriesCollection from the builder
-	 * @param exp       The experiment
+	 * @param exp        The experiment
 	 * @param cage       The cage containing the capillary
 	 * @param cap        The capillary to find series for
 	 * @param resultType The export result type
@@ -476,7 +477,8 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * 
 	 * @param exp            The experiment
 	 * @param cap            The capillary
-	 * @param series         The XYSeries to convert (X values in minutes from start)
+	 * @param series         The XYSeries to convert (X values in minutes from
+	 *                       start)
 	 * @param resultsOptions The export options
 	 * @param resultType     The result type
 	 * @return A Results object with valuesOut array populated

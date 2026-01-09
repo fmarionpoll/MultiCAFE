@@ -76,25 +76,25 @@ public class ImageMemoryPool {
 //				+ imageChannels + " (" + dataType + ")");
 	}
 
-	/**
-	 * Initializes the pool with default number of images. Note: This method is not
-	 * called during construction to avoid Icy framework initialization issues.
-	 */
-	private void initializePool() {
-//		System.out.println(
-//				"DEBUG: Initializing image memory pool for " + imageWidth + "x" + imageHeight + "x" + imageChannels);
-//		int successfulImages = 0;
-		for (int i = 0; i < DEFAULT_POOL_SIZE; i++) {
-			IcyBufferedImage pooledImage = createNewImage();
-			if (pooledImage != null) {
-				imagePool.offer(pooledImage);
-				totalImagesCreated.incrementAndGet();
-//				successfulImages++;
-			}
-		}
-//		System.out.println("DEBUG: Successfully created " + successfulImages + " pooled images out of "
-//				+ DEFAULT_POOL_SIZE + " requested");
-	}
+//	/**
+//	 * Initializes the pool with default number of images. Note: This method is not
+//	 * called during construction to avoid Icy framework initialization issues.
+//	 */
+//	private void initializePool() {
+////		System.out.println(
+////				"DEBUG: Initializing image memory pool for " + imageWidth + "x" + imageHeight + "x" + imageChannels);
+////		int successfulImages = 0;
+//		for (int i = 0; i < DEFAULT_POOL_SIZE; i++) {
+//			IcyBufferedImage pooledImage = createNewImage();
+//			if (pooledImage != null) {
+//				imagePool.offer(pooledImage);
+//				totalImagesCreated.incrementAndGet();
+////				successfulImages++;
+//			}
+//		}
+////		System.out.println("DEBUG: Successfully created " + successfulImages + " pooled images out of "
+////				+ DEFAULT_POOL_SIZE + " requested");
+//	}
 
 	/**
 	 * Gets an image from the pool or creates a new one.

@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 

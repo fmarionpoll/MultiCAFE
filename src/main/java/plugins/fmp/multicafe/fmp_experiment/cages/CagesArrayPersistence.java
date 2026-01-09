@@ -823,20 +823,20 @@ public class CagesArrayPersistence {
 			}
 		}
 
-		private static boolean csvSaveCagesMeasures(CagesArray cages, String directory) {
-			try {
-				FileWriter csvWriter = new FileWriter(directory + File.separator + ID_CAGESMEASURES_CSV);
-				csvSaveDESCRIPTIONSection(cages, csvWriter, csvSep);
-				csvSaveCAGESection(cages, csvWriter, csvSep);
-				csvSaveMeasuresSection(cages, csvWriter, EnumCageMeasures.POSITION, csvSep);
-				csvWriter.flush();
-				csvWriter.close();
-
-			} catch (IOException e) {
-				Logger.error("CagesArrayPersistence:csvSaveCagesMeasures() Error: " + e.getMessage(), e);
-			}
-			return true;
-		}
+//		private static boolean csvSaveCagesMeasures(CagesArray cages, String directory) {
+//			try {
+//				FileWriter csvWriter = new FileWriter(directory + File.separator + ID_CAGESMEASURES_CSV);
+//				csvSaveDESCRIPTIONSection(cages, csvWriter, csvSep);
+//				csvSaveCAGESection(cages, csvWriter, csvSep);
+//				csvSaveMeasuresSection(cages, csvWriter, EnumCageMeasures.POSITION, csvSep);
+//				csvWriter.flush();
+//				csvWriter.close();
+//
+//			} catch (IOException e) {
+//				Logger.error("CagesArrayPersistence:csvSaveCagesMeasures() Error: " + e.getMessage(), e);
+//			}
+//			return true;
+//		}
 
 		static boolean csvSaveDESCRIPTIONSection(CagesArray cages, FileWriter csvWriter, String csvSep) {
 			try {

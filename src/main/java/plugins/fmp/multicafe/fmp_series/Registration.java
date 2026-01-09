@@ -3,7 +3,6 @@ package plugins.fmp.multicafe.fmp_series;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.vecmath.Vector2d;
 
@@ -12,9 +11,9 @@ import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
 import icy.image.ImageUtil;
 import icy.type.geom.Polygon2D;
-import plugins.fmp.multicafe.dlg.experiment.CorrectDrift;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.GaspardRigidRegistration;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multicafe.fmp_tools.imageTransform.ImageTransformOptions;
 

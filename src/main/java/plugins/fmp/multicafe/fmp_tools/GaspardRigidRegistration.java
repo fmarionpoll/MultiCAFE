@@ -3,7 +3,6 @@ package plugins.fmp.multicafe.fmp_tools;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Arrays;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.swing.SwingConstants;
 import javax.vecmath.Vector2d;
@@ -40,7 +39,6 @@ import icy.type.collection.array.Array1DUtil;
  */
 public class GaspardRigidRegistration {
 
-
 	/** Default log-polar size for theta (angle) */
 	private static final int DEFAULT_SIZE_THETA = 1080;
 
@@ -56,10 +54,10 @@ public class GaspardRigidRegistration {
 	/**
 	 * Finds the 2D translation between two images using spectral correlation.
 	 * 
-	 * @param sourceImage  the source image
-	 * @param sourceC the source channel
-	 * @param targetImage  the target image
-	 * @param targetC the target channel
+	 * @param sourceImage the source image
+	 * @param sourceC     the source channel
+	 * @param targetImage the target image
+	 * @param targetC     the target channel
 	 * @return the translation vector
 	 * @throws IllegalArgumentException      if images are null or have different
 	 *                                       sizes
@@ -410,8 +408,8 @@ public class GaspardRigidRegistration {
 	 * @throws UnsupportedOperationException if images have different sizes and no
 	 *                                       previous translation
 	 */
-	public static double findRotation2D(IcyBufferedImage sourceImage, int sourceC, IcyBufferedImage targetImage, int targetC,
-			Vector2d previousTranslation) {
+	public static double findRotation2D(IcyBufferedImage sourceImage, int sourceC, IcyBufferedImage targetImage,
+			int targetC, Vector2d previousTranslation) {
 		if (sourceImage == null) {
 			throw new IllegalArgumentException("Source image cannot be null");
 		}
@@ -426,8 +424,8 @@ public class GaspardRigidRegistration {
 				// target accordingly (just need to know where the original data has to go)
 				int xAlign = previousTranslation.x > 0 ? SwingConstants.LEFT : SwingConstants.RIGHT;
 				int yAlign = previousTranslation.y > 0 ? SwingConstants.TOP : SwingConstants.BOTTOM;
-				targetImage = IcyBufferedImageUtil.scale(targetImage, sourceImage.getSizeX(), sourceImage.getSizeY(), false, xAlign,
-						yAlign);
+				targetImage = IcyBufferedImageUtil.scale(targetImage, sourceImage.getSizeX(), sourceImage.getSizeY(),
+						false, xAlign, yAlign);
 			} else {
 				throw new UnsupportedOperationException("Cannot register images of different size (yet)");
 			}

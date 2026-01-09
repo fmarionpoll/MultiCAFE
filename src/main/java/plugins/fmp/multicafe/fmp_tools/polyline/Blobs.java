@@ -8,11 +8,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.image.IcyBufferedImage;
 import icy.roi.BooleanMask2D;
 import icy.type.geom.Polygon2D;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 /**
  * Blob detection and analysis utility class for processing binary images. This
@@ -43,7 +43,6 @@ import icy.type.geom.Polygon2D;
  * @author MultiSPOTS96
  */
 public class Blobs {
-
 
 	/** Minimum blob number (background pixels have value 0) */
 	private static final int BACKGROUND_VALUE = 0;
@@ -229,14 +228,14 @@ public class Blobs {
 		return result;
 	}
 
-	/**
-	 * @deprecated Use {@link #getListOfBlobs()} instead
-	 */
-	@Deprecated
-	public List<Integer> getListOfBlobs(int[] binaryData) {
-		Logger.warn("Using deprecated method getListOfBlobs(int[])");
-		return getListOfBlobs();
-	}
+//	/**
+//	 * @deprecated Use {@link #getListOfBlobs()} instead
+//	 */
+//	@Deprecated
+//	public List<Integer> getListOfBlobs(int[] binaryData) {
+//		Logger.warn("Using deprecated method getListOfBlobs(int[])");
+//		return getListOfBlobs();
+//	}
 
 	/**
 	 * Creates a polygon representation of the specified blob's boundary.

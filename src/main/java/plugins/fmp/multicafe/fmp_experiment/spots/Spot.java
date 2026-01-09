@@ -187,8 +187,8 @@ public class Spot implements Comparable<Spot> {
 	// === ROI MANAGEMENT ===
 
 	/**
-	 * Gets the ROI associated with this spot.
-	 * If ROI is not set, regenerates it from coordinates.
+	 * Gets the ROI associated with this spot. If ROI is not set, regenerates it
+	 * from coordinates.
 	 * 
 	 * @return the ROI, or null if coordinates are invalid
 	 */
@@ -209,11 +209,12 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	/**
-	 * Regenerates the ROI from stored coordinates (spotXCoord, spotYCoord, spotRadius).
-	 * This is used when ROIs are not persisted (CSV-only persistence) and need to be
-	 * recreated for display purposes.
+	 * Regenerates the ROI from stored coordinates (spotXCoord, spotYCoord,
+	 * spotRadius). This is used when ROIs are not persisted (CSV-only persistence)
+	 * and need to be recreated for display purposes.
 	 * 
-	 * @return true if ROI was successfully regenerated, false if coordinates are invalid
+	 * @return true if ROI was successfully regenerated, false if coordinates are
+	 *         invalid
 	 */
 	public boolean regenerateROIFromCoordinates() {
 		int x = properties.getSpotXCoord();
@@ -228,10 +229,10 @@ public class Spot implements Comparable<Spot> {
 		try {
 			// Create ellipse ROI from center coordinates and radius
 			// The ellipse bounds are: (x - radius, y - radius, 2*radius, 2*radius)
-			java.awt.geom.Ellipse2D ellipse = new java.awt.geom.Ellipse2D.Double(
-					x - radius, y - radius, 2 * radius, 2 * radius);
+			java.awt.geom.Ellipse2D ellipse = new java.awt.geom.Ellipse2D.Double(x - radius, y - radius, 2 * radius,
+					2 * radius);
 			plugins.kernel.roi.roi2d.ROI2DEllipse roiEllipse = new plugins.kernel.roi.roi2d.ROI2DEllipse(ellipse);
-			
+
 			// Set the name if available
 			String name = properties.getName();
 			if (name != null && !name.isEmpty()) {
@@ -241,10 +242,11 @@ public class Spot implements Comparable<Spot> {
 				int cageID = properties.getCageID();
 				int position = properties.getCagePosition();
 				if (cageID >= 0 && position >= 0) {
-					roiEllipse.setName(plugins.fmp.multicafe.fmp_experiment.spots.SpotString.createSpotString(cageID, position));
+					roiEllipse.setName(
+							plugins.fmp.multicafe.fmp_experiment.spots.SpotString.createSpotString(cageID, position));
 				}
 			}
-			
+
 			this.spotROI2D = roiEllipse;
 			return true;
 		} catch (Exception e) {
@@ -742,7 +744,7 @@ public class Spot implements Comparable<Spot> {
 		}
 
 		// Memory monitoring before loading
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		// System.out.println(" Loading Spot - Memory: " + (startMemory / 1024 / 1024) +
 		// " MB");
 
@@ -779,8 +781,8 @@ public class Spot implements Comparable<Spot> {
 			}
 
 			// Memory monitoring after loading
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
+//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//			long memoryIncrease = endMemory - startMemory;
 			// System.out.println(" Spot loaded - Memory increase: " + (memoryIncrease /
 			// 1024 / 1024) + " MB");
 			// System.out.println(" Spot name: " + getProperties().getName());
@@ -807,7 +809,7 @@ public class Spot implements Comparable<Spot> {
 		}
 
 		// Memory monitoring before saving
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		// System.out.println(" Saving Spot - Memory: " + (startMemory / 1024 / 1024) +
 		// " MB");
 
@@ -838,8 +840,8 @@ public class Spot implements Comparable<Spot> {
 			}
 
 			// Memory monitoring after saving
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
+//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//			long memoryIncrease = endMemory - startMemory;
 			// System.out.println(" Spot saved - Memory increase: " + (memoryIncrease / 1024
 			// / 1024) + " MB");
 			// System.out.println(" Spot name: " + getProperties().getName());
