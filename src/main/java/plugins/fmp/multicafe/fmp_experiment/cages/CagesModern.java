@@ -11,10 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import icy.roi.ROI2D;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 
 /**
  * Modern, thread-safe implementation of cages array management with clean code
@@ -36,16 +36,15 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
  * Usage example:
  * 
  * <pre>{@code
- * ModernCagesArray cagesArray = ModernCagesArray.builder().withConfiguration(CagesArrayConfiguration.highPerformance())
- * 		.build();
+ * ModernCages cages = ModernCages.builder().withConfiguration(CagesConfiguration.highPerformance()).build();
  * 
- * CageOperationResult result = cagesArray.addCage(cage);
+ * CageOperationResult result = cages.addCage(cage);
  * if (result.isSuccess()) {
  * 	System.out.println("Added cage successfully");
  * }
  * 
  * // Fast O(1) lookups
- * Optional<ModernCage> cage = cagesArray.findCageById(42);
+ * Optional<ModernCage> cage = cages.findCageById(42);
  * }</pre>
  * 
  * @author MultiSPOTS96
@@ -67,7 +66,7 @@ public final class CagesModern implements AutoCloseable {
 	// === CONSTRUCTORS ===
 
 	/**
-	 * Creates a new ModernCagesArray with the specified configuration.
+	 * Creates a new ModernCages with the specified configuration.
 	 * 
 	 * @param configuration the configuration to use
 	 * @throws IllegalArgumentException if configuration is null
@@ -77,7 +76,7 @@ public final class CagesModern implements AutoCloseable {
 	}
 
 	/**
-	 * Creates a builder for constructing ModernCagesArray instances.
+	 * Creates a builder for constructing ModernCages instances.
 	 * 
 	 * @return a new builder instance
 	 */
@@ -498,7 +497,7 @@ public final class CagesModern implements AutoCloseable {
 
 	@Override
 	public String toString() {
-		return String.format("ModernCagesArray{cages=%d, valid=%d, active=%d}", cages.size(), findValidCages().size(),
+		return String.format("ModernCages{cages=%d, valid=%d, active=%d}", cages.size(), findValidCages().size(),
 				findActiveCages().size());
 	}
 
@@ -511,14 +510,14 @@ public final class CagesModern implements AutoCloseable {
 	 */
 	private void ensureNotClosed() {
 		if (closed) {
-			throw new IllegalStateException("CagesArray is closed");
+			throw new IllegalStateException("Cages is closed");
 		}
 	}
 
 	// === BUILDER PATTERN ===
 
 	/**
-	 * Builder for creating ModernCagesArray instances.
+	 * Builder for creating ModernCages instances.
 	 */
 	public static class Builder {
 		private CagesConfiguration configuration = CagesConfiguration.defaultConfiguration();
@@ -535,7 +534,7 @@ public final class CagesModern implements AutoCloseable {
 		}
 
 		/**
-		 * Builds the ModernCagesArray instance.
+		 * Builds the ModernCages instance.
 		 * 
 		 * @return the created cages array
 		 */

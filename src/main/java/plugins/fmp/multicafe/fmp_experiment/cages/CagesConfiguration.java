@@ -128,9 +128,8 @@ public final class CagesConfiguration {
 
 	@Override
 	public String toString() {
-		return String.format("CagesArrayConfiguration{grid=%dx%d, cagess=%dx%d, threadSafe=%b, optimized=%b}",
-				nCagesAlongX, nCagesAlongY, nColumnsPerCage, nRowsPerCage, enableThreadSafety,
-				enablePerformanceOptimization);
+		return String.format("CagesConfiguration{grid=%dx%d, cagess=%dx%d, threadSafe=%b, optimized=%b}", nCagesAlongX,
+				nCagesAlongY, nColumnsPerCage, nRowsPerCage, enableThreadSafety, enablePerformanceOptimization);
 	}
 
 	private static int validatePositive(int value, String fieldName) {

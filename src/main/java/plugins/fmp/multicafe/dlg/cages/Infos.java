@@ -28,7 +28,7 @@ public class Infos extends JPanel {
 	private JButton editCageButton = new JButton("Edit cage infos...");
 	private MultiCAFE parent0 = null;
 	private InfosCagesTable dialog = null;
-	private List<Cage> cagesArrayCopy = new ArrayList<Cage>();
+	private List<Cage> cagesCopy = new ArrayList<Cage>();
 
 	JRadioButton useCapillaries = new JRadioButton("capillary");
 	JRadioButton useCage = new JRadioButton("cage");
@@ -86,7 +86,7 @@ public class Infos extends JPanel {
 					exp.getCapillaries().transferDescriptionToCapillaries();
 					exp.getCages().transferNFliesFromCapillariesToCageBox(exp.getCapillaries().getList());
 					dialog = new InfosCagesTable();
-					dialog.initialize(parent0, cagesArrayCopy);
+					dialog.initialize(parent0, cagesCopy);
 				}
 			}
 		});

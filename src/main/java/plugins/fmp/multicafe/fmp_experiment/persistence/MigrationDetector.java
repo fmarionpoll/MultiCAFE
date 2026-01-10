@@ -12,26 +12,26 @@ import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_tools.Logger;
 
 /**
- * Detects if an experiment uses the old format (spots nested in cage XML)
- * or the new format (spots in separate CSV file, IDs in cage XML).
+ * Detects if an experiment uses the old format (spots nested in cage XML) or
+ * the new format (spots in separate CSV file, IDs in cage XML).
  */
 public class MigrationDetector {
 
 	private static final String ID_LISTOFSPOTS = "List_of_spots";
-	
+
 	// New format filenames
-	private static final String ID_CAGESARRAY_CSV = "CagesArray.csv";
-	private static final String ID_SPOTSARRAY_CSV = "SpotsArray.csv";
-	private static final String ID_CAPILLARIESARRAY_CSV = "CapillariesArray.csv";
-	
+	private static final String ID_CAGES_CSV = "Cages.csv";
+	private static final String ID_SPOTS_CSV = "Spots.csv";
+	private static final String ID_CAPILLARIES_CSV = "Capillaries.csv";
+
 	// Legacy filenames
-	private static final String ID_SPOTS_CSV = "SpotsMeasures.csv";
+	private static final String ID_SPOTSMEASURES_CSV = "SpotsMeasures.csv";
 	private static final String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 
 	/**
-	 * Detects if the experiment directory uses the old format.
-	 * Old format: spots are nested in cage XML files, combined CSV files.
-	 * New format: separate CSV files for descriptions (CagesArray.csv, SpotsArray.csv, etc.).
+	 * Detects if the experiment directory uses the old format. Old format: spots
+	 * are nested in cage XML files, combined CSV files. New format: separate CSV
+	 * files for descriptions (Cages.csv, SpotsArray.csv, etc.).
 	 * 
 	 * @param directory the experiment results directory
 	 * @return true if old format detected, false if new format or cannot determine
@@ -47,11 +47,12 @@ public class MigrationDetector {
 		}
 
 		// Check if new format exists (new CSV files for descriptions)
-		Path cagesArrayCsv = dirPath.resolve(ID_CAGESARRAY_CSV);
-		Path spotsArrayCsv = dirPath.resolve(ID_SPOTSARRAY_CSV);
-		Path capillariesArrayCsv = dirPath.resolve(ID_CAPILLARIESARRAY_CSV);
-		
-		boolean newFormatExists = Files.exists(cagesArrayCsv) || Files.exists(spotsArrayCsv) || Files.exists(capillariesArrayCsv);
+		Path cagesCsv = dirPath.resolve(ID_CAGES_CSV);
+		Path spotsArrayCsv = dirPath.resolve(ID_SPOTS_CSV);
+		Path capillariesArrayCsv = dirPath.resolve(ID_CAPILLARIES_CSV);
+
+		boolean newFormatExists = Files.exists(cagesCsv) || Files.exists(spotsArrayCsv)
+				|| Files.exists(capillariesArrayCsv);
 
 		// If new format exists, assume it's already migrated
 		if (newFormatExists) {
@@ -64,10 +65,10 @@ public class MigrationDetector {
 		if (Files.exists(cagesXmlPath)) {
 			oldFormatExists = hasSpotsInCageXML(cagesXmlPath.toString());
 		}
-		
+
 		// Also check for legacy CSV files
 		if (!oldFormatExists) {
-			Path legacySpotsCsv = dirPath.resolve(ID_SPOTS_CSV);
+			Path legacySpotsCsv = dirPath.resolve(ID_SPOTSMEASURES_CSV);
 			if (Files.exists(legacySpotsCsv)) {
 				oldFormatExists = true;
 			}
@@ -129,4 +130,3 @@ public class MigrationDetector {
 		}
 	}
 }
-

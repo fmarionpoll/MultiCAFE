@@ -1008,11 +1008,11 @@ public class Cages {
 
 	// --------------------------------------------------------
 	// Capillary measure computation methods - delegated to
-	// CagesArrayCapillariesComputation
+	// CagesCapillariesComputation
 
 	/**
 	 * Computes evaporation correction for all capillaries across all cages.
-	 * Delegates to CagesArrayCapillariesComputation.
+	 * Delegates to CagesCapillariesComputation.
 	 * 
 	 * @param exp The experiment containing all capillaries
 	 */
@@ -1050,8 +1050,8 @@ public class Cages {
 		 * charting options.detectAllKymos = true; new GulpDetector().detectGulps(exp,
 		 * options); } catch (Exception e) { // Keep charting resilient: if detection
 		 * cannot run (missing kymos etc.), caller may show empty plots.
-		 * System.err.println("CagesArray.prepareComputations: failed to detect gulps: "
-		 * + e.getMessage()); } } }
+		 * System.err.println("Cages.prepareComputations: failed to detect gulps: " +
+		 * e.getMessage()); } } }
 		 */
 
 		// TOPLEVEL is defined as evaporation-corrected and displayed as (t - t0).

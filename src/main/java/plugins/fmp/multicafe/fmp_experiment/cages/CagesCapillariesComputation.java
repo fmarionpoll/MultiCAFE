@@ -21,13 +21,13 @@ import plugins.fmp.multicafe.fmp_tools.Level2D;
  */
 public class CagesCapillariesComputation {
 
-	private final Cages cagesArray;
+	private final Cages cages;
 
-	public CagesCapillariesComputation(Cages cagesArray) {
-		if (cagesArray == null) {
-			throw new IllegalArgumentException("CagesArray cannot be null");
+	public CagesCapillariesComputation(Cages cages) {
+		if (cages == null) {
+			throw new IllegalArgumentException("Cages cannot be null");
 		}
-		this.cagesArray = cagesArray;
+		this.cages = cages;
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class CagesCapillariesComputation {
 		List<Capillary> zeroFliesCapillariesL = new ArrayList<>();
 		List<Capillary> zeroFliesCapillariesR = new ArrayList<>();
 
-		for (Cage cage : cagesArray.getCageList()) {
+		for (Cage cage : cages.getCageList()) {
 			for (Capillary cap : cage.getCapillaries(allCapillaries)) {
 				if (cap.getProperties().nFlies == 0 && cap.getTopLevel() != null
 						&& cap.getTopLevel().polylineLevel != null && cap.getTopLevel().polylineLevel.npoints > 0) {
@@ -81,7 +81,7 @@ public class CagesCapillariesComputation {
 			avgEvapR.offsetToStartWithZeroAmplitude();
 
 		// Apply evaporation correction to all capillaries
-		for (Cage cage : cagesArray.getCageList()) {
+		for (Cage cage : cages.getCageList()) {
 			for (Capillary cap : cage.getCapillaries(allCapillaries)) {
 				if (cap.getTopLevel() == null || cap.getTopLevel().polylineLevel == null
 						|| cap.getTopLevel().polylineLevel.npoints == 0)
@@ -113,9 +113,9 @@ public class CagesCapillariesComputation {
 	public void clearComputedMeasures(Experiment exp) {
 		if (exp == null || exp.getCapillaries() == null)
 			return;
-		
+
 		Capillaries allCapillaries = exp.getCapillaries();
-		for (Cage cage : cagesArray.getCageList()) {
+		for (Cage cage : cages.getCageList()) {
 			for (Capillary cap : cage.getCapillaries(allCapillaries)) {
 				cap.clearComputedMeasures();
 			}

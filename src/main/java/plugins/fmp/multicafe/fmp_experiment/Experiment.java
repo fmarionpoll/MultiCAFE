@@ -43,7 +43,6 @@ import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
 import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.Logger;
-
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsArray;
@@ -749,18 +748,20 @@ public class Experiment {
 			timeManager.setDurationMs(durationMs);
 			long frameDelta = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
 			timeManager.setDeltaImage(frameDelta);
-			
-			// Migration: Extract bin parameters from old XML format and migrate to bin directory
+
+			// Migration: Extract bin parameters from old XML format and migrate to bin
+			// directory
 			long binFirstMs = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
 			long binLastMs = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
 			long binDurationMs = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
-			
+
 			if (binDurationMs < 0)
 				binDurationMs = 60000; // Default value
-			
+
 			// If bin parameters exist in old format, migrate them to bin directory
 			if (binFirstMs >= 0 || binLastMs >= 0 || binDurationMs >= 0) {
-				// Determine target bin directory (use current binDirectory or default to bin_60)
+				// Determine target bin directory (use current binDirectory or default to
+				// bin_60)
 				String targetBinDir = binDirectory;
 				if (targetBinDir != null) {
 					// Extract just the subdirectory name if binDirectory is a full path
@@ -773,7 +774,7 @@ public class Experiment {
 					// No bin directory set, default based on duration
 					targetBinDir = BIN + (binDurationMs / 1000);
 				}
-				
+
 				// Create BinDescription and save to bin directory
 				BinDescription binDesc = new BinDescription();
 				if (binFirstMs >= 0)
@@ -782,12 +783,12 @@ public class Experiment {
 					binDesc.setLastKymoColMs(binLastMs);
 				binDesc.setBinKymoColMs(binDurationMs);
 				binDesc.setBinDirectory(targetBinDir);
-				
+
 				// Save to bin directory
 				if (resultsDirectory != null) {
 					String binFullDir = resultsDirectory + File.separator + targetBinDir;
 					binDescriptionPersistence.save(binDesc, binFullDir);
-					
+
 					// Load into active bin description (using subdirectory name, not full path)
 					loadBinDescription(targetBinDir);
 				}
@@ -902,7 +903,7 @@ public class Experiment {
 		// Load measures from bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
-			cages.getPersistence().loadCagesArrayMeasures(cages, binDir);
+			cages.getPersistence().loadCagesMeasures(cages, binDir);
 		}
 
 		// Transfer cages to ROIs on sequence if loaded successfully
@@ -931,7 +932,7 @@ public class Experiment {
 		// Also save measures to bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
-			cages.getPersistence().saveCagesArrayMeasures(cages, binDir);
+			cages.getPersistence().saveCagesMeasures(cages, binDir);
 		}
 
 		return descriptionsSaved;
@@ -984,10 +985,10 @@ public class Experiment {
 
 	public boolean save_MS96_fliesPositions() {
 		// Save fly positions to bin directory (e.g.,
-		// results/bin60/CagesArrayMeasures.csv)
+		// results/bin60/CagesMeasures.csv)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
-			return cages.getPersistence().saveCagesArrayMeasures(cages, binDir);
+			return cages.getPersistence().saveCagesMeasures(cages, binDir);
 		}
 		return false;
 	}
@@ -1444,7 +1445,7 @@ public class Experiment {
 		CagesSequenceMapper.pushSpotsToSequence(cages, spotsArray, seqCamData);
 	}
 
-	public boolean saveCagesArray_File() {
+	public boolean saveCages_File() {
 		CagesSequenceMapper.syncCagesFromSequenceBeforeSave(cages, seqCamData);
 		save_MS96_cages();
 		return save_MS96_spotsMeasures();
@@ -1589,7 +1590,7 @@ public class Experiment {
 		activeBinDescription.setLastKymoColMs(getKymoLast_ms());
 		activeBinDescription.setBinKymoColMs(getKymoBin_ms());
 		activeBinDescription.setBinDirectory(binSubDirectory);
-		
+
 		String binFullDir = resultsDirectory + File.separator + binSubDirectory;
 		return binDescriptionPersistence.save(activeBinDescription, binFullDir);
 	}
@@ -1808,14 +1809,14 @@ public class Experiment {
 
 		String resultsDir = getResultsDirectory();
 		// Try new format: descriptions from results, measures from bin
-		boolean descriptionsLoaded = cages.getPersistence().loadCagesArrayDescription(cages, resultsDir);
+		boolean descriptionsLoaded = cages.getPersistence().loadCagesDescription(cages, resultsDir);
 		if (!descriptionsLoaded)
 			return descriptionsLoaded;
 
 		String binDir = getKymosBinFullDirectory();
 		boolean measuresLoaded = false;
 		if (binDir != null) {
-			measuresLoaded = cages.getPersistence().loadCagesArrayMeasures(cages, binDir);
+			measuresLoaded = cages.getPersistence().loadCagesMeasures(cages, binDir);
 		}
 
 		if (measuresLoaded && seqCamData.getSequence() != null) {
@@ -1848,7 +1849,7 @@ public class Experiment {
 		String binDir = getKymosBinFullDirectory();
 		System.out.println(binDir);
 		if (binDir != null) {
-			cages.getPersistence().saveCagesArrayMeasures(cages, binDir);
+			cages.getPersistence().saveCagesMeasures(cages, binDir);
 		}
 
 		return descriptionsSaved;

@@ -71,7 +71,7 @@ public class MigrationTool {
 			}
 			
 			// Save cages descriptions to new format
-			boolean cagesDescriptionsSaved = exp.getCages().getPersistence().saveCagesArrayDescription(exp.getCages(), directory);
+			boolean cagesDescriptionsSaved = exp.getCages().getPersistence().saveCagesDescription(exp.getCages(), directory);
 			if (!cagesDescriptionsSaved) {
 				Logger.warn("MigrationTool:migrateExperiment() Failed to save cage descriptions");
 			}
@@ -89,7 +89,7 @@ public class MigrationTool {
 				exp.getSpotsArray().getPersistence().saveSpotsArrayMeasures(exp.getSpotsArray(), binDir);
 				
 				// Save cages measures
-				exp.getCages().getPersistence().saveCagesArrayMeasures(exp.getCages(), binDir);
+				exp.getCages().getPersistence().saveCagesMeasures(exp.getCages(), binDir);
 				
 				// Save capillary measures
 				exp.getCapillaries().getPersistence().save_CapillariesArrayMeasures(exp.getCapillaries(), binDir);

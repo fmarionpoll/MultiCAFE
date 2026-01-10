@@ -122,7 +122,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		} finally {
 			// Ensure cleanup happens even if exceptions occur
 			try {
-//				exp.cagesArray.setReadyToAnalyze(false, options);
+//				exp.cages.setReadyToAnalyze(false, options);
 //				closeViewers();
 //				cleanupResources();
 //				enhancedPostProcessingCleanup();

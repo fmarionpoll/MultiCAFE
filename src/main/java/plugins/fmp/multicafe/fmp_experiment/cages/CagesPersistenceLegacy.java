@@ -11,14 +11,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_tools.Logger;
-import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
-import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
 
 /**
- * Legacy persistence for cages files.
- * Handles loading from legacy XML and CSV formats: MCdrosotrack.xml, CagesMeasures.csv
+ * Legacy persistence for cages files. Handles loading from legacy XML and CSV
+ * formats: MCdrosotrack.xml, CagesMeasures.csv
  */
 public class CagesPersistenceLegacy {
 
@@ -40,7 +37,7 @@ public class CagesPersistenceLegacy {
 	/**
 	 * Loads cages from legacy CSV format (CagesMeasures.csv).
 	 * 
-	 * @param cages     The CagesArray to populate
+	 * @param cages     The Cages to populate
 	 * @param directory The directory containing the CSV file
 	 * @return true if successful
 	 */
@@ -51,7 +48,7 @@ public class CagesPersistenceLegacy {
 			return false;
 		}
 
-		Logger.info("CagesArrayPersistenceLegacy:csvLoadCagesMeasures() Starting with " + cages.cagesList.size()
+		Logger.info("CagesPersistenceLegacy:csvLoadCagesMeasures() Starting with " + cages.cagesList.size()
 				+ " existing cages");
 
 		BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
@@ -95,16 +92,16 @@ public class CagesPersistenceLegacy {
 			csvReader.close();
 		}
 
-		Logger.info("CagesArrayPersistenceLegacy:csvLoadCagesMeasures() Loaded: " + descriptionCount
-				+ " descriptions, " + cageCount + " cages, " + positionCount + " positions");
+		Logger.info("CagesPersistenceLegacy:csvLoadCagesMeasures() Loaded: " + descriptionCount + " descriptions, "
+				+ cageCount + " cages, " + positionCount + " positions");
 		return descriptionCount > 0 || cageCount > 0 || positionCount > 0;
 	}
 
 	/**
 	 * Loads cages from legacy XML format (MCdrosotrack.xml).
 	 * 
-	 * @param cages  The CagesArray to populate
-	 * @param node   The XML node containing cages data
+	 * @param cages The Cages to populate
+	 * @param node  The XML node containing cages data
 	 * @return true if successful
 	 */
 	public static boolean xmlLoadCages(Cages cages, Node node) {
@@ -115,7 +112,7 @@ public class CagesPersistenceLegacy {
 				cages.cagesList.clear();
 				int ncages = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
 				if (ncages < 0) {
-					Logger.error("CagesArrayPersistenceLegacy:xmlLoadCages() ERROR: Invalid number of cages: " + ncages);
+					Logger.error("CagesPersistenceLegacy:xmlLoadCages() ERROR: Invalid number of cages: " + ncages);
 					return false;
 				}
 
@@ -133,14 +130,16 @@ public class CagesPersistenceLegacy {
 							cages.cagesList.add(cage);
 							loadedCages++;
 						} else {
-							Logger.warn("CagesArrayPersistenceLegacy:xmlLoadCages() WARNING: Failed to load cage at index " + index);
+							Logger.warn("CagesPersistenceLegacy:xmlLoadCages() WARNING: Failed to load cage at index "
+									+ index);
 						}
 					} catch (Exception e) {
-						Logger.error("CagesArrayPersistenceLegacy:xmlLoadCages() ERROR loading cage at index " + index + ": " + e.getMessage(), e);
+						Logger.error("CagesPersistenceLegacy:xmlLoadCages() ERROR loading cage at index " + index + ": "
+								+ e.getMessage(), e);
 					}
 				}
 
-				Logger.info("CagesArrayPersistenceLegacy:xmlLoadCages() Loaded " + loadedCages + " cages");
+				Logger.info("CagesPersistenceLegacy:xmlLoadCages() Loaded " + loadedCages + " cages");
 				return loadedCages > 0;
 			}
 
@@ -150,11 +149,11 @@ public class CagesPersistenceLegacy {
 				return xmlLoadCages_v0(cages, drosoTrackNode);
 			}
 
-			Logger.warn("CagesArrayPersistenceLegacy:xmlLoadCages() Could not find Cages or drosoTrack element in XML");
+			Logger.warn("CagesPersistenceLegacy:xmlLoadCages() Could not find Cages or drosoTrack element in XML");
 			return false;
 
 		} catch (Exception e) {
-			Logger.error("CagesArrayPersistenceLegacy:xmlLoadCages() ERROR during xmlLoadCages: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:xmlLoadCages() ERROR during xmlLoadCages: " + e.getMessage(), e);
 			return false;
 		}
 	}
@@ -162,7 +161,7 @@ public class CagesPersistenceLegacy {
 	/**
 	 * Loads cages from legacy v0 XML format (with drosoTrack element).
 	 * 
-	 * @param cages The CagesArray to populate
+	 * @param cages The Cages to populate
 	 * @param node  The drosoTrack XML node
 	 * @return true if successful
 	 */
@@ -190,7 +189,7 @@ public class CagesPersistenceLegacy {
 			}
 			return false;
 		} catch (Exception e) {
-			Logger.error("CagesArrayPersistenceLegacy:xmlLoadCages_v0() ERROR: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:xmlLoadCages_v0() ERROR: " + e.getMessage(), e);
 			return false;
 		}
 	}
@@ -207,7 +206,8 @@ public class CagesPersistenceLegacy {
 		cageLimitROIList.clear();
 		int nb_items = XMLUtil.getAttributeIntValue(xmlVal, ID_NBITEMS, 0);
 		for (int i = 0; i < nb_items; i++) {
-			plugins.kernel.roi.roi2d.ROI2DPolygon roi = (plugins.kernel.roi.roi2d.ROI2DPolygon) icy.roi.ROI.create("plugins.kernel.roi.roi2d.ROI2DPolygon");
+			plugins.kernel.roi.roi2d.ROI2DPolygon roi = (plugins.kernel.roi.roi2d.ROI2DPolygon) icy.roi.ROI
+					.create("plugins.kernel.roi.roi2d.ROI2DPolygon");
 			Element subnode = XMLUtil.getElement(xmlVal, "cage" + i);
 			if (subnode != null) {
 				roi.loadFromXML(subnode);
@@ -264,7 +264,7 @@ public class CagesPersistenceLegacy {
 	/**
 	 * Loads cages from legacy XML file.
 	 * 
-	 * @param cages   The CagesArray to populate
+	 * @param cages    The Cages to populate
 	 * @param tempname The path to the XML file
 	 * @return true if successful
 	 */
@@ -281,7 +281,8 @@ public class CagesPersistenceLegacy {
 		try {
 			final Document doc = XMLUtil.loadDocument(tempname);
 			if (doc == null) {
-				Logger.warn("CagesArrayPersistenceLegacy:xmlReadCagesFromFileNoQuestion() Could not load XML document: " + tempname);
+				Logger.warn("CagesPersistenceLegacy:xmlReadCagesFromFileNoQuestion() Could not load XML document: "
+						+ tempname);
 				return false;
 			}
 
@@ -289,7 +290,8 @@ public class CagesPersistenceLegacy {
 			return success;
 
 		} catch (Exception e) {
-			Logger.error("CagesArrayPersistenceLegacy:xmlReadCagesFromFileNoQuestion() ERROR during cages XML loading: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:xmlReadCagesFromFileNoQuestion() ERROR during cages XML loading: "
+					+ e.getMessage(), e);
 			return false;
 		}
 	}
@@ -297,7 +299,7 @@ public class CagesPersistenceLegacy {
 	/**
 	 * Loads only ROIs (cage limits) from legacy XML file.
 	 * 
-	 * @param cages   The CagesArray to populate ROIs for
+	 * @param cages    The Cages to populate ROIs for
 	 * @param tempname The path to the XML file
 	 * @return true if successful
 	 */
@@ -314,14 +316,14 @@ public class CagesPersistenceLegacy {
 		try {
 			final Document doc = XMLUtil.loadDocument(tempname);
 			if (doc == null) {
-				Logger.warn("CagesArrayPersistenceLegacy:xmlLoadCagesROIsOnly() Could not load XML document: " + tempname);
+				Logger.warn("CagesPersistenceLegacy:xmlLoadCagesROIsOnly() Could not load XML document: " + tempname);
 				return false;
 			}
 
 			Node rootNode = XMLUtil.getRootElement(doc);
 			Element xmlVal = XMLUtil.getElement(rootNode, ID_CAGES);
 			if (xmlVal == null) {
-				Logger.warn("CagesArrayPersistenceLegacy:xmlLoadCagesROIsOnly() Could not find Cages element in XML");
+				Logger.warn("CagesPersistenceLegacy:xmlLoadCagesROIsOnly() Could not find Cages element in XML");
 				return false;
 			}
 
@@ -349,13 +351,16 @@ public class CagesPersistenceLegacy {
 						}
 					}
 				} catch (Exception e) {
-					Logger.warn("CagesArrayPersistenceLegacy:xmlLoadCagesROIsOnly() WARNING: Failed to load ROI for cage at index " + index);
+					Logger.warn(
+							"CagesPersistenceLegacy:xmlLoadCagesROIsOnly() WARNING: Failed to load ROI for cage at index "
+									+ index);
 				}
 			}
 
 			return loadedROIs > 0 || ncages == 0;
 		} catch (Exception e) {
-			Logger.error("CagesArrayPersistenceLegacy:xmlLoadCagesROIsOnly() ERROR during XML loading: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:xmlLoadCagesROIsOnly() ERROR during XML loading: " + e.getMessage(),
+					e);
 			return false;
 		}
 	}
@@ -363,7 +368,7 @@ public class CagesPersistenceLegacy {
 	/**
 	 * Loads only fly positions from legacy XML file.
 	 * 
-	 * @param cages   The CagesArray to populate fly positions for
+	 * @param cages    The Cages to populate fly positions for
 	 * @param tempname The path to the XML file
 	 * @return true if successful
 	 */
@@ -380,14 +385,15 @@ public class CagesPersistenceLegacy {
 		try {
 			final Document doc = XMLUtil.loadDocument(tempname);
 			if (doc == null) {
-				Logger.warn("CagesArrayPersistenceLegacy:xmlLoadFlyPositionsFromXML() Could not load XML document: " + tempname);
+				Logger.warn(
+						"CagesPersistenceLegacy:xmlLoadFlyPositionsFromXML() Could not load XML document: " + tempname);
 				return false;
 			}
 
 			Node rootNode = XMLUtil.getRootElement(doc);
 			Element xmlVal = XMLUtil.getElement(rootNode, ID_CAGES);
 			if (xmlVal == null) {
-				Logger.warn("CagesArrayPersistenceLegacy:xmlLoadFlyPositionsFromXML() Could not find Cages element in XML");
+				Logger.warn("CagesPersistenceLegacy:xmlLoadFlyPositionsFromXML() Could not find Cages element in XML");
 				return false;
 			}
 
@@ -409,16 +415,20 @@ public class CagesPersistenceLegacy {
 						}
 					}
 				} catch (Exception e) {
-					Logger.warn("CagesArrayPersistenceLegacy:xmlLoadFlyPositionsFromXML() WARNING: Failed to load fly positions for cage at index " + index);
+					Logger.warn(
+							"CagesArrayPersistenceLegacy:xmlLoadFlyPositionsFromXML() WARNING: Failed to load fly positions for cage at index "
+									+ index);
 				}
 			}
 
 			if (loadedFlyPositions > 0) {
-				Logger.info("CagesArrayPersistenceLegacy:xmlLoadFlyPositionsFromXML() Loaded fly positions for " + loadedFlyPositions + " cages");
+				Logger.info("CagesArrayPersistenceLegacy:xmlLoadFlyPositionsFromXML() Loaded fly positions for "
+						+ loadedFlyPositions + " cages");
 			}
 			return loadedFlyPositions > 0;
 		} catch (Exception e) {
-			Logger.error("CagesArrayPersistenceLegacy:xmlLoadFlyPositionsFromXML() ERROR during XML loading: " + e.getMessage(), e);
+			Logger.error("CagesArrayPersistenceLegacy:xmlLoadFlyPositionsFromXML() ERROR during XML loading: "
+					+ e.getMessage(), e);
 			return false;
 		}
 	}
@@ -445,7 +455,8 @@ public class CagesPersistenceLegacy {
 									cages.cagesList.subList(ncages, cages.cagesList.size()).clear();
 								}
 							} catch (NumberFormatException e) {
-								Logger.warn("CagesArrayPersistenceLegacy:csvLoad_DIMENSION() Invalid n_cages value: " + data[1]);
+								Logger.warn(
+										"CagesPersistenceLegacy:csvLoad_DIMENSION() Invalid n_cages value: " + data[1]);
 							}
 						}
 						break;
@@ -453,7 +464,7 @@ public class CagesPersistenceLegacy {
 				}
 			}
 		} catch (IOException e) {
-			Logger.error("CagesArrayPersistenceLegacy:csvLoad_DIMENSION() Error: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:csvLoad_DIMENSION() Error: " + e.getMessage(), e);
 		}
 	}
 
@@ -480,7 +491,7 @@ public class CagesPersistenceLegacy {
 				}
 			}
 		} catch (IOException e) {
-			Logger.error("CagesArrayPersistenceLegacy:csvLoad_DESCRIPTION() Error: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:csvLoad_DESCRIPTION() Error: " + e.getMessage(), e);
 		}
 	}
 
@@ -503,7 +514,7 @@ public class CagesPersistenceLegacy {
 				}
 			}
 		} catch (IOException e) {
-			Logger.error("CagesArrayPersistenceLegacy:csvLoad_CAGE() Error: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:csvLoad_CAGE() Error: " + e.getMessage(), e);
 		}
 	}
 
@@ -512,7 +523,7 @@ public class CagesPersistenceLegacy {
 		try {
 			cageID = Integer.valueOf(data);
 		} catch (NumberFormatException e) {
-			Logger.warn("CagesArrayPersistenceLegacy:csvLoad_CAGE() Invalid integer input: " + data);
+			Logger.warn("CagesPersistenceLegacy:csvLoad_CAGE() Invalid integer input: " + data);
 			cageID = -1;
 		}
 		Cage cage = cages.getCageFromID(cageID);
@@ -541,7 +552,7 @@ public class CagesPersistenceLegacy {
 					try {
 						cageID = Integer.valueOf(data[0]);
 					} catch (NumberFormatException e) {
-						Logger.warn("CagesArrayPersistenceLegacy:csvLoad_Measures() Invalid integer input: " + data[0]);
+						Logger.warn("CagesPersistenceLegacy:csvLoad_Measures() Invalid integer input: " + data[0]);
 						continue;
 					}
 					Cage cage = cages.getCageFromID(cageID);
@@ -559,7 +570,7 @@ public class CagesPersistenceLegacy {
 				}
 			}
 		} catch (IOException e) {
-			Logger.error("CagesArrayPersistenceLegacy:csvLoad_Measures() Error: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:csvLoad_Measures() Error: " + e.getMessage(), e);
 			e.printStackTrace();
 		}
 	}
@@ -572,7 +583,7 @@ public class CagesPersistenceLegacy {
 			csvWriter.append("n cages=" + csvSep + Integer.toString(cages.cagesList.size()) + "\n");
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {
-			Logger.error("CagesArrayPersistenceLegacy:csvSaveDESCRIPTIONSection() Error: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:csvSaveDESCRIPTIONSection() Error: " + e.getMessage(), e);
 		}
 		return true;
 	}
@@ -587,17 +598,16 @@ public class CagesPersistenceLegacy {
 				csvWriter.append(String.format("%d%s%d%s%d%s%s%s%s%s%s%s", cage.getProperties().getCageID(), csvSep,
 						cage.getProperties().getCageNFlies(), csvSep, cage.getProperties().getFlyAge(), csvSep,
 						cage.getProperties().getComment() != null ? cage.getProperties().getComment() : "", csvSep,
-						cage.getProperties().getFlyStrain() != null ? cage.getProperties().getFlyStrain() : "",
-						csvSep, cage.getProperties().getFlySex() != null ? cage.getProperties().getFlySex() : "",
-						csvSep));
+						cage.getProperties().getFlyStrain() != null ? cage.getProperties().getFlyStrain() : "", csvSep,
+						cage.getProperties().getFlySex() != null ? cage.getProperties().getFlySex() : "", csvSep));
 
-				String roiName = (cage.getRoi() != null && cage.getRoi().getName() != null)
-						? cage.getRoi().getName()
+				String roiName = (cage.getRoi() != null && cage.getRoi().getName() != null) ? cage.getRoi().getName()
 						: "cage" + String.format("%03d", cage.getProperties().getCageID());
 				csvWriter.append(roiName + csvSep);
 
 				if (cage.getRoi() != null && cage.getRoi() instanceof plugins.kernel.roi.roi2d.ROI2DPolygon) {
-					plugins.kernel.roi.roi2d.ROI2DPolygon polyRoi = (plugins.kernel.roi.roi2d.ROI2DPolygon) cage.getRoi();
+					plugins.kernel.roi.roi2d.ROI2DPolygon polyRoi = (plugins.kernel.roi.roi2d.ROI2DPolygon) cage
+							.getRoi();
 					icy.type.geom.Polygon2D polygon = polyRoi.getPolygon2D();
 					csvWriter.append(Integer.toString(polygon.npoints));
 					for (int i = 0; i < polygon.npoints; i++) {
@@ -611,12 +621,13 @@ public class CagesPersistenceLegacy {
 			}
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {
-			Logger.error("CagesArrayPersistenceLegacy:csvSaveCAGESection() Error: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:csvSaveCAGESection() Error: " + e.getMessage(), e);
 		}
 		return true;
 	}
 
-	static boolean csvSaveMeasuresSection(Cages cages, FileWriter csvWriter, EnumCageMeasures measuresType, String csvSep) {
+	static boolean csvSaveMeasuresSection(Cages cages, FileWriter csvWriter, EnumCageMeasures measuresType,
+			String csvSep) {
 		try {
 			if (cages.cagesList.size() <= 0) {
 				return false;
@@ -631,7 +642,7 @@ public class CagesPersistenceLegacy {
 
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {
-			Logger.error("CagesArrayPersistenceLegacy:csvSaveMeasuresSection() Error: " + e.getMessage(), e);
+			Logger.error("CagesPersistenceLegacy:csvSaveMeasuresSection() Error: " + e.getMessage(), e);
 		}
 		return true;
 	}
@@ -650,7 +661,8 @@ public class CagesPersistenceLegacy {
 		return sbf.toString();
 	}
 
-	private static String csvExport_MEASURE_Data(Cage cage, EnumCageMeasures measureType, String sep, boolean complete) {
+	private static String csvExport_MEASURE_Data(Cage cage, EnumCageMeasures measureType, String sep,
+			boolean complete) {
 		StringBuffer sbf = new StringBuffer();
 		String cageID = Integer.toString(cage.getProperties().getCageID());
 

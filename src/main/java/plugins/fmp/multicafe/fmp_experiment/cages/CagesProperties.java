@@ -121,8 +121,8 @@ public final class CagesProperties {
 
 	@Override
 	public String toString() {
-		return String.format("CagesArrayInfo{total=%d, valid=%d, active=%d, withSpots=%d, grid=%d}", totalCages,
-				validCages, activeCages, cagesWithSpots, gridSize);
+		return String.format("CagesInfo{total=%d, valid=%d, active=%d, withSpots=%d, grid=%d}", totalCages, validCages,
+				activeCages, cagesWithSpots, gridSize);
 	}
 
 	public static class Builder {

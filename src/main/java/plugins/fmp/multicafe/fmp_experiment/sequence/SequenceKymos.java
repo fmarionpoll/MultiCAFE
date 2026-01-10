@@ -421,15 +421,15 @@ public class SequenceKymos extends SequenceCamData {
 	 * Creates a list of potential kymograph files from spots in cages.
 	 * 
 	 * @param baseDirectory the base directory
-	 * @param cagesArray    the cages array
+	 * @param cages    the cages array
 	 * @return list of image file descriptors
 	 */
-	public List<ImageFileData> createKymographFileList(String baseDirectory, Cages cagesArray,
+	public List<ImageFileData> createKymographFileList(String baseDirectory, Cages cages,
 			SpotsArray allSpots) {
 		if (baseDirectory == null || baseDirectory.trim().isEmpty()) {
 			throw new IllegalArgumentException("Base directory cannot be null or empty");
 		}
-		if (cagesArray == null) {
+		if (cages == null) {
 			throw new IllegalArgumentException("Cages array cannot be null");
 		}
 		if (allSpots == null) {
@@ -440,12 +440,12 @@ public class SequenceKymos extends SequenceCamData {
 		try {
 			String fullDirectory = baseDirectory + File.separator;
 
-			if (cagesArray.cagesList.isEmpty()) {
+			if (cages.cagesList.isEmpty()) {
 				Logger.warn("No cages found in cages array");
 				return new ArrayList<>();
 			}
 
-			Cage firstCage = cagesArray.cagesList.get(0);
+			Cage firstCage = cages.cagesList.get(0);
 			List<Spot> firstCageSpots = firstCage.getSpots(allSpots);
 			if (firstCageSpots.isEmpty()) {
 				Logger.warn("No spots found in first cage");
@@ -453,11 +453,11 @@ public class SequenceKymos extends SequenceCamData {
 			}
 
 			// Calculate total expected files
-			int totalExpectedFiles = cagesArray.cagesList.size() * firstCageSpots.size();
+			int totalExpectedFiles = cages.cagesList.size() * firstCageSpots.size();
 			List<ImageFileData> fileList = new ArrayList<>(totalExpectedFiles);
 
 			// Generate file descriptors for each spot in each cage
-			for (Cage cage : cagesArray.cagesList) {
+			for (Cage cage : cages.cagesList) {
 				List<Spot> spots = cage.getSpots(allSpots);
 				if (spots.isEmpty())
 					continue;
@@ -521,9 +521,9 @@ public class SequenceKymos extends SequenceCamData {
 	 *             instead
 	 */
 	@Deprecated
-	public List<ImageFileData> loadListOfPotentialKymographsFromSpots(String dir, Cages cagesArray,
+	public List<ImageFileData> loadListOfPotentialKymographsFromSpots(String dir, Cages cages,
 			SpotsArray allSpots) {
-		return createKymographFileList(dir, cagesArray, allSpots);
+		return createKymographFileList(dir, cages, allSpots);
 	}
 
 	/**

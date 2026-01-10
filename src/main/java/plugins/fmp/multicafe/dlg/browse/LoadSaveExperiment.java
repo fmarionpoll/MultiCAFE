@@ -926,7 +926,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					// Save cage measures to bin directory
 					String binDir = exp.getKymosBinFullDirectory();
 					if (binDir != null) {
-						exp.getCages().getPersistence().saveCagesArrayMeasures(exp.getCages(), binDir);
+						exp.getCages().getPersistence().saveCagesMeasures(exp.getCages(), binDir);
 					}
 
 					// Save spots using new dual-file system
