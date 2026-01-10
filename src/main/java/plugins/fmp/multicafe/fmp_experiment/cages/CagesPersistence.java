@@ -19,7 +19,7 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.JComponents.Dialog;
 import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogException;
 
-public class CagesArrayPersistence {
+public class CagesPersistence {
 
 	private static final String ID_CAGES = "Cages";
 	private static final String ID_NCAGES = "n_cages";
@@ -41,7 +41,7 @@ public class CagesArrayPersistence {
 	// Public API methods (delegate to nested classes)
 	// ========================================================================
 
-	public boolean load_Cages(CagesArray cages, String directory) {
+	public boolean load_Cages(Cages cages, String directory) {
 		int cagesBefore = cages.cagesList.size();
 
 		// Priority 1: Try new v2_ format (descriptions + measures separate)
@@ -63,20 +63,20 @@ public class CagesArrayPersistence {
 		}
 
 		if (cagesWithROIsBefore < cages.cagesList.size()) {
-			CagesArrayPersistenceLegacy.xmlLoadCagesROIsOnly(cages, tempName);
+			CagesPersistenceLegacy.xmlLoadCagesROIsOnly(cages, tempName);
 		}
 
 		// Priority 2: Fall back to legacy combined CSV format
 		boolean csvLoadSuccess = false;
 		try {
-			csvLoadSuccess = CagesArrayPersistenceLegacy.csvLoadCagesMeasures(cages, directory);
+			csvLoadSuccess = CagesPersistenceLegacy.csvLoadCagesMeasures(cages, directory);
 			if (csvLoadSuccess) {
 				int cagesAfterCSV = cages.cagesList.size();
 				Logger.info(String.format("CagesArrayPersistence:load_Cages() Legacy CSV loaded: %d cages (was %d)",
 						cagesAfterCSV, cagesBefore));
 
 				// Optionally load ROIs from XML
-				CagesArrayPersistenceLegacy.xmlLoadCagesROIsOnly(cages, tempName);
+				CagesPersistenceLegacy.xmlLoadCagesROIsOnly(cages, tempName);
 				
 				// Check if fly positions were loaded, if not try loading from XML
 				boolean hasFlyPositions = false;
@@ -89,7 +89,7 @@ public class CagesArrayPersistence {
 				}
 				if (!hasFlyPositions) {
 					Logger.info("CagesArrayPersistence:load_Cages() No fly positions found in CSV, trying XML fallback");
-					CagesArrayPersistenceLegacy.xmlLoadFlyPositionsFromXML(cages, tempName);
+					CagesPersistenceLegacy.xmlLoadFlyPositionsFromXML(cages, tempName);
 				}
 
 				return true;
@@ -107,7 +107,7 @@ public class CagesArrayPersistence {
 		return xmlLoadSuccess;
 	}
 
-	public boolean save_Cages(CagesArray cages, String directory) {
+	public boolean save_Cages(Cages cages, String directory) {
 		if (directory == null) {
 			Logger.warn("CagesArrayPersistence:save_Cages() directory is null");
 			return false;
@@ -131,7 +131,7 @@ public class CagesArrayPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean saveCagesArrayDescription(CagesArray cages, String resultsDirectory) {
+	public boolean saveCagesArrayDescription(Cages cages, String resultsDirectory) {
 		return Persistence.saveDescription(cages, resultsDirectory);
 	}
 
@@ -143,7 +143,7 @@ public class CagesArrayPersistence {
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public boolean saveCagesArrayMeasures(CagesArray cages, String binDirectory) {
+	public boolean saveCagesArrayMeasures(Cages cages, String binDirectory) {
 		return Persistence.saveMeasures(cages, binDirectory);
 	}
 
@@ -155,7 +155,7 @@ public class CagesArrayPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean loadCagesArrayDescription(CagesArray cages, String resultsDirectory) {
+	public boolean loadCagesArrayDescription(Cages cages, String resultsDirectory) {
 		return Persistence.loadDescription(cages, resultsDirectory);
 	}
 
@@ -167,7 +167,7 @@ public class CagesArrayPersistence {
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public boolean loadCagesArrayMeasures(CagesArray cages, String binDirectory) {
+	public boolean loadCagesArrayMeasures(Cages cages, String binDirectory) {
 		return Persistence.loadMeasures(cages, binDirectory);
 	}
 
@@ -175,8 +175,8 @@ public class CagesArrayPersistence {
 	// Legacy methods - private, only for internal use within persistence class
 	// ========================================================================
 
-	private boolean xmlReadCagesFromFileNoQuestion(CagesArray cages, String tempname) {
-		return CagesArrayPersistenceLegacy.xmlReadCagesFromFileNoQuestion(cages, tempname);
+	private boolean xmlReadCagesFromFileNoQuestion(Cages cages, String tempname) {
+		return CagesPersistenceLegacy.xmlReadCagesFromFileNoQuestion(cages, tempname);
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class CagesArrayPersistence {
 	 *                  unused)
 	 * @return true if successful, false otherwise
 	 */
-	public boolean loadCages(CagesArray cages, String directory, Experiment exp) {
+	public boolean loadCages(Cages cages, String directory, Experiment exp) {
 		if (directory == null) {
 			Logger.warn("CagesArrayPersistence:loadCages() directory is null");
 			return false;
@@ -222,7 +222,7 @@ public class CagesArrayPersistence {
 	 *                  unused)
 	 * @return true if successful, false otherwise
 	 */
-	public boolean saveCages(CagesArray cages, String directory, Experiment exp) {
+	public boolean saveCages(Cages cages, String directory, Experiment exp) {
 		if (directory == null) {
 			Logger.warn("CagesArrayPersistence:saveCages() directory is null");
 			return false;
@@ -254,7 +254,7 @@ public class CagesArrayPersistence {
 		 * Loads cage descriptions (DESCRIPTION and CAGE sections) from CagesArray.csv.
 		 * Tries v2_ format first, then falls back to legacy format.
 		 */
-		public static boolean loadDescription(CagesArray cages, String resultsDirectory) {
+		public static boolean loadDescription(Cages cages, String resultsDirectory) {
 			if (resultsDirectory == null) {
 				return false;
 			}
@@ -288,12 +288,12 @@ public class CagesArrayPersistence {
 							switch (data[1]) {
 							case "DESCRIPTION":
 								descriptionLoaded = true;
-								CagesArrayPersistenceLegacy.csvLoad_DESCRIPTION(cages, csvReader, sep);
+								CagesPersistenceLegacy.csvLoad_DESCRIPTION(cages, csvReader, sep);
 								break;
 							case "CAGE":
 							case "CAGES":
 								cageLoaded = true;
-								CagesArrayPersistenceLegacy.csvLoad_CAGE(cages, csvReader, sep);
+								CagesPersistenceLegacy.csvLoad_CAGE(cages, csvReader, sep);
 								break;
 							case "POSITION":
 								// Stop reading when we hit measures section
@@ -317,7 +317,7 @@ public class CagesArrayPersistence {
 		 * Loads cage measures (POSITION section) from CagesArrayMeasures.csv in bin
 		 * directory. Tries v2_ format first, then falls back to legacy format.
 		 */
-		public static boolean loadMeasures(CagesArray cages, String binDirectory) {
+		public static boolean loadMeasures(Cages cages, String binDirectory) {
 			if (binDirectory == null) {
 				return false;
 			}
@@ -348,7 +348,7 @@ public class CagesArrayPersistence {
 					if (data.length > 0 && data[0].equals("#")) {
 						if (data.length > 1) {
 							if (data[1].equals("POSITION")) {
-								CagesArrayPersistenceLegacy.csvLoad_Measures(cages, csvReader, EnumCageMeasures.POSITION, sep);
+								CagesPersistenceLegacy.csvLoad_Measures(cages, csvReader, EnumCageMeasures.POSITION, sep);
 								csvReader.close();
 								return true;
 							}
@@ -368,7 +368,7 @@ public class CagesArrayPersistence {
 		 * Saves cage descriptions (DESCRIPTION and CAGE sections) to CagesArray.csv in
 		 * results directory. Always saves to v2_ format.
 		 */
-		public static boolean saveDescription(CagesArray cages, String resultsDirectory) {
+		public static boolean saveDescription(Cages cages, String resultsDirectory) {
 			if (resultsDirectory == null) {
 				Logger.warn("CagesArrayPersistence:saveCagesArray() directory is null");
 				return false;
@@ -383,8 +383,8 @@ public class CagesArrayPersistence {
 			try {
 				// Always save to v2_ format
 				FileWriter csvWriter = new FileWriter(resultsDirectory + File.separator + ID_V2_CAGESARRAY_CSV);
-				CagesArrayPersistenceLegacy.csvSaveDESCRIPTIONSection(cages, csvWriter, csvSep);
-				CagesArrayPersistenceLegacy.csvSaveCAGESection(cages, csvWriter, csvSep);
+				CagesPersistenceLegacy.csvSaveDESCRIPTIONSection(cages, csvWriter, csvSep);
+				CagesPersistenceLegacy.csvSaveCAGESection(cages, csvWriter, csvSep);
 				csvWriter.flush();
 				csvWriter.close();
 				Logger.info("CagesArrayPersistence:saveCagesArray() Saved descriptions to " + ID_V2_CAGESARRAY_CSV);
@@ -399,7 +399,7 @@ public class CagesArrayPersistence {
 		 * Saves cage measures (POSITION section) to CagesArrayMeasures.csv in bin
 		 * directory. Always saves to v2_ format.
 		 */
-		public static boolean saveMeasures(CagesArray cages, String binDirectory) {
+		public static boolean saveMeasures(Cages cages, String binDirectory) {
 			if (binDirectory == null) {
 				Logger.warn("CagesArrayPersistence:saveCagesArrayMeasures() directory is null");
 				return false;
@@ -414,7 +414,7 @@ public class CagesArrayPersistence {
 			try {
 				// Always save to v2_ format
 				FileWriter csvWriter = new FileWriter(binDirectory + File.separator + ID_V2_CAGESARRAYMEASURES_CSV);
-				CagesArrayPersistenceLegacy.csvSaveMeasuresSection(cages, csvWriter, EnumCageMeasures.POSITION, csvSep);
+				CagesPersistenceLegacy.csvSaveMeasuresSection(cages, csvWriter, EnumCageMeasures.POSITION, csvSep);
 				csvWriter.flush();
 				csvWriter.close();
 				Logger.info("CagesArrayPersistence:saveCagesArrayMeasures() Saved measures to "

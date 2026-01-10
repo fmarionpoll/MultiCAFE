@@ -19,11 +19,11 @@ import plugins.fmp.multicafe.fmp_tools.Level2D;
  * @author MultiSPOTS96
  * @version 2.3.3
  */
-public class CagesArrayCapillariesComputation {
+public class CagesCapillariesComputation {
 
-	private final CagesArray cagesArray;
+	private final Cages cagesArray;
 
-	public CagesArrayCapillariesComputation(CagesArray cagesArray) {
+	public CagesCapillariesComputation(Cages cagesArray) {
 		if (cagesArray == null) {
 			throw new IllegalArgumentException("CagesArray cannot be null");
 		}

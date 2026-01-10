@@ -52,7 +52,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
  * @version 2.3.3
  * @since 2.3.3
  */
-public final class CagesArrayModern implements AutoCloseable {
+public final class CagesModern implements AutoCloseable {
 
 	// === THREAD-SAFE COLLECTIONS ===
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -61,7 +61,7 @@ public final class CagesArrayModern implements AutoCloseable {
 	private final Map<String, CageModern> cagesByName = new ConcurrentHashMap<>();
 
 	// === CONFIGURATION ===
-	private final CagesArrayConfiguration configuration;
+	private final CagesConfiguration configuration;
 	private volatile boolean closed = false;
 
 	// === CONSTRUCTORS ===
@@ -72,7 +72,7 @@ public final class CagesArrayModern implements AutoCloseable {
 	 * @param configuration the configuration to use
 	 * @throws IllegalArgumentException if configuration is null
 	 */
-	public CagesArrayModern(CagesArrayConfiguration configuration) {
+	public CagesModern(CagesConfiguration configuration) {
 		this.configuration = Objects.requireNonNull(configuration, "Configuration cannot be null");
 	}
 
@@ -93,7 +93,7 @@ public final class CagesArrayModern implements AutoCloseable {
 	 * @return detailed cages array information
 	 * @throws IllegalStateException if the array is closed
 	 */
-	public CagesArrayProperties getArrayProperties() {
+	public CagesProperties getArrayProperties() {
 		ensureNotClosed();
 		lock.readLock().lock();
 		try {
@@ -117,7 +117,7 @@ public final class CagesArrayModern implements AutoCloseable {
 
 			long cagesWithSpots = cages.stream().filter(cage -> cage.getSpotsArray().getList().size() > 0).count();
 
-			return CagesArrayProperties.builder() //
+			return CagesProperties.builder() //
 					.totalCages(cages.size()) //
 					.validCages((int) validCages) //
 					.activeCages((int) activeCages) //
@@ -332,7 +332,7 @@ public final class CagesArrayModern implements AutoCloseable {
 	 * @throws IllegalArgumentException if otherArray is null
 	 * @throws IllegalStateException    if the array is closed
 	 */
-	public CageOperationResult mergeCages(CagesArrayModern otherArray) {
+	public CageOperationResult mergeCages(CagesModern otherArray) {
 		if (otherArray == null) {
 			return CageOperationResult.failure("MERGE_CAGES",
 					new IllegalArgumentException("Other array cannot be null"), "Cannot merge with null array");
@@ -461,7 +461,7 @@ public final class CagesArrayModern implements AutoCloseable {
 	 * 
 	 * @return the configuration
 	 */
-	public CagesArrayConfiguration getConfiguration() {
+	public CagesConfiguration getConfiguration() {
 		return configuration;
 	}
 
@@ -521,7 +521,7 @@ public final class CagesArrayModern implements AutoCloseable {
 	 * Builder for creating ModernCagesArray instances.
 	 */
 	public static class Builder {
-		private CagesArrayConfiguration configuration = CagesArrayConfiguration.defaultConfiguration();
+		private CagesConfiguration configuration = CagesConfiguration.defaultConfiguration();
 
 		/**
 		 * Sets the configuration.
@@ -529,7 +529,7 @@ public final class CagesArrayModern implements AutoCloseable {
 		 * @param configuration the configuration to use
 		 * @return this builder
 		 */
-		public Builder withConfiguration(CagesArrayConfiguration configuration) {
+		public Builder withConfiguration(CagesConfiguration configuration) {
 			this.configuration = configuration;
 			return this;
 		}
@@ -539,8 +539,8 @@ public final class CagesArrayModern implements AutoCloseable {
 		 * 
 		 * @return the created cages array
 		 */
-		public CagesArrayModern build() {
-			return new CagesArrayModern(configuration);
+		public CagesModern build() {
+			return new CagesModern(configuration);
 		}
 	}
 }

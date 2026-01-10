@@ -20,7 +20,7 @@ import plugins.fmp.multicafe.fmp_tools.JComponents.exceptions.FileDialogExceptio
  * Legacy persistence for cages files.
  * Handles loading from legacy XML and CSV formats: MCdrosotrack.xml, CagesMeasures.csv
  */
-public class CagesArrayPersistenceLegacy {
+public class CagesPersistenceLegacy {
 
 	private static final String ID_CAGES = "Cages";
 	private static final String ID_NCAGES = "n_cages";
@@ -44,7 +44,7 @@ public class CagesArrayPersistenceLegacy {
 	 * @param directory The directory containing the CSV file
 	 * @return true if successful
 	 */
-	public static boolean csvLoadCagesMeasures(CagesArray cages, String directory) throws Exception {
+	public static boolean csvLoadCagesMeasures(Cages cages, String directory) throws Exception {
 		String pathToCsv = directory + File.separator + ID_CAGESMEASURES_CSV;
 		File csvFile = new File(pathToCsv);
 		if (!csvFile.isFile()) {
@@ -107,7 +107,7 @@ public class CagesArrayPersistenceLegacy {
 	 * @param node   The XML node containing cages data
 	 * @return true if successful
 	 */
-	public static boolean xmlLoadCages(CagesArray cages, Node node) {
+	public static boolean xmlLoadCages(Cages cages, Node node) {
 		try {
 			// Try new format first (with Cages element)
 			Element xmlVal = XMLUtil.getElement(node, ID_CAGES);
@@ -166,7 +166,7 @@ public class CagesArrayPersistenceLegacy {
 	 * @param node  The drosoTrack XML node
 	 * @return true if successful
 	 */
-	private static boolean xmlLoadCages_v0(CagesArray cages, Node node) {
+	private static boolean xmlLoadCages_v0(Cages cages, Node node) {
 		try {
 			cages.cagesList.clear();
 			Element xmlVal = XMLUtil.getElement(node, ID_CAGES);
@@ -244,7 +244,7 @@ public class CagesArrayPersistenceLegacy {
 	/**
 	 * Transfers data from legacy v0 format lists to cages.
 	 */
-	private static void transferDataToCages_v0(CagesArray cages, java.util.List<icy.roi.ROI2D> cageLimitROIList,
+	private static void transferDataToCages_v0(Cages cages, java.util.List<icy.roi.ROI2D> cageLimitROIList,
 			java.util.List<FlyPositions> flyPositionsList) {
 		cages.cagesList.clear();
 		java.util.Collections.sort(cageLimitROIList, new plugins.fmp.multicafe.fmp_tools.Comparators.ROI2D_Name());
@@ -268,7 +268,7 @@ public class CagesArrayPersistenceLegacy {
 	 * @param tempname The path to the XML file
 	 * @return true if successful
 	 */
-	public static boolean xmlReadCagesFromFileNoQuestion(CagesArray cages, String tempname) {
+	public static boolean xmlReadCagesFromFileNoQuestion(Cages cages, String tempname) {
 		if (tempname == null) {
 			return false;
 		}
@@ -301,7 +301,7 @@ public class CagesArrayPersistenceLegacy {
 	 * @param tempname The path to the XML file
 	 * @return true if successful
 	 */
-	public static boolean xmlLoadCagesROIsOnly(CagesArray cages, String tempname) {
+	public static boolean xmlLoadCagesROIsOnly(Cages cages, String tempname) {
 		if (tempname == null) {
 			return false;
 		}
@@ -367,7 +367,7 @@ public class CagesArrayPersistenceLegacy {
 	 * @param tempname The path to the XML file
 	 * @return true if successful
 	 */
-	public static boolean xmlLoadFlyPositionsFromXML(CagesArray cages, String tempname) {
+	public static boolean xmlLoadFlyPositionsFromXML(Cages cages, String tempname) {
 		if (tempname == null) {
 			return false;
 		}
@@ -425,7 +425,7 @@ public class CagesArrayPersistenceLegacy {
 
 	// CSV loading helper methods
 
-	static void csvLoad_DIMENSION(CagesArray cages, BufferedReader csvReader, String sep) {
+	static void csvLoad_DIMENSION(Cages cages, BufferedReader csvReader, String sep) {
 		String row;
 		try {
 			while ((row = csvReader.readLine()) != null) {
@@ -457,7 +457,7 @@ public class CagesArrayPersistenceLegacy {
 		}
 	}
 
-	static void csvLoad_DESCRIPTION(CagesArray cages, BufferedReader csvReader, String sep) {
+	static void csvLoad_DESCRIPTION(Cages cages, BufferedReader csvReader, String sep) {
 		String row;
 		try {
 			while ((row = csvReader.readLine()) != null) {
@@ -484,7 +484,7 @@ public class CagesArrayPersistenceLegacy {
 		}
 	}
 
-	static void csvLoad_CAGE(CagesArray cages, BufferedReader csvReader, String sep) {
+	static void csvLoad_CAGE(Cages cages, BufferedReader csvReader, String sep) {
 		String row;
 		try {
 			row = csvReader.readLine();
@@ -507,7 +507,7 @@ public class CagesArrayPersistenceLegacy {
 		}
 	}
 
-	private static Cage getCagefromID(CagesArray cages, String data) {
+	private static Cage getCagefromID(Cages cages, String data) {
 		int cageID = 0;
 		try {
 			cageID = Integer.valueOf(data);
@@ -523,7 +523,7 @@ public class CagesArrayPersistenceLegacy {
 		return cage;
 	}
 
-	static void csvLoad_Measures(CagesArray cages, BufferedReader csvReader, EnumCageMeasures measureType, String sep) {
+	static void csvLoad_Measures(Cages cages, BufferedReader csvReader, EnumCageMeasures measureType, String sep) {
 		String row;
 		try {
 			row = csvReader.readLine();
@@ -566,7 +566,7 @@ public class CagesArrayPersistenceLegacy {
 
 	// CSV saving helper methods (for backward compatibility)
 
-	static boolean csvSaveDESCRIPTIONSection(CagesArray cages, FileWriter csvWriter, String csvSep) {
+	static boolean csvSaveDESCRIPTIONSection(Cages cages, FileWriter csvWriter, String csvSep) {
 		try {
 			csvWriter.append("#" + csvSep + "DESCRIPTION" + csvSep + "Cages data\n");
 			csvWriter.append("n cages=" + csvSep + Integer.toString(cages.cagesList.size()) + "\n");
@@ -577,7 +577,7 @@ public class CagesArrayPersistenceLegacy {
 		return true;
 	}
 
-	static boolean csvSaveCAGESection(CagesArray cages, FileWriter csvWriter, String csvSep) {
+	static boolean csvSaveCAGESection(Cages cages, FileWriter csvWriter, String csvSep) {
 		try {
 			csvWriter.append("#" + csvSep + "CAGE" + csvSep + "Cage properties\n");
 			csvWriter.append("cageID" + csvSep + "nFlies" + csvSep + "age" + csvSep + "Comment" + csvSep + "strain"
@@ -616,7 +616,7 @@ public class CagesArrayPersistenceLegacy {
 		return true;
 	}
 
-	static boolean csvSaveMeasuresSection(CagesArray cages, FileWriter csvWriter, EnumCageMeasures measuresType, String csvSep) {
+	static boolean csvSaveMeasuresSection(Cages cages, FileWriter csvWriter, EnumCageMeasures measuresType, String csvSep) {
 		try {
 			if (cages.cagesList.size() <= 0) {
 				return false;

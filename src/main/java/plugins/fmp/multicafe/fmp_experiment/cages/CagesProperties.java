@@ -8,7 +8,7 @@ import java.util.List;
  * @author MultiSPOTS96
  * @version 2.3.3
  */
-public final class CagesArrayProperties {
+public final class CagesProperties {
 	private final int totalCages;
 	private final int validCages;
 	private final int activeCages;
@@ -22,7 +22,7 @@ public final class CagesArrayProperties {
 	private List<String> spotConcentration;
 	private List<String> spotVolume;
 
-	private CagesArrayProperties(Builder builder) {
+	private CagesProperties(Builder builder) {
 		this.totalCages = builder.totalCages;
 		this.validCages = builder.validCages;
 		this.activeCages = builder.activeCages;
@@ -199,8 +199,8 @@ public final class CagesArrayProperties {
 			return this;
 		}
 
-		public CagesArrayProperties build() {
-			return new CagesArrayProperties(this);
+		public CagesProperties build() {
+			return new CagesProperties(this);
 		}
 	}
 }

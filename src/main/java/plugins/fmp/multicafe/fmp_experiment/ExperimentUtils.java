@@ -6,7 +6,7 @@ import java.util.List;
 import icy.roi.ROI;
 import icy.roi.ROI2D;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cages;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotString;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
@@ -16,7 +16,7 @@ public class ExperimentUtils {
 
 	public static void transferCamDataROI2DsToSpots(Experiment exp) {
 		if (exp.getCages() == null)
-			exp.setCages(new CagesArray());
+			exp.setCages(new Cages());
 
 		SpotsArray allSpots = exp.getSpotsArray();
 		List<ROI2D> listROIsSpots = exp.getSeqCamData().getROIsContainingString("spot");
@@ -50,7 +50,7 @@ public class ExperimentUtils {
 
 	public void removeSpotsWithNoCamDataROI(Experiment exp) {
 		if (exp.getCages() == null)
-			exp.setCages(new CagesArray());
+			exp.setCages(new Cages());
 
 		SpotsArray allSpots = exp.getSpotsArray();
 		List<ROI2D> listROIsSpots = exp.getSeqCamData().getROIsContainingString("spot");

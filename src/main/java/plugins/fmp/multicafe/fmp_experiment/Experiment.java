@@ -21,7 +21,7 @@ import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cages;
 import plugins.fmp.multicafe.fmp_experiment.cages.CagesSequenceMapper;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillariesDescription;
@@ -63,7 +63,7 @@ public class Experiment {
 	private SequenceKymos seqKymos = null;
 	private Sequence seqReference = null;
 
-	private CagesArray cages = new CagesArray();
+	private Cages cages = new Cages();
 	private Capillaries capillaries = new Capillaries();
 	private SpotsArray spotsArray = new SpotsArray();
 
@@ -95,11 +95,11 @@ public class Experiment {
 		this.seqReference = seqReference;
 	}
 
-	public CagesArray getCages() {
+	public Cages getCages() {
 		return cages;
 	}
 
-	public void setCages(CagesArray cages) {
+	public void setCages(Cages cages) {
 		this.cages = cages;
 	}
 

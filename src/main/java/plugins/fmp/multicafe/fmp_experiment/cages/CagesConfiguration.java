@@ -6,7 +6,7 @@ package plugins.fmp.multicafe.fmp_experiment.cages;
  * @author MultiSPOTS96
  * @version 2.3.3
  */
-public final class CagesArrayConfiguration {
+public final class CagesConfiguration {
 	private final int nCagesAlongX;
 	private final int nCagesAlongY;
 	private final int nColumnsPerCage;
@@ -21,7 +21,7 @@ public final class CagesArrayConfiguration {
 	private final boolean validateInputs;
 	private final boolean enableProgressReporting;
 
-	private CagesArrayConfiguration(Builder builder) {
+	private CagesConfiguration(Builder builder) {
 		this.nCagesAlongX = validatePositive(builder.nCagesAlongX, "nCagesAlongX");
 		this.nCagesAlongY = validatePositive(builder.nCagesAlongY, "nCagesAlongY");
 		this.nColumnsPerCage = validatePositive(builder.nColumnsPerCage, "nColumnsPerCage");
@@ -41,21 +41,21 @@ public final class CagesArrayConfiguration {
 		return new Builder();
 	}
 
-	public static CagesArrayConfiguration defaultConfiguration() {
+	public static CagesConfiguration defaultConfiguration() {
 		return builder().build();
 	}
 
-	public static CagesArrayConfiguration highPerformance() {
+	public static CagesConfiguration highPerformance() {
 		return builder().enableThreadSafety(true).enablePerformanceOptimization(true).validateInputs(false)
 				.enableProgressReporting(false).build();
 	}
 
-	public static CagesArrayConfiguration qualityAssurance() {
+	public static CagesConfiguration qualityAssurance() {
 		return builder().enableThreadSafety(true).enablePerformanceOptimization(false).validateInputs(true)
 				.enableProgressReporting(true).build();
 	}
 
-	public static CagesArrayConfiguration research(int nCagesX, int nCagesY) {
+	public static CagesConfiguration research(int nCagesX, int nCagesY) {
 		return builder().nCagesAlongX(nCagesX).nCagesAlongY(nCagesY).enableThreadSafety(true)
 				.enablePerformanceOptimization(true).validateInputs(true).build();
 	}
@@ -234,8 +234,8 @@ public final class CagesArrayConfiguration {
 			return this;
 		}
 
-		public CagesArrayConfiguration build() {
-			return new CagesArrayConfiguration(this);
+		public CagesConfiguration build() {
+			return new CagesConfiguration(this);
 		}
 	}
 }

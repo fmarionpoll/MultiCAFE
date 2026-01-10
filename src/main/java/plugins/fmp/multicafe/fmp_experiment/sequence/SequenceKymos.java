@@ -28,7 +28,7 @@ import plugins.fmp.multicafe.fmp_experiment.EnumStatus;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ExperimentDirectories;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cages;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
@@ -424,7 +424,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param cagesArray    the cages array
 	 * @return list of image file descriptors
 	 */
-	public List<ImageFileData> createKymographFileList(String baseDirectory, CagesArray cagesArray,
+	public List<ImageFileData> createKymographFileList(String baseDirectory, Cages cagesArray,
 			SpotsArray allSpots) {
 		if (baseDirectory == null || baseDirectory.trim().isEmpty()) {
 			throw new IllegalArgumentException("Base directory cannot be null or empty");
@@ -517,11 +517,11 @@ public class SequenceKymos extends SequenceCamData {
 
 	/**
 	 * @deprecated Use
-	 *             {@link #createKymographFileList(String, CagesArray, SpotsArray)}
+	 *             {@link #createKymographFileList(String, Cages, SpotsArray)}
 	 *             instead
 	 */
 	@Deprecated
-	public List<ImageFileData> loadListOfPotentialKymographsFromSpots(String dir, CagesArray cagesArray,
+	public List<ImageFileData> loadListOfPotentialKymographsFromSpots(String dir, Cages cagesArray,
 			SpotsArray allSpots) {
 		return createKymographFileList(dir, cagesArray, allSpots);
 	}

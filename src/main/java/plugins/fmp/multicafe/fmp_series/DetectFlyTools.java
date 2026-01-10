@@ -14,7 +14,7 @@ import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
-import plugins.fmp.multicafe.fmp_experiment.cages.CagesArray;
+import plugins.fmp.multicafe.fmp_experiment.cages.Cages;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
@@ -22,7 +22,7 @@ public class DetectFlyTools {
 	public List<BooleanMask2D> cageMaskList = new ArrayList<BooleanMask2D>();
 	public Rectangle rectangleAllCages = null;
 	public BuildSeriesOptions options = null;
-	public CagesArray cages = null;
+	public Cages cages = null;
 
 	// -----------------------------------------------------
 

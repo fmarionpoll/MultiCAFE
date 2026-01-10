@@ -31,7 +31,7 @@ import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
-public class CagesArray {
+public class Cages {
 	public ArrayList<Cage> cagesList = new ArrayList<Cage>();
 	private TIntervalsArray cagesListTimeIntervals = null;
 
@@ -39,9 +39,9 @@ public class CagesArray {
 	// This allows efficient access to computed L+R measures
 	private transient java.util.Map<Integer, CageCapillariesComputation> cageComputations = new java.util.HashMap<>();
 
-	private CagesArrayPersistence persistence = new CagesArrayPersistence();
+	private CagesPersistence persistence = new CagesPersistence();
 
-	public CagesArrayPersistence getPersistence() {
+	public CagesPersistence getPersistence() {
 		return persistence;
 	}
 
@@ -63,7 +63,7 @@ public class CagesArray {
 	public final String ID_MS96_spotsMeasures_XML = "MS96_spotsMeasures.xml";
 	public final String ID_MS96_fliesPositions_XML = "MS96_fliesPositions.xml";
 
-	public CagesArray() {
+	public Cages() {
 	}
 
 	public ArrayList<Cage> getCageList() {
@@ -114,11 +114,11 @@ public class CagesArray {
 		this.detect_nframes = detect_nframes;
 	}
 
-	public CagesArray(ArrayList<Cage> cagesListFrom) {
+	public Cages(ArrayList<Cage> cagesListFrom) {
 		copyCagesInfos(cagesListFrom);
 	}
 
-	public CagesArray(int ncolumns, int nrows) {
+	public Cages(int ncolumns, int nrows) {
 		nCagesAlongX = ncolumns;
 		nCagesAlongY = nrows;
 		cagesList = new ArrayList<Cage>(ncolumns * nrows);
@@ -135,7 +135,7 @@ public class CagesArray {
 		cagesList.clear();
 	}
 
-	public void mergeLists(CagesArray cageArrayToMerge) {
+	public void mergeLists(Cages cageArrayToMerge) {
 		for (Cage cageAdded : cageArrayToMerge.cagesList) {
 			if (!isPresent(cageAdded))
 				cagesList.add(cageAdded);
@@ -817,7 +817,7 @@ public class CagesArray {
 		return cagesListTimeIntervals;
 	}
 
-	public void mergeSpotsLists(CagesArray arrayToMerge, SpotsArray allSpots, SpotsArray allSpotsToMerge) {
+	public void mergeSpotsLists(Cages arrayToMerge, SpotsArray allSpots, SpotsArray allSpotsToMerge) {
 		if (allSpots == null || allSpotsToMerge == null) {
 			return;
 		}
@@ -1088,7 +1088,7 @@ public class CagesArray {
 //	}
 
 	public void computeEvaporationCorrection(Experiment exp) {
-		CagesArrayCapillariesComputation computation = new CagesArrayCapillariesComputation(this);
+		CagesCapillariesComputation computation = new CagesCapillariesComputation(this);
 		computation.computeEvaporationCorrection(exp);
 	}
 
@@ -1145,7 +1145,7 @@ public class CagesArray {
 		if (exp == null)
 			return;
 
-		CagesArrayCapillariesComputation computation = new CagesArrayCapillariesComputation(this);
+		CagesCapillariesComputation computation = new CagesCapillariesComputation(this);
 		computation.clearComputedMeasures(exp);
 
 		// Clear cage computations map

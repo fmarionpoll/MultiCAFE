@@ -23,11 +23,11 @@ public final class CagesSequenceMapper {
 	}
 
 	/**
-	 * Push cage ROIs from the {@link CagesArray} model to the given
+	 * Push cage ROIs from the {@link Cages} model to the given
 	 * {@link SequenceCamData}. Existing ROIs whose name contains {@code "cage"}
 	 * are cleared before transfer.
 	 */
-	public static void pushCagesToSequence(CagesArray cages, SequenceCamData seqCamData) {
+	public static void pushCagesToSequence(Cages cages, SequenceCamData seqCamData) {
 		if (cages == null || seqCamData == null || seqCamData.getSequence() == null) {
 			return;
 		}
@@ -37,9 +37,9 @@ public final class CagesSequenceMapper {
 
 	/**
 	 * Pull cage geometry from ROIs on the given {@link SequenceCamData} back into
-	 * the {@link CagesArray} model.
+	 * the {@link Cages} model.
 	 */
-	public static void pullCagesFromSequence(CagesArray cages, SequenceCamData seqCamData) {
+	public static void pullCagesFromSequence(Cages cages, SequenceCamData seqCamData) {
 		if (cages == null || seqCamData == null || seqCamData.getSequence() == null) {
 			return;
 		}
@@ -50,7 +50,7 @@ public final class CagesSequenceMapper {
 	 * Convenience operation used when saving cages: pull latest geometry from the
 	 * sequence and then persist cages and positions.
 	 */
-	public static void syncCagesFromSequenceBeforeSave(CagesArray cages, SequenceCamData seqCamData) {
+	public static void syncCagesFromSequenceBeforeSave(Cages cages, SequenceCamData seqCamData) {
 		pullCagesFromSequence(cages, seqCamData);
 	}
 
@@ -59,7 +59,7 @@ public final class CagesSequenceMapper {
 	 * {@link SequenceCamData} as ROIs named with the {@code \"spot\"} pattern.
 	 * Existing ROIs whose name contains {@code \"spot\"} are cleared first.
 	 */
-	public static void pushSpotsToSequence(CagesArray cages, plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray spots,
+	public static void pushSpotsToSequence(Cages cages, plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray spots,
 			SequenceCamData seqCamData) {
 		if (cages == null || spots == null || seqCamData == null || seqCamData.getSequence() == null) {
 			return;
@@ -73,7 +73,7 @@ public final class CagesSequenceMapper {
 	 * underlying {@code SpotsArray}, using the cages structure to map ROIs to
 	 * logical spots.
 	 */
-	public static void pullSpotsFromSequence(CagesArray cages,
+	public static void pullSpotsFromSequence(Cages cages,
 			plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray spots, SequenceCamData seqCamData) {
 		if (cages == null || spots == null || seqCamData == null || seqCamData.getSequence() == null) {
 			return;
