@@ -19,7 +19,13 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
 /**
  * Migrates experiments from old format (spots in cage XML) to new format
  * (spots in CSV, IDs in cage XML).
+ * 
+ * @deprecated Migration is no longer needed. Legacy persistence classes now provide
+ * transparent fallback to read old formats automatically. Users can manually save
+ * in new format when desired, or use an auto-save flag on experiment close.
+ * This class is kept for reference but is no longer used.
  */
+@Deprecated
 public class MigrationTool {
 
 	private MigrationDetector detector = new MigrationDetector();
@@ -77,7 +83,7 @@ public class MigrationTool {
 			}
 			
 			// Save capillary descriptions to new format (if available)
-			boolean capillariesDescriptionsSaved = exp.getCapillaries().getPersistence().saveCapillariesArrayDescription(exp.getCapillaries(), directory);
+			boolean capillariesDescriptionsSaved = exp.getCapillaries().getPersistence().saveCapillariesDescription(exp.getCapillaries(), directory);
 			if (!capillariesDescriptionsSaved) {
 				Logger.warn("MigrationTool:migrateExperiment() Failed to save capillary descriptions");
 			}
@@ -92,7 +98,7 @@ public class MigrationTool {
 				exp.getCages().getPersistence().saveCagesMeasures(exp.getCages(), binDir);
 				
 				// Save capillary measures
-				exp.getCapillaries().getPersistence().save_CapillariesArrayMeasures(exp.getCapillaries(), binDir);
+				exp.getCapillaries().getPersistence().save_CapillariesMeasures(exp.getCapillaries(), binDir);
 			}
 
 			Logger.info("MigrationTool:migrateExperiment() Migration completed successfully");

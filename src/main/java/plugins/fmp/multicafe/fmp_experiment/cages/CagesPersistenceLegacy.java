@@ -33,6 +33,8 @@ public class CagesPersistenceLegacy {
 	private static final String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 	private static final String csvSep = ";";
 	private static final String ID_CAGESMEASURES_CSV = "CagesMeasures.csv";
+	private static final String ID_CAGESARRAY_CSV = "CagesArray.csv";
+	private static final String ID_CAGESARRAYMEASURES_CSV = "CagesArrayMeasures.csv";
 
 	/**
 	 * Loads cages from legacy CSV format (CagesMeasures.csv).
@@ -680,5 +682,216 @@ public class CagesPersistenceLegacy {
 			break;
 		}
 		return sbf.toString();
+	}
+
+	// ========================================================================
+	// Fallback methods that handle all legacy formats (CSV → XML)
+	// These methods replicate the original MultiCAFE0 persistence behavior
+	// ========================================================================
+
+	/**
+	 * Loads cage descriptions with fallback logic. Replicates original MultiCAFE0
+	 * behavior: checks for legacy CSV files first, then falls back to XML.
+	 * 
+	 * @param cages            The Cages to populate
+	 * @param resultsDirectory The results directory
+	 * @return true if successful
+	 */
+	public static boolean loadDescriptionWithFallback(Cages cages, String resultsDirectory) {
+		if (resultsDirectory == null) {
+			return false;
+		}
+
+		// Priority 1: Try legacy CSV format (CagesArray.csv)
+		String pathToCsv = resultsDirectory + File.separator + ID_CAGESARRAY_CSV;
+		File csvFile = new File(pathToCsv);
+		if (csvFile.isFile()) {
+			try {
+				BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
+				String row;
+				String sep = csvSep;
+				boolean descriptionLoaded = false;
+				boolean cageLoaded = false;
+
+				while ((row = csvReader.readLine()) != null) {
+					if (row.length() > 0 && row.charAt(0) == '#')
+						sep = String.valueOf(row.charAt(1));
+
+					String[] data = row.split(sep);
+					if (data.length > 0 && data[0].equals("#")) {
+						if (data.length > 1) {
+							switch (data[1]) {
+							case "DESCRIPTION":
+								descriptionLoaded = true;
+								csvLoad_DESCRIPTION(cages, csvReader, sep);
+								break;
+							case "CAGE":
+							case "CAGES":
+								cageLoaded = true;
+								csvLoad_CAGE(cages, csvReader, sep);
+								break;
+							case "POSITION":
+								// Stop reading when we hit measures section
+								csvReader.close();
+								return descriptionLoaded || cageLoaded;
+							default:
+								break;
+							}
+						}
+					}
+				}
+				csvReader.close();
+				if (descriptionLoaded || cageLoaded) {
+					Logger.info("CagesPersistenceLegacy:loadDescriptionWithFallback() Loaded from legacy CSV: "
+							+ ID_CAGESARRAY_CSV);
+					return true;
+				}
+			} catch (Exception e) {
+				Logger.error("CagesPersistenceLegacy:loadDescriptionWithFallback() Error loading CSV: "
+						+ e.getMessage(), e);
+			}
+		}
+
+		// Priority 2: Try legacy CSV format (CagesMeasures.csv) - combined file
+		pathToCsv = resultsDirectory + File.separator + ID_CAGESMEASURES_CSV;
+		csvFile = new File(pathToCsv);
+		if (csvFile.isFile()) {
+			try {
+				boolean success = csvLoadCagesMeasures(cages, resultsDirectory);
+				if (success) {
+					Logger.info("CagesPersistenceLegacy:loadDescriptionWithFallback() Loaded from legacy CSV: "
+							+ ID_CAGESMEASURES_CSV);
+					// Extract only descriptions from the combined file
+					return true;
+				}
+			} catch (Exception e) {
+				Logger.error("CagesPersistenceLegacy:loadDescriptionWithFallback() Error loading combined CSV: "
+						+ e.getMessage(), e);
+			}
+		}
+
+		// Priority 3: Fall back to XML (legacy format)
+		String pathToXml = resultsDirectory + File.separator + ID_MCDROSOTRACK_XML;
+		File xmlFile = new File(pathToXml);
+		if (xmlFile.isFile()) {
+			Logger.info("CagesPersistenceLegacy:loadDescriptionWithFallback() Trying legacy XML format: "
+					+ pathToXml);
+			boolean loaded = xmlReadCagesFromFileNoQuestion(cages, pathToXml);
+			if (loaded) {
+				Logger.info("CagesPersistenceLegacy:loadDescriptionWithFallback() Loaded from legacy XML: "
+						+ ID_MCDROSOTRACK_XML);
+			}
+			return loaded;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Loads cage measures with fallback logic. Replicates original MultiCAFE0
+	 * behavior: checks for legacy CSV files first, then falls back to XML.
+	 * 
+	 * @param cages        The Cages to populate
+	 * @param binDirectory The bin directory (e.g., results/bin60)
+	 * @return true if successful
+	 */
+	public static boolean loadMeasuresWithFallback(Cages cages, String binDirectory) {
+		if (binDirectory == null) {
+			return false;
+		}
+
+		// Priority 1: Try legacy CSV format (CagesArrayMeasures.csv)
+		String pathToCsv = binDirectory + File.separator + ID_CAGESARRAYMEASURES_CSV;
+		File csvFile = new File(pathToCsv);
+		if (csvFile.isFile()) {
+			try {
+				BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
+				String row;
+				String sep = csvSep;
+
+				while ((row = csvReader.readLine()) != null) {
+					if (row.length() > 0 && row.charAt(0) == '#') {
+						sep = String.valueOf(row.charAt(1));
+					}
+
+					String[] data = row.split(sep);
+					if (data.length > 0 && data[0].equals("#")) {
+						if (data.length > 1) {
+							if (data[1].equals("POSITION")) {
+								csvLoad_Measures(cages, csvReader, EnumCageMeasures.POSITION, sep);
+								csvReader.close();
+								Logger.info("CagesPersistenceLegacy:loadMeasuresWithFallback() Loaded from legacy CSV: "
+										+ ID_CAGESARRAYMEASURES_CSV);
+								return true;
+							}
+						}
+					}
+				}
+				csvReader.close();
+			} catch (Exception e) {
+				Logger.error("CagesPersistenceLegacy:loadMeasuresWithFallback() Error loading CSV: "
+						+ e.getMessage(), e);
+			}
+		}
+
+		// Priority 2: Try legacy CSV format (CagesMeasures.csv) in results directory
+		// Check if binDirectory is actually results directory
+		String resultsDir = binDirectory;
+		if (binDirectory.contains(File.separator + "bin")) {
+			// Extract results directory from bin directory
+			int binIndex = binDirectory.lastIndexOf(File.separator + "bin");
+			if (binIndex > 0) {
+				resultsDir = binDirectory.substring(0, binIndex);
+			}
+		}
+		pathToCsv = resultsDir + File.separator + ID_CAGESMEASURES_CSV;
+		csvFile = new File(pathToCsv);
+		if (csvFile.isFile()) {
+			try {
+				BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
+				String row;
+				String sep = csvSep;
+
+				while ((row = csvReader.readLine()) != null) {
+					if (row.length() > 0 && row.charAt(0) == '#') {
+						sep = String.valueOf(row.charAt(1));
+					}
+
+					String[] data = row.split(sep);
+					if (data.length > 0 && data[0].equals("#")) {
+						if (data.length > 1) {
+							if (data[1].equals("POSITION")) {
+								csvLoad_Measures(cages, csvReader, EnumCageMeasures.POSITION, sep);
+								csvReader.close();
+								Logger.info("CagesPersistenceLegacy:loadMeasuresWithFallback() Loaded from legacy CSV: "
+										+ ID_CAGESMEASURES_CSV);
+								return true;
+							}
+						}
+					}
+				}
+				csvReader.close();
+			} catch (Exception e) {
+				Logger.error("CagesPersistenceLegacy:loadMeasuresWithFallback() Error loading combined CSV: "
+						+ e.getMessage(), e);
+			}
+		}
+
+		// Priority 3: Fall back to XML (legacy format)
+		String pathToXml = resultsDir + File.separator + ID_MCDROSOTRACK_XML;
+		File xmlFile = new File(pathToXml);
+		if (xmlFile.isFile()) {
+			Logger.info("CagesPersistenceLegacy:loadMeasuresWithFallback() Trying legacy XML format: "
+					+ pathToXml);
+			// Load fly positions from XML
+			boolean loaded = xmlLoadFlyPositionsFromXML(cages, pathToXml);
+			if (loaded) {
+				Logger.info("CagesPersistenceLegacy:loadMeasuresWithFallback() Loaded measures from legacy XML: "
+						+ ID_MCDROSOTRACK_XML);
+			}
+			return loaded;
+		}
+
+		return false;
 	}
 }

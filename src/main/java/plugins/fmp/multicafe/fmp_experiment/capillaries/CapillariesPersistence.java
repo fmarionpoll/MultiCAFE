@@ -19,8 +19,8 @@ public class CapillariesPersistence {
 	public final static String ID_CAPILLARY_ = "capillary_";
 
 	// New v2 format filenames
-	public final static String ID_V2_CAPILLARIESARRAY_CSV = "v2_CapillariesArray.csv";
-	public final static String ID_V2_CAPILLARIESARRAYMEASURES_CSV = "v2_CapillariesArrayMeasures.csv";
+	public final static String ID_V2_CAPILLARIESDESCRIPTION_CSV = "v2_capillaries_description.csv";
+	public final static String ID_V2_CAPILLARIESMEASURES_CSV = "v2_capillaries_measures.csv";
 
 	// Legacy filenames (for fallback)
 	public final static String ID_CAPILLARIESARRAY_CSV = "CapillariesArray.csv";
@@ -38,7 +38,7 @@ public class CapillariesPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean load_CapillariesArrayDescription(Capillaries capillaries, String resultsDirectory) {
+	public boolean load_CapillariesDescription(Capillaries capillaries, String resultsDirectory) {
 		return Persistence.loadDescription(capillaries, resultsDirectory);
 	}
 
@@ -49,7 +49,7 @@ public class CapillariesPersistence {
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public boolean load_CapillariesArrayMeasures(Capillaries capillaries, String binDirectory) {
+	public boolean load_CapillariesMeasures(Capillaries capillaries, String binDirectory) {
 		return Persistence.loadMeasures(capillaries, binDirectory);
 	}
 
@@ -61,7 +61,7 @@ public class CapillariesPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean saveCapillariesArrayDescription(Capillaries capillaries, String resultsDirectory) {
+	public boolean saveCapillariesDescription(Capillaries capillaries, String resultsDirectory) {
 		return Persistence.saveDescription(capillaries, resultsDirectory);
 	}
 
@@ -72,7 +72,7 @@ public class CapillariesPersistence {
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public boolean save_CapillariesArrayMeasures(Capillaries capillaries, String binDirectory) {
+	public boolean save_CapillariesMeasures(Capillaries capillaries, String binDirectory) {
 		return Persistence.saveMeasures(capillaries, binDirectory);
 	}
 
@@ -92,8 +92,8 @@ public class CapillariesPersistence {
 		private static final String csvSep = ";";
 
 		/**
-		 * Loads capillary descriptions (DESCRIPTION section) from CapillariesArray.csv.
-		 * Tries v2_ format first, then falls back to legacy format.
+		 * Loads capillary descriptions (DESCRIPTION section) from v2 format file.
+		 * If v2 format is not found, delegates to Legacy class for fallback handling.
 		 * 
 		 * @param capillaries      the Capillaries to populate
 		 * @param resultsDirectory the results directory
@@ -104,33 +104,15 @@ public class CapillariesPersistence {
 				return false;
 			}
 
-			// Priority 1: Try v2_ format
-			String pathToCsv = resultsDirectory + File.separator + ID_V2_CAPILLARIESARRAY_CSV;
+			// Try v2_ format ONLY
+			String pathToCsv = resultsDirectory + File.separator + ID_V2_CAPILLARIESDESCRIPTION_CSV;
 			File csvFile = new File(pathToCsv);
 			if (!csvFile.isFile()) {
-				// Priority 2: Fallback to legacy CSV format
-				pathToCsv = resultsDirectory + File.separator + ID_CAPILLARIESARRAY_CSV;
-				csvFile = new File(pathToCsv);
-				if (!csvFile.isFile()) {
-					// Priority 3: Fallback to legacy XML format
-					String pathToXml = resultsDirectory + File.separator + ID_MCCAPILLARIES_XML;
-					File xmlFile = new File(pathToXml);
-					if (xmlFile.isFile()) {
-						Logger.info("CapillariesPersistence:loadDescription() Trying legacy XML format: " + pathToXml);
-						boolean loaded = CapillariesPersistenceLegacy.xmlLoadOldCapillaries_Only(capillaries, pathToXml);
-						if (loaded) {
-							Logger.info("CapillariesPersistence:loadDescription() Successfully loaded " + capillaries.getList().size() + " capillaries from legacy XML");
-						} else {
-							Logger.warn("CapillariesPersistence:loadDescription() Failed to load from legacy XML: " + pathToXml);
-						}
-						return loaded;
-					} else {
-						Logger.info("CapillariesPersistence:loadDescription() Legacy XML file not found: " + pathToXml);
-					}
-					return false;
-				}
+				// v2 format not found - delegate to Legacy class for all fallback logic
+				return CapillariesPersistenceLegacy.loadDescriptionWithFallback(capillaries, resultsDirectory);
 			}
 
+			// Load from v2 format
 			try {
 				BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
 				String row;
@@ -169,14 +151,14 @@ public class CapillariesPersistence {
 				csvReader.close();
 				return false;
 			} catch (Exception e) {
-				Logger.error("CapillariesPersistence:loadCapillariesArray() Error: " + e.getMessage(), e);
+				Logger.error("CapillariesPersistence:loadDescription() Error: " + e.getMessage(), e);
 				return false;
 			}
 		}
 
 		/**
-		 * Loads capillary measures from CapillariesArrayMeasures.csv in bin directory.
-		 * Tries v2_ format first, then falls back to legacy format.
+		 * Loads capillary measures from v2 format file in bin directory.
+		 * If v2 format is not found, delegates to Legacy class for fallback handling.
 		 * 
 		 * @param capillaries  the Capillaries to populate
 		 * @param binDirectory the bin directory (e.g., results/bin60)
@@ -187,31 +169,15 @@ public class CapillariesPersistence {
 				return false;
 			}
 
-			// Priority 1: Try v2_ format
-			String pathToCsv = binDirectory + File.separator + ID_V2_CAPILLARIESARRAYMEASURES_CSV;
+			// Try v2_ format ONLY
+			String pathToCsv = binDirectory + File.separator + ID_V2_CAPILLARIESMEASURES_CSV;
 			File csvFile = new File(pathToCsv);
 			if (!csvFile.isFile()) {
-				// Priority 2: Fallback to legacy CSV format
-				pathToCsv = binDirectory + File.separator + ID_CAPILLARIESARRAYMEASURES_CSV;
-				csvFile = new File(pathToCsv);
-				if (!csvFile.isFile()) {
-					// Priority 3: Fallback to legacy XML format (individual capillary XML files)
-					// Measures are stored in {kymographName}.xml files in the bin directory
-					Logger.info("CapillariesPersistence:loadMeasures() Trying legacy XML format in bin directory: " + binDirectory);
-					if (capillaries.getList().size() == 0) {
-						Logger.warn("CapillariesPersistence:loadMeasures() No capillaries loaded, cannot load measures from XML");
-						return false;
-					}
-					boolean loaded = CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures(capillaries, binDirectory);
-					if (loaded) {
-						Logger.info("CapillariesPersistence:loadMeasures() Successfully loaded measures from legacy XML");
-					} else {
-						Logger.warn("CapillariesPersistence:loadMeasures() Failed to load measures from legacy XML");
-					}
-					return loaded;
-				}
+				// v2 format not found - delegate to Legacy class for all fallback logic
+				return CapillariesPersistenceLegacy.loadMeasuresWithFallback(capillaries, binDirectory);
 			}
 
+			// Load from v2 format
 			try {
 				BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
 				String row;
@@ -279,7 +245,7 @@ public class CapillariesPersistence {
 				csvReader.close();
 				return measuresLoaded;
 			} catch (Exception e) {
-				Logger.error("CapillariesPersistence:load_CapillariesArrayMeasures() Error: " + e.getMessage(), e);
+				Logger.error("CapillariesPersistence:loadMeasures() Error: " + e.getMessage(), e);
 				return false;
 			}
 		}
@@ -307,12 +273,12 @@ public class CapillariesPersistence {
 
 			try {
 				// Always save to v2_ format
-				FileWriter csvWriter = new FileWriter(resultsDirectory + File.separator + ID_V2_CAPILLARIESARRAY_CSV);
+				FileWriter csvWriter = new FileWriter(resultsDirectory + File.separator + ID_V2_CAPILLARIESDESCRIPTION_CSV);
 				CapillariesPersistenceLegacy.csvSave_DescriptionSection(capillaries, csvWriter, csvSep);
 				csvWriter.flush();
 				csvWriter.close();
 				Logger.info("CapillariesPersistence:saveCapillariesArrayDescription() Saved descriptions to "
-						+ ID_V2_CAPILLARIESARRAY_CSV);
+						+ ID_V2_CAPILLARIESDESCRIPTION_CSV);
 				return true;
 			} catch (IOException e) {
 				Logger.error("CapillariesPersistence:saveCapillariesArrayDescription() Error: " + e.getMessage(), e);
@@ -344,7 +310,7 @@ public class CapillariesPersistence {
 			try {
 				// Always save to v2_ format
 				FileWriter csvWriter = new FileWriter(
-						binDirectory + File.separator + ID_V2_CAPILLARIESARRAYMEASURES_CSV);
+						binDirectory + File.separator + ID_V2_CAPILLARIESMEASURES_CSV);
 				CapillariesPersistenceLegacy.csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.TOPRAW, csvSep);
 				CapillariesPersistenceLegacy.csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.TOPLEVEL, csvSep);
 				CapillariesPersistenceLegacy.csvSave_MeasuresSection(capillaries, csvWriter, EnumCapillaryMeasures.BOTTOMLEVEL, csvSep);
@@ -353,7 +319,7 @@ public class CapillariesPersistence {
 				csvWriter.flush();
 				csvWriter.close();
 				Logger.info("CapillariesPersistence:save_CapillariesArrayMeasures() Saved measures to "
-						+ ID_V2_CAPILLARIESARRAYMEASURES_CSV);
+						+ ID_V2_CAPILLARIESMEASURES_CSV);
 				return true;
 			} catch (IOException e) {
 				Logger.error("CapillariesPersistence:save_CapillariesArrayMeasures() Error: " + e.getMessage(), e);

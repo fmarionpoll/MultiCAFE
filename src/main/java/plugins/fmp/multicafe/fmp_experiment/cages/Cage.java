@@ -459,8 +459,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 			// Load spot IDs (new format)
 			if (!xmlLoadSpotIDs(xmlVal)) {
-				// Legacy format support removed - spots must be loaded via ID-based system
-				// Legacy files should be migrated using MigrationTool
+				// Legacy format: spots are loaded via transparent fallback in Legacy persistence classes
+				// Users can manually save in new format when desired
 			}
 
 			// Load cage measures

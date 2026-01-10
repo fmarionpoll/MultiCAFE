@@ -28,8 +28,6 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillariesDescription;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillariesKymosMapper;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.ids.CapillaryID;
-import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationDetector;
-import plugins.fmp.multicafe.fmp_experiment.persistence.MigrationTool;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageAdjustmentOptions;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
@@ -858,8 +856,7 @@ public class Experiment {
 	 * <p>
 	 * Responsibilities:
 	 * <ul>
-	 * <li>load cage description from results directory (CSV/XML with
-	 * migration),</li>
+	 * <li>load cage description from results directory (transparent fallback to legacy formats),</li>
 	 * <li>load cage measures from bin directory,</li>
 	 * <li>materialize cages and spots as ROIs on {@link SequenceCamData}.</li>
 	 * </ul>
@@ -867,37 +864,7 @@ public class Experiment {
 	public boolean load_MS96_cages() {
 		String resultsDir = getResultsDirectory();
 
-		// Check if migration is needed
-		MigrationDetector detector = new MigrationDetector();
-		if (detector.needsMigration(resultsDir)) {
-			Logger.info("Experiment:load_MS96_cages() Old format detected, running migration...");
-			MigrationTool migrationTool = new MigrationTool();
-			// Load old format first (spots will be in cage XML)
-			boolean loaded = cages.getPersistence().load_Cages(cages, resultsDir);
-			if (loaded) {
-				// Run migration to convert to new format
-				boolean migrated = migrationTool.migrateExperiment(this, resultsDir);
-				if (migrated) {
-					Logger.info("Experiment:load_MS96_cages() Migration completed successfully");
-					// Reload in new format
-					loaded = cages.getPersistence().load_Cages(cages, resultsDir);
-				} else {
-					Logger.warn("Experiment:load_MS96_cages() Migration failed, using old format");
-				}
-			}
-			// Also load spots from CSV (may be empty if migration failed)
-			spotsArray.getPersistence().loadSpotsArrayDescription(spotsArray, resultsDir);
-
-			// Transfer cages to ROIs on sequence if loaded successfully
-			if (loaded && seqCamData != null && seqCamData.getSequence() != null) {
-				cages.cagesToROIs(seqCamData);
-				cages.updateCagesFromSequence(seqCamData);
-			}
-
-			return loaded;
-		}
-
-		// New format - load descriptions from results directory
+		// Load descriptions from results directory (Legacy classes handle fallback transparently)
 		boolean cagesLoaded = cages.getPersistence().load_Cages(cages, resultsDir);
 
 		// Load measures from bin directory (if available)
@@ -912,7 +879,7 @@ public class Experiment {
 			CagesSequenceMapper.pullCagesFromSequence(cages, seqCamData);
 		}
 
-		// Also load spots descriptions from CSV (independent persistence)
+		// Also load spots descriptions from CSV (independent persistence, Legacy handles fallback)
 		spotsArray.getPersistence().loadSpotsArrayDescription(spotsArray, resultsDir);
 
 		// Load spots measures from bin directory (if available)
@@ -1672,7 +1639,7 @@ public class Experiment {
 	public boolean loadMCCapillaries_Only() {
 		// Try to load from CSV first (new format)
 		String resultsDir = getResultsDirectory();
-		boolean csvLoaded = capillaries.getPersistence().load_CapillariesArrayDescription(capillaries, resultsDir);
+		boolean csvLoaded = capillaries.getPersistence().load_CapillariesDescription(capillaries, resultsDir);
 
 		// New format methods already have internal fallback to legacy formats
 		boolean flag = csvLoaded;
@@ -1696,13 +1663,13 @@ public class Experiment {
 	public boolean loadMCCapillaries() {
 		// Try to load from CSV first (new format)
 		String resultsDir = getResultsDirectory();
-		boolean flag1 = capillaries.getPersistence().load_CapillariesArrayDescription(capillaries, resultsDir);
+		boolean flag1 = capillaries.getPersistence().load_CapillariesDescription(capillaries, resultsDir);
 
 		// Load measures from bin directory (new format)
 		String kymosImagesDirectory = getKymosBinFullDirectory();
 		boolean flag2 = false;
 		if (kymosImagesDirectory != null) {
-			flag2 = capillaries.getPersistence().load_CapillariesArrayMeasures(capillaries, kymosImagesDirectory);
+			flag2 = capillaries.getPersistence().load_CapillariesMeasures(capillaries, kymosImagesDirectory);
 		}
 
 		if (flag1 & flag2) {
@@ -1775,12 +1742,12 @@ public class Experiment {
 	public boolean loadCapillaries() {
 		String resultsDir = getResultsDirectory();
 		// Try new format: descriptions from results, measures from bin
-		boolean descriptionsLoaded = capillaries.getPersistence().load_CapillariesArrayDescription(capillaries,
+		boolean descriptionsLoaded = capillaries.getPersistence().load_CapillariesDescription(capillaries,
 				resultsDir);
 
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
-			boolean measuresLoaded = capillaries.getPersistence().load_CapillariesArrayMeasures(capillaries, binDir);
+			boolean measuresLoaded = capillaries.getPersistence().load_CapillariesMeasures(capillaries, binDir);
 			if (descriptionsLoaded || measuresLoaded) {
 				return true;
 			}
@@ -1793,13 +1760,13 @@ public class Experiment {
 	public boolean saveCapillaries() {
 		String resultsDir = getResultsDirectory();
 		// Save descriptions to new format
-		boolean descriptionsSaved = capillaries.getPersistence().saveCapillariesArrayDescription(capillaries,
+		boolean descriptionsSaved = capillaries.getPersistence().saveCapillariesDescription(capillaries,
 				resultsDir);
 
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
 			// Save measures to new format
-			capillaries.getPersistence().save_CapillariesArrayMeasures(capillaries, binDir);
+			capillaries.getPersistence().save_CapillariesMeasures(capillaries, binDir);
 		}
 
 		return descriptionsSaved;
@@ -1898,14 +1865,14 @@ public class Experiment {
 			// Also try to load the actual measures if kymos directory exists
 			String binDir = getKymosBinFullDirectory();
 			if (binDir != null) {
-				capillaries.getPersistence().load_CapillariesArrayMeasures(capillaries, binDir);
+				capillaries.getPersistence().load_CapillariesMeasures(capillaries, binDir);
 			}
 		}
 
 		if (seqKymos != null && seqKymos.getSequence() != null) {
 			CapillariesKymosMapper.pullCapillaryMeasuresFromKymos(capillaries, seqKymos);
 		}
-		return capillaries.getPersistence().save_CapillariesArrayMeasures(capillaries, directory);
+		return capillaries.getPersistence().save_CapillariesMeasures(capillaries, directory);
 	}
 
 	// ---------------------------------------------------------

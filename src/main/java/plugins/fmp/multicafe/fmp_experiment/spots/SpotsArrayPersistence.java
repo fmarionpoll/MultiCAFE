@@ -17,8 +17,8 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
 public class SpotsArrayPersistence {
 
 	// New v2 format filenames
-	private static final String ID_V2_SPOTSARRAY_CSV = "v2_SpotsArray.csv";
-	private static final String ID_V2_SPOTSARRAYMEASURES_CSV = "v2_SpotsArrayMeasures.csv";
+	private static final String ID_V2_SPOTSARRAY_CSV = "v2_spots_description.csv";
+	private static final String ID_V2_SPOTSARRAYMEASURES_CSV = "v2_spots_measures.csv";
 	
 	// Legacy filenames (for fallback)
 	private static final String ID_SPOTSARRAY_CSV = "SpotsArray.csv";
@@ -161,24 +161,22 @@ public class SpotsArrayPersistence {
 	public static class Persistence {
 		
 		/**
-		 * Loads spot descriptions (SPOTS_ARRAY and SPOTS sections) from SpotsArray.csv.
-		 * Tries v2_ format first, then falls back to legacy format.
+		 * Loads spot descriptions (SPOTS_ARRAY and SPOTS sections) from v2 format file.
+		 * If v2 format is not found, delegates to Legacy class for fallback handling.
 		 */
 		public static boolean loadDescription(SpotsArray spotsArray, String resultsDirectory) {
 			if (resultsDirectory == null) {
 				return false;
 			}
 
-			// Priority 1: Try v2_ format
+			// Try v2_ format ONLY
 			Path csvPath = Paths.get(resultsDirectory, ID_V2_SPOTSARRAY_CSV);
 			if (!Files.exists(csvPath)) {
-				// Priority 2: Fallback to legacy format
-				csvPath = Paths.get(resultsDirectory, ID_SPOTSARRAY_CSV);
-				if (!Files.exists(csvPath)) {
-					return false;
-				}
+				// v2 format not found - delegate to Legacy class for all fallback logic
+				return SpotsArrayPersistenceLegacy.loadDescriptionWithFallback(spotsArray, resultsDirectory);
 			}
 
+			// Load from v2 format
 			try (BufferedReader reader = new BufferedReader(new FileReader(csvPath.toFile()))) {
 				String line;
 				String sep = ";";
@@ -221,30 +219,28 @@ public class SpotsArrayPersistence {
 				}
 				return descriptionLoaded || spotsLoaded;
 			} catch (Exception e) {
-				Logger.error("SpotsArrayPersistence:loadSpotsArray() Failed: " + e.getMessage(), e, true);
+				Logger.error("SpotsArrayPersistence:loadDescription() Failed: " + e.getMessage(), e, true);
 				return false;
 			}
 		}
 		
 		/**
-		 * Loads spot measures from SpotsArrayMeasures.csv in bin directory.
-		 * Tries v2_ format first, then falls back to legacy format.
+		 * Loads spot measures from v2 format file in bin directory.
+		 * If v2 format is not found, delegates to Legacy class for fallback handling.
 		 */
 		public static boolean loadMeasures(SpotsArray spotsArray, String binDirectory) {
 			if (binDirectory == null) {
 				return false;
 			}
 
-			// Priority 1: Try v2_ format
+			// Try v2_ format ONLY
 			Path csvPath = Paths.get(binDirectory, ID_V2_SPOTSARRAYMEASURES_CSV);
 			if (!Files.exists(csvPath)) {
-				// Priority 2: Fallback to legacy format
-				csvPath = Paths.get(binDirectory, ID_SPOTSARRAYMEASURES_CSV);
-				if (!Files.exists(csvPath)) {
-					return false;
-				}
+				// v2 format not found - delegate to Legacy class for all fallback logic
+				return SpotsArrayPersistenceLegacy.loadMeasuresWithFallback(spotsArray, binDirectory);
 			}
 
+			// Load from v2 format
 			try (BufferedReader reader = new BufferedReader(new FileReader(csvPath.toFile()))) {
 				String line;
 				String sep = ";";
@@ -266,7 +262,7 @@ public class SpotsArrayPersistence {
 				}
 				return true;
 			} catch (Exception e) {
-				Logger.error("SpotsArrayPersistence:load_SpotsArrayMeasures() Failed: " + e.getMessage(), e, true);
+				Logger.error("SpotsArrayPersistence:loadMeasures() Failed: " + e.getMessage(), e, true);
 				return false;
 			}
 		}
