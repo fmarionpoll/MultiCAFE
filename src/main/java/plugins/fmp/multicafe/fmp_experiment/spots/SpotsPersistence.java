@@ -79,7 +79,7 @@ public class SpotsPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean loadSpotsArrayDescription(Spots spotsArray, String resultsDirectory) {
+	public boolean loadSpotsDescription(Spots spotsArray, String resultsDirectory) {
 		return Persistence.loadDescription(spotsArray, resultsDirectory);
 	}
 	
@@ -90,7 +90,7 @@ public class SpotsPersistence {
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public boolean loadSpotsArrayMeasures(Spots spotsArray, String binDirectory) {
+	public boolean loadSpotsMeasures(Spots spotsArray, String binDirectory) {
 		return Persistence.loadMeasures(spotsArray, binDirectory);
 	}
 
@@ -112,7 +112,7 @@ public class SpotsPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean saveSpotsArrayDescription(Spots spotsArray, String resultsDirectory) {
+	public boolean saveSpotsDescription(Spots spotsArray, String resultsDirectory) {
 		return Persistence.saveDescription(spotsArray, resultsDirectory);
 	}
 	
@@ -123,7 +123,7 @@ public class SpotsPersistence {
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public boolean saveSpotsArrayMeasures(Spots spotsArray, String binDirectory) {
+	public boolean saveSpotsMeasures(Spots spotsArray, String binDirectory) {
 		return Persistence.saveMeasures(spotsArray, binDirectory);
 	}
 

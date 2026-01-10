@@ -153,7 +153,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		exp.getCages().medianFilterFromSumToSumClean(exp.getSpots());
 
 		exp.saveExperimentDescriptors();
-		exp.save_MS96_spotsMeasures();
+		exp.save_spots_description_and_measures();
 	}
 
 	private void initMeasureSpots(Experiment exp) {

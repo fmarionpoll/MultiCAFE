@@ -235,7 +235,7 @@ public class EditCapillariesConditional extends JPanel {
 
 			// Only load capillaries if needed
 			if (condition1IsCapillary || (useCondition2 && condition2IsCapillary) || targetIsCapillary) {
-				exp.loadMCCapillaries();
+				exp.load_capillaries_description_and_measures();
 			}
 
 			int updated = replaceFieldWithConditions(exp, conditionField1, conditionValue1, useCondition2,
@@ -246,10 +246,10 @@ public class EditCapillariesConditional extends JPanel {
 			if (updated > 0) {
 				if (targetIsCapillary) {
 					exp.saveMCCapillaries_Only();
-					exp.saveCapillaries();
+					exp.save_capillaries_description_and_measures();
 				} else {
 					exp.saveExperimentDescriptors();
-					exp.save_MS96_cages();
+					exp.save_cages_description_and_measures();
 				}
 				totalUpdated += updated;
 			}

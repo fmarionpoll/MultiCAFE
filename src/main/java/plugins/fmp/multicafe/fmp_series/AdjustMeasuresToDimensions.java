@@ -5,7 +5,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 public class AdjustMeasuresToDimensions extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {
 		exp.xmlLoad_MCExperiment();
-		exp.loadMCCapillaries();
+		exp.load_capillaries_description_and_measures();
 		if (exp.loadKymographs()) {
 			exp.adjustCapillaryMeasuresDimensions();
 			exp.saveCapillariesMeasures(exp.getKymosBinFullDirectory());

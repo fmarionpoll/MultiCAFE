@@ -9,7 +9,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 public class ClipCageMeasuresToSmallest extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {
 		exp.xmlLoad_MCExperiment();
-		exp.loadMCCapillaries();
+		exp.load_capillaries_description_and_measures();
 		if (exp.loadKymographs()) {
 			SequenceKymos seqKymos = exp.getSeqKymos();
 			ArrayList<Integer> listCageID = new ArrayList<Integer>(seqKymos.getImageLoader().getNTotalFrames());
@@ -27,7 +27,7 @@ public class ClipCageMeasuresToSmallest extends BuildSeries {
 						ttcap.cropMeasuresToNPoints(minLength);
 				}
 			}
-			exp.saveCapillaries();
+			exp.save_capillaries_description_and_measures();
 		}
 		exp.getSeqCamData().closeSequence();
 		exp.getSeqKymos().closeSequence();

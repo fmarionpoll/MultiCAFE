@@ -76,7 +76,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 
 			for (int index = options.experimentIndexFirst; index <= options.experimentIndexLast; index++) {
 				Experiment exp = expList.getItemAt(index);
-				exp.load_MS96_spotsMeasures();
+				exp.load_spots_description_and_measures();
 				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
 				System.out.println("Export experiment " + (index + 1) + " of " + nbexpts);
 				String seriesIdentifier = CellReference.convertNumToColString(iSeries);

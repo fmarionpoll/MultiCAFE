@@ -66,7 +66,7 @@ public class GulpDetector {
 		}
 
 		waitFuturesCompletion(processor, futures);
-		exp.saveCapillaries();
+		exp.save_capillaries_description_and_measures();
 
 		processor.shutdown();
 		exp.getSeqKymos().getSequence().endUpdate();

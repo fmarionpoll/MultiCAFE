@@ -71,7 +71,7 @@ public class MigrationTool {
 			// Save descriptions to results directory, measures to bin directory
 			
 			// Save spots descriptions to new format
-			boolean spotsDescriptionsSaved = exp.getSpots().getPersistence().saveSpotsArrayDescription(exp.getSpots(), directory);
+			boolean spotsDescriptionsSaved = exp.getSpots().getPersistence().saveSpotsDescription(exp.getSpots(), directory);
 			if (!spotsDescriptionsSaved) {
 				Logger.warn("MigrationTool:migrateExperiment() Failed to save spot descriptions to CSV");
 			}
@@ -92,7 +92,7 @@ public class MigrationTool {
 			String binDir = exp.getKymosBinFullDirectory();
 			if (binDir != null) {
 				// Save spots measures
-				exp.getSpots().getPersistence().saveSpotsArrayMeasures(exp.getSpots(), binDir);
+				exp.getSpots().getPersistence().saveSpotsMeasures(exp.getSpots(), binDir);
 				
 				// Save cages measures
 				exp.getCages().getPersistence().saveCagesMeasures(exp.getCages(), binDir);

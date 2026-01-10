@@ -19,7 +19,7 @@ public class DetectGulps extends BuildSeries {
 
 		boolean flag = exp.loadMCCapillaries_Only();
 		flag &= exp.loadKymographs();
-		flag &= exp.loadCapillaries();
+		flag &= exp.load_capillaries_description_and_measures();
 		return flag;
 	}
 

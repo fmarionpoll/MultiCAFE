@@ -153,12 +153,12 @@ public abstract class XLSExport {
 
 				// Ensure properties are loaded (reload to ensure they're up to date)
 				exp.loadExperimentDescriptors();
-				exp.load_MS96_spotsMeasures();
+				exp.load_spots_description_and_measures();
 
 				// Ensure bin directory is set before loading capillaries
 				// This is critical for finding the CapillariesMeasures.csv file
 				ensureBinDirectoryIsDefined(exp);
-				exp.loadCapillaries();
+				exp.load_capillaries_description_and_measures();
 				exp.loadCagesMeasures();
 				if (shouldSkipChainedExperiment(exp)) {
 					continue;

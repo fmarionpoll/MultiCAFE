@@ -571,7 +571,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (selectedBinDir != null && exp.getBinSubDirectory() != null) {
 			String binFullDir = exp.getKymosBinFullDirectory();
 			if (binFullDir != null) {
-				exp.loadCapillaries();
+				exp.load_capillaries_description_and_measures();
 				if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
 					exp.getSeqKymos().transferCapillariesMeasuresToKymos(exp.getCapillaries());
 					loadMeasures = false;
@@ -915,7 +915,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					exp.saveExperimentDescriptors();
 					
 					// Save capillaries using new dual-file system (descriptions + measures)
-					exp.saveCapillaries();
+					exp.save_capillaries_description_and_measures();
 
 					// Update cages from sequence before saving
 					exp.getCages().updateCagesFromSequence(exp.getSeqCamData());
@@ -930,7 +930,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					}
 
 					// Save spots using new dual-file system
-					exp.save_MS96_spotsMeasures();
+					exp.save_spots_description_and_measures();
 					
 					// Save MS96_descriptors.xml (synchronous, but quick)
 					if (exp.getSeqCamData() != null) {
