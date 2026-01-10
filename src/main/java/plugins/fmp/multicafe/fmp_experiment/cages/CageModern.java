@@ -10,7 +10,7 @@ import icy.roi.BooleanMask2D;
 import icy.roi.ROI2D;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotString;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spots;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 
 /**
@@ -49,14 +49,14 @@ public final class CageModern implements Comparable<CageModern>, AutoCloseable {
 	// === CORE DATA ===
 	private final CageData data;
 	private final FlyPositions flyPositions;
-	private final SpotsArray spotsArray;
+	private final Spots spotsArray;
 	private final AtomicBoolean closed = new AtomicBoolean(false);
 
 	// === CONSTRUCTORS ===
 	private CageModern(Builder builder) {
 		this.data = Objects.requireNonNull(builder.data, "CageData cannot be null");
 		this.flyPositions = builder.flyPositions != null ? builder.flyPositions : new FlyPositions();
-		this.spotsArray = builder.spotsArray != null ? builder.spotsArray : new SpotsArray();
+		this.spotsArray = builder.spotsArray != null ? builder.spotsArray : new Spots();
 	}
 
 	public static Builder builder() {
@@ -103,7 +103,7 @@ public final class CageModern implements Comparable<CageModern>, AutoCloseable {
 	 * @return the spots array
 	 * @throws IllegalStateException if the cage is closed
 	 */
-	public SpotsArray getSpotsArray() {
+	public Spots getSpotsArray() {
 		ensureNotClosed();
 		return spotsArray;
 	}
@@ -136,15 +136,15 @@ public final class CageModern implements Comparable<CageModern>, AutoCloseable {
 			}
 
 			// Create spot
-			Spot spot = createEllipseSpot(spotsArray.getList().size(), center, radius);
+			Spot spot = createEllipseSpot(spotsArray.getSpotList().size(), center, radius);
 
 			// Add spot to array
-			spotsArray.getList().add(spot);
+			spotsArray.getSpotList().add(spot);
 
 			long processingTime = System.currentTimeMillis() - startTime;
 
 			return CageOperationResult.success("ADD_SPOT", "Successfully added spot").toBuilder()
-					.processingTimeMs(processingTime).addMetadata("spotCount", spotsArray.getList().size())
+					.processingTimeMs(processingTime).addMetadata("spotCount", spotsArray.getSpotList().size())
 					.addMetadata("spotRadius", radius).addMetadata("spotCenter", center).build();
 
 		} catch (Exception e) {
@@ -296,7 +296,7 @@ public final class CageModern implements Comparable<CageModern>, AutoCloseable {
 	@Override
 	public String toString() {
 		return String.format("ModernCage{name='%s', id=%d, valid=%b, spots=%d}", data.getName(),
-				data.getProperties().getCageID(), data.isValid(), spotsArray.getList().size());
+				data.getProperties().getCageID(), data.isValid(), spotsArray.getSpotList().size());
 	}
 
 	// === PRIVATE HELPER METHODS ===
@@ -351,7 +351,7 @@ public final class CageModern implements Comparable<CageModern>, AutoCloseable {
 	public static class Builder {
 		private CageData data;
 		private FlyPositions flyPositions;
-		private SpotsArray spotsArray;
+		private Spots spotsArray;
 
 		/**
 		 * Sets the cage data.
@@ -381,7 +381,7 @@ public final class CageModern implements Comparable<CageModern>, AutoCloseable {
 		 * @param spotsArray the spots array
 		 * @return this builder
 		 */
-		public Builder withSpotsArray(SpotsArray spotsArray) {
+		public Builder withSpotsArray(Spots spotsArray) {
 			this.spotsArray = spotsArray;
 			return this;
 		}

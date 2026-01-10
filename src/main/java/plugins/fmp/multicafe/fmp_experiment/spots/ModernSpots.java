@@ -51,7 +51,7 @@ import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
  * @version 2.3.3
  * @since 2.3.3
  */
-public class ModernSpotsArray implements AutoCloseable {
+public class ModernSpots implements AutoCloseable {
 
 	// === CORE FIELDS ===
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -59,7 +59,7 @@ public class ModernSpotsArray implements AutoCloseable {
 
 	private final List<Spot> spotsList = new CopyOnWriteArrayList<>();
 	private final Map<String, Spot> spotsByName = new ConcurrentHashMap<>();
-	private final SpotsArrayConfiguration configuration;
+	private final SpotsConfiguration configuration;
 	private TIntervalsArray timeIntervals;
 
 	// === CONSTRUCTORS ===
@@ -67,8 +67,8 @@ public class ModernSpotsArray implements AutoCloseable {
 	/**
 	 * Creates a new ModernSpotsArray with default configuration.
 	 */
-	public ModernSpotsArray() {
-		this.configuration = SpotsArrayConfiguration.defaultConfiguration();
+	public ModernSpots() {
+		this.configuration = SpotsConfiguration.defaultConfiguration();
 		this.timeIntervals = new TIntervalsArray();
 	}
 
@@ -78,7 +78,7 @@ public class ModernSpotsArray implements AutoCloseable {
 	 * @param configuration the configuration to use
 	 * @throws IllegalArgumentException if configuration is null
 	 */
-	public ModernSpotsArray(SpotsArrayConfiguration configuration) {
+	public ModernSpots(SpotsConfiguration configuration) {
 		if (configuration == null) {
 			throw new IllegalArgumentException("Configuration cannot be null");
 		}
@@ -102,7 +102,7 @@ public class ModernSpotsArray implements AutoCloseable {
 	 * 
 	 * @return detailed spots array information
 	 */
-	public SpotsArrayInfo getSpotsInfo() {
+	public SpotsInfo getSpotsInfo() {
 		ensureNotClosed();
 		lock.readLock().lock();
 		try {
@@ -115,7 +115,7 @@ public class ModernSpotsArray implements AutoCloseable {
 					.count();
 			int spotsReady = (int) spotsList.stream().filter(spot -> spot.isReadyForAnalysis()).count();
 
-			return SpotsArrayInfo.builder().totalSpots(spotsList.size()).validSpots(validSpots)
+			return SpotsInfo.builder().totalSpots(spotsList.size()).validSpots(validSpots)
 					.spotsWithMeasures(spotsWithMeasures).spotsReadyForAnalysis(spotsReady).spotNames(spotNames)
 					.hasTimeIntervals(timeIntervals != null && timeIntervals.size() > 0)
 					.timeIntervalsCount(timeIntervals != null ? timeIntervals.size() : 0).build();
@@ -316,7 +316,7 @@ public class ModernSpotsArray implements AutoCloseable {
 	 * @param sourceArray the source array to merge from
 	 * @return operation result
 	 */
-	public SpotsDataOperationResult mergeFrom(ModernSpotsArray sourceArray) {
+	public SpotsDataOperationResult mergeFrom(ModernSpots sourceArray) {
 		if (sourceArray == null) {
 			return SpotsDataOperationResult.failure("MERGE",
 					new IllegalArgumentException("Source array cannot be null"), "Invalid source array");
@@ -332,7 +332,7 @@ public class ModernSpotsArray implements AutoCloseable {
 			List<String> processedItems = new ArrayList<>();
 			List<String> skippedItems = new ArrayList<>();
 
-			SpotsArrayInfo sourceInfo = sourceArray.getSpotsInfo();
+			SpotsInfo sourceInfo = sourceArray.getSpotsInfo();
 
 			for (String spotName : sourceInfo.getSpotNames()) {
 				Optional<Spot> sourceSpot = sourceArray.findSpotByName(spotName);
@@ -375,7 +375,7 @@ public class ModernSpotsArray implements AutoCloseable {
 	 * 
 	 * @return the configuration
 	 */
-	public SpotsArrayConfiguration getConfiguration() {
+	public SpotsConfiguration getConfiguration() {
 		return configuration;
 	}
 
@@ -454,12 +454,12 @@ public class ModernSpotsArray implements AutoCloseable {
 	 * Builder for creating ModernSpotsArray instances.
 	 */
 	public static class Builder {
-		private SpotsArrayConfiguration configuration = SpotsArrayConfiguration.defaultConfiguration();
+		private SpotsConfiguration configuration = SpotsConfiguration.defaultConfiguration();
 
 		/**
 		 * Sets the configuration.
 		 */
-		public Builder withConfiguration(SpotsArrayConfiguration configuration) {
+		public Builder withConfiguration(SpotsConfiguration configuration) {
 			this.configuration = configuration;
 			return this;
 		}
@@ -467,8 +467,8 @@ public class ModernSpotsArray implements AutoCloseable {
 		/**
 		 * Builds the ModernSpotsArray instance.
 		 */
-		public ModernSpotsArray build() {
-			return new ModernSpotsArray(configuration);
+		public ModernSpots build() {
+			return new ModernSpots(configuration);
 		}
 	}
 
@@ -478,9 +478,9 @@ public class ModernSpotsArray implements AutoCloseable {
 	 * Helper class for CSV data loading operations.
 	 */
 	private static class CsvDataLoader {
-		private final SpotsArrayConfiguration config;
+		private final SpotsConfiguration config;
 
-		CsvDataLoader(SpotsArrayConfiguration config) {
+		CsvDataLoader(SpotsConfiguration config) {
 			this.config = config;
 		}
 

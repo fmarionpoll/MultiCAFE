@@ -149,10 +149,10 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 				XYDataset xyDataset = xyPlot.getDataset(0);
 				if (xyDataset != null && xyDataset.getSeriesCount() > 0) {
 					String description = (String) xyDataset.getSeriesKey(0);
-					spotFound = experiment.getCages().getSpotFromROIName(description, experiment.getSpotsArray());
+					spotFound = experiment.getCages().getSpotFromROIName(description, experiment.getSpots());
 				}
 			} else {
-				List<Spot> spots = cage.getSpots(experiment.getSpotsArray());
+				List<Spot> spots = cage.getSpotList(experiment.getSpots());
 				if (spots.size() > 0) {
 					spotFound = spots.get(0);
 				}
@@ -163,7 +163,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 				return null;
 			}
 
-			int index = experiment.getCages().getSpotGlobalPosition(spotFound, experiment.getSpotsArray());
+			int index = experiment.getCages().getSpotGlobalPosition(spotFound, experiment.getSpots());
 			spotFound.setSpotKymographT(index);
 			return spotFound;
 		} catch (Exception ex) {
@@ -200,7 +200,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 
 		description = description.substring(0, Math.min(description.length(), MAX_DESCRIPTION_LENGTH));
 
-		Spot spotFound = experiment.getCages().getSpotFromROIName(description, experiment.getSpotsArray());
+		Spot spotFound = experiment.getCages().getSpotFromROIName(description, experiment.getSpots());
 		if (spotFound == null) {
 			Logger.warn("Graph clicked but source not found - description (roiName)=" + description);
 			return null;
@@ -294,7 +294,7 @@ public class SpotChartInteractionHandler implements ChartInteractionHandler {
 		}
 
 		String spotName = clickedSpot.getRoi().getName();
-		Cage cage = exp.getCages().getCageFromSpotROIName(spotName, exp.getSpotsArray());
+		Cage cage = exp.getCages().getCageFromSpotROIName(spotName, exp.getSpots());
 		if (cage != null) {
 			ROI2D cageRoi = cage.getRoi();
 			exp.getSeqCamData().centerDisplayOnRoi(cageRoi);

@@ -59,7 +59,7 @@ public final class CagesSequenceMapper {
 	 * {@link SequenceCamData} as ROIs named with the {@code \"spot\"} pattern.
 	 * Existing ROIs whose name contains {@code \"spot\"} are cleared first.
 	 */
-	public static void pushSpotsToSequence(Cages cages, plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray spots,
+	public static void pushSpotsToSequence(Cages cages, plugins.fmp.multicafe.fmp_experiment.spots.Spots spots,
 			SequenceCamData seqCamData) {
 		if (cages == null || spots == null || seqCamData == null || seqCamData.getSequence() == null) {
 			return;
@@ -74,7 +74,7 @@ public final class CagesSequenceMapper {
 	 * logical spots.
 	 */
 	public static void pullSpotsFromSequence(Cages cages,
-			plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray spots, SequenceCamData seqCamData) {
+			plugins.fmp.multicafe.fmp_experiment.spots.Spots spots, SequenceCamData seqCamData) {
 		if (cages == null || spots == null || seqCamData == null || seqCamData.getSequence() == null) {
 			return;
 		}

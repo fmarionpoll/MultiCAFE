@@ -231,7 +231,7 @@ public class EditCapillariesConditional extends JPanel {
 			waitForSaveToComplete(exp, i);
 
 			exp.loadExperimentDescriptors();
-			exp.load_MS96_cages();
+			exp.load_cages_description_and_measures();
 
 			// Only load capillaries if needed
 			if (condition1IsCapillary || (useCondition2 && condition2IsCapillary) || targetIsCapillary) {

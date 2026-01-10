@@ -114,7 +114,7 @@ public final class CagesModern implements AutoCloseable {
 
 			long activeCages = cages.stream().filter(cage -> cage.getData().isDetectEnabled()).count();
 
-			long cagesWithSpots = cages.stream().filter(cage -> cage.getSpotsArray().getList().size() > 0).count();
+			long cagesWithSpots = cages.stream().filter(cage -> cage.getSpotsArray().getSpotList().size() > 0).count();
 
 			return CagesProperties.builder() //
 					.totalCages(cages.size()) //

@@ -13,7 +13,7 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.ids.CapillaryID;
 import plugins.fmp.multicafe.fmp_experiment.ids.SpotID;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spots;
 import plugins.fmp.multicafe.fmp_tools.Logger;
 
 /**
@@ -71,7 +71,7 @@ public class MigrationTool {
 			// Save descriptions to results directory, measures to bin directory
 			
 			// Save spots descriptions to new format
-			boolean spotsDescriptionsSaved = exp.getSpotsArray().getPersistence().saveSpotsArrayDescription(exp.getSpotsArray(), directory);
+			boolean spotsDescriptionsSaved = exp.getSpots().getPersistence().saveSpotsArrayDescription(exp.getSpots(), directory);
 			if (!spotsDescriptionsSaved) {
 				Logger.warn("MigrationTool:migrateExperiment() Failed to save spot descriptions to CSV");
 			}
@@ -92,7 +92,7 @@ public class MigrationTool {
 			String binDir = exp.getKymosBinFullDirectory();
 			if (binDir != null) {
 				// Save spots measures
-				exp.getSpotsArray().getPersistence().saveSpotsArrayMeasures(exp.getSpotsArray(), binDir);
+				exp.getSpots().getPersistence().saveSpotsArrayMeasures(exp.getSpots(), binDir);
 				
 				// Save cages measures
 				exp.getCages().getPersistence().saveCagesMeasures(exp.getCages(), binDir);
@@ -138,11 +138,11 @@ public class MigrationTool {
 	 * Extracts all spots from cages and adds them to the global SpotsArray.
 	 */
 	private void extractSpotsFromCages(Experiment exp) {
-		SpotsArray globalSpots = exp.getSpotsArray();
+		Spots globalSpots = exp.getSpots();
 		// Spots should already be in global array if loaded from XML
 		// This method is kept for compatibility but spots are now loaded directly to global array
 		// Ensure coordinates are saved for all spots
-		for (Spot spot : globalSpots.getList()) {
+		for (Spot spot : globalSpots.getSpotList()) {
 			if (spot.getRoi() != null && (spot.getProperties().getSpotXCoord() < 0
 					|| spot.getProperties().getSpotYCoord() < 0)) {
 				// Extract coordinates from ROI
@@ -155,18 +155,18 @@ public class MigrationTool {
 			}
 		}
 
-		Logger.info("MigrationTool:extractSpotsFromCages() Processed " + globalSpots.getSpotsCount() + " spots");
+		Logger.info("MigrationTool:extractSpotsFromCages() Processed " + globalSpots.getSpotListCount() + " spots");
 	}
 
 	/**
 	 * Converts global spots to SpotID lists in cages.
 	 */
 	private void convertCageSpotsToIDs(Experiment exp) {
-		SpotsArray globalSpots = exp.getSpotsArray();
+		Spots globalSpots = exp.getSpots();
 		for (Cage cage : exp.getCages().getCageList()) {
 			List<SpotID> spotIDs = new ArrayList<>();
 			// Find all spots belonging to this cage
-			for (Spot spot : globalSpots.getList()) {
+			for (Spot spot : globalSpots.getSpotList()) {
 				int cageID = spot.getProperties().getCageID();
 				int position = spot.getProperties().getCagePosition();
 				if (cageID == cage.getCageID() && position >= 0) {

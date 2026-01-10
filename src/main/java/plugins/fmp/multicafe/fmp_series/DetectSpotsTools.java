@@ -17,7 +17,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.ids.SpotID;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spots;
 import plugins.fmp.multicafe.fmp_series.options.BuildSeriesOptions;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -63,7 +63,7 @@ public class DetectSpotsTools {
 		exp.getCages().computeBooleanMasksForCages();
 		final ROI2DArea binarizedImageRoi = binarizeImage(workimage, options);
 
-		SpotsArray allSpots = exp.getSpotsArray();
+		Spots allSpots = exp.getSpots();
 		for (Cage cage : exp.getCages().cagesList) {
 			if (!options.selectedIndexes.contains(cage.getProperties().getCageID()))
 				continue;

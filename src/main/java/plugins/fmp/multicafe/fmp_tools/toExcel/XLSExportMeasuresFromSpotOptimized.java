@@ -10,7 +10,7 @@ import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spots;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 import plugins.fmp.multicafe.fmp_tools.toExcel.config.ExcelExportConstants;
@@ -125,12 +125,12 @@ public class XLSExportMeasuresFromSpotOptimized extends XLSExportSpots {
 		Point pt = new Point(col0, 0);
 		pt = writeExperimentSeparator(sheet, pt);
 
-		SpotsArray allSpots = exp.getSpotsArray();
+		Spots allSpots = exp.getSpots();
 		for (Cage cage : exp.getCages().cagesList) {
 			double scalingFactorToPhysicalUnits = allSpots.getScalingFactorToPhysicalUnits(resultType);
 			cage.updateSpotsStimulus_i(allSpots);
 
-			for (Spot spot : cage.getSpots(allSpots)) {
+			for (Spot spot : cage.getSpotList(allSpots)) {
 				pt.y = 0;
 				pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, resultType);
 

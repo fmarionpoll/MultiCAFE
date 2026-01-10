@@ -186,7 +186,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 	protected boolean loadSeqCamDataAndCages(Experiment exp) {
 		exp.getSeqCamData().attachSequence(exp.getSeqCamData().getImageLoader()
 				.initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
-		boolean flag = exp.load_MS96_cages();
+		boolean flag = exp.load_cages_description_and_measures();
 		return flag;
 	}
 

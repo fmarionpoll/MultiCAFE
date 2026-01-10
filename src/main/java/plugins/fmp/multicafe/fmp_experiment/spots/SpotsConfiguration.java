@@ -8,7 +8,7 @@ import java.util.List;
  * @author MultiSPOTS96
  * @version 2.3.3
  */
-public class SpotsArrayConfiguration {
+public class SpotsConfiguration {
     private final boolean validateSpots;
     private final boolean enableProgressReporting;
     private final boolean autoSortSpots;
@@ -18,7 +18,7 @@ public class SpotsArrayConfiguration {
     private final boolean strictValidation;
     private final String csvSeparator;
     
-    private SpotsArrayConfiguration(Builder builder) {
+    private SpotsConfiguration(Builder builder) {
         this.validateSpots = builder.validateSpots;
         this.enableProgressReporting = builder.enableProgressReporting;
         this.autoSortSpots = builder.autoSortSpots;
@@ -36,11 +36,11 @@ public class SpotsArrayConfiguration {
         return new Builder();
     }
     
-    public static SpotsArrayConfiguration defaultConfiguration() {
+    public static SpotsConfiguration defaultConfiguration() {
         return builder().build();
     }
     
-    public static SpotsArrayConfiguration highPerformance() {
+    public static SpotsConfiguration highPerformance() {
         return builder()
             .validateSpots(false)
             .autoSortSpots(false)
@@ -50,7 +50,7 @@ public class SpotsArrayConfiguration {
             .build();
     }
     
-    public static SpotsArrayConfiguration qualityAssurance() {
+    public static SpotsConfiguration qualityAssurance() {
         return builder()
             .validateSpots(true)
             .autoSortSpots(true)
@@ -61,7 +61,7 @@ public class SpotsArrayConfiguration {
             .build();
     }
     
-    public static SpotsArrayConfiguration dataImportExport() {
+    public static SpotsConfiguration dataImportExport() {
         return builder()
             .validateSpots(true)
             .enableProgressReporting(true)
@@ -135,8 +135,8 @@ public class SpotsArrayConfiguration {
             return this;
         }
         
-        public SpotsArrayConfiguration build() {
-            return new SpotsArrayConfiguration(this);
+        public SpotsConfiguration build() {
+            return new SpotsConfiguration(this);
         }
     }
 } 

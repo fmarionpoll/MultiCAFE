@@ -16,7 +16,7 @@ import plugins.fmp.multicafe.fmp_experiment.ExperimentProperties;
 import plugins.fmp.multicafe.fmp_experiment.LazyExperiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spots;
 import plugins.fmp.multicafe.fmp_tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
@@ -105,9 +105,9 @@ public class DescriptorIndex {
 
 					// Load cage and spot descriptors (no image I/O) and aggregate distincts
 					try {
-						exp.load_MS96_cages();
+						exp.load_cages_description_and_measures();
 						if (exp.getCages() != null && exp.getCages().cagesList != null) {
-							SpotsArray allSpots = exp.getSpotsArray();
+							Spots allSpots = exp.getSpots();
 							for (Cage cage : exp.getCages().cagesList) {
 								addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.CAGE_SEX),
 										cage.getField(EnumXLSColumnHeader.CAGE_SEX));
@@ -116,7 +116,7 @@ public class DescriptorIndex {
 								addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.CAGE_AGE),
 										cage.getField(EnumXLSColumnHeader.CAGE_AGE));
 								if (allSpots != null) {
-									List<Spot> spots = cage.getSpots(allSpots);
+									List<Spot> spots = cage.getSpotList(allSpots);
 									if (spots != null && !spots.isEmpty()) {
 										for (Spot spot : spots) {
 											addIfNotEmpty(distinctLocal.get(EnumXLSColumnHeader.SPOT_STIM),

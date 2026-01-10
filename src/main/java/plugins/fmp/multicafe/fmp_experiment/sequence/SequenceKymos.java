@@ -33,7 +33,7 @@ import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillaries;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillaryMeasure;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spots;
 import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Comparators;
 import plugins.fmp.multicafe.fmp_tools.Logger;
@@ -425,7 +425,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @return list of image file descriptors
 	 */
 	public List<ImageFileData> createKymographFileList(String baseDirectory, Cages cages,
-			SpotsArray allSpots) {
+			Spots allSpots) {
 		if (baseDirectory == null || baseDirectory.trim().isEmpty()) {
 			throw new IllegalArgumentException("Base directory cannot be null or empty");
 		}
@@ -446,7 +446,7 @@ public class SequenceKymos extends SequenceCamData {
 			}
 
 			Cage firstCage = cages.cagesList.get(0);
-			List<Spot> firstCageSpots = firstCage.getSpots(allSpots);
+			List<Spot> firstCageSpots = firstCage.getSpotList(allSpots);
 			if (firstCageSpots.isEmpty()) {
 				Logger.warn("No spots found in first cage");
 				return new ArrayList<>();
@@ -458,7 +458,7 @@ public class SequenceKymos extends SequenceCamData {
 
 			// Generate file descriptors for each spot in each cage
 			for (Cage cage : cages.cagesList) {
-				List<Spot> spots = cage.getSpots(allSpots);
+				List<Spot> spots = cage.getSpotList(allSpots);
 				if (spots.isEmpty())
 					continue;
 
@@ -517,12 +517,12 @@ public class SequenceKymos extends SequenceCamData {
 
 	/**
 	 * @deprecated Use
-	 *             {@link #createKymographFileList(String, Cages, SpotsArray)}
+	 *             {@link #createKymographFileList(String, Cages, Spots)}
 	 *             instead
 	 */
 	@Deprecated
 	public List<ImageFileData> loadListOfPotentialKymographsFromSpots(String dir, Cages cages,
-			SpotsArray allSpots) {
+			Spots allSpots) {
 		return createKymographFileList(dir, cages, allSpots);
 	}
 

@@ -17,7 +17,7 @@ public class BuildKymosFromSpots extends BuildSeries {
 	// -----------------------------------
 
 	void analyzeExperiment(Experiment exp) {
-		if (!loadExperimentDataToBuildKymos(exp) || exp.getCages().getTotalNumberOfSpots(exp.getSpotsArray()) < 1)
+		if (!loadExperimentDataToBuildKymos(exp) || exp.getCages().getTotalNumberOfSpots(exp.getSpots()) < 1)
 			return;
 		openKymoViewers(exp);
 		getTimeLimitsOfSequence(exp);
@@ -29,7 +29,7 @@ public class BuildKymosFromSpots extends BuildSeries {
 	}
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
-		boolean flag = exp.load_MS96_cages();
+		boolean flag = exp.load_cages_description_and_measures();
 		exp.getSeqCamData().attachSequence(exp.getSeqCamData().getImageLoader()
 				.initSequenceFromFirstImage(exp.getSeqCamData().getImagesList(true)));
 		return flag;
@@ -79,7 +79,7 @@ public class BuildKymosFromSpots extends BuildSeries {
 	}
 
 	private boolean buildKymo(Experiment exp) {
-		if (exp.getCages().getTotalNumberOfSpots(exp.getSpotsArray()) < 1) {
+		if (exp.getCages().getTotalNumberOfSpots(exp.getSpots()) < 1) {
 			System.out.println("BuildKymoSpots:buildKymo Abort (1): nb spots = 0");
 			return false;
 		}

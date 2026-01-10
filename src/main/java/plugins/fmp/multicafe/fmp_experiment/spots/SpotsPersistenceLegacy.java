@@ -13,7 +13,7 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
  * Legacy persistence for spots files. Handles loading from legacy CSV formats:
  * SpotsArray.csv, SpotsArrayMeasures.csv, SpotsMeasures.csv
  */
-public class SpotsArrayPersistenceLegacy {
+public class SpotsPersistenceLegacy {
 
 	private static final String ID_SPOTSARRAY_CSV = "SpotsArray.csv";
 	private static final String ID_SPOTSARRAYMEASURES_CSV = "SpotsArrayMeasures.csv";
@@ -33,7 +33,7 @@ public class SpotsArrayPersistenceLegacy {
 	 * @param resultsDirectory The results directory
 	 * @return true if successful
 	 */
-	public static boolean loadDescriptionWithFallback(SpotsArray spotsArray, String resultsDirectory) {
+	public static boolean loadDescriptionWithFallback(Spots spotsArray, String resultsDirectory) {
 		if (resultsDirectory == null) {
 			return false;
 		}
@@ -122,7 +122,7 @@ public class SpotsArrayPersistenceLegacy {
 	 * @param binDirectory The bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public static boolean loadMeasuresWithFallback(SpotsArray spotsArray, String binDirectory) {
+	public static boolean loadMeasuresWithFallback(Spots spotsArray, String binDirectory) {
 		if (binDirectory == null) {
 			return false;
 		}

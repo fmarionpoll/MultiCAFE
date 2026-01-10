@@ -37,7 +37,7 @@ import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceCamData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_experiment.sequence.TimeManager;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spots;
 import plugins.fmp.multicafe.fmp_service.KymographService;
 import plugins.fmp.multicafe.fmp_tools.Directories;
 import plugins.fmp.multicafe.fmp_tools.Logger;
@@ -62,7 +62,7 @@ public class Experiment {
 
 	private Cages cages = new Cages();
 	private Capillaries capillaries = new Capillaries();
-	private SpotsArray spotsArray = new SpotsArray();
+	private Spots spots = new Spots();
 
 	private ExperimentTimeManager timeManager = new ExperimentTimeManager();
 	private ExperimentProperties prop = new ExperimentProperties();
@@ -578,10 +578,10 @@ public class Experiment {
 	}
 
 	public boolean loadCamDataSpots() {
-		load_MS96_cages();
+		load_cages_description_and_measures();
 		if (seqCamData != null && seqCamData.getSequence() != null) {
 			seqCamData.removeROIsContainingString("spot");
-			cages.transferCageSpotsToSequenceAsROIs(seqCamData, spotsArray);
+			cages.transferCageSpotsToSequenceAsROIs(seqCamData, spots);
 		}
 		return (seqCamData != null && seqCamData.getSequence() != null);
 	}
@@ -861,7 +861,7 @@ public class Experiment {
 	 * <li>materialize cages and spots as ROIs on {@link SequenceCamData}.</li>
 	 * </ul>
 	 */
-	public boolean load_MS96_cages() {
+	public boolean load_cages_description_and_measures() {
 		String resultsDir = getResultsDirectory();
 
 		// Load descriptions from results directory (Legacy classes handle fallback transparently)
@@ -880,11 +880,11 @@ public class Experiment {
 		}
 
 		// Also load spots descriptions from CSV (independent persistence, Legacy handles fallback)
-		spotsArray.getPersistence().loadSpotsArrayDescription(spotsArray, resultsDir);
+		spots.getPersistence().loadSpotsArrayDescription(spots, resultsDir);
 
 		// Load spots measures from bin directory (if available)
 		if (binDir != null) {
-			spotsArray.getPersistence().loadSpotsArrayMeasures(spotsArray, binDir);
+			spots.getPersistence().loadSpotsArrayMeasures(spots, binDir);
 		}
 
 		return cagesLoaded;
@@ -915,12 +915,12 @@ public class Experiment {
 	 */
 	public boolean load_MS96_spotsMeasures() {
 		String resultsDir = getResultsDirectory();
-		boolean descriptionsLoaded = spotsArray.getPersistence().loadSpotsArrayDescription(spotsArray, resultsDir);
+		boolean descriptionsLoaded = spots.getPersistence().loadSpotsArrayDescription(spots, resultsDir);
 
 		// Load measures from bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
-			spotsArray.getPersistence().loadSpotsArrayMeasures(spotsArray, binDir);
+			spots.getPersistence().loadSpotsArrayMeasures(spots, binDir);
 		}
 
 		return descriptionsLoaded;
@@ -934,12 +934,12 @@ public class Experiment {
 	 */
 	public boolean save_MS96_spotsMeasures() {
 		String resultsDir = getResultsDirectory();
-		boolean descriptionsSaved = spotsArray.getPersistence().saveSpotsArrayDescription(spotsArray, resultsDir);
+		boolean descriptionsSaved = spots.getPersistence().saveSpotsArrayDescription(spots, resultsDir);
 
 		// Also save measures to bin directory (if available)
 		String binDir = getKymosBinFullDirectory();
 		if (binDir != null) {
-			spotsArray.getPersistence().saveSpotsArrayMeasures(spotsArray, binDir);
+			spots.getPersistence().saveSpotsArrayMeasures(spots, binDir);
 		}
 
 		return descriptionsSaved;
@@ -1320,11 +1320,11 @@ public class Experiment {
 
 	public boolean replaceSpotsFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
-		load_MS96_cages();
+		load_cages_description_and_measures();
 		boolean flag = false;
 		for (Cage cage : cages.cagesList) {
-			List<Spot> spots = cage.getSpots(spotsArray);
-			for (Spot spot : spots) {
+			List<Spot> spotList = cage.getSpotList(spots);
+			for (Spot spot : spotList) {
 				String current = spot.getField(fieldEnumCode);
 				if (current != null && oldValue != null && current.trim().equals(oldValue.trim())) {
 					spot.setField(fieldEnumCode, newValue);
@@ -1337,7 +1337,7 @@ public class Experiment {
 
 	public boolean replaceCageFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
-		load_MS96_cages();
+		load_cages_description_and_measures();
 		boolean flag = false;
 		for (Cage cage : cages.cagesList) {
 			String current = cage.getField(fieldEnumCode);
@@ -1357,11 +1357,11 @@ public class Experiment {
 	}
 
 	private List<String> getSpotsFieldValues(EnumXLSColumnHeader fieldEnumCode) {
-		load_MS96_cages();
+		load_cages_description_and_measures();
 		List<String> textList = new ArrayList<String>();
 		for (Cage cage : cages.cagesList) {
-			List<Spot> spots = cage.getSpots(spotsArray);
-			for (Spot spot : spots)
+			List<Spot> spotList = cage.getSpotList(spots);
+			for (Spot spot : spotList)
 				addValueIfUnique(spot.getField(fieldEnumCode), textList);
 		}
 		return textList;
@@ -1376,7 +1376,7 @@ public class Experiment {
 	}
 
 	private List<String> getCagesFieldValues(EnumXLSColumnHeader fieldEnumCode) {
-		load_MS96_cages();
+		load_cages_description_and_measures();
 		List<String> textList = new ArrayList<String>();
 		for (Cage cage : cages.cagesList)
 			addValueIfUnique(cage.getField(fieldEnumCode), textList);
@@ -1409,7 +1409,7 @@ public class Experiment {
 	}
 
 	public void transferSpotsROI_toSequence() {
-		CagesSequenceMapper.pushSpotsToSequence(cages, spotsArray, seqCamData);
+		CagesSequenceMapper.pushSpotsToSequence(cages, spots, seqCamData);
 	}
 
 	public boolean saveCages_File() {
@@ -1419,7 +1419,7 @@ public class Experiment {
 	}
 
 	public boolean saveSpotsArray_file() {
-		CagesSequenceMapper.pullSpotsFromSequence(cages, spotsArray, seqCamData);
+		CagesSequenceMapper.pullSpotsFromSequence(cages, spots, seqCamData);
 		boolean flag = save_MS96_cages();
 		flag &= save_MS96_spotsMeasures();
 		return flag;
@@ -1441,12 +1441,12 @@ public class Experiment {
 
 	// ------------------------------ Spots Support
 
-	public SpotsArray getSpotsArray() {
-		return spotsArray;
+	public Spots getSpots() {
+		return spots;
 	}
 
-	public void setSpotsArray(SpotsArray spotsArray) {
-		this.spotsArray = spotsArray != null ? spotsArray : new SpotsArray();
+	public void setSpots(Spots spotsArray) {
+		this.spots = spotsArray != null ? spotsArray : new Spots();
 	}
 
 	public SequenceCamData getSeqCamData() {

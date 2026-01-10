@@ -9,7 +9,7 @@ import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cages;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotString;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spots;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class ExperimentUtils {
@@ -18,12 +18,12 @@ public class ExperimentUtils {
 		if (exp.getCages() == null)
 			exp.setCages(new Cages());
 
-		SpotsArray allSpots = exp.getSpotsArray();
+		Spots allSpots = exp.getSpots();
 		List<ROI2D> listROIsSpots = exp.getSeqCamData().getROIsContainingString("spot");
 		for (ROI2D roi : listROIsSpots) {
 			boolean found = false;
 			for (Cage cage : exp.getCages().cagesList) {
-				List<Spot> spots = cage.getSpots(allSpots);
+				List<Spot> spots = cage.getSpotList(allSpots);
 				for (Spot spot : spots) {
 					if (spot.getRoi() != null && roi.getName().equals(spot.getRoi().getName())) {
 						found = true;
@@ -52,12 +52,12 @@ public class ExperimentUtils {
 		if (exp.getCages() == null)
 			exp.setCages(new Cages());
 
-		SpotsArray allSpots = exp.getSpotsArray();
+		Spots allSpots = exp.getSpots();
 		List<ROI2D> listROIsSpots = exp.getSeqCamData().getROIsContainingString("spot");
 
 		// spot with no corresponding roi? remove
 		for (Cage cage : exp.getCages().cagesList) {
-			List<Spot> spots = cage.getSpots(allSpots);
+			List<Spot> spots = cage.getSpotList(allSpots);
 			Iterator<Spot> iterator = spots.iterator();
 			while (iterator.hasNext()) {
 				Spot spot = iterator.next();
@@ -73,7 +73,7 @@ public class ExperimentUtils {
 					plugins.fmp.multicafe.fmp_experiment.ids.SpotID spotID = new plugins.fmp.multicafe.fmp_experiment.ids.SpotID(
 							spot.getProperties().getCageID(), spot.getProperties().getCagePosition());
 					cage.getSpotIDs().remove(spotID);
-					allSpots.getList().remove(spot);
+					allSpots.getSpotList().remove(spot);
 					iterator.remove();
 				}
 			}
@@ -84,11 +84,11 @@ public class ExperimentUtils {
 		if (exp.getCages() == null)
 			return;
 
-		SpotsArray allSpots = exp.getSpotsArray();
+		Spots allSpots = exp.getSpots();
 		List<ROI2D> listROISSpots = exp.getSeqCamData().getROIsContainingString("spot");
 		// roi with no corresponding cap? add ROI
 		for (Cage cage : exp.getCages().cagesList) {
-			List<Spot> spots = cage.getSpots(allSpots);
+			List<Spot> spots = cage.getSpotList(allSpots);
 			for (Spot spot : spots) {
 				boolean found = false;
 				for (ROI roi : listROISSpots) {

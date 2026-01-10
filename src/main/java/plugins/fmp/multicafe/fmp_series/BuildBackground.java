@@ -117,7 +117,7 @@ public class BuildBackground extends BuildSeries {
 			experiment.getSeqCamData().attachSequence(experiment.getSeqCamData().getImageLoader()
 					.initSequenceFromFirstImage(experiment.getSeqCamData().getImagesList(true)));
 
-			boolean cagesLoaded = experiment.load_MS96_cages();
+			boolean cagesLoaded = experiment.load_cages_description_and_measures();
 			if (!cagesLoaded) {
 				Logger.warn(
 						"Cages not loaded for background building - this is optional and background building will continue");

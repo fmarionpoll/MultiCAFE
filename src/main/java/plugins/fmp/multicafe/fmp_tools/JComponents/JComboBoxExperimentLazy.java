@@ -250,7 +250,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 					}
 
 					exp.loadExperimentDescriptors();
-					exp.load_MS96_cages();
+					exp.load_cages_description_and_measures();
 					if (loadSpots)
 						exp.load_MS96_spotsMeasures();
 
@@ -404,7 +404,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 						((LazyExperiment) exp).loadIfNeeded();
 					}
 					exp.loadExperimentDescriptors();
-					exp.load_MS96_cages();
+					exp.load_cages_description_and_measures();
 					
 					// Ensure capillaries are loaded for CAP_* fields
 					if (field == EnumXLSColumnHeader.CAP_STIM 

@@ -12,7 +12,7 @@ import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spots;
 import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
 import plugins.fmp.multicafe.fmp_tools.results.Results;
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
@@ -192,10 +192,10 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		String stim2 = exp.getProperties().getField_stim2();
 		String conc2 = exp.getProperties().getField_conc2();
 
-		SpotsArray allSpots = exp.getSpotsArray();
+		Spots allSpots = exp.getSpots();
 		for (Cage cage : exp.getCages().cagesList) {
 
-			if (cage.getSpots(allSpots).size() == 0)
+			if (cage.getSpotList(allSpots).size() == 0)
 				continue;
 
 			if (resultsOptions.onlyalive && cage.getProperties().getCageNFlies() < 1)

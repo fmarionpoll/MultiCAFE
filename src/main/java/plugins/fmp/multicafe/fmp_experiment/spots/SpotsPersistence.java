@@ -14,7 +14,7 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
  * Handles CSV-only persistence for SpotsArray.
  * ROIs are not persisted - they are regenerated from coordinates when needed for display.
  */
-public class SpotsArrayPersistence {
+public class SpotsPersistence {
 
 	// New v2 format filenames
 	private static final String ID_V2_SPOTSARRAY_CSV = "v2_spots_description.csv";
@@ -37,7 +37,7 @@ public class SpotsArrayPersistence {
 	 * @param directory  the directory containing spot files
 	 * @return true if successful
 	 */
-	public boolean load_SpotsArray(SpotsArray spotsArray, String directory) {
+	public boolean load_SpotsArray(Spots spotsArray, String directory) {
 		if (directory == null) {
 			Logger.warn("SpotsArrayPersistence:load_SpotsArray() directory is null");
 			return false;
@@ -52,7 +52,7 @@ public class SpotsArrayPersistence {
 		// Priority 1: Try new v2_ format (descriptions only)
 		boolean descriptionsLoaded = Persistence.loadDescription(spotsArray, directory);
 		if (descriptionsLoaded) {
-			Logger.info("SpotsArrayPersistence:load_SpotsArray() loaded " + spotsArray.getSpotsCount()
+			Logger.info("SpotsArrayPersistence:load_SpotsArray() loaded " + spotsArray.getSpotListCount()
 					+ " spot descriptions from new format");
 			return true;
 		}
@@ -61,7 +61,7 @@ public class SpotsArrayPersistence {
 		try {
 			boolean success = spotsArray.loadSpotsAll(directory);
 			if (success) {
-				Logger.info("SpotsArrayPersistence:load_SpotsArray() loaded " + spotsArray.getSpotsCount()
+				Logger.info("SpotsArrayPersistence:load_SpotsArray() loaded " + spotsArray.getSpotListCount()
 						+ " spots from legacy format");
 			}
 			return success;
@@ -79,7 +79,7 @@ public class SpotsArrayPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean loadSpotsArrayDescription(SpotsArray spotsArray, String resultsDirectory) {
+	public boolean loadSpotsArrayDescription(Spots spotsArray, String resultsDirectory) {
 		return Persistence.loadDescription(spotsArray, resultsDirectory);
 	}
 	
@@ -90,7 +90,7 @@ public class SpotsArrayPersistence {
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public boolean loadSpotsArrayMeasures(SpotsArray spotsArray, String binDirectory) {
+	public boolean loadSpotsArrayMeasures(Spots spotsArray, String binDirectory) {
 		return Persistence.loadMeasures(spotsArray, binDirectory);
 	}
 
@@ -101,7 +101,7 @@ public class SpotsArrayPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean save_SpotsArray(SpotsArray spotsArray, String resultsDirectory) {
+	public boolean save_SpotsArray(Spots spotsArray, String resultsDirectory) {
 		return Persistence.saveDescription(spotsArray, resultsDirectory);
 	}
 	
@@ -112,7 +112,7 @@ public class SpotsArrayPersistence {
 	 * @param resultsDirectory the results directory
 	 * @return true if successful
 	 */
-	public boolean saveSpotsArrayDescription(SpotsArray spotsArray, String resultsDirectory) {
+	public boolean saveSpotsArrayDescription(Spots spotsArray, String resultsDirectory) {
 		return Persistence.saveDescription(spotsArray, resultsDirectory);
 	}
 	
@@ -123,7 +123,7 @@ public class SpotsArrayPersistence {
 	 * @param binDirectory the bin directory (e.g., results/bin60)
 	 * @return true if successful
 	 */
-	public boolean saveSpotsArrayMeasures(SpotsArray spotsArray, String binDirectory) {
+	public boolean saveSpotsArrayMeasures(Spots spotsArray, String binDirectory) {
 		return Persistence.saveMeasures(spotsArray, binDirectory);
 	}
 
@@ -164,7 +164,7 @@ public class SpotsArrayPersistence {
 		 * Loads spot descriptions (SPOTS_ARRAY and SPOTS sections) from v2 format file.
 		 * If v2 format is not found, delegates to Legacy class for fallback handling.
 		 */
-		public static boolean loadDescription(SpotsArray spotsArray, String resultsDirectory) {
+		public static boolean loadDescription(Spots spotsArray, String resultsDirectory) {
 			if (resultsDirectory == null) {
 				return false;
 			}
@@ -173,7 +173,7 @@ public class SpotsArrayPersistence {
 			Path csvPath = Paths.get(resultsDirectory, ID_V2_SPOTSARRAY_CSV);
 			if (!Files.exists(csvPath)) {
 				// v2 format not found - delegate to Legacy class for all fallback logic
-				return SpotsArrayPersistenceLegacy.loadDescriptionWithFallback(spotsArray, resultsDirectory);
+				return SpotsPersistenceLegacy.loadDescriptionWithFallback(spotsArray, resultsDirectory);
 			}
 
 			// Load from v2 format
@@ -228,7 +228,7 @@ public class SpotsArrayPersistence {
 		 * Loads spot measures from v2 format file in bin directory.
 		 * If v2 format is not found, delegates to Legacy class for fallback handling.
 		 */
-		public static boolean loadMeasures(SpotsArray spotsArray, String binDirectory) {
+		public static boolean loadMeasures(Spots spotsArray, String binDirectory) {
 			if (binDirectory == null) {
 				return false;
 			}
@@ -237,7 +237,7 @@ public class SpotsArrayPersistence {
 			Path csvPath = Paths.get(binDirectory, ID_V2_SPOTSARRAYMEASURES_CSV);
 			if (!Files.exists(csvPath)) {
 				// v2 format not found - delegate to Legacy class for all fallback logic
-				return SpotsArrayPersistenceLegacy.loadMeasuresWithFallback(spotsArray, binDirectory);
+				return SpotsPersistenceLegacy.loadMeasuresWithFallback(spotsArray, binDirectory);
 			}
 
 			// Load from v2 format
@@ -271,7 +271,7 @@ public class SpotsArrayPersistence {
 		 * Saves spot descriptions (SPOTS_ARRAY and SPOTS sections) to SpotsArray.csv.
 		 * Always saves to v2_ format.
 		 */
-		public static boolean saveDescription(SpotsArray spotsArray, String resultsDirectory) {
+		public static boolean saveDescription(Spots spotsArray, String resultsDirectory) {
 			if (resultsDirectory == null) {
 				Logger.warn("SpotsArrayPersistence:saveSpotsArray() directory is null");
 				return false;
@@ -290,7 +290,7 @@ public class SpotsArrayPersistence {
 				if (!spotsArray.csvSaveSpotsArraySection(writer)) {
 					return false;
 				}
-				Logger.info("SpotsArrayPersistence:saveSpotsArray() saved " + spotsArray.getSpotsCount()
+				Logger.info("SpotsArrayPersistence:saveSpotsArray() saved " + spotsArray.getSpotListCount()
 						+ " spot descriptions to " + ID_V2_SPOTSARRAY_CSV);
 				return true;
 			} catch (IOException e) {
@@ -303,7 +303,7 @@ public class SpotsArrayPersistence {
 		 * Saves spot measures (AREA_SUM, AREA_SUMCLEAN sections) to SpotsArrayMeasures.csv in bin directory.
 		 * Always saves to v2_ format.
 		 */
-		public static boolean saveMeasures(SpotsArray spotsArray, String binDirectory) {
+		public static boolean saveMeasures(Spots spotsArray, String binDirectory) {
 			if (binDirectory == null) {
 				Logger.warn("SpotsArrayPersistence:save_SpotsArrayMeasures() directory is null");
 				return false;

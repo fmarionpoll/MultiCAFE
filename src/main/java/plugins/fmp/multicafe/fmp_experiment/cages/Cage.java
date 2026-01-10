@@ -24,7 +24,7 @@ import plugins.fmp.multicafe.fmp_experiment.ids.CapillaryID;
 import plugins.fmp.multicafe.fmp_experiment.ids.SpotID;
 import plugins.fmp.multicafe.fmp_experiment.spots.Spot;
 import plugins.fmp.multicafe.fmp_experiment.spots.SpotString;
-import plugins.fmp.multicafe.fmp_experiment.spots.SpotsArray;
+import plugins.fmp.multicafe.fmp_experiment.spots.Spots;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -111,14 +111,14 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	 * @param allSpots the global SpotsArray containing all spots
 	 * @return list of Spot objects for this cage
 	 */
-	public List<Spot> getSpots(SpotsArray allSpots) {
+	public List<Spot> getSpotList(Spots allSpots) {
 		List<Spot> result = new ArrayList<>();
 		if (allSpots == null) {
 			return result;
 		}
 		for (SpotID spotID : spotIDs) {
 			// Find spot by matching cageID and position
-			for (Spot spot : allSpots.getList()) {
+			for (Spot spot : allSpots.getSpotList()) {
 				if (spot.getProperties().getCageID() == spotID.getCageID() 
 						&& spot.getProperties().getCagePosition() == spotID.getPosition()) {
 					result.add(spot);
@@ -748,7 +748,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	// --------------------------------------------------------
 
-	public int addEllipseSpot(Point2D.Double center, int radius, SpotsArray allSpots) {
+	public int addEllipseSpot(Point2D.Double center, int radius, Spots allSpots) {
 		int position = spotIDs.size();
 		SpotID spotID = new SpotID(prop.getCageID(), position);
 		spotIDs.add(spotID);
@@ -780,12 +780,12 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return spot;
 	}
 
-	public Spot getSpotFromRoiName(String name, SpotsArray allSpots) {
+	public Spot getSpotFromRoiName(String name, Spots allSpots) {
 		if (allSpots == null) {
 			return null;
 		}
 		int cagePosition = SpotString.getSpotCagePositionFromSpotName(name);
-		List<Spot> spots = getSpots(allSpots);
+		List<Spot> spots = getSpotList(allSpots);
 		for (Spot spot : spots) {
 			if (spot.getProperties().getCagePosition() == cagePosition)
 				return spot;
@@ -793,14 +793,14 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return null;
 	}
 
-	public void mapSpotsToCageColumnRow(SpotsArray allSpots) {
+	public void mapSpotsToCageColumnRow(Spots allSpots) {
 		if (allSpots == null || cageROI2D == null) {
 			return;
 		}
 		Rectangle rect = cageROI2D.getBounds();
 		int deltaX = rect.width / 8;
 		int deltaY = rect.height / 4;
-		List<Spot> spots = getSpots(allSpots);
+		List<Spot> spots = getSpotList(allSpots);
 		for (Spot spot : spots) {
 			Rectangle rectSpot = spot.getRoi().getBounds();
 			spot.getProperties().setCageColumn((rectSpot.x - rect.x) / deltaX);
@@ -808,11 +808,11 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		}
 	}
 
-	public void cleanUpSpotNames(SpotsArray allSpots) {
+	public void cleanUpSpotNames(Spots allSpots) {
 		if (allSpots == null) {
 			return;
 		}
-		List<Spot> spots = getSpots(allSpots);
+		List<Spot> spots = getSpotList(allSpots);
 		for (int i = 0; i < spots.size(); i++) {
 			Spot spot = spots.get(i);
 			spot.setName(prop.getCageID(), i);
@@ -821,12 +821,12 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		}
 	}
 
-	public void updateSpotsStimulus_i(SpotsArray allSpots) {
+	public void updateSpotsStimulus_i(Spots allSpots) {
 		if (allSpots == null) {
 			return;
 		}
 		ArrayList<String> stimulusArray = new ArrayList<String>(8);
-		List<Spot> spots = getSpots(allSpots);
+		List<Spot> spots = getSpotList(allSpots);
 		for (Spot spot : spots) {
 			String test = spot.getProperties().getStimulus();
 			stimulusArray.add(test);
@@ -842,12 +842,12 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return items;
 	}
 
-	public Spot combineSpotsWithSameStimConc(String stim, String conc, SpotsArray allSpots) {
+	public Spot combineSpotsWithSameStimConc(String stim, String conc, Spots allSpots) {
 		if (allSpots == null) {
 			return null;
 		}
 		Spot spotCombined = null;
-		List<Spot> spots = getSpots(allSpots);
+		List<Spot> spots = getSpotList(allSpots);
 		for (Spot spotSource : spots) {
 			if (stim.equals(spotSource.getProperties().getStimulus())
 					&& conc.equals(spotSource.getProperties().getConcentration())) {
@@ -861,11 +861,11 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return spotCombined;
 	}
 
-	public void normalizeSpotMeasures(SpotsArray allSpots) {
+	public void normalizeSpotMeasures(Spots allSpots) {
 		if (allSpots == null) {
 			return;
 		}
-		List<Spot> spots = getSpots(allSpots);
+		List<Spot> spots = getSpotList(allSpots);
 		for (Spot spot : spots) {
 			spot.normalizeMeasures();
 		}

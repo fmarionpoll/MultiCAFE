@@ -33,7 +33,7 @@ import plugins.fmp.multicafe.fmp_tools.results.EnumResults;
  * @author MultiSPOTS96
  * @version 2.3.3
  */
-public class SpotsArray {
+public class Spots {
 
 	// === CONSTANTS ===
 	private static final String ID_SPOTTRACK = "spotTrack";
@@ -45,50 +45,50 @@ public class SpotsArray {
 	private static final int DEFAULT_VERSION = 2;
 
 	// === CORE FIELDS ===
-	private final List<Spot> spotsList;
-	private SpotsArrayPersistence persistence = new SpotsArrayPersistence();
+	private final List<Spot> spotList;
+	private SpotsPersistence persistence = new SpotsPersistence();
 
 	// === CONSTRUCTORS ===
 
-	public SpotsArray() {
-		this.spotsList = new ArrayList<>();
+	public Spots() {
+		this.spotList = new ArrayList<>();
 	}
 
 	// === PERSISTENCE ===
 
-	public SpotsArrayPersistence getPersistence() {
+	public SpotsPersistence getPersistence() {
 		return persistence;
 	}
 
 	// === SPOTS MANAGEMENT ===
 
-	public List<Spot> getList() {
-		return spotsList;
+	public List<Spot> getSpotList() {
+		return spotList;
 	}
 
-	public int getSpotsCount() {
-		return spotsList.size();
+	public int getSpotListCount() {
+		return spotList.size();
 	}
 
-	public boolean isEmpty() {
-		return spotsList.isEmpty();
+	public boolean isSpotListEmpty() {
+		return spotList.isEmpty();
 	}
 
 	public void addSpot(Spot spot) {
 		Objects.requireNonNull(spot, "Spot cannot be null");
-		spotsList.add(spot);
+		spotList.add(spot);
 	}
 
 	public boolean removeSpot(Spot spot) {
-		return spotsList.remove(spot);
+		return spotList.remove(spot);
 	}
 
-	public void clearSpots() {
-		spotsList.clear();
+	public void clearSpotList() {
+		spotList.clear();
 	}
 
-	public void sortSpots() {
-		Collections.sort(spotsList);
+	public void sortSpotList() {
+		Collections.sort(spotList);
 	}
 
 	// === SPOT SEARCH ===
@@ -98,7 +98,7 @@ public class SpotsArray {
 			return null;
 		}
 
-		return spotsList.stream().filter(spot -> name.equals(spot.getName())).findFirst().orElse(null);
+		return spotList.stream().filter(spot -> name.equals(spot.getName())).findFirst().orElse(null);
 	}
 
 	public List<Spot> findSpotsContainingPattern(String pattern) {
@@ -106,7 +106,7 @@ public class SpotsArray {
 			return new ArrayList<>();
 		}
 
-		return spotsList.stream().filter(spot -> spot.getName() != null && spot.getName().contains(pattern))
+		return spotList.stream().filter(spot -> spot.getName() != null && spot.getName().contains(pattern))
 				.collect(Collectors.toList());
 	}
 
@@ -114,7 +114,7 @@ public class SpotsArray {
 		if (newSpot == null)
 			return false;
 		String newSpotName = newSpot.getName();
-		for (Spot spot : spotsList) {
+		for (Spot spot : spotList) {
 			if (spot.getName().equals(newSpotName))
 				return true;
 		}
@@ -193,7 +193,7 @@ public class SpotsArray {
 	private void writeCsvHeader(FileWriter writer) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
 		writer.write("#" + CSV_SEPARATOR + "SPOTS_ARRAY" + CSV_SEPARATOR + "multiSPOTS data\n");
-		writer.write("n spots=" + CSV_SEPARATOR + spotsList.size() + "\n");
+		writer.write("n spots=" + CSV_SEPARATOR + spotList.size() + "\n");
 		writer.write("#" + CSV_SEPARATOR + "#\n");
 		writer.write("#" + CSV_SEPARATOR + "SPOTS" + CSV_SEPARATOR + "multiSPOTS data\n");
 		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "cageID" + CSV_SEPARATOR + "cagePos"
@@ -205,12 +205,12 @@ public class SpotsArray {
 		int chunkSize = 100; // Process 100 spots at a time
 		int processed = 0;
 
-		for (int i = 0; i < spotsList.size(); i += chunkSize) {
-			int endIndex = Math.min(i + chunkSize, spotsList.size());
+		for (int i = 0; i < spotList.size(); i += chunkSize) {
+			int endIndex = Math.min(i + chunkSize, spotList.size());
 
 			// Process chunk
 			for (int j = i; j < endIndex; j++) {
-				Spot spot = spotsList.get(j);
+				Spot spot = spotList.get(j);
 				writer.write(spot.getProperties().exportToCsv(CSV_SEPARATOR));
 			}
 
@@ -232,12 +232,12 @@ public class SpotsArray {
 		int chunkSize = 100; // Process 100 spots at a time
 		int processed = 0;
 
-		for (int i = 0; i < spotsList.size(); i += chunkSize) {
-			int endIndex = Math.min(i + chunkSize, spotsList.size());
+		for (int i = 0; i < spotList.size(); i += chunkSize) {
+			int endIndex = Math.min(i + chunkSize, spotList.size());
 
 			// Process chunk
 			for (int j = i; j < endIndex; j++) {
-				Spot spot = spotsList.get(j);
+				Spot spot = spotList.get(j);
 				writer.write(spot.exportMeasuresOneType(measureType, CSV_SEPARATOR));
 			}
 
@@ -281,17 +281,17 @@ public class SpotsArray {
 				return false;
 			}
 
-			XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
+			XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotList.size());
 
-			sortSpots();
+			sortSpotList();
 			
 			// If no spots, successfully save empty array
-			if (spotsList.isEmpty()) {
+			if (spotList.isEmpty()) {
 				return true;
 			}
 			
 			int savedSpots = 0;
-			for (int i = 0; i < spotsList.size(); i++) {
+			for (int i = 0; i < spotList.size(); i++) {
 				try {
 					Node nodeSpot = XMLUtil.setElement(node, ID_SPOT_ + i);
 					if (nodeSpot == null) {
@@ -299,7 +299,7 @@ public class SpotsArray {
 						continue;
 					}
 
-					Spot spot = spotsList.get(i);
+					Spot spot = spotList.get(i);
 					if (spot == null) {
 						System.err.println("WARNING: Null spot at index " + i);
 						continue;
@@ -351,7 +351,7 @@ public class SpotsArray {
 			}
 
 			// System.out.println(" Loading " + nitems + " spots");
-			spotsList.clear();
+			spotList.clear();
 
 			int loadedSpots = 0;
 			for (int i = 0; i < nitems; i++) {
@@ -365,7 +365,7 @@ public class SpotsArray {
 					Spot spot = new Spot();
 					boolean spotSuccess = spot.loadFromXml(nodeSpot);
 					if (spotSuccess && !isSpotPresent(spot)) {
-						spotsList.add(spot);
+						spotList.add(spot);
 						loadedSpots++;
 					} else if (!spotSuccess) {
 						System.err.println("ERROR: Failed to load spot at index " + i);
@@ -426,33 +426,33 @@ public class SpotsArray {
 
 	// === COPY OPERATIONS ===
 
-	public void copySpotsInfo(SpotsArray sourceArray) {
+	public void copySpotsInfo(Spots sourceArray) {
 		copySpots(sourceArray, false);
 	}
 
-	public void copySpots(SpotsArray sourceArray, boolean includeMeasurements) {
+	public void copySpots(Spots sourceArray, boolean includeMeasurements) {
 		if (sourceArray == null) {
 			return;
 		}
 
-		spotsList.clear();
-		for (Spot sourceSpot : sourceArray.getList()) {
+		spotList.clear();
+		for (Spot sourceSpot : sourceArray.getSpotList()) {
 			Spot spot = new Spot(sourceSpot, includeMeasurements);
-			spotsList.add(spot);
+			spotList.add(spot);
 		}
 	}
 
-	public void pasteSpotsInfo(SpotsArray targetArray) {
+	public void pasteSpotsInfo(Spots targetArray) {
 		pasteSpots(targetArray, false);
 	}
 
-	public void pasteSpots(SpotsArray targetArray, boolean includeMeasurements) {
+	public void pasteSpots(Spots targetArray, boolean includeMeasurements) {
 		if (targetArray == null) {
 			return;
 		}
 
-		for (Spot targetSpot : targetArray.getList()) {
-			for (Spot sourceSpot : spotsList) {
+		for (Spot targetSpot : targetArray.getSpotList()) {
+			for (Spot sourceSpot : spotList) {
 				if (sourceSpot.compareTo(targetSpot) == 0) {
 					targetSpot.copyFrom(sourceSpot, includeMeasurements);
 					break;
@@ -461,14 +461,14 @@ public class SpotsArray {
 		}
 	}
 
-	public void mergeSpots(SpotsArray sourceArray) {
+	public void mergeSpots(Spots sourceArray) {
 		if (sourceArray == null) {
 			return;
 		}
 
-		for (Spot sourceSpot : sourceArray.getList()) {
+		for (Spot sourceSpot : sourceArray.getSpotList()) {
 			if (!isSpotPresent(sourceSpot)) {
-				spotsList.add(sourceSpot);
+				spotList.add(sourceSpot);
 			}
 		}
 	}
@@ -476,26 +476,26 @@ public class SpotsArray {
 	// === LEVEL2D OPERATIONS ===
 
 	public void adjustSpotsLevel2DMeasuresToImageWidth(int imageWidth) {
-		spotsList.forEach(spot -> spot.adjustLevel2DMeasuresToImageWidth(imageWidth));
+		spotList.forEach(spot -> spot.adjustLevel2DMeasuresToImageWidth(imageWidth));
 	}
 
 	public void cropSpotsLevel2DMeasuresToImageWidth(int imageWidth) {
-		spotsList.forEach(spot -> spot.cropLevel2DMeasuresToImageWidth(imageWidth));
+		spotList.forEach(spot -> spot.cropLevel2DMeasuresToImageWidth(imageWidth));
 	}
 
 	public void initializeLevel2DMeasures() {
-		spotsList.forEach(Spot::initializeLevel2DMeasures);
+		spotList.forEach(Spot::initializeLevel2DMeasures);
 	}
 
 	public void transferMeasuresToLevel2D() {
-		spotsList.forEach(Spot::transferMeasuresToLevel2D);
+		spotList.forEach(Spot::transferMeasuresToLevel2D);
 	}
 
 	// === UTILITY OPERATIONS ===
 
 	public void medianFilterFromSumToSumClean() {
 		int span = 10;
-		spotsList.forEach(spot -> {
+		spotList.forEach(spot -> {
 			SpotMeasure sumIn = spot.getSum();
 			SpotMeasure sumClean = spot.getSumClean();
 			if (sumIn != null && sumClean != null) {
@@ -520,7 +520,7 @@ public class SpotsArray {
 //	}
 
 	public void setReadyToAnalyze(boolean setFilter, BuildSeriesOptions options) {
-		spotsList.forEach(spot -> spot.setReadyForAnalysis(setFilter));
+		spotList.forEach(spot -> spot.setReadyForAnalysis(setFilter));
 	}
 
 	// === PRIVATE HELPER METHODS ===
@@ -533,12 +533,12 @@ public class SpotsArray {
 
 		XMLUtil.setElementIntValue(spotsNode, "version", DEFAULT_VERSION);
 		Node nodeSpotsArray = XMLUtil.setElement(spotsNode, ID_LISTOFSPOTS);
-		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
+		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotList.size());
 
-		sortSpots();
-		for (int i = 0; i < spotsList.size(); i++) {
+		sortSpotList();
+		for (int i = 0; i < spotList.size(); i++) {
 			Node nodeSpot = XMLUtil.setElement(spotsNode, ID_SPOT_ + i);
-			spotsList.get(i).saveToXml(nodeSpot);
+			spotList.get(i).saveToXml(nodeSpot);
 		}
 
 		return true;
@@ -556,14 +556,14 @@ public class SpotsArray {
 		}
 
 		int nitems = XMLUtil.getElementIntValue(nodeSpotsArray, ID_NSPOTS, 0);
-		spotsList.clear();
+		spotList.clear();
 
 		for (int i = 0; i < nitems; i++) {
 			Node nodeSpot = XMLUtil.getElement(node, ID_SPOT_ + i);
 			if (nodeSpot != null) {
 				Spot spot = new Spot();
 				if (spot.loadFromXml(nodeSpot) && !isSpotPresent(spot)) {
-					spotsList.add(spot);
+					spotList.add(spot);
 				}
 			}
 		}
@@ -620,7 +620,7 @@ public class SpotsArray {
 			Spot spot = findSpotByName(spotData[0]);
 			if (spot == null) {
 				spot = new Spot();
-				spotsList.add(spot);
+				spotList.add(spot);
 				spot.getProperties().importFromCsv(spotData);
 			}
 
@@ -634,8 +634,8 @@ public class SpotsArray {
 		String motif = data[0].substring(0, Math.min(data[0].length(), 6));
 		if (motif.equals("n spot")) {
 			int nspots = Integer.valueOf(data[1]);
-			if (nspots < spotsList.size())
-				spotsList.subList(nspots, spotsList.size()).clear();
+			if (nspots < spotList.size())
+				spotList.subList(nspots, spotList.size()).clear();
 			line = reader.readLine();
 			if (line != null)
 				data = line.split(csvSeparator);
@@ -659,7 +659,7 @@ public class SpotsArray {
 			Spot spot = findSpotByName(data[0]);
 			if (spot == null) {
 				spot = new Spot();
-				spotsList.add(spot);
+				spotList.add(spot);
 			}
 			spot.importMeasuresOneType(measureType, data, x, y);
 		}
@@ -694,14 +694,14 @@ public class SpotsArray {
 	boolean csvSaveSpotsArraySection(FileWriter writer) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
 		writer.write("#" + CSV_SEPARATOR + "SPOTS_ARRAY" + CSV_SEPARATOR + "multiSPOTS data\n");
-		writer.write("n spots=" + CSV_SEPARATOR + spotsList.size() + "\n");
+		writer.write("n spots=" + CSV_SEPARATOR + spotList.size() + "\n");
 		writer.write("#" + CSV_SEPARATOR + "#\n");
 		writer.write("#" + CSV_SEPARATOR + "SPOTS" + CSV_SEPARATOR + "multiSPOTS data\n");
 		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "cageID" + CSV_SEPARATOR + "cagePos"
 				+ CSV_SEPARATOR + "cageColumn" + CSV_SEPARATOR + "cageRow" + CSV_SEPARATOR + "volume" + CSV_SEPARATOR
 				+ "npixels" + CSV_SEPARATOR + "radius" + CSV_SEPARATOR + "stim" + CSV_SEPARATOR + "conc\n");
 
-		for (Spot spot : spotsList) {
+		for (Spot spot : spotList) {
 			writer.write(spot.getProperties().exportToCsv(CSV_SEPARATOR));
 		}
 
@@ -713,7 +713,7 @@ public class SpotsArray {
 		writer.write("#" + CSV_SEPARATOR + measureType.toString() + CSV_SEPARATOR + "v0\n");
 		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "npts" + CSV_SEPARATOR + "yi\n");
 
-		for (Spot spot : spotsList) {
+		for (Spot spot : spotList) {
 			writer.write(spot.exportMeasuresOneType(measureType, CSV_SEPARATOR));
 		}
 
@@ -724,6 +724,6 @@ public class SpotsArray {
 
 	@Override
 	public String toString() {
-		return String.format("SpotsArray{spotsCount=%d}", spotsList.size());
+		return String.format("SpotsArray{spotsCount=%d}", spotList.size());
 	}
 }
