@@ -33,7 +33,7 @@ public class ExperimentPersistence {
 	public final static String ID_V2_EXPERIMENT_XML = "v2_Experiment.xml";
 	// Legacy filenames (for fallback)
 	public final static String ID_MCEXPERIMENT_XML = "MCexperiment.xml";
-	private final static String ID_MS96_EXPERIMENT_XML_LEGACY = "MS96_experiment.xml";
+//	private final static String ID_MS96_EXPERIMENT_XML_LEGACY = "MS96_experiment.xml";
 
 	private final static String ID_GENERATOR_PROGRAM = "generatorProgram";
 
@@ -89,8 +89,8 @@ public class ExperimentPersistence {
 		// ------------------------------------------
 
 		/**
-		 * Loads experiment from v2_ format XML file.
-		 * Legacy formats are handled by ExperimentPersistenceLegacy.
+		 * Loads experiment from v2_ format XML file. Legacy formats are handled by
+		 * ExperimentPersistenceLegacy.
 		 */
 		private static boolean xmlLoadExperiment(Experiment exp, String csFileName) {
 			final Document doc = XMLUtil.loadDocument(csFileName);
@@ -113,7 +113,8 @@ public class ExperimentPersistence {
 
 			exp.setBinT0(XMLUtil.getElementLongValue(node, ID_BINT0, 0));
 
-			// Migration: Extract bin parameters from old XML format and migrate to bin directory
+			// Migration: Extract bin parameters from old XML format and migrate to bin
+			// directory
 			long firstKymoColMs = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
 			long lastKymoColMs = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
 			long binKymoColMs = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
@@ -123,7 +124,8 @@ public class ExperimentPersistence {
 
 			// If bin parameters exist in old format, migrate them to bin directory
 			if (firstKymoColMs >= 0 || lastKymoColMs >= 0 || binKymoColMs >= 0) {
-				// Determine target bin directory (use current binDirectory or default to bin_60)
+				// Determine target bin directory (use current binDirectory or default to
+				// bin_60)
 				String targetBinDir = exp.getBinSubDirectory();
 				if (targetBinDir != null) {
 					// Extract just the subdirectory name if binDirectory is a full path
@@ -203,7 +205,8 @@ public class ExperimentPersistence {
 				long frameDelta = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
 				timeManager.setDeltaImage(frameDelta);
 				// Bin parameters are now stored in bin directories, not in experiment XML
-				// TimeManager bin parameters will be set from activeBinDescription when bin is loaded
+				// TimeManager bin parameters will be set from activeBinDescription when bin is
+				// loaded
 			}
 
 			// Try to compute from sequenceCamData if still uninitialized (-1)

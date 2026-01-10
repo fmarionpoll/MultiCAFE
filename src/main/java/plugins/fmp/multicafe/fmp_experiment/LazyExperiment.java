@@ -2,13 +2,13 @@ package plugins.fmp.multicafe.fmp_experiment;
 
 import java.io.File;
 import java.util.List;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageLoader;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
 
 /**
@@ -32,7 +32,6 @@ import plugins.fmp.multicafe.fmp_tools.toExcel.enums.EnumXLSColumnHeader;
  * @version 2.0.0
  */
 public class LazyExperiment extends Experiment {
-
 
 	private final ExperimentMetadata metadata;
 	private boolean isLoaded = false;
@@ -63,42 +62,44 @@ public class LazyExperiment extends Experiment {
 			try {
 				// Load cached properties first if available (for lightweight access)
 				loadPropertiesIfNeeded();
-				
+
 				ExperimentDirectories expDirectories = new ExperimentDirectories();
 				if (expDirectories.getDirectoriesFromExptPath(metadata.getBinDirectory(),
 						metadata.getCameraDirectory())) {
-					
+
 					// Set up directories using public methods
 					setResultsDirectory(expDirectories.getResultsDirectory());
 					setImagesDirectory(expDirectories.getCameraImagesDirectory());
-					setBinDirectory(expDirectories.getResultsDirectory() + File.separator + expDirectories.getBinSubDirectory());
-					
+					setBinDirectory(expDirectories.getResultsDirectory() + File.separator
+							+ expDirectories.getBinSubDirectory());
+
 					// Load XML metadata only (no images, no cages)
 					// xmlLoad_MCExperiment() loads from resultsDirectory + MCexperiment.xml
-					// XML file is optional - continue even if it doesn't exist (for new experiments)
+					// XML file is optional - continue even if it doesn't exist (for new
+					// experiments)
 					xmlLoad_MCExperiment();
-					
+
 					// Set up ImageLoader with directory and file names only (NO sequence loading)
 					ImageLoader imgLoader = getSeqCamData().getImageLoader();
 					imgLoader.setImagesDirectory(expDirectories.getCameraImagesDirectory());
-					List<String> imagesList = ExperimentDirectories.getImagesListFromPathV2(
-							imgLoader.getImagesDirectory(), "jpg");
+					List<String> imagesList = ExperimentDirectories
+							.getImagesListFromPathV2(imgLoader.getImagesDirectory(), "jpg");
 					// Use setImagesList instead of loadImageList to avoid loading the sequence
 					getSeqCamData().setImagesList(imagesList);
-					
+
 					// Calculate file intervals if needed (lightweight operation)
 					if (expDirectories.cameraImagesList.size() > 1) {
 						getFileIntervalsFromSeqCamData();
 					}
-					
+
 					// Initialize cages array (empty, will be loaded when needed)
 					// Don't load cages here - they will be loaded when experiment is opened
-					
+
 					// Copy cached properties to parent's prop object
 					if (cachedExperimentProperties != null) {
 						getProperties().copyFieldsFrom(cachedExperimentProperties);
 					}
-					
+
 					this.isLoaded = true;
 				}
 			} catch (Exception e) {
@@ -121,13 +122,13 @@ public class LazyExperiment extends Experiment {
 				// Priority 1: Try v2_ format
 				String xmlFileName = resultsDir + File.separator + ID_V2_EXPERIMENT_XML;
 				File xmlFile = new File(xmlFileName);
-				
+
 				// Priority 2: Fallback to legacy MCexperiment.xml
 				if (!xmlFile.exists()) {
 					xmlFileName = resultsDir + File.separator + ID_MS96_experiment_XML;
 					xmlFile = new File(xmlFileName);
 				}
-				
+
 				// Priority 3: Fallback to legacy MS96_experiment.xml
 				if (!xmlFile.exists()) {
 					xmlFileName = resultsDir + File.separator + ID_MS96_EXPERIMENT_XML_LEGACY;
@@ -197,8 +198,9 @@ public class LazyExperiment extends Experiment {
 	@Override
 	public ExperimentProperties getProperties() {
 		// Always return the parent's prop object (not cached properties)
-		// The parent's prop should be loaded via load_MS96_experiment() or loadIfNeeded()
-		// Don't sync cached properties here as they might be stale or from a different experiment
+		// The parent's prop should be loaded via load_experiment() or loadIfNeeded()
+		// Don't sync cached properties here as they might be stale or from a different
+		// experiment
 		return super.getProperties();
 	}
 

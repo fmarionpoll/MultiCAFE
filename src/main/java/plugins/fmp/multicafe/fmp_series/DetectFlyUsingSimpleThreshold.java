@@ -25,7 +25,7 @@ public class DetectFlyUsingSimpleThreshold extends BuildSeries {
 		runFlyDetect1(exp);
 		exp.getCages().orderFlyPositions();
 		if (!stopFlag)
-			exp.save_MS96_fliesPositions();
+			exp.save_cagesFliesPositions();
 		exp.getSeqCamData().closeSequence();
 		closeSequence(seqNegative);
 	}

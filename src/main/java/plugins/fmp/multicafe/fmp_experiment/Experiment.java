@@ -975,12 +975,15 @@ public class Experiment {
 		return descriptionsSaved;
 	}
 
-	public boolean load_MS96_fliesPositions() {
-		// TODO write real code
+	public boolean load_FliesPositions() {
+		String binDir = getKymosBinFullDirectory();
+		if (binDir != null) {
+			return cages.getPersistence().loadCagesMeasures(cages, binDir);
+		}
 		return false;
 	}
 
-	public boolean save_MS96_fliesPositions() {
+	public boolean save_cagesFliesPositions() {
 		// Save fly positions to bin directory (e.g.,
 		// results/bin60/CagesMeasures.csv)
 		String binDir = getKymosBinFullDirectory();
@@ -1689,42 +1692,6 @@ public class Experiment {
 		}
 		return flag;
 	}
-
-//	// TODO: Refactor migration logic - xmlLoadOldCapillaries() needs access to
-//	// legacy methods
-//	// for migration purposes. Consider moving this to a migration service or making
-//	// legacy methods accessible for migration only.
-//	private boolean xmlLoadOldCapillaries() {
-//		// Migration logic temporarily disabled - new format methods have internal
-//		// fallback
-//		// This method should be refactored to use migration service
-//		return false;
-//	}
-
-//	private boolean xmlReadCamDataROIs(String fileName) {
-//		Sequence seq = seqCamData.getSequence();
-//		if (fileName != null) {
-//			final Document doc = XMLUtil.loadDocument(fileName);
-//			if (doc != null) {
-//				List<ROI2D> seqRoisList = seq.getROI2Ds(false);
-//				List<ROI2D> newRoisList = ROI2DUtilities.loadROIsFromXML(doc);
-//				ROI2DUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, seq);
-//				seq.removeAllROI();
-//				seq.addROIs(seqRoisList, false);
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-
-//	private boolean xmlReadRoiLineParameters(String filename) {
-//		if (filename != null) {
-//			final Document doc = XMLUtil.loadDocument(filename);
-//			if (doc != null)
-//				return capillaries.getCapillariesDescription().xmlLoadCapillaryDescription(doc);
-//		}
-//		return false;
-//	}
 
 	// ---------------------------------------------
 
