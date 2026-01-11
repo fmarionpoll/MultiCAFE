@@ -23,8 +23,9 @@ import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 /**
- * Legacy persistence for capillaries files.
- * Handles loading from legacy XML and CSV formats: MCcapillaries.xml, CapillariesMeasures.csv, individual capillary XML files
+ * Legacy persistence for capillaries files. Handles loading from legacy XML and
+ * CSV formats: MCcapillaries.xml, CapillariesMeasures.csv, individual capillary
+ * XML files
  */
 public class CapillariesPersistenceLegacy {
 
@@ -40,7 +41,8 @@ public class CapillariesPersistenceLegacy {
 	private static final String ID_CAPILLARIESARRAYMEASURES_CSV = "CapillariesArrayMeasures.csv";
 
 	/**
-	 * Legacy entry point for loading capillaries. Tries CSV format first, then falls back to XML format.
+	 * Legacy entry point for loading capillaries. Tries CSV format first, then
+	 * falls back to XML format.
 	 */
 	public static boolean load(Capillaries capillaries, String directory) {
 		boolean flag = false;
@@ -70,6 +72,7 @@ public class CapillariesPersistenceLegacy {
 	 * @param csFileName  The path to the XML file
 	 * @return true if successful
 	 */
+
 	public static boolean xmlLoadOldCapillaries_Only(Capillaries capillaries, String csFileName) {
 		if (csFileName == null) {
 			Logger.warn("CapillariesPersistenceLegacy:xmlLoadOldCapillaries_Only() File path is null");
@@ -78,7 +81,9 @@ public class CapillariesPersistenceLegacy {
 		try {
 			final Document doc = XMLUtil.loadDocument(csFileName);
 			if (doc == null) {
-				Logger.warn("CapillariesPersistenceLegacy:xmlLoadOldCapillaries_Only() Could not load XML document from " + csFileName);
+				Logger.warn(
+						"CapillariesPersistenceLegacy:xmlLoadOldCapillaries_Only() Could not load XML document from "
+								+ csFileName);
 				return false;
 			}
 			capillaries.getCapillariesDescription().xmlLoadCapillaryDescription(doc);
@@ -98,13 +103,17 @@ public class CapillariesPersistenceLegacy {
 				break;
 			}
 			if (loaded) {
-				Logger.info("CapillariesPersistenceLegacy:xmlLoadOldCapillaries_Only() Loaded " + capillaries.getList().size() + " capillaries from version " + version);
+				Logger.info("CapillariesPersistenceLegacy:xmlLoadOldCapillaries_Only() Loaded "
+						+ capillaries.getList().size() + " capillaries from version " + version);
 			} else {
-				Logger.warn("CapillariesPersistenceLegacy:xmlLoadOldCapillaries_Only() Failed to load capillaries from version " + version);
+				Logger.warn(
+						"CapillariesPersistenceLegacy:xmlLoadOldCapillaries_Only() Failed to load capillaries from version "
+								+ version);
 			}
 			return loaded;
 		} catch (Exception e) {
-			Logger.error("CapillariesPersistenceLegacy:xmlLoadOldCapillaries_Only() Error loading from " + csFileName + ": " + e.getMessage(), e);
+			Logger.error("CapillariesPersistenceLegacy:xmlLoadOldCapillaries_Only() Error loading from " + csFileName
+					+ ": " + e.getMessage(), e);
 			return false;
 		}
 	}
@@ -117,10 +126,14 @@ public class CapillariesPersistenceLegacy {
 	 * @return true if successful
 	 */
 	public static boolean xmlLoadCapillaries_Measures(Capillaries capillaries, String directory) {
+		System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() called with directory: " + directory);
 		boolean flag = false;
 		int ncapillaries = capillaries.getList().size();
+		System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() number of capillaries: " + ncapillaries);
 		if (ncapillaries == 0) {
-			Logger.warn("CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() No capillaries to load measures for");
+			System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() No capillaries in list");
+			Logger.warn(
+					"CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() No capillaries to load measures for");
 			return false;
 		}
 		int loadedCount = 0;
@@ -128,30 +141,48 @@ public class CapillariesPersistenceLegacy {
 			Capillary cap = capillaries.getList().get(i);
 			String kymographName = cap.getKymographName();
 			if (kymographName == null || kymographName.isEmpty()) {
-				Logger.warn("CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() Capillary " + i + " has no kymograph name");
+				System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() Capillary " + i + " has no kymograph name");
+				Logger.warn("CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() Capillary " + i
+						+ " has no kymograph name");
 				continue;
 			}
 			String csFile = directory + File.separator + kymographName + ".xml";
+			System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() Capillary " + i + " kymograph name: " + kymographName);
+			System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() Trying to load XML from: " + csFile);
+			File xmlFile = new File(csFile);
+			System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() XML file exists: " + xmlFile.exists() + ", isFile: " + xmlFile.isFile());
 			try {
 				final Document capdoc = XMLUtil.loadDocument(csFile);
 				if (capdoc != null) {
+					System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() XML document loaded successfully for capillary " + i);
 					Node node = XMLUtil.getRootElement(capdoc, true);
 					cap.setKymographIndex(i);
 					if (cap.xmlLoad_MeasuresOnly(node)) {
 						flag = true;
 						loadedCount++;
+						System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() Successfully loaded measures for capillary " + i);
+					} else {
+						System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() xmlLoad_MeasuresOnly returned false for capillary " + i);
 					}
 				} else {
-					Logger.debug("CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() Could not load XML from " + csFile);
+					System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() Could not load XML document from " + csFile);
+					Logger.debug("CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() Could not load XML from "
+							+ csFile);
 				}
 			} catch (Exception e) {
-				Logger.warn("CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() Error loading measures from " + csFile + ": " + e.getMessage());
+				System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() Exception loading measures from " + csFile + ": " + e.getMessage());
+				e.printStackTrace();
+				Logger.warn("CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() Error loading measures from "
+						+ csFile + ": " + e.getMessage());
 			}
 		}
+		System.out.println("DEBUG CapillariesPersistenceLegacy.xmlLoadCapillaries_Measures() Final result: flag=" + flag + ", loadedCount=" + loadedCount + " out of " + ncapillaries);
 		if (flag) {
-			Logger.info("CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() Loaded measures for " + loadedCount + " out of " + ncapillaries + " capillaries");
+			Logger.info("CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() Loaded measures for " + loadedCount
+					+ " out of " + ncapillaries + " capillaries");
 		} else {
-			Logger.warn("CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() Failed to load measures for any capillaries");
+			Logger.warn(
+					"CapillariesPersistenceLegacy:xmlLoadCapillaries_Measures() Failed to load measures for any capillaries");
 		}
 		return flag;
 	}
@@ -174,7 +205,8 @@ public class CapillariesPersistenceLegacy {
 	/**
 	 * Loads an individual capillary from legacy v0 format.
 	 */
-	private static void xmlLoadIndividualCapillary_v0(Capillaries capillaries, ROI2D roiCapillary, String directory, int t) {
+	private static void xmlLoadIndividualCapillary_v0(Capillaries capillaries, ROI2D roiCapillary, String directory,
+			int t) {
 		Capillary cap = new Capillary(roiCapillary);
 		if (!capillaries.isPresent(cap))
 			capillaries.getList().add(cap);
@@ -279,8 +311,8 @@ public class CapillariesPersistenceLegacy {
 									row.contains("xi"));
 							break;
 						case "TOPDERIVATIVE":
-							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPDERIVATIVE, sep,
-									row.contains("xi"));
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPDERIVATIVE,
+									sep, row.contains("xi"));
 							break;
 						case "GULPS":
 						case "GULPS_CORRECTED":
@@ -288,11 +320,13 @@ public class CapillariesPersistenceLegacy {
 								csvSkipSection(csvReader, sep);
 								break;
 							}
-							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep, true);
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep,
+									true);
 							break;
 						case "GULPS_FLAT":
 							seenGulpsFlat = true;
-							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep, true);
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep,
+									true);
 							break;
 						default:
 							break;
@@ -573,8 +607,9 @@ public class CapillariesPersistenceLegacy {
 	// ========================================================================
 
 	/**
-	 * Loads capillary descriptions with fallback logic. Replicates original MultiCAFE0
-	 * behavior: checks for legacy CSV files first, then falls back to XML.
+	 * Loads capillary descriptions with fallback logic. Replicates original
+	 * MultiCAFE0 behavior: checks for legacy CSV files first, then falls back to
+	 * XML.
 	 * 
 	 * @param capillaries      The Capillaries to populate
 	 * @param resultsDirectory The results directory
@@ -608,8 +643,9 @@ public class CapillariesPersistenceLegacy {
 							// Load CAPILLARIES section with ROI coordinates
 							csvLoad_Capillaries_Description(capillaries, csvReader, sep);
 							csvReader.close();
-							Logger.info("CapillariesPersistenceLegacy:loadDescriptionWithFallback() Loaded from legacy CSV: "
-									+ ID_CAPILLARIESARRAY_CSV);
+							Logger.info(
+									"CapillariesPersistenceLegacy:loadDescriptionWithFallback() Loaded from legacy CSV: "
+											+ ID_CAPILLARIESARRAY_CSV);
 							return true;
 						case "TOPLEVEL":
 						case "TOPRAW":
@@ -620,8 +656,9 @@ public class CapillariesPersistenceLegacy {
 						case "GULPS_FLAT":
 							// Stop reading when we hit measures section
 							csvReader.close();
-							Logger.info("CapillariesPersistenceLegacy:loadDescriptionWithFallback() Loaded from legacy CSV: "
-									+ ID_CAPILLARIESARRAY_CSV);
+							Logger.info(
+									"CapillariesPersistenceLegacy:loadDescriptionWithFallback() Loaded from legacy CSV: "
+											+ ID_CAPILLARIESARRAY_CSV);
 							return true;
 						default:
 							break;
@@ -647,8 +684,9 @@ public class CapillariesPersistenceLegacy {
 				Logger.info("CapillariesPersistenceLegacy:loadDescriptionWithFallback() Loaded from legacy XML: "
 						+ ID_MCCAPILLARIES_XML);
 			} else {
-				Logger.warn("CapillariesPersistenceLegacy:loadDescriptionWithFallback() Failed to load from legacy XML: "
-						+ pathToXml);
+				Logger.warn(
+						"CapillariesPersistenceLegacy:loadDescriptionWithFallback() Failed to load from legacy XML: "
+								+ pathToXml);
 			}
 			return loaded;
 		}
@@ -665,20 +703,27 @@ public class CapillariesPersistenceLegacy {
 	 * @return true if successful
 	 */
 	public static boolean loadMeasuresWithFallback(Capillaries capillaries, String binDirectory) {
+		System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() called with binDirectory: " + binDirectory);
+		System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() capillaries list size: " + capillaries.getList().size());
 		if (binDirectory == null) {
+			System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() binDirectory is null, returning false");
 			return false;
 		}
+
+		boolean measuresLoaded = false;
 
 		// Priority 1: Try legacy CSV format (CapillariesArrayMeasures.csv)
 		String pathToCsv = binDirectory + File.separator + ID_CAPILLARIESARRAYMEASURES_CSV;
 		File csvFile = new File(pathToCsv);
+		System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() checking legacy CSV: " + pathToCsv);
+		System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() CSV file exists: " + csvFile.exists() + ", isFile: " + csvFile.isFile());
 		if (csvFile.isFile()) {
+			System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Legacy CSV file found, attempting to load");
 			try {
 				BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
 				String row;
 				String sep = csvSep;
 				boolean seenGulpsFlat = false;
-				boolean measuresLoaded = false;
 
 				while ((row = csvReader.readLine()) != null) {
 					if (row.length() > 0 && row.charAt(0) == '#')
@@ -698,23 +743,23 @@ public class CapillariesPersistenceLegacy {
 						case "TOPLEVEL":
 						case "TOPRAW":
 							measuresLoaded = true;
-							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPRAW,
-									sep, row.contains("xi"));
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPRAW, sep,
+									row.contains("xi"));
 							break;
 						case "TOPLEVEL_CORRECTED":
 							measuresLoaded = true;
-							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPLEVEL,
-									sep, row.contains("xi"));
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPLEVEL, sep,
+									row.contains("xi"));
 							break;
 						case "BOTTOMLEVEL":
 							measuresLoaded = true;
-							csvLoad_Capillaries_Measures(capillaries, csvReader,
-									EnumCapillaryMeasures.BOTTOMLEVEL, sep, row.contains("xi"));
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.BOTTOMLEVEL, sep,
+									row.contains("xi"));
 							break;
 						case "TOPDERIVATIVE":
 							measuresLoaded = true;
-							csvLoad_Capillaries_Measures(capillaries, csvReader,
-									EnumCapillaryMeasures.TOPDERIVATIVE, sep, row.contains("xi"));
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPDERIVATIVE,
+									sep, row.contains("xi"));
 							break;
 						case "GULPS":
 						case "GULPS_CORRECTED":
@@ -723,14 +768,14 @@ public class CapillariesPersistenceLegacy {
 								break;
 							}
 							measuresLoaded = true;
-							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS,
-									sep, true);
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep,
+									true);
 							break;
 						case "GULPS_FLAT":
 							seenGulpsFlat = true;
 							measuresLoaded = true;
-							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS,
-									sep, true);
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep,
+									true);
 							break;
 						default:
 							break;
@@ -739,29 +784,234 @@ public class CapillariesPersistenceLegacy {
 				}
 				csvReader.close();
 				if (measuresLoaded) {
+					System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Successfully loaded from legacy CSV: " + ID_CAPILLARIESARRAYMEASURES_CSV);
 					Logger.info("CapillariesPersistenceLegacy:loadMeasuresWithFallback() Loaded from legacy CSV: "
 							+ ID_CAPILLARIESARRAYMEASURES_CSV);
 					return true;
+				} else {
+					System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() CSV file read but no measures were loaded (measuresLoaded=false)");
 				}
 			} catch (Exception e) {
-				Logger.error("CapillariesPersistenceLegacy:loadMeasuresWithFallback() Error loading CSV: "
-						+ e.getMessage(), e);
+				System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Exception loading CSV: " + e.getMessage());
+				e.printStackTrace();
+				Logger.error(
+						"CapillariesPersistenceLegacy:loadMeasuresWithFallback() Error loading CSV: " + e.getMessage(),
+						e);
+			}
+		} else {
+			System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() CapillariesArrayMeasures.csv not found in bin directory, trying CapillariesMeasures.csv");
+		}
+
+		// Priority 2: Try legacy CSV format (CapillariesMeasures.csv) in bin directory
+		if (!measuresLoaded) {
+			pathToCsv = binDirectory + File.separator + ID_CAPILLARIESMEASURES_CSV;
+			csvFile = new File(pathToCsv);
+			System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() checking legacy CSV (CapillariesMeasures.csv) in bin directory: " + pathToCsv);
+			System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() CSV file exists: " + csvFile.exists() + ", isFile: " + csvFile.isFile());
+			if (csvFile.isFile()) {
+				System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Legacy CSV file (CapillariesMeasures.csv) found in bin directory, attempting to load");
+				try {
+					BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
+					String row;
+					String sep = csvSep;
+					boolean seenGulpsFlat = false;
+
+					while ((row = csvReader.readLine()) != null) {
+						if (row.length() > 0 && row.charAt(0) == '#')
+							sep = String.valueOf(row.charAt(1));
+
+						String[] data = row.split(sep);
+						if (data.length > 0 && data[0].equals("#")) {
+							switch (data[1]) {
+							case "DESCRIPTION":
+								// Skip description section in measures file
+								csvSkipSection(csvReader, sep);
+								break;
+							case "CAPILLARIES":
+								// Skip CAPILLARIES section
+								csvSkipSection(csvReader, sep);
+								break;
+							case "TOPLEVEL":
+							case "TOPRAW":
+								measuresLoaded = true;
+								csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPRAW, sep,
+										row.contains("xi"));
+								break;
+							case "TOPLEVEL_CORRECTED":
+								measuresLoaded = true;
+								csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPLEVEL, sep,
+										row.contains("xi"));
+								break;
+							case "BOTTOMLEVEL":
+								measuresLoaded = true;
+								csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.BOTTOMLEVEL, sep,
+										row.contains("xi"));
+								break;
+							case "TOPDERIVATIVE":
+								measuresLoaded = true;
+								csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPDERIVATIVE,
+										sep, row.contains("xi"));
+								break;
+							case "GULPS":
+							case "GULPS_CORRECTED":
+								if (seenGulpsFlat) {
+									csvSkipSection(csvReader, sep);
+									break;
+								}
+								measuresLoaded = true;
+								csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep,
+										true);
+								break;
+							case "GULPS_FLAT":
+								seenGulpsFlat = true;
+								measuresLoaded = true;
+								csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep,
+										true);
+								break;
+							default:
+								break;
+							}
+						}
+					}
+					csvReader.close();
+					if (measuresLoaded) {
+						System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Successfully loaded from legacy CSV (CapillariesMeasures.csv) in bin directory: " + ID_CAPILLARIESMEASURES_CSV);
+						Logger.info("CapillariesPersistenceLegacy:loadMeasuresWithFallback() Loaded from legacy CSV: "
+								+ ID_CAPILLARIESMEASURES_CSV);
+						return true;
+					} else {
+						System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() CSV file (CapillariesMeasures.csv) read but no measures were loaded");
+					}
+				} catch (Exception e) {
+					System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Exception loading CSV (CapillariesMeasures.csv): " + e.getMessage());
+					e.printStackTrace();
+					Logger.error(
+							"CapillariesPersistenceLegacy:loadMeasuresWithFallback() Error loading CSV: " + e.getMessage(),
+							e);
+				}
+			} else {
+				System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() CapillariesMeasures.csv not found in bin directory, will try XML fallback");
 			}
 		}
 
-		// Priority 2: Fall back to legacy XML format (individual capillary XML files)
+		// Priority 3: Try legacy CSV format (CapillariesMeasures.csv) in results directory (if not already loaded)
+		String resultsDir = binDirectory;
+		if (binDirectory.contains(File.separator + "bin")) {
+			// Extract results directory from bin directory
+			int binIndex = binDirectory.lastIndexOf(File.separator + "bin");
+			if (binIndex > 0) {
+				resultsDir = binDirectory.substring(0, binIndex);
+			}
+		}
+		pathToCsv = resultsDir + File.separator + ID_CAPILLARIESMEASURES_CSV;
+		csvFile = new File(pathToCsv);
+		System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() checking legacy CSV in results directory: " + pathToCsv);
+		System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() CSV file exists: " + csvFile.exists() + ", isFile: " + csvFile.isFile());
+		if (csvFile.isFile()) {
+			System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Legacy CSV file found in results directory, attempting to load");
+			try {
+				BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
+				String row;
+				String sep = csvSep;
+				boolean seenGulpsFlat = false;
+
+				while ((row = csvReader.readLine()) != null) {
+					if (row.length() > 0 && row.charAt(0) == '#')
+						sep = String.valueOf(row.charAt(1));
+
+					String[] data = row.split(sep);
+					if (data.length > 0 && data[0].equals("#")) {
+						switch (data[1]) {
+						case "DESCRIPTION":
+							// Skip description section in measures file
+							csvSkipSection(csvReader, sep);
+							break;
+						case "CAPILLARIES":
+							// Skip CAPILLARIES section
+							csvSkipSection(csvReader, sep);
+							break;
+						case "TOPLEVEL":
+						case "TOPRAW":
+							measuresLoaded = true;
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPRAW, sep,
+									row.contains("xi"));
+							break;
+						case "TOPLEVEL_CORRECTED":
+							measuresLoaded = true;
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPLEVEL, sep,
+									row.contains("xi"));
+							break;
+						case "BOTTOMLEVEL":
+							measuresLoaded = true;
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.BOTTOMLEVEL, sep,
+									row.contains("xi"));
+							break;
+						case "TOPDERIVATIVE":
+							measuresLoaded = true;
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.TOPDERIVATIVE,
+									sep, row.contains("xi"));
+							break;
+						case "GULPS":
+						case "GULPS_CORRECTED":
+							if (seenGulpsFlat) {
+								csvSkipSection(csvReader, sep);
+								break;
+							}
+							measuresLoaded = true;
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep,
+									true);
+							break;
+						case "GULPS_FLAT":
+							seenGulpsFlat = true;
+							measuresLoaded = true;
+							csvLoad_Capillaries_Measures(capillaries, csvReader, EnumCapillaryMeasures.GULPS, sep,
+									true);
+							break;
+						default:
+							break;
+						}
+					}
+				}
+				csvReader.close();
+				if (measuresLoaded) {
+					System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Successfully loaded from legacy CSV in results directory: " + ID_CAPILLARIESMEASURES_CSV);
+					Logger.info("CapillariesPersistenceLegacy:loadMeasuresWithFallback() Loaded from legacy CSV: "
+							+ ID_CAPILLARIESMEASURES_CSV);
+					return true;
+				} else {
+					System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() CSV file in results directory read but no measures were loaded (measuresLoaded=false)");
+				}
+			} catch (Exception e) {
+				System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Exception loading CSV from results directory: " + e.getMessage());
+				e.printStackTrace();
+				Logger.error(
+						"CapillariesPersistenceLegacy:loadMeasuresWithFallback() Error loading CSV from results directory: " + e.getMessage(),
+						e);
+			}
+		} else {
+			System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Legacy CSV file not found in results directory, will try XML fallback");
+		}
+
+		// Priority 3: Fall back to legacy XML format (individual capillary XML files)
 		// Measures are stored in {kymographName}.xml files in the bin directory
-		Logger.info("CapillariesPersistenceLegacy:loadMeasuresWithFallback() Trying legacy XML format in bin directory: "
-				+ binDirectory);
+		System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() Trying legacy XML format in bin directory: " + binDirectory);
+		Logger.info(
+				"CapillariesPersistenceLegacy:loadMeasuresWithFallback() Trying legacy XML format in bin directory: "
+						+ binDirectory);
+		System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() capillaries list size before XML load: " + capillaries.getList().size());
 		if (capillaries.getList().size() == 0) {
-			Logger.warn("CapillariesPersistenceLegacy:loadMeasuresWithFallback() No capillaries loaded, cannot load measures from XML");
+			System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() No capillaries in list, cannot load measures from XML");
+			Logger.warn(
+					"CapillariesPersistenceLegacy:loadMeasuresWithFallback() No capillaries loaded, cannot load measures from XML");
 			return false;
 		}
 		boolean loaded = xmlLoadCapillaries_Measures(capillaries, binDirectory);
+		System.out.println("DEBUG CapillariesPersistenceLegacy.loadMeasuresWithFallback() XML loading result: " + loaded);
 		if (loaded) {
 			Logger.info("CapillariesPersistenceLegacy:loadMeasuresWithFallback() Loaded measures from legacy XML");
 		} else {
-			Logger.warn("CapillariesPersistenceLegacy:loadMeasuresWithFallback() Failed to load measures from legacy XML");
+			Logger.warn(
+					"CapillariesPersistenceLegacy:loadMeasuresWithFallback() Failed to load measures from legacy XML");
 		}
 		return loaded;
 	}

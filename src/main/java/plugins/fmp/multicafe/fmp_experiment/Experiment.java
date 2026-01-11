@@ -945,14 +945,39 @@ public class Experiment {
 		boolean descriptionsLoaded = capillaries.getPersistence().load_CapillariesDescription(capillaries, resultsDir);
 
 		String binDir = getKymosBinFullDirectory();
+		boolean measuresLoaded = false;
 		if (binDir != null) {
-			boolean measuresLoaded = capillaries.getPersistence().load_CapillariesMeasures(capillaries, binDir);
-			if (descriptionsLoaded || measuresLoaded) {
-				return true;
-			}
+			measuresLoaded = capillaries.getPersistence().load_CapillariesMeasures(capillaries, binDir);
 		}
 
-		return descriptionsLoaded;
+		// Transfer capillaries to ROIs on sequence if capillaries exist (even if descriptions didn't load)
+		// Capillaries might have been loaded from XML files directly
+		System.out.println("DEBUG Experiment.load_capillaries_description_and_measures() descriptionsLoaded: " + descriptionsLoaded + ", capillaries: " + capillaries.getList().size() + ", seqCamData: " + (seqCamData != null) + ", sequence: " + (seqCamData != null && seqCamData.getSequence() != null));
+		if (capillaries.getList().size() > 0 && seqCamData != null && seqCamData.getSequence() != null) {
+			// Remove only capillary ROIs (containing "line"), preserving cages and other ROIs
+			seqCamData.removeROIsContainingString("line");
+			// Add capillary ROIs to sequence
+			int addedCount = 0;
+			for (Capillary cap : capillaries.getList()) {
+				if (cap.getRoi() != null) {
+					seqCamData.getSequence().addROI(cap.getRoi());
+					addedCount++;
+				}
+			}
+			System.out.println("DEBUG Experiment.load_capillaries_description_and_measures() Added " + addedCount + " capillary ROIs to sequence");
+		}
+
+		// Transfer measures to kymographs if measures loaded successfully
+		System.out.println("DEBUG Experiment.load_capillaries_description_and_measures() measuresLoaded: " + measuresLoaded + ", seqKymos: " + (seqKymos != null) + ", sequence: " + (seqKymos != null && seqKymos.getSequence() != null));
+		if (measuresLoaded && seqKymos != null && seqKymos.getSequence() != null) {
+			System.out.println("DEBUG Experiment.load_capillaries_description_and_measures() Transferring measures to kymographs");
+			CapillariesKymosMapper.pushCapillaryMeasuresToKymos(capillaries, seqKymos);
+			System.out.println("DEBUG Experiment.load_capillaries_description_and_measures() Measures transferred to kymographs");
+		} else {
+			System.out.println("DEBUG Experiment.load_capillaries_description_and_measures() NOT transferring measures - measuresLoaded: " + measuresLoaded + ", seqKymos: " + (seqKymos != null) + ", sequence: " + (seqKymos != null && seqKymos.getSequence() != null));
+		}
+
+		return descriptionsLoaded || measuresLoaded;
 	}
 
 	/**
@@ -1934,11 +1959,30 @@ public class Experiment {
 
 	public boolean loadCamDataCapillaries() {
 		if (resultsDirectory == null) {
+			System.out.println("DEBUG Experiment.loadCamDataCapillaries() resultsDirectory is null");
 			return false;
 		}
 		boolean flag = loadMCCapillaries_Only();
-		if (flag && seqCamData != null && seqCamData.getSequence() != null) {
-			capillaries.transferCapillaryRoiToSequence(seqCamData.getSequence());
+		System.out.println("DEBUG Experiment.loadCamDataCapillaries() loadMCCapillaries_Only returned: " + flag);
+		System.out.println("DEBUG Experiment.loadCamDataCapillaries() capillaries list size: " + capillaries.getList().size());
+		System.out.println("DEBUG Experiment.loadCamDataCapillaries() seqCamData: " + (seqCamData != null));
+		System.out.println("DEBUG Experiment.loadCamDataCapillaries() sequence: " + (seqCamData != null && seqCamData.getSequence() != null));
+		// Transfer ROIs if capillaries exist, even if descriptions didn't load
+		// (capillaries might have been loaded from XML files directly)
+		if (capillaries.getList().size() > 0 && seqCamData != null && seqCamData.getSequence() != null) {
+			// Remove only capillary ROIs (containing "line"), preserving cages and other ROIs
+			seqCamData.removeROIsContainingString("line");
+			// Add capillary ROIs to sequence
+			int addedCount = 0;
+			for (Capillary cap : capillaries.getList()) {
+				if (cap.getRoi() != null) {
+					seqCamData.getSequence().addROI(cap.getRoi());
+					addedCount++;
+				}
+			}
+			System.out.println("DEBUG Experiment.loadCamDataCapillaries() Added " + addedCount + " capillary ROIs to sequence");
+		} else {
+			System.out.println("DEBUG Experiment.loadCamDataCapillaries() NOT transferring ROIs - capillaries: " + capillaries.getList().size() + ", seqCamData: " + (seqCamData != null) + ", sequence: " + (seqCamData != null && seqCamData.getSequence() != null));
 		}
 		return flag;
 	}

@@ -27,6 +27,7 @@ import plugins.fmp.multicafe.MultiCAFE;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.ImageFileDescriptor;
 import plugins.fmp.multicafe.fmp_experiment.capillaries.Capillary;
+import plugins.fmp.multicafe.fmp_experiment.capillaries.CapillariesKymosMapper;
 import plugins.fmp.multicafe.fmp_experiment.sequence.ImageFileData;
 import plugins.fmp.multicafe.fmp_experiment.sequence.SequenceKymos;
 import plugins.fmp.multicafe.fmp_service.KymographService;
@@ -149,6 +150,11 @@ public class LoadSave extends JPanel {
 			flag = new KymographService().loadImagesFromList(exp.getSeqKymos(), myList, true);
 //			flag = seqKymos.loadImagesFromList(myList);
 			parent0.paneKymos.tabDisplay.transferCapillaryNamesToComboBox(exp);
+			// Transfer measures to kymographs if capillaries are already loaded with measures
+			if (flag && exp.getCapillaries() != null && exp.getSeqKymos() != null 
+					&& exp.getSeqKymos().getSequence() != null) {
+				CapillariesKymosMapper.pushCapillaryMeasuresToKymos(exp.getCapillaries(), exp.getSeqKymos());
+			}
 		} else
 			seqKymos.closeSequence();
 		return flag;

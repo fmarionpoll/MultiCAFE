@@ -230,9 +230,22 @@ public class Capillaries {
 	}
 
 	public void transferCapillaryRoiToSequence(Sequence seq) {
-		seq.removeAllROI();
+		// Remove only capillary ROIs (containing "line"), preserving cages and other ROIs
+		List<ROI2D> allROIs = seq.getROI2Ds();
+		List<ROI2D> toRemove = new ArrayList<>();
+		for (ROI2D roi : allROIs) {
+			if (roi.getName() != null && roi.getName().contains("line")) {
+				toRemove.add(roi);
+			}
+		}
+		for (ROI2D roi : toRemove) {
+			seq.removeROI(roi);
+		}
+		// Add capillary ROIs to sequence
 		for (Capillary cap : getList()) {
-			seq.addROI(cap.getRoi());
+			if (cap.getRoi() != null) {
+				seq.addROI(cap.getRoi());
+			}
 		}
 	}
 
