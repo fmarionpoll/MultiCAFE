@@ -211,6 +211,7 @@ public class SelectFiles1 extends JPanel {
 				deduplicated.addAll(dirFiles);
 			}
 		}
+		deduplicated.sort((p1, p2) -> p1.toString().compareToIgnoreCase(p2.toString()));
 		return deduplicated;
 	}
 
