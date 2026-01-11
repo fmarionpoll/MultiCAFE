@@ -549,26 +549,20 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	private void loadKymographsAndMeasures(Experiment exp, String selectedBinDir, ProgressFrame progressFrame) {
 		// Check if capillaries are loaded before trying to load kymographs
 		if (exp.getCapillaries() == null || exp.getCapillaries().getList().size() == 0) {
-			System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() No capillaries loaded, cannot load kymographs");
 			Logger.warn("LoadSaveExperiment:loadKymographsAndMeasures() No capillaries loaded, cannot load kymographs");
 			return;
 		}
-		System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() Capillaries loaded: " + exp.getCapillaries().getList().size());
 		
 		progressFrame.setMessage("Load kymographs");
 		boolean kymosLoaded = false;
 		if (selectedBinDir != null) {
-			System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() Calling loadDefaultKymos with binDir: " + selectedBinDir);
 			kymosLoaded = parent0.paneKymos.tabLoadSave.loadDefaultKymos(exp);
-			System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() loadDefaultKymos returned: " + kymosLoaded);
 			if (kymosLoaded && exp.getSeqKymos() != null) {
 				parent0.paneKymos.tabDisplay.displayUpdateOnSwingThread();
 			} else {
-				System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() Failed to load kymographs (loaded: " + kymosLoaded + ", seqKymos: " + (exp.getSeqKymos() != null) + ")");
 				Logger.warn("LoadSaveExperiment:loadKymographsAndMeasures() Failed to load kymographs (loaded: " + kymosLoaded + ", seqKymos: " + (exp.getSeqKymos() != null) + ")");
 			}
 		} else {
-			System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() No bin directory selected");
 			Logger.warn("LoadSaveExperiment:loadKymographsAndMeasures() No bin directory selected, cannot load kymographs");
 		}
 
@@ -578,23 +572,15 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			String binFullDir = exp.getKymosBinFullDirectory();
 			if (binFullDir != null) {
 				exp.load_capillaries_description_and_measures();
-				System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() After load_capillaries_description_and_measures(), seqKymos: " + (exp.getSeqKymos() != null) + ", sequence: " + (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null));
 				if (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
-					System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() Transferring measures to kymographs (first attempt)");
 					exp.getSeqKymos().transferCapillariesMeasuresToKymos(exp.getCapillaries());
 					loadMeasures = false;
-					System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() Measures transferred (first attempt), loadMeasures set to false");
-				} else {
-					System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() Cannot transfer measures (first attempt) - seqKymos: " + (exp.getSeqKymos() != null) + ", sequence: " + (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null));
 				}
 			}
 		}
 
-		System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() Fallback check - loadMeasures: " + loadMeasures + ", kymosLoaded: " + kymosLoaded + ", seqKymos: " + (exp.getSeqKymos() != null) + ", sequence: " + (exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null));
 		if (loadMeasures && kymosLoaded && exp.getSeqKymos() != null && exp.getSeqKymos().getSequence() != null) {
-			System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() Transferring measures to kymographs (fallback)");
 			exp.getSeqKymos().transferCapillariesMeasuresToKymos(exp.getCapillaries());
-			System.out.println("DEBUG LoadSaveExperiment.loadKymographsAndMeasures() Measures transferred (fallback)");
 		}
 	}
 

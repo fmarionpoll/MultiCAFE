@@ -165,26 +165,19 @@ public class CapillariesPersistence {
 		 * @return true if successful
 		 */
 		public static boolean loadMeasures(Capillaries capillaries, String binDirectory) {
-			System.out.println("DEBUG CapillariesPersistence.loadMeasures() called with binDirectory: " + binDirectory);
-			System.out.println("DEBUG CapillariesPersistence.loadMeasures() capillaries list size: " + capillaries.getList().size());
 			if (binDirectory == null) {
-				System.out.println("DEBUG CapillariesPersistence.loadMeasures() binDirectory is null, returning false");
 				return false;
 			}
 
 			// Try v2_ format ONLY
 			String pathToCsv = binDirectory + File.separator + ID_V2_CAPILLARIESMEASURES_CSV;
 			File csvFile = new File(pathToCsv);
-			System.out.println("DEBUG CapillariesPersistence.loadMeasures() checking v2 format file: " + pathToCsv);
-			System.out.println("DEBUG CapillariesPersistence.loadMeasures() v2 file exists: " + csvFile.exists() + ", isFile: " + csvFile.isFile());
 			if (!csvFile.isFile()) {
 				// v2 format not found - delegate to Legacy class for all fallback logic
-				System.out.println("DEBUG CapillariesPersistence.loadMeasures() v2 format not found, triggering fallback to loadMeasuresWithFallback");
 				return CapillariesPersistenceLegacy.loadMeasuresWithFallback(capillaries, binDirectory);
 			}
 
 			// Load from v2 format
-			System.out.println("DEBUG CapillariesPersistence.loadMeasures() Loading from v2 format file: " + pathToCsv);
 			try {
 				BufferedReader csvReader = new BufferedReader(new FileReader(pathToCsv));
 				String row;
@@ -250,11 +243,8 @@ public class CapillariesPersistence {
 					}
 				}
 				csvReader.close();
-				System.out.println("DEBUG CapillariesPersistence.loadMeasures() v2 format loading completed, measuresLoaded: " + measuresLoaded);
 				return measuresLoaded;
 			} catch (Exception e) {
-				System.out.println("DEBUG CapillariesPersistence.loadMeasures() Exception loading v2 format: " + e.getMessage());
-				e.printStackTrace();
 				Logger.error("CapillariesPersistence:loadMeasures() Error: " + e.getMessage(), e);
 				return false;
 			}

@@ -315,8 +315,23 @@ public class SequenceKymos extends SequenceCamData {
 	}
 
 	public void transferCapillariesMeasuresToKymos(Capillaries capillaries) {
-		List<ROI2D> matchingROIs = this.findROIsMissingNamePattern("_");
-		this.getSequence().removeROIs(matchingROIs, false);
+		// Remove existing measure ROIs to prevent duplication
+		// Measure ROIs have names like "prefix_toplevel", "prefix_bottomlevel", "prefix_derivative", "prefix_gulps"
+		List<ROI2D> allROIs = getSequence().getROI2Ds();
+		List<ROI2D> roisToRemove = new ArrayList<ROI2D>();
+		for (ROI2D roi : allROIs) {
+			if (roi instanceof ROI2DPolyLine && roi.getName() != null) {
+				String name = roi.getName();
+				// Check if this ROI matches the pattern of measure ROIs
+				if (name.contains("_") && (name.contains("toplevel") || name.contains("bottomlevel") 
+						|| name.contains("derivative") || name.contains("gulps"))) {
+					roisToRemove.add(roi);
+				}
+			}
+		}
+		if (!roisToRemove.isEmpty()) {
+			getSequence().removeROIs(roisToRemove, false);
+		}
 
 		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
 		int ncapillaries = capillaries.getList().size();
