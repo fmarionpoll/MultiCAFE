@@ -182,6 +182,12 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		ROI2DUtilities.removeRoisContainingStringAtT(-1, "cage", exp.getSeqCamData().getSequence());
 //		exp.getCages().getCageList().clear();
 
+		// Note: This method only creates cages for existing capillaries.
+		// It uses capillaries as seed points for blob detection, so cages cannot
+		// be detected for missing capillaries. If some capillaries are missing,
+		// use BuildCagesAsArray instead, which creates all cages in a grid pattern.
+		// The graph layout has been updated to handle missing cages properly.
+
 		int t = exp.getSeqCamData().getCurrentFrame();
 		IcyBufferedImage img0 = IcyBufferedImageUtil.convertToType(overlayThreshold.getTransformedImage(t),
 				DataType.INT, false);

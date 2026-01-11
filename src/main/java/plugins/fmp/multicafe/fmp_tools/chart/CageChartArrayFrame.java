@@ -364,9 +364,16 @@ public class CageChartArrayFrame extends IcyFrame {
 			nPanelsAlongX = 1;
 			nPanelsAlongY = 1;
 		} else {
-			// Use configured grid dimensions, but only iterate over existing cages
+			// Calculate optimal grid dimensions based on actual number of cages
+			// This ensures all cages are displayed and uses available space efficiently
+			int numCages = availableCages.size();
+			// Try to maintain aspect ratio close to the configured one, but adapt to actual number
 			nPanelsAlongX = experiment.getCages().nCagesAlongX;
-			nPanelsAlongY = experiment.getCages().nCagesAlongY;
+			nPanelsAlongY = (numCages + nPanelsAlongX - 1) / nPanelsAlongX; // Ceiling division
+			// Ensure we have enough columns to fit all cages
+			if (nPanelsAlongX * nPanelsAlongY < numCages) {
+				nPanelsAlongY++;
+			}
 		}
 
 		// Set layout using strategy
@@ -390,35 +397,19 @@ public class CageChartArrayFrame extends IcyFrame {
 		}
 
 		// Create chart panels - iterate over existing cages only
+		// Use sequential positioning based on available cages with valid data
+		// This ensures continuous layout without gaps for missing cages
+		int validIndex = 0;
 		for (Cage cage : availableCages) {
 			XYSeriesCollection xyDataSetList = datasets.get(cage);
 			if (xyDataSetList == null) {
 				continue;
 			}
 			
-			// Get row/col coordinates from cage properties if available
-			int row = cage.getProperties().getArrayRow();
-			int col = cage.getProperties().getArrayColumn();
-			
-			// If array position not set, calculate from cage ID
-			if (row < 0 || col < 0) {
-				int cageID = cage.getProperties().getCageID();
-				row = cageID / experiment.getCages().nCagesAlongX;
-				col = cageID % experiment.getCages().nCagesAlongX;
-			}
-			
-			// Ensure row/col are within grid bounds
-			if (row >= nPanelsAlongY || col >= nPanelsAlongX) {
-				// Use compact layout if position is out of bounds
-				int index = availableCages.indexOf(cage);
-				row = index / nPanelsAlongX;
-				col = index % nPanelsAlongX;
-				// Adjust grid if needed
-				if (row >= nPanelsAlongY) {
-					nPanelsAlongY = row + 1;
-					chartPanelArray = new ChartCagePair[nPanelsAlongY][nPanelsAlongX];
-				}
-			}
+			// Use sequential positioning based on valid cages index
+			// Grid dimensions are already calculated to accommodate all cages
+			int row = validIndex / nPanelsAlongX;
+			int col = validIndex % nPanelsAlongX;
 			
 			ChartPanel chartPanel = createChartPanelForCage(cage, row, col, resultsOptions, xyDataSetList);
 			int arrayRow = flag ? 0 : row;
@@ -428,6 +419,7 @@ public class CageChartArrayFrame extends IcyFrame {
 			if (arrayRow >= 0 && arrayRow < nPanelsAlongY && arrayCol >= 0 && arrayCol < nPanelsAlongX) {
 				chartPanelArray[arrayRow][arrayCol] = new ChartCagePair(chartPanel, cage);
 			}
+			validIndex++;
 		}
 	}
 
