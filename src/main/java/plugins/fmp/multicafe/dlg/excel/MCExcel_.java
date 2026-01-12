@@ -56,7 +56,7 @@ public class MCExcel_ extends JPanel implements PropertyChangeListener {
 		tabLevels.addPropertyChangeListener(this);
 
 		tabGulps.init(capLayout);
-		tabsPane.addTab("Levels: gulps", null, tabGulps, "Export gulps to file");
+		tabsPane.addTab("Gulps", null, tabGulps, "Export gulps to file");
 		tabGulps.addPropertyChangeListener(this);
 
 		tabMove.init(capLayout);

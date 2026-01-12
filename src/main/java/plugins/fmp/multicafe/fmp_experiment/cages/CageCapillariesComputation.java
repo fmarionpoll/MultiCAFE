@@ -63,12 +63,12 @@ public class CageCapillariesComputation {
 	 * Note: This should be called AFTER evaporation correction if needed.
 	 * 
 	 * @param allCapillaries The global Capillaries containing all capillaries
-	 * @param threshold Minimum SUM value required to compute PI
+	 * @param threshold      Minimum SUM value required to compute PI
 	 */
 	public void computeLRMeasures(Capillaries allCapillaries, double threshold) {
 		if (allCapillaries == null)
 			return;
-		
+
 		List<Capillary> caps = cage.getCapillaries(allCapillaries);
 		if (caps.size() < 2)
 			return;
@@ -226,6 +226,8 @@ public class CageCapillariesComputation {
 			} else {
 				piY[i] = 0.0;
 			}
+//			if (Math.abs(piY[i]) > 1.)
+//				System.out.println("unbalanced");
 		}
 
 		// Store SUM and PI in computed measures map
