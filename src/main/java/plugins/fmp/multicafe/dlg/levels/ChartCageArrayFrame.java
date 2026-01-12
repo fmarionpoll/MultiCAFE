@@ -9,7 +9,7 @@ import org.jfree.data.Range;
 
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
-import plugins.fmp.multicafe.fmp_tools.chart.CageChartArrayFrame;
+import plugins.fmp.multicafe.fmp_tools.chart.ChartCagesFrame;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartCagePair;
 import plugins.fmp.multicafe.fmp_tools.chart.ChartInteractionHandlerFactory;
 import plugins.fmp.multicafe.fmp_tools.chart.builders.CageCapillarySeriesBuilder;
@@ -25,7 +25,7 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
  * manages a grid of charts displaying measurements for different cages in an experiment.
  * 
  * <p>
- * This class is a wrapper around the generic {@link CageChartArrayFrame} that provides
+ * This class is a wrapper around the generic {@link ChartCagesFrame} that provides
  * a convenient API for the levels dialog. It automatically configures the appropriate
  * data builder, interaction handlers, and UI controls for capillary/spot measurements.
  * </p>
@@ -45,7 +45,7 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 public class ChartCageArrayFrame extends IcyFrame {
 
 	/** The underlying generic chart frame */
-	private CageChartArrayFrame genericFrame;
+	private ChartCagesFrame genericFrame;
 
 	/** UI controls factory for combobox and legend */
 	private ComboBoxUIControlsFactory uiControlsFactory;
@@ -75,7 +75,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 			}
 		};
 		
-		genericFrame = new CageChartArrayFrame(
+		genericFrame = new ChartCagesFrame(
 			dataBuilder,
 			handlerFactory,
 			layoutStrategy,

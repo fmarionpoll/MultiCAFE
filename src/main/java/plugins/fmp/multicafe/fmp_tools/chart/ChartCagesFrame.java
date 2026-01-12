@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
-import plugins.fmp.multicafe.fmp_tools.Logger;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -33,6 +32,7 @@ import icy.gui.util.GuiUtil;
 import plugins.fmp.multicafe.dlg.levels.ChartInteractionHandler;
 import plugins.fmp.multicafe.fmp_experiment.Experiment;
 import plugins.fmp.multicafe.fmp_experiment.cages.Cage;
+import plugins.fmp.multicafe.fmp_tools.Logger;
 import plugins.fmp.multicafe.fmp_tools.chart.builders.CageSeriesBuilder;
 import plugins.fmp.multicafe.fmp_tools.chart.plot.CageChartPlotFactory;
 import plugins.fmp.multicafe.fmp_tools.chart.strategies.ChartLayoutStrategy;
@@ -41,15 +41,16 @@ import plugins.fmp.multicafe.fmp_tools.chart.strategies.ComboBoxUIControlsFactor
 import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
 
 /**
- * Generic base class for displaying cage-based charts in a grid or horizontal layout.
- * This class provides a flexible framework for displaying different types of measurements
- * (capillaries, spots, fly positions) using a strategy pattern for layout and UI controls.
+ * Generic base class for displaying cage-based charts in a grid or horizontal
+ * layout. This class provides a flexible framework for displaying different
+ * types of measurements (capillaries, spots, fly positions) using a strategy
+ * pattern for layout and UI controls.
  * 
  * <p>
  * Usage example:
  * 
  * <pre>
- * CageChartArrayFrame chartFrame = new CageChartArrayFrame(
+ * CageChartArrayFrame chartFrame = new ChartCagesFrame(
  *     new CageCapillarySeriesBuilder(),
  *     new CapillaryChartInteractionHandler(...),
  *     new GridLayoutStrategy(),
@@ -61,8 +62,7 @@ import plugins.fmp.multicafe.fmp_tools.results.ResultsOptions;
  * 
  * @author MultiCAFE
  */
-public class CageChartArrayFrame extends IcyFrame {
-
+public class ChartCagesFrame extends IcyFrame {
 
 	/** Default chart width in pixels */
 	protected static final int DEFAULT_CHART_WIDTH = 200;
@@ -123,7 +123,7 @@ public class CageChartArrayFrame extends IcyFrame {
 
 	/** Chart interaction handler factory */
 	private ChartInteractionHandlerFactory interactionHandlerFactory = null;
-	
+
 	/** Current interaction handler (created after array is built) */
 	private ChartInteractionHandler interactionHandler = null;
 
@@ -145,15 +145,14 @@ public class CageChartArrayFrame extends IcyFrame {
 	/**
 	 * Creates a new cage chart array frame with the specified strategies.
 	 * 
-	 * @param dataBuilder the builder for creating chart data
-	 * @param interactionHandlerFactory the factory for creating interaction handlers (can be null)
-	 * @param layoutStrategy the layout strategy
-	 * @param uiControlsFactory the UI controls factory
+	 * @param dataBuilder               the builder for creating chart data
+	 * @param interactionHandlerFactory the factory for creating interaction
+	 *                                  handlers (can be null)
+	 * @param layoutStrategy            the layout strategy
+	 * @param uiControlsFactory         the UI controls factory
 	 */
-	public CageChartArrayFrame(CageSeriesBuilder dataBuilder, 
-	                           ChartInteractionHandlerFactory interactionHandlerFactory,
-	                           ChartLayoutStrategy layoutStrategy,
-	                           ChartUIControlsFactory uiControlsFactory) {
+	public ChartCagesFrame(CageSeriesBuilder dataBuilder, ChartInteractionHandlerFactory interactionHandlerFactory,
+			ChartLayoutStrategy layoutStrategy, ChartUIControlsFactory uiControlsFactory) {
 		if (dataBuilder == null) {
 			throw new IllegalArgumentException("Data builder cannot be null");
 		}
@@ -163,7 +162,7 @@ public class CageChartArrayFrame extends IcyFrame {
 		if (uiControlsFactory == null) {
 			throw new IllegalArgumentException("UI controls factory cannot be null");
 		}
-		
+
 		this.dataBuilder = dataBuilder;
 		this.interactionHandlerFactory = interactionHandlerFactory;
 		this.layoutStrategy = layoutStrategy;
@@ -200,7 +199,7 @@ public class CageChartArrayFrame extends IcyFrame {
 
 		// Set layout using strategy
 		layoutStrategy.setLayoutOnPanel(mainChartPanel, nPanelsAlongX, nPanelsAlongY);
-		
+
 		String finalTitle = title + ": " + options.resultType.toString();
 
 		// Reuse existing frame if it's still valid
@@ -321,21 +320,21 @@ public class CageChartArrayFrame extends IcyFrame {
 
 		// Update UI controls
 		uiControlsFactory.updateControls(resultsOptions.resultType, resultsOptions);
-		
+
 		// Clear any previously displayed charts
 		if (mainChartPanel != null) {
 			mainChartPanel.removeAll();
 		}
-		
+
 		// Ensure derived measures are computed before building datasets
 		exp.getCages().prepareComputations(exp, resultsOptions);
-		
+
 		// Create interaction handler if factory is provided
 		if (interactionHandlerFactory != null) {
 			interactionHandler = interactionHandlerFactory.createHandler(exp, resultsOptions, chartPanelArray);
 		}
-		
-		createChartPanelArray(resultsOptions);
+
+		createChartsPanel(resultsOptions);
 		arrangePanelsInDisplay(resultsOptions);
 		displayChartFrame();
 	}
@@ -345,12 +344,13 @@ public class CageChartArrayFrame extends IcyFrame {
 	 * 
 	 * @param resultsOptions the export options
 	 */
-	protected void createChartPanelArray(ResultsOptions resultsOptions) {
+	protected void createChartsPanel(ResultsOptions resultsOptions) {
 		// Update grid dimensions based on current experiment state
 		boolean flag = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast);
-		
+
 		// Calculate actual grid dimensions based on existing cages
-		// This handles cases where experiments have fewer cages than the configured grid
+		// This handles cases where experiments have fewer cages than the configured
+		// grid
 		List<Cage> availableCages = new ArrayList<>();
 		for (Cage cage : experiment.getCages().getCageList()) {
 			int cageID = cage.getProperties().getCageID();
@@ -358,7 +358,7 @@ public class CageChartArrayFrame extends IcyFrame {
 				availableCages.add(cage);
 			}
 		}
-		
+
 		if (flag || availableCages.isEmpty()) {
 			// Single cage mode or no cages
 			nPanelsAlongX = 1;
@@ -367,7 +367,8 @@ public class CageChartArrayFrame extends IcyFrame {
 			// Calculate optimal grid dimensions based on actual number of cages
 			// This ensures all cages are displayed and uses available space efficiently
 			int numCages = availableCages.size();
-			// Try to maintain aspect ratio close to the configured one, but adapt to actual number
+			// Try to maintain aspect ratio close to the configured one, but adapt to actual
+			// number
 			nPanelsAlongX = experiment.getCages().nCagesAlongX;
 			nPanelsAlongY = (numCages + nPanelsAlongX - 1) / nPanelsAlongX; // Ceiling division
 			// Ensure we have enough columns to fit all cages
@@ -381,7 +382,7 @@ public class CageChartArrayFrame extends IcyFrame {
 
 		// Reset array to ensure no stale panels
 		chartPanelArray = new ChartCagePair[nPanelsAlongY][nPanelsAlongX];
-		
+
 		// Create interaction handler now that array is initialized
 		if (interactionHandlerFactory != null) {
 			interactionHandler = interactionHandlerFactory.createHandler(experiment, resultsOptions, chartPanelArray);
@@ -405,16 +406,16 @@ public class CageChartArrayFrame extends IcyFrame {
 			if (xyDataSetList == null) {
 				continue;
 			}
-			
+
 			// Use sequential positioning based on valid cages index
 			// Grid dimensions are already calculated to accommodate all cages
 			int row = validIndex / nPanelsAlongX;
 			int col = validIndex % nPanelsAlongX;
-			
+
 			ChartPanel chartPanel = createChartPanelForCage(cage, row, col, resultsOptions, xyDataSetList);
 			int arrayRow = flag ? 0 : row;
 			int arrayCol = flag ? 0 : col;
-			
+
 			// Ensure array indices are within bounds
 			if (arrayRow >= 0 && arrayRow < nPanelsAlongY && arrayCol >= 0 && arrayCol < nPanelsAlongX) {
 				chartPanelArray[arrayRow][arrayCol] = new ChartCagePair(chartPanel, cage);
@@ -426,16 +427,15 @@ public class CageChartArrayFrame extends IcyFrame {
 	/**
 	 * Creates a chart panel for a specific cage.
 	 * 
-	 * @param cage             the cage to create chart for
-	 * @param row              the row index
-	 * @param col              the column index
-	 * @param resultsOptions   the export options
-	 * @param xyDataSetList    the dataset for this cage
+	 * @param cage           the cage to create chart for
+	 * @param row            the row index
+	 * @param col            the column index
+	 * @param resultsOptions the export options
+	 * @param xyDataSetList  the dataset for this cage
 	 * @return configured ChartPanel
 	 */
-	protected ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, 
-	                                                 ResultsOptions resultsOptions,
-	                                                 XYSeriesCollection xyDataSetList) {
+	protected ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, ResultsOptions resultsOptions,
+			XYSeriesCollection xyDataSetList) {
 
 		// If no data, show placeholder
 		if (xyDataSetList == null || xyDataSetList.getSeriesCount() == 0) {
@@ -459,11 +459,9 @@ public class CageChartArrayFrame extends IcyFrame {
 
 		// Check if cage has required data (subclasses can override this)
 		if (!hasRequiredData(cage)) {
-			ChartCagePanel chartPanel = new ChartCagePanel(null,
-					DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT,
-					MIN_CHART_WIDTH, MIN_CHART_HEIGHT,
-					MAX_CHART_WIDTH, MAX_CHART_HEIGHT,
-					true, true, true, true, false, true);
+			ChartCagePanel chartPanel = new ChartCagePanel(null, DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT,
+					MIN_CHART_WIDTH, MIN_CHART_HEIGHT, MAX_CHART_WIDTH, MAX_CHART_HEIGHT, true, true, true, true, false,
+					true);
 			return chartPanel;
 		}
 
@@ -492,11 +490,9 @@ public class CageChartArrayFrame extends IcyFrame {
 
 		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 
-		ChartCagePanel chartCagePanel = new ChartCagePanel(chart,
-				DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT,
-				MIN_CHART_WIDTH, MIN_CHART_HEIGHT,
-				MAX_CHART_WIDTH, MAX_CHART_HEIGHT,
-				true, true, true, true, false, true);
+		ChartCagePanel chartCagePanel = new ChartCagePanel(chart, DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT,
+				MIN_CHART_WIDTH, MIN_CHART_HEIGHT, MAX_CHART_WIDTH, MAX_CHART_HEIGHT, true, true, true, true, false,
+				true);
 
 		if (interactionHandler != null) {
 			chartCagePanel.addChartMouseListener(interactionHandler.createMouseListener());
@@ -506,8 +502,8 @@ public class CageChartArrayFrame extends IcyFrame {
 	}
 
 	/**
-	 * Checks if the cage has the required data for display.
-	 * Subclasses can override this to provide custom validation.
+	 * Checks if the cage has the required data for display. Subclasses can override
+	 * this to provide custom validation.
 	 * 
 	 * @param cage the cage to check
 	 * @return true if the cage has required data
@@ -525,8 +521,7 @@ public class CageChartArrayFrame extends IcyFrame {
 	 */
 	protected void arrangePanelsInDisplay(ResultsOptions resultsOptions) {
 		boolean singleCageMode = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast);
-		layoutStrategy.arrangePanels(mainChartPanel, chartPanelArray, 
-		                            nPanelsAlongX, nPanelsAlongY, singleCageMode);
+		layoutStrategy.arrangePanels(mainChartPanel, chartPanelArray, nPanelsAlongX, nPanelsAlongY, singleCageMode);
 	}
 
 	/**
@@ -550,7 +545,7 @@ public class CageChartArrayFrame extends IcyFrame {
 	}
 
 	private void loadPreferences() {
-		Preferences prefs = Preferences.userNodeForPackage(CageChartArrayFrame.class);
+		Preferences prefs = Preferences.userNodeForPackage(ChartCagesFrame.class);
 		int x = prefs.getInt("window_x", graphLocation.x);
 		int y = prefs.getInt("window_y", graphLocation.y);
 		int w = prefs.getInt("window_w", DEFAULT_FRAME_WIDTH);
@@ -559,7 +554,7 @@ public class CageChartArrayFrame extends IcyFrame {
 	}
 
 	private void savePreferences() {
-		Preferences prefs = Preferences.userNodeForPackage(CageChartArrayFrame.class);
+		Preferences prefs = Preferences.userNodeForPackage(ChartCagesFrame.class);
 		Rectangle r = mainChartFrame.getBounds();
 		prefs.putInt("window_x", r.x);
 		prefs.putInt("window_y", r.y);
@@ -654,4 +649,3 @@ public class CageChartArrayFrame extends IcyFrame {
 		yRange = range;
 	}
 }
-

@@ -52,12 +52,12 @@ public class MCKymos_ extends JPanel implements PropertyChangeListener, ChangeLi
 		tabIntervals.addPropertyChangeListener(this);
 		tabsPane.addTab("Edit", null, tabIntervals, "Time resolution of kymograph");
 
+		tabRegister.init(capLayout, parent0);
+		tabsPane.addTab("Registration", null, tabRegister, "Register source images");
+
 		tabLoadSave.init(capLayout, parent0);
 		tabLoadSave.addPropertyChangeListener(this);
 		tabsPane.addTab("Load/Save", null, tabLoadSave, "Load/Save xml file with capillaries descriptors");
-
-		tabRegister.init(capLayout, parent0);
-		tabsPane.addTab("Registration", null, tabRegister, "Register source images");
 
 		tabsPane.addChangeListener(this);
 		tabsPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);

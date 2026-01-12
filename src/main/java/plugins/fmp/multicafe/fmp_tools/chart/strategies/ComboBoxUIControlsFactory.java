@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.ComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -110,6 +111,18 @@ public class ComboBoxUIControlsFactory implements ChartUIControlsFactory {
 		});
 
 		topPanel.add(resultTypeComboBox);
+		
+		JButton updateButton = new JButton("Update");
+		updateButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (changeListener != null) {
+					changeListener.actionPerformed(new ActionEvent(updateButton, ActionEvent.ACTION_PERFORMED, "update"));
+				}
+			}
+		});
+		topPanel.add(updateButton);
+		
 		return topPanel;
 	}
 
