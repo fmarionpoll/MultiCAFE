@@ -183,6 +183,11 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 
 		int first = 0;
 		int last = exp.getCages().getCageList().size() - 1;
+		if (exp.getCages().getCageList().size() > 0) {
+			first = exp.getCages().getCageList().get(first).getCageID();
+			last = exp.getCages().getCageList().get(last).getCageID();
+		}
+
 		if (!displayAllButton.isSelected()) {
 			Cage cageFound = findSelectedCage(exp);
 			if (cageFound == null)
