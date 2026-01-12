@@ -193,7 +193,9 @@ public class ChartCagesFrame extends IcyFrame {
 		this.baseTitle = title;
 
 		mainChartPanel = new JPanel();
-		boolean flag = (options.cageIndexFirst == options.cageIndexLast);
+		// Single-cage mode: first == last and both are positive
+		boolean flag = (options.cageIndexFirst == options.cageIndexLast 
+				&& options.cageIndexFirst >= 0);
 		nPanelsAlongX = flag ? 1 : exp.getCages().nCagesAlongX;
 		nPanelsAlongY = flag ? 1 : exp.getCages().nCagesAlongY;
 
@@ -345,16 +347,23 @@ public class ChartCagesFrame extends IcyFrame {
 	 * @param resultsOptions the export options
 	 */
 	protected void createChartsPanel(ResultsOptions resultsOptions) {
-		// Update grid dimensions based on current experiment state
-		boolean flag = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast);
+		// Determine if we're in single-cage mode: first == last and both are positive
+		boolean flag = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast 
+				&& resultsOptions.cageIndexFirst >= 0);
 
-		// Calculate actual grid dimensions based on existing cages
-		// This handles cases where experiments have fewer cages than the configured
-		// grid
+		// Filter cages based on the new semantics:
+		// - If first == last (and positive): display only that specific cage ID
+		// - Otherwise: display all available cages (ignore the range)
 		List<Cage> availableCages = new ArrayList<>();
 		for (Cage cage : experiment.getCages().getCageList()) {
-			int cageID = cage.getProperties().getCageID();
-			if (cageID >= resultsOptions.cageIndexFirst && cageID <= resultsOptions.cageIndexLast) {
+			if (flag) {
+				// Single cage mode: only include the cage with the matching ID
+				int cageID = cage.getProperties().getCageID();
+				if (cageID == resultsOptions.cageIndexFirst) {
+					availableCages.add(cage);
+				}
+			} else {
+				// Display all cages mode: include all cages
 				availableCages.add(cage);
 			}
 		}
@@ -520,7 +529,9 @@ public class ChartCagesFrame extends IcyFrame {
 	 * @param resultsOptions the export options
 	 */
 	protected void arrangePanelsInDisplay(ResultsOptions resultsOptions) {
-		boolean singleCageMode = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast);
+		// Single-cage mode: first == last and both are positive
+		boolean singleCageMode = (resultsOptions.cageIndexFirst == resultsOptions.cageIndexLast 
+				&& resultsOptions.cageIndexFirst >= 0);
 		layoutStrategy.arrangePanels(mainChartPanel, chartPanelArray, nPanelsAlongX, nPanelsAlongY, singleCageMode);
 	}
 

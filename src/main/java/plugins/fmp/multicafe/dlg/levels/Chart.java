@@ -275,20 +275,6 @@ public class Chart extends JPanel implements SequenceListener, ViewerListener {
 		return null;
 	}
 
-//	private Capillary findCapillaryFromSelectedRoi(Experiment exp, ROI2D roi) {
-//		if (exp == null || exp.getCapillaries() == null || roi == null)
-//			return null;
-//		for (Capillary cap : exp.getCapillaries().getList()) {
-//			ROI2D capRoi = cap.getRoi();
-//			if (capRoi != null) {
-//				if (capRoi == roi || capRoi.getName().equals(roi.getName())) {
-//					return cap;
-//				}
-//			}
-//		}
-//		return null;
-//	}
-
 	private Cage findSelectedCage(Experiment exp) {
 		if (exp == null)
 			return null;
