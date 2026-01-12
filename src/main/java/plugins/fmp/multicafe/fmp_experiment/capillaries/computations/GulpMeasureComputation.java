@@ -16,6 +16,9 @@ public class GulpMeasureComputation {
 	 */
 	public static MeasurementComputation computeNbGulps() {
 		return (exp, cap, options) -> {
+			if (cap == null) {
+				return null;
+			}
 			CapillaryGulps gulps = cap.getGulps();
 			if (gulps == null) {
 				return null;
@@ -52,6 +55,9 @@ public class GulpMeasureComputation {
 	 */
 	public static MeasurementComputation computeAmplitudeGulps() {
 		return (exp, cap, options) -> {
+			if (cap == null) {
+				return null;
+			}
 			CapillaryGulps gulps = cap.getGulps();
 			if (gulps == null) {
 				return null;
@@ -88,6 +94,9 @@ public class GulpMeasureComputation {
 	 */
 	public static MeasurementComputation computeTToGulp() {
 		return (exp, cap, options) -> {
+			if (cap == null) {
+				return null;
+			}
 			CapillaryGulps gulps = cap.getGulps();
 			if (gulps == null) {
 				return null;

@@ -21,6 +21,9 @@ public class CorrelationComputation {
 	 */
 	public static MeasurementComputation computeAutocorrelation() {
 		return (exp, cap, options) -> {
+			if (cap == null) {
+				return null;
+			}
 			CapillaryGulps gulps = cap.getGulps();
 			if (gulps == null) {
 				return null;
@@ -141,6 +144,9 @@ public class CorrelationComputation {
 	 */
 	public static MeasurementComputation computeMarkovChain() {
 		return (exp, cap, options) -> {
+			if (cap == null) {
+				return null;
+			}
 			CapillaryGulps gulps = cap.getGulps();
 			if (gulps == null) {
 				return null;
@@ -188,6 +194,9 @@ public class CorrelationComputation {
 	// Helper methods
 
 	private static ArrayList<Integer> getGulpEvents(Experiment exp, Capillary cap, ResultsOptions options) {
+		if (cap == null) {
+			return null;
+		}
 		CapillaryGulps gulps = cap.getGulps();
 		if (gulps == null) {
 			return null;
