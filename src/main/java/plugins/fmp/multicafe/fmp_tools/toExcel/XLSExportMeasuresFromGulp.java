@@ -143,7 +143,7 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 		// All gulp measures now use the unified computation path via
 		// getCapillaryMeasuresForXLSPass1
 		// which supports both computed and direct-access measures
-		return xlsExportExperimentGulpDataToSheetUsingBuilder(exp, sheet, resultType, col0, charSeries);
+		return xlsExportExperimentGulpDataToSheetUsingBuilder(exp, sheet, resultType, pt, charSeries);
 	}
 
 //	/**
@@ -164,13 +164,12 @@ public class XLSExportMeasuresFromGulp extends XLSExport {
 	 * @param exp        The experiment to export
 	 * @param sheet      The sheet to write to
 	 * @param resultType The export type
-	 * @param col0       The starting column
+	 * @param pt         The starting point (after separator)
 	 * @param charSeries The series identifier
 	 * @return The next available column
 	 */
 	private int xlsExportExperimentGulpDataToSheetUsingBuilder(Experiment exp, SXSSFSheet sheet, EnumResults resultType,
-			int col0, String charSeries) {
-		Point pt = new Point(col0, 0);
+			Point pt, String charSeries) {
 
 		ResultsOptions resultsOptions = new ResultsOptions();
 		long kymoBin_ms = exp.getKymoBin_ms();
